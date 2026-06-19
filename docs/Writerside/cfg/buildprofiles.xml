@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildprofiles xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/build-profiles.xsd"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <sitemap priority="0.35" change-frequency="monthly"/>
+
+    <variables>
+        <primary-color>#4f57a7</primary-color>
+        <link-color>#6066a2</link-color>
+        <color-preset>contrast</color-preset>
+        <custom-favicons>logo.svg</custom-favicons>
+        <header-logo>logo.svg</header-logo>
+        <product-web-url>https://typelang.dev</product-web-url>
+        <noindex-content>false</noindex-content>
+        <offline-docs>false</offline-docs>
+
+        <feedback-url>https://github.com/php-type-language/docs/issues</feedback-url>
+        <web-root>/</web-root>
+        <og-image>splash.png</og-image>
+        <generate-canonicals>true</generate-canonicals>
+
+        <download-title>GitHub</download-title>
+        <download-page>https://github.com/php-type-language</download-page>
+        <showDownloadButton>true</showDownloadButton>
+
+        <enable-contribution>true</enable-contribution>
+        <contribute-url>https://github.com/php-type-language/docs/blob/master/Writerside/</contribute-url>
+        <custom-css>custom.css</custom-css>
+
+        <!--<algolia-id>CZXH99BXN1</algolia-id>
+        <algolia-index>Writerside</algolia-index>
+        <algolia-api-key>70b2d5249859c00508d22cb54c52eeee</algolia-api-key>-->
+    </variables>
+
+    <icons>
+        <local-src>icons</local-src>
+    </icons>
+
+    <footer>
+        <social href="https://github.com/php-type-language" type="github">GitHub</social>
+        <link href="https://packagist.org/packages/type-lang/parser">Packagist</link>
+        <link href="https://github.com/php-type-language/parser/issues">Issue tracker</link>
+        <link href="https://github.com/php-type-language/parser/pulls">Submit request</link>
+        <copyright>PHP TypeLang</copyright>
+    </footer>
+</buildprofiles>

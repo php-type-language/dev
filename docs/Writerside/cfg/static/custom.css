@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,200;1,200&display=swap');
+
+:root {
+    --wh-color-accent-substrate-bg: #222330 !important;
+    --wh-color-border-hover: #4f57a7 !important;
+    --wh-color-backlight-pale: none;
+    --wh-color-backlight-pale-dark: none;
+    --app-link-color-dark: #848CD5 !important;
+}
+
+h1, h2 {
+    font-family: "Roboto Condensed", "JetBrains Sans Bundled", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Droid Sans", "Helvetica Neue", Arial, sans-serif !important;
+    font-optical-sizing: auto !important;
+    font-weight: 200 !important;
+    font-style: normal !important;
+}
+
+h1 {
+    font-size: 48px !important;
+}
+
+.wh-header__product-logo {
+    width: 32px;
+    height: 32px;
+}
+
+.article > .prompt {
+    max-width: auto !important;
+}
+
+.prompt__wrapper {
+    display: flex;
+}
+
+.prompt__content {
+    overflow: visible;
+}
+
+.prompt__wrapper > .prompt__content {
+    flex: 1;
+}
+
+.app__nav {
+    padding: 0 10px;
+}
+
+.app__sidebar {
+    border: none;
+}
+
+.app__toc li {
+    margin: 6px 0;
+}
+
+.toc-item {
+    border-radius: 5px;
+}
+
+.toc-item--highlighted {
+    background: none !important;
+}
+
+.toc-item--theme-light:hover {
+    background: rgba(25, 25, 28, .05) !important;
+    background: var(--wh-color-backlight-main) !important;
+}
+
+.toc-item--theme-dark:hover {
+    background: hsla(0, 0%, 100%, .1) !important;
+    background: var(--wh-color-white-t10) !important;
+}
+
+.toc-item--selected.toc-item--theme-dark {
+    cursor: default;
+    background-color: #252528 !important;
+    background-color: var(--wh-color-backlight-secondary-dark) !important;
+}
+
+.toc-item--selected.toc-item--theme-light {
+    cursor: default;
+    background-color: #6b57ff !important;
+    background-color: var(--wh-color-primary-light-theme) !important;
+}
+
+.toc--theme-dark {
+    background: none;
+}
+
+.article__list + .code-block__wrapper,
+.article__list + .code-collapse__wrapper,
+p + .code-block__wrapper,
+p + .code-collapse__wrapper,
+.code-block__wrapper + .code-collapse__wrapper,
+.code-block__wrapper + .code-block__wrapper {
+    margin-top: 12px !important;
+}
+
+.starting-page-card {
+    border-radius: 7px;
+}
+
+.app__breadcrumbs {
+    width: 706px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 7px;
+    padding: 10px 0 10px 16px;
+}
+
+html.theme-dark .app__breadcrumbs {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.theme-dark .starting-page-card {
+    background: #1c2329 !important;
+}
+
+.theme-dark .starting-page-card:hover {
+    background: #252f37 !important;
+}
+
+.article img {
+    border-radius: 7px;
+}
+
+#mermaid .flowchart-link {
+    stroke: #4f57a7 !important;
+}
+
+#mermaid .node polygon,
+#mermaid .node rect {
+    fill: rgba(0, 0, 0, .05) !important;
+    stroke: transparent !important;
+    rx: 7px !important;
+}
+
+#mermaid .divider {
+    stroke: rgba(0, 0, 0, .1) !important;
+}
+
+html.theme-dark #mermaid .node polygon,
+html.theme-dark #mermaid .node rect {
+    fill: rgba(255, 255, 255, .05) !important;
+}
+
+html.theme-dark #mermaid .node span {
+    color: #a9b7c6 !important;
+    font-size: 95%;
+}
+
+html.theme-dark #mermaid .divider {
+    stroke: #1c2329 !important;
+}
+
+.code-comparer__code-line {
+    border-radius: 3px;
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE terms SYSTEM "https://resources.jetbrains.com/writerside/1.0/glossary.dtd">
+<terms>
+    <term name="FQN">Fully Qualified Name</term>
+    <term name="Identifier">A sequence that begins with a letter and contains
+        letters, numbers, underscores, and dashes</term>
+    <term name="publicity-or-privacy">The use of a work free of known copyright
+        restrictions may be otherwise regulated or limited. The work or its use
+        may be subject to personal data protection laws, publicity, image, or
+        privacy rights that allow a person to control how their voice, image or
+        likeness is used, or other restrictions or limitations under applicable
+        law</term>
+    <term name="endorsement">In some jurisdictions, wrongfully implying that an
+        author, publisher or anyone else endorses your use of a work may be
+        unlawful</term>
+    <term name="normalize">Normalization: The process of "simplifying" data;
+        Transforming from an internal "PHP Type" to a simpler "External Type"
+    </term>
+    <term name="denormalize">Denormalization: The process of "enriching" data;
+        Transforming an abstract "External Type" into a more concrete "PHP Type"
+    </term>
+</terms>

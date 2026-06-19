@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="tl" name="PHP TypeLang" is-library="true" start-page="overview.topic">
+    <toc-element topic="overview.topic" />
+
+    <toc-element toc-title="Language"
+        topic="introduction.md">
+        <toc-element topic="basic-types.md"
+            toc-title="Basic types"/>
+        <toc-element topic="logical-types.md"
+            toc-title="Logical types"/>
+        <toc-element topic="generic-types.md"
+                     toc-title="Generics"/>
+        <toc-element topic="literal-types.md"
+                     toc-title="Literals"/>
+        <toc-element topic="const-types.md"
+                     toc-title="Constants"/>
+        <toc-element topic="shape-types.md"
+                     toc-title="Shapes"/>
+        <toc-element topic="callable-types.md"
+                     toc-title="Callables"/>
+        <toc-element topic="offset-access.md"
+                     toc-title="Offsets"/>
+                        <!-- TODO -->
+        <toc-element topic="conditional-types.md"
+                     toc-title="Conditions"
+                     hidden="true" />
+        <toc-element topic="comparison.md"
+                     toc-title="Comparison of syntax between different tools" />
+
+        <toc-element toc-title="See also">
+            <toc-element toc-title="PHPStan" href="https://phpstan.org/writing-php-code/phpdoc-types" />
+            <toc-element toc-title="Psalm" href="https://psalm.dev/docs/annotating_code/typing_in_psalm/" />
+            <toc-element toc-title="PhpStorm" href="https://www.jetbrains.com/help/phpstorm/php-type-checking.html" />
+            <toc-element toc-title="phpDocumentor" href="https://docs.phpdoc.org/guide/guides/types.html" />
+        </toc-element>
+    </toc-element>
+
+    <toc-element toc-title="Mapper"
+        topic="data-mapper.md">
+        <toc-element topic="mapper-configuration.md" />
+        <toc-element topic="mapper-platforms.md">
+            <toc-element topic="standard-platform.md" />
+            <toc-element topic="custom-platform.md" />
+        </toc-element>
+
+        <toc-element topic="type-metadata.md"
+                     toc-title="Metadata">
+            <toc-element topic="meta-configuration.md"
+                         toc-title="Writing Metadata"/>
+            <toc-element topic="meta-reader.md">
+                <toc-element topic="meta-reader-reflection.md"
+                             toc-title="Reflection" />
+                <toc-element topic="meta-reader-attribute.md"
+                             toc-title="Attributes" />
+                <toc-element topic="meta-reader-phpdoc.md"
+                             toc-title="PHPDoc" />
+                <toc-element topic="meta-reader-array.md"
+                             toc-title="PHP Array" />
+                <toc-element topic="meta-reader-php-config.md"
+                             toc-title="PHP Config Files" />
+                <toc-element topic="meta-reader-json-config.md"
+                             toc-title="JSON Config Files" />
+                <toc-element topic="meta-reader-neon-config.md"
+                             toc-title="NEON Config Files" />
+                <toc-element topic="meta-reader-yaml-config.md"
+                             toc-title="YAML Config Files"/>
+                <toc-element topic="meta-reader-null.md"
+                             toc-title="Null" />
+            </toc-element>
+            <toc-element topic="meta-provider.md">
+                <toc-element topic="meta-provider-in-memory.md"
+                             toc-title="InMemory" />
+                <toc-element topic="meta-provider-psr6-cache.md"
+                             toc-title="PSR-6 Cache" />
+                <toc-element topic="meta-provider-psr16-cache.md"
+                             toc-title="PSR-16 Cache" />
+                <toc-element topic="meta-provider-null.md"
+                             toc-title="Null" />
+            </toc-element>
+            <toc-element topic="meta-expressions.md" />
+            <toc-element topic="meta-clock.md" />
+            <toc-element topic="meta-references.md" />
+        </toc-element>
+        <toc-element topic="types.md">
+            <toc-element topic="mixed-type.md" />
+            <toc-element topic="bool-type.md" />
+            <toc-element topic="custom-type.md" />
+        </toc-element>
+        <toc-element topic="type-builders.md"
+            toc-title="Builders">
+            <toc-element topic="custom-type-builder.md" />
+        </toc-element>
+        <toc-element topic="type-coercers.md"
+            toc-title="Type Coercion (Casting)">
+            <toc-element topic="array-key-type-coercer.md" />
+            <toc-element topic="bool-type-coercer.md" />
+            <toc-element topic="float-type-coercer.md" />
+            <toc-element topic="int-type-coercer.md" />
+            <toc-element topic="string-type-coercer.md" />
+            <toc-element topic="custom-type-coercer.md" />
+        </toc-element>
+        <toc-element topic="type-extractors.md"
+            toc-title="Type Inference">
+            <toc-element topic="native-type-extractor.md" />
+            <toc-element topic="custom-type-extractor.md" />
+        </toc-element>
+    </toc-element>
+
+    <toc-element toc-title="Components">
+        <toc-element topic="parser.md" toc-title="Parser">
+            <toc-element topic="features.md"
+                         toc-title="Feature toggling"/>
+            <toc-element topic="tolerant-mode.md"
+                         toc-title="Tolerant mode"/>
+            <toc-element toc-title="AST">
+                <toc-element topic="ast-type-statements.md" />
+            </toc-element>
+            <toc-element topic="visitors.md">
+                <toc-element topic="class-name-matcher-visitor.md"/>
+                <toc-element topic="stream-dumper-visitor.md"/>
+                <toc-element topic="string-dumper-visitor.md"/>
+                <toc-element topic="type-map-visitor.md"/>
+            </toc-element>
+            <toc-element toc-title="GitHub" href="https://github.com/php-type-language/parser" />
+            <toc-element toc-title="Packagist" href="https://packagist.org/packages/type-lang/parser" />
+        </toc-element>
+
+        <toc-element topic="phpdoc.md" toc-title="PHPDoc" hidden="true">
+            <toc-element toc-title="Extensions">
+                <toc-element topic="phpdoc-standard-tags.md"
+                             toc-title="Standard tags">
+                    <toc-element toc-title="GitHub" href="https://github.com/php-type-language/phpdoc-standard-tags" />
+                    <toc-element toc-title="Packagist" href="https://packagist.org/packages/type-lang/phpdoc-standard-tags" />
+                </toc-element>
+                <toc-element topic="phpdoc-template-tags.md"
+                             toc-title="Template (generic) tags">
+                    <toc-element toc-title="GitHub" href="https://github.com/php-type-language/phpdoc-template-tags" />
+                    <toc-element toc-title="Packagist" href="https://packagist.org/packages/type-lang/phpdoc-template-tags" />
+                </toc-element>
+            </toc-element>
+            <toc-element toc-title="GitHub" href="https://github.com/php-type-language/phpdoc" />
+            <toc-element toc-title="Packagist" href="https://packagist.org/packages/type-lang/phpdoc" />
+        </toc-element>
+
+        <toc-element topic="printer.md" toc-title="Printer">
+            <toc-element toc-title="GitHub" href="https://github.com/php-type-language/printer" />
+            <toc-element toc-title="Packagist" href="https://packagist.org/packages/type-lang/printer" />
+        </toc-element>
+
+        <toc-element topic="reader.md" toc-title="Reader">
+            <toc-element toc-title="GitHub" href="https://github.com/php-type-language/reader" />
+            <toc-element toc-title="Packagist" href="https://packagist.org/packages/type-lang/reader" />
+        </toc-element>
+    </toc-element>
+
+    <toc-element topic="release-notes.md" />
+    <toc-element topic="contribution.md" />
+    <toc-element topic="license.md" />
+
+</instance-profile>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE labels SYSTEM "https://resources.jetbrains.com/writerside/1.0/labels-list.dtd">
+<labels xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/labels.xsd">
+    <primary-label href="https://packagist.org/packages/type-lang/parser"
+        id="parser-component" name="type-lang/parser" short-name="c" color="purple">
+        The implementation of the functionality available for installation
+        of "type-lang/parser" component.
+    </primary-label>
+    <primary-label href="https://packagist.org/packages/type-lang/mapper"
+                   id="mapper-component" name="type-lang/mapper" short-name="m" color="red">
+        The implementation of the functionality available for installation
+        of "type-lang/mapper" component.
+    </primary-label>
+    <primary-label href="https://packagist.org/packages/type-lang/printer"
+        id="printer-component" name="type-lang/printer" short-name="c" color="purple">
+        The implementation of the functionality available for installation
+        of "type-lang/printer" component.
+    </primary-label>
+    <primary-label href="https://packagist.org/packages/type-lang/phpdoc"
+                   id="phpdoc-component" name="type-lang/phpdoc" short-name="c" color="purple">
+        The implementation of the functionality available for installation
+        of "type-lang/phpdoc" component.
+    </primary-label>
+    <primary-label href="https://packagist.org/packages/type-lang/phpdoc-standard-tags"
+                   id="phpdoc-standard-component" name="type-lang/phpdoc-standard-tags" short-name="e" color="strawberry">
+        The implementation of the functionality available for installation
+        of "type-lang/phpdoc-standard-tags" component.
+
+        This is an extension to the core "type-lang/phpdoc" component.
+    </primary-label>
+    <primary-label href="https://packagist.org/packages/type-lang/phpdoc-template-tags"
+                   id="phpdoc-template-component" name="type-lang/phpdoc-template-tags" short-name="e" color="strawberry">
+        The implementation of the functionality available for installation
+        of "type-lang/phpdoc-template-tags" component.
+
+        This is an extension to the core "type-lang/phpdoc" component.
+    </primary-label>
+    <primary-label href="https://packagist.org/packages/type-lang/reader"
+        id="reader-component" name="type-lang/reader" short-name="c" color="purple">
+        The implementation of the functionality available for installation
+        of "type-lang/reader" component.
+    </primary-label>
+    <primary-label id="experimental" name="Experimental" short-name="Experimental" color="tangerine">
+        This is a unique functionality that is not supported by other popular
+        third-party tools (e.g. PHPStan or Psalm) and has no alternatives.
+    </primary-label>
+
+    <secondary-label id="wip" name="WIP" color="red">Work in progress</secondary-label>
+    <secondary-label id="beta" name="β" color="tangerine">Beta</secondary-label>
+    <secondary-label id="tl1.1" name="parser v1.1" color="strawberry">Available since type-lang/parser 1.1+</secondary-label>
+    <secondary-label id="tl1.2" name="parser v1.2" color="strawberry">Available since type-lang/parser 1.2+</secondary-label>
+    <secondary-label id="tl1.4" name="parser v1.4" color="strawberry">Available since type-lang/parser 1.4+</secondary-label>
+    <secondary-label id="r1.1" name="reader v1.1" color="strawberry">Available since type-lang/reader 1.1+</secondary-label>
+</labels>
