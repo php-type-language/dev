@@ -1,0 +1,52 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Phplrt\Compiler\Compiler;
+
+if (!in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+    trigger_error('The console should be invoked via the CLI '
+        . 'version of PHP, not the ' . PHP_SAPI . ' SAPI.', E_USER_WARNING);
+}
+
+$directory = __DIR__;
+while (dirname($directory) !== $directory) {
+    foreach ([$directory . '/autoload.php', $directory . '/vendor/autoload.php'] as $pathname) {
+        if (is_file($pathname)) {
+            require $pathname;
+            break;
+        }
+    }
+
+    $directory = dirname($directory);
+}
+
+if (!class_exists(Compiler::class)) {
+    file_put_contents(
+        filename: 'php://stderr',
+        data: 'Composer "phplrt/compiler" dependency required to execute this script.' . PHP_EOL,
+    );
+
+    exit(-1);
+}
+
+$grammar = (new Compiler())
+    ->load(new SplFileInfo(__DIR__ . '/../resources/grammar.pp2'))
+    ->build()
+        ->withClassReference('TypeLang\\Parser\\Node')
+        ->withClassReference('TypeLang\\Parser\\Exception')
+        ->withClassReference('TypeLang\\Parser\\Exception\\SemanticException')
+        ->withClassReference('TypeLang\\Parser\\Exception\\FeatureNotAllowedException')
+    ->generate();
+
+file_put_contents(__DIR__ . '/../resources/grammar.php', $grammar);
+
+//
+// Postprocess and optimize output grammar
+//
+
+$data = file_get_contents(__DIR__ . '/../resources/grammar.php');
+
+// Replace functions to static one
+file_put_contents(__DIR__ . '/../resources/grammar.php', $data);

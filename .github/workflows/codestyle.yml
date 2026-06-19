@@ -1,0 +1,25 @@
+name: CodeStyle
+
+on:
+  push:
+  pull_request:
+
+env:
+  PHP_CS_FIXER_IGNORE_ENV: 1
+
+jobs:
+  psalm:
+    name: Code Style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP ${{ matrix.php }} Environment
+        uses: ./.github/actions/setup-php
+        with:
+          os: ubuntu-latest
+          php: 8.4
+
+      - name: Check Code Style
+        run: composer phpcs:check

@@ -1,0 +1,15 @@
+includes:
+  - phar://phpstan.phar/conf/bleedingEdge.neon
+  - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+  - vendor/phpstan/phpstan-strict-rules/rules.neon
+  # Components
+  - libs/parser/phpstan.neon
+  - libs/printer/phpstan.neon
+parameters:
+  level: max
+  strictRules:
+    allRules: true
+  fileExtensions:
+    - php
+  tmpDir: vendor/.cache.phpstan
+  reportUnmatchedIgnoredErrors: true

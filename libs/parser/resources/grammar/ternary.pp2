@@ -1,0 +1,71 @@
+
+TernaryExpressionOrLogicalType -> {
+    $count = \count($children);
+
+    if ($count === 1) {
+        return $children[0];
+    }
+
+    if ($this->conditional === false) {
+        throw FeatureNotAllowedException::fromFeature('conditional expressions', $offset);
+    }
+
+    $condition = match ($children[1]->getName()) {
+        'T_EQ' => new Node\Stmt\Condition\EqualConditionNode(
+            $children[0],
+            $children[2],
+        ),
+        'T_NEQ' => new Node\Stmt\Condition\NotEqualConditionNode(
+            $children[0],
+            $children[2],
+        ),
+        'T_GTE' => new Node\Stmt\Condition\GreaterOrEqualThanConditionNode(
+            $children[0],
+            $children[2],
+        ),
+        'T_ANGLE_BRACKET_CLOSE' => new Node\Stmt\Condition\GreaterThanConditionNode(
+            $children[0],
+            $children[2],
+        ),
+        'T_LTE' => new Node\Stmt\Condition\LessOrEqualThanConditionNode(
+            $children[0],
+            $children[2],
+        ),
+        'T_ANGLE_BRACKET_OPEN' => new Node\Stmt\Condition\LessThanConditionNode(
+            $children[0],
+            $children[2],
+        ),
+        default => throw SemanticException::fromInvalidConditionalOperator(
+            $children[1]->getValue(),
+            $offset,
+        ),
+    };
+
+    return new Node\Stmt\TernaryConditionNode(
+        $condition,
+        $children[3],
+        $children[4],
+    );
+}
+  : LogicalType() OptionalTernaryExpressionSuffix()
+  | VariableLiteral() TernaryExpressionSuffix()
+  ;
+
+OptionalTernaryExpressionSuffix
+  : TernaryExpressionSuffix()?
+  ;
+
+TernaryExpressionSuffix
+  : TernaryExpressionOperator() (Type() | VariableLiteral())
+    ::T_QMARK:: Type()
+    ::T_COLON:: Type()
+  ;
+
+TernaryExpressionOperator
+  : <T_EQ>
+  | <T_NEQ>
+  | <T_GTE>
+  | <T_LTE>
+  | <T_ANGLE_BRACKET_OPEN>
+  | <T_ANGLE_BRACKET_CLOSE>
+  ;

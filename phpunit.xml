@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         colors="true"
+         backupGlobals="true"
+         stopOnFailure="false"
+         processIsolation="false"
+         bootstrap="vendor/autoload.php"
+         cacheDirectory="vendor/.cache.phpunit"
+         backupStaticProperties="false"
+>
+    <testsuites>
+        <testsuite name="bridges">
+            <directory>libs/bridge/http-bridge/tests</directory>
+            <directory>libs/bridge/laravel-http-bridge/tests</directory>
+            <directory>libs/bridge/laravel-provider/tests</directory>
+            <directory>libs/bridge/psr-http-bridge/tests</directory>
+            <directory>libs/bridge/symfony-bundle/tests</directory>
+            <directory>libs/bridge/symfony-http-bridge/tests</directory>
+        </testsuite>
+        <testsuite name="components">
+            <directory>libs/component/compiler/tests</directory>
+            <directory>libs/component/cpu-info/tests</directory>
+            <directory>libs/component/globals-provider/tests</directory>
+            <directory>libs/component/http/tests</directory>
+            <directory>libs/component/http-body-decoder/tests</directory>
+            <directory>libs/component/http-static-provider/tests</directory>
+            <directory>libs/component/os-info/tests</directory>
+            <directory>libs/component/pasm/tests</directory>
+            <directory>libs/component/runtime/tests</directory>
+            <directory>libs/component/saucer/tests</directory>
+            <directory>libs/component/uri/tests</directory>
+            <directory>libs/component/uri-factory/tests</directory>
+            <directory>libs/component/weak-types/tests</directory>
+        </testsuite>
+        <testsuite name="contracts">
+            <directory>libs/contracts/event-listener-contracts/tests</directory>
+            <directory>libs/contracts/http-contracts/tests</directory>
+            <directory>libs/contracts/id-contracts/tests</directory>
+            <directory>libs/contracts/uri-contracts/tests</directory>
+            <directory>libs/contracts/uri-factory-contracts/tests</directory>
+            <directory>libs/contracts/value-object-contracts/tests</directory>
+        </testsuite>
+        <testsuite name="extensions">
+            <directory>libs/extension/app-ext-alert/tests</directory>
+            <directory>libs/extension/webview-ext-battery/tests</directory>
+            <directory>libs/extension/webview-ext-network/tests</directory>
+            <directory>libs/extension/webview-ext-web-components/tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage/>
+
+    <source>
+        <include>
+            <!-- bridges -->
+            <directory>libs/bridge/http-bridge/src</directory>
+            <directory>libs/bridge/laravel-http-bridge/src</directory>
+            <directory>libs/bridge/laravel-provider/src</directory>
+            <directory>libs/bridge/psr-http-bridge/src</directory>
+            <directory>libs/bridge/spiral-bridge/src</directory>
+            <directory>libs/bridge/symfony-bundle/src</directory>
+            <directory>libs/bridge/symfony-http-bridge/src</directory>
+            <!-- components -->
+            <directory>libs/component/compiler/src</directory>
+            <directory>libs/component/cpu-info/src</directory>
+            <directory>libs/component/globals-provider/src</directory>
+            <directory>libs/component/http/src</directory>
+            <directory>libs/component/http-body-decoder/src</directory>
+            <directory>libs/component/http-static-provider/src</directory>
+            <directory>libs/component/os-info/src</directory>
+            <directory>libs/component/pasm/src</directory>
+            <directory>libs/component/runtime/src</directory>
+            <directory>libs/component/saucer/src</directory>
+            <directory>libs/component/uri/src</directory>
+            <directory>libs/component/uri-factory/src</directory>
+            <directory>libs/component/weak-types/src</directory>
+            <!-- contracts -->
+            <directory>libs/contracts/event-listener-contracts/src</directory>
+            <directory>libs/contracts/http-contracts/src</directory>
+            <directory>libs/contracts/id-contracts/src</directory>
+            <directory>libs/contracts/uri-contracts/src</directory>
+            <directory>libs/contracts/uri-factory-contracts/src</directory>
+            <directory>libs/contracts/value-object-contracts/src</directory>
+            <!-- extensions -->
+            <directory>libs/extension/app-ext-alert/src</directory>
+            <directory>libs/extension/webview-ext-battery/src</directory>
+            <directory>libs/extension/webview-ext-network/src</directory>
+            <directory>libs/extension/webview-ext-web-components/src</directory>
+        </include>
+    </source>
+
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <ini name="memory_limit" value="-1"/>
+    </php>
+</phpunit>

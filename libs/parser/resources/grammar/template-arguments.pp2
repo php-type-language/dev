@@ -1,0 +1,55 @@
+
+TemplateArguments -> {
+    if ($this->generics === false) {
+        throw FeatureNotAllowedException::fromFeature('template arguments', $offset);
+    }
+
+    return new Node\Stmt\Template\TemplateArgumentsListNode($children);
+}
+  : ::T_ANGLE_BRACKET_OPEN::
+      TemplateArgument() (
+        ::T_COMMA:: TemplateArgument()
+      )* ::T_COMMA::?
+    ::T_ANGLE_BRACKET_CLOSE::
+  ;
+
+TemplateArgument -> {
+    $hint = $attributes = null;
+
+    if (\reset($children) instanceof Node\Stmt\Attribute\AttributeGroupsListNode) {
+        if ($this->attributes === false) {
+            throw FeatureNotAllowedException::fromFeature('template argument attributes', $offset);
+        }
+
+        $attributes = \array_shift($children);
+    }
+
+    $type = \array_pop($children);
+
+    if (\reset($children) !== false) {
+        if ($this->hints === false) {
+            throw FeatureNotAllowedException::fromFeature('template argument hints', $offset);
+        }
+
+        $hint = \reset($children);
+    }
+
+    return new Node\Stmt\Template\TemplateArgumentNode(
+        $type,
+        $hint,
+        $attributes,
+    );
+}
+  : AttributeGroupsList()? (
+      TemplateHintedArgument()
+      | TemplateSimpleArgument()
+    )
+  ;
+
+TemplateSimpleArgument
+  : Type()
+  ;
+
+TemplateHintedArgument
+  : IdentifierWithExtraSpace() Type()
+  ;

@@ -1,0 +1,22 @@
+name: Security
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP ${{ matrix.php }} Environment
+        uses: ./.github/actions/setup-php
+        with:
+          os: ubuntu-latest
+          php: 8.4
+
+      - name: Composer Audit
+        run: composer audit

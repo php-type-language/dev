@@ -1,0 +1,22 @@
+name: Static Analysis
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  phpstan:
+    name: Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP ${{ matrix.php }} Environment
+        uses: ./.github/actions/setup-php
+        with:
+          os: ubuntu-latest
+          php: 8.4
+
+      - name: Static Analysis
+        run: composer linter:check -- --error-format=github --ansi

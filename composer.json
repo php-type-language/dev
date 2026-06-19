@@ -1,0 +1,60 @@
+{
+    "name": "type-lang/dev",
+    "description": "TypeLang Components Monorepo",
+    "type": "library",
+    "license": "MIT",
+    "repositories": [
+        {"type": "path", "url": "libs/*"}
+    ],
+    "require": {
+        "php": "^8.4",
+        "type-lang/parser": "^2.0",
+        "type-lang/printer": "^2.0"
+    },
+    "require-dev": {
+        "jetbrains/phpstorm-attributes": "^1.2",
+        "phplrt/compiler": "^3.7",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpunit/phpunit": "^12.0|^13.2",
+        "symfony/var-dumper": "^7.4|^8.1"
+    },
+    "autoload-dev": {
+        "psr-4": {
+             "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
+             "TypeLang\\Printer\\Tests\\": "libs/printer/tests"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev",
+            "dev-main": "2.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "platform-check": true,
+        "bin-compat": "full",
+        "preferred-install": {
+            "*": "dist"
+        }
+    },
+    "scripts-aliases": {
+        "test:unit": ["test", "phpunit", "unit"],
+        "linter:check": ["linter", "stan"],
+        "phpcs:check": ["phpcs", "cs", "psr", "per"]
+    },
+    "scripts": {
+        "test": [
+            "@test:unit"
+        ],
+        "test:unit": "phpunit --testdox --testsuite=unit",
+        "linter:check": "phpstan analyse --configuration phpstan.neon --memory-limit 256M",
+        "linter:baseline": "@linter:check --generate-baseline",
+        "phpcs:check": "@phpcs:fix --dry-run",
+        "phpcs:fix": "php-cs-fixer fix --config=.php-cs-fixer.php --allow-risky=yes --verbose --diff"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

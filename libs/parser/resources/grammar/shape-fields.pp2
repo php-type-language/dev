@@ -1,0 +1,126 @@
+
+ShapeFields -> {
+    if ($children === []) {
+        return new Node\Stmt\Shape\FieldsListNode();
+    }
+
+    if ($this->shapes === false) {
+        throw FeatureNotAllowedException::fromFeature('shape fields', $offset);
+    }
+
+    $parameters = null;
+
+    if (\end($children) instanceof Node\Stmt\Template\ArgumentsListNode) {
+        $parameters = \array_pop($children);
+    }
+
+    $fields = \reset($children) instanceof Node\Stmt\Shape\FieldsListNode
+        ? \array_shift($children)
+        : new Node\Stmt\Shape\FieldsListNode();
+
+    if ($children !== []) {
+        $fields->sealed = false;
+    }
+
+    return \array_filter([$parameters, $fields]);
+}
+  : ::T_BRACE_OPEN::
+      (
+        (ShapeFieldsList() (::T_COMMA:: ShapeFieldsUnsealed())?)
+        | ShapeFieldsUnsealed()?
+      )
+      ::T_COMMA::?
+    ::T_BRACE_CLOSE::
+  ;
+
+ShapeFieldsUnsealed
+  : <T_ELLIPSIS> TemplateArguments()?
+  ;
+
+ShapeFieldsList -> {
+    $explicit = [];
+    $implicit = false;
+
+    foreach ($children as $field) {
+        if ($field instanceof Node\Stmt\Shape\ExplicitFieldNode) {
+            $key = $field->getKey();
+
+            if (\in_array($key, $explicit, true)) {
+                throw SemanticException::fromShapeFieldDuplication($key, $field->offset);
+            }
+
+            $explicit[] = $key;
+        } else {
+            $implicit = true;
+        }
+    }
+
+    if ($explicit !== [] && $implicit) {
+        throw SemanticException::fromShapeMixedKeys($offset);
+    }
+
+    return new Node\Stmt\Shape\FieldsListNode($children);
+}
+  : ShapeField() (
+      ::T_COMMA:: ShapeField()
+    )*
+  ;
+
+ShapeField -> {
+    $result = \end($children);
+
+    if ($children[0] instanceof Node\Stmt\Attribute\AttributeGroupsListNode) {
+        if ($this->attributes === false) {
+            throw FeatureNotAllowedException::fromFeature('shape field attributes', $offset);
+        }
+
+        $result->attributes = $children[0];
+    }
+
+    return $result;
+}
+  : AttributeGroupsList()? (
+      ExplicitField()
+      | ImplicitField()
+    )
+  ;
+
+ExplicitField -> {
+    $name = $children[0];
+    $value = \array_pop($children);
+
+    // In case of "nullable" suffix defined
+    $optional = \count($children) === 2;
+
+    return match (true) {
+        $name instanceof Node\Literal\IntLiteralNode
+            => new Node\Stmt\Shape\NumericFieldNode($name, $value, $optional),
+        $name instanceof Node\Literal\StringLiteralNode
+            => new Node\Stmt\Shape\StringNamedFieldNode($name, $value, $optional),
+        $name instanceof Node\Stmt\ClassConstMaskNode
+            => new Node\Stmt\Shape\ClassConstMaskFieldNode($name, $value, $optional),
+        $name instanceof Node\Stmt\ConstMaskNode
+            => new Node\Stmt\Shape\ConstMaskFieldNode($name, $value, $optional),
+        default => new Node\Stmt\Shape\NamedFieldNode($name, $value, $optional),
+    };
+}
+  : ShapeKey() (<T_QMARK>)? ::T_COLON:: ShapeValue()
+  ;
+
+ImplicitField -> {
+    return new Node\Stmt\Shape\ImplicitFieldNode($children[0]);
+}
+  : ShapeValue()
+  ;
+
+ShapeKey
+  : ConstMaskLiteral()
+  | ClassConstLiteral()
+  | Identifier()
+  | IntLiteral()
+  | StringLiteral()
+  ;
+
+ShapeValue
+  : Type()
+  ;

@@ -1,0 +1,33 @@
+
+Name
+  : FullQualifiedName()
+  | RelativeName()
+  ;
+
+FullQualifiedName -> {
+    return new Node\FullQualifiedName($children);
+}
+  : ::T_NS_DELIMITER:: Identifier() (::T_NS_DELIMITER:: Identifier())*
+  ;
+
+RelativeName -> {
+    return new Node\Name($children);
+}
+  : Identifier() (::T_NS_DELIMITER:: Identifier())*
+  ;
+
+Identifier -> {
+    return new Node\Identifier($children->getValue());
+}
+  : <T_NAME>
+  | <T_NAME_WITH_SPACE>
+  | <T_EQ>
+  | <T_BOOL_LITERAL>
+  | <T_NULL_LITERAL>
+  ;
+
+IdentifierWithExtraSpace -> {
+    return new Node\Identifier($children->getValue());
+}
+    : <T_NAME_WITH_SPACE>
+    ;

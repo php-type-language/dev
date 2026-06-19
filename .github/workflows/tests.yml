@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    name: Tests (${{matrix.php}}, ${{ matrix.os }}, ${{ matrix.stability }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '8.4', '8.5' ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        stability: [ lowest, stable ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: [${{ matrix.stability }}] Setup PHP ${{ matrix.php }} Environment
+        uses: ./.github/actions/setup-php
+        with:
+          os: ${{ matrix.os }}
+          php: ${{ matrix.php }}
+          stability: ${{ matrix.stability }}
+
+      - name: Execute Tests
+        run: composer test
