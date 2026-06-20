@@ -39,9 +39,9 @@ final class ConstantTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             Stmt\ClassConstNode
-              Identifier(CONSTANT_NAME)
               Name(ClassName)
                 Identifier(ClassName)
+              Identifier(CONSTANT_NAME)
             AST, $this->parseAndPrint('ClassName::CONSTANT_NAME'));
     }
 
@@ -49,11 +49,11 @@ final class ConstantTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             Stmt\ClassConstNode
-              Identifier(ANOTHER_CONSTANT_NAME)
               Name(Path\To\ClassName)
                 Identifier(Path)
                 Identifier(To)
                 Identifier(ClassName)
+              Identifier(ANOTHER_CONSTANT_NAME)
             AST, $this->parseAndPrint('Path\\To\\ClassName::ANOTHER_CONSTANT_NAME'));
     }
 
@@ -70,11 +70,11 @@ final class ConstantTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             Stmt\ClassConstMaskNode
-              Identifier(PREFIX_)
               Name(Path\To\ClassName)
                 Identifier(Path)
                 Identifier(To)
                 Identifier(ClassName)
+              Identifier(PREFIX_)
             AST, $this->parseAndPrint('Path\\To\\ClassName::PREFIX_*'));
     }
 

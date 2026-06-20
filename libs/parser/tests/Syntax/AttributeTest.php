@@ -94,6 +94,7 @@ final class AttributeTest extends SyntaxTestCase
                 Identifier(User)
               Stmt\Shape\FieldsListNode(sealed)
                 Stmt\Shape\NamedFieldNode(required)
+                  Identifier(userName)
                   Stmt\NamedTypeNode
                     Name(non-empty-string)
                       Identifier(non-empty-string)
@@ -102,7 +103,6 @@ final class AttributeTest extends SyntaxTestCase
                       Stmt\Attribute\AttributeNode
                         Name(name)
                           Identifier(name)
-                  Identifier(userName)
             AST, $this->parseAndPrint('App\\Domain\\User{#[name("user_name")] userName: non-empty-string}'));
     }
 
@@ -114,6 +114,7 @@ final class AttributeTest extends SyntaxTestCase
                 Identifier(array)
               Stmt\Shape\FieldsListNode(sealed)
                 Stmt\Shape\NamedFieldNode(optional)
+                  Identifier(test)
                   Stmt\NamedTypeNode
                     Name(App\Domain\User)
                       Identifier(App)
@@ -128,7 +129,6 @@ final class AttributeTest extends SyntaxTestCase
                       Stmt\Attribute\AttributeNode
                         Name(deserialize)
                           Identifier(deserialize)
-                  Identifier(test)
             AST, $this->parseAndPrint('array{#[serialize("onSerialize")] #[deserialize("onDeserialize")] test?: App\\Domain\\User}'));
     }
 

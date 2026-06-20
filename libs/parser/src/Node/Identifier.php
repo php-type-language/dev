@@ -74,6 +74,10 @@ class Identifier extends Node implements \Stringable
 
     public static function createFromString(string|\Stringable $value): self
     {
+        if ($value instanceof self) {
+            return $value;
+        }
+
         $normalized = \trim((string) $value);
 
         if ($normalized === '') {

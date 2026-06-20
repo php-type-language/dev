@@ -7,13 +7,10 @@ namespace TypeLang\Parser\Node\Stmt;
 use TypeLang\Parser\Node\Identifier;
 use TypeLang\Parser\Node\Name;
 
-class ClassConstNode extends ClassConstMaskNode
+class ClassConstNode extends TypeStatement
 {
-    /**
-     * @param Identifier|non-empty-string $constant
-     */
-    public function __construct(Name $class, Identifier|string $constant)
-    {
-        parent::__construct($class, $constant);
-    }
+    public function __construct(
+        public Name $class,
+        public Identifier $constant,
+    ) {}
 }

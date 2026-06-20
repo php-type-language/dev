@@ -89,17 +89,14 @@ final class Traverser implements MutableTraverserInterface
      */
     private function getProperties(Node $node): iterable
     {
-        $variables = \get_object_vars($node);
-
         $reflection = new \ReflectionObject($node);
-        foreach (\get_object_vars($node) as $name => $value) {
-            $property = $reflection->getProperty($name);
 
-            if ($property->hasHooks()) {
+        foreach ($reflection->getProperties() as $property) {
+            if ($property->isStatic() || $property->hasHooks()) {
                 continue;
             }
 
-            yield $name => $value;
+            yield $property->getName() => $property->getValue($node);
         }
     }
 

@@ -18,10 +18,10 @@ final class OffsetAccessTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             Stmt\TypeOffsetAccessNode
+              Literal\StringLiteralNode('offset')
               Stmt\NamedTypeNode
                 Name(T)
                   Identifier(T)
-              Literal\StringLiteralNode('offset')
             AST, $this->parseAndPrint("T['offset']"));
     }
 
@@ -30,11 +30,11 @@ final class OffsetAccessTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             Stmt\TypeOffsetAccessNode
               Stmt\NamedTypeNode
-                Name(T)
-                  Identifier(T)
-              Stmt\NamedTypeNode
                 Name(U)
                   Identifier(U)
+              Stmt\NamedTypeNode
+                Name(T)
+                  Identifier(T)
             AST, $this->parseAndPrint('T[U]'));
     }
 
@@ -42,6 +42,7 @@ final class OffsetAccessTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             Stmt\TypeOffsetAccessNode
+              Literal\IntLiteralNode(0)
               Stmt\NamedTypeNode
                 Name(array)
                   Identifier(array)
@@ -54,7 +55,6 @@ final class OffsetAccessTest extends SyntaxTestCase
                     Stmt\NamedTypeNode
                       Name(string)
                         Identifier(string)
-              Literal\IntLiteralNode(0)
             AST, $this->parseAndPrint('array{int, string}[0]'));
     }
 
@@ -63,6 +63,15 @@ final class OffsetAccessTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             Stmt\TypeOffsetAccessNode
               Stmt\NamedTypeNode
+                Name(object)
+                  Identifier(object)
+                Stmt\Shape\FieldsListNode(unsealed)
+                  Stmt\Shape\NamedFieldNode(required)
+                    Identifier(key)
+                    Stmt\NamedTypeNode
+                      Name(int)
+                        Identifier(int)
+              Stmt\NamedTypeNode
                 Name(T)
                   Identifier(T)
                 Stmt\Template\TemplateArgumentsListNode
@@ -70,15 +79,6 @@ final class OffsetAccessTest extends SyntaxTestCase
                     Stmt\NamedTypeNode
                       Name(U)
                         Identifier(U)
-              Stmt\NamedTypeNode
-                Name(object)
-                  Identifier(object)
-                Stmt\Shape\FieldsListNode(unsealed)
-                  Stmt\Shape\NamedFieldNode(required)
-                    Stmt\NamedTypeNode
-                      Name(int)
-                        Identifier(int)
-                    Identifier(key)
             AST, $this->parseAndPrint('T<U>[object{key: int, ...}]'));
     }
 

@@ -22,15 +22,15 @@ final class ShapeTest extends SyntaxTestCase
                 Identifier(array)
               Stmt\Shape\FieldsListNode(sealed)
                 Stmt\Shape\NamedFieldNode(required)
+                  Identifier(a)
                   Stmt\NamedTypeNode
                     Name(first)
                       Identifier(first)
-                  Identifier(a)
                 Stmt\Shape\NamedFieldNode(required)
+                  Identifier(b)
                   Stmt\NamedTypeNode
                     Name(second)
                       Identifier(second)
-                  Identifier(b)
             AST, $this->parseAndPrint('array{a: first, b: second}'));
     }
 
@@ -42,15 +42,15 @@ final class ShapeTest extends SyntaxTestCase
                 Identifier(array)
               Stmt\Shape\FieldsListNode(sealed)
                 Stmt\Shape\NumericFieldNode(required)
+                  Literal\IntLiteralNode(1)
                   Stmt\NamedTypeNode
                     Name(first)
                       Identifier(first)
-                  Literal\IntLiteralNode(1)
                 Stmt\Shape\NumericFieldNode(required)
+                  Literal\IntLiteralNode(42)
                   Stmt\NamedTypeNode
                     Name(second)
                       Identifier(second)
-                  Literal\IntLiteralNode(42)
             AST, $this->parseAndPrint('array{1: first, 42: second}'));
     }
 
@@ -62,15 +62,15 @@ final class ShapeTest extends SyntaxTestCase
                 Identifier(array)
               Stmt\Shape\FieldsListNode(sealed)
                 Stmt\Shape\StringNamedFieldNode(required)
+                  Literal\StringLiteralNode("name-some")
                   Stmt\NamedTypeNode
                     Name(first)
                       Identifier(first)
-                  Literal\StringLiteralNode("name-some")
                 Stmt\Shape\StringNamedFieldNode(required)
+                  Literal\StringLiteralNode("escape\nchars")
                   Stmt\NamedTypeNode
                     Name(second)
                       Identifier(second)
-                  Literal\StringLiteralNode("escape\nchars")
             AST, $this->parseAndPrint('array{"name-some": first, "escape\\nchars": second}'));
     }
 
@@ -110,10 +110,10 @@ final class ShapeTest extends SyntaxTestCase
                 Identifier(array)
               Stmt\Shape\FieldsListNode(sealed)
                 Stmt\Shape\NamedFieldNode(required)
+                  Identifier(a)
                   Stmt\NamedTypeNode
                     Name(int)
                       Identifier(int)
-                  Identifier(a)
             AST, $this->parseAndPrint('array{a: int,}'));
     }
 
@@ -125,10 +125,10 @@ final class ShapeTest extends SyntaxTestCase
                 Identifier(array)
               Stmt\Shape\FieldsListNode(sealed)
                 Stmt\Shape\NamedFieldNode(optional)
+                  Identifier(key)
                   Stmt\NamedTypeNode
                     Name(Type)
                       Identifier(Type)
-                  Identifier(key)
             AST, $this->parseAndPrint('array{key?: Type}'));
     }
 
@@ -140,10 +140,10 @@ final class ShapeTest extends SyntaxTestCase
                 Identifier(array)
               Stmt\Shape\FieldsListNode(unsealed)
                 Stmt\Shape\NamedFieldNode(required)
+                  Identifier(key)
                   Stmt\NamedTypeNode
                     Name(type)
                       Identifier(type)
-                  Identifier(key)
             AST, $this->parseAndPrint('array{key: type, ...}'));
     }
 
@@ -164,10 +164,10 @@ final class ShapeTest extends SyntaxTestCase
                       Identifier(object)
               Stmt\Shape\FieldsListNode(unsealed)
                 Stmt\Shape\NamedFieldNode(required)
+                  Identifier(user)
                   Stmt\NamedTypeNode
                     Name(User)
                       Identifier(User)
-                  Identifier(user)
             AST, $this->parseAndPrint('array{user: User, ...<string, object>}'));
     }
 
@@ -181,10 +181,10 @@ final class ShapeTest extends SyntaxTestCase
                 Identifier(User)
               Stmt\Shape\FieldsListNode(sealed)
                 Stmt\Shape\NamedFieldNode(required)
+                  Identifier(userName)
                   Stmt\NamedTypeNode
                     Name(non-empty-string)
                       Identifier(non-empty-string)
-                  Identifier(userName)
             AST, $this->parseAndPrint('App\\Domain\\User{userName: non-empty-string}'));
     }
 
