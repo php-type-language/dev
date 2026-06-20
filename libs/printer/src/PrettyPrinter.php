@@ -34,7 +34,6 @@ use TypeLang\Parser\Node\Stmt\Shape\NumericFieldNode;
 use TypeLang\Parser\Node\Stmt\Shape\StringNamedFieldNode;
 use TypeLang\Parser\Node\Stmt\Template\TemplateArgumentNode;
 use TypeLang\Parser\Node\Stmt\Template\TemplateArgumentsListNode;
-use TypeLang\Parser\Node\Stmt\Template\TemplateArgumentsListNode;
 use TypeLang\Parser\Node\Stmt\TernaryConditionNode;
 use TypeLang\Parser\Node\Stmt\TypeOffsetAccessNode;
 use TypeLang\Parser\Node\Stmt\TypesListNode;
@@ -45,25 +44,16 @@ use TypeLang\Printer\Exception\NonPrintableNodeException;
 
 class PrettyPrinter extends Printer
 {
-    /**
-     * @var bool
-     */
-    public const DEFAULT_WRAP_INTERSECTION_TYPE = true;
+    public const bool DEFAULT_WRAP_INTERSECTION_TYPE = true;
 
-    /**
-     * @var bool
-     */
-    public const DEFAULT_WRAP_UNION_TYPE = true;
+    public const bool DEFAULT_WRAP_UNION_TYPE = true;
 
-    /**
-     * @var bool
-     */
-    public const DEFAULT_WRAP_CALLABLE_RETURN_TYPE = true;
+    public const bool DEFAULT_WRAP_CALLABLE_RETURN_TYPE = true;
 
     /**
      * @var int<0, max>
      */
-    public const DEFAULT_MULTILINE_SHAPE = 1;
+    public const int DEFAULT_MULTILINE_SHAPE = 1;
 
     /**
      * @param non-empty-string $newLine
@@ -131,7 +121,6 @@ class PrettyPrinter extends Printer
     }
 
     /**
-     * @return non-empty-string
      * @throws NonPrintableNodeException
      */
     protected function make(Statement $stmt): string
@@ -155,8 +144,6 @@ class PrettyPrinter extends Printer
 
     /**
      * @param LiteralNode<mixed> $node
-     *
-     * @return non-empty-string
      */
     protected function printLiteralNode(LiteralNode $node): string
     {
