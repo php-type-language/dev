@@ -1,0 +1,112 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TypeLang\Parser\Tests\Syntax;
+
+use PHPUnit\Framework\Attributes\Group;
+
+/**
+ * Tests for the constant grammar: global constants, class constants and masks.
+ *
+ * @see \TypeLang\Parser\Node\Stmt\ClassConstNode
+ * @see \TypeLang\Parser\Node\Stmt\ConstMaskNode
+ * @see \TypeLang\Parser\Node\Stmt\ClassConstMaskNode
+ */
+#[Group('unit'), Group('type-lang/parser')]
+final class ConstantTest extends SyntaxTestCase
+{
+    public function testGlobalConstantIsInterpretedAsNamedType(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\NamedTypeNode
+              Name(JSON_THROW_ON_ERROR)
+                Identifier(JSON_THROW_ON_ERROR)
+            AST, $this->parseAndPrint('JSON_THROW_ON_ERROR'));
+    }
+
+    public function testNamespacedConstantIsInterpretedAsNamedType(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\NamedTypeNode
+              Name(pcov\version)
+                Identifier(pcov)
+                Identifier(version)
+            AST, $this->parseAndPrint('pcov\\version'));
+    }
+
+    public function testClassConstant(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\ClassConstNode
+              Identifier(CONSTANT_NAME)
+              Name(ClassName)
+                Identifier(ClassName)
+            AST, $this->parseAndPrint('ClassName::CONSTANT_NAME'));
+    }
+
+    public function testNamespacedClassConstant(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\ClassConstNode
+              Identifier(ANOTHER_CONSTANT_NAME)
+              Name(Path\To\ClassName)
+                Identifier(Path)
+                Identifier(To)
+                Identifier(ClassName)
+            AST, $this->parseAndPrint('Path\\To\\ClassName::ANOTHER_CONSTANT_NAME'));
+    }
+
+    public function testGlobalConstantMask(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\ConstMaskNode(JSON_*)
+              Name(JSON_)
+                Identifier(JSON_)
+            AST, $this->parseAndPrint('JSON_*'));
+    }
+
+    public function testClassConstantMask(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\ClassConstMaskNode
+              Identifier(PREFIX_)
+              Name(Path\To\ClassName)
+                Identifier(Path)
+                Identifier(To)
+                Identifier(ClassName)
+            AST, $this->parseAndPrint('Path\\To\\ClassName::PREFIX_*'));
+    }
+
+    public function testClassConstantMaskWithoutPrefix(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\ClassConstMaskNode
+              Name(Path\To\ClassName)
+                Identifier(Path)
+                Identifier(To)
+                Identifier(ClassName)
+            AST, $this->parseAndPrint('Path\\To\\ClassName::*'));
+    }
+
+    public function testClassConstantCannotContainNamespace(): void
+    {
+        $this->expectParsingException('unexpected "\\"');
+
+        $this->parse('ClassName::SOME\\ANY');
+    }
+
+    public function testGlobalConstantMaskCannotOmitPrefix(): void
+    {
+        $this->expectParsingException('unexpected "*"');
+
+        $this->parse('*');
+    }
+
+    public function testAsteriskMustBeTheFinalCharacter(): void
+    {
+        $this->expectParsingException('unexpected "_SUFFIX"');
+
+        $this->parse('Path\\To\\ClassName::PREFIX_*_SUFFIX');
+    }
+}

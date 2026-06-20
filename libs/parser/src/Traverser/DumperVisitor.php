@@ -11,7 +11,7 @@ abstract class DumperVisitor extends Visitor
     /**
      * @var non-empty-string
      */
-    private const NODE_NAMESPACE_PREFIX = 'TypeLang\\Parser\\Node\\';
+    private const string NODE_NAMESPACE_PREFIX = 'TypeLang\\Parser\\Node\\';
 
     /**
      * @var int<0, max>

@@ -5,7 +5,7 @@
 ---
 
 <p align="center">
-    <a href="https://packagist.org/packages/type-lang/printer"><img src="https://poser.pugx.org/type-lang/printer/require/php?style=for-the-badge" alt="PHP 8.1+"></a>
+    <a href="https://packagist.org/packages/type-lang/printer"><img src="https://poser.pugx.org/type-lang/printer/require/php?style=for-the-badge" alt="PHP 8.4+"></a>
     <a href="https://packagist.org/packages/type-lang/printer"><img src="https://poser.pugx.org/type-lang/printer/version?style=for-the-badge" alt="Latest Stable Version"></a>
     <a href="https://packagist.org/packages/type-lang/printer"><img src="https://poser.pugx.org/type-lang/printer/v/unstable?style=for-the-badge" alt="Latest Unstable Version"></a>
     <a href="https://raw.githubusercontent.com/php-type-language/printer/blob/master/LICENSE"><img src="https://poser.pugx.org/type-lang/printer/license?style=for-the-badge" alt="License MIT"></a>

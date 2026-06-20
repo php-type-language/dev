@@ -5,7 +5,7 @@
 ---
 
 <p align="center">
-    <a href="https://packagist.org/packages/type-lang/phpdoc-template-tags"><img src="https://poser.pugx.org/type-lang/phpdoc-template-tags/require/php?style=for-the-badge" alt="PHP 8.1+"></a>
+    <a href="https://packagist.org/packages/type-lang/phpdoc-template-tags"><img src="https://poser.pugx.org/type-lang/phpdoc-template-tags/require/php?style=for-the-badge" alt="PHP 8.4+"></a>
     <a href="https://packagist.org/packages/type-lang/phpdoc-template-tags"><img src="https://poser.pugx.org/type-lang/phpdoc-template-tags/version?style=for-the-badge" alt="Latest Stable Version"></a>
     <a href="https://packagist.org/packages/type-lang/phpdoc-template-tags"><img src="https://poser.pugx.org/type-lang/phpdoc-template-tags/v/unstable?style=for-the-badge" alt="Latest Unstable Version"></a>
     <a href="https://raw.githubusercontent.com/php-type-language/phpdoc-template-tags/blob/master/LICENSE"><img src="https://poser.pugx.org/type-lang/phpdoc-template-tags/license?style=for-the-badge" alt="License MIT"></a>

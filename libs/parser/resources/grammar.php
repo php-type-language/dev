@@ -277,16 +277,16 @@ return [
     ],
     'reducers' => [
         0 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\FullQualifiedName($children);
+            return new Node\Name($children, true);
         },
         1 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Name($children);
+            return new Node\Name($children, false);
         },
         3 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Identifier($children->getValue());
+            return Node\Identifier::createFromString($children->getValue());
         },
         16 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Identifier($children->getValue());
+            return Node\Identifier::createFromString($children->getValue());
         },
         17 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated

@@ -9,7 +9,7 @@ final class Identifier extends Node implements \Stringable
     /**
      * @var list<non-empty-string>
      */
-    private const SPECIAL_CLASS_NAME = [
+    private const array SPECIAL_CLASS_NAME = [
         'self',
         'parent',
         'static',
@@ -18,7 +18,7 @@ final class Identifier extends Node implements \Stringable
     /**
      * @var list<non-empty-string>
      */
-    private const BUILTIN_TYPE_NAME = [
+    private const array BUILTIN_TYPE_NAME = [
         'mixed',
         'string',
         'int',
@@ -36,23 +36,6 @@ final class Identifier extends Node implements \Stringable
     ];
 
     /**
-     * @var non-empty-string
-     */
-    public readonly string $value;
-
-    /**
-     * @param non-empty-string $value
-     */
-    public function __construct(string $value)
-    {
-        $value = \trim($value);
-
-        assert($value !== '', new \InvalidArgumentException('Identifier value cannot be empty'));
-
-        $this->value = $value;
-    }
-
-    /**
      * Returns {@see true} if the identifier contains the name of
      * a "virtual" type, i.e. invalid in the PHP namespace.
      *
@@ -61,41 +44,56 @@ final class Identifier extends Node implements \Stringable
      * - `non-empty-array` - Virtual, cannot be defined in PHP.
      * - `empty-string` - Virtual, cannot be defined in PHP.
      */
-    public function isVirtual(): bool
-    {
-        return \str_contains($this->value, '-');
+    public bool $isVirtual {
+        get => \str_contains($this->value, '-');
     }
 
     /**
      * Returns {@see true} in case of name contains special class reference.
      */
-    public function isSpecial(): bool
+    public bool $isSpecial {
+        get => self::isLooksLikeSpecial($this->value);
+    }
+
+    /**
+     * Returns {@see true} in case of name contains builtin type name.
+     */
+    public bool $isBuiltin {
+        get => self::isLooksLikeBuiltin($this->value);
+    }
+
+    public function __construct(
+        /**
+         * @var non-empty-string
+         */
+        public readonly string $value,
+    ) {}
+
+    public static function createFromString(string|\Stringable $value): self
     {
-        return self::looksLikeSpecial($this->value);
+        $normalized = \trim((string) $value);
+
+        if ($normalized === '') {
+            throw new \InvalidArgumentException('Name identifier cannot be empty');
+        }
+
+        return new self($normalized);
     }
 
     /**
      * Returns {@see true} in case of passed "$name" argument looks like
      * a special type name or {@see false} instead.
      */
-    public static function looksLikeSpecial(string $name): bool
+    public static function isLooksLikeSpecial(string $name): bool
     {
         return \in_array(\strtolower($name), self::SPECIAL_CLASS_NAME, true);
-    }
-
-    /**
-     * Returns {@see true} in case of name contains builtin type name.
-     */
-    public function isBuiltin(): bool
-    {
-        return self::looksLikeBuiltin($this->value);
     }
 
     /**
      * Returns {@see true} in case of passed "$name" argument looks like
      * a builtin type name or {@see false} instead.
      */
-    public static function looksLikeBuiltin(string $value): bool
+    public static function isLooksLikeBuiltin(string $value): bool
     {
         return \in_array(\strtolower($value), self::BUILTIN_TYPE_NAME, true);
     }

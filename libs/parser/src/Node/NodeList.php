@@ -15,11 +15,17 @@ abstract class NodeList extends Node implements
     \Countable
 {
     /**
-     * @param list<TNode> $items
+     * @var list<TNode>
      */
-    public function __construct(
-        public array $items = [],
-    ) {}
+    public array $items = [];
+
+    /**
+     * @param iterable<mixed, TNode> $items
+     */
+    public function __construct(iterable $items = [])
+    {
+        $this->items = \iterator_to_array($items, false);
+    }
 
     /**
      * Returns the ordinal number (position) of an element {@see TNode} in
@@ -32,7 +38,7 @@ abstract class NodeList extends Node implements
      *
      * @return int<0, max>|null
      */
-    public function findIndex(object $node): ?int
+    public function findIndex(Node $node): ?int
     {
         $index = \array_search($node, $this->items, true);
 
@@ -66,7 +72,7 @@ abstract class NodeList extends Node implements
     public function offsetExists(mixed $offset): bool
     {
         // @phpstan-ignore-next-line
-        assert(\is_int($offset) && $offset >= 0);
+        \assert(\is_int($offset) && $offset >= 0);
 
         return isset($this->items[$offset]);
     }
@@ -74,7 +80,7 @@ abstract class NodeList extends Node implements
     public function offsetGet(mixed $offset): ?Node
     {
         // @phpstan-ignore-next-line
-        assert(\is_int($offset) && $offset >= 0);
+        \assert(\is_int($offset) && $offset >= 0);
 
         return $this->items[$offset] ?? null;
     }
@@ -82,9 +88,9 @@ abstract class NodeList extends Node implements
     public function offsetSet(mixed $offset, mixed $value): void
     {
         // @phpstan-ignore-next-line
-        assert(\is_int($offset) && $offset >= 0);
+        \assert(\is_int($offset) && $offset >= 0);
         // @phpstan-ignore-next-line
-        assert($value instanceof Node);
+        \assert($value instanceof Node);
 
         // @phpstan-ignore-next-line
         $this->items[$offset] = $value;
@@ -97,7 +103,7 @@ abstract class NodeList extends Node implements
     public function offsetUnset(mixed $offset): void
     {
         // @phpstan-ignore-next-line
-        assert(\is_int($offset) && $offset >= 0);
+        \assert(\is_int($offset) && $offset >= 0);
 
         $items = $this->items;
         unset($items[$offset]);
