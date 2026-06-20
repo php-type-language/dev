@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Parser\Node\Stmt\Callable\ParameterNode;
+use TypeLang\Parser\Node\Stmt\Callable\CallableParameterNode;
 use TypeLang\Parser\Node\Stmt\CallableTypeNode;
 use TypeLang\Parser\Node\Stmt\TypeStatement;
 use TypeLang\PHPDoc\Tag\Tag;
@@ -72,7 +72,7 @@ class MethodTag extends Tag implements TypeProviderInterface
     }
 
     /**
-     * @return iterable<array-key, ParameterNode>
+     * @return iterable<array-key, CallableParameterNode>
      */
     public function getParameters(): iterable
     {

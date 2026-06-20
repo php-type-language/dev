@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Parser\Node\Stmt\Callable\ParameterNode;
+use TypeLang\Parser\Node\Stmt\Callable\CallableParameterNode;
 use TypeLang\Parser\Node\Stmt\TypeStatement;
 use TypeLang\PHPDoc\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\Tag\Tag;
@@ -42,7 +42,7 @@ class ParamTag extends Tag implements
      */
     public function __construct(
         string $name,
-        protected readonly ParameterNode $param,
+        protected readonly CallableParameterNode $param,
         \Stringable|string|null $description = null,
     ) {
         assert($this->param->name !== null, 'Parameter name cannot be empty');

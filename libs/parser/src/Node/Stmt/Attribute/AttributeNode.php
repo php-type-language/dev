@@ -7,7 +7,7 @@ namespace TypeLang\Parser\Node\Stmt\Attribute;
 use TypeLang\Parser\Node\Name;
 use TypeLang\Parser\Node\Node;
 
-final class AttributeNode extends Node
+class AttributeNode extends Node
 {
     public function __construct(
         public Name $name,

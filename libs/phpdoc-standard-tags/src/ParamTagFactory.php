@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PHPDoc\Standard;
 
 use TypeLang\Parser\Node\Literal\VariableLiteralNode;
-use TypeLang\Parser\Node\Stmt\Callable\ParameterNode;
+use TypeLang\Parser\Node\Stmt\Callable\CallableParameterNode;
 use TypeLang\Parser\Parser as TypesParser;
 use TypeLang\Parser\ParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
@@ -54,7 +54,7 @@ final class ParamTagFactory implements FactoryInterface
 
         return new ParamTag(
             name: $name,
-            param: new ParameterNode(
+            param: new CallableParameterNode(
                 type: $type,
                 name: new VariableLiteralNode('$' . $variable),
                 output: $output,

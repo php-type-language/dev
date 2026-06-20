@@ -9,4 +9,4 @@ use TypeLang\Parser\Node\NodeList;
 /**
  * @template-extends NodeList<AttributeNode>
  */
-final class AttributeGroupNode extends NodeList {}
+class AttributeGroupNode extends NodeList {}

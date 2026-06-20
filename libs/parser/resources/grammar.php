@@ -427,7 +427,7 @@ return [
                 throw FeatureNotAllowedException::fromFeature('callable types', $offset);
             }
 
-            $parameters = isset($children[0]) && $children[0] instanceof Node\Stmt\Callable\ParametersListNode
+            $parameters = isset($children[0]) && $children[0] instanceof Node\Stmt\Callable\CallableParametersListNode
                 ? \array_shift($children)
                 : new Node\Stmt\Callable\CallableParametersListNode();
 
@@ -558,7 +558,7 @@ return [
 
             foreach ($children as $field) {
                 if ($field instanceof Node\Stmt\Shape\ExplicitFieldNode) {
-                    $key = $field->getKey();
+                    $key = $field->index;
 
                     if (\in_array($key, $explicit, true)) {
                         throw SemanticException::fromShapeFieldDuplication($key, $field->offset);
@@ -590,7 +590,7 @@ return [
 
             $parameters = null;
 
-            if (\end($children) instanceof Node\Stmt\Template\ArgumentsListNode) {
+            if (\end($children) instanceof Node\Stmt\Template\TemplateArgumentsListNode) {
                 $parameters = \array_pop($children);
             }
 
@@ -651,7 +651,7 @@ return [
             }
 
             // Template parameters
-            if (\end($children) instanceof Node\Stmt\Template\ArgumentsListNode) {
+            if (\end($children) instanceof Node\Stmt\Template\TemplateArgumentsListNode) {
                 $parameters = \array_pop($children);
             }
 

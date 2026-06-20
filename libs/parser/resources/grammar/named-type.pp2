@@ -8,7 +8,7 @@ NamedType -> {
     }
 
     // Template parameters
-    if (\end($children) instanceof Node\Stmt\Template\ArgumentsListNode) {
+    if (\end($children) instanceof Node\Stmt\Template\TemplateArgumentsListNode) {
         $parameters = \array_pop($children);
     }
 

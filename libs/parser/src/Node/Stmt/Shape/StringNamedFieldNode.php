@@ -8,19 +8,26 @@ use TypeLang\Parser\Node\Literal\StringLiteralNode;
 use TypeLang\Parser\Node\Stmt\Attribute\AttributeGroupsListNode;
 use TypeLang\Parser\Node\Stmt\TypeStatement;
 
+/**
+ * @template-extends ExplicitFieldNode<StringLiteralNode>
+ */
 final class StringNamedFieldNode extends ExplicitFieldNode
 {
+    public string $index {
+        get => $this->key->value;
+    }
+
     public function __construct(
-        public StringLiteralNode $key,
-        TypeStatement $of,
+        StringLiteralNode $key,
+        TypeStatement $type,
         bool $optional = false,
         ?AttributeGroupsListNode $attributes = null,
     ) {
-        parent::__construct($of, $optional, $attributes);
-    }
-
-    public function getKey(): string
-    {
-        return $this->key->value;
+        parent::__construct(
+            key: $key,
+            type: $type,
+            optional: $optional,
+            attributes: $attributes,
+        );
     }
 }

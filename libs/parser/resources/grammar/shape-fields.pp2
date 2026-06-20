@@ -10,7 +10,7 @@ ShapeFields -> {
 
     $parameters = null;
 
-    if (\end($children) instanceof Node\Stmt\Template\ArgumentsListNode) {
+    if (\end($children) instanceof Node\Stmt\Template\TemplateArgumentsListNode) {
         $parameters = \array_pop($children);
     }
 
@@ -43,7 +43,7 @@ ShapeFieldsList -> {
 
     foreach ($children as $field) {
         if ($field instanceof Node\Stmt\Shape\ExplicitFieldNode) {
-            $key = $field->getKey();
+            $key = $field->index;
 
             if (\in_array($key, $explicit, true)) {
                 throw SemanticException::fromShapeFieldDuplication($key, $field->offset);

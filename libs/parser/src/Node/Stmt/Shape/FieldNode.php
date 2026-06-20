@@ -16,16 +16,6 @@ abstract class FieldNode extends Node implements \Stringable
         public ?AttributeGroupsListNode $attributes = null,
     ) {}
 
-    public function is(string $class): bool
-    {
-        return $this instanceof $class;
-    }
-
-    public function getType(): TypeStatement
-    {
-        return $this->type;
-    }
-
     public function __toString(): string
     {
         return $this->optional ? 'optional' : 'required';

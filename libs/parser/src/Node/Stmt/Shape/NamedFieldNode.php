@@ -8,26 +8,26 @@ use TypeLang\Parser\Node\Identifier;
 use TypeLang\Parser\Node\Stmt\Attribute\AttributeGroupsListNode;
 use TypeLang\Parser\Node\Stmt\TypeStatement;
 
+/**
+ * @template-extends ExplicitFieldNode<Identifier>
+ */
 final class NamedFieldNode extends ExplicitFieldNode
 {
-    public Identifier $key;
+    public string $index {
+        get => $this->key->toString();
+    }
 
-    /**
-     * @param Identifier|non-empty-string $key
-     */
     public function __construct(
-        Identifier|string $key,
-        TypeStatement $of,
+        Identifier $key,
+        TypeStatement $type,
         bool $optional = false,
         ?AttributeGroupsListNode $attributes = null,
     ) {
-        $this->key = \is_string($key) ? new Identifier($key) : $key;
-
-        parent::__construct($of, $optional, $attributes);
-    }
-
-    public function getKey(): string
-    {
-        return $this->key->toString();
+        parent::__construct(
+            key: $key,
+            type: $type,
+            optional: $optional,
+            attributes: $attributes,
+        );
     }
 }

@@ -9,7 +9,7 @@ use TypeLang\Parser\Node\Node;
 use TypeLang\Parser\Node\Statement;
 use TypeLang\Parser\Node\Stmt\Attribute\AttributeGroupNode;
 use TypeLang\Parser\Node\Stmt\Attribute\AttributeGroupsListNode;
-use TypeLang\Parser\Node\Stmt\Callable\ParameterNode;
+use TypeLang\Parser\Node\Stmt\Callable\CallableParameterNode;
 use TypeLang\Parser\Node\Stmt\CallableTypeNode;
 use TypeLang\Parser\Node\Stmt\ClassConstMaskNode;
 use TypeLang\Parser\Node\Stmt\ClassConstNode;
@@ -32,8 +32,8 @@ use TypeLang\Parser\Node\Stmt\Shape\FieldsListNode;
 use TypeLang\Parser\Node\Stmt\Shape\NamedFieldNode;
 use TypeLang\Parser\Node\Stmt\Shape\NumericFieldNode;
 use TypeLang\Parser\Node\Stmt\Shape\StringNamedFieldNode;
-use TypeLang\Parser\Node\Stmt\Template\ArgumentNode;
-use TypeLang\Parser\Node\Stmt\Template\ArgumentsListNode;
+use TypeLang\Parser\Node\Stmt\Template\TemplateArgumentNode;
+use TypeLang\Parser\Node\Stmt\Template\TemplateArgumentsListNode;
 use TypeLang\Parser\Node\Stmt\Template\TemplateArgumentsListNode;
 use TypeLang\Parser\Node\Stmt\TernaryConditionNode;
 use TypeLang\Parser\Node\Stmt\TypeOffsetAccessNode;
@@ -252,7 +252,7 @@ class PrettyPrinter extends Printer
     {
         $result = '#[';
 
-        $last = $group->last();
+        $last = $group->last;
         foreach ($group as $attribute) {
             $result .= $attribute->name->toString();
 
@@ -279,12 +279,12 @@ class PrettyPrinter extends Printer
 
             return \vsprintf('%s: %s', [
                 $name,
-                $this->make($field->getType()),
+                $this->make($field->type),
             ]);
         }
 
         /** @var non-empty-string */
-        return $this->make($field->getType());
+        return $this->make($field->type);
     }
 
     protected function printShapeFieldName(FieldNode $field): string
@@ -341,12 +341,12 @@ class PrettyPrinter extends Printer
     }
 
     /**
-     * @param ArgumentsListNode<ArgumentNode>|TemplateArgumentsListNode $arguments
+     * @param TemplateArgumentsListNode<TemplateArgumentNode>|TemplateArgumentsListNode $arguments
      *
      * @return non-empty-string
      * @throws NonPrintableNodeException
      */
-    protected function printTemplateArgumentsNode(ArgumentsListNode $arguments): string
+    protected function printTemplateArgumentsNode(TemplateArgumentsListNode $arguments): string
     {
         $result = [];
 
@@ -367,7 +367,7 @@ class PrettyPrinter extends Printer
      * @return non-empty-string
      * @throws NonPrintableNodeException
      */
-    protected function printTemplateArgumentNode(ArgumentNode $argument): string
+    protected function printTemplateArgumentNode(TemplateArgumentNode $argument): string
     {
         $result = $this->make($argument->value);
 
@@ -444,7 +444,7 @@ class PrettyPrinter extends Printer
      * @return non-empty-string
      * @throws NonPrintableNodeException
      */
-    protected function printCallableArgumentNode(ParameterNode $node): string
+    protected function printCallableArgumentNode(CallableParameterNode $node): string
     {
         $result = 'mixed';
 

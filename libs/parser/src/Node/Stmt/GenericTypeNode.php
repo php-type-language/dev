@@ -6,6 +6,13 @@ namespace TypeLang\Parser\Node\Stmt;
 
 /**
  * @template T of TypeStatement = TypeStatement
- * @template-extends GenericTypeStmt<T>
  */
-abstract class GenericTypeNode extends GenericTypeStmt {}
+abstract class GenericTypeNode extends TypeStatement
+{
+    /**
+     * @param T $type
+     */
+    public function __construct(
+        public TypeStatement $type,
+    ) {}
+}

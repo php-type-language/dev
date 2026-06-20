@@ -20,6 +20,22 @@ abstract class NodeList extends Node implements
     public array $items = [];
 
     /**
+     * @var TNode|null
+     */
+    public ?Node $first {
+        get => $this->items[0] ?? null;
+    }
+
+    /**
+     * @var TNode|null
+     */
+    public ?Node $last {
+        get => ($lastKey = \array_key_last($this->items)) !== null
+            ? $this->items[$lastKey]
+            : null;
+    }
+
+    /**
      * @param iterable<mixed, TNode> $items
      */
     public function __construct(iterable $items = [])
@@ -47,26 +63,6 @@ abstract class NodeList extends Node implements
         }
 
         return null;
-    }
-
-    /**
-     * @return TNode|null
-     */
-    public function first(): ?Node
-    {
-        $first = \reset($this->items);
-
-        return $first instanceof Node ? $first : null;
-    }
-
-    /**
-     * @return TNode|null
-     */
-    public function last(): ?Node
-    {
-        $last = \end($this->items);
-
-        return $last instanceof Node ? $last : null;
     }
 
     public function offsetExists(mixed $offset): bool

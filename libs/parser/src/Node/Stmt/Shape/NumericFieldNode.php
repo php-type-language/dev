@@ -8,19 +8,26 @@ use TypeLang\Parser\Node\Literal\IntLiteralNode;
 use TypeLang\Parser\Node\Stmt\Attribute\AttributeGroupsListNode;
 use TypeLang\Parser\Node\Stmt\TypeStatement;
 
+/**
+ * @template-extends ExplicitFieldNode<IntLiteralNode>
+ */
 final class NumericFieldNode extends ExplicitFieldNode
 {
+    public string $index {
+        get => (string) $this->key->value;
+    }
+
     public function __construct(
-        public IntLiteralNode $key,
-        TypeStatement $of,
+        IntLiteralNode $key,
+        TypeStatement $type,
         bool $optional = false,
         ?AttributeGroupsListNode $attributes = null,
     ) {
-        parent::__construct($of, $optional, $attributes);
-    }
-
-    public function getKey(): int
-    {
-        return $this->key->value;
+        parent::__construct(
+            key: $key,
+            type: $type,
+            optional: $optional,
+            attributes: $attributes,
+        );
     }
 }

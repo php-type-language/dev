@@ -8,19 +8,26 @@ use TypeLang\Parser\Node\Stmt\Attribute\AttributeGroupsListNode;
 use TypeLang\Parser\Node\Stmt\ConstMaskNode;
 use TypeLang\Parser\Node\Stmt\TypeStatement;
 
-final class ConstMaskFieldNode extends ExplicitFieldNode
+/**
+ * @template-extends ExplicitFieldNode<ConstMaskNode>
+ */
+class ConstMaskFieldNode extends ExplicitFieldNode
 {
+    public string $index {
+        get => (string) $this->key;
+    }
+
     public function __construct(
-        public ConstMaskNode $key,
-        TypeStatement $of,
+        ConstMaskNode $key,
+        TypeStatement $type,
         bool $optional = false,
         ?AttributeGroupsListNode $attributes = null,
     ) {
-        parent::__construct($of, $optional, $attributes);
-    }
-
-    public function getKey(): string
-    {
-        return (string) $this->key;
+        parent::__construct(
+            key: $key,
+            type: $type,
+            optional: $optional,
+            attributes: $attributes,
+        );
     }
 }

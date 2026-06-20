@@ -6,7 +6,7 @@ CallableType -> {
         throw FeatureNotAllowedException::fromFeature('callable types', $offset);
     }
 
-    $parameters = isset($children[0]) && $children[0] instanceof Node\Stmt\Callable\ParametersListNode
+    $parameters = isset($children[0]) && $children[0] instanceof Node\Stmt\Callable\CallableParametersListNode
         ? \array_shift($children)
         : new Node\Stmt\Callable\CallableParametersListNode();
 

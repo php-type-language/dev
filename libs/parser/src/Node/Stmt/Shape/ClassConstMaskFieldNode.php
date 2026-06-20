@@ -9,26 +9,35 @@ use TypeLang\Parser\Node\Stmt\ClassConstMaskNode;
 use TypeLang\Parser\Node\Stmt\ClassConstNode;
 use TypeLang\Parser\Node\Stmt\TypeStatement;
 
-final class ClassConstMaskFieldNode extends ExplicitFieldNode
+/**
+ * @template-extends ExplicitFieldNode<ClassConstMaskNode>
+ */
+class ClassConstMaskFieldNode extends ExplicitFieldNode
 {
+    public string $index {
+        get {
+            $result = $this->key->class->toString()
+                . '::' . $this->key->constant?->toString();
+
+            if ($this->key instanceof ClassConstNode) {
+                return $result;
+            }
+
+            return $result . '*';
+        }
+    }
+
     public function __construct(
-        public ClassConstMaskNode $key,
-        TypeStatement $of,
+        ClassConstMaskNode $key,
+        TypeStatement $type,
         bool $optional = false,
         ?AttributeGroupsListNode $attributes = null,
     ) {
-        parent::__construct($of, $optional, $attributes);
-    }
-
-    public function getKey(): string
-    {
-        $result = $this->key->class->toString()
-            . '::' . $this->key->constant?->toString();
-
-        if ($this->key instanceof ClassConstNode) {
-            return $result;
-        }
-
-        return $result . '*';
+        parent::__construct(
+            key: $key,
+            type: $type,
+            optional: $optional,
+            attributes: $attributes,
+        );
     }
 }

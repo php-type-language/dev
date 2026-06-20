@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PHPDoc\DocBlock\Tag\MethodTag;
 
 use TypeLang\Parser\Node\Stmt\Callable\CallableParameterNode;
-use TypeLang\Parser\Node\Stmt\Callable\ParameterNode;
+use TypeLang\Parser\Node\Stmt\Callable\CallableParameterNode;
 use TypeLang\Parser\Node\Stmt\TypeStatement;
 use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
@@ -44,14 +44,14 @@ use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 class MethodTag extends Tag implements OptionalTypeProviderInterface
 {
     /**
-     * @var list<ParameterNode|CallableParameterNode>
+     * @var list<CallableParameterNode|CallableParameterNode>
      */
     public readonly array $parameters;
 
     /**
      * @param non-empty-string $name
      * @param non-empty-string $method
-     * @param iterable<mixed, ParameterNode|CallableParameterNode> $parameters
+     * @param iterable<mixed, CallableParameterNode|CallableParameterNode> $parameters
      */
     public function __construct(
         string $name,
