@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\ThrowsTag;
 
+use TypeLang\Node\Stmt\TypeStatement;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 use TypeLang\PHPDoc\DocBlock\Tag\TypeProviderInterface;
-use TypeLang\Type\Stmt\TypeStatement;
 
 /**
  * The "`@throws`" tag MAY be used to indicate that structural elements throw a

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Shape;
+namespace TypeLang\Node\Stmt\Shape;
 
-use TypeLang\Type\Node;
-use TypeLang\Type\Stmt\Attribute\AttributeGroupsListNode;
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Node;
+use TypeLang\Node\Stmt\Attribute\AttributeGroupsListNode;
+use TypeLang\Node\Stmt\TypeStatement;
 
 abstract class FieldNode extends Node implements \Stringable
 {

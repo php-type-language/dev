@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag;
 
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Stmt\TypeStatement;
 
 /**
  * Representation of any entry that MAY contain optional type definition.

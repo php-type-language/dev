@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Literal;
+namespace TypeLang\Node\Literal;
 
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Stmt\TypeStatement;
 
 /**
  * @template TValue of mixed = mixed

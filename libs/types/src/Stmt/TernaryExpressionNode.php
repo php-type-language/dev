@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt;
+namespace TypeLang\Node\Stmt;
 
-use TypeLang\Type\Stmt\Condition\Condition;
+use TypeLang\Node\Stmt\Condition\Condition;
 
 final class TernaryExpressionNode extends TypeStatement
 {

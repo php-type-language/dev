@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
+use TypeLang\Node\Stmt\TypeStatement;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
-use TypeLang\Type\Stmt\TypeStatement;
 
 /**
  * @property-read int<0, max> $lastProcessedTokenOffset

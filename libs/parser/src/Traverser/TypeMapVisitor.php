@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Traverser;
 
-use TypeLang\Type\Name;
-use TypeLang\Type\Node;
-use TypeLang\Type\Stmt\CallableTypeNode;
-use TypeLang\Type\Stmt\ClassConstMaskNode;
-use TypeLang\Type\Stmt\ConstMaskNode;
-use TypeLang\Type\Stmt\NamedTypeNode;
+use TypeLang\Node\Name;
+use TypeLang\Node\Node;
+use TypeLang\Node\Stmt\CallableTypeNode;
+use TypeLang\Node\Stmt\ClassConstMaskNode;
+use TypeLang\Node\Stmt\ConstMaskNode;
+use TypeLang\Node\Stmt\NamedTypeNode;
 
 final class TypeMapVisitor extends Visitor
 {

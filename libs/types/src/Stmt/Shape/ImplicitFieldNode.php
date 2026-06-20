@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Shape;
+namespace TypeLang\Node\Stmt\Shape;
 
 class ImplicitFieldNode extends FieldNode {}

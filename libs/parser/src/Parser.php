@@ -20,12 +20,12 @@ use Phplrt\Parser\Grammar\RuleInterface;
 use Phplrt\Parser\Parser as ParserCombinator;
 use Phplrt\Parser\ParserConfigsInterface;
 use Phplrt\Source\SourceFactory;
+use TypeLang\Node\Literal\IntLiteralNode;
+use TypeLang\Node\Literal\StringLiteralNode;
+use TypeLang\Node\Node;
+use TypeLang\Node\Stmt\TypeStatement;
 use TypeLang\Parser\Exception\ParseException;
 use TypeLang\Parser\Exception\SemanticException;
-use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\Literal\StringLiteralNode;
-use TypeLang\Type\Node;
-use TypeLang\Type\Stmt\TypeStatement;
 
 /**
  * @phpstan-type GrammarConfigArray array{

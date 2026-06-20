@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type;
+namespace TypeLang\Node;
 
 interface NodeInterface
 {

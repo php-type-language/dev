@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\MethodTag;
 
+use TypeLang\Node\Stmt\CallableTypeNode;
+use TypeLang\Node\Stmt\NamedTypeNode;
 use TypeLang\Parser\Parser as TypesParser;
 use TypeLang\Parser\ParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
@@ -13,8 +15,6 @@ use TypeLang\PHPDoc\Parser\Content\OptionalValueReader;
 use TypeLang\PHPDoc\Parser\Content\Stream;
 use TypeLang\PHPDoc\Parser\Content\TypeReader;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
-use TypeLang\Type\Stmt\CallableTypeNode;
-use TypeLang\Type\Stmt\NamedTypeNode;
 
 /**
  * This class is responsible for creating "`@method`" tags.

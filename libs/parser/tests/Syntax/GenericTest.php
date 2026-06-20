@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for generic (template argument) grammar and call-site hints.
  *
- * @see \TypeLang\Type\Stmt\Template\TemplateArgumentsListNode
- * @see \TypeLang\Type\Stmt\Template\TemplateArgumentNode
+ * @see \TypeLang\Node\Stmt\Template\TemplateArgumentsListNode
+ * @see \TypeLang\Node\Stmt\Template\TemplateArgumentNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class GenericTest extends SyntaxTestCase

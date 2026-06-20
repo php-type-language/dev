@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt;
+namespace TypeLang\Node\Stmt;
 
-use TypeLang\Type\Statement;
+use TypeLang\Node\Node;
 
-abstract class TypeStatement extends Statement {}
+abstract class TypeStatement extends Node {}

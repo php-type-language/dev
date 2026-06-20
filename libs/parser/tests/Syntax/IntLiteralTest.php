@@ -6,12 +6,12 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Type\Literal\IntLiteralNode;
+use TypeLang\Node\Literal\IntLiteralNode;
 
 /**
  * Tests for the integer literal grammar (decimal, binary, octal, hexadecimal).
  *
- * @see \TypeLang\Type\Literal\IntLiteralNode
+ * @see \TypeLang\Node\Literal\IntLiteralNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class IntLiteralTest extends SyntaxTestCase

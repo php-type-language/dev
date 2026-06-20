@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt;
+namespace TypeLang\Node\Stmt;
 
-use TypeLang\Type\Name;
+use TypeLang\Node\Name;
 
 class ConstMaskNode extends TypeStatement implements \Stringable
 {

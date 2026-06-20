@@ -66,12 +66,12 @@ $result = $reader->findConstantType(
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "int"
       }
@@ -104,39 +104,39 @@ $result = $reader->findConstantType(
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     +parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "int"
       }
     ]
   }
-  +arguments: TypeLang\Type\Stmt\Template\TemplateArgumentsListNode {
+  +arguments: TypeLang\Node\Stmt\Template\TemplateArgumentsListNode {
     +offset: 3
     +items: array:2 [
-      0 => TypeLang\Type\Stmt\Template\TemplateArgumentNode {
+      0 => TypeLang\Node\Stmt\Template\TemplateArgumentNode {
         +offset: 4
         +hint: null
-        +value: TypeLang\Type\Literal\IntLiteralNode {#798
+        +value: TypeLang\Node\Literal\IntLiteralNode {#798
           +offset: 4
           +raw: "0"
           +value: 0
         }
         +attributes: null
       }
-      1 => TypeLang\Type\Stmt\Template\TemplateArgumentNode {
+      1 => TypeLang\Node\Stmt\Template\TemplateArgumentNode {
         +offset: 7
         +hint: null
-        +value: TypeLang\Type\Stmt\NamedTypeNode {
+        +value: TypeLang\Node\Stmt\NamedTypeNode {
           +offset: 7
-          +name: TypeLang\Type\Name {
+          +name: TypeLang\Node\Name {
             +offset: 7
             +parts: array:1 [
-              0 => TypeLang\Type\Identifier {
+              0 => TypeLang\Node\Identifier {
                 +offset: 7
                 +value: "max"
               }
@@ -181,12 +181,12 @@ $result = $reader->findPropertyType(
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "string"
       }
@@ -218,12 +218,12 @@ $result = $reader->findPropertyType(
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     +parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "non-empty-string"
       }
@@ -256,12 +256,12 @@ $result = $reader->findFunctionType(
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "void"
       }
@@ -288,12 +288,12 @@ $result = $reader->findFunctionType(
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "never"
       }
@@ -330,12 +330,12 @@ $result = $reader->findParameterType(
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "bool"
       }
@@ -366,12 +366,12 @@ $result = $reader->findParameterType(
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "true"
       }

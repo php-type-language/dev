@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for conditional (ternary) types.
  *
- * @see \TypeLang\Type\Stmt\TernaryExpressionNode
- * @see \TypeLang\Type\Stmt\Condition\Condition
+ * @see \TypeLang\Node\Stmt\TernaryExpressionNode
+ * @see \TypeLang\Node\Stmt\Condition\Condition
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ConditionalTest extends SyntaxTestCase

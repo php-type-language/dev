@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Template;
 
+use TypeLang\Node\Stmt\TypeStatement;
 use TypeLang\PHPDoc\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\Tag\Tag;
-use TypeLang\Type\Stmt\TypeStatement;
 
 /**
  * ```

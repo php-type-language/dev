@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Callable;
+namespace TypeLang\Node\Stmt\Callable;
 
-use TypeLang\Type\NodeList;
+use TypeLang\Node\NodeList;
 
 /**
  * @template-extends NodeList<CallableParameterNode>

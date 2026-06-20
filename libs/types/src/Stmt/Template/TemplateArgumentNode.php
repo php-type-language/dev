@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Template;
+namespace TypeLang\Node\Stmt\Template;
 
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Node;
-use TypeLang\Type\Stmt\Attribute\AttributeGroupsListNode;
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Identifier;
+use TypeLang\Node\Node;
+use TypeLang\Node\Stmt\Attribute\AttributeGroupsListNode;
+use TypeLang\Node\Stmt\TypeStatement;
 
 class TemplateArgumentNode extends Node
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference;
 
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Stmt\TypeStatement;
 
 /**
  * Related to internal type reference

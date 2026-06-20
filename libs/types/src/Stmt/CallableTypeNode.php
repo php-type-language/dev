@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt;
+namespace TypeLang\Node\Stmt;
 
-use TypeLang\Type\Name;
-use TypeLang\Type\Stmt\Callable\CallableParametersListNode;
+use TypeLang\Node\Name;
+use TypeLang\Node\Stmt\Callable\CallableParametersListNode;
 
 class CallableTypeNode extends TypeStatement
 {

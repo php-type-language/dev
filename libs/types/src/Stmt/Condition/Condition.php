@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Condition;
+namespace TypeLang\Node\Stmt\Condition;
 
-use TypeLang\Type\Statement;
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Node;
+use TypeLang\Node\Stmt\TypeStatement;
 
-abstract class Condition extends Statement
+abstract class Condition extends Node
 {
     public function __construct(
         public TypeStatement $subject,

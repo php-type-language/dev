@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Callable;
+namespace TypeLang\Node\Stmt\Callable;
 
-use TypeLang\Type\Literal\VariableLiteralNode;
-use TypeLang\Type\Node;
-use TypeLang\Type\Stmt\Attribute\AttributeGroupsListNode;
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Literal\VariableLiteralNode;
+use TypeLang\Node\Node;
+use TypeLang\Node\Stmt\Attribute\AttributeGroupsListNode;
+use TypeLang\Node\Stmt\TypeStatement;
 
 class CallableParameterNode extends Node implements \Stringable
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Type\Statement;
+use TypeLang\Node\Statement;
 
 interface PrinterInterface
 {

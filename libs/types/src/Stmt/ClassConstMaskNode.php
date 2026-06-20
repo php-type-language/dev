@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt;
+namespace TypeLang\Node\Stmt;
 
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Name;
+use TypeLang\Node\Identifier;
+use TypeLang\Node\Name;
 
 class ClassConstMaskNode extends TypeStatement
 {

@@ -51,45 +51,45 @@ var_dump($type);
 Expected Output:
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "array"
       }
     ]
   }
   +arguments: null
-  +fields: TypeLang\Type\Stmt\Shape\FieldsListNode {
+  +fields: TypeLang\Node\Stmt\Shape\FieldsListNode {
     +offset: 11
     +items: array:1 [
-      0 => TypeLang\Type\Stmt\Shape\NamedFieldNode {
+      0 => TypeLang\Node\Stmt\Shape\NamedFieldNode {
         +offset: 11
-        +type: TypeLang\Type\Stmt\CallableTypeNode {
+        +type: TypeLang\Node\Stmt\CallableTypeNode {
           +offset: 16
-          +name: TypeLang\Type\Name {
+          +name: TypeLang\Node\Name {
             +offset: 16
             -parts: array:1 [
-              0 => TypeLang\Type\Identifier {
+              0 => TypeLang\Node\Identifier {
                 +offset: 16
                 +value: "callable"
               }
             ]
           }
-          +parameters: TypeLang\Type\Stmt\Callable\ParametersListNode {
+          +parameters: TypeLang\Node\Stmt\Callable\ParametersListNode {
             +offset: 25
             +items: array:2 [
-              0 => TypeLang\Type\Stmt\Callable\ParameterNode {
+              0 => TypeLang\Node\Stmt\Callable\ParameterNode {
                 +offset: 25
-                +type: TypeLang\Type\Stmt\NamedTypeNode {
+                +type: TypeLang\Node\Stmt\NamedTypeNode {
                   +offset: 25
-                  +name: TypeLang\Type\Name {
+                  +name: TypeLang\Node\Name {
                     +offset: 25
                     -parts: array:1 [
-                      0 => TypeLang\Type\Identifier {
+                      0 => TypeLang\Node\Identifier {
                         +offset: 25
                         +value: "Example"
                       }
@@ -103,14 +103,14 @@ TypeLang\Type\Stmt\NamedTypeNode {
                 +variadic: false
                 +optional: false
               }
-              1 => TypeLang\Type\Stmt\Callable\ParameterNode {
+              1 => TypeLang\Node\Stmt\Callable\ParameterNode {
                 +offset: 34
-                +type: TypeLang\Type\Stmt\NamedTypeNode {
+                +type: TypeLang\Node\Stmt\NamedTypeNode {
                   +offset: 34
-                  +name: TypeLang\Type\Name {
+                  +name: TypeLang\Node\Name {
                     +offset: 34
                     -parts: array:1 [
-                      0 => TypeLang\Type\Identifier {
+                      0 => TypeLang\Node\Identifier {
                         +offset: 34
                         +value: "int"
                       }
@@ -126,12 +126,12 @@ TypeLang\Type\Stmt\NamedTypeNode {
               }
             ]
           }
-          +type: TypeLang\Type\Stmt\NamedTypeNode {
+          +type: TypeLang\Node\Stmt\NamedTypeNode {
             +offset: 40
-            +name: TypeLang\Type\Name {
+            +name: TypeLang\Node\Name {
               +offset: 40
               -parts: array:1 [
-                0 => TypeLang\Type\Identifier {
+                0 => TypeLang\Node\Identifier {
                   +offset: 40
                   +value: "mixed"
                 }
@@ -142,7 +142,7 @@ TypeLang\Type\Stmt\NamedTypeNode {
           }
         }
         +optional: false
-        +key: TypeLang\Type\Identifier {
+        +key: TypeLang\Node\Identifier {
           +offset: 11
           +value: "key"
         }

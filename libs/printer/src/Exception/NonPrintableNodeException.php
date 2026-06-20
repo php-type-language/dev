@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer\Exception;
 
-use TypeLang\Type\Node;
+use TypeLang\Node\Node;
 
 class NonPrintableNodeException extends \InvalidArgumentException implements PrinterExceptionInterface
 {

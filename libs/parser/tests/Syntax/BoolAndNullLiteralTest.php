@@ -6,14 +6,14 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Type\Literal\BoolLiteralNode;
-use TypeLang\Type\Literal\NullLiteralNode;
+use TypeLang\Node\Literal\BoolLiteralNode;
+use TypeLang\Node\Literal\NullLiteralNode;
 
 /**
  * Tests for the "true", "false" and "null" literal grammar.
  *
- * @see \TypeLang\Type\Literal\BoolLiteralNode
- * @see \TypeLang\Type\Literal\NullLiteralNode
+ * @see \TypeLang\Node\Literal\BoolLiteralNode
+ * @see \TypeLang\Node\Literal\NullLiteralNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class BoolAndNullLiteralTest extends SyntaxTestCase

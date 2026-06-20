@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Traverser;
 
-use TypeLang\Type\Node;
+use TypeLang\Node\Node;
 
 interface VisitorInterface
 {

@@ -12,10 +12,7 @@ Let's try to write a simple visitor that will display the names of all classes
 when entering each AST node.
 
 ```php
-use TypeLang\Type\Node;
-use TypeLang\Parser\Traverser;
-use TypeLang\Parser\Traverser\Command;
-use TypeLang\Parser\Traverser\Visitor;
+use TypeLang\Node\Node;use TypeLang\Parser\Traverser;use TypeLang\Parser\Traverser\Command;use TypeLang\Parser\Traverser\Visitor;
 
 $traverser = new Traverser([
     new class extends Visitor {
@@ -64,11 +61,7 @@ To skip any nodes when traversing, you can use the appropriate
 command `TypeLang\Parser\Traverser\Command::SKIP_CHILDREN`.
 
 ```php
-use TypeLang\Type\Node;
-use TypeLang\Type\Stmt\Template\TemplateArgumentNode;
-use TypeLang\Parser\Traverser;
-use TypeLang\Parser\Traverser\Command;
-use TypeLang\Parser\Traverser\Visitor;
+use TypeLang\Node\Node;use TypeLang\Node\Stmt\Template\TemplateArgumentNode;use TypeLang\Parser\Traverser;use TypeLang\Parser\Traverser\Command;use TypeLang\Parser\Traverser\Visitor;
 
 $traverser = new Traverser([
     new class extends Visitor {

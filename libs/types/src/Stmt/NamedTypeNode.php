@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt;
+namespace TypeLang\Node\Stmt;
 
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Name;
-use TypeLang\Type\Stmt\Shape\FieldsListNode;
-use TypeLang\Type\Stmt\Template\TemplateArgumentsListNode;
+use TypeLang\Node\Identifier;
+use TypeLang\Node\Name;
+use TypeLang\Node\Stmt\Shape\FieldsListNode;
+use TypeLang\Node\Stmt\Template\TemplateArgumentsListNode;
 
 class NamedTypeNode extends TypeStatement
 {

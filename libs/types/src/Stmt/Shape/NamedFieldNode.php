@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Shape;
+namespace TypeLang\Node\Stmt\Shape;
 
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Stmt\Attribute\AttributeGroupsListNode;
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Identifier;
+use TypeLang\Node\Stmt\Attribute\AttributeGroupsListNode;
+use TypeLang\Node\Stmt\TypeStatement;
 
 /**
  * @template-extends ExplicitFieldNode<Identifier>

@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Condition;
+namespace TypeLang\Node\Stmt\Condition;
 
 class GreaterThanOrEqualConditionNode extends Condition {}

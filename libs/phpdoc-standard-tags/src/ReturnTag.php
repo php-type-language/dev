@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
+use TypeLang\Node\Stmt\TypeStatement;
 use TypeLang\PHPDoc\Tag\Tag;
 use TypeLang\PHPDoc\Tag\TypeProviderInterface;
-use TypeLang\Type\Stmt\TypeStatement;
 
 /**
  * With the "`@return`" tag it is possible to document the return type of a

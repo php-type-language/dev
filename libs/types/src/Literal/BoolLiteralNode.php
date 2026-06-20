@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Literal;
+namespace TypeLang\Node\Literal;
 
 /**
  * @template-extends LiteralNode<bool>

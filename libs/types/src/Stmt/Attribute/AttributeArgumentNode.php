@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Attribute;
+namespace TypeLang\Node\Stmt\Attribute;
 
-use TypeLang\Type\Node;
-use TypeLang\Type\Stmt\TypeStatement;
+use TypeLang\Node\Node;
+use TypeLang\Node\Stmt\TypeStatement;
 
 class AttributeArgumentNode extends Node
 {

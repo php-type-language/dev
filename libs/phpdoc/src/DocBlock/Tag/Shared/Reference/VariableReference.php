@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference;
 
-use TypeLang\Type\Literal\VariableLiteralNode;
+use TypeLang\Node\Literal\VariableLiteralNode;
 
 /**
  * Related to local variable reference

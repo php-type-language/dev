@@ -32,12 +32,12 @@ $result = $parser->parse('example');
 ```
 
 ```php
-TypeLang\Type\Stmt\NamedTypeNode {
+TypeLang\Node\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Type\Name {
+  +name: TypeLang\Node\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
+      0 => TypeLang\Node\Identifier {
         +offset: 0
         +value: "example"
       }

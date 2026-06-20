@@ -9,9 +9,9 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for the constant grammar: global constants, class constants and masks.
  *
- * @see \TypeLang\Type\Stmt\ClassConstNode
- * @see \TypeLang\Type\Stmt\ConstMaskNode
- * @see \TypeLang\Type\Stmt\ClassConstMaskNode
+ * @see \TypeLang\Node\Stmt\ClassConstNode
+ * @see \TypeLang\Node\Stmt\ConstMaskNode
+ * @see \TypeLang\Node\Stmt\ClassConstMaskNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ConstantTest extends SyntaxTestCase

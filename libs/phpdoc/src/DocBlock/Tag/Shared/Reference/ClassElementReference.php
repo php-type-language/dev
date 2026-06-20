@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference;
 
-use TypeLang\Type\Name;
+use TypeLang\Node\Name;
 
 /**
  * Related to any internal class reference

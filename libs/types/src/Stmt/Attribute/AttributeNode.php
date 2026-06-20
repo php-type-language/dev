@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Attribute;
+namespace TypeLang\Node\Stmt\Attribute;
 
-use TypeLang\Type\Name;
-use TypeLang\Type\Node;
+use TypeLang\Node\Name;
+use TypeLang\Node\Node;
 
 class AttributeNode extends Node
 {

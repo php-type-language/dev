@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Type\Stmt\Attribute;
+namespace TypeLang\Node\Stmt\Attribute;
 
-use TypeLang\Type\NodeList;
+use TypeLang\Node\NodeList;
 
 /**
  * @template-extends NodeList<AttributeGroupNode>

@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
+use TypeLang\Node\Literal\BoolLiteralNode;
+use TypeLang\Node\Literal\FloatLiteralNode;
+use TypeLang\Node\Literal\IntLiteralNode;
+use TypeLang\Node\Literal\LiteralNode;
+use TypeLang\Node\Literal\NullLiteralNode;
+use TypeLang\Node\Literal\StringLiteralNode;
+use TypeLang\Node\Literal\VariableLiteralNode;
+use TypeLang\Node\Stmt\CallableTypeNode;
+use TypeLang\Node\Stmt\ClassConstMaskNode;
+use TypeLang\Node\Stmt\ClassConstNode;
+use TypeLang\Node\Stmt\Condition\Condition;
+use TypeLang\Node\Stmt\Condition\EqualConditionNode;
+use TypeLang\Node\Stmt\Condition\NotEqualConditionNode;
+use TypeLang\Node\Stmt\ConstMaskNode;
+use TypeLang\Node\Stmt\IntersectionTypeNode;
+use TypeLang\Node\Stmt\NamedTypeNode;
+use TypeLang\Node\Stmt\TernaryExpressionNode;
+use TypeLang\Node\Stmt\TypeOffsetAccessNode;
+use TypeLang\Node\Stmt\TypesListNode;
+use TypeLang\Node\Stmt\UnionTypeNode;
 use TypeLang\Printer\Exception\NonPrintableNodeException;
-use TypeLang\Type\Literal\BoolLiteralNode;
-use TypeLang\Type\Literal\FloatLiteralNode;
-use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\Literal\LiteralNode;
-use TypeLang\Type\Literal\NullLiteralNode;
-use TypeLang\Type\Literal\StringLiteralNode;
-use TypeLang\Type\Literal\VariableLiteralNode;
-use TypeLang\Type\Stmt\CallableTypeNode;
-use TypeLang\Type\Stmt\ClassConstMaskNode;
-use TypeLang\Type\Stmt\ClassConstNode;
-use TypeLang\Type\Stmt\Condition\Condition;
-use TypeLang\Type\Stmt\Condition\EqualConditionNode;
-use TypeLang\Type\Stmt\Condition\NotEqualConditionNode;
-use TypeLang\Type\Stmt\ConstMaskNode;
-use TypeLang\Type\Stmt\IntersectionTypeNode;
-use TypeLang\Type\Stmt\NamedTypeNode;
-use TypeLang\Type\Stmt\TernaryExpressionNode;
-use TypeLang\Type\Stmt\TypeOffsetAccessNode;
-use TypeLang\Type\Stmt\TypesListNode;
-use TypeLang\Type\Stmt\UnionTypeNode;
 
 class NativeTypePrinter extends PrettyPrinter
 {
