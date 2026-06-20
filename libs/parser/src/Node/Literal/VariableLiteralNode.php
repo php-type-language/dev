@@ -12,27 +12,22 @@ namespace TypeLang\Parser\Node\Literal;
 class VariableLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
 {
     /**
-     * @var non-empty-string
-     */
-    private readonly string $value;
-
-    /**
      * @param non-empty-string $value
      */
     public function __construct(string $value)
     {
-        assert(\strlen($value) > 1, new \InvalidArgumentException(
-            'Variable name length must be greater than 1',
-        ));
+        if (\strlen($value) < 2) {
+            throw new \InvalidArgumentException('Variable name length must be greater than 1');
+        }
 
-        assert(\str_starts_with($value, '$'), new \InvalidArgumentException(
-            'Variable name must start with "$" character',
-        ));
+        if (!\str_starts_with($value, '$')) {
+            throw new \InvalidArgumentException('Variable name must start with "$" character');
+        }
 
-        // @phpstan-ignore-next-line : Variable name gte than 2
-        $this->value = \substr($value, 1);
+        /** @var non-empty-string $normalized */
+        $normalized = \substr($value, 1);
 
-        parent::__construct($value);
+        parent::__construct($normalized, $value);
     }
 
     public static function parse(string $value): static
@@ -42,11 +37,5 @@ class VariableLiteralNode extends LiteralNode implements ParsableLiteralNodeInte
         }
 
         return new static($value);
-    }
-
-    public function getValue(): string
-    {
-        /** @var non-empty-string */
-        return $this->value;
     }
 }

@@ -160,8 +160,7 @@ class PrettyPrinter extends Printer
      */
     protected function printLiteralNode(LiteralNode $node): string
     {
-        /** @var non-empty-string */
-        return $node->getRawValue();
+        return $node->raw;
     }
 
     /**
@@ -302,12 +301,12 @@ class PrettyPrinter extends Printer
 
     protected function printStringShapeFieldName(StringNamedFieldNode $field): string
     {
-        return $field->key->getRawValue();
+        return $field->key->raw;
     }
 
     protected function printNumericShapeFieldName(NumericFieldNode $field): string
     {
-        return $field->key->getRawValue();
+        return $field->key->raw;
     }
 
     protected function printNamedShapeFieldName(NamedFieldNode $field): string

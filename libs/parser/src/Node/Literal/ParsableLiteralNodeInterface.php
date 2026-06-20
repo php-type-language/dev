@@ -8,6 +8,8 @@ interface ParsableLiteralNodeInterface
 {
     /**
      * Parse raw literal string value.
+     *
+     * @throws \InvalidArgumentException in case of value parsing error occurs
      */
     public static function parse(string $value): self;
 }

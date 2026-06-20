@@ -20,7 +20,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse('"hello world"');
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('hello world', $statement->getValue());
+        self::assertSame('hello world', $statement->value);
     }
 
     public function testSingleQuotedString(): void
@@ -28,7 +28,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse("'hello world'");
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('hello world', $statement->getValue());
+        self::assertSame('hello world', $statement->value);
     }
 
     public function testEmptyDoubleQuotedString(): void
@@ -36,7 +36,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse('""');
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('', $statement->getValue());
+        self::assertSame('', $statement->value);
     }
 
     public function testEmptySingleQuotedString(): void
@@ -44,7 +44,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse("''");
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('', $statement->getValue());
+        self::assertSame('', $statement->value);
     }
 
     public function testEscapedSingleQuoteInsideSingleQuotedString(): void
@@ -52,7 +52,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse("'I am single-quoted \\' string'");
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame("I am single-quoted ' string", $statement->getValue());
+        self::assertSame("I am single-quoted ' string", $statement->value);
     }
 
     public function testEscapedDoubleQuoteInsideDoubleQuotedString(): void
@@ -60,7 +60,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse('"I am double-quoted \\" string"');
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('I am double-quoted " string', $statement->getValue());
+        self::assertSame('I am double-quoted " string', $statement->value);
     }
 
     public function testDoubleQuotedStringProcessesEscapeSequences(): void
@@ -68,7 +68,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse('"String with\\nNew Line"');
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame("String with\nNew Line", $statement->getValue());
+        self::assertSame("String with\nNew Line", $statement->value);
     }
 
     public function testSingleQuotedStringIgnoresEscapeSequences(): void
@@ -76,7 +76,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse("'String without\\nNew Line'");
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('String without\\nNew Line', $statement->getValue());
+        self::assertSame('String without\\nNew Line', $statement->value);
     }
 
     public function testHexadecimalEscapeSequence(): void
@@ -84,7 +84,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse('"\\x48\\x65\\x6c\\x6c\\x6f"');
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('Hello', $statement->getValue());
+        self::assertSame('Hello', $statement->value);
     }
 
     public function testHexadecimalSequenceIsIgnoredInSingleQuotedString(): void
@@ -92,7 +92,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse("'\\x48\\x65'");
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('\\x48\\x65', $statement->getValue());
+        self::assertSame('\\x48\\x65', $statement->value);
     }
 
     public function testUnicodeEscapeSequence(): void
@@ -100,7 +100,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse('"\\u{41}"');
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('A', $statement->getValue());
+        self::assertSame('A', $statement->value);
     }
 
     public function testUnicodeEscapeSequenceWithSurrogatePair(): void
@@ -108,7 +108,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse('"\\u{1F60A}"');
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame("\u{1F60A}", $statement->getValue());
+        self::assertSame("\u{1F60A}", $statement->value);
     }
 
     public function testDollarEscapeSequence(): void
@@ -116,7 +116,7 @@ final class StringLiteralTest extends SyntaxTestCase
         $statement = $this->parse('"price \\$value"');
 
         self::assertInstanceOf(StringLiteralNode::class, $statement);
-        self::assertSame('price $value', $statement->getValue());
+        self::assertSame('price $value', $statement->value);
     }
 
     public function testUnterminatedDoubleQuotedString(): void

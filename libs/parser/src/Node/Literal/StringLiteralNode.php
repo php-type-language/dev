@@ -14,17 +14,17 @@ class StringLiteralNode extends LiteralNode implements ParsableLiteralNodeInterf
     /**
      * @var non-empty-string
      */
-    private const UTF_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\u\{([0-9a-fA-F]+)}/u';
+    private const string UTF_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\u\{([0-9a-fA-F]+)}/u';
 
     /**
      * @var non-empty-string
      */
-    private const HEX_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\x([0-9a-fA-F]{1,2})/iu';
+    private const string HEX_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\x([0-9a-fA-F]{1,2})/iu';
 
     /**
      * @var non-empty-array<non-empty-string, non-empty-string>
      */
-    private const ESCAPED_CHARS = [
+    private const array ESCAPED_CHARS = [
         '\n' => "\n",
         '\r' => "\r",
         '\t' => "\t",
@@ -35,23 +35,19 @@ class StringLiteralNode extends LiteralNode implements ParsableLiteralNodeInterf
     ];
 
     final public function __construct(
-        public readonly string $value,
+        string $value,
         ?string $raw = null,
     ) {
-        parent::__construct($raw ?? $this->value);
-    }
+        $raw ??= \sprintf('"%s"', \addcslashes($value, '"'));
 
-    public static function createFromValue(string $value): static
-    {
-        return new static(
-            value: $value,
-            raw: \sprintf('"%s"', \addcslashes($value, '"')),
-        );
+        parent::__construct($value, $raw);
     }
 
     public static function parse(string $value): static
     {
-        assert(\strlen($value) >= 2, new \InvalidArgumentException('Could not parse non-quoted string'));
+        if (\strlen($value) < 2) {
+            throw new \InvalidArgumentException('Could not parse non-quoted string');
+        }
 
         if ($value[0] === '"') {
             return static::createFromDoubleQuotedString($value);
@@ -65,7 +61,9 @@ class StringLiteralNode extends LiteralNode implements ParsableLiteralNodeInterf
      */
     public static function createFromDoubleQuotedString(string $value): static
     {
-        assert(\strlen($value) >= 2, new \InvalidArgumentException('Could not parse non-quoted string'));
+        if (\strlen($value) < 2) {
+            throw new \InvalidArgumentException('Could not parse non-quoted string');
+        }
 
         $body = \substr($value, 1, -1);
 
@@ -80,7 +78,9 @@ class StringLiteralNode extends LiteralNode implements ParsableLiteralNodeInterf
      */
     public static function createFromSingleQuotedString(string $value): static
     {
-        assert(\strlen($value) >= 2, new \InvalidArgumentException('Could not parse non-quoted string'));
+        if (\strlen($value) < 2) {
+            throw new \InvalidArgumentException('Could not parse non-quoted string');
+        }
 
         $body = \substr($value, 1, -1);
 
@@ -163,24 +163,19 @@ class StringLiteralNode extends LiteralNode implements ParsableLiteralNodeInterf
 
             if (0x800 > $code) {
                 return \chr(0xC0 | $code >> 6)
-                    . \chr(0x80 | $code & 0x3F);
+                     . \chr(0x80 | $code & 0x3F);
             }
 
             if (0x10000 > $code) {
                 return \chr(0xE0 | $code >> 12)
-                    . \chr(0x80 | $code >> 6 & 0x3F)
-                    . \chr(0x80 | $code & 0x3F);
+                     . \chr(0x80 | $code >> 6 & 0x3F)
+                     . \chr(0x80 | $code & 0x3F);
             }
 
             return \chr(0xF0 | $code >> 18)
-                . \chr(0x80 | $code >> 12 & 0x3F)
-                . \chr(0x80 | $code >> 6 & 0x3F)
-                . \chr(0x80 | $code & 0x3F);
+                 . \chr(0x80 | $code >> 12 & 0x3F)
+                 . \chr(0x80 | $code >> 6 & 0x3F)
+                 . \chr(0x80 | $code & 0x3F);
         }, $body) ?? $body;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
     }
 }

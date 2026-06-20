@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Node;
 
 /**
+ * @phpstan-consistent-constructor
  * @template-implements \IteratorAggregate<array-key, Identifier>
  */
-final class Name extends Node implements \IteratorAggregate, \Countable, \Stringable
+class Name extends Node implements \IteratorAggregate, \Countable, \Stringable
 {
     /**
      * @var non-empty-string
@@ -59,7 +60,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     /**
      * @param iterable<array-key, Identifier> $segments
      */
-    final public function __construct(
+    public function __construct(
         iterable $segments,
         public readonly bool $isFullyQualified = self::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
     ) {
@@ -76,20 +77,20 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     public static function createFromStringSegments(
         iterable $segments,
         bool $isFullyQualified = self::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
-    ): self {
+    ): static {
         $identifiers = [];
 
         foreach ($segments as $segment) {
             $identifiers[] = Identifier::createFromString($segment);
         }
 
-        return new self($identifiers, $isFullyQualified);
+        return new static($identifiers, $isFullyQualified);
     }
 
     /**
      * @param non-empty-string|\Stringable $name
      */
-    public static function createFromString(string|\Stringable $name): self
+    public static function createFromString(string|\Stringable $name): static
     {
         $name = (string) $name;
         $unqualified = \trim($name, self::NAMESPACE_DELIMITER);
@@ -104,7 +105,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
             $segments[] = $segment;
         }
 
-        return self::createFromStringSegments(
+        return static::createFromStringSegments(
             segments: $segments,
             isFullyQualified: \str_starts_with($name, self::NAMESPACE_DELIMITER),
         );
@@ -114,9 +115,12 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      * @param int<0, max> $offset
      * @param int<0, max>|null $length
      */
-    public function slice(int $offset = 0, ?int $length = null): self
+    public function slice(int $offset = 0, ?int $length = null): static
     {
-        return new self(\array_slice($this->segments, $offset, $length), $this->isFullyQualified);
+        return new static(
+            segments: \array_slice($this->segments, $offset, $length),
+            isFullyQualified: $this->isFullyQualified,
+        );
     }
 
     /**
@@ -132,9 +136,9 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      *  > "Some\Any\Any\Class"
      * ```
      */
-    public function withAdded(self $name): self
+    public function withAdded(self $name): static
     {
-        return new self([
+        return new static([
             ...$this->segments,
             ...$name->segments,
         ], $this->isFullyQualified);
@@ -175,9 +179,9 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      *  // > TypeLang\Parser\Exception\SemanticException
      * ```
      */
-    public function mergeWith(self $name): self
+    public function mergeWith(self $name): static
     {
-        return new self([
+        return new static([
             ...$this->segments,
             ...\array_slice($name->segments, 1),
         ], $this->isFullyQualified);
@@ -186,22 +190,22 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     /**
      * Convert a name to a full qualified name instance.
      */
-    public function toFullQualified(): self
+    public function toFullQualified(): static
     {
         if ($this->isFullyQualified) {
             return clone $this;
         }
 
-        return new self($this->segments, true);
+        return new static($this->segments, true);
     }
 
     /**
      * Convert name to unqualified name instance.
      */
-    public function toUnqualified(): self
+    public function toUnqualified(): static
     {
         if ($this->isFullyQualified) {
-            return new self($this->segments, false);
+            return new static($this->segments, false);
         }
 
         return clone $this;

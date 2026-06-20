@@ -47,7 +47,7 @@ final class IntLiteralTest extends SyntaxTestCase
         $statement = $this->parse($type);
 
         self::assertInstanceOf(IntLiteralNode::class, $statement);
-        self::assertSame($expected, $statement->getValue());
+        self::assertSame($expected, $statement->value);
     }
 
     public function testBinaryAllowsOnlyZeroAndOne(): void

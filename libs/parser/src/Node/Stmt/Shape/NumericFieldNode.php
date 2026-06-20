@@ -21,6 +21,6 @@ final class NumericFieldNode extends ExplicitFieldNode
 
     public function getKey(): int
     {
-        return $this->key->getValue();
+        return $this->key->value;
     }
 }

@@ -21,6 +21,6 @@ final class StringNamedFieldNode extends ExplicitFieldNode
 
     public function getKey(): string
     {
-        return $this->key->getValue();
+        return $this->key->value;
     }
 }

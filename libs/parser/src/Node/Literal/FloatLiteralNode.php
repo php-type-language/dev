@@ -12,10 +12,10 @@ namespace TypeLang\Parser\Node\Literal;
 class FloatLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
 {
     public function __construct(
-        public readonly float $value,
+        float $value,
         ?string $raw = null,
     ) {
-        parent::__construct($raw ?? (string) $this->value);
+        parent::__construct($value, $raw ?? (string) $this->value);
     }
 
     public static function parse(string $value): static
@@ -25,10 +25,5 @@ class FloatLiteralNode extends LiteralNode implements ParsableLiteralNodeInterfa
         }
 
         return new static((float) $value, $value);
-    }
-
-    public function getValue(): float
-    {
-        return $this->value;
     }
 }

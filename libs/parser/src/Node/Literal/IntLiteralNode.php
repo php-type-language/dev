@@ -20,13 +20,13 @@ class IntLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
      * @param numeric-string|null $decimal
      */
     public function __construct(
-        public readonly int $value,
+        int $value,
         ?string $raw = null,
         ?string $decimal = null,
     ) {
         $this->decimal = $decimal ?? (string) $this->value;
 
-        parent::__construct($raw ?? (string) $this->value);
+        parent::__construct($value, $raw ?? (string) $this->value);
     }
 
     public static function parse(string $value): static
@@ -75,18 +75,5 @@ class IntLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
 
         /** @var array{bool, numeric-string} */
         return [$negative, $literal];
-    }
-
-    /**
-     * @return numeric-string
-     */
-    public function getValueAsDecimalString(): string
-    {
-        return $this->decimal;
-    }
-
-    public function getValue(): int
-    {
-        return $this->value;
     }
 }

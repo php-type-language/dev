@@ -36,7 +36,7 @@ final class BoolAndNullLiteralTest extends SyntaxTestCase
         $statement = $this->parse($type);
 
         self::assertInstanceOf(BoolLiteralNode::class, $statement);
-        self::assertSame($expected, $statement->getValue());
+        self::assertSame($expected, $statement->value);
     }
 
     /**

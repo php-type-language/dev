@@ -37,7 +37,7 @@ final class FloatLiteralTest extends SyntaxTestCase
         $statement = $this->parse($type);
 
         self::assertInstanceOf(FloatLiteralNode::class, $statement);
-        self::assertSame($expected, $statement->getValue());
+        self::assertSame($expected, $statement->value);
     }
 
     public function testLeadingAndTrailingNumberCannotBothBeOmitted(): void

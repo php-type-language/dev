@@ -73,6 +73,6 @@ class ParamTag extends Tag implements
             return 'unknown';
         }
 
-        return $node->getValue();
+        return $node->value;
     }
 }

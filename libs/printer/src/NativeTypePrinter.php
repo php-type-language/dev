@@ -238,8 +238,8 @@ class NativeTypePrinter extends PrettyPrinter
             $node instanceof IntLiteralNode => 'int',
             $node instanceof NullLiteralNode => 'null',
             $node instanceof StringLiteralNode => 'string',
-            $node instanceof VariableLiteralNode => $node->getValue() === 'this' ? 'self' : 'mixed',
-            default => \get_debug_type($node->getValue()),
+            $node instanceof VariableLiteralNode => $node->value === 'this' ? 'self' : 'mixed',
+            default => \get_debug_type($node->value),
         };
     }
 

@@ -5,24 +5,28 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Node\Literal;
 
 /**
- * @template TValue of mixed = mixed
+ * @template-covariant TValue of mixed = mixed
  */
 interface LiteralNodeInterface extends \Stringable
 {
     /**
-     * Returns a PHP representation of the literal value.
+     * Gets a PHP representation of the literal value.
      *
-     * @return TValue
+     * @var TValue
      */
-    public function getValue(): mixed;
+    public mixed $value {
+        get;
+    }
 
     /**
-     * Returns the original literal value specified in the token.
+     * Gets the original literal value specified in the token.
      */
-    public function getRawValue(): string;
+    public string $raw {
+        get;
+    }
 
     /**
-     * Returns the processed ({@see getValue()}) literal value as a string.
+     * Returns the processed ({@see $value}) literal value as a string.
      */
     public function __toString(): string;
 }

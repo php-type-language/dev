@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Node;
 
-final class Identifier extends Node implements \Stringable
+/**
+ * @phpstan-consistent-constructor
+ */
+class Identifier extends Node implements \Stringable
 {
     /**
      * @var list<non-empty-string>
      */
-    private const array SPECIAL_CLASS_NAME = [
+    protected const array SPECIAL_CLASS_NAME = [
         'self',
         'parent',
         'static',
@@ -18,7 +21,7 @@ final class Identifier extends Node implements \Stringable
     /**
      * @var list<non-empty-string>
      */
-    private const array BUILTIN_TYPE_NAME = [
+    protected const array BUILTIN_TYPE_NAME = [
         'mixed',
         'string',
         'int',
@@ -52,14 +55,14 @@ final class Identifier extends Node implements \Stringable
      * Returns {@see true} in case of name contains special class reference.
      */
     public bool $isSpecial {
-        get => self::isLooksLikeSpecial($this->value);
+        get => static::isLooksLikeSpecial($this->value);
     }
 
     /**
      * Returns {@see true} in case of name contains builtin type name.
      */
     public bool $isBuiltin {
-        get => self::isLooksLikeBuiltin($this->value);
+        get => static::isLooksLikeBuiltin($this->value);
     }
 
     public function __construct(
@@ -77,7 +80,7 @@ final class Identifier extends Node implements \Stringable
             throw new \InvalidArgumentException('Name identifier cannot be empty');
         }
 
-        return new self($normalized);
+        return new static($normalized);
     }
 
     /**
@@ -86,7 +89,7 @@ final class Identifier extends Node implements \Stringable
      */
     public static function isLooksLikeSpecial(string $name): bool
     {
-        return \in_array(\strtolower($name), self::SPECIAL_CLASS_NAME, true);
+        return \in_array(\strtolower($name), static::SPECIAL_CLASS_NAME, true);
     }
 
     /**
@@ -95,7 +98,7 @@ final class Identifier extends Node implements \Stringable
      */
     public static function isLooksLikeBuiltin(string $value): bool
     {
-        return \in_array(\strtolower($value), self::BUILTIN_TYPE_NAME, true);
+        return \in_array(\strtolower($value), static::BUILTIN_TYPE_NAME, true);
     }
 
     /**
