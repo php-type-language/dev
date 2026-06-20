@@ -116,6 +116,85 @@ final class GenericTest extends SyntaxTestCase
             AST, $this->parseAndPrint('HashMap<array-key, covariant Request>'));
     }
 
+    /**
+     * Without a space after the hint-like identifier the whole token is a
+     * relative name: {@code Type<out\Some>} is {@code Type} parameterized
+     * with the {@code out\Some} type and no hint.
+     */
+    public function testHintLikeIdentifierWithoutSpaceIsRelativeName(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\NamedTypeNode
+              Name(Type)
+                Identifier(Type)
+              Stmt\Template\TemplateArgumentsListNode
+                Stmt\Template\TemplateArgumentNode
+                  Stmt\NamedTypeNode
+                    Name(out\Some)
+                      Identifier(out)
+                      Identifier(Some)
+            AST, $this->parseAndPrint('Type<out\\Some>'));
+    }
+
+    /**
+     * A space after the identifier turns it into a hint: {@code Type<out \Some>}
+     * is {@code Type} parameterized with the {@code \Some} type hinted by
+     * {@code out}.
+     */
+    public function testHintFollowedBySpaceAndFullyQualifiedName(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\NamedTypeNode
+              Name(Type)
+                Identifier(Type)
+              Stmt\Template\TemplateArgumentsListNode
+                Stmt\Template\TemplateArgumentNode
+                  Identifier(out)
+                  Stmt\NamedTypeNode
+                    Name(\Some)
+                      Identifier(Some)
+            AST, $this->parseAndPrint('Type<out \\Some>'));
+    }
+
+    /**
+     * A multi-segment relative name starting with a hint-like identifier
+     * stays a single name as long as no space separates the segments.
+     */
+    public function testHintLikeIdentifierWithoutSpaceIsNestedRelativeName(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\NamedTypeNode
+              Name(Type)
+                Identifier(Type)
+              Stmt\Template\TemplateArgumentsListNode
+                Stmt\Template\TemplateArgumentNode
+                  Stmt\NamedTypeNode
+                    Name(out\Some\Deep)
+                      Identifier(out)
+                      Identifier(Some)
+                      Identifier(Deep)
+            AST, $this->parseAndPrint('Type<out\\Some\\Deep>'));
+    }
+
+    /**
+     * A hint may also precede a relative (non fully-qualified) name when the
+     * two are separated by a space: {@code Type<out Some>}.
+     */
+    public function testHintFollowedBySpaceAndRelativeName(): void
+    {
+        self::assertSame(<<<'AST'
+            Stmt\NamedTypeNode
+              Name(Type)
+                Identifier(Type)
+              Stmt\Template\TemplateArgumentsListNode
+                Stmt\Template\TemplateArgumentNode
+                  Identifier(out)
+                  Stmt\NamedTypeNode
+                    Name(Some)
+                      Identifier(Some)
+            AST, $this->parseAndPrint('Type<out Some>'));
+    }
+
     public function testMissingTemplateArgument(): void
     {
         $this->expectParsingException('unexpected ">"');
