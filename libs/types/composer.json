@@ -1,0 +1,47 @@
+{
+    "name": "type-lang/types",
+    "type": "library",
+    "description": "An AST nodes of the TypeLang",
+    "keywords": ["language", "php", "type-lang", "ast", "nodes", "types"],
+    "license": "MIT",
+    "support": {
+        "source": "https://github.com/php-type-language/types",
+        "issues": "https://github.com/php-type-language/types/issues"
+    },
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "TypeLang\\Type\\": "src"
+        }
+    },
+    "require-dev": {
+        "jetbrains/phpstorm-attributes": "^1.2",
+        "phplrt/compiler": "^3.7",
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^12.0|^13.0",
+        "symfony/var-dumper": "^7.4|^8.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TypeLang\\Type\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev",
+            "dev-main": "2.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "platform-check": true,
+        "bin-compat": "full",
+        "preferred-install": {
+            "*": "dist"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

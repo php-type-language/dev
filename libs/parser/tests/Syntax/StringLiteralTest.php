@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Parser\Node\Literal\StringLiteralNode;
+use TypeLang\Type\Literal\StringLiteralNode;
 
 /**
  * Tests for the string literal grammar (single and double quoted strings).
  *
- * @see \TypeLang\Parser\Node\Literal\StringLiteralNode
+ * @see \TypeLang\Type\Literal\StringLiteralNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class StringLiteralTest extends SyntaxTestCase

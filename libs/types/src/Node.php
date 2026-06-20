@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TypeLang\Type;
+
+abstract class Node implements NodeInterface
+{
+    /**
+     * @var int<0, max>
+     */
+    public int $offset = 0;
+}

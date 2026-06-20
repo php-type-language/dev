@@ -278,7 +278,7 @@ TypeLang\PHPDoc\DocBlock\DocBlock {
         +description: null
         +name: "see"
         +ref: TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\TypeSymbolReference {
-          +type: TypeLang\Parser\Node\Stmt\NamedTypeNode { … }
+          +type: TypeLang\Type\Stmt\NamedTypeNode { … }
         }
       }
       2 => TypeLang\PHPDoc\DocBlock\Description\Description {
@@ -296,12 +296,12 @@ TypeLang\PHPDoc\DocBlock\DocBlock {
     1 => TypeLang\PHPDoc\DocBlock\Tag\ReturnTag\ReturnTag {
       +description: null
       +name: "return"
-      +type: TypeLang\Parser\Node\Stmt\NamedTypeNode { … }
+      +type: TypeLang\Type\Stmt\NamedTypeNode { … }
     }
     2 => TypeLang\PHPDoc\DocBlock\Tag\ThrowsTag\ThrowsTag {
       +description: null
       +name: "throws"
-      +type: TypeLang\Parser\Node\Stmt\NamedTypeNode { … }
+      +type: TypeLang\Type\Stmt\NamedTypeNode { … }
     }
   ]
 }

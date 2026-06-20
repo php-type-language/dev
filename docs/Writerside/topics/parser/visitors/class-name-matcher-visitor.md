@@ -7,7 +7,7 @@ To search for the first suitable node for an instance of a class, you can
 use the `ClassNameMatcherVisitor` visitor.
 
 ```php
-use TypeLang\Parser\Node\Name;
+use TypeLang\Type\Name;
 use TypeLang\Parser\Traverser;
 
 Traverser::new([
@@ -24,7 +24,7 @@ var_dump($finder->getFoundNode());
 > TypeLang\Parser\Node\Name {
 >   +offset: 0
 >   -parts: array:1 [
->     0 => TypeLang\Parser\Node\Identifier {
+>     0 => TypeLang\Type\Identifier {
 >       +offset: 0
 >       +value: "array"
 >     }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\MethodTag;
 
-use TypeLang\Parser\Node\Stmt\Callable\CallableParameterNode;
-use TypeLang\Parser\Node\Stmt\Callable\CallableParameterNode;
-use TypeLang\Parser\Node\Stmt\TypeStatement;
 use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
+use TypeLang\Type\Stmt\Callable\CallableParameterNode;
+use TypeLang\Type\Stmt\Callable\CallableParameterNode;
+use TypeLang\Type\Stmt\TypeStatement;
 
 /**
  * The "`@method`" tag is used in situations where a class contains the

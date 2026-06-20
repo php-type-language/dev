@@ -19,7 +19,7 @@ use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;
 use TypeLang\Mapper\Type\Parser\TypeParserInterface;
 use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;
 use TypeLang\Mapper\Type\TypeInterface;
-use TypeLang\Parser\Node\Stmt\TypeStatement;
+use TypeLang\Type\Stmt\TypeStatement;
 
 final readonly class CustomTypeBuilder implements TypeBuilderInterface
 {
@@ -61,7 +61,7 @@ For example, if we want to check that the type is called `json`, the code
 will look like this:
 
 ```php
-use TypeLang\Parser\Node\Stmt\NamedTypeNode;
+use TypeLang\Type\Stmt\NamedTypeNode;
 
 // ...
 

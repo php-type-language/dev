@@ -6,7 +6,7 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Parser\Node\Stmt\NamedTypeNode;
+use TypeLang\Type\Stmt\NamedTypeNode;
 
 /**
  * Tests that each grammar feature can be disabled through the parser options

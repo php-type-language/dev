@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\PropertyTag;
 
-use TypeLang\Parser\Node\Stmt\TypeStatement;
 use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 use TypeLang\PHPDoc\DocBlock\Tag\VariableProviderInterface;
+use TypeLang\Type\Stmt\TypeStatement;
 
 /**
  * The "`@property`" tag is used when a class or trait implements the `__get()`

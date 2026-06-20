@@ -16,6 +16,7 @@
             <directory>libs/phpdoc-standard-tags/tests</directory>
             <directory>libs/phpdoc-template-tags/tests</directory>
             <directory>libs/printer/tests</directory>
+            <directory>libs/types/tests</directory>
         </testsuite>
     </testsuites>
 
@@ -28,6 +29,7 @@
             <directory>libs/phpdoc-standard-tags/src</directory>
             <directory>libs/phpdoc-template-tags/src</directory>
             <directory>libs/printer/src</directory>
+            <directory>libs/types/src</directory>
         </include>
     </source>
 

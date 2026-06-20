@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for conditional (ternary) types.
  *
- * @see \TypeLang\Parser\Node\Stmt\TernaryConditionNode
- * @see \TypeLang\Parser\Node\Stmt\Condition\Condition
+ * @see \TypeLang\Type\Stmt\TernaryExpressionNode
+ * @see \TypeLang\Type\Stmt\Condition\Condition
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ConditionalTest extends SyntaxTestCase
@@ -25,15 +25,15 @@ final class ConditionalTest extends SyntaxTestCase
         yield 'is not' => ['A is not B ? C : D', 'NotEqualConditionNode'];
         yield 'less than' => ['A < B ? C : D', 'LessThanConditionNode'];
         yield 'greater than' => ['A > B ? C : D', 'GreaterThanConditionNode'];
-        yield 'less or equal' => ['A <= B ? C : D', 'LessOrEqualThanConditionNode'];
-        yield 'greater or equal' => ['A >= B ? C : D', 'GreaterOrEqualThanConditionNode'];
+        yield 'less or equal' => ['A <= B ? C : D', 'LessThanOrEqualConditionNode'];
+        yield 'greater or equal' => ['A >= B ? C : D', 'GreaterThanOrEqualConditionNode'];
     }
 
     #[DataProvider('conditionDataProvider')]
     public function testConditionalOperators(string $type, string $condition): void
     {
         self::assertSame(<<<AST
-            Stmt\\TernaryConditionNode
+            Stmt\\TernaryExpressionNode
               Stmt\\Condition\\{$condition}
                 Stmt\\NamedTypeNode
                   Name(A)
@@ -53,7 +53,7 @@ final class ConditionalTest extends SyntaxTestCase
     public function testConditionalWithVariableSubject(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\TernaryConditionNode
+            Stmt\TernaryExpressionNode
               Stmt\Condition\EqualConditionNode
                 Literal\VariableLiteralNode($T)
                 Stmt\NamedTypeNode

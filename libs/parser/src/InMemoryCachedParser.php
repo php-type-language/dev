@@ -8,7 +8,7 @@ use Phplrt\Contracts\Source\SourceExceptionInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
-use TypeLang\Parser\Node\Stmt\TypeStatement;
+use TypeLang\Type\Stmt\TypeStatement;
 
 final class InMemoryCachedParser implements ParserInterface
 {

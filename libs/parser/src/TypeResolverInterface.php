@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
-use TypeLang\Parser\Node\Name;
-use TypeLang\Parser\Node\Stmt\TypeStatement;
+use TypeLang\Type\Name;
+use TypeLang\Type\Stmt\TypeStatement;
 
 interface TypeResolverInterface
 {

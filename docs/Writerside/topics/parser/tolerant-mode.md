@@ -36,29 +36,29 @@ var_dump($parser->parse($content));
 ```
 
 ```php
-TypeLang\Parser\Node\Stmt\NamedTypeNode {
+TypeLang\Type\Stmt\NamedTypeNode {
   +offset: 0
-  +name: TypeLang\Parser\Node\Name {
+  +name: TypeLang\Type\Name {
     +offset: 0
     -parts: array:1 [
-      0 => TypeLang\Parser\Node\Identifier {
+      0 => TypeLang\Type\Identifier {
         +offset: 0
         +value: "Example"
       }
     ]
   }
-  +arguments: TypeLang\Parser\Node\Stmt\Template\ArgumentsListNode {
+  +arguments: TypeLang\Type\Stmt\Template\ArgumentsListNode {
     +offset: 7
     +items: array:1 [
-      0 => TypeLang\Parser\Node\Stmt\Template\ArgumentNode {
+      0 => TypeLang\Type\Stmt\Template\ArgumentNode {
         +offset: 8
         +hint: null
-        +value: TypeLang\Parser\Node\Stmt\NamedTypeNode {
+        +value: TypeLang\Type\Stmt\NamedTypeNode {
           +offset: 8
-          +name: TypeLang\Parser\Node\Name {
+          +name: TypeLang\Type\Name {
             +offset: 8
             -parts: array:1 [
-              0 => TypeLang\Parser\Node\Identifier {
+              0 => TypeLang\Type\Identifier {
                 +offset: 8
                 +value: "T"
               }

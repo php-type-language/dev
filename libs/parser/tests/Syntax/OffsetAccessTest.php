@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for the type offset access syntax (e.g. "T['offset']").
  *
- * @see \TypeLang\Parser\Node\Stmt\TypeOffsetAccessNode
+ * @see \TypeLang\Type\Stmt\TypeOffsetAccessNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class OffsetAccessTest extends SyntaxTestCase

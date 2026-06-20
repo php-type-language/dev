@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Parser\Node\Stmt\CallableTypeNode;
 use TypeLang\Parser\Parser as TypesParser;
 use TypeLang\Parser\ParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PHPDoc\Tag\Content;
 use TypeLang\PHPDoc\Tag\Factory\FactoryInterface;
+use TypeLang\Type\Stmt\CallableTypeNode;
 
 /**
  * This class is responsible for creating "`@method`" tags.

@@ -13,9 +13,9 @@ use PHPUnit\Framework\Attributes\Group;
  * Note: the AST dump renders the attribute structure (groups and names) but
  * not the attribute argument values.
  *
- * @see \TypeLang\Parser\Node\Stmt\Attribute\AttributeGroupsListNode
- * @see \TypeLang\Parser\Node\Stmt\Attribute\AttributeGroupNode
- * @see \TypeLang\Parser\Node\Stmt\Attribute\AttributeNode
+ * @see \TypeLang\Type\Stmt\Attribute\AttributeGroupsListNode
+ * @see \TypeLang\Type\Stmt\Attribute\AttributeGroupNode
+ * @see \TypeLang\Type\Stmt\Attribute\AttributeNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class AttributeTest extends SyntaxTestCase

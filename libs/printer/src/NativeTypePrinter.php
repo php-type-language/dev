@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Parser\Node\Literal\BoolLiteralNode;
-use TypeLang\Parser\Node\Literal\FloatLiteralNode;
-use TypeLang\Parser\Node\Literal\IntLiteralNode;
-use TypeLang\Parser\Node\Literal\LiteralNode;
-use TypeLang\Parser\Node\Literal\NullLiteralNode;
-use TypeLang\Parser\Node\Literal\StringLiteralNode;
-use TypeLang\Parser\Node\Literal\VariableLiteralNode;
-use TypeLang\Parser\Node\Stmt\CallableTypeNode;
-use TypeLang\Parser\Node\Stmt\ClassConstMaskNode;
-use TypeLang\Parser\Node\Stmt\ClassConstNode;
-use TypeLang\Parser\Node\Stmt\Condition\Condition;
-use TypeLang\Parser\Node\Stmt\Condition\EqualConditionNode;
-use TypeLang\Parser\Node\Stmt\Condition\NotEqualConditionNode;
-use TypeLang\Parser\Node\Stmt\ConstMaskNode;
-use TypeLang\Parser\Node\Stmt\IntersectionTypeNode;
-use TypeLang\Parser\Node\Stmt\NamedTypeNode;
-use TypeLang\Parser\Node\Stmt\TernaryConditionNode;
-use TypeLang\Parser\Node\Stmt\TypeOffsetAccessNode;
-use TypeLang\Parser\Node\Stmt\TypesListNode;
-use TypeLang\Parser\Node\Stmt\UnionTypeNode;
 use TypeLang\Printer\Exception\NonPrintableNodeException;
+use TypeLang\Type\Literal\BoolLiteralNode;
+use TypeLang\Type\Literal\FloatLiteralNode;
+use TypeLang\Type\Literal\IntLiteralNode;
+use TypeLang\Type\Literal\LiteralNode;
+use TypeLang\Type\Literal\NullLiteralNode;
+use TypeLang\Type\Literal\StringLiteralNode;
+use TypeLang\Type\Literal\VariableLiteralNode;
+use TypeLang\Type\Stmt\CallableTypeNode;
+use TypeLang\Type\Stmt\ClassConstMaskNode;
+use TypeLang\Type\Stmt\ClassConstNode;
+use TypeLang\Type\Stmt\Condition\Condition;
+use TypeLang\Type\Stmt\Condition\EqualConditionNode;
+use TypeLang\Type\Stmt\Condition\NotEqualConditionNode;
+use TypeLang\Type\Stmt\ConstMaskNode;
+use TypeLang\Type\Stmt\IntersectionTypeNode;
+use TypeLang\Type\Stmt\NamedTypeNode;
+use TypeLang\Type\Stmt\TernaryExpressionNode;
+use TypeLang\Type\Stmt\TypeOffsetAccessNode;
+use TypeLang\Type\Stmt\TypesListNode;
+use TypeLang\Type\Stmt\UnionTypeNode;
 
 class NativeTypePrinter extends PrettyPrinter
 {
@@ -107,7 +107,7 @@ class NativeTypePrinter extends PrettyPrinter
     }
 
     #[\Override]
-    protected function printTernaryType(TernaryConditionNode $node): string
+    protected function printTernaryType(TernaryExpressionNode $node): string
     {
         return $this->make(new UnionTypeNode($node->then, $node->else));
     }

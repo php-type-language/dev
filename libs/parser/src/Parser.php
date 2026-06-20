@@ -22,10 +22,10 @@ use Phplrt\Parser\ParserConfigsInterface;
 use Phplrt\Source\SourceFactory;
 use TypeLang\Parser\Exception\ParseException;
 use TypeLang\Parser\Exception\SemanticException;
-use TypeLang\Parser\Node\Literal\IntLiteralNode;
-use TypeLang\Parser\Node\Literal\StringLiteralNode;
-use TypeLang\Parser\Node\Node;
-use TypeLang\Parser\Node\Stmt\TypeStatement;
+use TypeLang\Type\Literal\IntLiteralNode;
+use TypeLang\Type\Literal\StringLiteralNode;
+use TypeLang\Type\Node;
+use TypeLang\Type\Stmt\TypeStatement;
 
 /**
  * @phpstan-type GrammarConfigArray array{

@@ -6,14 +6,14 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Parser\Node\Stmt\NamedTypeNode;
+use TypeLang\Type\Stmt\NamedTypeNode;
 
 /**
  * Tests for the grammar of type names (identifiers) and namespaces.
  *
- * @see \TypeLang\Parser\Node\Stmt\NamedTypeNode
- * @see \TypeLang\Parser\Node\Name
- * @see \TypeLang\Parser\Node\Identifier
+ * @see \TypeLang\Type\Stmt\NamedTypeNode
+ * @see \TypeLang\Type\Name
+ * @see \TypeLang\Type\Identifier
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class NameTest extends SyntaxTestCase

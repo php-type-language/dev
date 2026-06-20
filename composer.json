@@ -12,7 +12,8 @@
         "type-lang/printer": "^2.0",
         "type-lang/phpdoc": "^2.0",
         "type-lang/phpdoc-standard-tags": "^2.0",
-        "type-lang/phpdoc-template-tags": "^2.0"
+        "type-lang/phpdoc-template-tags": "^2.0",
+        "type-lang/types": "^2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.95.8",
@@ -30,7 +31,8 @@
              "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
              "TypeLang\\PHPDoc\\Tests\\": "libs/phpdoc/tests",
              "TypeLang\\PHPDoc\\Standard\\Tests\\": "libs/phpdoc-standard-tags/tests",
-             "TypeLang\\PHPDoc\\Template\\Tests\\": "libs/phpdoc-template-tags/tests"
+             "TypeLang\\PHPDoc\\Template\\Tests\\": "libs/phpdoc-template-tags/tests",
+             "TypeLang\\Type\\Tests\\": "libs/types/tests"
         }
     },
     "extra": {

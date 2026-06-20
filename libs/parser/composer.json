@@ -10,6 +10,7 @@
     },
     "require": {
         "php": "^8.4",
+        "type-lang/types": "^2.0",
         "phplrt/lexer": "^3.7",
         "phplrt/parser": "^3.7",
         "phplrt/source": "^3.7"

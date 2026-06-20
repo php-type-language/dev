@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-use TypeLang\Parser\Node;
-use TypeLang\Parser\Exception;
-use TypeLang\Parser\Exception\SemanticException;
 use TypeLang\Parser\Exception\FeatureNotAllowedException;
+use TypeLang\Parser\Exception\SemanticException;
+use TypeLang\Type;
 
 /**
  * @var array{
@@ -277,16 +276,16 @@ return [
     ],
     'reducers' => [
         0 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Name($children, true);
+            return new Type\Name($children, true);
         },
         1 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Name($children, false);
+            return new Type\Name($children, false);
         },
         3 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return Node\Identifier::createFromString($children->getValue());
+            return Type\Identifier::createFromString($children->getValue());
         },
         16 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return Node\Identifier::createFromString($children->getValue());
+            return Type\Identifier::createFromString($children->getValue());
         },
         17 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated
@@ -298,27 +297,27 @@ return [
             return $children;
         },
         18 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\ConstMaskNode($children[0]);
+            return new Type\Stmt\ConstMaskNode($children[0]);
         },
         19 => static function (\Phplrt\Parser\Context $ctx, $children) {
             // <ClassName> :: <ConstPrefix> "*"
             if (\count($children) === 3) {
-                return new Node\Stmt\ClassConstMaskNode(
+                return new Type\Stmt\ClassConstMaskNode(
                     $children[0],
                     $children[1],
                 );
             }
 
             // <ClassName> :: <ConstName>
-            if ($children[1] instanceof Node\Identifier) {
-                return new Node\Stmt\ClassConstNode(
+            if ($children[1] instanceof Type\Identifier) {
+                return new Type\Stmt\ClassConstNode(
                     $children[0],
                     $children[1],
                 );
             }
 
             // <ClassName> :: "*"
-            return new Node\Stmt\ClassConstMaskNode($children[0]);
+            return new Type\Stmt\ClassConstMaskNode($children[0]);
         },
         21 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
@@ -330,46 +329,46 @@ return [
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Node\Literal\FloatLiteralNode::parse($token->getValue());
+            return Type\Literal\FloatLiteralNode::parse($token->getValue());
         },
         23 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return $this->integerPool[$token] ??= Node\Literal\IntLiteralNode::parse($token->getValue());
+            return $this->integerPool[$token] ??= Type\Literal\IntLiteralNode::parse($token->getValue());
         },
         24 => static function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Node\Literal\BoolLiteralNode::parse($token->getValue());
+            return Type\Literal\BoolLiteralNode::parse($token->getValue());
         },
         25 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Literal\NullLiteralNode($children->getValue());
+            return new Type\Literal\NullLiteralNode($children->getValue());
         },
         28 => static function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Node\Literal\VariableLiteralNode::parse($token->getValue());
+            return Type\Literal\VariableLiteralNode::parse($token->getValue());
         },
         29 => static function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Node\Literal\VariableLiteralNode::parse($token->getValue());
+            return Type\Literal\VariableLiteralNode::parse($token->getValue());
         },
         30 => static function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Node\Literal\StringLiteralNode::createFromDoubleQuotedString($token->getValue());
+            return Type\Literal\StringLiteralNode::createFromDoubleQuotedString($token->getValue());
         },
         31 => static function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Node\Literal\StringLiteralNode::createFromSingleQuotedString($token->getValue());
+            return Type\Literal\StringLiteralNode::createFromSingleQuotedString($token->getValue());
         },
         45 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated
@@ -377,7 +376,7 @@ return [
 
             $hint = $attributes = null;
 
-            if (\reset($children) instanceof Node\Stmt\Attribute\AttributeGroupsListNode) {
+            if (\reset($children) instanceof Type\Stmt\Attribute\AttributeGroupsListNode) {
                 if ($this->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('template argument attributes', $offset);
                 }
@@ -395,7 +394,7 @@ return [
                 $hint = \reset($children);
             }
 
-            return new Node\Stmt\Template\TemplateArgumentNode(
+            return new Type\Stmt\Template\TemplateArgumentNode(
                 $type,
                 $hint,
                 $attributes,
@@ -409,13 +408,13 @@ return [
                 throw FeatureNotAllowedException::fromFeature('template arguments', $offset);
             }
 
-            return new Node\Stmt\Template\TemplateArgumentsListNode($children);
+            return new Type\Stmt\Template\TemplateArgumentsListNode($children);
         },
         54 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Attribute\AttributeGroupsListNode($children);
+            return new Type\Stmt\Attribute\AttributeGroupsListNode($children);
         },
         60 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Callable\CallableParametersListNode($children);
+            return new Type\Stmt\Callable\CallableParametersListNode($children);
         },
         66 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated
@@ -427,11 +426,11 @@ return [
                 throw FeatureNotAllowedException::fromFeature('callable types', $offset);
             }
 
-            $parameters = isset($children[0]) && $children[0] instanceof Node\Stmt\Callable\CallableParametersListNode
+            $parameters = isset($children[0]) && $children[0] instanceof Type\Stmt\Callable\CallableParametersListNode
                 ? \array_shift($children)
-                : new Node\Stmt\Callable\CallableParametersListNode();
+                : new Type\Stmt\Callable\CallableParametersListNode();
 
-            return new Node\Stmt\CallableTypeNode(
+            return new Type\Stmt\CallableTypeNode(
                 name: $name,
                 parameters: $parameters,
                 type: $children[0] ?? null,
@@ -443,7 +442,7 @@ return [
 
             $result = \end($children);
 
-            if ($children[0] instanceof Node\Stmt\Attribute\AttributeGroupsListNode) {
+            if ($children[0] instanceof Type\Stmt\Attribute\AttributeGroupsListNode) {
                 if ($this->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('callable parameter attributes', $offset);
                 }
@@ -512,7 +511,7 @@ return [
             return $result;
         },
         80 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Callable\CallableParameterNode(null, $children[0]);
+            return new Type\Stmt\Callable\CallableParameterNode(null, $children[0]);
         },
         92 => static function (\Phplrt\Parser\Context $ctx, $children) {
             if (\count($children) === 1) {
@@ -547,7 +546,7 @@ return [
             return $result;
         },
         96 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Callable\CallableParameterNode($children[0]);
+            return new Type\Stmt\Callable\CallableParameterNode($children[0]);
         },
         108 => static function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated
@@ -557,7 +556,7 @@ return [
             $implicit = false;
 
             foreach ($children as $field) {
-                if ($field instanceof Node\Stmt\Shape\ExplicitFieldNode) {
+                if ($field instanceof Type\Stmt\Shape\ExplicitFieldNode) {
                     $key = $field->index;
 
                     if (\in_array($key, $explicit, true)) {
@@ -574,14 +573,14 @@ return [
                 throw SemanticException::fromShapeMixedKeys($offset);
             }
 
-            return new Node\Stmt\Shape\FieldsListNode($children);
+            return new Type\Stmt\Shape\FieldsListNode($children);
         },
         120 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated
             $offset = $ctx->lastProcessedToken->getOffset();
 
             if ($children === []) {
-                return new Node\Stmt\Shape\FieldsListNode();
+                return new Type\Stmt\Shape\FieldsListNode();
             }
 
             if ($this->shapes === false) {
@@ -590,13 +589,13 @@ return [
 
             $parameters = null;
 
-            if (\end($children) instanceof Node\Stmt\Template\TemplateArgumentsListNode) {
+            if (\end($children) instanceof Type\Stmt\Template\TemplateArgumentsListNode) {
                 $parameters = \array_pop($children);
             }
 
-            $fields = \reset($children) instanceof Node\Stmt\Shape\FieldsListNode
+            $fields = \reset($children) instanceof Type\Stmt\Shape\FieldsListNode
                 ? \array_shift($children)
-                : new Node\Stmt\Shape\FieldsListNode();
+                : new Type\Stmt\Shape\FieldsListNode();
 
             if ($children !== []) {
                 $fields->sealed = false;
@@ -610,7 +609,7 @@ return [
 
             $result = \end($children);
 
-            if ($children[0] instanceof Node\Stmt\Attribute\AttributeGroupsListNode) {
+            if ($children[0] instanceof Type\Stmt\Attribute\AttributeGroupsListNode) {
                 if ($this->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('shape field attributes', $offset);
                 }
@@ -628,34 +627,34 @@ return [
             $optional = \count($children) === 2;
 
             return match (true) {
-                $name instanceof Node\Literal\IntLiteralNode
-                    => new Node\Stmt\Shape\NumericFieldNode($name, $value, $optional),
-                $name instanceof Node\Literal\StringLiteralNode
-                    => new Node\Stmt\Shape\StringNamedFieldNode($name, $value, $optional),
-                $name instanceof Node\Stmt\ClassConstMaskNode
-                    => new Node\Stmt\Shape\ClassConstMaskFieldNode($name, $value, $optional),
-                $name instanceof Node\Stmt\ConstMaskNode
-                    => new Node\Stmt\Shape\ConstMaskFieldNode($name, $value, $optional),
-                default => new Node\Stmt\Shape\NamedFieldNode($name, $value, $optional),
+                $name instanceof Type\Literal\IntLiteralNode
+                    => new Type\Stmt\Shape\NumericFieldNode($name, $value, $optional),
+                $name instanceof Type\Literal\StringLiteralNode
+                    => new Type\Stmt\Shape\StringNamedFieldNode($name, $value, $optional),
+                $name instanceof Type\Stmt\ClassConstMaskNode
+                    => new Type\Stmt\Shape\ClassConstMaskFieldNode($name, $value, $optional),
+                $name instanceof Type\Stmt\ConstMaskNode
+                    => new Type\Stmt\Shape\ConstMaskFieldNode($name, $value, $optional),
+                default => new Type\Stmt\Shape\NamedFieldNode($name, $value, $optional),
             };
         },
         128 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Shape\ImplicitFieldNode($children[0]);
+            return new Type\Stmt\Shape\ImplicitFieldNode($children[0]);
         },
         138 => static function (\Phplrt\Parser\Context $ctx, $children) {
             $fields = $parameters = null;
 
             // Shape fields
-            if (\end($children) instanceof Node\Stmt\Shape\FieldsListNode) {
+            if (\end($children) instanceof Type\Stmt\Shape\FieldsListNode) {
                 $fields = \array_pop($children);
             }
 
             // Template parameters
-            if (\end($children) instanceof Node\Stmt\Template\TemplateArgumentsListNode) {
+            if (\end($children) instanceof Type\Stmt\Template\TemplateArgumentsListNode) {
                 $parameters = \array_pop($children);
             }
 
-            return new Node\Stmt\NamedTypeNode(
+            return new Type\Stmt\NamedTypeNode(
                 $children[0],
                 $parameters,
                 $fields,
@@ -676,27 +675,27 @@ return [
             }
 
             $condition = match ($children[1]->getName()) {
-                'T_EQ' => new Node\Stmt\Condition\EqualConditionNode(
+                'T_EQ' => new Type\Stmt\Condition\EqualConditionNode(
                     $children[0],
                     $children[2],
                 ),
-                'T_NEQ' => new Node\Stmt\Condition\NotEqualConditionNode(
+                'T_NEQ' => new Type\Stmt\Condition\NotEqualConditionNode(
                     $children[0],
                     $children[2],
                 ),
-                'T_GTE' => new Node\Stmt\Condition\GreaterOrEqualThanConditionNode(
+                'T_GTE' => new Type\Stmt\Condition\GreaterThanOrEqualConditionNode(
                     $children[0],
                     $children[2],
                 ),
-                'T_ANGLE_BRACKET_CLOSE' => new Node\Stmt\Condition\GreaterThanConditionNode(
+                'T_ANGLE_BRACKET_CLOSE' => new Type\Stmt\Condition\GreaterThanConditionNode(
                     $children[0],
                     $children[2],
                 ),
-                'T_LTE' => new Node\Stmt\Condition\LessOrEqualThanConditionNode(
+                'T_LTE' => new Type\Stmt\Condition\LessThanOrEqualConditionNode(
                     $children[0],
                     $children[2],
                 ),
-                'T_ANGLE_BRACKET_OPEN' => new Node\Stmt\Condition\LessThanConditionNode(
+                'T_ANGLE_BRACKET_OPEN' => new Type\Stmt\Condition\LessThanConditionNode(
                     $children[0],
                     $children[2],
                 ),
@@ -706,25 +705,25 @@ return [
                 ),
             };
 
-            return new Node\Stmt\TernaryConditionNode(
+            return new Type\Stmt\TernaryExpressionNode(
                 $condition,
                 $children[3],
                 $children[4],
             );
         },
         155 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Attribute\AttributeGroupNode($children);
+            return new Type\Stmt\Attribute\AttributeGroupNode($children);
         },
         161 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Attribute\AttributeNode(
+            return new Type\Stmt\Attribute\AttributeNode(
                 $children[0],
             );
         },
         165 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Attribute\AttributeArgumentsListNode($children);
+            return new Type\Stmt\Attribute\AttributeArgumentsListNode($children);
         },
         167 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Node\Stmt\Attribute\AttributeArgumentNode($children[0]);
+            return new Type\Stmt\Attribute\AttributeArgumentNode($children[0]);
         },
         176 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated
@@ -735,7 +734,7 @@ return [
                     throw FeatureNotAllowedException::fromFeature('union types', $offset);
                 }
 
-                return new Node\Stmt\UnionTypeNode($children[0], $children[1]);
+                return new Type\Stmt\UnionTypeNode($children[0], $children[1]);
             }
 
             return $children;
@@ -749,14 +748,14 @@ return [
                     throw FeatureNotAllowedException::fromFeature('intersection types', $offset);
                 }
 
-                return new Node\Stmt\IntersectionTypeNode($children[0], $children[1]);
+                return new Type\Stmt\IntersectionTypeNode($children[0], $children[1]);
             }
 
             return $children;
         },
         185 => static function (\Phplrt\Parser\Context $ctx, $children) {
             if (\is_array($children)) {
-                return new Node\Stmt\NullableTypeNode($children[1]);
+                return new Type\Stmt\NullableTypeNode($children[1]);
             }
 
             return $children;
@@ -775,15 +774,15 @@ return [
                             throw FeatureNotAllowedException::fromFeature('square bracket list types', $offset);
                         }
 
-                        $statement = new Node\Stmt\TypesListNode($statement);
+                        $statement = new Type\Stmt\TypesListNode($statement);
                         break;
                     // In case of offset access type
-                    case $child instanceof Node\Stmt\TypeStatement:
+                    case $child instanceof Type\Stmt\TypeStatement:
                         if ($this->offsets === false) {
                             throw FeatureNotAllowedException::fromFeature('type offsets', $offset);
                         }
 
-                        $statement = new Node\Stmt\TypeOffsetAccessNode($statement, $child);
+                        $statement = new Type\Stmt\TypeOffsetAccessNode($statement, $child);
                         break;
                     default:
                         throw new SemanticException($offset, \sprintf(

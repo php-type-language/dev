@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for the legacy square bracket list syntax (e.g. "T[]").
  *
- * @see \TypeLang\Parser\Node\Stmt\TypesListNode
+ * @see \TypeLang\Type\Stmt\TypesListNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ListTest extends SyntaxTestCase

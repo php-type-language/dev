@@ -8,6 +8,7 @@ includes:
   - libs/phpdoc-standard-tags/phpstan.neon
   - libs/phpdoc-template-tags/phpstan.neon
   - libs/printer/phpstan.neon
+  - libs/types/phpstan.neon
 parameters:
   level: max
   strictRules:

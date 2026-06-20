@@ -6,12 +6,12 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Parser\Node\Literal\FloatLiteralNode;
+use TypeLang\Type\Literal\FloatLiteralNode;
 
 /**
  * Tests for the float literal grammar (basic and scientific notation).
  *
- * @see \TypeLang\Parser\Node\Literal\FloatLiteralNode
+ * @see \TypeLang\Type\Literal\FloatLiteralNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class FloatLiteralTest extends SyntaxTestCase

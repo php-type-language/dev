@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
-use TypeLang\Parser\Node\FullQualifiedName;
-use TypeLang\Parser\Node\Name;
-use TypeLang\Parser\Node\Stmt\TypeStatement;
 use TypeLang\Parser\Traverser\TypeMapVisitor;
+use TypeLang\Type\FullQualifiedName;
+use TypeLang\Type\Name;
+use TypeLang\Type\Stmt\TypeStatement;
 
 final class TypeResolver implements TypeResolverInterface
 {
