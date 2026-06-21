@@ -28,11 +28,11 @@ final class FeatureToggleTest extends SyntaxTestCase
         yield 'generics' => [['generics' => false], 'T<U>', 'Template arguments not allowed'];
         yield 'shapes' => [['shapes' => false], 'array{a: int}', 'Shape fields not allowed'];
         yield 'callables' => [['callables' => false], 'foo(): void', 'Callable types not allowed'];
-        yield 'union' => [['union' => false], 'A|B', 'Union types not allowed'];
-        yield 'intersection' => [['intersection' => false], 'A&B', 'Intersection types not allowed'];
-        yield 'list' => [['list' => false], 'int[]', 'Square bracket list types not allowed'];
+        yield 'unions' => [['unions' => false], 'A|B', 'Union types not allowed'];
+        yield 'intersections' => [['intersections' => false], 'A&B', 'Intersection types not allowed'];
+        yield 'lists' => [['lists' => false], 'int[]', 'Square bracket list types not allowed'];
         yield 'offsets' => [['offsets' => false], 'T[U]', 'Type offsets not allowed'];
-        yield 'conditional' => [['conditional' => false], 'A is B ? C : D', 'Conditional expressions not allowed'];
+        yield 'conditions' => [['conditions' => false], 'A is B ? C : D', 'Conditional expressions not allowed'];
         yield 'attributes' => [['attributes' => false], 'T<#[a] U>', 'Template argument attributes not allowed'];
         yield 'hints' => [['hints' => false], 'T<in U>', 'Template argument hints not allowed'];
     }
@@ -52,14 +52,15 @@ final class FeatureToggleTest extends SyntaxTestCase
     {
         $this->expectParsingException();
 
-        $this->parse('int and more text', ['tolerant' => false]);
+        $this->parse('int and more text');
     }
 
     public function testTrailingTextIsAllowedInTolerantMode(): void
     {
-        $statement = $this->parse('int and more text', ['tolerant' => true]);
+        $result = $this->parseTolerant('int and more text');
+        $type = $result->type;
 
-        self::assertInstanceOf(NamedTypeNode::class, $statement);
-        self::assertSame('int', $statement->name->toString());
+        self::assertInstanceOf(NamedTypeNode::class, $type);
+        self::assertSame('int', $type->name->toString());
     }
 }

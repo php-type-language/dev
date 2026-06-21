@@ -4,7 +4,7 @@ ShapeFields -> {
         return new Node\Type\Shape\FieldsListNode();
     }
 
-    if ($this->shapes === false) {
+    if ($this->features->shapes === false) {
         throw FeatureNotAllowedException::fromFeature('shape fields', $offset);
     }
 
@@ -70,7 +70,7 @@ ShapeField -> {
     $result = \end($children);
 
     if ($children[0] instanceof Node\Type\Attribute\AttributeGroupsListNode) {
-        if ($this->attributes === false) {
+        if ($this->features->attributes === false) {
             throw FeatureNotAllowedException::fromFeature('shape field attributes', $offset);
         }
 

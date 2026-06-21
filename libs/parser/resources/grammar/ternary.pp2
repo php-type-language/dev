@@ -6,7 +6,7 @@ TernaryExpressionOrLogicalType -> {
         return $children[0];
     }
 
-    if ($this->conditional === false) {
+    if ($this->features->conditions === false) {
         throw FeatureNotAllowedException::fromFeature('conditional expressions', $offset);
     }
 

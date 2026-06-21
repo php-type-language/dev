@@ -292,7 +292,7 @@ return [
             // The "$offset" variable is an auto-generated
             $offset = $ctx->lastProcessedToken->getOffset();
 
-            if ($this->literals === false) {
+            if ($this->features->literals === false) {
                 throw FeatureNotAllowedException::fromFeature('literal values', $offset);
             }
             return $children;
@@ -378,7 +378,7 @@ return [
             $hint = $attributes = null;
 
             if (\reset($children) instanceof Node\Type\Attribute\AttributeGroupsListNode) {
-                if ($this->attributes === false) {
+                if ($this->features->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('template argument attributes', $offset);
                 }
 
@@ -388,7 +388,7 @@ return [
             $type = \array_pop($children);
 
             if (\reset($children) !== false) {
-                if ($this->hints === false) {
+                if ($this->features->hints === false) {
                     throw FeatureNotAllowedException::fromFeature('template argument hints', $offset);
                 }
 
@@ -405,7 +405,7 @@ return [
             // The "$offset" variable is an auto-generated
             $offset = $ctx->lastProcessedToken->getOffset();
 
-            if ($this->generics === false) {
+            if ($this->features->generics === false) {
                 throw FeatureNotAllowedException::fromFeature('template arguments', $offset);
             }
 
@@ -423,7 +423,7 @@ return [
 
             $name = \array_shift($children);
 
-            if ($this->callables === false) {
+            if ($this->features->callables === false) {
                 throw FeatureNotAllowedException::fromFeature('callable types', $offset);
             }
 
@@ -444,7 +444,7 @@ return [
             $result = \end($children);
 
             if ($children[0] instanceof Node\Type\Attribute\AttributeGroupsListNode) {
-                if ($this->attributes === false) {
+                if ($this->features->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('callable parameter attributes', $offset);
                 }
 
@@ -584,7 +584,7 @@ return [
                 return new Node\Type\Shape\FieldsListNode();
             }
 
-            if ($this->shapes === false) {
+            if ($this->features->shapes === false) {
                 throw FeatureNotAllowedException::fromFeature('shape fields', $offset);
             }
 
@@ -611,7 +611,7 @@ return [
             $result = \end($children);
 
             if ($children[0] instanceof Node\Type\Attribute\AttributeGroupsListNode) {
-                if ($this->attributes === false) {
+                if ($this->features->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('shape field attributes', $offset);
                 }
 
@@ -673,7 +673,7 @@ return [
                 return $children[0];
             }
 
-            if ($this->conditional === false) {
+            if ($this->features->conditions === false) {
                 throw FeatureNotAllowedException::fromFeature('conditional expressions', $offset);
             }
 
@@ -733,7 +733,7 @@ return [
             $offset = $ctx->lastProcessedToken->getOffset();
 
             if (\count($children) === 2) {
-                if ($this->union === false) {
+                if ($this->features->unions === false) {
                     throw FeatureNotAllowedException::fromFeature('union types', $offset);
                 }
 
@@ -747,7 +747,7 @@ return [
             $offset = $ctx->lastProcessedToken->getOffset();
 
             if (\count($children) === 2) {
-                if ($this->intersection === false) {
+                if ($this->features->intersections === false) {
                     throw FeatureNotAllowedException::fromFeature('intersection types', $offset);
                 }
 
@@ -773,7 +773,7 @@ return [
                 switch (true) {
                     // In case of list type
                     case $child === true:
-                        if ($this->list === false) {
+                        if ($this->features->lists === false) {
                             throw FeatureNotAllowedException::fromFeature('square bracket list types', $offset);
                         }
 
@@ -781,7 +781,7 @@ return [
                         break;
                     // In case of offset access type
                     case $child instanceof Node\Type\TypeNode:
-                        if ($this->offsets === false) {
+                        if ($this->features->offsets === false) {
                             throw FeatureNotAllowedException::fromFeature('type offsets', $offset);
                         }
 

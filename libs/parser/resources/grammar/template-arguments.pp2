@@ -1,6 +1,6 @@
 
 TemplateArguments -> {
-    if ($this->generics === false) {
+    if ($this->features->generics === false) {
         throw FeatureNotAllowedException::fromFeature('template arguments', $offset);
     }
 
@@ -17,7 +17,7 @@ TemplateArgument -> {
     $hint = $attributes = null;
 
     if (\reset($children) instanceof Node\Type\Attribute\AttributeGroupsListNode) {
-        if ($this->attributes === false) {
+        if ($this->features->attributes === false) {
             throw FeatureNotAllowedException::fromFeature('template argument attributes', $offset);
         }
 
@@ -27,7 +27,7 @@ TemplateArgument -> {
     $type = \array_pop($children);
 
     if (\reset($children) !== false) {
-        if ($this->hints === false) {
+        if ($this->features->hints === false) {
             throw FeatureNotAllowedException::fromFeature('template argument hints', $offset);
         }
 

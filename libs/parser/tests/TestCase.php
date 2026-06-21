@@ -8,7 +8,9 @@ use JetBrains\PhpStorm\Language;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use TypeLang\Node\Type\TypeNode;
+use TypeLang\Parser\ParsedResult;
 use TypeLang\Parser\Parser;
+use TypeLang\Parser\ParserFeatures;
 use TypeLang\Parser\ParserInterface;
 use TypeLang\Parser\Traverser;
 
@@ -44,7 +46,7 @@ abstract class TestCase extends BaseTestCase
             return $this->parser;
         }
 
-        return new Parser(...$options);
+        return new Parser(new ParserFeatures(...$options));
     }
 
     /**
@@ -56,6 +58,17 @@ abstract class TestCase extends BaseTestCase
         $parser = $this->parser($options);
 
         return $parser->parse($code);
+    }
+
+    /**
+     * @param ParserOptionsType $options
+     * @throws \Throwable
+     */
+    protected function parseTolerant(#[Language('PHP')] string $code, array $options = []): ParsedResult
+    {
+        $parser = $this->parser($options);
+
+        return $parser->parseTolerant($code);
     }
 
     protected function print(TypeNode $statement): string
@@ -72,8 +85,19 @@ abstract class TestCase extends BaseTestCase
      */
     protected function parseAndPrint(#[Language('PHP')] string $code, array $options = []): string
     {
-        $statement = $this->parse($code, $options);
+        $type = $this->parse($code, $options);
 
-        return $this->print($statement);
+        return $this->print($type);
+    }
+
+    /**
+     * @param ParserOptionsType $options
+     * @throws \Throwable
+     */
+    protected function tolerantParseAndPrint(#[Language('PHP')] string $code, array $options = []): string
+    {
+        $result = $this->tolerant($code, $options);
+
+        return $this->print($result->type);
     }
 }

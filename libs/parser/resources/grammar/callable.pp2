@@ -2,7 +2,7 @@
 CallableType -> {
     $name = \array_shift($children);
 
-    if ($this->callables === false) {
+    if ($this->features->callables === false) {
         throw FeatureNotAllowedException::fromFeature('callable types', $offset);
     }
 
@@ -33,7 +33,7 @@ CallableParameter -> {
     $result = \end($children);
 
     if ($children[0] instanceof Node\Type\Attribute\AttributeGroupsListNode) {
-        if ($this->attributes === false) {
+        if ($this->features->attributes === false) {
             throw FeatureNotAllowedException::fromFeature('callable parameter attributes', $offset);
         }
 
