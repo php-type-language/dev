@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\ThrowsTag;
 
-use TypeLang\Parser\Parser as TypesParser;
-use TypeLang\Parser\ParserInterface as TypesParserInterface;
+use TypeLang\Parser\TypeParser as TypesParser;
+use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
 use TypeLang\PHPDoc\Parser\Content\Stream;
 use TypeLang\PHPDoc\Parser\Content\TypeReader;

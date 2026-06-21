@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\PHPDoc\Standard;
 
 use TypeLang\Node\Type\CallableTypeNode;
-use TypeLang\Parser\Parser as TypesParser;
-use TypeLang\Parser\ParserInterface as TypesParserInterface;
+use TypeLang\Parser\TypeParser as TypesParser;
+use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PHPDoc\Tag\Content;
 use TypeLang\PHPDoc\Tag\Factory\FactoryInterface;

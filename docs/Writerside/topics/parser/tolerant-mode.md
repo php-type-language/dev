@@ -9,7 +9,7 @@ Such a mode will be convenient to use, for example, for analyzing phpdoc
 docblocks, separating types from their descriptions.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     // enable "tolerant" mode
     tolerant: true,
 );
@@ -19,7 +19,7 @@ As an example, let's try to parse the contents of the "`@return`" docblock.
 Similar actions can be implemented for other annotations.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     tolerant: true,
 );
 

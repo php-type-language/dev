@@ -11,7 +11,7 @@ use Phplrt\Source\SourceFactory;
 use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 
-final class InMemoryCachedParser implements ParserInterface
+final class InMemoryTypeParser implements TypeParserInterface
 {
     /**
      * @var array<non-empty-string, TypeNode>
@@ -24,7 +24,7 @@ final class InMemoryCachedParser implements ParserInterface
     private array $sequences = [];
 
     public function __construct(
-        private readonly ParserInterface $parser = new Parser(),
+        private readonly TypeParserInterface $parser = new TypeParser(),
         private readonly SourceFactoryInterface $sources = new SourceFactory(),
     ) {}
 

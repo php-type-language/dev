@@ -32,7 +32,7 @@ composer require type-lang/printer
 ## Quick Start
 
 ```php
-$parser = new \TypeLang\Parser\Parser();
+$parser = new \TypeLang\Parser\TypeParser();
 $type = $parser->parseType(<<<'PHP'
     array{
         field1: (callable(Example,int):mixed),

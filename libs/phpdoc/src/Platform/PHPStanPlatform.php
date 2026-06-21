@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Platform;
 
-use TypeLang\Parser\ParserInterface as TypesParserInterface;
+use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\MethodTag\MethodTagFactory;
 use TypeLang\PHPDoc\DocBlock\Tag\ParamTag\ParamTagFactory;
 use TypeLang\PHPDoc\DocBlock\Tag\PropertyTag\PropertyReadTagFactory;

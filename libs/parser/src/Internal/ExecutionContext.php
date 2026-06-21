@@ -22,7 +22,7 @@ use TypeLang\Node\Type\Literal\IntLiteralNode;
 use TypeLang\Node\Type\Literal\StringLiteralNode;
 use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\ParsedResult;
-use TypeLang\Parser\ParserFeatures;
+use TypeLang\Parser\TypeParserFeatures;
 
 /**
  * @phpstan-type GrammarConfigArrayType array{
@@ -71,7 +71,7 @@ final readonly class ExecutionContext
         /**
          * @api this property is accessible inside the grammar reducers
          */
-        protected ParserFeatures $features,
+        protected TypeParserFeatures $features,
         /**
          * @api this property is accessible inside the grammar reducers
          */

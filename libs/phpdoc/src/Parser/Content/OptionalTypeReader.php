@@ -7,7 +7,7 @@ namespace TypeLang\PHPDoc\Parser\Content;
 use TypeLang\Node\FullQualifiedName;
 use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
-use TypeLang\Parser\ParserInterface as TypesParserInterface;
+use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Exception\InvalidTagException;
 
 /**

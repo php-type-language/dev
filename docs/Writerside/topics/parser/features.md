@@ -20,7 +20,7 @@ implement more strict functionality.
 To enable or disable literals, use the `literals: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     literals: false,
 );
 
@@ -38,7 +38,7 @@ To enable or disable template arguments (generics), use
 the `generics: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     generics: false,
 );
 
@@ -56,7 +56,7 @@ To enable or disable template argument hints (argument modifiers), use the
 `hints: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     hints: false,
 );
 
@@ -74,7 +74,7 @@ To enable or disable type lists (legacy/short syntax for iterable types), use
 the `list: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     list: false,
 );
 
@@ -93,7 +93,7 @@ Square bracket list types not allowed in "Example[]"
 To enable or disable type offsets, use the `offsets: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     offsets: false,
 );
 
@@ -111,7 +111,7 @@ Type offsets not allowed in "Example[Type]"
 To enable or disable callables (delegates), use the `callables: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     callables: false,
 );
 
@@ -128,7 +128,7 @@ Callable types not allowed in "fn()"
 To enable or disable shape fields, use the `shapes: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     shapes: false,
 );
 
@@ -150,7 +150,7 @@ Shape fields not allowed in "array{\n foo: T,\n ...\n}"
 To enable or disable union types, use the `union: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     union: false,
 );
 
@@ -167,7 +167,7 @@ Union types not allowed in "T|U"
 To enable or disable union types, use the `intersection: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     intersection: false,
 );
 
@@ -184,7 +184,7 @@ Intersection types not allowed in "T&U"
 To enable or disable conditional types (expressions), use the `conditional: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     conditional: false,
 );
 
@@ -201,7 +201,7 @@ Conditional expressions not allowed in "T is U ? 23 : 42"
 To enable or disable attributes, use the `attributes: bool` flag.
 
 ```php
-$parser = new TypeLang\Parser\Parser(
+$parser = new TypeLang\Parser\TypeParser(
     attributes: false,
 );
 

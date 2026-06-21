@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Platform;
 
-use TypeLang\Parser\Parser as TypesParser;
-use TypeLang\Parser\ParserInterface as TypesParserInterface;
+use TypeLang\Parser\TypeParser as TypesParser;
+use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
 
 abstract class Platform implements PlatformInterface

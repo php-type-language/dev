@@ -36,7 +36,7 @@ composer require type-lang/parser
 ## Quick Start
 
 ```php
-$parser = new \TypeLang\Parser\Parser();
+$parser = new \TypeLang\Parser\TypeParser();
 
 $type = $parser->parse(<<<'PHP'
     array{

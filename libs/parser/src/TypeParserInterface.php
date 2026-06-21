@@ -11,7 +11,7 @@ use TypeLang\Parser\Exception\ParserExceptionInterface;
 /**
  * @template-contravariant TSource of mixed = mixed
  */
-interface ParserInterface
+interface TypeParserInterface
 {
     /**
      * Parses the provided source code and returns a complete AST.

@@ -17,7 +17,7 @@ use TypeLang\Parser\Exception\ParseException;
 use TypeLang\Parser\Exception\SemanticException;
 use TypeLang\Parser\Internal\ExecutionContext;
 
-final class Parser implements ParserInterface
+final class TypeParser implements TypeParserInterface
 {
     private ExecutionContext $strict {
         get => $this->strict ??= new ExecutionContext($this->features, false);
@@ -28,7 +28,7 @@ final class Parser implements ParserInterface
     }
 
     public function __construct(
-        public readonly ParserFeatures $features = new ParserFeatures(),
+        public readonly TypeParserFeatures $features = new TypeParserFeatures(),
         private readonly SourceFactoryInterface $sources = new SourceFactory(),
     ) {}
 

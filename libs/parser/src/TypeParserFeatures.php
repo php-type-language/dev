@@ -20,7 +20,7 @@ namespace TypeLang\Parser;
  * // => Error: Conditional expressions not allowed in ...
  * ```
  */
-final readonly class ParserFeatures
+final readonly class TypeParserFeatures
 {
     public const bool CONDITIONAL_FEATURES_DEFAULT_VALUE = true;
     public const bool SHAPES_FEATURES_DEFAULT_VALUE = true;

@@ -40,7 +40,7 @@ contains an `print()` method for displaying ASTs as formatted strings.
 <tab title="PrettyPrinter">
 
 ```php
-$parser = new TypeLang\Parser\Parser();
+$parser = new TypeLang\Parser\TypeParser();
 $printer = new TypeLang\Printer\PrettyPrinter();
 
 $result = $parser->parse(<<<'PHP'
@@ -64,7 +64,7 @@ echo $printer->print($result);
 <tab title="NativeTypePrinter">
 
 ```php
-$parser = new TypeLang\Parser\Parser();
+$parser = new TypeLang\Parser\TypeParser();
 $printer = new TypeLang\Printer\NativeTypePrinter();
 
 $result = $parser->parse(<<<'PHP'
@@ -89,7 +89,7 @@ echo $printer->print($result);
 <tab title="PrettyPrinter">
 
 ```php
-$parser = new TypeLang\Parser\Parser();
+$parser = new TypeLang\Parser\TypeParser();
 $printer = new TypeLang\Printer\PrettyPrinter();
 
 $result = $parser->parse(<<<'PHP'
@@ -108,7 +108,7 @@ echo $printer->print($result);
 <tab title="NativeTypePrinter">
 
 ```php
-$parser = new TypeLang\Parser\Parser();
+$parser = new TypeLang\Parser\TypeParser();
 $printer = new TypeLang\Printer\NativeTypePrinter();
 
 $result = $parser->parse(<<<'PHP'
@@ -132,7 +132,7 @@ echo $printer->print($result);
 <tab title="PrettyPrinter">
 
 ```php
-$parser = new TypeLang\Parser\Parser();
+$parser = new TypeLang\Parser\TypeParser();
 $printer = new TypeLang\Printer\PrettyPrinter();
 
 $result = $parser->parse(<<<'PHP'
@@ -151,7 +151,7 @@ echo $printer->print($result);
 <tab title="NativeTypePrinter">
 
 ```php
-$parser = new TypeLang\Parser\Parser();
+$parser = new TypeLang\Parser\TypeParser();
 $printer = new TypeLang\Printer\NativeTypePrinter();
 
 $result = $parser->parse(<<<'PHP'

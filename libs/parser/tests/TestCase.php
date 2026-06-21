@@ -9,9 +9,9 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\ParsedResult;
-use TypeLang\Parser\Parser;
-use TypeLang\Parser\ParserFeatures;
-use TypeLang\Parser\ParserInterface;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeParserFeatures;
+use TypeLang\Parser\TypeParserInterface;
 use TypeLang\Parser\Traverser;
 
 /**
@@ -33,20 +33,20 @@ use TypeLang\Parser\Traverser;
 #[Group('unit'), Group('type-lang/parser')]
 abstract class TestCase extends BaseTestCase
 {
-    protected ParserInterface $parser {
-        get => $this->parser ??= new Parser();
+    protected TypeParserInterface $parser {
+        get => $this->parser ??= new TypeParser();
     }
 
     /**
      * @param ParserOptionsType $options
      */
-    protected function parser(array $options = []): ParserInterface
+    protected function parser(array $options = []): TypeParserInterface
     {
         if ($options === []) {
             return $this->parser;
         }
 
-        return new Parser(new ParserFeatures(...$options));
+        return new TypeParser(new TypeParserFeatures(...$options));
     }
 
     /**

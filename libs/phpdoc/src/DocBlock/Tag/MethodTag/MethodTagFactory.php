@@ -6,8 +6,8 @@ namespace TypeLang\PHPDoc\DocBlock\Tag\MethodTag;
 
 use TypeLang\Node\Type\CallableTypeNode;
 use TypeLang\Node\Type\NamedTypeNode;
-use TypeLang\Parser\Parser as TypesParser;
-use TypeLang\Parser\ParserInterface as TypesParserInterface;
+use TypeLang\Parser\TypeParser as TypesParser;
+use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
 use TypeLang\PHPDoc\Exception\InvalidTagException;
 use TypeLang\PHPDoc\Parser\Content\OptionalTypeReader;
