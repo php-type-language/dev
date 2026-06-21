@@ -4,6 +4,22 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
+/**
+ * Configures language features supported by the parser.
+ *
+ * Feature flags allow enabling or disabling individual language constructs.
+ * When a feature is disabled, the parser will treat the corresponding syntax
+ * as unsupported and report an error.
+ *
+ * ```
+ * $parser = new Parser(new ParserFeatures(
+ *     conditions: false,
+ * ));
+ *
+ * $parser->parse('T is 42 ? U : V');
+ * // => Error: Conditional expressions not allowed in ...
+ * ```
+ */
 final readonly class ParserFeatures
 {
     public const bool CONDITIONAL_FEATURES_DEFAULT_VALUE = true;
@@ -20,53 +36,43 @@ final readonly class ParserFeatures
 
     public function __construct(
         /**
-         * Enables or disables support for dependent/conditional
-         * types such as `T ? U : V`
+         * Enables or disables support for conditional types such as `T ? U : V`
          */
         public bool $conditions = self::CONDITIONAL_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for type shapes such
-         * as `T{key: U}`
+         * Enables or disables support for shape types such as `T{key: U}`
          */
         public bool $shapes = self::SHAPES_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for callable types
-         * such as `(T, U): V`
+         * Enables or disables support for callable types such as `fn(T, U): V`
          */
         public bool $callables = self::CALLABLES_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for literal types such
-         * as `42` or `"string"`
+         * Enables or disables support for literal types such as `42` or `'foo'`
          */
         public bool $literals = self::LITERALS_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for template arguments
-         * such as `T<U, V>`
+         * Enables or disables support for generic type arguments such as `T<U, V>`
          */
         public bool $generics = self::GENERICS_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for logical union types
-         * such as `T | U`
+         * Enables or disables support for union types such as `T | U`
          */
         public bool $unions = self::UNION_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for logical intersection
-         * types such as `T & U`
+         * Enables or disables support for intersection types such as `T & U`
          */
         public bool $intersections = self::INTERSECTION_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for square bracket list
-         * types such as `T[]`
+         * Enables or disables support for short list types such as `T[]`
          */
         public bool $lists = self::LIST_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for square bracket offset
-         * access types such as `T[U]`
+         * Enables or disables support for offset access types such as `T[U]`
          */
         public bool $offsets = self::OFFSETS_FEATURES_DEFAULT_VALUE,
         /**
-         * Enables or disables support for template argument hints
-         * such as `T<out U, in V>`
+         * Enables or disables support for generic variance hints such as `T<out U, in V>`
          */
         public bool $hints = self::HINTS_FEATURES_DEFAULT_VALUE,
         /**
@@ -76,7 +82,9 @@ final readonly class ParserFeatures
     ) {}
 
     /**
-     * A general method with the ability to override a specific feature flag
+     * Creates a new feature set with one or more feature flags overridden.
+     *
+     * Any feature not explicitly specified retains its current value.
      *
      * ```
      * $features = $features->with(
@@ -84,6 +92,8 @@ final readonly class ParserFeatures
      *     hints: false,
      * );
      * ```
+     *
+     * @phpstan-pure
      */
     public function with(bool ...$features): self
     {
