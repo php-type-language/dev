@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
+use JetBrains\PhpStorm\Language;
 use Phplrt\Contracts\Parser\ParserRuntimeExceptionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Contracts\Source\SourceExceptionInterface;
@@ -49,14 +50,14 @@ final class Parser implements ParserInterface
         );
     }
 
-    public function parse(mixed $source): TypeNode
+    public function parse(#[Language('PHP')] mixed $source): TypeNode
     {
         $result = $this->execute($this->strict, $source);
 
         return $result->type;
     }
 
-    public function parseTolerant(mixed $source): ParsedResult
+    public function parseTolerant(#[Language('PHP')] mixed $source): ParsedResult
     {
         return $this->execute($this->tolerant, $source);
     }

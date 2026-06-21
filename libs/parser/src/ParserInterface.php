@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
+use JetBrains\PhpStorm\Language;
 use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 
@@ -33,7 +34,7 @@ interface ParserInterface
      * @throws ParserExceptionInterface in case of parsing exception occurs
      * @throws \Throwable in case of internal error occurs
      */
-    public function parse(mixed $source): TypeNode;
+    public function parse(#[Language('PHP')] mixed $source): TypeNode;
 
     /**
      * Parses as much of the provided source code as possible and returns
@@ -74,5 +75,5 @@ interface ParserInterface
      * @throws ParserExceptionInterface in case of parsing exception occurs
      * @throws \Throwable in case of internal error occurs
      */
-    public function parseTolerant(mixed $source): ParsedResult;
+    public function parseTolerant(#[Language('PHP')] mixed $source): ParsedResult;
 }

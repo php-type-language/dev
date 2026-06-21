@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
+use JetBrains\PhpStorm\Language;
 use Phplrt\Contracts\Source\SourceExceptionInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
@@ -32,7 +33,7 @@ final class InMemoryCachedParser implements ParserInterface
      * @throws SourceExceptionInterface
      * @throws \Throwable
      */
-    public function parse(mixed $source): TypeNode
+    public function parse(#[Language('PHP')] mixed $source): TypeNode
     {
         $instance = $this->sources->create($source);
 
@@ -44,7 +45,7 @@ final class InMemoryCachedParser implements ParserInterface
      * @throws SourceExceptionInterface
      * @throws \Throwable
      */
-    public function parseTolerant(mixed $source): ParsedResult
+    public function parseTolerant(#[Language('PHP')] mixed $source): ParsedResult
     {
         $instance = $this->sources->create($source);
 
