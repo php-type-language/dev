@@ -7,8 +7,8 @@ namespace TypeLang\Type\Tests\Template;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\Template\TemplateArgumentNode;
 use TypeLang\Type\Template\TemplateArgumentListNode;
+use TypeLang\Type\Template\TemplateArgumentNode;
 use TypeLang\Type\Tests\TestCase;
 
 final class TemplateArgumentsListNodeTest extends TestCase

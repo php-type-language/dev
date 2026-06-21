@@ -37,7 +37,6 @@ class TaggedDescription implements
 
     /**
      * @param iterable<mixed, object> $components
-     *
      * @return list<TagInterface>
      */
     private function getTagsFromComponents(iterable $components): array

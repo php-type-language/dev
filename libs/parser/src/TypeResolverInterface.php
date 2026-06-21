@@ -16,10 +16,8 @@ interface TypeResolverInterface
      * replacement.
      *
      * @template TArgType of TypeNode
-     *
      * @param TArgType $type
      * @param callable(Name):(Name|null) $transform
-     *
      * @return TArgType
      */
     public function resolve(TypeNode $type, callable $transform): TypeNode;

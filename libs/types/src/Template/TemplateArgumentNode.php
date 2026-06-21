@@ -15,7 +15,7 @@ final class TemplateArgumentNode extends Node
 
     public function __construct(
         public TypeNode $value,
-        Identifier|null $hint = null,
+        ?Identifier $hint = null,
         public ?AttributeGroupListNode $attributes = null,
     ) {
         $this->hint = $hint;

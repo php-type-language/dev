@@ -45,6 +45,7 @@ final class Stream implements \Stringable
 
     /**
      * @api
+     *
      * @template TArgResult of mixed
      * @param callable(self):TArgResult $context
      * @return TArgResult
@@ -66,9 +67,7 @@ final class Stream implements \Stringable
 
     /**
      * @template T of mixed
-     *
      * @param callable(Stream):T $applicator
-     *
      * @return T
      */
     public function apply(callable $applicator): mixed

@@ -10,7 +10,6 @@ use TypeLang\Type\NamedTypeNode;
 
 /**
  * Tests for the grammar of type names (identifiers) and namespaces.
- *
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class NameTest extends SyntaxTestCase

@@ -68,9 +68,7 @@ abstract class Printer implements PrinterInterface
 
     /**
      * @template TResult of mixed
-     *
      * @param callable():TResult $section
-     *
      * @return TResult
      */
     protected function nested(callable $section): mixed
@@ -86,7 +84,6 @@ abstract class Printer implements PrinterInterface
 
     /**
      * @param LogicalTypeNode<TypeNode> $stmt
-     *
      * @return list<non-empty-string>
      */
     protected function unwrapAndPrint(LogicalTypeNode $stmt): iterable
@@ -96,7 +93,6 @@ abstract class Printer implements PrinterInterface
 
     /**
      * @param iterable<mixed, TypeNode> $stmts
-     *
      * @return list<non-empty-string>
      */
     protected function printMap(iterable $stmts): array
@@ -113,9 +109,7 @@ abstract class Printer implements PrinterInterface
 
     /**
      * @template T of TypeNode
-     *
      * @param LogicalTypeNode<T> $logical
-     *
      * @return iterable<array-key, T>
      */
     protected function unwrap(LogicalTypeNode $logical): iterable

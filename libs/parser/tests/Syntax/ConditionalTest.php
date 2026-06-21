@@ -9,7 +9,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests for conditional (ternary) types.
- *
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ConditionalTest extends SyntaxTestCase

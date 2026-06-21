@@ -6,6 +6,7 @@ namespace TypeLang\PHPDoc\Parser\Content;
 
 /**
  * @template T of non-empty-string
+ *
  * @template-implements OptionalReaderInterface<T|null>
  */
 final class OptionalValueReader implements OptionalReaderInterface

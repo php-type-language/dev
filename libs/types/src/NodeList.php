@@ -6,6 +6,7 @@ namespace TypeLang\Type;
 
 /**
  * @template TNode of Node = Node
+ *
  * @template-implements \IteratorAggregate<array-key, TNode>
  * @template-implements \ArrayAccess<int<0, max>, TNode>
  */
@@ -51,7 +52,6 @@ abstract class NodeList extends Node implements
      * to the node list.
      *
      * @param TNode $node
-     *
      * @return int<0, max>|null
      */
     public function findIndex(Node $node): ?int

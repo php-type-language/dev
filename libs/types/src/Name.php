@@ -6,6 +6,7 @@ namespace TypeLang\Type;
 
 /**
  * @phpstan-consistent-constructor
+ *
  * @template-implements \IteratorAggregate<array-key, Identifier>
  */
 final class Name extends Node implements \IteratorAggregate, \Countable, \Stringable
@@ -338,7 +339,6 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
 
     /**
      * @param array{0?: int<0, max>, 1?: non-empty-list<Identifier>} $data
-     *
      * @throws \UnexpectedValueException
      */
     public function __unserialize(array $data): void

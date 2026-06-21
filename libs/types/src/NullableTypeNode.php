@@ -6,6 +6,7 @@ namespace TypeLang\Type;
 
 /**
  * @template T of TypeNode = TypeNode
+ *
  * @template-extends WrappingTypeNode<TypeNode>
  */
 final class NullableTypeNode extends WrappingTypeNode {}

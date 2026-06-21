@@ -29,8 +29,7 @@ interface TypeParserInterface
      * // => ParseException
      * ```
      *
-     * @param TSource $source Source code to parse.
-     *
+     * @param TSource $source source code to parse
      * @throws ParserExceptionInterface in case of parsing exception occurs
      * @throws \Throwable in case of internal error occurs
      */
@@ -68,10 +67,9 @@ interface TypeParserInterface
      * // => "This is an example"
      * ```
      *
-     * @param TSource $source Source code to parse.
-     *
-     * @return ParsedResult Parsing result containing a partial AST, parser
-     *         state, and syntax diagnostics.
+     * @param TSource $source source code to parse
+     * @return ParsedResult parsing result containing a partial AST, parser
+     *         state, and syntax diagnostics
      * @throws ParserExceptionInterface in case of parsing exception occurs
      * @throws \Throwable in case of internal error occurs
      */

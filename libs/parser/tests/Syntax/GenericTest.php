@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests for generic (template argument) grammar and call-site hints.
- *
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class GenericTest extends SyntaxTestCase

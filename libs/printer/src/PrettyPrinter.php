@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Type\Node;
-use TypeLang\Type\Attribute\AttributeGroupNode;
+use TypeLang\Parser\Traverser;
+use TypeLang\Printer\Exception\NonPrintableNodeException;
 use TypeLang\Type\Attribute\AttributeGroupListNode;
+use TypeLang\Type\Attribute\AttributeGroupNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\CallableTypeNode;
 use TypeLang\Type\ClassConstMaskNode;
@@ -23,6 +24,7 @@ use TypeLang\Type\IntersectionTypeNode;
 use TypeLang\Type\Literal\LiteralNode;
 use TypeLang\Type\LogicalTypeNode;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Node;
 use TypeLang\Type\NullableTypeNode;
 use TypeLang\Type\Shape\ClassConstFieldNode;
 use TypeLang\Type\Shape\ClassConstMaskFieldNode;
@@ -32,15 +34,13 @@ use TypeLang\Type\Shape\FieldsListNode;
 use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Shape\NumericFieldNode;
 use TypeLang\Type\Shape\StringNamedFieldNode;
-use TypeLang\Type\Template\TemplateArgumentNode;
 use TypeLang\Type\Template\TemplateArgumentListNode;
+use TypeLang\Type\Template\TemplateArgumentNode;
 use TypeLang\Type\TernaryExpressionNode;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\TypeOffsetAccessNode;
 use TypeLang\Type\TypesListNode;
 use TypeLang\Type\UnionTypeNode;
-use TypeLang\Parser\Traverser;
-use TypeLang\Printer\Exception\NonPrintableNodeException;
 
 class PrettyPrinter extends Printer
 {
@@ -330,7 +330,6 @@ class PrettyPrinter extends Printer
 
     /**
      * @param TemplateArgumentListNode<TemplateArgumentNode>|TemplateArgumentListNode $arguments
-     *
      * @return non-empty-string
      * @throws NonPrintableNodeException
      */
@@ -500,7 +499,6 @@ class PrettyPrinter extends Printer
 
     /**
      * @param UnionTypeNode<TypeNode> $node
-     *
      * @return non-empty-string
      */
     protected function printUnionTypeNode(UnionTypeNode $node): string
@@ -517,7 +515,6 @@ class PrettyPrinter extends Printer
 
     /**
      * @param IntersectionTypeNode<TypeNode> $node
-     *
      * @return non-empty-string
      */
     protected function printIntersectionTypeNode(IntersectionTypeNode $node): string
@@ -534,7 +531,6 @@ class PrettyPrinter extends Printer
 
     /**
      * @param NullableTypeNode<TypeNode> $node
-     *
      * @return non-empty-string
      * @throws NonPrintableNodeException
      */
@@ -577,7 +573,6 @@ class PrettyPrinter extends Printer
 
     /**
      * @param TypesListNode<TypeNode> $node
-     *
      * @return non-empty-string
      * @throws NonPrintableNodeException
      */
@@ -590,7 +585,6 @@ class PrettyPrinter extends Printer
 
     /**
      * @param TypeOffsetAccessNode<TypeNode> $node
-     *
      * @return non-empty-string
      * @throws NonPrintableNodeException
      */

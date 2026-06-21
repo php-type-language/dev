@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests for the constant grammar: global constants, class constants and masks.
- *
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ConstantTest extends SyntaxTestCase

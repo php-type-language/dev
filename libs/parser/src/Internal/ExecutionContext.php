@@ -36,7 +36,6 @@ use TypeLang\Type\TypeNode;
  *     reducers: array<int<0, max>|non-empty-string, callable(Context, mixed): mixed>,
  *     transitions?: array<array-key, mixed>
  * }
- *
  * @phpstan-type ParserConfigArrayType array<ParserConfigsInterface::CONFIG_*, mixed>
  *
  * @internal this is an internal library class, please do not use it in your code
@@ -55,6 +54,7 @@ final readonly class ExecutionContext
      * In-memory string literal pool.
      *
      * @api this property is accessible inside the grammar reducers
+     *
      * @var \WeakMap<TokenInterface, StringLiteralNode>
      */
     protected \WeakMap $stringPool;
@@ -63,6 +63,7 @@ final readonly class ExecutionContext
      * In-memory integer literal pool.
      *
      * @api this property is accessible inside the grammar reducers
+     *
      * @var \WeakMap<TokenInterface, IntLiteralNode>
      */
     protected \WeakMap $integerPool;
@@ -97,7 +98,6 @@ final readonly class ExecutionContext
 
     /**
      * @param GrammarConfigArrayType $grammar
-     *
      * @return ParserRuntime<TypeNode>
      */
     private function createParser(LexerInterface $lexer, array $grammar): ParserRuntime

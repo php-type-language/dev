@@ -8,6 +8,7 @@ use TypeLang\PHPDoc\Exception\InvalidTagException;
 
 /**
  * @template T of non-empty-string
+ *
  * @template-implements ReaderInterface<T>
  */
 final class ValueReader implements ReaderInterface

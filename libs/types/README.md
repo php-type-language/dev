@@ -4,20 +4,7 @@
 
 ---
 
-<p align="center">
-    <a href="https://packagist.org/packages/type-lang/parser"><img src="https://poser.pugx.org/type-lang/parser/require/php?style=for-the-badge" alt="PHP 8.4+"></a>
-    <a href="https://packagist.org/packages/type-lang/parser"><img src="https://poser.pugx.org/type-lang/parser/version?style=for-the-badge" alt="Latest Stable Version"></a>
-    <a href="https://packagist.org/packages/type-lang/parser"><img src="https://poser.pugx.org/type-lang/parser/v/unstable?style=for-the-badge" alt="Latest Unstable Version"></a>
-    <a href="https://raw.githubusercontent.com/php-type-language/parser/blob/master/LICENSE"><img src="https://poser.pugx.org/type-lang/parser/license?style=for-the-badge" alt="License MIT"></a>
-    <a href="https://github.com/xepozz/meta-storm-idea-plugin"><img src="https://img.shields.io/static/v1?label=Powered+by&message=Meta+Storm&color=db5860&style=for-the-badge&logo=data:image/svg%2bxml;base64,PHN2ZyB3aWR0aD0iMTExIiBoZWlnaHQ9IjExMSIgdmlld0JveD0iMCAwIDExMSAxMTEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYwLjQ2MTcgOEwzMC4xNjU0IDguMjQ3OUMyNy4yNDYgOC4yNzE3OSAyNC42NDggMTAuMTA1IDIzLjY0NyAxMi44NDc1TDAuNDMwNTkgNzYuODMxNEMtMS4yNDQ1OSA4MS40MjA4IDIuMTc4MDUgODYuMjcxMyA3LjA2MzUzIDg2LjIzMTNMMzIuMTE5NyA4Ni4wMjYzTDM1LjQxNDcgNzYuOTk5TDkuODczOTEgNzcuMjA4TDMxLjYyNTkgMTcuMjM2Mkw1Ny4xNjY2IDE3LjAyNzNMNjAuNDYxNyA4WiIgZmlsbD0iI0FGQjFCMyIvPjxwYXRoIGQ9Ik00OS40MTQ5IDEwMi45OTlMNzkuNzEyMiAxMDIuOTk5QzgyLjYzMTcgMTAyLjk5OSA4NS4yNDQ2IDEwMS4xODcgODYuMjY4IDk4LjQ1MjlMMTEwLjAxMyAzNC40NTI0QzExMS43MjYgMjkuODc2OCAxMDguMzQzIDI0Ljk5ODUgMTAzLjQ1NyAyNC45OTg1TDc4LjQwMDQgMjQuOTk4NUw3NS4wMzE2IDMzLjk5ODVMMTAwLjU3MyAzMy45OTg1TDc4LjMyNTMgOTMuOTk5TDUyLjc4MzcgOTMuOTk5TDQ5LjQxNDkgMTAyLjk5OVoiIGZpbGw9IiNBRkIxQjMiLz48cGF0aCBkPSJNMjIgNjFMODYgOEw1NyA1MEw4OS45OTk3IDQ5Ljk5OTdMMjYgMTAzTDU1IDYxSDIyWiIgZmlsbD0iI0M3NTQ1MCIvPjwvc3ZnPg==" alt="MetaStorm"></a>
-</p>
-<p align="center">
-    <a href="https://github.com/php-type-language/parser/actions/workflows/tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/php-type-language/parser/tests.yml?label=Tests&style=flat-square&logo=unpkg"></a>
-    <a href="https://github.com/php-type-language/parser/actions/workflows/codestyle.yml"><img src="https://img.shields.io/github/actions/workflow/status/php-type-language/parser/codestyle.yml?label=PER-2+CodeStyle&style=flat-square&logo=telegraph"></a>
-    <a href="https://github.com/php-type-language/parser/actions/workflows/static-analysis.yml"><img src="https://img.shields.io/github/actions/workflow/status/php-type-language/parser/static-analysis.yml?label=PHPStan&style=flat-square&logo=data:image/png;base64,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"></a>
-</p>
-
-Reference implementation for TypeLang Parser.
+AST node classes for the TypeLang type system.
 
 **TypeLang** is a declarative type language inspired by static analyzers
 like [PHPStan](https://phpstan.org/) and [Psalm](https://psalm.dev/docs/).
@@ -26,129 +13,317 @@ Read [documentation pages](https://typelang.dev) for more information.
 
 ## Installation
 
-TypeLang Parser is available as Composer repository and can be installed
+The package is available as a Composer repository and can be installed
 using the following command in a root of your project:
 
 ```sh
-composer require type-lang/parser
+composer require type-lang/types
 ```
 
-## Quick Start
+## Requirements
+
+- PHP 8.4+
+
+## Node Overview
+
+### Core Nodes
+
+All nodes extend the abstract `Node` class and expose a single common property:
 
 ```php
-$parser = new \TypeLang\Parser\TypeParser();
-
-$type = $parser->parse(<<<'PHP'
-    array{
-        key: callable(Example, int): mixed,
-        ...
-    }
-    PHP);
-
-var_dump($type);
+// Byte offset of the token in the original source string.
+public int $offset = 0;
 ```
 
-Expected Output:
+#### `Identifier`
+
+A single name segment such as `string`, `MyClass`, or `non-empty-string`.
+Virtual identifiers (containing `-`) are common in PHPStan/Psalm type aliases.
 
 ```php
-TypeLang\Type\NamedTypeNode {
-  +offset: 0
-  +name: TypeLang\Type\Name {
-    +offset: 0
-    -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
-        +offset: 0
-        +value: "array"
-      }
-    ]
-  }
-  +arguments: null
-  +fields: TypeLang\Type\Shape\FieldsListNode {
-    +offset: 11
-    +items: array:1 [
-      0 => TypeLang\Type\Shape\NamedFieldNode {
-        +offset: 11
-        +type: TypeLang\Type\CallableTypeNode {
-          +offset: 16
-          +name: TypeLang\Type\Name {
-            +offset: 16
-            -parts: array:1 [
-              0 => TypeLang\Type\Identifier {
-                +offset: 16
-                +value: "callable"
-              }
-            ]
-          }
-          +parameters: TypeLang\Type\Callable\ParametersListNode {
-            +offset: 25
-            +items: array:2 [
-              0 => TypeLang\Type\Callable\ParameterNode {
-                +offset: 25
-                +type: TypeLang\Type\NamedTypeNode {
-                  +offset: 25
-                  +name: TypeLang\Type\Name {
-                    +offset: 25
-                    -parts: array:1 [
-                      0 => TypeLang\Type\Identifier {
-                        +offset: 25
-                        +value: "Example"
-                      }
-                    ]
-                  }
-                  +arguments: null
-                  +fields: null
-                }
-                +name: null
-                +output: false
-                +variadic: false
-                +optional: false
-              }
-              1 => TypeLang\Type\Callable\ParameterNode {
-                +offset: 34
-                +type: TypeLang\Type\NamedTypeNode {
-                  +offset: 34
-                  +name: TypeLang\Type\Name {
-                    +offset: 34
-                    -parts: array:1 [
-                      0 => TypeLang\Type\Identifier {
-                        +offset: 34
-                        +value: "int"
-                      }
-                    ]
-                  }
-                  +arguments: null
-                  +fields: null
-                }
-                +name: null
-                +output: false
-                +variadic: false
-                +optional: false
-              }
-            ]
-          }
-          +type: TypeLang\Type\NamedTypeNode {
-            +offset: 40
-            +name: TypeLang\Type\Name {
-              +offset: 40
-              -parts: array:1 [
-                0 => TypeLang\Type\Identifier {
-                  +offset: 40
-                  +value: "mixed"
-                }
-              ]
-            }
-            +arguments: null
-            +fields: null
-          }
-        }
-        +optional: false
-        +key: TypeLang\Type\Identifier {
-          +offset: 11
-          +value: "key"
-        }
-      }
-    ]
-    +sealed: false
-  }
-}
+$id = new Identifier('non-empty-string');
+
+$id->value;      // 'non-empty-string'
+$id->isVirtual;  // true  — contains "-"
+$id->isBuiltin;  // false
+$id->isSpecial;  // false
+
+$id = Identifier::createFromString('  int  '); // trims whitespace
 ```
+
+#### `Name`
+
+A fully- or partially-qualified name composed of `Identifier` segments.
+
+```php
+$name = Name::createFromString('\TypeLang\Parser\Node');
+
+$name->isFullyQualified; // true
+$name->isSimple;         // false
+$name->first->value;     // 'TypeLang'
+$name->last->value;      // 'Node'
+$name->toString();       // '\TypeLang\Parser\Node'
+
+$name->slice(1)->toString();                      // 'Parser\Node'
+$name->toUnqualified()->toString();               // 'TypeLang\Parser\Node'
+$name->mergeWith(Name::createFromString('Node\Sub'))->toString(); // '\TypeLang\Parser\Node\Sub'
+```
+
+---
+
+### Type Nodes
+
+All type nodes extend the abstract `TypeNode` class.
+
+#### `NamedTypeNode`
+
+The most common node — a named type with optional template arguments and shape fields.
+
+```php
+// int
+new NamedTypeNode(Name::createFromString('int'));
+
+// array<string, int>
+new NamedTypeNode(
+    name: Name::createFromString('array'),
+    arguments: new TemplateArgumentListNode([
+        new TemplateArgumentNode(new NamedTypeNode(Name::createFromString('string'))),
+        new TemplateArgumentNode(new NamedTypeNode(Name::createFromString('int'))),
+    ]),
+);
+```
+
+#### `NullableTypeNode`
+
+Wraps a type to make it nullable (`?Type`).
+
+```php
+new NullableTypeNode(new NamedTypeNode(Name::createFromString('string')));
+```
+
+#### `UnionTypeNode` / `IntersectionTypeNode`
+
+Represent `A|B|C` and `A&B&C` respectively. Nested unions (or intersections)
+of the same kind are automatically flattened.
+
+```php
+new UnionTypeNode(
+    new NamedTypeNode(Name::createFromString('int')),
+    new NamedTypeNode(Name::createFromString('string')),
+    new NamedTypeNode(Name::createFromString('null')),
+);
+```
+
+#### `TypesListNode`
+
+Represents the array-shorthand `Type[]`.
+
+```php
+new TypesListNode(new NamedTypeNode(Name::createFromString('int'))); // int[]
+```
+
+#### `TypeOffsetAccessNode`
+
+Represents an indexed access type `T[K]`.
+
+```php
+new TypeOffsetAccessNode(
+    type:   new NamedTypeNode(Name::createFromString('T')),
+    access: new NamedTypeNode(Name::createFromString('K')),
+);
+```
+
+#### `CallableTypeNode`
+
+Represents a callable signature.
+
+```php
+// callable(int, string): bool
+new CallableTypeNode(
+    name: Name::createFromString('callable'),
+    parameters: new CallableParameterListNode([
+        new CallableParameterNode(type: new NamedTypeNode(Name::createFromString('int'))),
+        new CallableParameterNode(type: new NamedTypeNode(Name::createFromString('string'))),
+    ]),
+    type: new NamedTypeNode(Name::createFromString('bool')),
+);
+```
+
+#### `TernaryExpressionNode`
+
+Represents a conditional type expression `subject is Target ? Then : Else`.
+
+```php
+new TernaryExpressionNode(
+    condition: new EqualConditionNode(
+        subject: new NamedTypeNode(Name::createFromString('T')),
+        target:  new NamedTypeNode(Name::createFromString('string')),
+    ),
+    then: new NamedTypeNode(Name::createFromString('non-empty-string')),
+    else: new NamedTypeNode(Name::createFromString('T')),
+);
+```
+
+#### `ConstMaskNode` / `ClassConstNode` / `ClassConstMaskNode`
+
+Represent constant references and wildcard masks.
+
+```php
+new ClassConstNode(
+    class:    Name::createFromString('Status'),
+    constant: new Identifier('ACTIVE'),
+);
+// → Status::ACTIVE
+
+new ClassConstMaskNode(class: Name::createFromString('Status'));
+// → Status::*
+
+new ConstMaskNode(name: Name::createFromString('Foo\Bar'));
+// → Foo\Bar\*
+```
+
+---
+
+### Literal Nodes
+
+All literals extend `LiteralNode` and expose `$value` (native PHP type)
+and `$raw` (original source token). Most support a static `parse()` factory.
+
+```php
+BoolLiteralNode::parse('true');   // value: true,  raw: 'true'
+BoolLiteralNode::parse('False');  // value: false, raw: 'False'
+
+IntLiteralNode::parse('0xFF');    // value: 255,   raw: '0xFF', decimal: '255'
+IntLiteralNode::parse('0b1010');  // value: 10,    raw: '0b1010'
+IntLiteralNode::parse('1_000');   // value: 1000,  raw: '1_000'
+
+FloatLiteralNode::parse('1.5e2'); // value: 150.0, raw: '1.5e2'
+
+NullLiteralNode();                // value: null,  raw: 'null'
+
+StringLiteralNode::parse('"hello\nworld"'); // decodes escape sequences
+StringLiteralNode::parse("'raw'");          // no escape decoding
+
+VariableLiteralNode::parse('$name'); // value: 'name' (no $), raw: '$name'
+```
+
+---
+
+### Condition Nodes
+
+Used as the `$condition` of `TernaryExpressionNode`. All extend `Condition`
+and hold `public TypeNode $subject` and `public TypeNode $target`.
+
+| Class                             | Meaning                 |
+|-----------------------------------|-------------------------|
+| `EqualConditionNode`              | `subject is target`     |
+| `NotEqualConditionNode`           | `subject is not target` |
+| `GreaterThanConditionNode`        | `subject > target`      |
+| `GreaterThanOrEqualConditionNode` | `subject >= target`     |
+| `LessThanConditionNode`           | `subject < target`      |
+| `LessThanOrEqualConditionNode`    | `subject <= target`     |
+
+---
+
+### Shape Nodes (`Shape/`)
+
+Shape fields describe the entries of a structured array type.
+
+```
+array{key: string, 0: int, 'literal': bool, ...}
+```
+
+| Class                     | Key type             | Example                    |
+|---------------------------|----------------------|----------------------------|
+| `ImplicitFieldNode`       | none (positional)    | `array{string}`            |
+| `NamedFieldNode`          | `Identifier`         | `array{key: string}`       |
+| `StringNamedFieldNode`    | `StringLiteralNode`  | `array{'key': string}`     |
+| `NumericFieldNode`        | `IntLiteralNode`     | `array{0: string}`         |
+| `ClassConstFieldNode`     | `ClassConstNode`     | `array{Foo::BAR: string}`  |
+| `ClassConstMaskFieldNode` | `ClassConstMaskNode` | `array{Foo::BAR*: string}` |
+| `ConstMaskFieldNode`      | `ConstMaskNode`      | `array{Foo\*: string}`     |
+
+All field nodes inherit `public TypeNode $type`, `public bool $optional`, and
+`public ?AttributeGroupListNode $attributes` from `FieldNode`. Explicit fields
+also expose a string `$index` property for the key's string representation.
+
+`FieldsListNode` collects the fields and marks the shape as sealed or unsealed
+(`$sealed = true` means no extra keys allowed; `...` in source makes it unsealed).
+
+---
+
+### Template Argument Nodes (`Template/`)
+
+```php
+// array<covariant T, int>
+new TemplateArgumentListNode([
+    new TemplateArgumentNode(
+        value: new NamedTypeNode(Name::createFromString('T')),
+        hint:  new Identifier('covariant'),
+    ),
+    new TemplateArgumentNode(
+        value: new NamedTypeNode(Name::createFromString('int')),
+    ),
+]);
+```
+
+---
+
+### Callable Parameter Nodes (`Callable/`)
+
+```php
+// callable(int $a, string ...$b): void
+new CallableParameterListNode([
+    new CallableParameterNode(
+        type: new NamedTypeNode(Name::createFromString('int')),
+        name: VariableLiteralNode::parse('$a'),
+    ),
+    new CallableParameterNode(
+        type:     new NamedTypeNode(Name::createFromString('string')),
+        name:     VariableLiteralNode::parse('$b'),
+        variadic: true,
+    ),
+]);
+```
+
+Constraints enforced by `CallableParameterNode`:
+- At least one of `$type` or `$name` must be provided.
+- `$variadic` and `$optional` cannot both be `true`.
+
+---
+
+### Attribute Nodes (`Attribute/`)
+
+Represent PHP-attribute-style annotations that some type systems attach to type positions.
+
+```
+#[Pure, Deprecated('Use X instead')]
+```
+
+```
+AttributeGroupListNode          (#[X] #[Y])
+└── AttributeGroupNode          (#[A, B, C])
+    └── AttributeNode           (Pure, Deprecated)
+        └── AttributeArgumentListNode
+            └── AttributeArgumentNode  (value: StringLiteralNode 'Use X instead')
+```
+
+---
+
+### Node Lists
+
+All list containers extend `NodeList` and implement `IteratorAggregate`,
+`ArrayAccess`, and `Countable`.
+
+```php
+$list = new TemplateArgumentListNode([...]);
+
+count($list);          // number of items
+$list[0];              // first item
+$list->first;          // first item
+$list->last;           // last item
+$index = $list->findIndex($node); // position by identity, or null
+foreach ($list as $item) { ... }
+```
+
+---

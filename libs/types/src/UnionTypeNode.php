@@ -6,6 +6,7 @@ namespace TypeLang\Type;
 
 /**
  * @template T of TypeNode = TypeNode
+ *
  * @template-extends LogicalTypeNode<T>
  */
 final class UnionTypeNode extends LogicalTypeNode {}

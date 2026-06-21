@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests\Attribute;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Attribute\AttributeGroupNode;
 use TypeLang\Type\Attribute\AttributeGroupListNode;
+use TypeLang\Type\Attribute\AttributeGroupNode;
 use TypeLang\Type\Attribute\AttributeNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\Tests\TestCase;

@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests for the type offset access syntax (e.g. "T['offset']").
- *
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class OffsetAccessTest extends SyntaxTestCase

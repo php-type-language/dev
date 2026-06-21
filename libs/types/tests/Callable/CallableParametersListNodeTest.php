@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests\Callable;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableParameterListNode;
+use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Tests\TestCase;

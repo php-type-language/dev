@@ -12,7 +12,6 @@ use PHPUnit\Framework\Attributes\Group;
  *
  * Note: the AST dump renders the attribute structure (groups and names) but
  * not the attribute argument values.
- *
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class AttributeTest extends SyntaxTestCase

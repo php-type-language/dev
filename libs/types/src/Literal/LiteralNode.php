@@ -8,6 +8,7 @@ use TypeLang\Type\TypeNode;
 
 /**
  * @template TValue of mixed = mixed
+ *
  * @template-implements LiteralNodeInterface<TValue>
  */
 abstract class LiteralNode extends TypeNode implements LiteralNodeInterface

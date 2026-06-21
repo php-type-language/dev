@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Tests for callable types.
- *
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class CallableTest extends SyntaxTestCase

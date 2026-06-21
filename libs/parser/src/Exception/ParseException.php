@@ -31,7 +31,6 @@ class ParseException extends \LogicException implements ParserExceptionInterface
      * unexpected source location.
      *
      * @param int<0, max> $offset
-     *
      * @throws SourceExceptionInterface
      */
     public static function fromUnexpectedToken(string $token, string $statement, int $offset): static
@@ -49,7 +48,6 @@ class ParseException extends \LogicException implements ParserExceptionInterface
      * This error occurs when unable to recognize tokens in source code.
      *
      * @param int<0, max> $offset
-     *
      * @throws SourceExceptionInterface
      */
     public static function fromUnrecognizedToken(string $token, string $statement, int $offset): static
@@ -65,7 +63,6 @@ class ParseException extends \LogicException implements ParserExceptionInterface
 
     /**
      * @param int<0, max> $offset
-     *
      * @throws SourceExceptionInterface
      */
     public static function fromUnrecognizedSyntaxError(string $statement, int $offset): static

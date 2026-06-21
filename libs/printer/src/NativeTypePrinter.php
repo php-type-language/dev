@@ -160,7 +160,6 @@ class NativeTypePrinter extends PrettyPrinter
      * Replace "true" + "false" pair into "bool"
      *
      * @param list<non-empty-string> $result
-     *
      * @return list<non-empty-string>
      */
     private function formatBoolWithTrueAndFalse(array $result): array
@@ -185,7 +184,6 @@ class NativeTypePrinter extends PrettyPrinter
      * if one of the types is "mixed".
      *
      * @param list<non-empty-string> $result
-     *
      * @return list<non-empty-string>
      */
     private function formatUnionWithMixed(array $result): array
@@ -214,7 +212,6 @@ class NativeTypePrinter extends PrettyPrinter
 
     /**
      * @param non-empty-string $name
-     *
      * @return non-empty-string
      */
     protected function getTypeName(string $name): string

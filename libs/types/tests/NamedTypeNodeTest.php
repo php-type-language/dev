@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Name;
+use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\FieldsListNode;
 use TypeLang\Type\Template\TemplateArgumentListNode;
 

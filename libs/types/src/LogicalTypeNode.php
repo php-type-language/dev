@@ -6,6 +6,7 @@ namespace TypeLang\Type;
 
 /**
  * @template T of TypeNode = TypeNode
+ *
  * @template-implements \IteratorAggregate<array-key, T>
  */
 abstract class LogicalTypeNode extends TypeNode implements \IteratorAggregate, \Countable
@@ -26,7 +27,6 @@ abstract class LogicalTypeNode extends TypeNode implements \IteratorAggregate, \
 
     /**
      * @param non-empty-list<TypeNode> $statements
-     *
      * @return iterable<array-key, TypeNode>
      */
     private function unwrap(array $statements): iterable
@@ -64,7 +64,6 @@ abstract class LogicalTypeNode extends TypeNode implements \IteratorAggregate, \
 
     /**
      * @param array{0?: int<0, max>, 1?: non-empty-list<T>} $data
-     *
      * @throws \UnexpectedValueException
      */
     public function __unserialize(array $data): void
