@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
-use TypeLang\Node\FullQualifiedName;
 use TypeLang\Node\Name;
 use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Traverser\TypeMapVisitor;
@@ -52,9 +51,7 @@ final class TypeResolver implements TypeResolverInterface
         foreach ($replacements as $key => $replacement) {
             // normalize value
             if (\is_string($replacement)) {
-                $replacement = \str_starts_with($replacement, '\\')
-                    ? new FullQualifiedName($replacement)
-                    : new Name($replacement);
+                $replacement = Name::createFromString($replacement);
             }
 
             // normalize key

@@ -17,6 +17,11 @@ final class InMemoryCachedParser implements ParserInterface
      */
     private array $types = [];
 
+    /**
+     * @var array<non-empty-string, ParsedResult>
+     */
+    private array $sequences = [];
+
     public function __construct(
         private readonly ParserInterface $parser = new Parser(),
         private readonly SourceFactoryInterface $sources = new SourceFactory(),
@@ -32,5 +37,17 @@ final class InMemoryCachedParser implements ParserInterface
         $instance = $this->sources->create($source);
 
         return $this->types[$instance->getHash()] ??= $this->parser->parse($source);
+    }
+
+    /**
+     * @throws ParserExceptionInterface
+     * @throws SourceExceptionInterface
+     * @throws \Throwable
+     */
+    public function parseTolerant(mixed $source): ParsedResult
+    {
+        $instance = $this->sources->create($source);
+
+        return $this->sequences[$instance->getHash()] ??= $this->parser->parseTolerant($source);
     }
 }
