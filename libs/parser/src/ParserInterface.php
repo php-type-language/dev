@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 
 /**
@@ -18,5 +18,5 @@ interface ParserInterface
      * @throws ParserExceptionInterface in case of parsing exception occurs
      * @throws \Throwable in case of internal error occurs
      */
-    public function parse(mixed $source): TypeStatement;
+    public function parse(mixed $source): TypeNode;
 }

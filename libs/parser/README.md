@@ -51,7 +51,7 @@ var_dump($type);
 Expected Output:
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -63,12 +63,12 @@ TypeLang\Node\Stmt\NamedTypeNode {
     ]
   }
   +arguments: null
-  +fields: TypeLang\Node\Stmt\Shape\FieldsListNode {
+  +fields: TypeLang\Node\Type\Shape\FieldsListNode {
     +offset: 11
     +items: array:1 [
-      0 => TypeLang\Node\Stmt\Shape\NamedFieldNode {
+      0 => TypeLang\Node\Type\Shape\NamedFieldNode {
         +offset: 11
-        +type: TypeLang\Node\Stmt\CallableTypeNode {
+        +type: TypeLang\Node\Type\CallableTypeNode {
           +offset: 16
           +name: TypeLang\Node\Name {
             +offset: 16
@@ -79,12 +79,12 @@ TypeLang\Node\Stmt\NamedTypeNode {
               }
             ]
           }
-          +parameters: TypeLang\Node\Stmt\Callable\ParametersListNode {
+          +parameters: TypeLang\Node\Type\Callable\ParametersListNode {
             +offset: 25
             +items: array:2 [
-              0 => TypeLang\Node\Stmt\Callable\ParameterNode {
+              0 => TypeLang\Node\Type\Callable\ParameterNode {
                 +offset: 25
-                +type: TypeLang\Node\Stmt\NamedTypeNode {
+                +type: TypeLang\Node\Type\NamedTypeNode {
                   +offset: 25
                   +name: TypeLang\Node\Name {
                     +offset: 25
@@ -103,9 +103,9 @@ TypeLang\Node\Stmt\NamedTypeNode {
                 +variadic: false
                 +optional: false
               }
-              1 => TypeLang\Node\Stmt\Callable\ParameterNode {
+              1 => TypeLang\Node\Type\Callable\ParameterNode {
                 +offset: 34
-                +type: TypeLang\Node\Stmt\NamedTypeNode {
+                +type: TypeLang\Node\Type\NamedTypeNode {
                   +offset: 34
                   +name: TypeLang\Node\Name {
                     +offset: 34
@@ -126,7 +126,7 @@ TypeLang\Node\Stmt\NamedTypeNode {
               }
             ]
           }
-          +type: TypeLang\Node\Stmt\NamedTypeNode {
+          +type: TypeLang\Node\Type\NamedTypeNode {
             +offset: 40
             +name: TypeLang\Node\Name {
               +offset: 40

@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Node\Literal\BoolLiteralNode;
-use TypeLang\Node\Literal\FloatLiteralNode;
-use TypeLang\Node\Literal\IntLiteralNode;
-use TypeLang\Node\Literal\LiteralNode;
-use TypeLang\Node\Literal\NullLiteralNode;
-use TypeLang\Node\Literal\StringLiteralNode;
-use TypeLang\Node\Literal\VariableLiteralNode;
-use TypeLang\Node\Stmt\CallableTypeNode;
-use TypeLang\Node\Stmt\ClassConstMaskNode;
-use TypeLang\Node\Stmt\ClassConstNode;
-use TypeLang\Node\Stmt\Condition\Condition;
-use TypeLang\Node\Stmt\Condition\EqualConditionNode;
-use TypeLang\Node\Stmt\Condition\NotEqualConditionNode;
-use TypeLang\Node\Stmt\ConstMaskNode;
-use TypeLang\Node\Stmt\IntersectionTypeNode;
-use TypeLang\Node\Stmt\NamedTypeNode;
-use TypeLang\Node\Stmt\TernaryExpressionNode;
-use TypeLang\Node\Stmt\TypeOffsetAccessNode;
-use TypeLang\Node\Stmt\TypesListNode;
-use TypeLang\Node\Stmt\UnionTypeNode;
+use TypeLang\Node\Type\CallableTypeNode;
+use TypeLang\Node\Type\ClassConstMaskNode;
+use TypeLang\Node\Type\ClassConstNode;
+use TypeLang\Node\Type\Condition\Condition;
+use TypeLang\Node\Type\Condition\EqualConditionNode;
+use TypeLang\Node\Type\Condition\NotEqualConditionNode;
+use TypeLang\Node\Type\ConstMaskNode;
+use TypeLang\Node\Type\IntersectionTypeNode;
+use TypeLang\Node\Type\Literal\BoolLiteralNode;
+use TypeLang\Node\Type\Literal\FloatLiteralNode;
+use TypeLang\Node\Type\Literal\IntLiteralNode;
+use TypeLang\Node\Type\Literal\LiteralNode;
+use TypeLang\Node\Type\Literal\NullLiteralNode;
+use TypeLang\Node\Type\Literal\StringLiteralNode;
+use TypeLang\Node\Type\Literal\VariableLiteralNode;
+use TypeLang\Node\Type\NamedTypeNode;
+use TypeLang\Node\Type\TernaryExpressionNode;
+use TypeLang\Node\Type\TypeOffsetAccessNode;
+use TypeLang\Node\Type\TypesListNode;
+use TypeLang\Node\Type\UnionTypeNode;
 use TypeLang\Printer\Exception\NonPrintableNodeException;
 
 class NativeTypePrinter extends PrettyPrinter

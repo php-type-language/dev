@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace TypeLang\PHPDoc\Parser\Content;
 
 use TypeLang\Node\FullQualifiedName;
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\ParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Exception\InvalidTagException;
 
 /**
- * @template-implements ReaderInterface<TypeStatement>
+ * @template-implements ReaderInterface<TypeNode>
  */
 final class TypeReader implements ReaderInterface
 {
@@ -23,7 +23,7 @@ final class TypeReader implements ReaderInterface
      * @throws \Throwable
      * @throws InvalidTagException
      */
-    public function __invoke(Stream $stream): TypeStatement
+    public function __invoke(Stream $stream): TypeNode
     {
         try {
             $type = $this->parser->parse($stream->value);

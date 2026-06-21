@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 
 /**
  * Related to internal type reference
@@ -12,6 +12,6 @@ use TypeLang\Node\Stmt\TypeStatement;
 final class TypeElementReference extends ElementReference
 {
     public function __construct(
-        public readonly TypeStatement $type,
+        public readonly TypeNode $type,
     ) {}
 }

@@ -7,7 +7,7 @@ namespace TypeLang\Parser\Tests;
 use JetBrains\PhpStorm\Language;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Parser;
 use TypeLang\Parser\ParserInterface;
 use TypeLang\Parser\Traverser;
@@ -51,14 +51,14 @@ abstract class TestCase extends BaseTestCase
      * @param ParserOptionsType $options
      * @throws \Throwable
      */
-    protected function parse(#[Language('PHP')] string $code, array $options = []): TypeStatement
+    protected function parse(#[Language('PHP')] string $code, array $options = []): TypeNode
     {
         $parser = $this->parser($options);
 
         return $parser->parse($code);
     }
 
-    protected function print(TypeStatement $statement): string
+    protected function print(TypeNode $statement): string
     {
         Traverser::new([$visitor = new Traverser\StringDumperVisitor()])
             ->traverse([$statement]);

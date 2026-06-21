@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for callable types.
  *
- * @see \TypeLang\Node\Stmt\CallableTypeNode
- * @see \TypeLang\Node\Stmt\Callable\CallableParameterNode
+ * @see \TypeLang\Node\Type\CallableTypeNode
+ * @see \TypeLang\Node\Type\Callable\CallableParameterNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class CallableTest extends SyntaxTestCase
@@ -18,25 +18,25 @@ final class CallableTest extends SyntaxTestCase
     public function testCallableWithoutParametersAndReturnType(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
+              Type\Callable\CallableParametersListNode
             AST, $this->parseAndPrint('foo()'));
     }
 
     public function testCallableWithParameterAndReturnType(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(simple)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(simple)
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
-              Stmt\NamedTypeNode
+              Type\NamedTypeNode
                 Name(void)
                   Identifier(void)
             AST, $this->parseAndPrint('foo(T): void'));
@@ -45,35 +45,35 @@ final class CallableTest extends SyntaxTestCase
     public function testComplexNestedCallable(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(a)
                 Identifier(a)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(simple)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(simple)
+                  Type\NamedTypeNode
                     Name(int)
                       Identifier(int)
-                    Stmt\Template\TemplateArgumentsListNode
-                      Stmt\Template\TemplateArgumentNode
-                        Literal\IntLiteralNode(0)
-                      Stmt\Template\TemplateArgumentNode
-                        Stmt\NamedTypeNode
+                    Type\Template\TemplateArgumentsListNode
+                      Type\Template\TemplateArgumentNode
+                        Type\Literal\IntLiteralNode(0)
+                      Type\Template\TemplateArgumentNode
+                        Type\NamedTypeNode
                           Name(max)
                             Identifier(max)
-                Stmt\Callable\CallableParameterNode(simple)
-                  Stmt\CallableTypeNode
+                Type\Callable\CallableParameterNode(simple)
+                  Type\CallableTypeNode
                     Name(c)
                       Identifier(c)
-                    Stmt\Callable\CallableParametersListNode
-                      Stmt\Callable\CallableParameterNode(simple)
-                        Stmt\NullableTypeNode
-                          Stmt\NamedTypeNode
+                    Type\Callable\CallableParametersListNode
+                      Type\Callable\CallableParameterNode(simple)
+                        Type\NullableTypeNode
+                          Type\NamedTypeNode
                             Name(C)
                               Identifier(C)
-                    Stmt\NamedTypeNode
+                    Type\NamedTypeNode
                       Name(mixed)
                         Identifier(mixed)
-              Stmt\NamedTypeNode
+              Type\NamedTypeNode
                 Name(void)
                   Identifier(void)
             AST, $this->parseAndPrint('a(int<0, max>, c(?C): mixed): void'));
@@ -82,36 +82,36 @@ final class CallableTest extends SyntaxTestCase
     public function testNamedParameter(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(simple)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(simple)
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
-                  Literal\VariableLiteralNode($name)
+                  Type\Literal\VariableLiteralNode($name)
             AST, $this->parseAndPrint('foo(T $name)'));
     }
 
     public function testMixedNamedAndAnonymousParameters(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(simple)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(simple)
+                  Type\NamedTypeNode
                     Name(A)
                       Identifier(A)
-                  Literal\VariableLiteralNode($a)
-                Stmt\Callable\CallableParameterNode(simple)
-                  Stmt\NamedTypeNode
+                  Type\Literal\VariableLiteralNode($a)
+                Type\Callable\CallableParameterNode(simple)
+                  Type\NamedTypeNode
                     Name(B)
                       Identifier(B)
-                Stmt\Callable\CallableParameterNode(simple)
-                  Stmt\NamedTypeNode
+                Type\Callable\CallableParameterNode(simple)
+                  Type\NamedTypeNode
                     Name(C)
                       Identifier(C)
             AST, $this->parseAndPrint('foo(A $a, B, C)'));
@@ -120,12 +120,12 @@ final class CallableTest extends SyntaxTestCase
     public function testOutputParameter(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(output)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(output)
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
             AST, $this->parseAndPrint('foo(T&)'));
@@ -134,27 +134,27 @@ final class CallableTest extends SyntaxTestCase
     public function testOutputNamedParameter(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(output)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(output)
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
-                  Literal\VariableLiteralNode($name)
+                  Type\Literal\VariableLiteralNode($name)
             AST, $this->parseAndPrint('foo(T &$name)'));
     }
 
     public function testOptionalParameter(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(optional)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(optional)
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
             AST, $this->parseAndPrint('foo(T=)'));
@@ -163,12 +163,12 @@ final class CallableTest extends SyntaxTestCase
     public function testVariadicParameterPrefixSyntax(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(variadic)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(variadic)
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
             AST, $this->parseAndPrint('foo(...T)'));
@@ -177,12 +177,12 @@ final class CallableTest extends SyntaxTestCase
     public function testVariadicParameterPostfixSyntax(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(variadic)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(variadic)
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
             AST, $this->parseAndPrint('foo(T...)'));
@@ -191,15 +191,15 @@ final class CallableTest extends SyntaxTestCase
     public function testVariadicNamedOutputParameter(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\CallableTypeNode
+            Type\CallableTypeNode
               Name(foo)
                 Identifier(foo)
-              Stmt\Callable\CallableParametersListNode
-                Stmt\Callable\CallableParameterNode(output, variadic)
-                  Stmt\NamedTypeNode
+              Type\Callable\CallableParametersListNode
+                Type\Callable\CallableParameterNode(output, variadic)
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
-                  Literal\VariableLiteralNode($name)
+                  Type\Literal\VariableLiteralNode($name)
             AST, $this->parseAndPrint('foo(...T &$name)'));
     }
 

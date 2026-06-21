@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\PHPDoc\Parser\Content;
 
 use TypeLang\Node\FullQualifiedName;
-use TypeLang\Node\Literal\VariableLiteralNode;
 use TypeLang\Node\Name;
-use TypeLang\Node\Stmt\NamedTypeNode;
+use TypeLang\Node\Type\Literal\VariableLiteralNode;
+use TypeLang\Node\Type\NamedTypeNode;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassConstantElementReference;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassMethodElementReference;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassPropertyElementReference;

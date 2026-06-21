@@ -15,17 +15,17 @@ requires the implementation of two methods:
 - `build()` - Creates [a `TypeInterface` instance](types.md)
 
 ```php
-use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;use TypeLang\Mapper\Type\Parser\TypeParserInterface;use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;use TypeLang\Mapper\Type\TypeInterface;use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;use TypeLang\Mapper\Type\Parser\TypeParserInterface;use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;use TypeLang\Mapper\Type\TypeInterface;use TypeLang\Node\Type\TypeNode;
 
 final readonly class CustomTypeBuilder implements TypeBuilderInterface
 {
-    public function isSupported(TypeStatement $statement): bool
+    public function isSupported(TypeNode $statement): bool
     {
         // TODO: Should match the TypeStatement AST object
     }
 
     public function build(
-        TypeStatement $statement,
+        TypeNode $statement,
         TypeRepositoryInterface $types,
         TypeParserInterface $parser,
     ): TypeInterface {
@@ -57,7 +57,7 @@ For example, if we want to check that the type is called `json`, the code
 will look like this:
 
 ```php
-use TypeLang\Node\Stmt\NamedTypeNode;
+use TypeLang\Node\Type\NamedTypeNode;
 
 // ...
 

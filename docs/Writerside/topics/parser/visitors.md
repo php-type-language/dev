@@ -61,7 +61,7 @@ To skip any nodes when traversing, you can use the appropriate
 command `TypeLang\Parser\Traverser\Command::SKIP_CHILDREN`.
 
 ```php
-use TypeLang\Node\Node;use TypeLang\Node\Stmt\Template\TemplateArgumentNode;use TypeLang\Parser\Traverser;use TypeLang\Parser\Traverser\Command;use TypeLang\Parser\Traverser\Visitor;
+use TypeLang\Node\Node;use TypeLang\Node\Type\Template\TemplateArgumentNode;use TypeLang\Parser\Traverser;use TypeLang\Parser\Traverser\Command;use TypeLang\Parser\Traverser\Visitor;
 
 $traverser = new Traverser([
     new class extends Visitor {

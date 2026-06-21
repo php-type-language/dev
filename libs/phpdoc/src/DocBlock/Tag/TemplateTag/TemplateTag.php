@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\TemplateTag;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 
@@ -22,7 +22,7 @@ class TemplateTag extends Tag implements OptionalTypeProviderInterface
     public function __construct(
         string $name,
         public readonly string $template,
-        public readonly ?TypeStatement $type = null,
+        public readonly ?TypeNode $type = null,
         \Stringable|string|null $description = null,
     ) {
         parent::__construct($name, $description);

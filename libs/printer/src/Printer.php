@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Printer;
 
 use TypeLang\Node\Statement;
-use TypeLang\Node\Stmt\LogicalTypeNode;
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\LogicalTypeNode;
+use TypeLang\Node\Type\TypeNode;
 
 abstract class Printer implements PrinterInterface
 {
@@ -86,7 +86,7 @@ abstract class Printer implements PrinterInterface
     }
 
     /**
-     * @param LogicalTypeNode<TypeStatement> $stmt
+     * @param LogicalTypeNode<TypeNode> $stmt
      *
      * @return list<non-empty-string>
      */
@@ -113,7 +113,7 @@ abstract class Printer implements PrinterInterface
     }
 
     /**
-     * @template T of TypeStatement
+     * @template T of TypeNode
      *
      * @param LogicalTypeNode<T> $logical
      *

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\MethodTag;
 
-use TypeLang\Node\Stmt\Callable\CallableParameterNode;
-use TypeLang\Node\Stmt\Callable\CallableParameterNode;
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\Callable\CallableParameterNode;
+use TypeLang\Node\Type\Callable\CallableParameterNode;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 
@@ -59,7 +59,7 @@ class MethodTag extends Tag implements OptionalTypeProviderInterface
          * @var non-empty-string
          */
         public readonly string $method,
-        public readonly ?TypeStatement $type = null,
+        public readonly ?TypeNode $type = null,
         iterable $parameters = [],
         public readonly bool $isStatic = false,
         \Stringable|string|null $description = null,

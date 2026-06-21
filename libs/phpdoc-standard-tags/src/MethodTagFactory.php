@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Node\Stmt\CallableTypeNode;
+use TypeLang\Node\Type\CallableTypeNode;
 use TypeLang\Parser\Parser as TypesParser;
 use TypeLang\Parser\ParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;

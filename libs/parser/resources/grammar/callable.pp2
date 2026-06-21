@@ -6,11 +6,11 @@ CallableType -> {
         throw FeatureNotAllowedException::fromFeature('callable types', $offset);
     }
 
-    $parameters = isset($children[0]) && $children[0] instanceof Node\Stmt\Callable\CallableParametersListNode
+    $parameters = isset($children[0]) && $children[0] instanceof Node\Type\Callable\CallableParametersListNode
         ? \array_shift($children)
-        : new Node\Stmt\Callable\CallableParametersListNode();
+        : new Node\Type\Callable\CallableParametersListNode();
 
-    return new Node\Stmt\CallableTypeNode(
+    return new Node\Type\CallableTypeNode(
         name: $name,
         parameters: $parameters,
         type: $children[0] ?? null,
@@ -24,7 +24,7 @@ CallableType -> {
   ;
 
 CallableParameters -> {
-    return new Node\Stmt\Callable\CallableParametersListNode($children);
+    return new Node\Type\Callable\CallableParametersListNode($children);
 }
   : CallableParameter() (::T_COMMA:: CallableParameter())* ::T_COMMA::?
   ;
@@ -32,7 +32,7 @@ CallableParameters -> {
 CallableParameter -> {
     $result = \end($children);
 
-    if ($children[0] instanceof Node\Stmt\Attribute\AttributeGroupsListNode) {
+    if ($children[0] instanceof Node\Type\Attribute\AttributeGroupsListNode) {
         if ($this->attributes === false) {
             throw FeatureNotAllowedException::fromFeature('callable parameter attributes', $offset);
         }
@@ -111,7 +111,7 @@ MaybeModifiersNamedCallableParameter -> {
 // Expects expression:
 // - "$<var>"
 MaybeNamedCallableParameter -> {
-    return new Node\Stmt\Callable\CallableParameterNode(null, $children[0]);
+    return new Node\Type\Callable\CallableParameterNode(null, $children[0]);
 }
   : VariableLiteral()
   ;
@@ -181,7 +181,7 @@ MaybeModifiersTypedCallableParameter -> {
 // Expects expression:
 // - "<type>"
 TypedCallableParameter -> {
-    return new Node\Stmt\Callable\CallableParameterNode($children[0]);
+    return new Node\Type\Callable\CallableParameterNode($children[0]);
 }
   : Type()
   ;

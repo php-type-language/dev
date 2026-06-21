@@ -66,7 +66,7 @@ $result = $reader->findConstantType(
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -104,7 +104,7 @@ $result = $reader->findConstantType(
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -115,23 +115,23 @@ TypeLang\Node\Stmt\NamedTypeNode {
       }
     ]
   }
-  +arguments: TypeLang\Node\Stmt\Template\TemplateArgumentsListNode {
+  +arguments: TypeLang\Node\Type\Template\TemplateArgumentsListNode {
     +offset: 3
     +items: array:2 [
-      0 => TypeLang\Node\Stmt\Template\TemplateArgumentNode {
+      0 => TypeLang\Node\Type\Template\TemplateArgumentNode {
         +offset: 4
         +hint: null
-        +value: TypeLang\Node\Literal\IntLiteralNode {#798
+        +value: TypeLang\Node\Type\Literal\IntLiteralNode {#798
           +offset: 4
           +raw: "0"
           +value: 0
         }
         +attributes: null
       }
-      1 => TypeLang\Node\Stmt\Template\TemplateArgumentNode {
+      1 => TypeLang\Node\Type\Template\TemplateArgumentNode {
         +offset: 7
         +hint: null
-        +value: TypeLang\Node\Stmt\NamedTypeNode {
+        +value: TypeLang\Node\Type\NamedTypeNode {
           +offset: 7
           +name: TypeLang\Node\Name {
             +offset: 7
@@ -181,7 +181,7 @@ $result = $reader->findPropertyType(
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -218,7 +218,7 @@ $result = $reader->findPropertyType(
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -256,7 +256,7 @@ $result = $reader->findFunctionType(
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -288,7 +288,7 @@ $result = $reader->findFunctionType(
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -330,7 +330,7 @@ $result = $reader->findParameterType(
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -366,7 +366,7 @@ $result = $reader->findParameterType(
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0

@@ -1,6 +1,6 @@
 # TypeStatement
 
-A `TypeStatement` is an AST node that represents a complete and
+A `TypeNode` is an AST node that represents a complete and
 independent description of a type. Each implementation of the type statement
 contains one `$offset` property meaning the offset in bytes from the beginning
 of the passed type definition string where the specified node is located.

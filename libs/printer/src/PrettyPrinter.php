@@ -4,41 +4,41 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Node\Literal\LiteralNode;
 use TypeLang\Node\Node;
 use TypeLang\Node\Statement;
-use TypeLang\Node\Stmt\Attribute\AttributeGroupNode;
-use TypeLang\Node\Stmt\Attribute\AttributeGroupsListNode;
-use TypeLang\Node\Stmt\Callable\CallableParameterNode;
-use TypeLang\Node\Stmt\CallableTypeNode;
-use TypeLang\Node\Stmt\ClassConstMaskNode;
-use TypeLang\Node\Stmt\ClassConstNode;
-use TypeLang\Node\Stmt\Condition\Condition;
-use TypeLang\Node\Stmt\Condition\EqualConditionNode;
-use TypeLang\Node\Stmt\Condition\GreaterThanConditionNode;
-use TypeLang\Node\Stmt\Condition\GreaterThanOrEqualConditionNode;
-use TypeLang\Node\Stmt\Condition\LessThanConditionNode;
-use TypeLang\Node\Stmt\Condition\LessThanOrEqualConditionNode;
-use TypeLang\Node\Stmt\Condition\NotEqualConditionNode;
-use TypeLang\Node\Stmt\ConstMaskNode;
-use TypeLang\Node\Stmt\IntersectionTypeNode;
-use TypeLang\Node\Stmt\LogicalTypeNode;
-use TypeLang\Node\Stmt\NamedTypeNode;
-use TypeLang\Node\Stmt\NullableTypeNode;
-use TypeLang\Node\Stmt\Shape\ClassConstMaskFieldNode;
-use TypeLang\Node\Stmt\Shape\ConstMaskFieldNode;
-use TypeLang\Node\Stmt\Shape\FieldNode;
-use TypeLang\Node\Stmt\Shape\FieldsListNode;
-use TypeLang\Node\Stmt\Shape\NamedFieldNode;
-use TypeLang\Node\Stmt\Shape\NumericFieldNode;
-use TypeLang\Node\Stmt\Shape\StringNamedFieldNode;
-use TypeLang\Node\Stmt\Template\TemplateArgumentNode;
-use TypeLang\Node\Stmt\Template\TemplateArgumentsListNode;
-use TypeLang\Node\Stmt\TernaryExpressionNode;
-use TypeLang\Node\Stmt\TypeOffsetAccessNode;
-use TypeLang\Node\Stmt\TypesListNode;
-use TypeLang\Node\Stmt\TypeStatement;
-use TypeLang\Node\Stmt\UnionTypeNode;
+use TypeLang\Node\Type\Attribute\AttributeGroupNode;
+use TypeLang\Node\Type\Attribute\AttributeGroupsListNode;
+use TypeLang\Node\Type\Callable\CallableParameterNode;
+use TypeLang\Node\Type\CallableTypeNode;
+use TypeLang\Node\Type\ClassConstMaskNode;
+use TypeLang\Node\Type\ClassConstNode;
+use TypeLang\Node\Type\Condition\Condition;
+use TypeLang\Node\Type\Condition\EqualConditionNode;
+use TypeLang\Node\Type\Condition\GreaterThanConditionNode;
+use TypeLang\Node\Type\Condition\GreaterThanOrEqualConditionNode;
+use TypeLang\Node\Type\Condition\LessThanConditionNode;
+use TypeLang\Node\Type\Condition\LessThanOrEqualConditionNode;
+use TypeLang\Node\Type\Condition\NotEqualConditionNode;
+use TypeLang\Node\Type\ConstMaskNode;
+use TypeLang\Node\Type\IntersectionTypeNode;
+use TypeLang\Node\Type\Literal\LiteralNode;
+use TypeLang\Node\Type\LogicalTypeNode;
+use TypeLang\Node\Type\NamedTypeNode;
+use TypeLang\Node\Type\NullableTypeNode;
+use TypeLang\Node\Type\Shape\ClassConstMaskFieldNode;
+use TypeLang\Node\Type\Shape\ConstMaskFieldNode;
+use TypeLang\Node\Type\Shape\FieldNode;
+use TypeLang\Node\Type\Shape\FieldsListNode;
+use TypeLang\Node\Type\Shape\NamedFieldNode;
+use TypeLang\Node\Type\Shape\NumericFieldNode;
+use TypeLang\Node\Type\Shape\StringNamedFieldNode;
+use TypeLang\Node\Type\Template\TemplateArgumentNode;
+use TypeLang\Node\Type\Template\TemplateArgumentsListNode;
+use TypeLang\Node\Type\TernaryExpressionNode;
+use TypeLang\Node\Type\TypeNode;
+use TypeLang\Node\Type\TypeOffsetAccessNode;
+use TypeLang\Node\Type\TypesListNode;
+use TypeLang\Node\Type\UnionTypeNode;
 use TypeLang\Parser\Traverser;
 use TypeLang\Printer\Exception\NonPrintableNodeException;
 
@@ -468,7 +468,7 @@ class PrettyPrinter extends Printer
         return $result;
     }
 
-    protected function shouldWrapReturnType(TypeStatement $type): bool
+    protected function shouldWrapReturnType(TypeNode $type): bool
     {
         if ($type instanceof LogicalTypeNode) {
             return true;
@@ -498,7 +498,7 @@ class PrettyPrinter extends Printer
     }
 
     /**
-     * @param UnionTypeNode<TypeStatement> $node
+     * @param UnionTypeNode<TypeNode> $node
      *
      * @return non-empty-string
      */
@@ -515,7 +515,7 @@ class PrettyPrinter extends Printer
     }
 
     /**
-     * @param IntersectionTypeNode<TypeStatement> $node
+     * @param IntersectionTypeNode<TypeNode> $node
      *
      * @return non-empty-string
      */
@@ -532,7 +532,7 @@ class PrettyPrinter extends Printer
     }
 
     /**
-     * @param NullableTypeNode<TypeStatement> $node
+     * @param NullableTypeNode<TypeNode> $node
      *
      * @return non-empty-string
      * @throws NonPrintableNodeException
@@ -575,7 +575,7 @@ class PrettyPrinter extends Printer
     }
 
     /**
-     * @param TypesListNode<TypeStatement> $node
+     * @param TypesListNode<TypeNode> $node
      *
      * @return non-empty-string
      * @throws NonPrintableNodeException
@@ -588,7 +588,7 @@ class PrettyPrinter extends Printer
     }
 
     /**
-     * @param TypeOffsetAccessNode<TypeStatement> $node
+     * @param TypeOffsetAccessNode<TypeNode> $node
      *
      * @return non-empty-string
      * @throws NonPrintableNodeException

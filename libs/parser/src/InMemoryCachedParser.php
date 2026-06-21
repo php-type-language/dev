@@ -7,13 +7,13 @@ namespace TypeLang\Parser;
 use Phplrt\Contracts\Source\SourceExceptionInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 
 final class InMemoryCachedParser implements ParserInterface
 {
     /**
-     * @var array<non-empty-string, TypeStatement>
+     * @var array<non-empty-string, TypeNode>
      */
     private array $types = [];
 
@@ -27,7 +27,7 @@ final class InMemoryCachedParser implements ParserInterface
      * @throws SourceExceptionInterface
      * @throws \Throwable
      */
-    public function parse(mixed $source): TypeStatement
+    public function parse(mixed $source): TypeNode
     {
         $instance = $this->sources->create($source);
 

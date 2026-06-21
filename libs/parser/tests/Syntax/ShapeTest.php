@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for shape (structural) types.
  *
- * @see \TypeLang\Node\Stmt\Shape\FieldsListNode
+ * @see \TypeLang\Node\Type\Shape\FieldsListNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ShapeTest extends SyntaxTestCase
@@ -17,18 +17,18 @@ final class ShapeTest extends SyntaxTestCase
     public function testNamedExplicitKeys(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\NamedFieldNode(required)
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\NamedFieldNode(required)
                   Identifier(a)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(first)
                       Identifier(first)
-                Stmt\Shape\NamedFieldNode(required)
+                Type\Shape\NamedFieldNode(required)
                   Identifier(b)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(second)
                       Identifier(second)
             AST, $this->parseAndPrint('array{a: first, b: second}'));
@@ -37,18 +37,18 @@ final class ShapeTest extends SyntaxTestCase
     public function testNumericExplicitKeys(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\NumericFieldNode(required)
-                  Literal\IntLiteralNode(1)
-                  Stmt\NamedTypeNode
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\NumericFieldNode(required)
+                  Type\Literal\IntLiteralNode(1)
+                  Type\NamedTypeNode
                     Name(first)
                       Identifier(first)
-                Stmt\Shape\NumericFieldNode(required)
-                  Literal\IntLiteralNode(42)
-                  Stmt\NamedTypeNode
+                Type\Shape\NumericFieldNode(required)
+                  Type\Literal\IntLiteralNode(42)
+                  Type\NamedTypeNode
                     Name(second)
                       Identifier(second)
             AST, $this->parseAndPrint('array{1: first, 42: second}'));
@@ -57,18 +57,18 @@ final class ShapeTest extends SyntaxTestCase
     public function testStringExplicitKeys(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\StringNamedFieldNode(required)
-                  Literal\StringLiteralNode("name-some")
-                  Stmt\NamedTypeNode
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\StringNamedFieldNode(required)
+                  Type\Literal\StringLiteralNode("name-some")
+                  Type\NamedTypeNode
                     Name(first)
                       Identifier(first)
-                Stmt\Shape\StringNamedFieldNode(required)
-                  Literal\StringLiteralNode("escape\nchars")
-                  Stmt\NamedTypeNode
+                Type\Shape\StringNamedFieldNode(required)
+                  Type\Literal\StringLiteralNode("escape\nchars")
+                  Type\NamedTypeNode
                     Name(second)
                       Identifier(second)
             AST, $this->parseAndPrint('array{"name-some": first, "escape\\nchars": second}'));
@@ -77,16 +77,16 @@ final class ShapeTest extends SyntaxTestCase
     public function testImplicitKeys(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\ImplicitFieldNode(required)
-                  Stmt\NamedTypeNode
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\ImplicitFieldNode(required)
+                  Type\NamedTypeNode
                     Name(first)
                       Identifier(first)
-                Stmt\Shape\ImplicitFieldNode(required)
-                  Stmt\NamedTypeNode
+                Type\Shape\ImplicitFieldNode(required)
+                  Type\NamedTypeNode
                     Name(second)
                       Identifier(second)
             AST, $this->parseAndPrint('array{first, second}'));
@@ -95,23 +95,23 @@ final class ShapeTest extends SyntaxTestCase
     public function testEmptyShape(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(sealed)
+              Type\Shape\FieldsListNode(sealed)
             AST, $this->parseAndPrint('array{}'));
     }
 
     public function testTrailingCommaIsAllowed(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\NamedFieldNode(required)
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\NamedFieldNode(required)
                   Identifier(a)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(int)
                       Identifier(int)
             AST, $this->parseAndPrint('array{a: int,}'));
@@ -120,13 +120,13 @@ final class ShapeTest extends SyntaxTestCase
     public function testOptionalKey(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\NamedFieldNode(optional)
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\NamedFieldNode(optional)
                   Identifier(key)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(Type)
                       Identifier(Type)
             AST, $this->parseAndPrint('array{key?: Type}'));
@@ -135,13 +135,13 @@ final class ShapeTest extends SyntaxTestCase
     public function testUnsealedShape(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(unsealed)
-                Stmt\Shape\NamedFieldNode(required)
+              Type\Shape\FieldsListNode(unsealed)
+                Type\Shape\NamedFieldNode(required)
                   Identifier(key)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(type)
                       Identifier(type)
             AST, $this->parseAndPrint('array{key: type, ...}'));
@@ -150,22 +150,22 @@ final class ShapeTest extends SyntaxTestCase
     public function testTypedUnsealedShape(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Template\TemplateArgumentsListNode
-                Stmt\Template\TemplateArgumentNode
-                  Stmt\NamedTypeNode
+              Type\Template\TemplateArgumentsListNode
+                Type\Template\TemplateArgumentNode
+                  Type\NamedTypeNode
                     Name(string)
                       Identifier(string)
-                Stmt\Template\TemplateArgumentNode
-                  Stmt\NamedTypeNode
+                Type\Template\TemplateArgumentNode
+                  Type\NamedTypeNode
                     Name(object)
                       Identifier(object)
-              Stmt\Shape\FieldsListNode(unsealed)
-                Stmt\Shape\NamedFieldNode(required)
+              Type\Shape\FieldsListNode(unsealed)
+                Type\Shape\NamedFieldNode(required)
                   Identifier(user)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(User)
                       Identifier(User)
             AST, $this->parseAndPrint('array{user: User, ...<string, object>}'));
@@ -174,15 +174,15 @@ final class ShapeTest extends SyntaxTestCase
     public function testShapeOnArbitraryTypeName(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(App\Domain\User)
                 Identifier(App)
                 Identifier(Domain)
                 Identifier(User)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\NamedFieldNode(required)
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\NamedFieldNode(required)
                   Identifier(userName)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(non-empty-string)
                       Identifier(non-empty-string)
             AST, $this->parseAndPrint('App\\Domain\\User{userName: non-empty-string}'));

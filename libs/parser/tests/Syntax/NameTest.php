@@ -6,12 +6,12 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Node\Stmt\NamedTypeNode;
+use TypeLang\Node\Type\NamedTypeNode;
 
 /**
  * Tests for the grammar of type names (identifiers) and namespaces.
  *
- * @see \TypeLang\Node\Stmt\NamedTypeNode
+ * @see \TypeLang\Node\Type\NamedTypeNode
  * @see \TypeLang\Node\Name
  * @see \TypeLang\Node\Identifier
  */
@@ -49,7 +49,7 @@ final class NameTest extends SyntaxTestCase
     public function testRelativeNamespacedName(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(Example\Name)
                 Identifier(Example)
                 Identifier(Name)
@@ -59,7 +59,7 @@ final class NameTest extends SyntaxTestCase
     public function testAbsoluteNamespacedName(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(\Absolute\Type\Name)
                 Identifier(Absolute)
                 Identifier(Type)
@@ -84,7 +84,7 @@ final class NameTest extends SyntaxTestCase
     public function testKeywordAsExplicitTypeReference(string $keyword): void
     {
         self::assertSame(<<<AST
-            Stmt\\NamedTypeNode
+            Type\\NamedTypeNode
               Name(\\{$keyword})
                 Identifier({$keyword})
             AST, $this->parseAndPrint('\\' . $keyword));

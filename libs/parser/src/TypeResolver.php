@@ -6,12 +6,12 @@ namespace TypeLang\Parser;
 
 use TypeLang\Node\FullQualifiedName;
 use TypeLang\Node\Name;
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Traverser\TypeMapVisitor;
 
 final class TypeResolver implements TypeResolverInterface
 {
-    public function resolve(TypeStatement $type, callable $transform): TypeStatement
+    public function resolve(TypeNode $type, callable $transform): TypeNode
     {
         Traverser::through(
             visitor: new TypeMapVisitor($transform(...)),
@@ -47,7 +47,7 @@ final class TypeResolver implements TypeResolverInterface
      *
      * @param array<non-empty-string|array-key, non-empty-string|Name> $replacements
      */
-    public function resolveWith(TypeStatement $type, array $replacements): TypeStatement
+    public function resolveWith(TypeNode $type, array $replacements): TypeNode
     {
         foreach ($replacements as $key => $replacement) {
             // normalize value

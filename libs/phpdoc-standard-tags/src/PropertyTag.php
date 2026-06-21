@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\Tag\Tag;
 use TypeLang\PHPDoc\Tag\VariableNameProviderInterface;
@@ -48,14 +48,14 @@ class PropertyTag extends Tag implements
      */
     public function __construct(
         string $name,
-        protected readonly ?TypeStatement $type,
+        protected readonly ?TypeNode $type,
         protected readonly string $variable,
         \Stringable|string|null $description = null,
     ) {
         parent::__construct($name, $description);
     }
 
-    public function getType(): ?TypeStatement
+    public function getType(): ?TypeNode
     {
         return $this->type;
     }

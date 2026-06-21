@@ -1,7 +1,7 @@
 
 ShapeFields -> {
     if ($children === []) {
-        return new Node\Stmt\Shape\FieldsListNode();
+        return new Node\Type\Shape\FieldsListNode();
     }
 
     if ($this->shapes === false) {
@@ -10,13 +10,13 @@ ShapeFields -> {
 
     $parameters = null;
 
-    if (\end($children) instanceof Node\Stmt\Template\TemplateArgumentsListNode) {
+    if (\end($children) instanceof Node\Type\Template\TemplateArgumentsListNode) {
         $parameters = \array_pop($children);
     }
 
-    $fields = \reset($children) instanceof Node\Stmt\Shape\FieldsListNode
+    $fields = \reset($children) instanceof Node\Type\Shape\FieldsListNode
         ? \array_shift($children)
-        : new Node\Stmt\Shape\FieldsListNode();
+        : new Node\Type\Shape\FieldsListNode();
 
     if ($children !== []) {
         $fields->sealed = false;
@@ -42,7 +42,7 @@ ShapeFieldsList -> {
     $implicit = false;
 
     foreach ($children as $field) {
-        if ($field instanceof Node\Stmt\Shape\ExplicitFieldNode) {
+        if ($field instanceof Node\Type\Shape\ExplicitFieldNode) {
             $key = $field->index;
 
             if (\in_array($key, $explicit, true)) {
@@ -59,7 +59,7 @@ ShapeFieldsList -> {
         throw SemanticException::fromShapeMixedKeys($offset);
     }
 
-    return new Node\Stmt\Shape\FieldsListNode($children);
+    return new Node\Type\Shape\FieldsListNode($children);
 }
   : ShapeField() (
       ::T_COMMA:: ShapeField()
@@ -69,7 +69,7 @@ ShapeFieldsList -> {
 ShapeField -> {
     $result = \end($children);
 
-    if ($children[0] instanceof Node\Stmt\Attribute\AttributeGroupsListNode) {
+    if ($children[0] instanceof Node\Type\Attribute\AttributeGroupsListNode) {
         if ($this->attributes === false) {
             throw FeatureNotAllowedException::fromFeature('shape field attributes', $offset);
         }
@@ -93,22 +93,22 @@ ExplicitField -> {
     $optional = \count($children) === 2;
 
     return match (true) {
-        $name instanceof Node\Literal\IntLiteralNode
-            => new Node\Stmt\Shape\NumericFieldNode($name, $value, $optional),
-        $name instanceof Node\Literal\StringLiteralNode
-            => new Node\Stmt\Shape\StringNamedFieldNode($name, $value, $optional),
-        $name instanceof Node\Stmt\ClassConstMaskNode
-            => new Node\Stmt\Shape\ClassConstMaskFieldNode($name, $value, $optional),
-        $name instanceof Node\Stmt\ConstMaskNode
-            => new Node\Stmt\Shape\ConstMaskFieldNode($name, $value, $optional),
-        default => new Node\Stmt\Shape\NamedFieldNode($name, $value, $optional),
+        $name instanceof Node\Type\Literal\IntLiteralNode
+            => new Node\Type\Shape\NumericFieldNode($name, $value, $optional),
+        $name instanceof Node\Type\Literal\StringLiteralNode
+            => new Node\Type\Shape\StringNamedFieldNode($name, $value, $optional),
+        $name instanceof Node\Type\ClassConstMaskNode
+            => new Node\Type\Shape\ClassConstFieldNode($name, $value, $optional),
+        $name instanceof Node\Type\ConstMaskNode
+            => new Node\Type\Shape\ConstMaskFieldNode($name, $value, $optional),
+        default => new Node\Type\Shape\NamedFieldNode($name, $value, $optional),
     };
 }
   : ShapeKey() (<T_QMARK>)? ::T_COLON:: ShapeValue()
   ;
 
 ImplicitField -> {
-    return new Node\Stmt\Shape\ImplicitFieldNode($children[0]);
+    return new Node\Type\Shape\ImplicitFieldNode($children[0]);
 }
   : ShapeValue()
   ;

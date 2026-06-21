@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Node\Stmt\Callable\CallableParameterNode;
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\Callable\CallableParameterNode;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\Tag\Tag;
 use TypeLang\PHPDoc\Tag\VariableNameProviderInterface;
@@ -50,7 +50,7 @@ class ParamTag extends Tag implements
         parent::__construct($name, $description);
     }
 
-    public function getType(): ?TypeStatement
+    public function getType(): ?TypeNode
     {
         return $this->param->type;
     }

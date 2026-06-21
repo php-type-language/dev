@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Polyfill\Tag;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 
 /**
  * @internal polyfill interface for the {@see \TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface}
  *
- * @property-read TypeStatement|null $type
+ * @property-read TypeNode|null $type
  */
 interface OptionalTypeProviderInterface {}

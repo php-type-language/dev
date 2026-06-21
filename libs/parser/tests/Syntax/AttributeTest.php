@@ -13,9 +13,9 @@ use PHPUnit\Framework\Attributes\Group;
  * Note: the AST dump renders the attribute structure (groups and names) but
  * not the attribute argument values.
  *
- * @see \TypeLang\Node\Stmt\Attribute\AttributeGroupsListNode
- * @see \TypeLang\Node\Stmt\Attribute\AttributeGroupNode
- * @see \TypeLang\Node\Stmt\Attribute\AttributeNode
+ * @see \TypeLang\Node\Type\Attribute\AttributeGroupsListNode
+ * @see \TypeLang\Node\Type\Attribute\AttributeGroupNode
+ * @see \TypeLang\Node\Type\Attribute\AttributeNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class AttributeTest extends SyntaxTestCase
@@ -23,17 +23,17 @@ final class AttributeTest extends SyntaxTestCase
     public function testSingleAttributeOnTemplateArgument(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(HashMap)
                 Identifier(HashMap)
-              Stmt\Template\TemplateArgumentsListNode
-                Stmt\Template\TemplateArgumentNode
-                  Stmt\NamedTypeNode
+              Type\Template\TemplateArgumentsListNode
+                Type\Template\TemplateArgumentNode
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
-                  Stmt\Attribute\AttributeGroupsListNode
-                    Stmt\Attribute\AttributeGroupNode
-                      Stmt\Attribute\AttributeNode
+                  Type\Attribute\AttributeGroupsListNode
+                    Type\Attribute\AttributeGroupNode
+                      Type\Attribute\AttributeNode
                         Name(name)
                           Identifier(name)
             AST, $this->parseAndPrint('HashMap<#[name("key")] T>'));
@@ -42,20 +42,20 @@ final class AttributeTest extends SyntaxTestCase
     public function testMultipleAttributesInOneGroup(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(HashMap)
                 Identifier(HashMap)
-              Stmt\Template\TemplateArgumentsListNode
-                Stmt\Template\TemplateArgumentNode
-                  Stmt\NamedTypeNode
+              Type\Template\TemplateArgumentsListNode
+                Type\Template\TemplateArgumentNode
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
-                  Stmt\Attribute\AttributeGroupsListNode
-                    Stmt\Attribute\AttributeGroupNode
-                      Stmt\Attribute\AttributeNode
+                  Type\Attribute\AttributeGroupsListNode
+                    Type\Attribute\AttributeGroupNode
+                      Type\Attribute\AttributeNode
                         Name(name)
                           Identifier(name)
-                      Stmt\Attribute\AttributeNode
+                      Type\Attribute\AttributeNode
                         Name(out)
                           Identifier(out)
             AST, $this->parseAndPrint('HashMap<#[name("key"), out] T>'));
@@ -64,21 +64,21 @@ final class AttributeTest extends SyntaxTestCase
     public function testMultipleAttributeGroups(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(HashMap)
                 Identifier(HashMap)
-              Stmt\Template\TemplateArgumentsListNode
-                Stmt\Template\TemplateArgumentNode
-                  Stmt\NamedTypeNode
+              Type\Template\TemplateArgumentsListNode
+                Type\Template\TemplateArgumentNode
+                  Type\NamedTypeNode
                     Name(T)
                       Identifier(T)
-                  Stmt\Attribute\AttributeGroupsListNode
-                    Stmt\Attribute\AttributeGroupNode
-                      Stmt\Attribute\AttributeNode
+                  Type\Attribute\AttributeGroupsListNode
+                    Type\Attribute\AttributeGroupNode
+                      Type\Attribute\AttributeNode
                         Name(name)
                           Identifier(name)
-                    Stmt\Attribute\AttributeGroupNode
-                      Stmt\Attribute\AttributeNode
+                    Type\Attribute\AttributeGroupNode
+                      Type\Attribute\AttributeNode
                         Name(out)
                           Identifier(out)
             AST, $this->parseAndPrint('HashMap<#[name("key")] #[out] T>'));
@@ -87,20 +87,20 @@ final class AttributeTest extends SyntaxTestCase
     public function testSingleAttributeOnShapeField(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(App\Domain\User)
                 Identifier(App)
                 Identifier(Domain)
                 Identifier(User)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\NamedFieldNode(required)
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\NamedFieldNode(required)
                   Identifier(userName)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(non-empty-string)
                       Identifier(non-empty-string)
-                  Stmt\Attribute\AttributeGroupsListNode
-                    Stmt\Attribute\AttributeGroupNode
-                      Stmt\Attribute\AttributeNode
+                  Type\Attribute\AttributeGroupsListNode
+                    Type\Attribute\AttributeGroupNode
+                      Type\Attribute\AttributeNode
                         Name(name)
                           Identifier(name)
             AST, $this->parseAndPrint('App\\Domain\\User{#[name("user_name")] userName: non-empty-string}'));
@@ -109,24 +109,24 @@ final class AttributeTest extends SyntaxTestCase
     public function testMultipleAttributeGroupsOnShapeField(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\NamedTypeNode
+            Type\NamedTypeNode
               Name(array)
                 Identifier(array)
-              Stmt\Shape\FieldsListNode(sealed)
-                Stmt\Shape\NamedFieldNode(optional)
+              Type\Shape\FieldsListNode(sealed)
+                Type\Shape\NamedFieldNode(optional)
                   Identifier(test)
-                  Stmt\NamedTypeNode
+                  Type\NamedTypeNode
                     Name(App\Domain\User)
                       Identifier(App)
                       Identifier(Domain)
                       Identifier(User)
-                  Stmt\Attribute\AttributeGroupsListNode
-                    Stmt\Attribute\AttributeGroupNode
-                      Stmt\Attribute\AttributeNode
+                  Type\Attribute\AttributeGroupsListNode
+                    Type\Attribute\AttributeGroupNode
+                      Type\Attribute\AttributeNode
                         Name(serialize)
                           Identifier(serialize)
-                    Stmt\Attribute\AttributeGroupNode
-                      Stmt\Attribute\AttributeNode
+                    Type\Attribute\AttributeGroupNode
+                      Type\Attribute\AttributeNode
                         Name(deserialize)
                           Identifier(deserialize)
             AST, $this->parseAndPrint('array{#[serialize("onSerialize")] #[deserialize("onDeserialize")] test?: App\\Domain\\User}'));

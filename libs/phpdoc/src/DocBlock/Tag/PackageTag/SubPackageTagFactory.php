@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\PackageTag;
 
-use TypeLang\Node\Stmt\NamedTypeNode;
+use TypeLang\Node\Type\NamedTypeNode;
 use TypeLang\Parser\Parser as TypesParser;
 use TypeLang\Parser\ParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;

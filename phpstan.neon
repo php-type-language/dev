@@ -3,11 +3,11 @@ includes:
   - vendor/phpstan/phpstan-deprecation-rules/rules.neon
   - vendor/phpstan/phpstan-strict-rules/rules.neon
   # Components
-  - libs/parser/phpstan.neon
-  - libs/phpdoc/phpstan.neon
-  - libs/phpdoc-standard-tags/phpstan.neon
-  - libs/phpdoc-template-tags/phpstan.neon
-  - libs/printer/phpstan.neon
+  # - libs/parser/phpstan.neon
+  # - libs/phpdoc/phpstan.neon
+  # - libs/phpdoc-standard-tags/phpstan.neon
+  # - libs/phpdoc-template-tags/phpstan.neon
+  # - libs/printer/phpstan.neon
   - libs/types/phpstan.neon
 parameters:
   level: max

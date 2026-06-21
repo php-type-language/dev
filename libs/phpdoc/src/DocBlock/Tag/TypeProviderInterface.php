@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 
 /**
  * Representation of any entry that contain type definition.
@@ -12,7 +12,7 @@ use TypeLang\Node\Stmt\TypeStatement;
 interface TypeProviderInterface extends OptionalTypeProviderInterface
 {
     /**
-     * Gets an AST object of the {@see TypeStatement} type.
+     * Gets an AST object of the {@see TypeNode} type.
      */
-    public TypeStatement $type { get; }
+    public TypeNode $type { get; }
 }

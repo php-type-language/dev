@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 
 /**
  * Representation of any entry that MAY contain optional type definition.
@@ -12,10 +12,10 @@ use TypeLang\Node\Stmt\TypeStatement;
 interface OptionalTypeProviderInterface
 {
     /**
-     * Gets an AST object of the {@see TypeStatement} type or {@see null}
+     * Gets an AST object of the {@see TypeNode} type or {@see null}
      * in case the type is not specified.
      *
      * @readonly
      */
-    public ?TypeStatement $type { get; }
+    public ?TypeNode $type { get; }
 }

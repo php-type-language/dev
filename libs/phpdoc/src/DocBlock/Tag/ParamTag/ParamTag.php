@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\ParamTag;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 use TypeLang\PHPDoc\DocBlock\Tag\VariableProviderInterface;
@@ -41,7 +41,7 @@ class ParamTag extends Tag implements
      */
     public function __construct(
         string $name,
-        public readonly ?TypeStatement $type,
+        public readonly ?TypeNode $type,
         public readonly string $variable,
         public readonly bool $isVariadic = false,
         public readonly bool $isOutput = false,

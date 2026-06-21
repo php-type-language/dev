@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for conditional (ternary) types.
  *
- * @see \TypeLang\Node\Stmt\TernaryExpressionNode
- * @see \TypeLang\Node\Stmt\Condition\Condition
+ * @see \TypeLang\Node\Type\TernaryExpressionNode
+ * @see \TypeLang\Node\Type\Condition\Condition
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ConditionalTest extends SyntaxTestCase
@@ -33,18 +33,18 @@ final class ConditionalTest extends SyntaxTestCase
     public function testConditionalOperators(string $type, string $condition): void
     {
         self::assertSame(<<<AST
-            Stmt\\TernaryExpressionNode
-              Stmt\\Condition\\{$condition}
-                Stmt\\NamedTypeNode
+            Type\\TernaryExpressionNode
+              Type\\Condition\\{$condition}
+                Type\\NamedTypeNode
                   Name(A)
                     Identifier(A)
-                Stmt\\NamedTypeNode
+                Type\\NamedTypeNode
                   Name(B)
                     Identifier(B)
-              Stmt\\NamedTypeNode
+              Type\\NamedTypeNode
                 Name(C)
                   Identifier(C)
-              Stmt\\NamedTypeNode
+              Type\\NamedTypeNode
                 Name(D)
                   Identifier(D)
             AST, $this->parseAndPrint($type));
@@ -53,16 +53,16 @@ final class ConditionalTest extends SyntaxTestCase
     public function testConditionalWithVariableSubject(): void
     {
         self::assertSame(<<<'AST'
-            Stmt\TernaryExpressionNode
-              Stmt\Condition\EqualConditionNode
-                Literal\VariableLiteralNode($T)
-                Stmt\NamedTypeNode
+            Type\TernaryExpressionNode
+              Type\Condition\EqualConditionNode
+                Type\Literal\VariableLiteralNode($T)
+                Type\NamedTypeNode
                   Name(B)
                     Identifier(B)
-              Stmt\NamedTypeNode
+              Type\NamedTypeNode
                 Name(C)
                   Identifier(C)
-              Stmt\NamedTypeNode
+              Type\NamedTypeNode
                 Name(D)
                   Identifier(D)
             AST, $this->parseAndPrint('$T is B ? C : D'));

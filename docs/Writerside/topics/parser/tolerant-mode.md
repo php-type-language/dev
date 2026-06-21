@@ -36,7 +36,7 @@ var_dump($parser->parse($content));
 ```
 
 ```php
-TypeLang\Node\Stmt\NamedTypeNode {
+TypeLang\Node\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Node\Name {
     +offset: 0
@@ -47,13 +47,13 @@ TypeLang\Node\Stmt\NamedTypeNode {
       }
     ]
   }
-  +arguments: TypeLang\Node\Stmt\Template\ArgumentsListNode {
+  +arguments: TypeLang\Node\Type\Template\ArgumentsListNode {
     +offset: 7
     +items: array:1 [
-      0 => TypeLang\Node\Stmt\Template\ArgumentNode {
+      0 => TypeLang\Node\Type\Template\ArgumentNode {
         +offset: 8
         +hint: null
-        +value: TypeLang\Node\Stmt\NamedTypeNode {
+        +value: TypeLang\Node\Type\NamedTypeNode {
           +offset: 8
           +name: TypeLang\Node\Name {
             +offset: 8

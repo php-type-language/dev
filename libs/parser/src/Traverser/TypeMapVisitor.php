@@ -6,10 +6,10 @@ namespace TypeLang\Parser\Traverser;
 
 use TypeLang\Node\Name;
 use TypeLang\Node\Node;
-use TypeLang\Node\Stmt\CallableTypeNode;
-use TypeLang\Node\Stmt\ClassConstMaskNode;
-use TypeLang\Node\Stmt\ConstMaskNode;
-use TypeLang\Node\Stmt\NamedTypeNode;
+use TypeLang\Node\Type\CallableTypeNode;
+use TypeLang\Node\Type\ClassConstMaskNode;
+use TypeLang\Node\Type\ConstMaskNode;
+use TypeLang\Node\Type\NamedTypeNode;
 
 final class TypeMapVisitor extends Visitor
 {

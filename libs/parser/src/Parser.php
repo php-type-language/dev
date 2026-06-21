@@ -20,10 +20,10 @@ use Phplrt\Parser\Grammar\RuleInterface;
 use Phplrt\Parser\Parser as ParserCombinator;
 use Phplrt\Parser\ParserConfigsInterface;
 use Phplrt\Source\SourceFactory;
-use TypeLang\Node\Literal\IntLiteralNode;
-use TypeLang\Node\Literal\StringLiteralNode;
 use TypeLang\Node\Node;
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\Literal\IntLiteralNode;
+use TypeLang\Node\Type\Literal\StringLiteralNode;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParseException;
 use TypeLang\Parser\Exception\SemanticException;
 
@@ -193,7 +193,7 @@ final class Parser implements ParserInterface
         );
     }
 
-    public function parse(mixed $source): TypeStatement
+    public function parse(mixed $source): TypeNode
     {
         $this->lastProcessedTokenOffset = 0;
 
@@ -202,7 +202,7 @@ final class Parser implements ParserInterface
 
             try {
                 foreach ($this->parser->parse($instance) as $stmt) {
-                    if ($stmt instanceof TypeStatement) {
+                    if ($stmt instanceof TypeNode) {
                         $context = $this->parser->getLastExecutionContext();
 
                         if ($context !== null) {

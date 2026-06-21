@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Node\Literal\VariableLiteralNode;
-use TypeLang\Node\Stmt\Callable\CallableParameterNode;
+use TypeLang\Node\Type\Callable\CallableParameterNode;
+use TypeLang\Node\Type\Literal\VariableLiteralNode;
 use TypeLang\Parser\Parser as TypesParser;
 use TypeLang\Parser\ParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;

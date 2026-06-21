@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\ReturnTag;
 
-use TypeLang\Node\Stmt\TypeStatement;
+use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 use TypeLang\PHPDoc\DocBlock\Tag\TypeProviderInterface;
 
@@ -40,7 +40,7 @@ class ReturnTag extends Tag implements TypeProviderInterface
      */
     public function __construct(
         string $name,
-        public readonly TypeStatement $type,
+        public readonly TypeNode $type,
         \Stringable|string|null $description = null,
     ) {
         parent::__construct($name, $description);
