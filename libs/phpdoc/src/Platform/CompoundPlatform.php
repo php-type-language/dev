@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Platform;
+namespace TypeLang\PhpDoc\Platform;
 
 final class CompoundPlatform implements PlatformInterface
 {

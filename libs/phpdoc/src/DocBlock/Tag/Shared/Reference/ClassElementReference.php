@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference;
+namespace TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference;
 
 use TypeLang\Type\Name;
 

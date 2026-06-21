@@ -32,21 +32,21 @@ composer require type-lang/phpdoc-standard-tags
 Adds support for basic annotations containing descriptions of types 
 that affect their output in static analyzers.
 
-- [x] [`@method`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/method.html) — `TypeLang\PHPDoc\Standard\MethodTagFactory`
-- [x] [`@param`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/param.html) — `TypeLang\PHPDoc\Standard\ParamTagFactory`
-- [x] [`@property`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/property.html) — `TypeLang\PHPDoc\Standard\PropertyTagFactory`
-- [x] [`@property-read`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/property-read.html) — `TypeLang\PHPDoc\Standard\PropertyReadTagFactory`
-- [x] [`@property-write`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/property-write.html) — `TypeLang\PHPDoc\Standard\PropertyWriteTagFactory`
-- [x] [`@return`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/return.html) — `TypeLang\PHPDoc\Standard\ReturnTagFactory`
-- [x] [`@throws`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/throws.html) — `TypeLang\PHPDoc\Standard\ThrowsTagFactory`
-- [x] [`@var`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/var.html) — `TypeLang\PHPDoc\Standard\VarTagFactory`
+- [x] [`@method`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/method.html) — `TypeLang\PhpDoc\Standard\MethodTagFactory`
+- [x] [`@param`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/param.html) — `TypeLang\PhpDoc\Standard\ParamTagFactory`
+- [x] [`@property`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/property.html) — `TypeLang\PhpDoc\Standard\PropertyTagFactory`
+- [x] [`@property-read`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/property-read.html) — `TypeLang\PhpDoc\Standard\PropertyReadTagFactory`
+- [x] [`@property-write`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/property-write.html) — `TypeLang\PhpDoc\Standard\PropertyWriteTagFactory`
+- [x] [`@return`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/return.html) — `TypeLang\PhpDoc\Standard\ReturnTagFactory`
+- [x] [`@throws`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/throws.html) — `TypeLang\PhpDoc\Standard\ThrowsTagFactory`
+- [x] [`@var`](https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/var.html) — `TypeLang\PhpDoc\Standard\VarTagFactory`
 
 ## Usage
 
 ```php
-use TypeLang\PHPDoc\Parser;
-use TypeLang\PHPDoc\Standard;
-use TypeLang\PHPDoc\Tag\Factory\TagFactory;
+use TypeLang\PhpDoc\Parser;
+use TypeLang\PhpDoc\Standard;
+use TypeLang\PhpDoc\Tag\Factory\TagFactory;
 
 $tags = new TagFactory();
 

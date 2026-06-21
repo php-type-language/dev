@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\IgnoreTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\IgnoreTag;
 
 use TypeLang\DocBlock\Tag\Tag;
 

@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc;
+namespace TypeLang\PhpDoc;
 
 use TypeLang\DocBlock\DocBlock;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\MutableTagFactoryInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\Exception\ParsingException;
-use TypeLang\PHPDoc\Exception\RuntimeExceptionInterface;
-use TypeLang\PHPDoc\Parser\Comment\CommentParserInterface;
-use TypeLang\PHPDoc\Parser\Comment\RegexCommentParser;
-use TypeLang\PHPDoc\Parser\Comment\Segment;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
-use TypeLang\PHPDoc\Parser\Description\RegexDescriptionParser;
-use TypeLang\PHPDoc\Parser\SourceMap;
-use TypeLang\PHPDoc\Parser\Tag\RegexTagParser;
-use TypeLang\PHPDoc\Parser\Tag\TagParserInterface;
-use TypeLang\PHPDoc\Platform\CompoundPlatform;
-use TypeLang\PHPDoc\Platform\PhanPlatform;
-use TypeLang\PHPDoc\Platform\PHPStanPlatform;
-use TypeLang\PHPDoc\Platform\PlatformInterface;
-use TypeLang\PHPDoc\Platform\PsalmPlatform;
-use TypeLang\PHPDoc\Platform\StandardPlatform;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\MutableTagFactoryInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\Exception\ParsingException;
+use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
+use TypeLang\PhpDoc\Parser\Comment\CommentParserInterface;
+use TypeLang\PhpDoc\Parser\Comment\RegexCommentParser;
+use TypeLang\PhpDoc\Parser\Comment\Segment;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Parser\Description\RegexDescriptionParser;
+use TypeLang\PhpDoc\Parser\SourceMap;
+use TypeLang\PhpDoc\Parser\Tag\RegexTagParser;
+use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
+use TypeLang\PhpDoc\Platform\CompoundPlatform;
+use TypeLang\PhpDoc\Platform\PhanPlatform;
+use TypeLang\PhpDoc\Platform\PHPStanPlatform;
+use TypeLang\PhpDoc\Platform\PlatformInterface;
+use TypeLang\PhpDoc\Platform\PsalmPlatform;
+use TypeLang\PhpDoc\Platform\StandardPlatform;
 
 class Parser implements ParserInterface
 {

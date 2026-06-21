@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\MethodTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\MethodTag;
 
 use TypeLang\DocBlock\Tag\Tag;
-use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\OptionalTypeProviderInterface;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\TypeNode;

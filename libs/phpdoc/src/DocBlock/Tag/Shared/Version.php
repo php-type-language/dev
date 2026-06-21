@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\Shared;
+namespace TypeLang\PhpDoc\DocBlock\Tag\Shared;
 
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Version\Stability;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Version\Stability;
 
 final class Version implements \Stringable
 {

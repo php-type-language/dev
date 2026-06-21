@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Platform;
+namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 

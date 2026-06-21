@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Platform;
+namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\ApiTag\ApiTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\MethodTag\MethodTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\ParamTag\ParamTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\PropertyTag\PropertyReadTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\PropertyTag\PropertyTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\PropertyTag\PropertyWriteTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\ReturnTag\ReturnTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateExtendsTag\TemplateExtendsTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateExtendsTag\TemplateImplementsTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateTag\TemplateTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\VarTag\VarTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\MethodTag\MethodTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyReadTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyWriteTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateExtendsTag\TemplateExtendsTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateExtendsTag\TemplateImplementsTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagFactory;
 
 final class PsalmPlatform extends Platform
 {

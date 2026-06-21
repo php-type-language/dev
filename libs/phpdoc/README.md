@@ -251,7 +251,7 @@ composer require type-lang/phpdoc
 ## Quick Start
 
 ```php
-$parser = new \TypeLang\PHPDoc\Parser();
+$parser = new \TypeLang\PhpDoc\DocBlock\Parser();
 $result = $parser->parse(<<<'PHPDOC'
     /**
      * Example description {@see some} and blah-blah-blah.
@@ -268,16 +268,16 @@ var_dump($result);
 **Expected Output:**
 
 ```php
-TypeLang\PHPDoc\DocBlock\DocBlock {
+TypeLang\PhpDoc\DocBlock\DocBlock\DocBlock {
   +description: TypeLang\DocBlock\Description\TaggedDescription {
     +components: array:3 [
       0 => TypeLang\DocBlock\Description\Description {
         #value: "Example description "
       }
-      1 => TypeLang\PHPDoc\DocBlock\Tag\SeeTag\SeeTag {
+      1 => TypeLang\PhpDoc\DocBlock\DocBlock\Tag\SeeTag\SeeTag {
         +description: null
         +name: "see"
-        +ref: TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\TypeSymbolReference {
+        +ref: TypeLang\PhpDoc\DocBlock\DocBlock\Tag\Shared\Reference\TypeSymbolReference {
           +type: TypeLang\Type\NamedTypeNode { … }
         }
       }
@@ -287,18 +287,18 @@ TypeLang\PHPDoc\DocBlock\DocBlock {
     ]
   }
   +tags: array:3 [
-    0 => TypeLang\PHPDoc\DocBlock\Tag\Tag {
+    0 => TypeLang\PhpDoc\DocBlock\DocBlock\Tag\Tag {
       +description: TypeLang\DocBlock\Description\Description {
         #value: "("foo")\n"
       }
       +name: "Example\Annotation"
     }
-    1 => TypeLang\PHPDoc\DocBlock\Tag\ReturnTag\ReturnTag {
+    1 => TypeLang\PhpDoc\DocBlock\DocBlock\Tag\ReturnTag\ReturnTag {
       +description: null
       +name: "return"
       +type: TypeLang\Type\NamedTypeNode { … }
     }
-    2 => TypeLang\PHPDoc\DocBlock\Tag\ThrowsTag\ThrowsTag {
+    2 => TypeLang\PhpDoc\DocBlock\DocBlock\Tag\ThrowsTag\ThrowsTag {
       +description: null
       +name: "throws"
       +type: TypeLang\Type\NamedTypeNode { … }

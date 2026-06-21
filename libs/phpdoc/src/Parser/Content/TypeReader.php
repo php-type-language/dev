@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Content;
+namespace TypeLang\PhpDoc\Parser\Content;
 
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
-use TypeLang\PHPDoc\Exception\InvalidTagException;
+use TypeLang\PhpDoc\Exception\InvalidTagException;
 use TypeLang\Type\TypeNode;
 
 /**

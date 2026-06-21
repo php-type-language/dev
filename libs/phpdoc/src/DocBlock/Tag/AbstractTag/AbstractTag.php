@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\AbstractTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\AbstractTag;
 
 use TypeLang\DocBlock\Tag\Tag;
 

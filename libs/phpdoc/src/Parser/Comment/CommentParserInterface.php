@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Comment;
+namespace TypeLang\PhpDoc\Parser\Comment;
 
 /**
  * This interface is responsible for reading significant

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Tag;
+namespace TypeLang\PhpDoc\Parser\Tag;
 
 use TypeLang\DocBlock\Tag\TagInterface;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 interface TagParserInterface
 {

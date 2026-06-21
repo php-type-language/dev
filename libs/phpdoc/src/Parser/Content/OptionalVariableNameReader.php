@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Content;
+namespace TypeLang\PhpDoc\Parser\Content;
 
 /**
  * @template-implements OptionalReaderInterface<non-empty-string>

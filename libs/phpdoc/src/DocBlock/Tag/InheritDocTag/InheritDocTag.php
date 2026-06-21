@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\InheritDocTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\InheritDocTag;
 
 use TypeLang\DocBlock\Tag\Tag;
 

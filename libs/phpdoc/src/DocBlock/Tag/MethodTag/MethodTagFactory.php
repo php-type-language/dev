@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\MethodTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\MethodTag;
 
 use TypeLang\Parser\TypeParser as TypesParser;
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\Exception\InvalidTagException;
-use TypeLang\PHPDoc\Parser\Content\OptionalTypeReader;
-use TypeLang\PHPDoc\Parser\Content\OptionalValueReader;
-use TypeLang\PHPDoc\Parser\Content\Stream;
-use TypeLang\PHPDoc\Parser\Content\TypeReader;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\Exception\InvalidTagException;
+use TypeLang\PhpDoc\Parser\Content\OptionalTypeReader;
+use TypeLang\PhpDoc\Parser\Content\OptionalValueReader;
+use TypeLang\PhpDoc\Parser\Content\Stream;
+use TypeLang\PhpDoc\Parser\Content\TypeReader;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\Type\CallableTypeNode;
 use TypeLang\Type\NamedTypeNode;
 

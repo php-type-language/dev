@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\PackageTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\PackageTag;
 
 use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\Type\Name;

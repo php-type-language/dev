@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\ApiTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\ApiTag;
 
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\Parser\Content\Stream;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\Parser\Content\Stream;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 /**
  * This class is responsible for creating "`@api`" tags.

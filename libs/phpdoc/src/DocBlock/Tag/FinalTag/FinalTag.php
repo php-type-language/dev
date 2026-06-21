@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\FinalTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\FinalTag;
 
 use TypeLang\DocBlock\Tag\Tag;
 

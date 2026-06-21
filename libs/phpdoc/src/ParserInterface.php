@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc;
+namespace TypeLang\PhpDoc;
 
 use JetBrains\PhpStorm\Language;
 use TypeLang\DocBlock\DocBlock;

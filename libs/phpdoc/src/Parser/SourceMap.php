@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser;
+namespace TypeLang\PhpDoc\Parser;
 
 /**
  * @internal this is an internal library class, please do not use it in your code
- * @psalm-internal TypeLang\PHPDoc
+ * @psalm-internal TypeLang\PhpDoc
  */
 final class SourceMap
 {

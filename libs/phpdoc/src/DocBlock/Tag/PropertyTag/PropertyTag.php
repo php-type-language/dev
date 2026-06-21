@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\PropertyTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\PropertyTag;
 
 use TypeLang\DocBlock\Tag\Tag;
-use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\VariableProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\OptionalTypeProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\VariableProviderInterface;
 use TypeLang\Type\TypeNode;
 
 /**

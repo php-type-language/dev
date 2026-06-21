@@ -11,7 +11,7 @@ use TypeLang\DocBlock\Tag\TagInterface;
 use TypeLang\DocBlock\Tag\TagsProviderInterface;
 
 /**
- * An implementation represents structure containing a description and a set
+ * An implementation represents a structure containing a description and a set
  * of tags that describe an arbitrary DocBlock Comment in the code.
  *
  * @template-implements \ArrayAccess<array-key, TagInterface|null>

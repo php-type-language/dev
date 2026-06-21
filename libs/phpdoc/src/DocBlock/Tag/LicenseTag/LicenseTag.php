@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\LicenseTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\LicenseTag;
 
 use TypeLang\DocBlock\Tag\Tag;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\UriReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\UriReference;
 
 /**
  * Used to indicate which license is applicable for the associated _Element_.

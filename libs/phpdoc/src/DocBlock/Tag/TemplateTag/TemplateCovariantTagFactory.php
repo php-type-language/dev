@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\TemplateTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\TemplateTag;
 
 use TypeLang\Parser\TypeParser as TypesParser;
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 /**
  * This class is responsible for creating "`@template-covariant`" tags.

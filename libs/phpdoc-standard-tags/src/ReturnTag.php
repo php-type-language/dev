@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Standard;
+namespace TypeLang\PhpDoc\Standard;
 
-use TypeLang\PHPDoc\Tag\Tag;
-use TypeLang\PHPDoc\Tag\TypeProviderInterface;
+use TypeLang\PhpDoc\Tag\Tag;
+use TypeLang\PhpDoc\Tag\TypeProviderInterface;
 use TypeLang\Type\TypeNode;
 
 /**

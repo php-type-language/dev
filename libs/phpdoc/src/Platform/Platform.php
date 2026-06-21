@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Platform;
+namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\Parser\TypeParser as TypesParser;
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
 
 abstract class Platform implements PlatformInterface
 {

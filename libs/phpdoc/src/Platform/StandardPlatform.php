@@ -2,37 +2,37 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Platform;
+namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\AbstractTag\AbstractTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\ApiTag\ApiTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\CategoryTag\CategoryTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\CopyrightTag\CopyrightTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\FinalTag\FinalTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\IgnoreTag\IgnoreTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\InheritDocTag\InheritDocTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\LicenseTag\LicenseTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\LinkTag\LinkTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\MethodTag\MethodTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\NoNamedArgumentsTag\NoNamedArgumentsTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\OverrideTag\OverrideTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\PackageTag\PackageTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\PackageTag\SubPackageTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\ParamTag\ParamTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\PropertyTag\PropertyReadTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\PropertyTag\PropertyTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\PropertyTag\PropertyWriteTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\ReturnTag\ReturnTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\SeeTag\SeeTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateExtendsTag\TemplateExtendsTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateExtendsTag\TemplateImplementsTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\TemplateTag\TemplateTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\ThrowsTag\ThrowsTagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\VarTag\VarTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\CategoryTag\CategoryTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\CopyrightTag\CopyrightTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\FinalTag\FinalTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\IgnoreTag\IgnoreTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\InheritDocTag\InheritDocTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\LicenseTag\LicenseTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\MethodTag\MethodTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\NoNamedArgumentsTag\NoNamedArgumentsTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\OverrideTag\OverrideTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\PackageTag\PackageTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\PackageTag\SubPackageTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyReadTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyWriteTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateExtendsTag\TemplateExtendsTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateExtendsTag\TemplateImplementsTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagFactory;
 
 final class StandardPlatform extends Platform
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\PropertyTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\PropertyTag;
 
 /**
  * ```

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Content;
+namespace TypeLang\PhpDoc\Parser\Content;
 
 use TypeLang\DocBlock\Description\DescriptionInterface;
-use TypeLang\PHPDoc\Exception\InvalidTagException;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Exception\InvalidTagException;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 final class Stream implements \Stringable
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Description;
+namespace TypeLang\PhpDoc\Parser\Description;
 
 use TypeLang\DocBlock\Description\DescriptionInterface;
 

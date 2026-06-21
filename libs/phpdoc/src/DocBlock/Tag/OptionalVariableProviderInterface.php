@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag;
+namespace TypeLang\PhpDoc\DocBlock\Tag;
 
 /**
  * Representation of any entry that MAY contain an optional variable name.

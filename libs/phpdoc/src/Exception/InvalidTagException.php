@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Exception;
+namespace TypeLang\PhpDoc\Exception;
 
 class InvalidTagException extends ParsingException
 {

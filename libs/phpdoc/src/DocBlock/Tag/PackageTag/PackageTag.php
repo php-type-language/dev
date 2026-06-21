@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\PackageTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\PackageTag;
 
 /**
  * Used to categorize _Element(s)_ into logical subdivisions.

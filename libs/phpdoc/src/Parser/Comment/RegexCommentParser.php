@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Comment;
+namespace TypeLang\PhpDoc\Parser\Comment;
 
 final class RegexCommentParser implements CommentParserInterface
 {

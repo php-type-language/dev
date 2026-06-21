@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Content;
+namespace TypeLang\PhpDoc\Parser\Content;
 
 use League\Uri\Uri;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\UriReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\UriReference;
 
 /**
  * A strict URI parser that requires an "scheme://" or "//" prefix for a

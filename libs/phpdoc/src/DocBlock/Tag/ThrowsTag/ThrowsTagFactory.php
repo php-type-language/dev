@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\ThrowsTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag;
 
 use TypeLang\Parser\TypeParser as TypesParser;
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\Parser\Content\Stream;
-use TypeLang\PHPDoc\Parser\Content\TypeReader;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\Parser\Content\Stream;
+use TypeLang\PhpDoc\Parser\Content\TypeReader;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 /**
  * This class is responsible for creating "`@throws`" tags.

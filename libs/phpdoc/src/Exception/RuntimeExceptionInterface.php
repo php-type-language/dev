@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Exception;
+namespace TypeLang\PhpDoc\Exception;
 
 /**
  * Error occurring while processing phpdoc content.

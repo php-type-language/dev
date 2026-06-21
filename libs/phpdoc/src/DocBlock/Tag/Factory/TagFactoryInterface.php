@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\Factory;
+namespace TypeLang\PhpDoc\DocBlock\Tag\Factory;
 
 use TypeLang\DocBlock\Tag\TagInterface;
-use TypeLang\PHPDoc\Exception\RuntimeExceptionInterface;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 interface TagFactoryInterface
 {

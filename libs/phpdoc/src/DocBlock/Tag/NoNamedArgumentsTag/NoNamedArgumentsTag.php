@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\NoNamedArgumentsTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\NoNamedArgumentsTag;
 
 use TypeLang\DocBlock\Tag\Tag;
 

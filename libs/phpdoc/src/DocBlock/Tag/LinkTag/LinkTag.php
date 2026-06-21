@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\LinkTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\LinkTag;
 
 use TypeLang\DocBlock\Tag\Tag;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ReferenceInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\ReferenceInterface;
 
 /**
  * The "`@link`" tag can be used to define a relation, or link, between

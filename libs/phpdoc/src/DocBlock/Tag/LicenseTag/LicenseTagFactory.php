@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\LicenseTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\LicenseTag;
 
 use Composer\Spdx\SpdxLicenses;
 use League\Uri\Uri;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\UriReference;
-use TypeLang\PHPDoc\Parser\Content\Stream;
-use TypeLang\PHPDoc\Parser\Content\UriReferenceReader;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\UriReference;
+use TypeLang\PhpDoc\Parser\Content\Stream;
+use TypeLang\PhpDoc\Parser\Content\UriReferenceReader;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 /**
  * This class is responsible for creating "`@license`" tags.

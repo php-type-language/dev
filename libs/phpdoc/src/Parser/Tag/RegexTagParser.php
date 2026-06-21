@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Tag;
+namespace TypeLang\PhpDoc\Parser\Tag;
 
 use TypeLang\DocBlock\Tag\TagInterface;
 use TypeLang\DocBlock\Tag\UnknownTag;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactory;
-use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\Exception\InvalidTagNameException;
-use TypeLang\PHPDoc\Exception\RuntimeExceptionInterface;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactory;
+use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\Exception\InvalidTagNameException;
+use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 final class RegexTagParser implements TagParserInterface
 {

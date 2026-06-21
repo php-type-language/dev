@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\Factory;
+namespace TypeLang\PhpDoc\DocBlock\Tag\Factory;
 
 use TypeLang\DocBlock\Tag\InvalidTag;
 use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\DocBlock\Tag\TagInterface;
-use TypeLang\PHPDoc\Exception\InvalidTagException;
-use TypeLang\PHPDoc\Exception\RuntimeExceptionInterface;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Exception\InvalidTagException;
+use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 final class TagFactory implements MutableTagFactoryInterface
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\Shared\Version;
+namespace TypeLang\PhpDoc\DocBlock\Tag\Shared\Version;
 
 enum StabilityType: int
 {

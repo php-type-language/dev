@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\OverrideTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\OverrideTag;
 
 use TypeLang\DocBlock\Tag\Tag;
 

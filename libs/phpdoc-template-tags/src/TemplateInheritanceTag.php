@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Template;
+namespace TypeLang\PhpDoc\Template;
 
-use TypeLang\PHPDoc\Tag\Tag;
-use TypeLang\PHPDoc\Tag\TypeProviderInterface;
+use TypeLang\PhpDoc\Tag\Tag;
+use TypeLang\PhpDoc\Tag\TypeProviderInterface;
 use TypeLang\Type\TypeNode;
 
 abstract class TemplateInheritanceTag extends Tag implements TypeProviderInterface

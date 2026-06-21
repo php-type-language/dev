@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\ThrowsTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag;
 
 use TypeLang\DocBlock\Tag\Tag;
-use TypeLang\PHPDoc\DocBlock\Tag\TypeProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TypeProviderInterface;
 use TypeLang\Type\TypeNode;
 
 /**

@@ -31,19 +31,19 @@ composer require type-lang/phpdoc-template-tags
 
 Adds support for advanced template annotations.
 
-- [x] `@template` — `TypeLang\PHPDoc\Template\TemplateTagFactory`
-- [x] `@template-covariant` — `TypeLang\PHPDoc\Template\TemplateCovariantTagFactory`
-- [x] `@template-contravariant` — `TypeLang\PHPDoc\Template\TemplateContravariantTagFactory`
-- [x] `@template-extends` (or `@extends`) — `TypeLang\PHPDoc\Template\TemplateExtendsTagFactory`
-- [x] `@template-implements` (or `@implements`) — `TypeLang\PHPDoc\Template\TemplateImplementsTagFactory`
-- [x] `@template-use` (or `@use`) — `TypeLang\PHPDoc\Template\TemplateUseTagFactory`
+- [x] `@template` — `TypeLang\PhpDoc\Template\TemplateTagFactory`
+- [x] `@template-covariant` — `TypeLang\PhpDoc\Template\TemplateCovariantTagFactory`
+- [x] `@template-contravariant` — `TypeLang\PhpDoc\Template\TemplateContravariantTagFactory`
+- [x] `@template-extends` (or `@extends`) — `TypeLang\PhpDoc\Template\TemplateExtendsTagFactory`
+- [x] `@template-implements` (or `@implements`) — `TypeLang\PhpDoc\Template\TemplateImplementsTagFactory`
+- [x] `@template-use` (or `@use`) — `TypeLang\PhpDoc\Template\TemplateUseTagFactory`
 
 ## Usage
 
 ```php
-use TypeLang\PHPDoc\Parser;
-use TypeLang\PHPDoc\Template;
-use TypeLang\PHPDoc\Tag\Factory\TagFactory;
+use TypeLang\PhpDoc\Parser;
+use TypeLang\PhpDoc\Template;
+use TypeLang\PhpDoc\Tag\Factory\TagFactory;
 
 $tags = new TagFactory();
 

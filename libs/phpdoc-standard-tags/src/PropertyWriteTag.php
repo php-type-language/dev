@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Standard;
+namespace TypeLang\PhpDoc\Standard;
 
 class PropertyWriteTag extends PropertyTag {}

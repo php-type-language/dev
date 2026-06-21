@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Content;
+namespace TypeLang\PhpDoc\Parser\Content;
 
-use TypeLang\PHPDoc\Exception\InvalidTagException;
+use TypeLang\PhpDoc\Exception\InvalidTagException;
 
 /**
  * @template-implements ReaderInterface<non-empty-string>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\Factory;
+namespace TypeLang\PhpDoc\DocBlock\Tag\Factory;
 
 interface MutableTagFactoryInterface extends TagFactoryInterface
 {

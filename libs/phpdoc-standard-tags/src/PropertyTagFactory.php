@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Standard;
+namespace TypeLang\PhpDoc\Standard;
 
 use TypeLang\Parser\TypeParser as TypesParser;
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
-use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
-use TypeLang\PHPDoc\Tag\Content;
-use TypeLang\PHPDoc\Tag\Factory\FactoryInterface;
+use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Tag\Content;
+use TypeLang\PhpDoc\Tag\Factory\FactoryInterface;
 
 /**
  * This class is responsible for creating "`@property`" tags.

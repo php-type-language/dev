@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag\CopyrightTag;
+namespace TypeLang\PhpDoc\DocBlock\Tag\CopyrightTag;
 
 use TypeLang\DocBlock\Tag\Tag;
 

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\Parser\Content;
+namespace TypeLang\PhpDoc\Parser\Content;
 
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassConstantElementReference;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassMethodElementReference;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassPropertyElementReference;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ElementReference;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\FunctionElementReference;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\TypeElementReference;
-use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\VariableReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\ClassConstantElementReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\ClassMethodElementReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\ClassPropertyElementReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\ElementReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\FunctionElementReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\TypeElementReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\VariableReference;
 use TypeLang\Type\FullQualifiedName;
 use TypeLang\Type\Literal\VariableLiteralNode;
 use TypeLang\Type\Name;
