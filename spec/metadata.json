@@ -1,0 +1,10 @@
+{
+  "biblio": {
+    "https://www.php.net/manual": {
+      "php-namespaces": "/en/language.namespaces.rationale.php",
+      "php-strings": "/en/language.types.string.php",
+      "php-named-arguments": "/en/functions.arguments.php#functions.named-arguments",
+      "php-type-system": "/en/language.types.type-system.php"
+    }
+  }
+}
