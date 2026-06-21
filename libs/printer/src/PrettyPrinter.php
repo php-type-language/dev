@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TypeLang\Printer;
 
 use TypeLang\Node\Node;
-use TypeLang\Node\Statement;
 use TypeLang\Node\Type\Attribute\AttributeGroupNode;
 use TypeLang\Node\Type\Attribute\AttributeGroupsListNode;
 use TypeLang\Node\Type\Callable\CallableParameterNode;
@@ -25,6 +24,7 @@ use TypeLang\Node\Type\Literal\LiteralNode;
 use TypeLang\Node\Type\LogicalTypeNode;
 use TypeLang\Node\Type\NamedTypeNode;
 use TypeLang\Node\Type\NullableTypeNode;
+use TypeLang\Node\Type\Shape\ClassConstFieldNode;
 use TypeLang\Node\Type\Shape\ClassConstMaskFieldNode;
 use TypeLang\Node\Type\Shape\ConstMaskFieldNode;
 use TypeLang\Node\Type\Shape\FieldNode;
@@ -123,7 +123,7 @@ class PrettyPrinter extends Printer
     /**
      * @throws NonPrintableNodeException
      */
-    protected function make(Statement $stmt): string
+    protected function make(TypeNode $stmt): string
     {
         return match (true) {
             $stmt instanceof LiteralNode => $this->printLiteralNode($stmt),
@@ -282,6 +282,7 @@ class PrettyPrinter extends Printer
             $field instanceof NamedFieldNode => $this->printNamedShapeFieldName($field),
             $field instanceof ConstMaskFieldNode => $this->printConstMaskShapeFieldName($field),
             $field instanceof ClassConstMaskFieldNode => $this->printClassConstMaskShapeFieldName($field),
+            $field instanceof ClassConstFieldNode => $this->printClassConstShapeFieldName($field),
             default => $this->printUnknownShapeFieldName($field),
         };
     }
@@ -306,20 +307,20 @@ class PrettyPrinter extends Printer
         return $field->key->name->toString() . '*';
     }
 
+    protected function printClassConstShapeFieldName(ClassConstFieldNode $field): string
+    {
+        return \sprintf('%s::%s', $field->key->class, $field->key->constant);
+    }
+
     protected function printClassConstMaskShapeFieldName(ClassConstMaskFieldNode $field): string
     {
-        $class = $field->key->class;
         $constant = $field->key->constant;
 
-        if ($field->key instanceof ClassConstNode) {
-            return $class . '::' . $constant;
-        }
-
         if ($constant === null) {
-            return $class . '::*';
+            return \sprintf('%s::*', $field->key->class);
         }
 
-        return $class . '::' . $constant . '*';
+        return \sprintf('%s::%s*', $field->key->class, $constant);
     }
 
     protected function printUnknownShapeFieldName(FieldNode $field): string

@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Node\Statement;
+use TypeLang\Node\Type\TypeNode;
 
 interface PrinterInterface
 {
-    /**
-     * @return non-empty-string
-     */
-    public function print(Statement $stmt): string;
+    public function print(TypeNode $stmt): string;
 }
