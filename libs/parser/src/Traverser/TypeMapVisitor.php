@@ -8,6 +8,7 @@ use TypeLang\Node\Name;
 use TypeLang\Node\Node;
 use TypeLang\Node\Type\CallableTypeNode;
 use TypeLang\Node\Type\ClassConstMaskNode;
+use TypeLang\Node\Type\ClassConstNode;
 use TypeLang\Node\Type\ConstMaskNode;
 use TypeLang\Node\Type\NamedTypeNode;
 
@@ -41,6 +42,7 @@ final class TypeMapVisitor extends Visitor
 
                 return null;
 
+            case $node instanceof ClassConstNode:
             case $node instanceof ClassConstMaskNode:
                 $node->class = $this->map($node->class);
 
