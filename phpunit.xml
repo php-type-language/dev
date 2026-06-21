@@ -11,6 +11,7 @@
 >
     <testsuites>
         <testsuite name="components">
+            <directory>libs/docblock/tests</directory>
             <directory>libs/parser/tests</directory>
             <directory>libs/phpdoc/tests</directory>
             <directory>libs/phpdoc-standard-tags/tests</directory>
@@ -24,6 +25,7 @@
 
     <source>
         <include>
+            <directory>libs/docblock/src</directory>
             <directory>libs/parser/src</directory>
             <directory>libs/phpdoc/src</directory>
             <directory>libs/phpdoc-standard-tags/src</directory>
