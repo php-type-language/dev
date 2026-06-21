@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Parser\Content;
 
-use TypeLang\PHPDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\DocBlock\Description\DescriptionInterface;
 use TypeLang\PHPDoc\Exception\InvalidTagException;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
 

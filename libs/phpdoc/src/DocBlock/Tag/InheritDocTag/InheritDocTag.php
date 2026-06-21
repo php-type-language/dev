@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\InheritDocTag;
 
-use TypeLang\PHPDoc\DocBlock\Tag\Tag;
+use TypeLang\DocBlock\Tag\Tag;
 
 /**
  * Used to directly inherit the long description from the parent

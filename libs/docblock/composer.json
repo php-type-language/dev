@@ -1,21 +1,19 @@
 {
-    "name": "type-lang/phpdoc-template-tags",
+    "name": "type-lang/docblock",
     "type": "library",
-    "description": "Adds support for template PHPDoc tags",
-    "keywords": ["language", "php", "phpdoc", "docblock", "tags", "dictionary"],
+    "description": "An AST nodes of the PHP DocBlock",
+    "keywords": ["language", "php", "phpdoc", "docblock", "ast", "nodes", "types"],
     "license": "MIT",
     "support": {
-        "source": "https://github.com/php-type-language/phpdoc-template-tags",
-        "issues": "https://github.com/php-type-language/phpdoc-template-tags/issues"
+        "source": "https://github.com/php-type-language/docblock",
+        "issues": "https://github.com/php-type-language/docblock/issues"
     },
     "require": {
-        "php": "^8.4",
-        "type-lang/parser": "^2.0",
-        "type-lang/phpdoc": "^2.0"
+        "php": "^8.4"
     },
     "autoload": {
         "psr-4": {
-            "TypeLang\\PhpDoc\\Template\\": "src"
+            "TypeLang\\DocBlock\\": "src"
         }
     },
     "require-dev": {
@@ -24,7 +22,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TypeLang\\PhpDoc\\Template\\Tests\\": "tests"
+            "TypeLang\\DocBlock\\Tests\\": "tests"
         }
     },
     "extra": {
@@ -37,7 +35,6 @@
         "sort-packages": true,
         "platform-check": true,
         "bin-compat": "full",
-        "optimize-autoloader": true,
         "preferred-install": {
             "*": "dist"
         }

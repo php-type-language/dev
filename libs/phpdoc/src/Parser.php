@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc;
 
-use TypeLang\PHPDoc\DocBlock\DocBlock;
+use TypeLang\DocBlock\DocBlock;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\MutableTagFactoryInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactory;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;

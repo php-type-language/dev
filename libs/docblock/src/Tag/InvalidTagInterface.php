@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag;
+namespace TypeLang\DocBlock\Tag;
 
 /**
  * Representation of invalid tag definition.

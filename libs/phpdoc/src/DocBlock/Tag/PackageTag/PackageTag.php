@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\PackageTag;
 
-use TypeLang\PHPDoc\DocBlock\Tag\Tag;
-
 /**
  * Used to categorize _Element(s)_ into logical subdivisions.
  *

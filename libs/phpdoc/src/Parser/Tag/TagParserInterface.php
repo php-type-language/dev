@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Parser\Tag;
 
-use TypeLang\PHPDoc\DocBlock\Tag\TagInterface;
+use TypeLang\DocBlock\Tag\TagInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
 
 interface TagParserInterface

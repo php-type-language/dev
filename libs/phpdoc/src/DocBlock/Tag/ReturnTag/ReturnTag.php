@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\ReturnTag;
 
-use TypeLang\PHPDoc\DocBlock\Tag\Tag;
+use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\PHPDoc\DocBlock\Tag\TypeProviderInterface;
 use TypeLang\Type\TypeNode;
 

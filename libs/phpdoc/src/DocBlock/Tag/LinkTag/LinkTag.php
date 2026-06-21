@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\LinkTag;
 
+use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ReferenceInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 
 /**
  * The "`@link`" tag can be used to define a relation, or link, between

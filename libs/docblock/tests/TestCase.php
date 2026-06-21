@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\Tests;
+namespace TypeLang\DocBlock\Tests;
 
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
-#[Group('type-lang/phpdoc')]
+#[Group('unit'), Group('type-lang/docblock')]
 abstract class TestCase extends BaseTestCase {}

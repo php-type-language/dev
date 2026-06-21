@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag;
+namespace TypeLang\DocBlock\Tag;
 
-class UnknownTag extends Tag implements InvalidTagInterface
+final class UnknownTag extends Tag implements InvalidTagInterface
 {
     /**
      * @var non-empty-string
      */
-    public const DEFAULT_UNKNOWN_TAG_NAME = 'unknown';
+    public const string DEFAULT_UNKNOWN_TAG_NAME = 'unknown';
 
     public function __construct(
         public readonly \Throwable $reason,

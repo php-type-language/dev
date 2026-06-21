@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag;
+namespace TypeLang\DocBlock\Tag;
 
-use TypeLang\PHPDoc\DocBlock\Description\OptionalDescriptionProviderInterface;
+use TypeLang\DocBlock\Description\OptionalDescriptionProviderInterface;
 
 /**
  * Representation of the phpdoc tag.
@@ -21,10 +21,10 @@ interface TagInterface extends OptionalDescriptionProviderInterface, \Stringable
      * (Fully Qualified Name), as well as the '-' character.
      *
      * @var non-empty-string
-     *
-     * @readonly
      */
-    public string $name { get; }
+    public string $name {
+        get;
+    }
 
     /**
      * Magic method {@link https://www.php.net/manual/en/language.oop5.magic.php#object.tostring}

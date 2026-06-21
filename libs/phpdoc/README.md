@@ -269,9 +269,9 @@ var_dump($result);
 
 ```php
 TypeLang\PHPDoc\DocBlock\DocBlock {
-  +description: TypeLang\PHPDoc\DocBlock\Description\TaggedDescription {
+  +description: TypeLang\DocBlock\Description\TaggedDescription {
     +components: array:3 [
-      0 => TypeLang\PHPDoc\DocBlock\Description\Description {
+      0 => TypeLang\DocBlock\Description\Description {
         #value: "Example description "
       }
       1 => TypeLang\PHPDoc\DocBlock\Tag\SeeTag\SeeTag {
@@ -281,14 +281,14 @@ TypeLang\PHPDoc\DocBlock\DocBlock {
           +type: TypeLang\Type\NamedTypeNode { … }
         }
       }
-      2 => TypeLang\PHPDoc\DocBlock\Description\Description {
+      2 => TypeLang\DocBlock\Description\Description {
         #value: " and blah-blah-blah.\n"
       }
     ]
   }
   +tags: array:3 [
     0 => TypeLang\PHPDoc\DocBlock\Tag\Tag {
-      +description: TypeLang\PHPDoc\DocBlock\Description\Description {
+      +description: TypeLang\DocBlock\Description\Description {
         #value: "("foo")\n"
       }
       +name: "Example\Annotation"

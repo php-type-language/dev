@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\IgnoreTag;
 
-use TypeLang\PHPDoc\DocBlock\Tag\Tag;
+use TypeLang\DocBlock\Tag\Tag;
 
 /**
  * Used to tell documentation systems that _Element_ are not to be processed.

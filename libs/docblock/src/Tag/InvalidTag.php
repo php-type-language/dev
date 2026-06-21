@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag;
+namespace TypeLang\DocBlock\Tag;
 
-class InvalidTag extends Tag implements InvalidTagInterface
+final class InvalidTag extends Tag implements InvalidTagInterface
 {
     /**
      * @param non-empty-string $name

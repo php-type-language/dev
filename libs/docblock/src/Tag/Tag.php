@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Tag;
+namespace TypeLang\DocBlock\Tag;
 
-use TypeLang\PHPDoc\DocBlock\Description\Description;
-use TypeLang\PHPDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\DocBlock\Description\Description;
+use TypeLang\DocBlock\Description\DescriptionInterface;
 
-class Tag implements TagInterface
+abstract class Tag implements TagInterface
 {
     public readonly ?DescriptionInterface $description;
 
-    /**
-     * @param non-empty-string $name
-     */
     public function __construct(
+        /**
+         * @var non-empty-string
+         */
         public readonly string $name,
         \Stringable|string|null $description = null,
     ) {
-        $this->description = Description::fromStringableOrNull($description);
+        $this->description = Description::tryCreateFromStringOrNull($description);
     }
 
     public function __toString(): string

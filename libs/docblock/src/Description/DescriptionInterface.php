@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PHPDoc\DocBlock\Description;
+namespace TypeLang\DocBlock\Description;
 
 /**
  * Any class that implements this interface is a description object

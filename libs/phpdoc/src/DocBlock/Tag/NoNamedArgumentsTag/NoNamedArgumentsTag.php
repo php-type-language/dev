@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\NoNamedArgumentsTag;
 
-use TypeLang\PHPDoc\DocBlock\Tag\Tag;
+use TypeLang\DocBlock\Tag\Tag;
 
 /**
  * Indicates that argument names may be changed in the future, and an update

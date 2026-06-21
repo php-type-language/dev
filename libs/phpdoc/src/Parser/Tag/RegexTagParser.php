@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Parser\Tag;
 
+use TypeLang\DocBlock\Tag\TagInterface;
+use TypeLang\DocBlock\Tag\UnknownTag;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactory;
 use TypeLang\PHPDoc\DocBlock\Tag\Factory\TagFactoryInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\TagInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\UnknownTag;
 use TypeLang\PHPDoc\Exception\InvalidTagNameException;
 use TypeLang\PHPDoc\Exception\RuntimeExceptionInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;

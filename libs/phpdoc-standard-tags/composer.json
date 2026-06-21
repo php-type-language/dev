@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "TypeLang\\PHPDoc\\Standard\\": "src"
+            "TypeLang\\PhpDoc\\Standard\\": "src"
         }
     },
     "require-dev": {
@@ -24,7 +24,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TypeLang\\PHPDoc\\Standard\\Tests\\": "tests"
+            "TypeLang\\PhpDoc\\Standard\\Tests\\": "tests"
         }
     },
     "extra": {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Parser\Description;
 
-use TypeLang\PHPDoc\DocBlock\Description\Description;
-use TypeLang\PHPDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PHPDoc\DocBlock\Description\TaggedDescription;
-use TypeLang\PHPDoc\DocBlock\Tag\TagInterface;
+use TypeLang\DocBlock\Description\Description;
+use TypeLang\DocBlock\Description\DescriptionInterface;
+use TypeLang\DocBlock\Description\TaggedDescription;
+use TypeLang\DocBlock\Tag\TagInterface;
 use TypeLang\PHPDoc\Parser\Tag\RegexTagParser;
 use TypeLang\PHPDoc\Parser\Tag\TagParserInterface;
 

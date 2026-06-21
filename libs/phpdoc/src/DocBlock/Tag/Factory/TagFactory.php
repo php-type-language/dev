@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\Factory;
 
-use TypeLang\PHPDoc\DocBlock\Tag\InvalidTag;
-use TypeLang\PHPDoc\DocBlock\Tag\Tag;
-use TypeLang\PHPDoc\DocBlock\Tag\TagInterface;
+use TypeLang\DocBlock\Tag\InvalidTag;
+use TypeLang\DocBlock\Tag\Tag;
+use TypeLang\DocBlock\Tag\TagInterface;
 use TypeLang\PHPDoc\Exception\InvalidTagException;
 use TypeLang\PHPDoc\Exception\RuntimeExceptionInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;

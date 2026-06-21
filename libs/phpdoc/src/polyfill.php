@@ -10,12 +10,12 @@ if (\PHP_VERSION_ID >= 80400) {
 
 \class_alias(
     Polyfill\Description\OptionalDescriptionProviderInterface::class,
-    Description\OptionalDescriptionProviderInterface::class,
+    TypeLang\DocBlock\Description\OptionalDescriptionProviderInterface::class,
 );
 
 \class_alias(
     Polyfill\Description\DescriptionProviderInterface::class,
-    Description\DescriptionProviderInterface::class,
+    TypeLang\DocBlock\Description\DescriptionProviderInterface::class,
 );
 
 \class_alias(
@@ -45,15 +45,15 @@ if (\PHP_VERSION_ID >= 80400) {
 
 \class_alias(
     Polyfill\Tag\TagInterface::class,
-    Tag\TagInterface::class,
+    \TypeLang\DocBlock\Tag\TagInterface::class,
 );
 
 \class_alias(
     Polyfill\Tag\InvalidTagInterface::class,
-    Tag\InvalidTagInterface::class,
+    \TypeLang\DocBlock\Tag\InvalidTagInterface::class,
 );
 
 \class_alias(
     Polyfill\Description\TaggedDescriptionInterface::class,
-    Description\TaggedDescriptionInterface::class,
+    TypeLang\DocBlock\Description\TaggedDescriptionInterface::class,
 );

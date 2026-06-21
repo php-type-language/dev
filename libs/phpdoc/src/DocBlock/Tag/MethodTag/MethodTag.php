@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\MethodTag;
 
+use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
-use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\TypeNode;
