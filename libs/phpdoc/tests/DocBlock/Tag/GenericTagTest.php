@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\DocBlock\Tests\TestCase;
+use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\GenericTag;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
