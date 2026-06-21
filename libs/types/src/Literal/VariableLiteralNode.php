@@ -30,12 +30,12 @@ final class VariableLiteralNode extends LiteralNode implements ParsableLiteralNo
         parent::__construct($normalized, $value);
     }
 
-    public static function parse(string $value): static
+    public static function parse(string $value): self
     {
         if (!\str_starts_with($value, '$')) {
             $value = '$' . $value;
         }
 
-        return new static($value);
+        return new self($value);
     }
 }

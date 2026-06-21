@@ -18,8 +18,8 @@ final class BoolLiteralNode extends LiteralNode implements ParsableLiteralNodeIn
         parent::__construct($value, $raw ?? ($value ? 'true' : 'false'));
     }
 
-    public static function parse(string $value): static
+    public static function parse(string $value): self
     {
-        return new static(\strtolower($value) === 'true', $value);
+        return new self(\strtolower($value) === 'true', $value);
     }
 }

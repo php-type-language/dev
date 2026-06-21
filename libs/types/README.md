@@ -4,6 +4,8 @@
 
 ---
 
+# TypeLang DTO Types
+
 AST node classes for the TypeLang type system.
 
 **TypeLang** is a declarative type language inspired by static analyzers

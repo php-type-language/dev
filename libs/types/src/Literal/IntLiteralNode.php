@@ -29,7 +29,7 @@ final class IntLiteralNode extends LiteralNode implements ParsableLiteralNodeInt
         parent::__construct($value, $raw ?? (string) $this->value);
     }
 
-    public static function parse(string $value): static
+    public static function parse(string $value): self
     {
         [$negative, $decimal] = self::split($value);
 
@@ -37,14 +37,14 @@ final class IntLiteralNode extends LiteralNode implements ParsableLiteralNodeInt
 
         if ($negative) {
             if ((string) \PHP_INT_MIN === $inverse) {
-                return new static(\PHP_INT_MIN, $value, $inverse);
+                return new self(\PHP_INT_MIN, $value, $inverse);
             }
 
             /** @phpstan-ignore-next-line : An "$inverse" variable contain numeric-string */
-            return new static((int) $inverse, $value, $inverse);
+            return new self((int) $inverse, $value, $inverse);
         }
 
-        return new static((int) $decimal, $value, $decimal);
+        return new self((int) $decimal, $value, $decimal);
     }
 
     /**

@@ -55,14 +55,14 @@ final class Identifier extends Node implements \Stringable
      * Returns {@see true} in case of name contains special class reference.
      */
     public bool $isSpecial {
-        get => static::isLooksLikeSpecial($this->value);
+        get => self::isLooksLikeSpecial($this->value);
     }
 
     /**
      * Returns {@see true} in case of name contains builtin type name.
      */
     public bool $isBuiltin {
-        get => static::isLooksLikeBuiltin($this->value);
+        get => self::isLooksLikeBuiltin($this->value);
     }
 
     public function __construct(
@@ -84,7 +84,7 @@ final class Identifier extends Node implements \Stringable
             throw new \InvalidArgumentException('Name identifier cannot be empty');
         }
 
-        return new static($normalized);
+        return new self($normalized);
     }
 
     /**
@@ -93,7 +93,7 @@ final class Identifier extends Node implements \Stringable
      */
     public static function isLooksLikeSpecial(string $name): bool
     {
-        return \in_array(\strtolower($name), static::SPECIAL_CLASS_NAME, true);
+        return \in_array(\strtolower($name), self::SPECIAL_CLASS_NAME, true);
     }
 
     /**
@@ -102,7 +102,7 @@ final class Identifier extends Node implements \Stringable
      */
     public static function isLooksLikeBuiltin(string $value): bool
     {
-        return \in_array(\strtolower($value), static::BUILTIN_TYPE_NAME, true);
+        return \in_array(\strtolower($value), self::BUILTIN_TYPE_NAME, true);
     }
 
     /**

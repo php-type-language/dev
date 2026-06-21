@@ -43,23 +43,23 @@ final class StringLiteralNode extends LiteralNode implements ParsableLiteralNode
         parent::__construct($value, $raw);
     }
 
-    public static function parse(string $value): static
+    public static function parse(string $value): self
     {
         if (\strlen($value) < 2) {
             throw new \InvalidArgumentException('Could not parse non-quoted string');
         }
 
         if ($value[0] === '"') {
-            return static::createFromDoubleQuotedString($value);
+            return self::createFromDoubleQuotedString($value);
         }
 
-        return static::createFromSingleQuotedString($value);
+        return self::createFromSingleQuotedString($value);
     }
 
     /**
      * @param non-empty-string $value
      */
-    public static function createFromDoubleQuotedString(string $value): static
+    public static function createFromDoubleQuotedString(string $value): self
     {
         if (\strlen($value) < 2) {
             throw new \InvalidArgumentException('Could not parse non-quoted string');
@@ -76,7 +76,7 @@ final class StringLiteralNode extends LiteralNode implements ParsableLiteralNode
     /**
      * @param non-empty-string $value
      */
-    public static function createFromSingleQuotedString(string $value): static
+    public static function createFromSingleQuotedString(string $value): self
     {
         if (\strlen($value) < 2) {
             throw new \InvalidArgumentException('Could not parse non-quoted string');
@@ -84,13 +84,13 @@ final class StringLiteralNode extends LiteralNode implements ParsableLiteralNode
 
         $body = \substr($value, 1, -1);
 
-        return new static(
+        return new self(
             value: \str_replace("\'", "'", $body),
             raw: $value,
         );
     }
 
-    private static function parseEncodedValue(string $string, ?string $raw = null): static
+    private static function parseEncodedValue(string $string, ?string $raw = null): self
     {
         $raw ??= $string;
 
@@ -111,7 +111,7 @@ final class StringLiteralNode extends LiteralNode implements ParsableLiteralNode
             $string = \str_replace("\0", '\\\\', $string);
         }
 
-        return new static($string, $raw);
+        return new self($string, $raw);
     }
 
     /**

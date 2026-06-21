@@ -18,12 +18,12 @@ final class FloatLiteralNode extends LiteralNode implements ParsableLiteralNodeI
         parent::__construct($value, $raw ?? (string) $this->value);
     }
 
-    public static function parse(string $value): static
+    public static function parse(string $value): self
     {
         if (!\is_numeric($value)) {
-            return new static(0.0, $value);
+            return new self(0.0, $value);
         }
 
-        return new static((float) $value, $value);
+        return new self((float) $value, $value);
     }
 }

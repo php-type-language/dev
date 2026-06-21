@@ -78,20 +78,20 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     public static function createFromStringSegments(
         iterable $segments,
         bool $isFullyQualified = self::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
-    ): static {
+    ): self {
         $identifiers = [];
 
         foreach ($segments as $segment) {
             $identifiers[] = Identifier::createFromString($segment);
         }
 
-        return new static($identifiers, $isFullyQualified);
+        return new self($identifiers, $isFullyQualified);
     }
 
     /**
      * @param non-empty-string|\Stringable $name
      */
-    public static function createFromString(string|\Stringable $name): static
+    public static function createFromString(string|\Stringable $name): self
     {
         $name = (string) $name;
         $unqualified = \trim($name, self::NAMESPACE_DELIMITER);
@@ -106,7 +106,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
             $segments[] = $segment;
         }
 
-        return static::createFromStringSegments(
+        return self::createFromStringSegments(
             segments: $segments,
             isFullyQualified: \str_starts_with($name, self::NAMESPACE_DELIMITER),
         );
@@ -116,9 +116,9 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      * @param int<0, max> $offset
      * @param int<0, max>|null $length
      */
-    public function slice(int $offset = 0, ?int $length = null): static
+    public function slice(int $offset = 0, ?int $length = null): self
     {
-        return new static(
+        return new self(
             segments: \array_slice($this->segments, $offset, $length),
             isFullyQualified: $this->isFullyQualified,
         );
@@ -137,9 +137,9 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      *  > "Some\Any\Any\Class"
      * ```
      */
-    public function withAdded(self $name): static
+    public function withAdded(self $name): self
     {
-        return new static([
+        return new self([
             ...$this->segments,
             ...$name->segments,
         ], $this->isFullyQualified);
@@ -180,9 +180,9 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      *  // > TypeLang\Parser\Exception\SemanticException
      * ```
      */
-    public function mergeWith(self $name): static
+    public function mergeWith(self $name): self
     {
-        return new static([
+        return new self([
             ...$this->segments,
             ...\array_slice($name->segments, 1),
         ], $this->isFullyQualified);
@@ -191,22 +191,22 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     /**
      * Convert a name to a full qualified name instance.
      */
-    public function toFullQualified(): static
+    public function toFullQualified(): self
     {
         if ($this->isFullyQualified) {
             return clone $this;
         }
 
-        return new static($this->segments, true);
+        return new self($this->segments, true);
     }
 
     /**
      * Convert name to unqualified name instance.
      */
-    public function toUnqualified(): static
+    public function toUnqualified(): self
     {
         if ($this->isFullyQualified) {
-            return new static($this->segments, false);
+            return new self($this->segments, false);
         }
 
         return clone $this;
