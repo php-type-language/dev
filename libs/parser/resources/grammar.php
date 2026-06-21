@@ -377,7 +377,7 @@ return [
 
             $hint = $attributes = null;
 
-            if (\reset($children) instanceof Type\Attribute\AttributeGroupsListNode) {
+            if (\reset($children) instanceof Type\Attribute\AttributeGroupListNode) {
                 if ($this->features->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('template argument attributes', $offset);
                 }
@@ -409,13 +409,13 @@ return [
                 throw FeatureNotAllowedException::fromFeature('template arguments', $offset);
             }
 
-            return new Type\Template\TemplateArgumentsListNode($children);
+            return new Type\Template\TemplateArgumentListNode($children);
         },
         54 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Type\Attribute\AttributeGroupsListNode($children);
+            return new Type\Attribute\AttributeGroupListNode($children);
         },
         60 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Type\Callable\CallableParametersListNode($children);
+            return new Type\Callable\CallableParameterListNode($children);
         },
         66 => function (\Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated
@@ -427,9 +427,9 @@ return [
                 throw FeatureNotAllowedException::fromFeature('callable types', $offset);
             }
 
-            $parameters = isset($children[0]) && $children[0] instanceof Type\Callable\CallableParametersListNode
+            $parameters = isset($children[0]) && $children[0] instanceof Type\Callable\CallableParameterListNode
                 ? \array_shift($children)
-                : new Type\Callable\CallableParametersListNode();
+                : new Type\Callable\CallableParameterListNode();
 
             return new Type\CallableTypeNode(
                 name: $name,
@@ -443,7 +443,7 @@ return [
 
             $result = \end($children);
 
-            if ($children[0] instanceof Type\Attribute\AttributeGroupsListNode) {
+            if ($children[0] instanceof Type\Attribute\AttributeGroupListNode) {
                 if ($this->features->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('callable parameter attributes', $offset);
                 }
@@ -590,7 +590,7 @@ return [
 
             $parameters = null;
 
-            if (\end($children) instanceof Type\Template\TemplateArgumentsListNode) {
+            if (\end($children) instanceof Type\Template\TemplateArgumentListNode) {
                 $parameters = \array_pop($children);
             }
 
@@ -610,7 +610,7 @@ return [
 
             $result = \end($children);
 
-            if ($children[0] instanceof Type\Attribute\AttributeGroupsListNode) {
+            if ($children[0] instanceof Type\Attribute\AttributeGroupListNode) {
                 if ($this->features->attributes === false) {
                     throw FeatureNotAllowedException::fromFeature('shape field attributes', $offset);
                 }
@@ -653,7 +653,7 @@ return [
             }
 
             // Template parameters
-            if (\end($children) instanceof Type\Template\TemplateArgumentsListNode) {
+            if (\end($children) instanceof Type\Template\TemplateArgumentListNode) {
                 $parameters = \array_pop($children);
             }
 
@@ -723,7 +723,7 @@ return [
             );
         },
         165 => static function (\Phplrt\Parser\Context $ctx, $children) {
-            return new Type\Attribute\AttributeArgumentsListNode($children);
+            return new Type\Attribute\AttributeArgumentListNode($children);
         },
         167 => static function (\Phplrt\Parser\Context $ctx, $children) {
             return new Type\Attribute\AttributeArgumentNode($children[0]);

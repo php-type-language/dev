@@ -9,7 +9,6 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for the legacy square bracket list syntax (e.g. "T[]").
  *
- * @see \TypeLang\Type\TypesListNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ListTest extends SyntaxTestCase
@@ -17,8 +16,8 @@ final class ListTest extends SyntaxTestCase
     public function testSimpleList(): void
     {
         self::assertSame(<<<'AST'
-            Type\TypesListNode
-              Type\NamedTypeNode
+            TypesListNode
+              NamedTypeNode
                 Name(User)
                   Identifier(User)
             AST, $this->parseAndPrint('User[]'));
@@ -27,9 +26,9 @@ final class ListTest extends SyntaxTestCase
     public function testNestedList(): void
     {
         self::assertSame(<<<'AST'
-            Type\TypesListNode
-              Type\TypesListNode
-                Type\NamedTypeNode
+            TypesListNode
+              TypesListNode
+                NamedTypeNode
                   Name(User)
                     Identifier(User)
             AST, $this->parseAndPrint('User[][]'));

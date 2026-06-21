@@ -10,7 +10,6 @@ use TypeLang\Type\Literal\StringLiteralNode;
 /**
  * Tests for the string literal grammar (single and double quoted strings).
  *
- * @see \TypeLang\Type\Literal\StringLiteralNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class StringLiteralTest extends SyntaxTestCase

@@ -6,9 +6,9 @@ CallableType -> {
         throw FeatureNotAllowedException::fromFeature('callable types', $offset);
     }
 
-    $parameters = isset($children[0]) && $children[0] instanceof Type\Callable\CallableParametersListNode
+    $parameters = isset($children[0]) && $children[0] instanceof Type\Callable\CallableParameterListNode
         ? \array_shift($children)
-        : new Type\Callable\CallableParametersListNode();
+        : new Type\Callable\CallableParameterListNode();
 
     return new Type\CallableTypeNode(
         name: $name,
@@ -24,7 +24,7 @@ CallableType -> {
   ;
 
 CallableParameters -> {
-    return new Type\Callable\CallableParametersListNode($children);
+    return new Type\Callable\CallableParameterListNode($children);
 }
   : CallableParameter() (::T_COMMA:: CallableParameter())* ::T_COMMA::?
   ;
@@ -32,7 +32,7 @@ CallableParameters -> {
 CallableParameter -> {
     $result = \end($children);
 
-    if ($children[0] instanceof Type\Attribute\AttributeGroupsListNode) {
+    if ($children[0] instanceof Type\Attribute\AttributeGroupListNode) {
         if ($this->features->attributes === false) {
             throw FeatureNotAllowedException::fromFeature('callable parameter attributes', $offset);
         }

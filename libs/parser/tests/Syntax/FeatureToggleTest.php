@@ -12,7 +12,6 @@ use TypeLang\Type\NamedTypeNode;
  * Tests that each grammar feature can be disabled through the parser options
  * and that disabled constructs are rejected.
  *
- * @see \TypeLang\Parser\TypeParser
  *
  * @phpstan-import-type ParserOptionsType from \TypeLang\Parser\Tests\TestCase
  */

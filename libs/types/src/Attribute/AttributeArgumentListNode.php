@@ -9,4 +9,4 @@ use TypeLang\Type\NodeList;
 /**
  * @template-extends NodeList<AttributeArgumentNode>
  */
-final class AttributeArgumentsListNode extends NodeList {}
+final class AttributeArgumentListNode extends NodeList {}

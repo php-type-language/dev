@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Shape;
 
-use TypeLang\Type\Attribute\AttributeGroupsListNode;
+use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -26,7 +26,7 @@ abstract class ExplicitFieldNode extends FieldNode
         public mixed $key,
         TypeNode $type,
         bool $optional = false,
-        ?AttributeGroupsListNode $attributes = null,
+        ?AttributeGroupListNode $attributes = null,
     ) {
         parent::__construct(
             type: $type,

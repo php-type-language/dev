@@ -9,4 +9,4 @@ use TypeLang\Type\NodeList;
 /**
  * @template-extends NodeList<CallableParameterNode>
  */
-final class CallableParametersListNode extends NodeList {}
+final class CallableParameterListNode extends NodeList {}

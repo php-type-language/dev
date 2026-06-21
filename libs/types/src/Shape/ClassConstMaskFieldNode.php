@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Shape;
 
-use TypeLang\Type\Attribute\AttributeGroupsListNode;
+use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\ClassConstMaskNode;
 use TypeLang\Type\TypeNode;
 
@@ -24,7 +24,7 @@ final class ClassConstMaskFieldNode extends ExplicitFieldNode
         ClassConstMaskNode $key,
         TypeNode $type,
         bool $optional = false,
-        ?AttributeGroupsListNode $attributes = null,
+        ?AttributeGroupListNode $attributes = null,
     ) {
         parent::__construct(
             key: $key,

@@ -6,7 +6,7 @@ namespace TypeLang\Printer;
 
 use TypeLang\Type\Node;
 use TypeLang\Type\Attribute\AttributeGroupNode;
-use TypeLang\Type\Attribute\AttributeGroupsListNode;
+use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\CallableTypeNode;
 use TypeLang\Type\ClassConstMaskNode;
@@ -33,7 +33,7 @@ use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Shape\NumericFieldNode;
 use TypeLang\Type\Shape\StringNamedFieldNode;
 use TypeLang\Type\Template\TemplateArgumentNode;
-use TypeLang\Type\Template\TemplateArgumentsListNode;
+use TypeLang\Type\Template\TemplateArgumentListNode;
 use TypeLang\Type\TernaryExpressionNode;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\TypeOffsetAccessNode;
@@ -222,7 +222,7 @@ class PrettyPrinter extends Printer
         return $fields;
     }
 
-    protected function printAttributeGroups(AttributeGroupsListNode $groups, bool $multiline): string
+    protected function printAttributeGroups(AttributeGroupListNode $groups, bool $multiline): string
     {
         $prefix = $this->prefix();
         $result = '';
@@ -329,12 +329,12 @@ class PrettyPrinter extends Printer
     }
 
     /**
-     * @param TemplateArgumentsListNode<TemplateArgumentNode>|TemplateArgumentsListNode $arguments
+     * @param TemplateArgumentListNode<TemplateArgumentNode>|TemplateArgumentListNode $arguments
      *
      * @return non-empty-string
      * @throws NonPrintableNodeException
      */
-    protected function printTemplateArgumentsNode(TemplateArgumentsListNode $arguments): string
+    protected function printTemplateArgumentsNode(TemplateArgumentListNode $arguments): string
     {
         $result = [];
 

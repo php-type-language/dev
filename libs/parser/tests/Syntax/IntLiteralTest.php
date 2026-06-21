@@ -11,7 +11,6 @@ use TypeLang\Type\Literal\IntLiteralNode;
 /**
  * Tests for the integer literal grammar (decimal, binary, octal, hexadecimal).
  *
- * @see \TypeLang\Type\Literal\IntLiteralNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class IntLiteralTest extends SyntaxTestCase

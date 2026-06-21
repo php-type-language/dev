@@ -10,7 +10,7 @@ ShapeFields -> {
 
     $parameters = null;
 
-    if (\end($children) instanceof Type\Template\TemplateArgumentsListNode) {
+    if (\end($children) instanceof Type\Template\TemplateArgumentListNode) {
         $parameters = \array_pop($children);
     }
 
@@ -69,7 +69,7 @@ ShapeFieldsList -> {
 ShapeField -> {
     $result = \end($children);
 
-    if ($children[0] instanceof Type\Attribute\AttributeGroupsListNode) {
+    if ($children[0] instanceof Type\Attribute\AttributeGroupListNode) {
         if ($this->features->attributes === false) {
             throw FeatureNotAllowedException::fromFeature('shape field attributes', $offset);
         }

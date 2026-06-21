@@ -10,9 +10,6 @@ use PHPUnit\Framework\Attributes\Group;
  * Tests for logical (composite) types: union, intersection, nullable and
  * parentheses grouping.
  *
- * @see \TypeLang\Type\UnionTypeNode
- * @see \TypeLang\Type\IntersectionTypeNode
- * @see \TypeLang\Type\NullableTypeNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class LogicalTest extends SyntaxTestCase
@@ -20,14 +17,14 @@ final class LogicalTest extends SyntaxTestCase
     public function testUnionType(): void
     {
         self::assertSame(<<<'AST'
-            Type\UnionTypeNode
-              Type\NamedTypeNode
+            UnionTypeNode
+              NamedTypeNode
                 Name(A)
                   Identifier(A)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(B)
                   Identifier(B)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(C)
                   Identifier(C)
             AST, $this->parseAndPrint('A | B | C'));
@@ -36,14 +33,14 @@ final class LogicalTest extends SyntaxTestCase
     public function testIntersectionType(): void
     {
         self::assertSame(<<<'AST'
-            Type\IntersectionTypeNode
-              Type\NamedTypeNode
+            IntersectionTypeNode
+              NamedTypeNode
                 Name(A)
                   Identifier(A)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(B)
                   Identifier(B)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(C)
                   Identifier(C)
             AST, $this->parseAndPrint('A & B & C'));
@@ -52,8 +49,8 @@ final class LogicalTest extends SyntaxTestCase
     public function testNullableType(): void
     {
         self::assertSame(<<<'AST'
-            Type\NullableTypeNode
-              Type\NamedTypeNode
+            NullableTypeNode
+              NamedTypeNode
                 Name(Example)
                   Identifier(Example)
             AST, $this->parseAndPrint('?Example'));
@@ -62,15 +59,15 @@ final class LogicalTest extends SyntaxTestCase
     public function testDisjunctiveNormalForm(): void
     {
         self::assertSame(<<<'AST'
-            Type\UnionTypeNode
-              Type\IntersectionTypeNode
-                Type\NamedTypeNode
+            UnionTypeNode
+              IntersectionTypeNode
+                NamedTypeNode
                   Name(A)
                     Identifier(A)
-                Type\NamedTypeNode
+                NamedTypeNode
                   Name(B)
                     Identifier(B)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(C)
                   Identifier(C)
             AST, $this->parseAndPrint('(A & B) | C'));
@@ -79,15 +76,15 @@ final class LogicalTest extends SyntaxTestCase
     public function testConjunctiveNormalForm(): void
     {
         self::assertSame(<<<'AST'
-            Type\IntersectionTypeNode
-              Type\UnionTypeNode
-                Type\NamedTypeNode
+            IntersectionTypeNode
+              UnionTypeNode
+                NamedTypeNode
                   Name(A)
                     Identifier(A)
-                Type\NamedTypeNode
+                NamedTypeNode
                   Name(B)
                     Identifier(B)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(C)
                   Identifier(C)
             AST, $this->parseAndPrint('(A | B) & C'));

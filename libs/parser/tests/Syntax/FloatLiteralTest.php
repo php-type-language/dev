@@ -11,7 +11,6 @@ use TypeLang\Type\Literal\FloatLiteralNode;
 /**
  * Tests for the float literal grammar (basic and scientific notation).
  *
- * @see \TypeLang\Type\Literal\FloatLiteralNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class FloatLiteralTest extends SyntaxTestCase

@@ -11,9 +11,6 @@ use TypeLang\Type\NamedTypeNode;
 /**
  * Tests for the grammar of type names (identifiers) and namespaces.
  *
- * @see \TypeLang\Type\NamedTypeNode
- * @see \TypeLang\Type\Name
- * @see \TypeLang\Type\Identifier
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class NameTest extends SyntaxTestCase
@@ -49,7 +46,7 @@ final class NameTest extends SyntaxTestCase
     public function testRelativeNamespacedName(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(Example\Name)
                 Identifier(Example)
                 Identifier(Name)
@@ -59,7 +56,7 @@ final class NameTest extends SyntaxTestCase
     public function testAbsoluteNamespacedName(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(\Absolute\Type\Name)
                 Identifier(Absolute)
                 Identifier(Type)
@@ -84,7 +81,7 @@ final class NameTest extends SyntaxTestCase
     public function testKeywordAsExplicitTypeReference(string $keyword): void
     {
         self::assertSame(<<<AST
-            Type\\NamedTypeNode
+            NamedTypeNode
               Name(\\{$keyword})
                 Identifier({$keyword})
             AST, $this->parseAndPrint('\\' . $keyword));

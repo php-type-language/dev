@@ -9,8 +9,6 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for generic (template argument) grammar and call-site hints.
  *
- * @see \TypeLang\Type\Template\TemplateArgumentsListNode
- * @see \TypeLang\Type\Template\TemplateArgumentNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class GenericTest extends SyntaxTestCase
@@ -18,18 +16,18 @@ final class GenericTest extends SyntaxTestCase
     public function testTemplateArguments(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(Path\To\ExampleClass)
                 Identifier(Path)
                 Identifier(To)
                 Identifier(ExampleClass)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(T)
                       Identifier(T)
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(U)
                       Identifier(U)
             AST, $this->parseAndPrint('Path\\To\\ExampleClass<T, U>'));
@@ -38,12 +36,12 @@ final class GenericTest extends SyntaxTestCase
     public function testSingleTemplateArgument(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(Collection)
                 Identifier(Collection)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(User)
                       Identifier(User)
             AST, $this->parseAndPrint('Collection<User>'));
@@ -52,28 +50,28 @@ final class GenericTest extends SyntaxTestCase
     public function testNestedTemplateArguments(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(iterable)
                 Identifier(iterable)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(int)
                       Identifier(int)
-                    Type\Template\TemplateArgumentsListNode
-                      Type\Template\TemplateArgumentNode
-                        Type\Literal\IntLiteralNode(0)
-                      Type\Template\TemplateArgumentNode
-                        Type\NamedTypeNode
+                    Template\TemplateArgumentListNode
+                      Template\TemplateArgumentNode
+                        Literal\IntLiteralNode(0)
+                      Template\TemplateArgumentNode
+                        NamedTypeNode
                           Name(max)
                             Identifier(max)
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(Collection)
                       Identifier(Collection)
-                    Type\Template\TemplateArgumentsListNode
-                      Type\Template\TemplateArgumentNode
-                        Type\NamedTypeNode
+                    Template\TemplateArgumentListNode
+                      Template\TemplateArgumentNode
+                        NamedTypeNode
                           Name(User)
                             Identifier(User)
             AST, $this->parseAndPrint('iterable<int<0, max>, Collection<User>>'));
@@ -82,16 +80,16 @@ final class GenericTest extends SyntaxTestCase
     public function testTrailingCommaIsAllowed(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(HashMap)
                 Identifier(HashMap)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(Request)
                       Identifier(Request)
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(User)
                       Identifier(User)
             AST, $this->parseAndPrint('HashMap<Request, User,>'));
@@ -100,17 +98,17 @@ final class GenericTest extends SyntaxTestCase
     public function testCallSiteHint(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(HashMap)
                 Identifier(HashMap)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(array-key)
                       Identifier(array-key)
-                Type\Template\TemplateArgumentNode
+                Template\TemplateArgumentNode
                   Identifier(covariant)
-                  Type\NamedTypeNode
+                  NamedTypeNode
                     Name(Request)
                       Identifier(Request)
             AST, $this->parseAndPrint('HashMap<array-key, covariant Request>'));
@@ -124,12 +122,12 @@ final class GenericTest extends SyntaxTestCase
     public function testHintLikeIdentifierWithoutSpaceIsRelativeName(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(Type)
                 Identifier(Type)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(out\Some)
                       Identifier(out)
                       Identifier(Some)
@@ -144,13 +142,13 @@ final class GenericTest extends SyntaxTestCase
     public function testHintFollowedBySpaceAndFullyQualifiedName(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(Type)
                 Identifier(Type)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
                   Identifier(out)
-                  Type\NamedTypeNode
+                  NamedTypeNode
                     Name(\Some)
                       Identifier(Some)
             AST, $this->parseAndPrint('Type<out \\Some>'));
@@ -163,12 +161,12 @@ final class GenericTest extends SyntaxTestCase
     public function testHintLikeIdentifierWithoutSpaceIsNestedRelativeName(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(Type)
                 Identifier(Type)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
-                  Type\NamedTypeNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
                     Name(out\Some\Deep)
                       Identifier(out)
                       Identifier(Some)
@@ -183,13 +181,13 @@ final class GenericTest extends SyntaxTestCase
     public function testHintFollowedBySpaceAndRelativeName(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(Type)
                 Identifier(Type)
-              Type\Template\TemplateArgumentsListNode
-                Type\Template\TemplateArgumentNode
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
                   Identifier(out)
-                  Type\NamedTypeNode
+                  NamedTypeNode
                     Name(Some)
                       Identifier(Some)
             AST, $this->parseAndPrint('Type<out Some>'));

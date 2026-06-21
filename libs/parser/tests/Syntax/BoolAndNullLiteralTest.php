@@ -12,8 +12,6 @@ use TypeLang\Type\Literal\NullLiteralNode;
 /**
  * Tests for the "true", "false" and "null" literal grammar.
  *
- * @see \TypeLang\Type\Literal\BoolLiteralNode
- * @see \TypeLang\Type\Literal\NullLiteralNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class BoolAndNullLiteralTest extends SyntaxTestCase

@@ -1,6 +1,6 @@
 
 AttributeGroupsList -> {
-    return new Type\Attribute\AttributeGroupsListNode($children);
+    return new Type\Attribute\AttributeGroupListNode($children);
 }
   : AttributeGroup()+
   ;
@@ -28,7 +28,7 @@ Attribute -> {
   ;
 
 AttributeArguments -> {
-    return new Type\Attribute\AttributeArgumentsListNode($children);
+    return new Type\Attribute\AttributeArgumentListNode($children);
 }
   : ::T_PARENTHESIS_OPEN::
       AttributeArgument() (

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Callable;
 
-use TypeLang\Type\Attribute\AttributeGroupsListNode;
+use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\Literal\VariableLiteralNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
@@ -17,7 +17,7 @@ final class CallableParameterNode extends Node implements \Stringable
         public bool $output = false,
         public bool $variadic = false,
         public bool $optional = false,
-        public ?AttributeGroupsListNode $attributes = null,
+        public ?AttributeGroupListNode $attributes = null,
     ) {
         assert($type !== null || $name !== null, new \TypeError(
             'Required indication of the type or name of the parameter (one of)',

@@ -9,7 +9,6 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for the type offset access syntax (e.g. "T['offset']").
  *
- * @see \TypeLang\Type\TypeOffsetAccessNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class OffsetAccessTest extends SyntaxTestCase
@@ -17,9 +16,9 @@ final class OffsetAccessTest extends SyntaxTestCase
     public function testStringOffset(): void
     {
         self::assertSame(<<<'AST'
-            Type\TypeOffsetAccessNode
-              Type\Literal\StringLiteralNode('offset')
-              Type\NamedTypeNode
+            TypeOffsetAccessNode
+              Literal\StringLiteralNode('offset')
+              NamedTypeNode
                 Name(T)
                   Identifier(T)
             AST, $this->parseAndPrint("T['offset']"));
@@ -28,11 +27,11 @@ final class OffsetAccessTest extends SyntaxTestCase
     public function testDependentKeyOffset(): void
     {
         self::assertSame(<<<'AST'
-            Type\TypeOffsetAccessNode
-              Type\NamedTypeNode
+            TypeOffsetAccessNode
+              NamedTypeNode
                 Name(U)
                   Identifier(U)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(T)
                   Identifier(T)
             AST, $this->parseAndPrint('T[U]'));
@@ -41,18 +40,18 @@ final class OffsetAccessTest extends SyntaxTestCase
     public function testShapeWithNumericOffset(): void
     {
         self::assertSame(<<<'AST'
-            Type\TypeOffsetAccessNode
-              Type\Literal\IntLiteralNode(0)
-              Type\NamedTypeNode
+            TypeOffsetAccessNode
+              Literal\IntLiteralNode(0)
+              NamedTypeNode
                 Name(array)
                   Identifier(array)
-                Type\Shape\FieldsListNode(sealed)
-                  Type\Shape\ImplicitFieldNode(required)
-                    Type\NamedTypeNode
+                Shape\FieldsListNode(sealed)
+                  Shape\ImplicitFieldNode(required)
+                    NamedTypeNode
                       Name(int)
                         Identifier(int)
-                  Type\Shape\ImplicitFieldNode(required)
-                    Type\NamedTypeNode
+                  Shape\ImplicitFieldNode(required)
+                    NamedTypeNode
                       Name(string)
                         Identifier(string)
             AST, $this->parseAndPrint('array{int, string}[0]'));
@@ -61,22 +60,22 @@ final class OffsetAccessTest extends SyntaxTestCase
     public function testComplexOffsetWithGenericsAndShapes(): void
     {
         self::assertSame(<<<'AST'
-            Type\TypeOffsetAccessNode
-              Type\NamedTypeNode
+            TypeOffsetAccessNode
+              NamedTypeNode
                 Name(object)
                   Identifier(object)
-                Type\Shape\FieldsListNode(unsealed)
-                  Type\Shape\NamedFieldNode(required)
+                Shape\FieldsListNode(unsealed)
+                  Shape\NamedFieldNode(required)
                     Identifier(key)
-                    Type\NamedTypeNode
+                    NamedTypeNode
                       Name(int)
                         Identifier(int)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(T)
                   Identifier(T)
-                Type\Template\TemplateArgumentsListNode
-                  Type\Template\TemplateArgumentNode
-                    Type\NamedTypeNode
+                Template\TemplateArgumentListNode
+                  Template\TemplateArgumentNode
+                    NamedTypeNode
                       Name(U)
                         Identifier(U)
             AST, $this->parseAndPrint('T<U>[object{key: int, ...}]'));

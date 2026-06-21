@@ -11,6 +11,6 @@ final class AttributeNode extends Node
 {
     public function __construct(
         public Name $name,
-        public ?AttributeArgumentsListNode $arguments = null,
+        public ?AttributeArgumentListNode $arguments = null,
     ) {}
 }

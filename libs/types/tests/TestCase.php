@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Node\Tests;
+namespace TypeLang\Type\Tests;
 
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;

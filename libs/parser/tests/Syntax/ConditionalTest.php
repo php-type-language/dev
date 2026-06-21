@@ -10,8 +10,6 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for conditional (ternary) types.
  *
- * @see \TypeLang\Type\TernaryExpressionNode
- * @see \TypeLang\Type\Condition\Condition
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ConditionalTest extends SyntaxTestCase
@@ -33,18 +31,18 @@ final class ConditionalTest extends SyntaxTestCase
     public function testConditionalOperators(string $type, string $condition): void
     {
         self::assertSame(<<<AST
-            Type\\TernaryExpressionNode
-              Type\\Condition\\{$condition}
-                Type\\NamedTypeNode
+            TernaryExpressionNode
+              Condition\\{$condition}
+                NamedTypeNode
                   Name(A)
                     Identifier(A)
-                Type\\NamedTypeNode
+                NamedTypeNode
                   Name(B)
                     Identifier(B)
-              Type\\NamedTypeNode
+              NamedTypeNode
                 Name(C)
                   Identifier(C)
-              Type\\NamedTypeNode
+              NamedTypeNode
                 Name(D)
                   Identifier(D)
             AST, $this->parseAndPrint($type));
@@ -53,16 +51,16 @@ final class ConditionalTest extends SyntaxTestCase
     public function testConditionalWithVariableSubject(): void
     {
         self::assertSame(<<<'AST'
-            Type\TernaryExpressionNode
-              Type\Condition\EqualConditionNode
-                Type\Literal\VariableLiteralNode($T)
-                Type\NamedTypeNode
+            TernaryExpressionNode
+              Condition\EqualConditionNode
+                Literal\VariableLiteralNode($T)
+                NamedTypeNode
                   Name(B)
                     Identifier(B)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(C)
                   Identifier(C)
-              Type\NamedTypeNode
+              NamedTypeNode
                 Name(D)
                   Identifier(D)
             AST, $this->parseAndPrint('$T is B ? C : D'));

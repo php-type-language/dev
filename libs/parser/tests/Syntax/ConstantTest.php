@@ -9,9 +9,6 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for the constant grammar: global constants, class constants and masks.
  *
- * @see \TypeLang\Type\ClassConstNode
- * @see \TypeLang\Type\ConstMaskNode
- * @see \TypeLang\Type\ClassConstMaskNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ConstantTest extends SyntaxTestCase
@@ -19,7 +16,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testGlobalConstantIsInterpretedAsNamedType(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(JSON_THROW_ON_ERROR)
                 Identifier(JSON_THROW_ON_ERROR)
             AST, $this->parseAndPrint('JSON_THROW_ON_ERROR'));
@@ -28,7 +25,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testNamespacedConstantIsInterpretedAsNamedType(): void
     {
         self::assertSame(<<<'AST'
-            Type\NamedTypeNode
+            NamedTypeNode
               Name(pcov\version)
                 Identifier(pcov)
                 Identifier(version)
@@ -38,7 +35,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testClassConstant(): void
     {
         self::assertSame(<<<'AST'
-            Type\ClassConstNode
+            ClassConstNode
               Name(ClassName)
                 Identifier(ClassName)
               Identifier(CONSTANT_NAME)
@@ -48,7 +45,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testNamespacedClassConstant(): void
     {
         self::assertSame(<<<'AST'
-            Type\ClassConstNode
+            ClassConstNode
               Name(Path\To\ClassName)
                 Identifier(Path)
                 Identifier(To)
@@ -60,7 +57,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testGlobalConstantMask(): void
     {
         self::assertSame(<<<'AST'
-            Type\ConstMaskNode(JSON_*)
+            ConstMaskNode(JSON_*)
               Name(JSON_)
                 Identifier(JSON_)
             AST, $this->parseAndPrint('JSON_*'));
@@ -69,7 +66,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testClassConstantMask(): void
     {
         self::assertSame(<<<'AST'
-            Type\ClassConstMaskNode
+            ClassConstMaskNode
               Name(Path\To\ClassName)
                 Identifier(Path)
                 Identifier(To)
@@ -81,7 +78,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testClassConstantMaskWithoutPrefix(): void
     {
         self::assertSame(<<<'AST'
-            Type\ClassConstMaskNode
+            ClassConstMaskNode
               Name(Path\To\ClassName)
                 Identifier(Path)
                 Identifier(To)

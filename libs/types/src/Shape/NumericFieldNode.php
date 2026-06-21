@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Shape;
 
-use TypeLang\Type\Attribute\AttributeGroupsListNode;
+use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\TypeNode;
 
@@ -21,7 +21,7 @@ final class NumericFieldNode extends ExplicitFieldNode
         IntLiteralNode $key,
         TypeNode $type,
         bool $optional = false,
-        ?AttributeGroupsListNode $attributes = null,
+        ?AttributeGroupListNode $attributes = null,
     ) {
         parent::__construct(
             key: $key,
