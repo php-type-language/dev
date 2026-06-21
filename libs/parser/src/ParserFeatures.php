@@ -92,8 +92,6 @@ final readonly class ParserFeatures
      *     hints: false,
      * );
      * ```
-     *
-     * @phpstan-pure
      */
     public function with(bool ...$features): self
     {

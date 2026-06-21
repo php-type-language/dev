@@ -40,8 +40,6 @@ final class Parser implements ParserInterface
      *     hints: false,
      * );
      * ```
-     *
-     * @phpstan-pure
      */
     public function withFeatures(bool ...$features): self
     {
