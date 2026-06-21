@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock;
+namespace TypeLang\PhpDoc\DocBlock;
 
-use TypeLang\DocBlock\Description\Description;
-use TypeLang\DocBlock\Description\DescriptionInterface;
-use TypeLang\DocBlock\Description\OptionalDescriptionProviderInterface;
-use TypeLang\DocBlock\Tag\TagInterface;
-use TypeLang\DocBlock\Tag\TagsProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Description\Description;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Description\OptionalDescriptionProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TagsProviderInterface;
 
 /**
  * An implementation represents a structure containing a description and a set

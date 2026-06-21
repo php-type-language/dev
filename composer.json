@@ -10,7 +10,6 @@
         "php": "^8.4",
         "type-lang/parser": "^2.0",
         "type-lang/printer": "^2.0",
-        "type-lang/docblock": "^2.0",
         "type-lang/phpdoc": "^2.0",
         "type-lang/phpdoc-standard-tags": "^2.0",
         "type-lang/phpdoc-template-tags": "^2.0",

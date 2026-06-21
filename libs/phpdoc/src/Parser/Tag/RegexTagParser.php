@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Tag;
 
-use TypeLang\DocBlock\Tag\TagInterface;
-use TypeLang\DocBlock\Tag\UnknownTag;
 use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\UnknownTag;
 use TypeLang\PhpDoc\Exception\InvalidTagNameException;
 use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;

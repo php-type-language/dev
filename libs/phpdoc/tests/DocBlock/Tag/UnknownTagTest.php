@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tests\Tag;
+namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\DocBlock\Description\DescriptionInterface;
-use TypeLang\DocBlock\Tag\InvalidTagInterface;
-use TypeLang\DocBlock\Tag\Tag;
-use TypeLang\DocBlock\Tag\UnknownTag;
 use TypeLang\DocBlock\Tests\TestCase;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
+use TypeLang\PhpDoc\DocBlock\Tag\UnknownTag;
 
 final class UnknownTagTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tag;
+namespace TypeLang\PhpDoc\DocBlock\Tag;
 
 final class UnknownTag extends Tag implements InvalidTagInterface
 {

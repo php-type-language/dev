@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Description;
 
-use TypeLang\DocBlock\Description\Description;
-use TypeLang\DocBlock\Description\DescriptionInterface;
-use TypeLang\DocBlock\Description\TaggedDescription;
-use TypeLang\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\Description\Description;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Parser\Tag\RegexTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
 

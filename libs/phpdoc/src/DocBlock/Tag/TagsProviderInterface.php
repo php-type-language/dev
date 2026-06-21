@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tag;
+namespace TypeLang\PhpDoc\DocBlock\Tag;
 
 /**
- * Representation of any entry that contain inner tags list.
+ * Representation of any entry that contains an inner tag list.
  */
 interface TagsProviderInterface
 {
     /**
-     * Gets tags list for this object.
+     * Gets a tag list for this object.
      *
      * @var iterable<array-key, TagInterface>
      */

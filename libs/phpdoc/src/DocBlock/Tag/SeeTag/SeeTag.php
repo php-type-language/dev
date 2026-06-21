@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\SeeTag;
 
-use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\ElementReference;
 use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\ReferenceInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\UriReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 /**
  * The "`@see`" tag can be used to define a {@see ElementReference element} or

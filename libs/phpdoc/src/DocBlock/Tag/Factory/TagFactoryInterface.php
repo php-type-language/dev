@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\Factory;
 
-use TypeLang\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 

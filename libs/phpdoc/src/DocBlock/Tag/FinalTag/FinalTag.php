@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\FinalTag;
 
-use TypeLang\DocBlock\Tag\Tag;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 /**
  * Used to denote that the associated _Element_ is final, are not allowed to

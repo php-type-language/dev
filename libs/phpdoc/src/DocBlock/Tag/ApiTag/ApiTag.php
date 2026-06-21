@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\ApiTag;
 
-use TypeLang\DocBlock\Tag\Tag;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 /**
  * Used to highlight _Element_ as being part of the primary

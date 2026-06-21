@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tag;
+namespace TypeLang\PhpDoc\DocBlock\Tag;
 
-use TypeLang\DocBlock\Description\Description;
-use TypeLang\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Description\Description;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 
 abstract class Tag implements TagInterface
 {

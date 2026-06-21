@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tests\Description;
+namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\DocBlock\Description\Description;
-use TypeLang\DocBlock\Description\DescriptionInterface;
 use TypeLang\DocBlock\Tests\TestCase;
+use TypeLang\PhpDoc\DocBlock\Description\Description;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 
 final class DescriptionTest extends TestCase
 {

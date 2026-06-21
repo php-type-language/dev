@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tag;
+namespace TypeLang\PhpDoc\DocBlock\Tag;
 
-use TypeLang\DocBlock\Description\OptionalDescriptionProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Description\OptionalDescriptionProviderInterface;
 
 /**
  * Representation of the phpdoc tag.

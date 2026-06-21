@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\LicenseTag;
 
-use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\Shared\Reference\UriReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 /**
  * Used to indicate which license is applicable for the associated _Element_.

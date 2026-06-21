@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\Factory;
 
-use TypeLang\DocBlock\Tag\InvalidTag;
-use TypeLang\DocBlock\Tag\Tag;
-use TypeLang\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\InvalidTagException;
 use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;

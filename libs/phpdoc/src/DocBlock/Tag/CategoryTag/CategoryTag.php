@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\CategoryTag;
 
-use TypeLang\DocBlock\Tag\Tag;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 /**
  * Used to organize groups of packages together.

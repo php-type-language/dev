@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tests\Description;
+namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\DocBlock\Description\Description;
-use TypeLang\DocBlock\Description\TaggedDescription;
-use TypeLang\DocBlock\Description\TaggedDescriptionInterface;
-use TypeLang\DocBlock\Tag\GenericTag;
-use TypeLang\DocBlock\Tag\TagInterface;
 use TypeLang\DocBlock\Tests\TestCase;
+use TypeLang\PhpDoc\DocBlock\Description\Description;
+use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
+use TypeLang\PhpDoc\DocBlock\Description\TaggedDescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\GenericTag;
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 
 final class TaggedDescriptionTest extends TestCase
 {

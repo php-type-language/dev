@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Content;
 
-use TypeLang\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\Exception\InvalidTagException;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 

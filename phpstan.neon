@@ -4,7 +4,6 @@ includes:
   - vendor/phpstan/phpstan-strict-rules/rules.neon
   # Components
   - libs/parser/phpstan.neon
-  - libs/docblock/phpstan.neon
   # - libs/phpdoc/phpstan.neon
   # - libs/phpdoc-standard-tags/phpstan.neon
   # - libs/phpdoc-template-tags/phpstan.neon

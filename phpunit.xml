@@ -25,7 +25,6 @@
 
     <source>
         <include>
-            <directory>libs/docblock/src</directory>
             <directory>libs/parser/src</directory>
             <directory>libs/phpdoc/src</directory>
             <directory>libs/phpdoc-standard-tags/src</directory>

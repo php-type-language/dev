@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc;
 
-use TypeLang\DocBlock\DocBlock;
+use TypeLang\PhpDoc\DocBlock\DocBlock;
 use TypeLang\PhpDoc\DocBlock\Tag\Factory\MutableTagFactoryInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;

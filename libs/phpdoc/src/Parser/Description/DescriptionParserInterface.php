@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Description;
 
-use TypeLang\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 
 interface DescriptionParserInterface
 {

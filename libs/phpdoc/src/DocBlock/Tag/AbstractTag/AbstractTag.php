@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\AbstractTag;
 
-use TypeLang\DocBlock\Tag\Tag;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 /**
  * Declare a class-like or method as abstract, as well as for declaring

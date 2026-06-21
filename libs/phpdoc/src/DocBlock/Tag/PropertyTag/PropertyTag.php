@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\PropertyTag;
 
-use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\OptionalTypeProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\VariableProviderInterface;
 use TypeLang\Type\TypeNode;
 

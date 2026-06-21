@@ -10,7 +10,6 @@
     },
     "require": {
         "php": "^8.4",
-        "type-lang/docblock": "^2.0",
         "type-lang/parser": "^2.0"
     },
     "autoload": {

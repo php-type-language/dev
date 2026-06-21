@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Description;
+namespace TypeLang\PhpDoc\DocBlock\Description;
 
-use TypeLang\DocBlock\Tag\TagInterface;
-use TypeLang\DocBlock\Tag\TagsProviderInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TagsProviderInterface;
 
 /**
  * Any class that implements this interface is a description object

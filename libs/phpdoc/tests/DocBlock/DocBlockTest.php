@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tests;
+namespace TypeLang\PhpDoc\Tests\DocBlock;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\DocBlock\Description\Description;
-use TypeLang\DocBlock\Description\DescriptionInterface;
-use TypeLang\DocBlock\Tag\GenericTag;
+use TypeLang\PhpDoc\DocBlock\Description\Description;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
+use TypeLang\PhpDoc\DocBlock\Tag\GenericTag;
+use TypeLang\PhpDoc\Tests\TestCase;
 
 final class DocBlockTest extends TestCase
 {

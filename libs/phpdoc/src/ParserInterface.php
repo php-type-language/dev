@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc;
 
 use JetBrains\PhpStorm\Language;
-use TypeLang\DocBlock\DocBlock;
+use TypeLang\PhpDoc\DocBlock\DocBlock;
 
 interface ParserInterface
 {

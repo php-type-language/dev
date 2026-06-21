@@ -7,7 +7,7 @@ namespace TypeLang\PhpDoc\DocBlock\Tag;
 use TypeLang\Type\TypeNode;
 
 /**
- * Representation of any entry that contain type definition.
+ * Representation of any entry that contains type definition.
  */
 interface TypeProviderInterface extends OptionalTypeProviderInterface
 {

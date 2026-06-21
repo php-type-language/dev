@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Description;
+namespace TypeLang\PhpDoc\DocBlock\Description;
 
 final readonly class Description implements DescriptionInterface
 {

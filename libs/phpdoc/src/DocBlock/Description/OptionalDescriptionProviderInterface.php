@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Description;
+namespace TypeLang\PhpDoc\DocBlock\Description;
 
 /**
  * Representation of any entry that MAY contain an optional description.

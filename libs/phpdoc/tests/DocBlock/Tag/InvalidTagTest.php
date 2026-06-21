@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\DocBlock\Tests\Tag;
+namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\DocBlock\Description\DescriptionInterface;
-use TypeLang\DocBlock\Tag\InvalidTag;
-use TypeLang\DocBlock\Tag\InvalidTagInterface;
-use TypeLang\DocBlock\Tag\Tag;
 use TypeLang\DocBlock\Tests\TestCase;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 final class InvalidTagTest extends TestCase
 {
