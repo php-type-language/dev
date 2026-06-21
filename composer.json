@@ -32,7 +32,7 @@
              "TypeLang\\PHPDoc\\Tests\\": "libs/phpdoc/tests",
              "TypeLang\\PHPDoc\\Standard\\Tests\\": "libs/phpdoc-standard-tags/tests",
              "TypeLang\\PHPDoc\\Template\\Tests\\": "libs/phpdoc-template-tags/tests",
-             "TypeLang\\Node\\Tests\\": "libs/types/tests"
+             "TypeLang\\Type\\Tests\\": "libs/types/tests"
         }
     },
     "extra": {

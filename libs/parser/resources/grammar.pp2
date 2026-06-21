@@ -68,7 +68,7 @@ UnionType -> {
             throw FeatureNotAllowedException::fromFeature('union types', $offset);
         }
 
-        return new Node\Type\UnionTypeNode($children[0], $children[1]);
+        return new Type\UnionTypeNode($children[0], $children[1]);
     }
 
     return $children;
@@ -82,7 +82,7 @@ IntersectionType -> {
             throw FeatureNotAllowedException::fromFeature('intersection types', $offset);
         }
 
-        return new Node\Type\IntersectionTypeNode($children[0], $children[1]);
+        return new Type\IntersectionTypeNode($children[0], $children[1]);
     }
 
     return $children;
@@ -110,7 +110,7 @@ UnaryType
 // stmt = ?Type
 PrefixedNullableType -> {
     if (\is_array($children)) {
-        return new Node\Type\NullableTypeNode($children[1]);
+        return new Type\NullableTypeNode($children[1]);
     }
 
     return $children;
@@ -130,15 +130,15 @@ TypesList -> {
                     throw FeatureNotAllowedException::fromFeature('square bracket list types', $offset);
                 }
 
-                $statement = new Node\Type\TypesListNode($statement);
+                $statement = new Type\TypesListNode($statement);
                 break;
             // In case of offset access type
-            case $child instanceof Node\Type\TypeNode:
+            case $child instanceof Type\TypeNode:
                 if ($this->features->offsets === false) {
                     throw FeatureNotAllowedException::fromFeature('type offsets', $offset);
                 }
 
-                $statement = new Node\Type\TypeOffsetAccessNode($statement, $child);
+                $statement = new Type\TypeOffsetAccessNode($statement, $child);
                 break;
             default:
                 throw new SemanticException($offset, \sprintf(

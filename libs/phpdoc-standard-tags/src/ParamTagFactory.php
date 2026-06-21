@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Node\Type\Callable\CallableParameterNode;
-use TypeLang\Node\Type\Literal\VariableLiteralNode;
 use TypeLang\Parser\TypeParser as TypesParser;
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PHPDoc\Tag\Content;
 use TypeLang\PHPDoc\Tag\Factory\FactoryInterface;
+use TypeLang\Type\Callable\CallableParameterNode;
+use TypeLang\Type\Literal\VariableLiteralNode;
 
 /**
  * This class is responsible for creating "`@param`" tags.

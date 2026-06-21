@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for callable types.
  *
- * @see \TypeLang\Node\Type\CallableTypeNode
- * @see \TypeLang\Node\Type\Callable\CallableParameterNode
+ * @see \TypeLang\Type\CallableTypeNode
+ * @see \TypeLang\Type\Callable\CallableParameterNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class CallableTest extends SyntaxTestCase

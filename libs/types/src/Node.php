@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Node;
+namespace TypeLang\Type;
 
 abstract class Node implements NodeInterface
 {

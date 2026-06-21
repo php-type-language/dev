@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\Tag\Tag;
 use TypeLang\PHPDoc\Tag\VariableNameProviderInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * The "`@property`" tag is used when a class or trait implements the `__get()`

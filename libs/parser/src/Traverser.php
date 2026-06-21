@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser;
 
-use TypeLang\Node\Node;
 use TypeLang\Parser\Traverser\VisitorInterface;
+use TypeLang\Type\Node;
 
 final class Traverser implements MutableTraverserInterface
 {

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Node\Type\Callable\CallableParameterNode;
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\Tag\Tag;
 use TypeLang\PHPDoc\Tag\VariableNameProviderInterface;
+use TypeLang\Type\Callable\CallableParameterNode;
+use TypeLang\Type\TypeNode;
 
 /**
  * With the "`@param`" tag it is possible to document the type and the intent of

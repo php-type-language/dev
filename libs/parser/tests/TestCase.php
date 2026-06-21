@@ -7,12 +7,12 @@ namespace TypeLang\Parser\Tests;
 use JetBrains\PhpStorm\Language;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\ParsedResult;
+use TypeLang\Parser\Traverser;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserFeatures;
 use TypeLang\Parser\TypeParserInterface;
-use TypeLang\Parser\Traverser;
+use TypeLang\Type\TypeNode;
 
 /**
  * @phpstan-type ParserOptionsType array{

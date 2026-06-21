@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests for shape (structural) types.
  *
- * @see \TypeLang\Node\Type\Shape\FieldsListNode
+ * @see \TypeLang\Type\Shape\FieldsListNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class ShapeTest extends SyntaxTestCase

@@ -6,7 +6,7 @@ namespace TypeLang\Parser\Internal;
 
 use Phplrt\Parser\BuilderInterface;
 use Phplrt\Parser\Context;
-use TypeLang\Node\Node;
+use TypeLang\Type\Node;
 
 /**
  * @internal this is an internal library class, please do not use it in your code

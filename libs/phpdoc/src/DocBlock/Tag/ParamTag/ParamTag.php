@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag\ParamTag;
 
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface;
 use TypeLang\PHPDoc\DocBlock\Tag\Tag;
 use TypeLang\PHPDoc\DocBlock\Tag\VariableProviderInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * With the "`@param`" tag it is possible to document the type and the intent of

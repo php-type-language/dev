@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Parser\Content;
 
-use TypeLang\Node\FullQualifiedName;
-use TypeLang\Node\Name;
-use TypeLang\Node\Type\Literal\VariableLiteralNode;
-use TypeLang\Node\Type\NamedTypeNode;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassConstantElementReference;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassMethodElementReference;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ClassPropertyElementReference;
@@ -15,6 +11,10 @@ use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\ElementReference;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\FunctionElementReference;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\TypeElementReference;
 use TypeLang\PHPDoc\DocBlock\Tag\Shared\Reference\VariableReference;
+use TypeLang\Type\FullQualifiedName;
+use TypeLang\Type\Literal\VariableLiteralNode;
+use TypeLang\Type\Name;
+use TypeLang\Type\NamedTypeNode;
 
 /**
  * @template-implements ReaderInterface<ElementReference>

@@ -18,11 +18,11 @@ use Phplrt\Parser\Context;
 use Phplrt\Parser\Grammar\RuleInterface;
 use Phplrt\Parser\Parser as ParserRuntime;
 use Phplrt\Parser\ParserConfigsInterface;
-use TypeLang\Node\Type\Literal\IntLiteralNode;
-use TypeLang\Node\Type\Literal\StringLiteralNode;
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\ParsedResult;
 use TypeLang\Parser\TypeParserFeatures;
+use TypeLang\Type\Literal\IntLiteralNode;
+use TypeLang\Type\Literal\StringLiteralNode;
+use TypeLang\Type\TypeNode;
 
 /**
  * @phpstan-type GrammarConfigArrayType array{

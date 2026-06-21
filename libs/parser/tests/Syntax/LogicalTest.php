@@ -10,9 +10,9 @@ use PHPUnit\Framework\Attributes\Group;
  * Tests for logical (composite) types: union, intersection, nullable and
  * parentheses grouping.
  *
- * @see \TypeLang\Node\Type\UnionTypeNode
- * @see \TypeLang\Node\Type\IntersectionTypeNode
- * @see \TypeLang\Node\Type\NullableTypeNode
+ * @see \TypeLang\Type\UnionTypeNode
+ * @see \TypeLang\Type\IntersectionTypeNode
+ * @see \TypeLang\Type\NullableTypeNode
  */
 #[Group('unit'), Group('type-lang/parser')]
 final class LogicalTest extends SyntaxTestCase

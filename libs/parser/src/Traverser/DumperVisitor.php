@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Traverser;
 
-use TypeLang\Node\Node;
+use TypeLang\Type\Node;
 
 abstract class DumperVisitor extends Visitor
 {
     /**
      * @var non-empty-string
      */
-    private const string NODE_NAMESPACE_PREFIX = 'TypeLang\\Node\\';
+    private const string NODE_NAMESPACE_PREFIX = 'TypeLang\\Type\\';
 
     /**
      * @var int<0, max>

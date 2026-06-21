@@ -11,27 +11,27 @@ TernaryExpressionOrLogicalType -> {
     }
 
     $condition = match ($children[1]->getName()) {
-        'T_EQ' => new Node\Type\Condition\EqualConditionNode(
+        'T_EQ' => new Type\Condition\EqualConditionNode(
             $children[0],
             $children[2],
         ),
-        'T_NEQ' => new Node\Type\Condition\NotEqualConditionNode(
+        'T_NEQ' => new Type\Condition\NotEqualConditionNode(
             $children[0],
             $children[2],
         ),
-        'T_GTE' => new Node\Type\Condition\GreaterThanOrEqualConditionNode(
+        'T_GTE' => new Type\Condition\GreaterThanOrEqualConditionNode(
             $children[0],
             $children[2],
         ),
-        'T_ANGLE_BRACKET_CLOSE' => new Node\Type\Condition\GreaterThanConditionNode(
+        'T_ANGLE_BRACKET_CLOSE' => new Type\Condition\GreaterThanConditionNode(
             $children[0],
             $children[2],
         ),
-        'T_LTE' => new Node\Type\Condition\LessThanOrEqualConditionNode(
+        'T_LTE' => new Type\Condition\LessThanOrEqualConditionNode(
             $children[0],
             $children[2],
         ),
-        'T_ANGLE_BRACKET_OPEN' => new Node\Type\Condition\LessThanConditionNode(
+        'T_ANGLE_BRACKET_OPEN' => new Type\Condition\LessThanConditionNode(
             $children[0],
             $children[2],
         ),
@@ -41,7 +41,7 @@ TernaryExpressionOrLogicalType -> {
         ),
     };
 
-    return new Node\Type\TernaryExpressionNode(
+    return new Type\TernaryExpressionNode(
         $condition,
         $children[3],
         $children[4],

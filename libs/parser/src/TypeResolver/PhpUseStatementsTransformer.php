@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\TypeResolver;
 
-use TypeLang\Node\Name;
+use TypeLang\Type\Name;
 
 /**
  * A set of rules for modifying names defined in the `use` statements of PHP code.

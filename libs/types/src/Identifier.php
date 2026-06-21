@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Node;
+namespace TypeLang\Type;
 
 /**
  * @phpstan-consistent-constructor
  */
-class Identifier extends Node implements \Stringable
+final class Identifier extends Node implements \Stringable
 {
     /**
      * @var list<non-empty-string>

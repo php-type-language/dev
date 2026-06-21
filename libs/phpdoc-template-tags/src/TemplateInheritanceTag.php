@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Template;
 
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\Tag\Tag;
 use TypeLang\PHPDoc\Tag\TypeProviderInterface;
+use TypeLang\Type\TypeNode;
 
 abstract class TemplateInheritanceTag extends Tag implements TypeProviderInterface
 {

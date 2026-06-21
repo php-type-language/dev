@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Polyfill\Tag;
 
-use TypeLang\Node\Type\TypeNode;
+use TypeLang\Type\TypeNode;
 
 /**
  * @internal polyfill interface for the {@see \TypeLang\PHPDoc\DocBlock\Tag\OptionalTypeProviderInterface}

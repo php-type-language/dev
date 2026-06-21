@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Node;
+namespace TypeLang\Type;
 
 /**
  * @phpstan-consistent-constructor
  * @template-implements \IteratorAggregate<array-key, Identifier>
  */
-class Name extends Node implements \IteratorAggregate, \Countable, \Stringable
+final class Name extends Node implements \IteratorAggregate, \Countable, \Stringable
 {
     /**
      * @var non-empty-string

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Parser;
 
 use JetBrains\PhpStorm\Language;
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * @template-contravariant TSource of mixed = mixed

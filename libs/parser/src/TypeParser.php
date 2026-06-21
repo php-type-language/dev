@@ -12,10 +12,10 @@ use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Parser\Exception\UnexpectedTokenException;
 use Phplrt\Parser\Exception\UnrecognizedTokenException;
 use Phplrt\Source\SourceFactory;
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParseException;
 use TypeLang\Parser\Exception\SemanticException;
 use TypeLang\Parser\Internal\ExecutionContext;
+use TypeLang\Type\TypeNode;
 
 final class TypeParser implements TypeParserInterface
 {

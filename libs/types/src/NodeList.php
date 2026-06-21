@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Node;
+namespace TypeLang\Type;
 
 /**
  * @template TNode of Node = Node

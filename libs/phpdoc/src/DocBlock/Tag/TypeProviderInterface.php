@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\DocBlock\Tag;
 
-use TypeLang\Node\Type\TypeNode;
+use TypeLang\Type\TypeNode;
 
 /**
  * Representation of any entry that contain type definition.

@@ -8,8 +8,8 @@ use JetBrains\PhpStorm\Language;
 use Phplrt\Contracts\Source\SourceExceptionInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
+use TypeLang\Type\TypeNode;
 
 final class InMemoryTypeParser implements TypeParserInterface
 {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Standard;
 
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\PHPDoc\Tag\OptionalVariableNameProviderInterface;
 use TypeLang\PHPDoc\Tag\Tag;
 use TypeLang\PHPDoc\Tag\TypeProviderInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * The "`@var`" tag defines which type of data is represented by the value of a

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Traverser;
 
-use TypeLang\Node\Node;
+use TypeLang\Type\Node;
 
 class MatcherVisitor extends Visitor
 {

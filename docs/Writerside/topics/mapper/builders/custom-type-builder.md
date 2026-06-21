@@ -15,7 +15,7 @@ requires the implementation of two methods:
 - `build()` - Creates [a `TypeInterface` instance](types.md)
 
 ```php
-use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;use TypeLang\Mapper\Type\Parser\TypeParserInterface;use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;use TypeLang\Mapper\Type\TypeInterface;use TypeLang\Node\Type\TypeNode;
+use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;use TypeLang\Mapper\Type\Parser\TypeParserInterface;use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;use TypeLang\Mapper\Type\TypeInterface;use TypeLang\Type\TypeNode;
 
 final readonly class CustomTypeBuilder implements TypeBuilderInterface
 {
@@ -57,7 +57,7 @@ For example, if we want to check that the type is called `json`, the code
 will look like this:
 
 ```php
-use TypeLang\Node\Type\NamedTypeNode;
+use TypeLang\Type\NamedTypeNode;
 
 // ...
 

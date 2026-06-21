@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PHPDoc\Parser\Content;
 
-use TypeLang\Node\FullQualifiedName;
-use TypeLang\Node\Type\TypeNode;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\TypeParserInterface as TypesParserInterface;
 use TypeLang\PHPDoc\Exception\InvalidTagException;
+use TypeLang\Type\FullQualifiedName;
+use TypeLang\Type\TypeNode;
 
 /**
  * @template-implements ReaderInterface<TypeNode>
