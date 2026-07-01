@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\Parser\Comment;
+namespace TypeLang\PhpDoc\Internal\Splitter;
 
 /**
  * This interface is responsible for reading significant
  * sections of the DocBlock comment.
  */
-interface CommentParserInterface
+interface SplitterInterface
 {
     /**
      * Returns significant parts of the DocBlock comment with their offsets of
@@ -30,5 +30,5 @@ interface CommentParserInterface
      *
      * @return iterable<array-key, Segment>
      */
-    public function parse(string $docblock): iterable;
+    public function split(string $docblock): iterable;
 }

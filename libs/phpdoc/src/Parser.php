@@ -10,9 +10,9 @@ use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
-use TypeLang\PhpDoc\Parser\Comment\CommentParserInterface;
-use TypeLang\PhpDoc\Parser\Comment\RegexCommentParser;
-use TypeLang\PhpDoc\Parser\Comment\Segment;
+use TypeLang\PhpDoc\Internal\Splitter\SplitterInterface;
+use TypeLang\PhpDoc\Internal\Splitter\RegexSplitter;
+use TypeLang\PhpDoc\Internal\Splitter\Segment;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\Description\RegexDescriptionParser;
 use TypeLang\PhpDoc\Parser\SourceMap;
@@ -27,7 +27,7 @@ use TypeLang\PhpDoc\Platform\StandardPlatform;
 
 class Parser implements ParserInterface
 {
-    private readonly CommentParserInterface $comments;
+    private readonly SplitterInterface $comments;
 
     private readonly DescriptionParserInterface $descriptions;
 
@@ -59,9 +59,9 @@ class Parser implements ParserInterface
         return new RegexDescriptionParser($tags);
     }
 
-    protected function createCommentParser(): CommentParserInterface
+    protected function createCommentParser(): SplitterInterface
     {
-        return new RegexCommentParser();
+        return new RegexSplitter();
     }
 
     /**
@@ -148,7 +148,7 @@ class Parser implements ParserInterface
         $current = '';
         $blocks = [];
 
-        foreach ($this->comments->parse($docblock) as $segment) {
+        foreach ($this->comments->split($docblock) as $segment) {
             yield $segment;
 
             if (\str_starts_with($segment->text, '@')) {

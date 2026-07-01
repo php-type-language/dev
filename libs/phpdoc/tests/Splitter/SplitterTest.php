@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\Tests\Parser\Comment;
+namespace TypeLang\PhpDoc\Tests\Splitter;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\Parser\Comment\CommentParserInterface;
-use TypeLang\PhpDoc\Parser\Comment\RegexCommentParser;
-use TypeLang\PhpDoc\Parser\Comment\Segment;
+use TypeLang\PhpDoc\Internal\Splitter\SplitterInterface;
+use TypeLang\PhpDoc\Internal\Splitter\RegexSplitter;
+use TypeLang\PhpDoc\Internal\Splitter\Segment;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class RegexCommentParserTest extends TestCase
+final class SplitterTest extends TestCase
 {
     /**
-     * All implementations of {@see CommentParserInterface} to be verified.
+     * All implementations of {@see SplitterInterface} to be verified.
      *
-     * @return iterable<string, array{CommentParserInterface}>
+     * @return iterable<string, array{SplitterInterface}>
      */
     public static function provideParsers(): iterable
     {
@@ -29,7 +29,7 @@ final class RegexCommentParserTest extends TestCase
      * Cross product of every parser with every "unwrapped" (not a `/** *​/`
      * comment) input.
      *
-     * @return iterable<string, array{CommentParserInterface, string}>
+     * @return iterable<string, array{SplitterInterface, string}>
      */
     public static function provideUnwrappedInputs(): iterable
     {
@@ -51,7 +51,7 @@ final class RegexCommentParserTest extends TestCase
      * Cross product of every parser with every wrapped multi-line comment that
      * uses `\n` line endings (so byte offsets are unambiguous).
      *
-     * @return iterable<string, array{CommentParserInterface, string}>
+     * @return iterable<string, array{SplitterInterface, string}>
      */
     public static function provideWrappedInputs(): iterable
     {
@@ -92,23 +92,23 @@ final class RegexCommentParserTest extends TestCase
 
     #[Test]
     #[DataProvider('provideParsers')]
-    public function parseReturnsIterable(CommentParserInterface $parser): void
+    public function parseReturnsIterable(SplitterInterface $parser): void
     {
-        $this->assertIsIterable($parser->parse('/** example */'));
+        $this->assertIsIterable($parser->split('/** example */'));
     }
 
     #[Test]
     #[DataProvider('provideWrappedInputs')]
-    public function parseYieldsOnlySegmentInstances(CommentParserInterface $parser, string $input): void
+    public function parseYieldsOnlySegmentInstances(SplitterInterface $parser, string $input): void
     {
-        $this->assertContainsOnlyInstancesOf(Segment::class, self::segments($parser->parse($input)));
+        $this->assertContainsOnlyInstancesOf(Segment::class, self::segments($parser->split($input)));
     }
 
     #[Test]
     #[DataProvider('provideUnwrappedInputs')]
-    public function unwrappedInputBecomesSingleSegment(CommentParserInterface $parser, string $input): void
+    public function unwrappedInputBecomesSingleSegment(SplitterInterface $parser, string $input): void
     {
-        $segments = self::segments($parser->parse($input));
+        $segments = self::segments($parser->split($input));
 
         $this->assertCount(1, $segments);
         $this->assertSame($input, $segments[0]->text);
@@ -117,9 +117,9 @@ final class RegexCommentParserTest extends TestCase
 
     #[Test]
     #[DataProvider('provideWrappedInputs')]
-    public function segmentOffsetPointsToItsTextInSource(CommentParserInterface $parser, string $input): void
+    public function segmentOffsetPointsToItsTextInSource(SplitterInterface $parser, string $input): void
     {
-        foreach (self::segments($parser->parse($input)) as $segment) {
+        foreach (self::segments($parser->split($input)) as $segment) {
             $this->assertSame(
                 \substr($input, $segment->offset, \strlen($segment->text)),
                 $segment->text,
@@ -130,11 +130,11 @@ final class RegexCommentParserTest extends TestCase
 
     #[Test]
     #[DataProvider('provideWrappedInputs')]
-    public function segmentsAreReturnedInSourceOrder(CommentParserInterface $parser, string $input): void
+    public function segmentsAreReturnedInSourceOrder(SplitterInterface $parser, string $input): void
     {
         $previous = -1;
 
-        foreach (self::segments($parser->parse($input)) as $segment) {
+        foreach (self::segments($parser->split($input)) as $segment) {
             $this->assertGreaterThan($previous, $segment->offset);
             $previous = $segment->offset;
         }
@@ -142,7 +142,7 @@ final class RegexCommentParserTest extends TestCase
 
     #[Test]
     #[DataProvider('provideParsers')]
-    public function wrappedCommentYieldsSignificantLinesInOrder(CommentParserInterface $parser): void
+    public function wrappedCommentYieldsSignificantLinesInOrder(SplitterInterface $parser): void
     {
         $input = self::comment(
             '/**',
@@ -154,13 +154,13 @@ final class RegexCommentParserTest extends TestCase
 
         $this->assertSame(
             ['Example line 1', '@tag1 type Description of tag1'],
-            self::trimmedTexts($parser->parse($input)),
+            self::trimmedTexts($parser->split($input)),
         );
     }
 
     #[Test]
     #[DataProvider('provideParsers')]
-    public function blankCommentLinesAreSkipped(CommentParserInterface $parser): void
+    public function blankCommentLinesAreSkipped(SplitterInterface $parser): void
     {
         $input = self::comment(
             '/**',
@@ -171,19 +171,19 @@ final class RegexCommentParserTest extends TestCase
             ' */',
         );
 
-        $this->assertSame(['first', 'second'], self::trimmedTexts($parser->parse($input)));
+        $this->assertSame(['first', 'second'], self::trimmedTexts($parser->split($input)));
     }
 
     #[Test]
     #[DataProvider('provideParsers')]
-    public function singleLineCommentYieldsSingleSegment(CommentParserInterface $parser): void
+    public function singleLineCommentYieldsSingleSegment(SplitterInterface $parser): void
     {
-        $this->assertSame(['Foo bar'], self::trimmedTexts($parser->parse('/** Foo bar */')));
+        $this->assertSame(['Foo bar'], self::trimmedTexts($parser->split('/** Foo bar */')));
     }
 
     #[Test]
     #[DataProvider('provideParsers')]
-    public function leadingWhitespaceBeforeOpeningIsTreatedAsComment(CommentParserInterface $parser): void
+    public function leadingWhitespaceBeforeOpeningIsTreatedAsComment(SplitterInterface $parser): void
     {
         $input = "   \n" . self::comment(
             '/**',
@@ -191,12 +191,12 @@ final class RegexCommentParserTest extends TestCase
             ' */',
         );
 
-        $this->assertSame(['Hi'], self::trimmedTexts($parser->parse($input)));
+        $this->assertSame(['Hi'], self::trimmedTexts($parser->split($input)));
     }
 
     #[Test]
     #[DataProvider('provideParsers')]
-    public function tagContinuationLinesBecomeSeparateSegments(CommentParserInterface $parser): void
+    public function tagContinuationLinesBecomeSeparateSegments(SplitterInterface $parser): void
     {
         $input = self::comment(
             '/**',
@@ -208,7 +208,7 @@ final class RegexCommentParserTest extends TestCase
 
         $this->assertSame(
             ['@param int $a first', 'second line', '@return void'],
-            self::trimmedTexts($parser->parse($input)),
+            self::trimmedTexts($parser->split($input)),
         );
     }
 
@@ -217,7 +217,7 @@ final class RegexCommentParserTest extends TestCase
      * declares the EXACT segments (verbatim text including the trailing line
      * terminator, plus its byte offset) the parser is expected to produce.
      *
-     * @return iterable<string, array{CommentParserInterface, string, list<array{string, int<0, max>}>}>
+     * @return iterable<string, array{SplitterInterface, string, list<array{string, int<0, max>}>}>
      */
     public static function provideLineEndingCases(): iterable
     {
@@ -256,9 +256,9 @@ final class RegexCommentParserTest extends TestCase
      */
     #[Test]
     #[DataProvider('provideLineEndingCases')]
-    public function preservesLineEndingsVerbatim(CommentParserInterface $parser, string $input, array $expected): void
+    public function preservesLineEndingsVerbatim(SplitterInterface $parser, string $input, array $expected): void
     {
-        $segments = self::segments($parser->parse($input));
+        $segments = self::segments($parser->split($input));
 
         $this->assertSame(\array_column($expected, 0), \array_map(
             static fn(Segment $segment): string => $segment->text,
@@ -272,11 +272,11 @@ final class RegexCommentParserTest extends TestCase
     }
 
     /**
-     * @return iterable<string, CommentParserInterface>
+     * @return iterable<string, SplitterInterface>
      */
     private static function createParsers(): iterable
     {
-        yield 'RegexCommentParser' => new RegexCommentParser();
+        yield 'RegexCommentParser' => new RegexSplitter();
     }
 
     /**
@@ -288,7 +288,7 @@ final class RegexCommentParserTest extends TestCase
     }
 
     /**
-     * Normalizes the {@see CommentParserInterface::parse()} result (which may be
+     * Normalizes the {@see SplitterInterface::split()} result (which may be
      * any iterable) into a positionally indexed list of segments.
      *
      * @return list<Segment>

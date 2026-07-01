@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\Parser\Comment;
+namespace TypeLang\PhpDoc\Internal\Splitter;
 
-final class RegexCommentParser implements CommentParserInterface
+final readonly class RegexSplitter implements SplitterInterface
 {
     /**
      * @var non-empty-string
      */
-    private const TOKENS_PCRE = '/\G(?'
+    private const string TOKENS_PCRE = '/\G(?'
         . '|(?:(?:^\h*\/\*\*\h*)(*MARK:T_COMMENT_START))'
         . '|(?:(?:\h*\*\/)(*MARK:T_COMMENT_END))'
         . '|(?:(?:^\h*\*\h*)(*MARK:T_COMMENT_PREFIX))'
@@ -20,7 +20,7 @@ final class RegexCommentParser implements CommentParserInterface
     /**
      * @var list<non-empty-string>
      */
-    private const LEXER_TOKENS_OUTPUT = [
+    private const array LEXER_TOKENS_OUTPUT = [
         'T_TEXT',
         'T_NEWLINE',
     ];
@@ -95,7 +95,7 @@ final class RegexCommentParser implements CommentParserInterface
      *
      * @return iterable<array-key, Segment>
      */
-    public function parse(string $docblock): iterable
+    public function split(string $docblock): iterable
     {
         if ($this->isWrappedComment($docblock)) {
             return $this->readWrappedComment($docblock);
