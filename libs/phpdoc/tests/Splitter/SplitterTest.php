@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\Internal\Splitter\SplitterInterface;
 use TypeLang\PhpDoc\Internal\Splitter\RegexSplitter;
+use TypeLang\PhpDoc\Internal\Splitter\StringSplitter;
 use TypeLang\PhpDoc\Internal\Splitter\Segment;
 use TypeLang\PhpDoc\Tests\TestCase;
 
@@ -94,14 +95,14 @@ final class SplitterTest extends TestCase
     #[DataProvider('provideParsers')]
     public function parseReturnsIterable(SplitterInterface $parser): void
     {
-        $this->assertIsIterable($parser->split('/** example */'));
+        self::assertIsIterable($parser->split('/** example */'));
     }
 
     #[Test]
     #[DataProvider('provideWrappedInputs')]
     public function parseYieldsOnlySegmentInstances(SplitterInterface $parser, string $input): void
     {
-        $this->assertContainsOnlyInstancesOf(Segment::class, self::segments($parser->split($input)));
+        self::assertContainsOnlyInstancesOf(Segment::class, self::segments($parser->split($input)));
     }
 
     #[Test]
@@ -110,9 +111,9 @@ final class SplitterTest extends TestCase
     {
         $segments = self::segments($parser->split($input));
 
-        $this->assertCount(1, $segments);
-        $this->assertSame($input, $segments[0]->text);
-        $this->assertSame(0, $segments[0]->offset);
+        self::assertCount(1, $segments);
+        self::assertSame($input, $segments[0]->text);
+        self::assertSame(0, $segments[0]->offset);
     }
 
     #[Test]
@@ -120,7 +121,7 @@ final class SplitterTest extends TestCase
     public function segmentOffsetPointsToItsTextInSource(SplitterInterface $parser, string $input): void
     {
         foreach (self::segments($parser->split($input)) as $segment) {
-            $this->assertSame(
+            self::assertSame(
                 \substr($input, $segment->offset, \strlen($segment->text)),
                 $segment->text,
                 'A segment text must be a verbatim slice of the source at its offset',
@@ -135,7 +136,7 @@ final class SplitterTest extends TestCase
         $previous = -1;
 
         foreach (self::segments($parser->split($input)) as $segment) {
-            $this->assertGreaterThan($previous, $segment->offset);
+            self::assertGreaterThan($previous, $segment->offset);
             $previous = $segment->offset;
         }
     }
@@ -152,7 +153,7 @@ final class SplitterTest extends TestCase
             ' */',
         );
 
-        $this->assertSame(
+        self::assertSame(
             ['Example line 1', '@tag1 type Description of tag1'],
             self::trimmedTexts($parser->split($input)),
         );
@@ -171,14 +172,14 @@ final class SplitterTest extends TestCase
             ' */',
         );
 
-        $this->assertSame(['first', 'second'], self::trimmedTexts($parser->split($input)));
+        self::assertSame(['first', 'second'], self::trimmedTexts($parser->split($input)));
     }
 
     #[Test]
     #[DataProvider('provideParsers')]
     public function singleLineCommentYieldsSingleSegment(SplitterInterface $parser): void
     {
-        $this->assertSame(['Foo bar'], self::trimmedTexts($parser->split('/** Foo bar */')));
+        self::assertSame(['Foo bar'], self::trimmedTexts($parser->split('/** Foo bar */')));
     }
 
     #[Test]
@@ -191,7 +192,7 @@ final class SplitterTest extends TestCase
             ' */',
         );
 
-        $this->assertSame(['Hi'], self::trimmedTexts($parser->split($input)));
+        self::assertSame(['Hi'], self::trimmedTexts($parser->split($input)));
     }
 
     #[Test]
@@ -206,7 +207,7 @@ final class SplitterTest extends TestCase
             ' */',
         );
 
-        $this->assertSame(
+        self::assertSame(
             ['@param int $a first', 'second line', '@return void'],
             self::trimmedTexts($parser->split($input)),
         );
@@ -260,12 +261,12 @@ final class SplitterTest extends TestCase
     {
         $segments = self::segments($parser->split($input));
 
-        $this->assertSame(\array_column($expected, 0), \array_map(
+        self::assertSame(\array_column($expected, 0), \array_map(
             static fn(Segment $segment): string => $segment->text,
             $segments,
         ));
 
-        $this->assertSame(\array_column($expected, 1), \array_map(
+        self::assertSame(\array_column($expected, 1), \array_map(
             static fn(Segment $segment): int => $segment->offset,
             $segments,
         ));
@@ -276,7 +277,7 @@ final class SplitterTest extends TestCase
      */
     private static function createParsers(): iterable
     {
-        yield 'RegexCommentParser' => new RegexSplitter();
+        yield 'StringSplitter' => new StringSplitter();
     }
 
     /**
@@ -291,13 +292,12 @@ final class SplitterTest extends TestCase
      * Normalizes the {@see SplitterInterface::split()} result (which may be
      * any iterable) into a positionally indexed list of segments.
      *
+     * @param iterable<Segment> $result
      * @return list<Segment>
      */
     private static function segments(iterable $result): array
     {
-        return \is_array($result)
-            ? \array_values($result)
-            : \iterator_to_array($result, false);
+        return \iterator_to_array($result, false);
     }
 
     /**
@@ -305,9 +305,9 @@ final class SplitterTest extends TestCase
      */
     private static function trimmedTexts(iterable $result): array
     {
-        return \array_map(
-            static fn(Segment $segment): string => \trim($segment->text),
-            self::segments($result),
-        );
+        $transform = static fn(Segment $segment): string => \trim($segment->text);
+
+        /** @var list<string> */
+        return \array_map($transform, self::segments($result));
     }
 }

@@ -57,7 +57,7 @@
         "phpcs:check": ["phpcs", "cs", "psr", "per"]
     },
     "scripts": {
-        "bench:split": "phpbench run libs/phpdoc/tests --report=default --filter=benchSplit",
+        "bench:split": "phpbench run libs/phpdoc/tests --report=default --filter=benchSplitBigDocBlock --filter=benchSplitLittleDocBlock",
         "test:unit": "phpunit --testdox",
         "linter:check": "phpstan analyse --configuration phpstan.neon --memory-limit 256M",
         "linter:baseline": "@linter:check --generate-baseline",
