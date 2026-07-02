@@ -151,21 +151,23 @@ final readonly class StringSplitter implements SplitterInterface
                 continue;
             }
 
-            // Significant line of content. Catch the closing cursor up if the
-            // scan has moved past it (e.g. right after consuming a "*/").
-            if ($closing !== false && $closing < $offset) {
-                $closing = \strpos($docblock, self::CLOSING, $offset);
+            // Significant line of content. It starts at $content, past any
+            // leading indentation, so the segment text never begins with
+            // whitespace even when the line has no "*" prefix; $content also
+            // carries the offset forward over the skipped whitespace.
+            if ($closing !== false && $closing < $content) {
+                $closing = \strpos($docblock, self::CLOSING, $content);
             }
 
-            $end = self::readTextEnd($docblock, $offset, $length, $closing);
-            $span = $end - $offset;
+            $end = self::readTextEnd($docblock, $content, $length, $closing);
+            $span = $end - $content;
 
             // Skip blank lines without allocating a trimmed copy of the text.
-            if (\strspn($docblock, self::BLANK, $offset, $span) !== $span) {
+            if (\strspn($docblock, self::BLANK, $content, $span) !== $span) {
                 /** @phpstan-ignore-next-line : Allow readonly mutation */
-                $prototype->text = \substr($docblock, $offset, $span);
+                $prototype->text = \substr($docblock, $content, $span);
                 /** @phpstan-ignore-next-line : Allow readonly mutation */
-                $prototype->offset = $offset;
+                $prototype->offset = $content;
 
                 $segments[] = clone $prototype;
             }

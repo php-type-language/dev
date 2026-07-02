@@ -7,7 +7,6 @@ namespace TypeLang\PhpDoc\Tests\Splitter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\Internal\Splitter\SplitterInterface;
-use TypeLang\PhpDoc\Internal\Splitter\RegexSplitter;
 use TypeLang\PhpDoc\Internal\Splitter\StringSplitter;
 use TypeLang\PhpDoc\Internal\Splitter\Segment;
 use TypeLang\PhpDoc\Tests\TestCase;
@@ -214,6 +213,50 @@ final class SplitterTest extends TestCase
     }
 
     /**
+     * A line without a leading "*" prefix still has its indentation stripped,
+     * so the segment text never begins with whitespace and its offset points
+     * at the first significant character.
+     */
+    #[Test]
+    #[DataProvider('provideParsers')]
+    public function leadingWhitespaceIsStrippedWhenLineHasNoStarPrefix(SplitterInterface $parser): void
+    {
+        // "/**\n @return example\n */" — note the space before "@", and no "*".
+        $input = self::comment('/**', ' @return example', ' */');
+
+        $segments = self::segments($parser->split($input));
+
+        self::assertCount(1, $segments);
+        self::assertSame("@return example\n", $segments[0]->text);
+        // The "@" sits at index 5: "/**"(3) + "\n"(1) + " "(1).
+        self::assertSame(5, $segments[0]->offset);
+        self::assertSame(
+            \substr($input, $segments[0]->offset, \strlen($segments[0]->text)),
+            $segments[0]->text,
+            'A stripped segment must still be a verbatim slice of the source at its offset',
+        );
+    }
+
+    /**
+     * Whether or not a line carries a "*" prefix, the resulting segment text is
+     * the same; only the offset differs (by the width of the skipped prefix).
+     */
+    #[Test]
+    #[DataProvider('provideParsers')]
+    public function starlessLineYieldsSameTextAsStarPrefixedLine(SplitterInterface $parser): void
+    {
+        $texts = static fn(iterable $result): array => \array_map(
+            static fn(Segment $segment): string => $segment->text,
+            self::segments($result),
+        );
+
+        self::assertSame(
+            $texts($parser->split(self::comment('/**', ' * @var int $x', ' */'))),
+            $texts($parser->split(self::comment('/**', ' @var int $x', ' */'))),
+        );
+    }
+
+    /**
      * Cross product of every parser with line-ending fixtures. Each fixture
      * declares the EXACT segments (verbatim text including the trailing line
      * terminator, plus its byte offset) the parser is expected to produce.
@@ -238,6 +281,18 @@ final class SplitterTest extends TestCase
             'mixed LF and CRLF' => [
                 "/**\r\n * a\n * b\r\n */",
                 [["a\n", 8], ["b\r\n", 13]],
+            ],
+            'LF indented tag without star' => [
+                "/**\n @return x\n */",
+                [["@return x\n", 5]],
+            ],
+            'LF tab-indented without star' => [
+                "/**\n\t@tag y\n */",
+                [["@tag y\n", 5]],
+            ],
+            'CRLF indented without star' => [
+                "/**\r\n  plain\r\n */",
+                [["plain\r\n", 7]],
             ],
         ];
 
