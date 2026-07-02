@@ -8,7 +8,7 @@ use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 abstract class DescriptionParserBench
 {
-    private const string DOC_BLOCK_SAMPLE = <<<'DOC'
+    private const string DESCRIPTION_SAMPLE = <<<'DOC'
         Cross product of every parser with line-ending fixtures. Each fixture
         declares the EXACT segments (verbatim text including the trailing line
         terminator, plus its byte offset) the parser {@see example} is expected
@@ -26,8 +26,8 @@ abstract class DescriptionParserBench
 
     public function prepare(): void
     {
-        $this->littleDescription = self::DOC_BLOCK_SAMPLE;
-        $this->bigDescription = \str_repeat(self::DOC_BLOCK_SAMPLE, 30);
+        $this->littleDescription = self::DESCRIPTION_SAMPLE;
+        $this->bigDescription = \str_repeat(self::DESCRIPTION_SAMPLE, 30);
     }
 
     public function benchParseLittleDescription(): void

@@ -57,10 +57,9 @@
         "phpcs:check": ["phpcs", "cs", "psr", "per"]
     },
     "scripts": {
-        "bench:split:big": "phpbench run libs/phpdoc/tests --report=default --filter=benchSplitBigDocBlock",
-        "bench:split:small": "phpbench run libs/phpdoc/tests --report=default --filter=benchSplitLittleDocBlock",
-        "bench:description:big": "phpbench run libs/phpdoc/tests --report=default --filter=benchParseBigDescription",
-        "bench:description:small": "phpbench run libs/phpdoc/tests --report=default --filter=benchParseLittleDescription",
+        "bench:split": "phpbench run libs/phpdoc/tests --report=default --filter=benchSplitLittleDocBlock --filter=benchSplitBigDocBlock",
+        "bench:description": "phpbench run libs/phpdoc/tests --report=default --filter=benchParseLittleDescription --filter=benchParseBigDescription",
+        "bench:tag": "phpbench run libs/phpdoc/tests --report=default --filter=benchParseTag",
         "test:unit": "phpunit --testdox",
         "linter:check": "phpstan analyse --configuration phpstan.neon --memory-limit 256M",
         "linter:baseline": "@linter:check --generate-baseline",
