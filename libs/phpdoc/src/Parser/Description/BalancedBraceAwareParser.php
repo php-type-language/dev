@@ -20,6 +20,15 @@ use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
  */
 final readonly class BalancedBraceAwareParser implements DescriptionParserInterface
 {
+    private const string INLINE_TAG_START_SEQUENCE = '{@';
+
+    private const string NESTING_INC_CHAR = '{';
+    private const string NESTING_DEC_CHAR = '}';
+
+    private const string NESTING_CHARS
+        = self::NESTING_INC_CHAR
+        . self::NESTING_DEC_CHAR;
+
     public function __construct(
         private TagParserInterface $tags,
     ) {}
@@ -64,7 +73,7 @@ final readonly class BalancedBraceAwareParser implements DescriptionParserInterf
         // Position from which to look for the next inline tag opening.
         $cursor = 0;
 
-        while (($open = \strpos($description, '{@', $cursor)) !== false) {
+        while (($open = \strpos($description, self::INLINE_TAG_START_SEQUENCE, $cursor)) !== false) {
             $close = $this->findClosingBrace($description, $open, $length);
 
             // An unclosed "{@..." consumes everything up to the end of the
@@ -119,13 +128,13 @@ final readonly class BalancedBraceAwareParser implements DescriptionParserInterf
         $offset = $open + 1;
 
         while (true) {
-            $offset += \strcspn($description, '{}', $offset);
+            $offset += \strcspn($description, self::NESTING_CHARS, $offset);
 
             if ($offset >= $length) {
                 return null;
             }
 
-            if ($description[$offset] === '{') {
+            if ($description[$offset] === self::NESTING_INC_CHAR) {
                 ++$depth;
             } elseif (--$depth === 0) {
                 return $offset;
