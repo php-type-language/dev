@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\Parser;
+namespace TypeLang\PhpDoc\Internal;
+
+use TypeLang\PhpDoc\Internal\Splitter\Segment;
 
 /**
  * @internal this is an internal library class, please do not use it in your code
@@ -28,11 +30,11 @@ final class SourceMap
     /**
      * @param int<0, max> $offset
      */
-    public function add(int $offset, string $segment): void
+    public function addMapping(string $text, int $offset): void
     {
         $this->mappings[$this->offset] = $offset;
 
-        $length = \strlen($segment);
+        $length = \strlen($text);
 
         $this->max = \max($this->max, $offset + $length - 1);
         $this->offset += $length;
@@ -41,7 +43,7 @@ final class SourceMap
     /**
      * @return int<0, max>
      */
-    public function getOffset(int $offset): int
+    public function getOriginalOffset(int $offset): int
     {
         if ($offset >= $this->offset) {
             return $this->max;

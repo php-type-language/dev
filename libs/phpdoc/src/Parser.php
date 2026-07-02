@@ -10,12 +10,11 @@ use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
+use TypeLang\PhpDoc\Internal\Analyzer;
 use TypeLang\PhpDoc\Internal\Splitter\SplitterInterface;
-use TypeLang\PhpDoc\Internal\Splitter\RegexSplitter;
-use TypeLang\PhpDoc\Internal\Splitter\Segment;
+use TypeLang\PhpDoc\Internal\Splitter\StringSplitter;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\Description\RegexDescriptionParser;
-use TypeLang\PhpDoc\Parser\SourceMap;
 use TypeLang\PhpDoc\Parser\Tag\RegexTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
 use TypeLang\PhpDoc\Platform\CompoundPlatform;
@@ -27,7 +26,7 @@ use TypeLang\PhpDoc\Platform\StandardPlatform;
 
 class Parser implements ParserInterface
 {
-    private readonly SplitterInterface $comments;
+    private readonly Analyzer $sectioner;
 
     private readonly DescriptionParserInterface $descriptions;
 
@@ -46,7 +45,7 @@ class Parser implements ParserInterface
         $this->factories = new TagFactory($platform->getTags());
         $this->tags = $this->createTagParser($this->factories);
         $this->descriptions = $this->createDescriptionParser($this->tags);
-        $this->comments = $this->createCommentParser();
+        $this->sectioner = new Analyzer($this->createSplitter());
     }
 
     protected function createTagParser(TagFactoryInterface $factories): TagParserInterface
@@ -59,9 +58,9 @@ class Parser implements ParserInterface
         return new RegexDescriptionParser($tags);
     }
 
-    protected function createCommentParser(): SplitterInterface
+    protected function createSplitter(): SplitterInterface
     {
-        return new RegexSplitter();
+        return new StringSplitter();
     }
 
     /**
@@ -79,86 +78,36 @@ class Parser implements ParserInterface
      */
     public function parse(string $docblock): DocBlock
     {
-        $mapper = new SourceMap();
+        $sections = $this->sectioner->group($docblock);
+        $map = $sections->map;
+
+        $tags = [];
+
+        // Offset (in the concatenated section space) of the section currently
+        // being parsed; the source map translates it back to $docblock.
+        $offset = 0;
 
         try {
-            /** @var Segment $segment */
-            foreach ($result = $this->analyze($docblock) as $segment) {
-                $mapper->add($segment->offset, $segment->text);
+            $description = $this->descriptions->parse($sections->description);
+            $offset += \strlen($sections->description);
+
+            foreach ($sections->tags as $tag) {
+                $tags[] = $this->tags->parse($tag, $this->descriptions);
+                $offset += \strlen($tag);
             }
         } catch (RuntimeExceptionInterface $e) {
             throw $e->withSource(
                 source: $docblock,
-                offset: $mapper->getOffset($e->getOffset()),
+                offset: $map->getOriginalOffset($offset + $e->getOffset()),
             );
         } catch (\Throwable $e) {
             throw ParsingException::fromInternalError(
                 source: $docblock,
-                offset: $mapper->getOffset(0),
+                offset: $map->getOriginalOffset($offset),
                 e: $e,
             );
         }
 
-        return $result->getReturn();
-    }
-
-    /**
-     * @return \Generator<array-key, Segment, void, DocBlock>
-     * @throws RuntimeExceptionInterface
-     */
-    private function analyze(string $docblock): \Generator
-    {
-        yield from $blocks = $this->groupByCommentSections($docblock);
-
-        $description = null;
-        $tags = [];
-        $offset = 0;
-
-        foreach ($blocks->getReturn() as $block) {
-            try {
-                if ($description === null) {
-                    $description = $this->descriptions->parse($block);
-                } else {
-                    $tags[] = $this->tags->parse($block, $this->descriptions);
-                }
-            } catch (RuntimeExceptionInterface $e) {
-                throw $e->withSource(
-                    source: $docblock,
-                    offset: $offset + $e->getOffset(),
-                );
-            } catch (\Throwable $e) {
-                throw ParsingException::fromInternalError(
-                    source: $docblock,
-                    offset: $offset,
-                    e: $e,
-                );
-            }
-
-            $offset += \strlen($block);
-        }
-
         return new DocBlock($description, $tags);
-    }
-
-    /**
-     * @return \Generator<array-key, Segment, void, non-empty-list<string>>
-     */
-    private function groupByCommentSections(string $docblock): \Generator
-    {
-        $current = '';
-        $blocks = [];
-
-        foreach ($this->comments->split($docblock) as $segment) {
-            yield $segment;
-
-            if (\str_starts_with($segment->text, '@')) {
-                $blocks[] = $current;
-                $current = '';
-            }
-
-            $current .= $segment->text;
-        }
-
-        return [...$blocks, $current];
     }
 }
