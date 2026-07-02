@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
-use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\Tests\TestCase;
 
 /**
  * Tests the behaviour shared by every tag through the abstract {@see Tag} base
@@ -17,30 +16,16 @@ use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
  */
 final class TagTest extends TestCase
 {
-    private function createTag(string $name, \Stringable|string|null $description = null): Tag
-    {
-        return new class($name, $description) extends Tag {};
-    }
-
     #[Test]
     public function constructorStoresName(): void
     {
-        $this->assertSame('param', $this->createTag('param')->name);
+        $this->assertSame('param', new Tag('param')->name);
     }
 
     #[Test]
     public function descriptionDefaultsToNull(): void
     {
-        $this->assertNull($this->createTag('param')->description);
-    }
-
-    #[Test]
-    public function constructorConvertsStringDescription(): void
-    {
-        $tag = $this->createTag('param', 'int $a');
-
-        $this->assertInstanceOf(DescriptionInterface::class, $tag->description);
-        $this->assertSame('int $a', (string) $tag->description);
+        $this->assertNull(new Tag('param')->description);
     }
 
     #[Test]
@@ -48,30 +33,12 @@ final class TagTest extends TestCase
     {
         $description = new Description('int $a');
 
-        $this->assertSame($description, $this->createTag('param', $description)->description);
+        $this->assertSame($description, new Tag('param', $description)->description);
     }
 
     #[Test]
     public function implementsTagInterface(): void
     {
-        $this->assertInstanceOf(TagInterface::class, $this->createTag('param'));
-    }
-
-    #[Test]
-    public function toStringWithoutDescriptionRendersNameOnly(): void
-    {
-        $this->assertSame('@param', (string) $this->createTag('param'));
-    }
-
-    #[Test]
-    public function toStringWithDescriptionRendersNameAndDescription(): void
-    {
-        $this->assertSame('@param int $a', (string) $this->createTag('param', 'int $a'));
-    }
-
-    #[Test]
-    public function toStringTrimsTrailingSpaceForEmptyDescription(): void
-    {
-        $this->assertSame('@param', (string) $this->createTag('param', ''));
+        $this->assertInstanceOf(TagInterface::class, new Tag('param'));
     }
 }

@@ -4,85 +4,81 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Tag;
 
-use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactory;
-use TypeLang\PhpDoc\DocBlock\Tag\Factory\TagFactoryInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
+use TypeLang\PhpDoc\DocBlock\Tag\TagFactoryInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\UnknownTag;
-use TypeLang\PhpDoc\Exception\InvalidTagNameException;
-use TypeLang\PhpDoc\Exception\RuntimeExceptionInterface;
+use TypeLang\PhpDoc\Exception\EmptyTagLineException;
+use TypeLang\PhpDoc\Exception\EmptyTagNameException;
+use TypeLang\PhpDoc\Exception\InvalidTagPrefixException;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
-final class RegexTagParser implements TagParserInterface
+final readonly class RegexTagParser implements TagParserInterface
 {
     /**
      * @var non-empty-string
      */
-    private const PATTERN_TAG = '\G@[a-zA-Z_\x80-\xff\\\][\w\x80-\xff\-:\\\]*';
+    private const string PATTERN_TAG = '\G@[a-zA-Z_\x80-\xff\\\][\w\x80-\xff\-:\\\]*';
+
+    /**
+     * @var non-empty-string
+     */
+    private string $pattern;
 
     public function __construct(
-        private readonly TagFactoryInterface $tags = new TagFactory(),
-    ) {}
-
-    /**
-     * Read tag name from passed content.
-     *
-     * Expected argument should be looks like:
-     *   - "@tag"
-     *   - "@tag with description"
-     *   - "@tag With\TypeName"
-     *   - "@tag With\TypeName And description"
-     *   - "@tag With\TypeName $andVariableName"
-     *   - "@tag With\TypeName $andVariableName And description"
-     *   - etc...
-     *
-     * @throws InvalidTagNameException
-     */
-    private function getTagName(string $content): string
-    {
-        if ($content === '') {
-            throw InvalidTagNameException::fromEmptyTag();
-        }
-
-        if (isset($content[0]) && $content[0] !== '@') {
-            throw InvalidTagNameException::fromInvalidTagPrefix($content);
-        }
-
-        $pattern = \addcslashes(self::PATTERN_TAG, '/');
-
-        \preg_match("/^$pattern/isum", $content, $matches);
-
-        if (($matches[0] ?? null) === null) {
-            throw InvalidTagNameException::fromEmptyTagName($content);
-        }
-
-        return $matches[0];
+        private TagFactoryInterface $factory,
+    ) {
+        $this->pattern = \sprintf('/^%s/isum', \addcslashes(self::PATTERN_TAG, '/'));
     }
 
-    /**
-     * @throws \Throwable
-     * @throws RuntimeExceptionInterface
-     */
-    public function parse(string $tag, DescriptionParserInterface $parser): TagInterface
+    private static function createForEmptyTagLine(): InvalidTag
     {
-        try {
-            $name = $this->getTagName($tag);
-        } catch (InvalidTagNameException $e) {
-            return new UnknownTag($e, description: $tag);
+        $reason = EmptyTagLineException::becauseTagLineIsEmpty();
+
+        return new InvalidTag($reason);
+    }
+
+    private static function createForInvalidTagPrefix(
+        string $definition,
+        DescriptionParserInterface $descriptions,
+    ): InvalidTag {
+        $reason = InvalidTagPrefixException::becauseTagPrefixIsInvalid($definition);
+        $description = $descriptions->tryParse($definition);
+
+        return new InvalidTag($reason, description: $description);
+    }
+
+    private static function createForInvalidTagName(
+        string $definition,
+        DescriptionParserInterface $descriptions,
+    ): InvalidTag {
+        $reason = EmptyTagNameException::becauseTagNameIsEmpty($definition);
+        $description = $descriptions->tryParse(\substr($definition, 1));
+
+        return new InvalidTag($reason, description: $description);
+    }
+
+    public function parse(string $definition, DescriptionParserInterface $descriptions): TagInterface
+    {
+        if ($definition === '') {
+            return self::createForEmptyTagLine();
         }
 
-        /** @var non-empty-string $name */
-        $name = \substr($name, 1);
-
-        $content = \substr($tag, $offset = \strlen($name) + 1);
-        $trimmed = \ltrim($content);
-
-        try {
-            return $this->tags->create($name, $trimmed, $parser);
-        } catch (RuntimeExceptionInterface $e) {
-            $offset += \strlen($content) - \strlen($trimmed);
-
-            /** @var int<0, max> $offset */
-            throw $e->withSource($tag, $offset);
+        if ($definition[0] !== '@') {
+            return self::createForInvalidTagPrefix($definition, $descriptions);
         }
+
+        \preg_match($this->pattern, $definition, $matches);
+        $prefixedTagName = $matches[0] ?? null;
+
+        if ($prefixedTagName === null) {
+            return self::createForInvalidTagName($definition, $descriptions);
+        }
+
+        /** @var non-empty-string $tagName */
+        $tagName = \substr($prefixedTagName, 1);
+        $offset = \strlen($prefixedTagName);
+        $tagSuffix = \ltrim(\substr($definition, $offset));
+
+        return $this->factory->create($tagName, $tagSuffix, $descriptions);
     }
 }

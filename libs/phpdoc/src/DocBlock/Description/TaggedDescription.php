@@ -4,25 +4,34 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Description;
 
+use TypeLang\PhpDoc\DocBlock\ComponentInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 
 /**
- * @phpstan-import-type TaggedDescriptionComponentType from TaggedDescriptionInterface
+ * Any class that implements this interface is a description object
+ * containing an arbitrary set of nested tags ({@see TagInterface}).
  *
- * @template-implements \ArrayAccess<array-key, TaggedDescriptionComponentType|null>
- * @template-implements \IteratorAggregate<array-key, TaggedDescriptionComponentType>
+ * @template-implements \ArrayAccess<array-key, ComponentInterface>
+ * @template-implements \IteratorAggregate<array-key, ComponentInterface>
  */
 final class TaggedDescription implements
-    TaggedDescriptionInterface,
+    DescriptionInterface,
     \IteratorAggregate,
-    \ArrayAccess
+    \ArrayAccess,
+    \Countable
 {
     /**
-     * @var list<TaggedDescriptionComponentType>
+     * Gets a list of {@see ComponentInterface} components that make up the
+     * {@see TaggedDescriptionInterface} in the order in which these
+     * elements are defined.
+     *
+     * @var list<ComponentInterface>
      */
     public readonly array $components;
 
     /**
+     * Gets a list of all tags within a description
+     *
      * @var list<TagInterface>
      */
     public array $tags {
@@ -30,7 +39,7 @@ final class TaggedDescription implements
     }
 
     /**
-     * @param iterable<array-key, TagInterface|DescriptionInterface> $components
+     * @param iterable<mixed, ComponentInterface> $components
      */
     public function __construct(iterable $components = [])
     {
@@ -38,11 +47,11 @@ final class TaggedDescription implements
     }
 
     /**
-     * @template TArgComponent of TaggedDescriptionComponentType
+     * @template TArgComponent of ComponentInterface
      * @param class-string<TArgComponent> $component
      * @return list<TArgComponent>
      */
-    private function only(string $component): array
+    public function only(string $component): array
     {
         $result = [];
 
@@ -60,7 +69,7 @@ final class TaggedDescription implements
         return isset($this->components[$offset]);
     }
 
-    public function offsetGet(mixed $offset): TagInterface|DescriptionInterface|null
+    public function offsetGet(mixed $offset): ?ComponentInterface
     {
         return $this->components[$offset] ?? null;
     }
@@ -68,7 +77,7 @@ final class TaggedDescription implements
     /**
      * @throws \BadMethodCallException
      */
-    public function offsetSet(mixed $offset, mixed $value): void
+    public function offsetSet(mixed $offset, mixed $value): never
     {
         throw new \BadMethodCallException(self::class . ' objects are immutable');
     }
@@ -76,7 +85,7 @@ final class TaggedDescription implements
     /**
      * @throws \BadMethodCallException
      */
-    public function offsetUnset(mixed $offset): void
+    public function offsetUnset(mixed $offset): never
     {
         throw new \BadMethodCallException(self::class . ' objects are immutable');
     }
@@ -98,10 +107,11 @@ final class TaggedDescription implements
     {
         $result = [];
 
-        foreach ($this->components as $component) {
-            $result[] = $component instanceof TagInterface
-                ? \sprintf('{%s}', $component)
-                : $component;
+        foreach ($this->components as $actual) {
+            $result[] = match (true) {
+                $actual instanceof TagInterface => \sprintf('{%s}', $actual),
+                default => $actual,
+            };
         }
 
         return \implode('', $result);

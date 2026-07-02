@@ -6,9 +6,8 @@ namespace TypeLang\PhpDoc\Tests\DocBlock;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
-use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
-use TypeLang\PhpDoc\DocBlock\Tag\GenericTag;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\Tests\TestCase;
 
 final class DocBlockTest extends TestCase
@@ -17,15 +16,6 @@ final class DocBlockTest extends TestCase
     public function descriptionDefaultsToNull(): void
     {
         $this->assertNull(new DocBlock()->description);
-    }
-
-    #[Test]
-    public function constructorConvertsStringDescription(): void
-    {
-        $docblock = new DocBlock('Summary');
-
-        $this->assertInstanceOf(DescriptionInterface::class, $docblock->description);
-        $this->assertSame('Summary', (string) $docblock->description);
     }
 
     #[Test]
@@ -45,8 +35,8 @@ final class DocBlockTest extends TestCase
     #[Test]
     public function constructorStoresTagsAsList(): void
     {
-        $first = new GenericTag('param');
-        $second = new GenericTag('return');
+        $first = new Tag('param');
+        $second = new Tag('return');
 
         $docblock = new DocBlock(null, [3 => $first, 7 => $second]);
 
@@ -56,7 +46,7 @@ final class DocBlockTest extends TestCase
     #[Test]
     public function constructorAcceptsTraversableTags(): void
     {
-        $tag = new GenericTag('deprecated');
+        $tag = new Tag('deprecated');
 
         $docblock = new DocBlock(null, new \ArrayIterator([$tag]));
 
@@ -66,7 +56,7 @@ final class DocBlockTest extends TestCase
     #[Test]
     public function countReturnsNumberOfTags(): void
     {
-        $docblock = new DocBlock(null, [new GenericTag('param'), new GenericTag('return')]);
+        $docblock = new DocBlock(null, [new Tag('param'), new Tag('return')]);
 
         $this->assertCount(2, $docblock);
     }
@@ -74,7 +64,7 @@ final class DocBlockTest extends TestCase
     #[Test]
     public function offsetExistsReflectsTagPresence(): void
     {
-        $docblock = new DocBlock(null, [new GenericTag('param')]);
+        $docblock = new DocBlock(null, [new Tag('param')]);
 
         $this->assertTrue(isset($docblock[0]));
         $this->assertFalse(isset($docblock[1]));
@@ -83,7 +73,7 @@ final class DocBlockTest extends TestCase
     #[Test]
     public function offsetGetReturnsTag(): void
     {
-        $tag = new GenericTag('param');
+        $tag = new Tag('param');
         $docblock = new DocBlock(null, [$tag]);
 
         $this->assertSame($tag, $docblock[0]);
@@ -102,13 +92,13 @@ final class DocBlockTest extends TestCase
 
         $this->expectException(\BadMethodCallException::class);
 
-        $docblock[0] = new GenericTag('param');
+        $docblock[0] = new Tag('param');
     }
 
     #[Test]
     public function offsetUnsetThrows(): void
     {
-        $docblock = new DocBlock(null, [new GenericTag('param')]);
+        $docblock = new DocBlock(null, [new Tag('param')]);
 
         $this->expectException(\BadMethodCallException::class);
 
@@ -118,7 +108,7 @@ final class DocBlockTest extends TestCase
     #[Test]
     public function iteratorYieldsAllTagsInOrder(): void
     {
-        $tags = [new GenericTag('param'), new GenericTag('return')];
+        $tags = [new Tag('param'), new Tag('return')];
         $docblock = new DocBlock(null, $tags);
 
         $this->assertSame($tags, \iterator_to_array($docblock, false));

@@ -4,126 +4,48 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Tests\Bench\Splitter;
 
-use TypeLang\PhpDoc\Internal\Splitter\SplitterInterface;
+use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
 
 abstract class SplitterBench
 {
-    private const string LITTLE_SAMPLE = <<<'DOC'
-        /**
+    private const string DOC_BLOCK_SAMPLE = <<<'DOC'
          * Cross product of every parser with line-ending fixtures. Each fixture
          * declares the EXACT segments (verbatim text including the trailing line
          * terminator, plus its byte offset) the parser is expected to produce.
          *
          * @return iterable<string, array{CommentParserInterface, string, list<array{string, int<0, max>}>}>
-         */
         DOC;
 
-    private const string BIG_SAMPLE = <<<'DOC'
-        /**
-         * Returns significant parts of the DocBlock comment with their offsets of
-         * the returned section, relative to the beginning.
-         *
-         * ```
-         * $result = $reader->read(<<<'DOC'
-         *      /**
-         *       * Example line 1
-         *       *
-         *       * @​tag1 type Description of tag1
-         *       *​/
-         *      DOC);
-         *
-         * // The $result contains:
-         * // object(Segment) { offset: 7, text: 'Example line 1' }
-         * // object(Segment) { offset: 28, text: '@tag1 type Description of tag1' }
-         * ```
-         *
-         * Returns significant parts of the DocBlock comment with their offsets of
-         * the returned section, relative to the beginning.
-         *
-         * ```
-         * $result = $reader->read(<<<'DOC'
-         *      /**
-         *       * Example line 1
-         *       *
-         *       * @​tag1 type Description of tag1
-         *       *​/
-         *      DOC);
-         *
-         * // The $result contains:
-         * // object(Segment) { offset: 7, text: 'Example line 1' }
-         * // object(Segment) { offset: 28, text: '@tag1 type Description of tag1' }
-         * ```
-         *
-         * Returns significant parts of the DocBlock comment with their offsets of
-         * the returned section, relative to the beginning.
-         *
-         * ```
-         * $result = $reader->read(<<<'DOC'
-         *      /**
-         *       * Example line 1
-         *       *
-         *       * @​tag1 type Description of tag1
-         *       *​/
-         *      DOC);
-         *
-         * // The $result contains:
-         * // object(Segment) { offset: 7, text: 'Example line 1' }
-         * // object(Segment) { offset: 28, text: '@tag1 type Description of tag1' }
-         * ```
-         *
-         * Returns significant parts of the DocBlock comment with their offsets of
-         * the returned section, relative to the beginning.
-         *
-         * ```
-         * $result = $reader->read(<<<'DOC'
-         *      /**
-         *       * Example line 1
-         *       *
-         *       * @​tag1 type Description of tag1
-         *       *​/
-         *      DOC);
-         *
-         * // The $result contains:
-         * // object(Segment) { offset: 7, text: 'Example line 1' }
-         * // object(Segment) { offset: 28, text: '@tag1 type Description of tag1' }
-         * ```
-         *
-         * Returns significant parts of the DocBlock comment with their offsets of
-         * the returned section, relative to the beginning.
-         *
-         * ```
-         * $result = $reader->read(<<<'DOC'
-         *      /**
-         *       * Example line 1
-         *       *
-         *       * @​tag1 type Description of tag1
-         *       *​/
-         *      DOC);
-         *
-         * // The $result contains:
-         * // object(Segment) { offset: 7, text: 'Example line 1' }
-         * // object(Segment) { offset: 28, text: '@tag1 type Description of tag1' }
-         * ```
-         *
-         * @return iterable<array-key, Segment>
-         */
-        DOC;
+    private const string DOC_BLOCK_TEMPLATE = "/**\n%s\n*/";
 
+    private string $littleDocBlock;
+    private string $bigDocBlock;
 
     abstract protected SplitterInterface $splitter {
         get;
     }
 
+    public function prepare(): void
+    {
+        $this->littleDocBlock = \vsprintf(self::DOC_BLOCK_TEMPLATE, [
+            self::DOC_BLOCK_SAMPLE,
+        ]);
+
+        $this->bigDocBlock = \vsprintf(self::DOC_BLOCK_TEMPLATE, [
+            \str_repeat(self::DOC_BLOCK_SAMPLE, 30),
+        ]);
+    }
+
     public function benchSplitLittleDocBlock(): void
     {
-        foreach ($this->splitter->split(self::LITTLE_SAMPLE) as $segment) {
+        foreach ($this->splitter->split($this->littleDocBlock) as $segment) {
             // NO-OP
         }
     }
 
     public function benchSplitBigDocBlock(): void
     {
-        foreach ($this->splitter->split(self::BIG_SAMPLE) as $segment) {
+        foreach ($this->splitter->split($this->bigDocBlock) as $segment) {
             // NO-OP
         }
     }

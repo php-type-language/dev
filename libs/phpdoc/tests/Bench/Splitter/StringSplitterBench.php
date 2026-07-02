@@ -9,16 +9,19 @@ use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\RetryThreshold;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
-use TypeLang\PhpDoc\Internal\Splitter\SplitterInterface;
-use TypeLang\PhpDoc\Internal\Splitter\StringSplitter;
+use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
+use TypeLang\PhpDoc\Parser\Splitter\StringSplitter;
 
 #[Revs(50), Warmup(5), Iterations(25), BeforeMethods('prepare'), RetryThreshold(2)]
 final class StringSplitterBench extends SplitterBench
 {
     protected SplitterInterface $splitter;
 
+    #[\Override]
     public function prepare(): void
     {
         $this->splitter = new StringSplitter();
+
+        parent::prepare();
     }
 }

@@ -5,18 +5,16 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\Tests\TestCase;
-use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
-use TypeLang\PhpDoc\DocBlock\Tag\InvalidTagInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
+use TypeLang\PhpDoc\Tests\TestCase;
 
 final class InvalidTagTest extends TestCase
 {
     #[Test]
     public function constructorStoresName(): void
     {
-        $tag = new InvalidTag('param', new \RuntimeException());
+        $tag = new InvalidTag(new \RuntimeException(), 'param');
 
         $this->assertSame('param', $tag->name);
     }
@@ -25,7 +23,7 @@ final class InvalidTagTest extends TestCase
     public function constructorStoresReason(): void
     {
         $reason = new \RuntimeException('broken');
-        $tag = new InvalidTag('param', $reason);
+        $tag = new InvalidTag($reason, 'param');
 
         $this->assertSame($reason, $tag->reason);
     }
@@ -33,40 +31,14 @@ final class InvalidTagTest extends TestCase
     #[Test]
     public function descriptionDefaultsToNull(): void
     {
-        $this->assertNull(new InvalidTag('param', new \RuntimeException())->description);
-    }
-
-    #[Test]
-    public function constructorConvertsStringDescription(): void
-    {
-        $tag = new InvalidTag('param', new \RuntimeException(), 'int $a');
-
-        $this->assertInstanceOf(DescriptionInterface::class, $tag->description);
-        $this->assertSame('int $a', (string) $tag->description);
+        $this->assertNull(new InvalidTag(new \RuntimeException(), 'param')->description);
     }
 
     #[Test]
     public function isAnInvalidTag(): void
     {
-        $tag = new InvalidTag('param', new \RuntimeException());
+        $tag = new InvalidTag(new \RuntimeException(), 'param');
 
         $this->assertInstanceOf(Tag::class, $tag);
-        $this->assertInstanceOf(InvalidTagInterface::class, $tag);
-    }
-
-    #[Test]
-    public function toStringWithDescription(): void
-    {
-        $tag = new InvalidTag('param', new \RuntimeException(), 'int $a');
-
-        $this->assertSame('@param int $a', (string) $tag);
-    }
-
-    #[Test]
-    public function toStringWithoutDescription(): void
-    {
-        $tag = new InvalidTag('param', new \RuntimeException());
-
-        $this->assertSame('@param', (string) $tag);
     }
 }
