@@ -17,7 +17,7 @@ final readonly class RegexTagParser implements TagParserInterface
     /**
      * @var non-empty-string
      */
-    private const string PATTERN_TAG = '\G@[a-zA-Z_\x80-\xff\\\][\w\x80-\xff\-:\\\]*';
+    private const string PATTERN_TAG = '\G@[\w\-\_\\\\:]++';
 
     /**
      * @var non-empty-string
@@ -76,8 +76,7 @@ final readonly class RegexTagParser implements TagParserInterface
 
         /** @var non-empty-string $tagName */
         $tagName = \substr($prefixedTagName, 1);
-        $offset = \strlen($prefixedTagName);
-        $tagSuffix = \ltrim(\substr($definition, $offset));
+        $tagSuffix = \ltrim(\substr($definition, \strlen($prefixedTagName)));
 
         return $this->factory->create($tagName, $tagSuffix, $descriptions);
     }

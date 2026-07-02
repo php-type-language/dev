@@ -244,12 +244,16 @@ final class DescriptionParserTest extends TestCase
      * A balanced "{@...}" whose name the tag parser rejects with an
      * {@see \TypeLang\PhpDoc\Exception\InvalidTagNameException} is preserved
      * verbatim (with its braces) as a part of the description.
+     *
+     * A name is limited to word characters (including Unicode letters) and a
+     * few name punctuation characters, so "{@!bad}" — whose "!" is none of
+     * these — has no readable name and stays raw text.
      */
     #[Test]
     #[DataProvider('parserDataProvider')]
     public function inlineTagWithUnreadableNameBecomesPlainDescription(DescriptionParserInterface $parser): void
     {
-        self::assertPlainDescription('Hello {@вася} world', $parser->parse('Hello {@вася} world'));
+        self::assertPlainDescription('Hello {@!bad} world', $parser->parse('Hello {@!bad} world'));
     }
 
     /**
