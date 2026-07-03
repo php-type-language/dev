@@ -27,7 +27,7 @@ abstract class TagParserBench
         $this->tag = self::TAG_SAMPLE;
 
         $this->descriptions = new BalancedBraceAwareParser(
-            tags: $this->parser,
+            tagParser: $this->parser,
         );
     }
 

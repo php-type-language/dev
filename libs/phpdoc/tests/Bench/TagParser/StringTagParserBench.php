@@ -21,7 +21,9 @@ final class StringTagParserBench extends TagParserBench
     #[\Override]
     public function prepare(): void
     {
-        $this->parser = new StringTagParser(new TagFactory());
+        $this->parser = new StringTagParser(
+            tagFactory: new TagFactory(),
+        );
 
         parent::prepare();
     }
