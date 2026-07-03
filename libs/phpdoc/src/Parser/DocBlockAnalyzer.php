@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
  * It only slices and maps the comment: parsing the description and tag
  * contents is left to the caller.
  */
-final readonly class Analyzer
+final readonly class DocBlockAnalyzer
 {
     public function __construct(
         private SplitterInterface $splitter,

@@ -62,6 +62,7 @@
         "bench:split": "phpbench run libs/phpdoc/tests --report=default --filter=benchSplitLittleDocBlock --filter=benchSplitBigDocBlock",
         "bench:description": "phpbench run libs/phpdoc/tests --report=default --filter=benchParseLittleDescription --filter=benchParseBigDescription",
         "bench:tag": "phpbench run libs/phpdoc/tests --report=default --filter=benchParseTag",
+        "bench:phpdoc": "phpbench run libs/phpdoc/tests --report=default --filter=benchParseDocBlock",
         "test:unit": "phpunit --testdox",
         "linter:check": "phpstan analyse --configuration phpstan.neon --memory-limit 256M",
         "linter:baseline": "@linter:check --generate-baseline",

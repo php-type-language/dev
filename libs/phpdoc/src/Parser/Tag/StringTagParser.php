@@ -43,7 +43,7 @@ final readonly class StringTagParser implements TagParserInterface
     private string $nameTerminators;
 
     public function __construct(
-        private TagFactoryInterface $factory,
+        private TagFactoryInterface $tagFactory,
     ) {
         $this->nameTerminators = self::createTerminatorMask();
     }
@@ -110,7 +110,7 @@ final readonly class StringTagParser implements TagParserInterface
         $suffix = \ltrim(\substr($definition, 1 + $length));
 
         try {
-            return $this->factory->create($name, $suffix, $descriptions);
+            return $this->tagFactory->create($name, $suffix, $descriptions);
         } catch (ParsingException $e) {
             throw $e->withSource($definition, $e->offset + $length + 1);
         }

@@ -30,7 +30,7 @@ final readonly class BalancedBraceAwareParser implements DescriptionParserInterf
         . self::NESTING_DEC_CHAR;
 
     public function __construct(
-        private TagParserInterface $tags,
+        private TagParserInterface $tagParser,
     ) {}
 
     public function tryParse(string $description): ?DescriptionInterface
@@ -85,7 +85,7 @@ final readonly class BalancedBraceAwareParser implements DescriptionParserInterf
             // Strip the outer braces: "{@see X}" becomes "@see X".
             $definition = \substr($description, $open + 1, $close - $open - 1);
             // TODO Add an internal exception handling
-            $tag = $this->tags->parse($definition, $this);
+            $tag = $this->tagParser->parse($definition, $this);
 
             // A "{@...}" with an unreadable tag name is not a tag at all: keep
             // the original (braced) text as a part of the description by

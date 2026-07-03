@@ -7,15 +7,19 @@ namespace TypeLang\PhpDoc;
 use JetBrains\PhpStorm\Language;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
+use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Link\LinkTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\Rule\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\TagFactoryInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
 use TypeLang\PhpDoc\Exception\TagParsingException;
-use TypeLang\PhpDoc\Parser\Analyzer;
+use TypeLang\PhpDoc\Parser\DocBlockAnalyzer;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Parser\Grammar\Grammar;
 use TypeLang\PhpDoc\Parser\Splitter\Segment;
 use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
 use TypeLang\PhpDoc\Parser\Splitter\StringSplitter;
@@ -24,28 +28,30 @@ use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
 
 final readonly class DocBlockParser implements DocBlockParserInterface
 {
-    private Analyzer $analyzer;
-    private TagParserInterface $tags;
-    private DescriptionParserInterface $descriptions;
+    public TagFactoryInterface $tags;
+
+    private DocBlockAnalyzer $docBlockAnalyzer;
+    private TagParserInterface $tagParser;
+    private DescriptionParserInterface $descriptionParser;
 
     public function __construct()
     {
-        $this->analyzer = $this->createAnalyzer(
+        $this->docBlockAnalyzer = $this->createAnalyzer(
             splitter: $this->createDocBlockSplitter(),
         );
 
-        $this->tags = $this->createTagParser(
-            factory: $this->createTagFactory(),
+        $this->tagParser = $this->createTagParser(
+            factory: $this->tags = $this->createTagFactory(),
         );
 
-        $this->descriptions = $this->createDescriptionParser(
-            parser: $this->tags,
+        $this->descriptionParser = $this->createDescriptionParser(
+            parser: $this->tagParser,
         );
     }
 
-    private function createAnalyzer(SplitterInterface $splitter): Analyzer
+    private function createAnalyzer(SplitterInterface $splitter): DocBlockAnalyzer
     {
-        return new Analyzer($splitter);
+        return new DocBlockAnalyzer($splitter);
     }
 
     private function createDocBlockSplitter(): SplitterInterface
@@ -53,9 +59,29 @@ final readonly class DocBlockParser implements DocBlockParserInterface
         return new StringSplitter();
     }
 
+    private function createDefaultGrammar(): Grammar
+    {
+        return new Grammar([
+            UriGrammarRule::NAME => new UriGrammarRule(),
+        ]);
+    }
+
+    /**
+     * @return array<non-empty-string, TagDefinitionInterface>
+     */
+    private function createDefaultTagDefinitions(): array
+    {
+        return [
+            LinkTagDefinition::NAME => new LinkTagDefinition(),
+        ];
+    }
+
     private function createTagFactory(): TagFactoryInterface
     {
-        return new TagFactory();
+        return new TagFactory(
+            definitions: $this->createDefaultTagDefinitions(),
+            grammar: $this->createDefaultGrammar(),
+        );
     }
 
     private function createTagParser(TagFactoryInterface $factory): TagParserInterface
@@ -79,7 +105,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
         foreach ($segments as $segment) {
             try {
-                $result[] = $this->tags->parse($segment->text, $this->descriptions);
+                $result[] = $this->tagParser->parse($segment->text, $this->descriptionParser);
             } catch (\Throwable $e) {
                 throw $this->failure($e, $docblock, $segment->offset);
             }
@@ -94,7 +120,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
     private function tryCreateDescription(Segment $segment, string $docblock): ?DescriptionInterface
     {
         try {
-            return $this->descriptions->tryParse($segment->text);
+            return $this->descriptionParser->tryParse($segment->text);
         } catch (\Throwable $e) {
             throw $this->failure($e, $docblock, $segment->offset);
         }
@@ -130,7 +156,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
     public function parse(#[Language('InjectablePHP')] string $docblock): DocBlock
     {
-        $data = $this->analyzer->analyze($docblock);
+        $data = $this->docBlockAnalyzer->analyze($docblock);
 
         return new DocBlock(
             description: $this->tryCreateDescription($data->description, $docblock),

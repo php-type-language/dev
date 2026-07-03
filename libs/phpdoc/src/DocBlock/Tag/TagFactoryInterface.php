@@ -8,8 +8,10 @@ use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 /**
  * @template-covariant TTag of TagInterface = TagInterface
+ *
+ * @template-extends \Traversable<non-empty-string, TagDefinitionInterface>
  */
-interface TagFactoryInterface
+interface TagFactoryInterface extends \Traversable, \Countable
 {
     /**
      * @param non-empty-string $name
@@ -20,4 +22,9 @@ interface TagFactoryInterface
         string $suffix,
         DescriptionParserInterface $descriptions,
     ): TagInterface;
+
+    /**
+     * @return int<0, max>
+     */
+    public function count(): int;
 }
