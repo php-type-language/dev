@@ -12,10 +12,6 @@ namespace TypeLang\PhpDoc\Parser\Splitter;
  */
 final class Segment
 {
-    public bool $isTag {
-        get => ($this->text[0] ?? null) === '@';
-    }
-
     public function __construct(
         public string $text = '',
         /**

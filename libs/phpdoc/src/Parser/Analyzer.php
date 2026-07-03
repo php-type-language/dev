@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser;
 
-use TypeLang\PhpDoc\DocBlock\DocBlock;
-use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
-use TypeLang\PhpDoc\Exception\ParsingExceptionInterface;
-use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Parser\Splitter\Segment;
 use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
-use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
 
 /**
  * Groups the significant segments of a DocBlock comment into sections (a
@@ -22,55 +18,39 @@ final readonly class Analyzer
 {
     public function __construct(
         private SplitterInterface $splitter,
-        private TagParserInterface $tags,
-        private DescriptionParserInterface $descriptions,
     ) {}
 
-    public function analyze(string $docblock): DocBlock
+    public function analyze(string $docblock): RawDocBlock
     {
-        $map = new SourceMap();
+        $buffer = '';
+        $currentOffset = 0;
+        $hasOffset = false;
 
-        $current = '';
-        $blocks = [];
+        /** @var list<Segment> $computedSegments */
+        $computedSegments = [];
 
         foreach ($this->splitter->split($docblock) as $segment) {
-            $text = $segment->text;
-            $offset = $segment->offset;
+            $segmentText = $segment->text;
 
-            $map->addMapping($text, $offset);
-
-            // A segment starting with "@" opens a new tag section, flushing
-            // whatever was accumulated for the previous one.
-            if (\str_starts_with($text, '@')) {
-                $blocks[] = $current;
-                $current = '';
+            if ($segmentText[0] === '@') {
+                $computedSegments[] = new Segment($buffer, $currentOffset);
+                $buffer = '';
+                $currentOffset = $segment->offset;
+                $hasOffset = true;
+            } elseif (!$hasOffset) {
+                // Anchor the leading description at its first significant line.
+                $currentOffset = $segment->offset;
+                $hasOffset = true;
             }
 
-            $current .= $text;
+            $buffer .= $segment->text;
         }
 
-        $blocks[] = $current;
+        $computedSegments[] = new Segment($buffer, $currentOffset);
 
-        return new DocBlock(
-            // The first section is always the description; the rest are tags.
-            description: $this->descriptions->tryParse(\array_shift($blocks)),
-            tags: $this->createTags($blocks),
+        return new RawDocBlock(
+            description: \array_shift($computedSegments),
+            tags: $computedSegments,
         );
-    }
-
-    /**
-     * @param list<string> $blocks
-     * @return list<TagInterface>
-     * @throws ParsingExceptionInterface
-     */
-    private function createTags(array $blocks): array
-    {
-        $result = [];
-
-        foreach ($blocks as $block) {
-            $result[] = $this->tags->parse($block, $this->descriptions);
-        }
-
-        return $result;
     }
 }
