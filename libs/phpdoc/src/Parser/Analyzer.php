@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser;
 
-use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\ParsingExceptionInterface;
@@ -54,7 +53,7 @@ final readonly class Analyzer
 
         return new DocBlock(
             // The first section is always the description; the rest are tags.
-            description: $this->tryCreateDescription(\array_shift($blocks)),
+            description: $this->descriptions->tryParse(\array_shift($blocks)),
             tags: $this->createTags($blocks),
         );
     }
@@ -73,10 +72,5 @@ final readonly class Analyzer
         }
 
         return $result;
-    }
-
-    private function tryCreateDescription(string $description): ?DescriptionInterface
-    {
-        return $this->descriptions->tryParse($description);
     }
 }

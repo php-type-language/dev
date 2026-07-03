@@ -13,7 +13,6 @@ use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\ParsingExceptionInterface;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
-use TypeLang\PhpDoc\Parser\SourceMap;
 use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
 use TypeLang\PhpDoc\Parser\Splitter\StringSplitter;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
@@ -64,6 +63,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
         $result = [];
 
         foreach ($blocks as $block) {
+            // TODO Add an internal exception handling
             $result[] = $this->tags->parse($block, $this->descriptions);
         }
 
@@ -72,21 +72,17 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
     private function tryCreateDescription(string $description): ?DescriptionInterface
     {
+        // TODO Add an internal exception handling
         return $this->descriptions->tryParse($description);
     }
 
     public function parse(#[Language('InjectablePHP')] string $docblock): DocBlock
     {
-        $map = new SourceMap();
-
         $current = '';
         $blocks = [];
 
         foreach ($this->splitter->split($docblock) as $segment) {
-            $text = $segment->text;
-            $offset = $segment->offset;
-
-            $map->addMapping($text, $offset);
+            $segmentText = $segment->text;
 
             // A segment starting with "@" opens a new tag section, flushing
             // whatever was accumulated for the previous one.
@@ -95,7 +91,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
                 $current = '';
             }
 
-            $current .= $text;
+            $current .= $segmentText;
         }
 
         $blocks[] = $current;
