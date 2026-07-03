@@ -18,7 +18,7 @@ use TypeLang\PhpDoc\Exception\InvalidTagPrefixException;
 use TypeLang\PhpDoc\Exception\ParsingExceptionInterface;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
-use TypeLang\PhpDoc\Parser\Tag\RegexTagParser;
+use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
 use TypeLang\PhpDoc\Tests\TestCase;
 
@@ -29,8 +29,8 @@ final class TagParserTest extends TestCase
      */
     public static function parserDataProvider(): iterable
     {
-        yield 'RegexTagParser' => [
-            new RegexTagParser(new TagFactory()),
+        yield 'StringTagParser' => [
+            new StringTagParser(new TagFactory()),
         ];
     }
 
@@ -249,7 +249,7 @@ final class TagParserTest extends TestCase
      */
     private static function descriptions(): DescriptionParserInterface
     {
-        return new BalancedBraceAwareParser(new RegexTagParser(new TagFactory()));
+        return new BalancedBraceAwareParser(new StringTagParser(new TagFactory()));
     }
 
     /**

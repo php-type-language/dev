@@ -12,22 +12,54 @@ use TypeLang\PhpDoc\Exception\EmptyTagNameException;
 use TypeLang\PhpDoc\Exception\InvalidTagPrefixException;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
-final readonly class RegexTagParser implements TagParserInterface
+/**
+ * Parses a tag definition into a {@see TagInterface}.
+ *
+ * A definition is an "@" followed by a name and an optional, whitespace
+ * separated description:
+ *
+ * ```
+ *
+ * @name
+ * @name the description text
+ * ```
+ *
+ * A definition that does not start with an "@", or whose "@" is not followed
+ * by a name, is an {@see InvalidTag}.
+ */
+final readonly class StringTagParser implements TagParserInterface
 {
     /**
+     * The ASCII characters allowed inside a tag name.
+     *
      * @var non-empty-string
      */
-    private const string PATTERN_TAG = '\G@[\w\-\_\\\\:]++';
+    private const string ASCII_NAME_CHARS = 'abcdefghijklmnopqrstuvwxyz'
+        . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        . '0123456789'
+        . '_-\\:';
 
-    /**
-     * @var non-empty-string
-     */
-    private string $pattern;
+    private string $nameTerminators;
 
     public function __construct(
         private TagFactoryInterface $factory,
     ) {
-        $this->pattern = \sprintf('/^%s/isum', \addcslashes(self::PATTERN_TAG, '/'));
+        $this->nameTerminators = self::createTerminatorMask();
+    }
+
+    private static function createTerminatorMask(): string
+    {
+        $mask = '';
+
+        for ($byte = 0x00; $byte <= 0x7F; ++$byte) {
+            $char = \chr($byte);
+
+            if (!\str_contains(self::ASCII_NAME_CHARS, $char)) {
+                $mask .= $char;
+            }
+        }
+
+        return $mask;
     }
 
     private static function createForEmptyTagLine(): InvalidTag
@@ -67,17 +99,15 @@ final readonly class RegexTagParser implements TagParserInterface
             return self::createForInvalidTagPrefix($definition, $descriptions);
         }
 
-        \preg_match($this->pattern, $definition, $matches);
-        $prefixedTagName = $matches[0] ?? null;
+        $length = \strcspn($definition, $this->nameTerminators, 1);
+        $name = \substr($definition, 1, $length);
 
-        if ($prefixedTagName === null) {
+        if ($name === '') {
             return self::createForInvalidTagName($definition, $descriptions);
         }
 
-        /** @var non-empty-string $tagName */
-        $tagName = \substr($prefixedTagName, 1);
-        $tagSuffix = \ltrim(\substr($definition, \strlen($prefixedTagName)));
+        $suffix = \ltrim(\substr($definition, 1 + $length));
 
-        return $this->factory->create($tagName, $tagSuffix, $descriptions);
+        return $this->factory->create($name, $suffix, $descriptions);
     }
 }

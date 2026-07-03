@@ -16,7 +16,7 @@ use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\SourceMap;
 use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
 use TypeLang\PhpDoc\Parser\Splitter\StringSplitter;
-use TypeLang\PhpDoc\Parser\Tag\RegexTagParser;
+use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
 
 final readonly class DocBlockParser implements DocBlockParserInterface
@@ -46,7 +46,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
     private function createTagParser(TagFactoryInterface $factory): TagParserInterface
     {
-        return new RegexTagParser($factory);
+        return new StringTagParser($factory);
     }
 
     private function createDescriptionParser(TagParserInterface $parser): DescriptionParserInterface
