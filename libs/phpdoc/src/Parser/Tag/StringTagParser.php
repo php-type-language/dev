@@ -10,6 +10,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\EmptyTagLineException;
 use TypeLang\PhpDoc\Exception\EmptyTagNameException;
 use TypeLang\PhpDoc\Exception\InvalidTagPrefixException;
+use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 /**
@@ -108,6 +109,10 @@ final readonly class StringTagParser implements TagParserInterface
 
         $suffix = \ltrim(\substr($definition, 1 + $length));
 
-        return $this->factory->create($name, $suffix, $descriptions);
+        try {
+            return $this->factory->create($name, $suffix, $descriptions);
+        } catch (ParsingException $e) {
+            throw $e->withSource($definition, $e->offset + $length + 1);
+        }
     }
 }
