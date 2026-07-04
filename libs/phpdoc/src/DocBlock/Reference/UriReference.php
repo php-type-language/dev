@@ -8,10 +8,10 @@ namespace TypeLang\PhpDoc\DocBlock\Reference;
  * A reference to an external resource identified by a URI, for example
  * a web page.
  *
- * Such a reference always points outside of the described codebase, so it
+ * Such a reference always points outside the described codebase, so it
  * is always external.
  */
-final readonly class UriReference implements ReferenceInterface
+readonly class UriReference implements ReferenceInterface
 {
     public bool $isExternal;
 
