@@ -27,15 +27,27 @@ final class LicenseTagTest extends TestCase
         self::assertSame('@license https://opensource.org/licenses/MIT MIT License', (string) $tag);
     }
 
+    /**
+     * A word without a scheme is not a URL, so it is parsed as a named license.
+     */
+    #[Test]
+    public function parsesNameForm(): void
+    {
+        $tag = self::factory()->create('license', 'MIT Permissive license.');
+
+        self::assertInstanceOf(LicenseTag::class, $tag);
+        self::assertSame('MIT Permissive license.', (string) $tag->description);
+        self::assertSame('@license MIT Permissive license.', (string) $tag);
+    }
+
     #[Test]
     public function resolvesThroughTheRealParser(): void
     {
-        $block = new DocBlockParser()->parse('/** @license MIT */');
+        $block = new DocBlockParser()->parse('/** @license https://example.com/license */');
 
         self::assertCount(1, $block->tags);
         self::assertInstanceOf(LicenseTag::class, $block->tags[0]);
-        self::assertNull($block->tags[0]->url);
-        self::assertSame('MIT', (string) $block->tags[0]->description);
+        self::assertSame('https://example.com/license', (string) $block->tags[0]->url);
     }
 
     private static function factory(): TagFactory

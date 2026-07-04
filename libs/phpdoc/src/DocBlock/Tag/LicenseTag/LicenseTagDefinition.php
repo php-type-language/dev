@@ -18,7 +18,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
  *
  * ```
  * "@license" <URL> [ <Description> ]
- * "@license" <Name> [ <Description> ]
+ * "@license" <Description>
  * ```
  */
 final class LicenseTagDefinition extends TagDefinition
@@ -29,9 +29,10 @@ final class LicenseTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            spec: Spec::sequence(
-                Spec::maybe(
+            spec: Spec::oneOf(
+                Spec::sequence(
                     Spec::rule(UrlCombinator::NAME, 'url'),
+                    Spec::maybe(Spec::rule(DescriptionCombinator::NAME, 'description')),
                 ),
                 Spec::rule(DescriptionCombinator::NAME, 'description'),
             ),
