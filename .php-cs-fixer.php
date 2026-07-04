@@ -14,7 +14,7 @@ const PHPCS_IGNORE_FILES = [
 
 $files = Finder::create()
     ->in(PHPCS_DIRECTORIES)
-    ->filter(static fn (SplFileInfo $file): bool=> !in_array(
+    ->filter(static fn (SplFileInfo $file): bool => !in_array(
         needle: realpath($file->getPathname()),
         haystack: array_map(realpath(...), PHPCS_IGNORE_FILES),
         strict: true,
