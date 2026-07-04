@@ -15,7 +15,6 @@ use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\OneOf;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
 
 /**
@@ -42,20 +41,20 @@ final class SeeTagDefinition extends TagDefinition
 {
     public const string NAME = 'see';
 
-    public private(set) string $name = self::NAME;
-
-    public readonly Rule $rule;
-
     public function __construct()
     {
-        $this->rule = new SequenceOf(
-            new OneOf(
-                new MatchRule(ReferenceGrammarRule::NAME, 'ref'),
-                new MatchRule(UriGrammarRule::NAME, 'ref'),
+        parent::__construct(
+            name: self::NAME,
+            rule: new SequenceOf(
+                new OneOf(
+                    new MatchRule(ReferenceGrammarRule::NAME, 'ref'),
+                    new MatchRule(UriGrammarRule::NAME, 'ref'),
+                ),
+                new Optional(
+                    new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+                ),
             ),
-            new Optional(
-                new MatchRule(DescriptionGrammarRule::NAME, 'description'),
-            ),
+            isInline: true,
         );
     }
 

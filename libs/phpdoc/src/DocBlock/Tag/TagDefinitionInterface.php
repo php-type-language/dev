@@ -32,6 +32,18 @@ interface TagDefinitionInterface extends \Stringable
     }
 
     /**
+     * Whether the tag may be used inline, that is inside a description as
+     * a "{@tag}" sequence.
+     *
+     * A block-only tag (such as "@param") is never lifted out of a description:
+     * a "{@param}" written in running text stays raw text instead of being
+     * parsed as an inline tag.
+     */
+    public bool $isInline {
+        get;
+    }
+
+    /**
      * Builds the tag from the values captured while matching {@see $rule}.
      *
      * @param non-empty-string $name the tag name, without the leading "@"

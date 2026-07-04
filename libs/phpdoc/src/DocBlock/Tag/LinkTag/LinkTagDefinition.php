@@ -12,7 +12,6 @@ use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
 
 /**
@@ -34,17 +33,17 @@ final class LinkTagDefinition extends TagDefinition
 {
     public const string NAME = 'link';
 
-    public private(set) string $name = self::NAME;
-
-    public readonly Rule $rule;
-
     public function __construct()
     {
-        $this->rule = new SequenceOf(
-            new MatchRule(UriGrammarRule::NAME, 'uri'),
-            new Optional(
-                new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+        parent::__construct(
+            name: self::NAME,
+            rule: new SequenceOf(
+                new MatchRule(UriGrammarRule::NAME, 'uri'),
+                new Optional(
+                    new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+                ),
             ),
+            isInline: true,
         );
     }
 

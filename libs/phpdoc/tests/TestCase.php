@@ -12,6 +12,7 @@ use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Tag\GenericTagDefinition;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
@@ -46,12 +47,15 @@ abstract class TestCase extends BaseTestCase
             ->newLazyProxy(function () use (&$tagFactory): DescriptionGrammarRule {
                 if ($tagFactory === null) {
                     return new DescriptionGrammarRule(new BalancedBraceAwareParser(
-                        new StringTagParser(new TagFactory(rules: [
-                            UriGrammarRule::NAME => new UriGrammarRule(),
-                            ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
-                            TypeGrammarRule::NAME => new TypeGrammarRule(typeParser: new TypeParser()),
-                            VariableGrammarRule::NAME => new VariableGrammarRule(),
-                        ])),
+                        new StringTagParser(new TagFactory(
+                            rules: [
+                                UriGrammarRule::NAME => new UriGrammarRule(),
+                                ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
+                                TypeGrammarRule::NAME => new TypeGrammarRule(typeParser: new TypeParser()),
+                                VariableGrammarRule::NAME => new VariableGrammarRule(),
+                            ],
+                            genericTagDefinition: new GenericTagDefinition(isInline: true),
+                        )),
                     ));
                 }
 
@@ -60,16 +64,18 @@ abstract class TestCase extends BaseTestCase
                 );
             });
 
-        $tagFactory = new TagFactory(rules: $baseRules);
+        $tagFactory = new TagFactory(
+            rules: $baseRules,
+            genericTagDefinition: new GenericTagDefinition(isInline: true),
+        );
         return $tagFactory;
     }
 
     protected static function createDescriptionParser(): DescriptionParserInterface
     {
         if (self::$cachedDescriptionParser === null) {
-            $tagFactory = self::createTagFactory();
             self::$cachedDescriptionParser = new BalancedBraceAwareParser(
-                new StringTagParser($tagFactory),
+                new StringTagParser(self::createTagFactory()),
             );
         }
 

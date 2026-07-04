@@ -9,20 +9,25 @@ use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
 
 final class GenericTagDefinition extends TagDefinition
 {
     public const string NAME = '<Tag>';
 
-    public private(set) string $name = self::NAME;
-
-    public readonly Rule $rule;
-
-    public function __construct()
+    /**
+     * @param bool $isInline Generic (unknown) tag has no dedicated definition,
+     *        so whether it is allowed inline cannot be inferred from the tag
+     *        itself and is decided by the caller. It is not inline by default:
+     *        an unrecognized "{@tag}" in running text stays raw text.
+     */
+    public function __construct(bool $isInline = false)
     {
-        $this->rule = new Optional(
-            new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+        parent::__construct(
+            name: self::NAME,
+            rule: new Optional(
+                new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+            ),
+            isInline: $isInline,
         );
     }
 

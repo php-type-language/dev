@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
 use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
 use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Tag\GenericTagDefinition;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
@@ -24,9 +25,12 @@ final class DescriptionGrammarRuleTest extends GrammarRuleTestCase
                 return new DescriptionGrammarRule(
                     descriptionParser: new BalancedBraceAwareParser(
                         tagParser: new StringTagParser(
-                            tagFactory: new TagFactory(rules: [
-                                DescriptionGrammarRule::NAME => $proxy,
-                            ]),
+                            tagFactory: new TagFactory(
+                                rules: [
+                                    DescriptionGrammarRule::NAME => $proxy,
+                                ],
+                                genericTagDefinition: new GenericTagDefinition(isInline: true),
+                            ),
                         ),
                     ),
                 );
