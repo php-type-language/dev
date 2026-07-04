@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Tag;
+namespace TypeLang\PhpDoc;
 
+use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
-use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 /**
  * @template-covariant TTag of TagInterface = TagInterface
@@ -19,11 +20,12 @@ interface TagFactoryInterface extends \Traversable, \Countable
      * @return TTag
      * @throws PhpDocExceptionInterface
      */
-    public function create(
-        string $name,
-        string $suffix,
-        DescriptionParserInterface $descriptions,
-    ): TagInterface;
+    public function create(string $name, string $suffix): TagInterface;
+
+    /**
+     * @param non-empty-string $name
+     */
+    public function get(string $name): TagDefinitionInterface;
 
     /**
      * @return int<0, max>

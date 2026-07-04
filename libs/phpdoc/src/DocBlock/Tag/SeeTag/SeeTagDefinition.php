@@ -19,8 +19,7 @@ use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
 
 /**
- * The "`@see`" tag can be used to define a {@see ElementReference element} or
- * to an {@see UriReference external URI}.
+ * The "`@see`" tag can be used to define a {@see CodeReference element}.
  *
  * When defining a reference to other elements, you can refer to a specific
  * element by appending a double colon and providing the name of that element

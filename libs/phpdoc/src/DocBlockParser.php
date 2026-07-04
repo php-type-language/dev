@@ -16,8 +16,6 @@ use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\TagFactory;
-use TypeLang\PhpDoc\DocBlock\Tag\TagFactoryInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
@@ -126,7 +124,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
         foreach ($segments as $segment) {
             try {
-                $result[] = $this->tagParser->parse($segment->text, $this->descriptionParser);
+                $result[] = $this->tagParser->parse($segment->text);
             } catch (\Throwable $e) {
                 throw $this->failure($e, $docblock, $segment->offset);
             }

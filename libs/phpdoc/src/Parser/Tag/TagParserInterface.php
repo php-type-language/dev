@@ -6,7 +6,6 @@ namespace TypeLang\PhpDoc\Parser\Tag;
 
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\ParsingExceptionInterface;
-use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 
 interface TagParserInterface
 {
@@ -24,5 +23,5 @@ interface TagParserInterface
      *
      * @throws ParsingExceptionInterface
      */
-    public function parse(string $definition, DescriptionParserInterface $descriptions): TagInterface;
+    public function parse(string $definition): TagInterface;
 }

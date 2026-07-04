@@ -26,12 +26,12 @@ final class GenericTagDefinition extends TagDefinition
         );
     }
 
-    public function create(string $name, MatchedResult $result): GenericTag
+    public function create(string $name, MatchedResult $result): Tag
     {
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new GenericTag(
+        return new Tag(
             name: $name,
             description: $description,
         );
