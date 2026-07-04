@@ -11,6 +11,7 @@ use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTag;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\Exception\MalformedTagException;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
@@ -72,10 +73,14 @@ final class DefinitionTest extends TestCase
     #[Test]
     public function missingRequiredUriIsMalformed(): void
     {
-        $this->expectException(MalformedTagException::class);
-        $this->expectExceptionMessage('Malformed "@link" tag, expected: <URI> [ <Description> ]');
+        $tag = self::factory()->create('link', '');
 
-        self::factory()->create('link', '');
+        self::assertInstanceOf(InvalidTag::class, $tag);
+        self::assertInstanceOf(MalformedTagException::class, $tag->reason);
+        self::assertSame(
+            'Malformed "@link" tag, expected: <URI> [ <Description> ]',
+            $tag->reason->getMessage(),
+        );
     }
 
     /**
@@ -84,13 +89,12 @@ final class DefinitionTest extends TestCase
     #[Test]
     public function malformedTagReportsFailureOffset(): void
     {
-        try {
-            self::factory()->create('link', '     ');
-            self::fail('Expected a MalformedTagException');
-        } catch (MalformedTagException $e) {
-            self::assertSame(5, $e->offset);
-            self::assertSame('     ', $e->source);
-        }
+        $tag = self::factory()->create('link', '     ');
+
+        self::assertInstanceOf(InvalidTag::class, $tag);
+        self::assertInstanceOf(MalformedTagException::class, $tag->reason);
+        self::assertSame(5, $tag->reason->offset);
+        self::assertSame('     ', $tag->reason->source);
     }
 
     /**
@@ -113,9 +117,10 @@ final class DefinitionTest extends TestCase
     #[Test]
     public function uriReaderSoftFailurePropagatesAsMalformedTag(): void
     {
-        $this->expectException(MalformedTagException::class);
+        $tag = self::factory()->create('link', "\t");
 
-        self::factory()->create('link', "\t");
+        self::assertInstanceOf(InvalidTag::class, $tag);
+        self::assertInstanceOf(MalformedTagException::class, $tag->reason);
     }
 
     private static function factory(): TagFactory

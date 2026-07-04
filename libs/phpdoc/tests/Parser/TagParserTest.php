@@ -75,7 +75,7 @@ final class TagParserTest extends TestCase
             'empty definition' => ['', EmptyTagLineException::class, '', null],
             'missing "@" prefix' => ['foo bar', InvalidTagPrefixException::class, '', 'foo bar'],
             '"@" followed by whitespace' => ['@ foo', EmptyTagNameException::class, '', ' foo'],
-            'bare "@"' => ['@', EmptyTagNameException::class, '', ''],
+            'bare "@"' => ['@', EmptyTagNameException::class, '', null],
             // Punctuation such as "!" is not a name character.
             '"@" followed by punctuation' => ['@!bad', EmptyTagNameException::class, '', '!bad'],
         ];
