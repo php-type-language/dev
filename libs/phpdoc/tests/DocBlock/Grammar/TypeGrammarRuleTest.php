@@ -7,11 +7,11 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Grammar;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\NullableTypeNode;
-use TypeLang\Type\TypeNode;
 use TypeLang\Type\UnionTypeNode;
 
 final class TypeGrammarRuleTest extends GrammarRuleTestCase
@@ -24,26 +24,40 @@ final class TypeGrammarRuleTest extends GrammarRuleTestCase
     #[Test]
     public function producesANamedType(): void
     {
-        $type = $this->matchText('array<int, string>');
+        $statement = $this->matchText('array<int, string>');
 
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame('array', (string) $type->name);
+        self::assertInstanceOf(TypeStatement::class, $statement);
+        self::assertInstanceOf(NamedTypeNode::class, $statement->type);
+        self::assertSame('array', (string) $statement->type->name);
+    }
+
+    /**
+     * The parsed type keeps the exact text it was read from.
+     */
+    #[Test]
+    public function preservesTheSourceText(): void
+    {
+        $statement = $this->matchText('array<int, string>');
+
+        self::assertInstanceOf(TypeStatement::class, $statement);
+        self::assertSame('array<int, string>', $statement->source);
+        self::assertSame('array<int, string>', (string) $statement);
     }
 
     #[Test]
     public function producesANullableType(): void
     {
-        $type = $this->matchText('?string');
+        $statement = $this->matchText('?string');
 
-        self::assertInstanceOf(NullableTypeNode::class, $type);
+        self::assertInstanceOf(NullableTypeNode::class, $statement->type);
     }
 
     #[Test]
     public function producesAUnionType(): void
     {
-        $type = $this->matchText('int|string');
+        $statement = $this->matchText('int|string');
 
-        self::assertInstanceOf(UnionTypeNode::class, $type);
+        self::assertInstanceOf(UnionTypeNode::class, $statement->type);
     }
 
     /**
@@ -54,9 +68,10 @@ final class TypeGrammarRuleTest extends GrammarRuleTestCase
     public function stopsAfterTheType(): void
     {
         $cursor = new Cursor('int|string and the rest');
-        $type = $this->matchCursor($cursor);
+        $statement = $this->matchCursor($cursor);
 
-        self::assertInstanceOf(UnionTypeNode::class, $type);
+        self::assertInstanceOf(UnionTypeNode::class, $statement->type);
+        self::assertSame('int|string', $statement->source);
         self::assertSame(11, $cursor->offset);
     }
 
@@ -68,9 +83,9 @@ final class TypeGrammarRuleTest extends GrammarRuleTestCase
     public function respectsTheCursorBase(): void
     {
         $cursor = new Cursor('int rest', base: 100);
-        $type = $this->matchCursor($cursor);
+        $statement = $this->matchCursor($cursor);
 
-        self::assertInstanceOf(TypeNode::class, $type);
+        self::assertInstanceOf(TypeStatement::class, $statement);
         self::assertSame(104, $cursor->offset);
     }
 
