@@ -32,7 +32,7 @@ use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
  * The "`@see`" tag cannot refer to a namespace element.
  *
  * ```
- * "@see" ( <reference> | <URI> ) [ <description> ]
+ * "@see" ( <Reference> | <URI> ) [ <Description> ]
  * ```
  *
  * @link https://www.ietf.org/rfc/rfc2396.txt RFC2396

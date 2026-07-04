@@ -24,7 +24,7 @@ use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
  * relation defined by this occurrence.
  *
  * ```
- * "@link" <URI> [<description>]
+ * "@link" <URI> [<Description>]
  * ```
  *
  * @link https://www.ietf.org/rfc/rfc2396.txt RFC2396
