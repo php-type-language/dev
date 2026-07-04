@@ -10,7 +10,6 @@
     },
     "require": {
         "php": "^8.4",
-        "boson-php/uri-factory": "^0.19",
         "type-lang/parser": "^2.0"
     },
     "autoload": {

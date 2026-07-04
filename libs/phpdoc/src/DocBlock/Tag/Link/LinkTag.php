@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\Link;
 
-use Boson\Contracts\Uri\UriInterface;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 /**
@@ -18,7 +18,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\Tag;
  * relation defined by this occurrence.
  *
  * ```
- * "@link" [<URI> | <reference>] [<description>]
+ * "@link" <URI> [<description>]
  * ```
  *
  * @link https://www.ietf.org/rfc/rfc2396.txt RFC2396
@@ -27,7 +27,7 @@ final class LinkTag extends Tag
 {
     public function __construct(
         string $name,
-        public readonly UriInterface $uri,
+        public readonly UriReference $uri,
         ?DescriptionInterface $description = null,
     ) {
         parent::__construct($name, $description);

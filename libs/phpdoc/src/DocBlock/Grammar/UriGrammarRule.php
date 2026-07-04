@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Tag\Rule;
+namespace TypeLang\PhpDoc\DocBlock\Grammar;
 
-use Boson\Component\Uri\Factory\UriFactory;
-use Boson\Contracts\Uri\Factory\UriFactoryInterface;
-use Boson\Contracts\Uri\UriInterface;
+use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
@@ -15,11 +13,7 @@ final readonly class UriGrammarRule implements RuleInterface
 {
     public const string NAME = 'URI';
 
-    public function __construct(
-        private UriFactoryInterface $factory = new UriFactory(),
-    ) {}
-
-    public function __invoke(Cursor $cursor): UriInterface
+    public function __invoke(Cursor $cursor): UriReference
     {
         $uri = $cursor->readWord();
 
@@ -27,6 +21,6 @@ final readonly class UriGrammarRule implements RuleInterface
             throw new NoMatchException('Expected a URI');
         }
 
-        return $this->factory->createUriFromString($uri);
+        return new UriReference($uri);
     }
 }

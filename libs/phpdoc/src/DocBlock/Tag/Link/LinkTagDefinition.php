@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\Link;
 
-use Boson\Contracts\Uri\UriInterface;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\DocBlock\Tag\Rule\UriGrammarRule;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\Description;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
 
 /**
@@ -25,7 +25,7 @@ use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
  * relation defined by this occurrence.
  *
  * ```
- * "@link" [<URI> | <reference>] [<description>]
+ * "@link" <URI> [<description>]
  * ```
  *
  * @link https://www.ietf.org/rfc/rfc2396.txt RFC2396
@@ -50,8 +50,9 @@ final class LinkTagDefinition extends TagDefinition
 
     public function create(string $name, MatchedResult $result): LinkTag
     {
-        /** @var UriInterface $uri */
+        /** @var UriReference $uri */
         $uri = $result->get('uri');
+
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
