@@ -12,13 +12,16 @@ use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\UrlCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\VersionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
 use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\CategoryTag\CategoryTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\DeprecatedTag\DeprecatedTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\CopyrightTag\CopyrightTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\FilesourceTag\FilesourceTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\FinalTag\FinalTagDefinition;
@@ -28,6 +31,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ImplementsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\UseTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritDocTag\InheritDocTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InternalTag\InternalTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\LicenseTag\LicenseTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\MixinTag\MixinTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\NoNamedArgumentsTag\NoNamedArgumentsTagDefinition;
@@ -49,6 +53,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SealMethodsTag\SealMethodsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SealPropertiesTag\SealPropertiesTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SinceTag\SinceTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SubpackageTag\SubpackageTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
@@ -56,6 +61,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\TodoTag\TodoTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UnusedParamTag\UnusedParamTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UsedByTag\UsedByTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UsesTag\UsesTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\VersionTag\VersionTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
@@ -112,11 +118,13 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
         return [
             UriCombinator::NAME => new UriCombinator(),
+            UrlCombinator::NAME => new UrlCombinator(),
             ReferenceCombinator::NAME => new ReferenceCombinator(),
             TypeCombinator::NAME => new TypeCombinator($typeParser),
             VariableCombinator::NAME => new VariableCombinator(),
             AuthorNameCombinator::NAME => new AuthorNameCombinator(),
             EmailCombinator::NAME => new EmailCombinator(),
+            VersionCombinator::NAME => new VersionCombinator(),
             DescriptionCombinator::NAME => new \ReflectionClass(DescriptionCombinator::class)
                 ->newLazyProxy(fn(): DescriptionCombinator => new DescriptionCombinator(
                     descriptionParser: $this->descriptionParser,
@@ -182,6 +190,10 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             UsesTagDefinition::NAME => new UsesTagDefinition(),
             UsedByTagDefinition::NAME => new UsedByTagDefinition(),
             AuthorTagDefinition::NAME => new AuthorTagDefinition(),
+            VersionTagDefinition::NAME => new VersionTagDefinition(),
+            SinceTagDefinition::NAME => new SinceTagDefinition(),
+            DeprecatedTagDefinition::NAME => new DeprecatedTagDefinition(),
+            LicenseTagDefinition::NAME => new LicenseTagDefinition(),
         ];
     }
 
