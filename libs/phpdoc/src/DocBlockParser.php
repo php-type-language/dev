@@ -10,6 +10,7 @@ use TypeLang\PhpDoc\DocBlock\Combinator\AuthorNameCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\TemplateNameCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\UrlCombinator;
@@ -61,6 +62,9 @@ use TypeLang\PhpDoc\DocBlock\Tag\TodoTag\TodoTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UnusedParamTag\UnusedParamTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UsedByTag\UsedByTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UsesTag\UsesTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VersionTag\VersionTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
@@ -125,6 +129,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             AuthorNameCombinator::NAME => new AuthorNameCombinator(),
             EmailCombinator::NAME => new EmailCombinator(),
             VersionCombinator::NAME => new VersionCombinator(),
+            TemplateNameCombinator::NAME => new TemplateNameCombinator(),
             DescriptionCombinator::NAME => new \ReflectionClass(DescriptionCombinator::class)
                 ->newLazyProxy(fn(): DescriptionCombinator => new DescriptionCombinator(
                     descriptionParser: $this->descriptionParser,
@@ -133,31 +138,35 @@ final readonly class DocBlockParser implements DocBlockParserInterface
     }
 
     /**
-     * @return array<non-empty-string, TagDefinitionInterface>
+     * @return array<non-empty-lowercase-string, non-empty-lowercase-string>
+     */
+    private function createDefaultTagAliases(): array
+    {
+        return [
+            'inherits' => ExtendsTagDefinition::NAME,
+            'template-extends' => ExtendsTagDefinition::NAME,
+            'template-implements' => ImplementsTagDefinition::NAME,
+            'template-use' => UseTagDefinition::NAME,
+            // A fairly common typos in code
+            'returns' => ReturnTagDefinition::NAME,
+            'throw' => ThrowsTagDefinition::NAME,
+        ];
+    }
+
+    /**
+     * @return array<non-empty-lowercase-string, TagDefinitionInterface>
      */
     private function createDefaultTagDefinitions(): array
     {
-        $return = new ReturnTagDefinition();
-        $throws = new ThrowsTagDefinition();
-        $extends = new ExtendsTagDefinition();
-        $implements = new ImplementsTagDefinition();
-        $use = new UseTagDefinition();
-
         return [
             LinkTagDefinition::NAME => new LinkTagDefinition(),
             SeeTagDefinition::NAME => new SeeTagDefinition(),
-            ReturnTagDefinition::NAME => $return,
-            'returns' => $return, // A fairly common typo in code
-            ThrowsTagDefinition::NAME => $throws,
-            'throw' => $throws, // A fairly common typo in code
+            ReturnTagDefinition::NAME => new ReturnTagDefinition(),
+            ThrowsTagDefinition::NAME => new ThrowsTagDefinition(),
             MixinTagDefinition::NAME => new MixinTagDefinition(),
-            ExtendsTagDefinition::NAME => $extends,
-            'inherits' => $extends,
-            'template-extends' => $extends,
-            ImplementsTagDefinition::NAME => $implements,
-            'template-implements' => $implements,
-            UseTagDefinition::NAME => $use,
-            'template-use' => $use,
+            ExtendsTagDefinition::NAME => new ExtendsTagDefinition(),
+            ImplementsTagDefinition::NAME => new ImplementsTagDefinition(),
+            UseTagDefinition::NAME => new UseTagDefinition(),
             RequireExtendsTagDefinition::NAME => new RequireExtendsTagDefinition(),
             RequireImplementsTagDefinition::NAME => new RequireImplementsTagDefinition(),
             ParamTagDefinition::NAME => new ParamTagDefinition(),
@@ -191,6 +200,9 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             UsedByTagDefinition::NAME => new UsedByTagDefinition(),
             AuthorTagDefinition::NAME => new AuthorTagDefinition(),
             VersionTagDefinition::NAME => new VersionTagDefinition(),
+            TemplateTagDefinition::NAME => new TemplateTagDefinition(),
+            TemplateCovariantTagDefinition::NAME => new TemplateCovariantTagDefinition(),
+            TemplateContravariantTagDefinition::NAME => new TemplateContravariantTagDefinition(),
             SinceTagDefinition::NAME => new SinceTagDefinition(),
             DeprecatedTagDefinition::NAME => new DeprecatedTagDefinition(),
             LicenseTagDefinition::NAME => new LicenseTagDefinition(),
@@ -199,10 +211,11 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
     private function createTagFactory(): TagFactoryInterface
     {
-        $definitions = $this->createDefaultTagDefinitions();
-        $rules = $this->createDefaultCombinators();
-
-        return new TagFactory($definitions, $rules);
+        return new TagFactory(
+            definitions: $this->createDefaultTagDefinitions(),
+            aliases: $this->createDefaultTagAliases(),
+            combinators: $this->createDefaultCombinators(),
+        );
     }
 
     private function createTagParser(TagFactoryInterface $factory): TagParserInterface

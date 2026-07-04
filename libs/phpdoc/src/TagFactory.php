@@ -37,19 +37,27 @@ final readonly class TagFactory implements TagFactoryInterface, \IteratorAggrega
      */
     private array $definitions;
 
+    /**
+     * @var array<non-empty-lowercase-string, non-empty-lowercase-string>
+     */
+    private array $aliases;
+
     private TagSpecificationParser $parser;
 
     /**
-     * @param iterable<non-empty-string, TagDefinitionInterface> $definitions
+     * @param iterable<non-empty-lowercase-string, TagDefinitionInterface> $definitions
+     * @param iterable<non-empty-lowercase-string, non-empty-lowercase-string> $aliases
      * @param iterable<non-empty-string, CombinatorType> $combinators
      */
     public function __construct(
         iterable $definitions = [],
+        iterable $aliases = [],
         iterable $combinators = [],
         private TagDefinitionInterface $genericTagDefinition = new GenericTagDefinition(),
     ) {
         $this->parser = new TagSpecificationParser($combinators);
         $this->definitions = \iterator_to_array($definitions);
+        $this->aliases = \iterator_to_array($aliases);
     }
 
     public function create(string $name, string $suffix): TagInterface
@@ -67,6 +75,11 @@ final readonly class TagFactory implements TagFactoryInterface, \IteratorAggrega
 
     public function get(string $name): TagDefinitionInterface
     {
+        // normalize
+        $name = \strtolower($name);
+        // canonicalize
+        $name = $this->aliases[$name] ?? $name;
+
         return $this->definitions[$name]
             ?? $this->genericTagDefinition;
     }
