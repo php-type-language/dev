@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 final readonly class UriCombinator implements CombinatorInterface
 {

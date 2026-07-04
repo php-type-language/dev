@@ -68,6 +68,7 @@ abstract class TestCase extends BaseTestCase
             combinators: $baseRules,
             genericTagDefinition: new GenericTagDefinition(isInline: true),
         );
+
         return $tagFactory;
     }
 

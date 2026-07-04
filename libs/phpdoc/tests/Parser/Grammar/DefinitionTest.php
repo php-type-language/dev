@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Tests\Parser\Grammar;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTag;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
-use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\Exception\MalformedTagException;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;

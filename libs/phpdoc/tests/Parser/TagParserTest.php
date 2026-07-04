@@ -15,7 +15,6 @@ use TypeLang\PhpDoc\Exception\EmptyTagNameException;
 use TypeLang\PhpDoc\Exception\InvalidTagNameException;
 use TypeLang\PhpDoc\Exception\InvalidTagPrefixException;
 use TypeLang\PhpDoc\Exception\ParsingExceptionInterface;
-use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;

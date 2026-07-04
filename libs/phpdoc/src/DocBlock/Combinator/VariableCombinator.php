@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 /**
  * Reads a variable ("$name") and returns its name without the leading "$".

@@ -11,9 +11,9 @@ use TypeLang\PhpDoc\DocBlock\Reference\CodeReference;
 use TypeLang\PhpDoc\DocBlock\Reference\FunctionReference;
 use TypeLang\PhpDoc\DocBlock\Reference\SymbolReference;
 use TypeLang\PhpDoc\DocBlock\Reference\VariableReference;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 /**
  * Reads a reference to a code element: a class, a function, a class method, a

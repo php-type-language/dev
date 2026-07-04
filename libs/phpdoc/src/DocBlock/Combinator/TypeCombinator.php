@@ -6,10 +6,9 @@ namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\Parser\TypeParserInterface;
 use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
-use TypeLang\Printer\PrinterInterface;
 
 /**
  * Reads a type from the cursor, consuming exactly the part that forms

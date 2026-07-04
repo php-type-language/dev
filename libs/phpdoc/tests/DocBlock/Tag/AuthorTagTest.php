@@ -13,7 +13,6 @@ use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTagDefinition;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
-use TypeLang\PhpDoc\Parser\TagSpecificationParser;
 use TypeLang\PhpDoc\TagFactory;
 use TypeLang\PhpDoc\Tests\TestCase;
 

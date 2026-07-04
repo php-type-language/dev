@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Tests\DocBlock\Grammar;
 
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Grammar;
-use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Tests\TestCase;
 
 /**

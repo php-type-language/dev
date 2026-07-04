@@ -6,9 +6,9 @@ namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 /**
  * Reads the trailing description, consuming everything that is left and
