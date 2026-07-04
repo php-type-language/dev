@@ -23,145 +23,73 @@ final readonly class ReferenceGrammarRule implements RuleInterface
 {
     public const string NAME = 'Reference';
 
-    /**
-     * Validates a member name: letters, digits and "_".
-     */
-    private NameValidator $names;
-
-    /**
-     * Validates a class name: letters, digits, "_" and "\".
-     */
-    private NameValidator $symbols;
-
-    public function __construct()
-    {
-        $this->names = new NameValidator();
-        $this->symbols = new NameValidator('\\');
-    }
-
     public function __invoke(Cursor $cursor): CodeReference
     {
-        $reference = $cursor->readWord();
+        $reference = $this->parse($cursor);
 
-        if ($reference === '') {
+        // A reference is a single word: nothing but whitespace may follow it.
+        if ($reference === null || $cursor->readWord() !== '') {
             throw new NoMatchException('Expected a code reference');
         }
 
-        return $this->parse($reference)
-            ?? throw new NoMatchException(\sprintf('Invalid code reference "%s"', $reference));
+        return $reference;
     }
 
-    private function parse(string $reference): ?CodeReference
+    private function parse(Cursor $cursor): ?CodeReference
     {
         // A variable: "$name".
-        if ($reference[0] === '$') {
-            return $this->parseVariable($reference);
+        if ($cursor->readLiteral('$')) {
+            $name = $cursor->readPhpIdentifier();
+
+            return $name === '' ? null : new VariableReference($name);
         }
 
-        // A class member: "Class::member".
-        $separator = \strpos($reference, '::');
+        $symbol = $cursor->readPhpQualifiedName();
 
-        if ($separator !== false) {
-            return $this->parseClassMember(
-                \substr($reference, 0, $separator),
-                \substr($reference, $separator + 2),
-            );
-        }
-
-        // A function: "name()".
-        if (\str_ends_with($reference, '()')) {
-            return $this->parseFunction($reference);
-        }
-
-        // A class or global constant: "name".
-        return $this->parseSymbol($reference);
-    }
-
-    /**
-     * Parses a variable: "$name".
-     */
-    private function parseVariable(string $reference): ?VariableReference
-    {
-        $name = $this->names->validate(\substr($reference, 1));
-
-        return $name === null ? null : new VariableReference($name);
-    }
-
-    /**
-     * Parses a function: "name()".
-     */
-    private function parseFunction(string $reference): ?FunctionReference
-    {
-        $symbol = $this->symbols->validate(\substr($reference, 0, -2));
-
-        return $symbol === null ? null : new FunctionReference($symbol);
-    }
-
-    /**
-     * Parses a class or global constant: "name".
-     */
-    private function parseSymbol(string $reference): ?SymbolReference
-    {
-        $symbol = $this->symbols->validate($reference);
-
-        return $symbol === null ? null : new SymbolReference($symbol);
-    }
-
-    private function parseClassMember(string $class, string $member): ?CodeReference
-    {
-        $symbol = $this->symbols->validate($class);
-
-        if ($symbol === null || $member === '') {
+        if ($symbol === '') {
             return null;
         }
 
+        // A class member: "Class::member".
+        if ($cursor->readLiteral('::')) {
+            return $this->parseMember($cursor, $symbol);
+        }
+
+        // A function: "name()".
+        if ($cursor->readLiteral('()')) {
+            return new FunctionReference($symbol);
+        }
+
+        // A class or global constant: "name".
+        return new SymbolReference($symbol);
+    }
+
+    /**
+     * Parses the member of a "Class::member" reference.
+     *
+     * @param non-empty-string $class
+     */
+    private function parseMember(Cursor $cursor, string $class): ?CodeReference
+    {
         // A property: "$name".
-        if ($member[0] === '$') {
-            return $this->parseClassProperty($symbol, $member);
+        if ($cursor->readLiteral('$')) {
+            $name = $cursor->readPhpIdentifier();
+
+            return $name === '' ? null : new ClassPropertyReference($class, $name);
+        }
+
+        $member = $cursor->readPhpIdentifier();
+
+        if ($member === '') {
+            return null;
         }
 
         // A method: "name()".
-        if (\str_ends_with($member, '()')) {
-            return $this->parseClassMethod($symbol, $member);
+        if ($cursor->readLiteral('()')) {
+            return new ClassMethodReference($class, $member);
         }
 
         // A constant: "name".
-        return $this->parseClassConstant($symbol, $member);
-    }
-
-    /**
-     * Parses the "$name" part of a "Class::$name" property reference.
-     *
-     * @param non-empty-string $class
-     */
-    private function parseClassProperty(string $class, string $member): ?ClassPropertyReference
-    {
-        $name = $this->names->validate(\substr($member, 1));
-
-        return $name === null ? null : new ClassPropertyReference($class, $name);
-    }
-
-    /**
-     * Parses the "name()" part of a "Class::name()" method reference.
-     *
-     * @param non-empty-string $class
-     */
-    private function parseClassMethod(string $class, string $member): ?ClassMethodReference
-    {
-        $name = $this->names->validate(\substr($member, 0, -2));
-
-        return $name === null ? null : new ClassMethodReference($class, $name);
-    }
-
-    /**
-     * Parses the "name" part of a "Class::name" constant reference.
-     *
-     * @param non-empty-string $class
-     */
-    private function parseClassConstant(string $class, string $member): ?ClassConstantReference
-    {
-        $name = $this->names->validate($member);
-
-        return $name === null ? null : new ClassConstantReference($class, $name);
+        return new ClassConstantReference($class, $member);
     }
 }

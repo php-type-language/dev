@@ -100,7 +100,7 @@ final class CursorTest extends TestCase
     {
         $cursor = new Cursor($input);
 
-        self::assertSame($expected, $cursor->readIdentifier());
+        self::assertSame($expected, $cursor->readPhpIdentifier());
         self::assertSame($rest, $cursor->readRemainder());
     }
 
@@ -109,7 +109,7 @@ final class CursorTest extends TestCase
     {
         $cursor = new Cursor('Some\\Any\\Класс::member');
 
-        self::assertSame('Some\\Any\\Класс', $cursor->readQualifiedName());
+        self::assertSame('Some\\Any\\Класс', $cursor->readPhpQualifiedName());
         self::assertSame('::member', $cursor->readRemainder());
     }
 

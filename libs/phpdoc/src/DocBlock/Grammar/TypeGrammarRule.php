@@ -26,7 +26,7 @@ final readonly class TypeGrammarRule implements RuleInterface
 
     public function __invoke(Cursor $cursor): TypeNode
     {
-        $start = $cursor->tell();
+        $start = $cursor->position;
         $source = $cursor->readRemainder();
 
         if ($source === '') {
@@ -38,7 +38,7 @@ final readonly class TypeGrammarRule implements RuleInterface
         // text (e.g. a description) rather than at the end of the buffer.
         $result = $this->typeParser->parseTolerant($source);
 
-        $cursor->seek($start + $result->offset);
+        $cursor->position = $start + $result->offset;
 
         return $result->type;
     }

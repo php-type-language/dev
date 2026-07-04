@@ -46,7 +46,7 @@ final class Repeat extends Rule
 
             ++$count;
 
-            if ($context->cursor->tell() === $snapshot[0]) {
+            if ($context->cursor->position === $snapshot[0]) {
                 break;
             }
         }

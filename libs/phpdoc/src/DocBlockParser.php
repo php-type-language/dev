@@ -81,7 +81,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             VariableGrammarRule::NAME => new VariableGrammarRule(),
             DescriptionGrammarRule::NAME => new \ReflectionClass(DescriptionGrammarRule::class)
                 ->newLazyProxy(fn(): DescriptionGrammarRule => new DescriptionGrammarRule(
-                    parser: $this->descriptionParser,
+                    descriptionParser: $this->descriptionParser,
                 )),
         ];
     }

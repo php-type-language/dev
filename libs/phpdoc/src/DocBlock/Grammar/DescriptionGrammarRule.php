@@ -24,7 +24,7 @@ final readonly class DescriptionGrammarRule implements RuleInterface
     public const string NAME = 'Description';
 
     public function __construct(
-        private DescriptionParserInterface $parser,
+        private DescriptionParserInterface $descriptionParser,
     ) {}
 
     public function __invoke(Cursor $cursor): DescriptionInterface
@@ -35,6 +35,6 @@ final readonly class DescriptionGrammarRule implements RuleInterface
             throw new NoMatchException('Expected a description');
         }
 
-        return $this->parser->parse($text);
+        return $this->descriptionParser->parse($text);
     }
 }

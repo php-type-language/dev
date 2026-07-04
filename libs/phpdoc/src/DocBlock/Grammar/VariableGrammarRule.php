@@ -18,27 +18,21 @@ final readonly class VariableGrammarRule implements RuleInterface
     public const string NAME = 'Variable';
 
     /**
-     * Validates a variable name: letters, digits and "_".
-     */
-    private NameValidator $names;
-
-    public function __construct()
-    {
-        $this->names = new NameValidator();
-    }
-
-    /**
      * @return non-empty-string
      */
     public function __invoke(Cursor $cursor): string
     {
-        $variable = $cursor->readWord();
-
-        if ($variable === '' || $variable[0] !== '$') {
+        if (!$cursor->readLiteral('$')) {
             throw new NoMatchException('Expected a variable');
         }
 
-        return $this->names->validate(\substr($variable, 1))
-            ?? throw new NoMatchException(\sprintf('Invalid variable "%s"', $variable));
+        $name = $cursor->readPhpIdentifier();
+
+        // A variable is a single word: nothing but whitespace may follow it.
+        if ($name === '' || $cursor->readWord() !== '') {
+            throw new NoMatchException('Expected a variable');
+        }
+
+        return $name;
     }
 }

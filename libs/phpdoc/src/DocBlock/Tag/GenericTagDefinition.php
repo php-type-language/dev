@@ -13,7 +13,7 @@ use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
 
 final class GenericTagDefinition extends TagDefinition
 {
-    public const string NAME = '<any>';
+    public const string NAME = '<Tag>';
 
     public private(set) string $name = self::NAME;
 
