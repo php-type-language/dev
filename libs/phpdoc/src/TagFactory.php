@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc;
 
+use TypeLang\PhpDoc\DocBlock\Description\Description;
 use TypeLang\PhpDoc\DocBlock\Tag\GenericTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Grammar;
@@ -54,7 +56,11 @@ final readonly class TagFactory implements TagFactoryInterface, \IteratorAggrega
     {
         $definition = $this->get($name);
 
-        $result = $this->parser->parse($definition, $name, $suffix);
+        try {
+            $result = $this->parser->parse($definition, $name, $suffix);
+        } catch (\Throwable $e) {
+            return new InvalidTag($e, $name, Description::createIfNotEmpty($suffix));
+        }
 
         return $definition->create($name, $result);
     }
