@@ -79,6 +79,20 @@ final class ReferenceGrammarRuleTest extends GrammarRuleTestCase
     }
 
     /**
+     * A multi-part reference is consumed up to its last token, leaving the
+     * trailing text untouched.
+     */
+    #[Test]
+    public function stopsAfterTheReference(): void
+    {
+        $cursor = new Cursor('Some\Any\Ololo::foo() and the rest');
+        $reference = $this->matchCursor($cursor);
+
+        self::assertInstanceOf(ClassMethodReference::class, $reference);
+        self::assertSame(21, $cursor->offset);
+    }
+
+    /**
      * @return iterable<string, array{string}>
      */
     public static function invalidDataProvider(): iterable
@@ -86,6 +100,7 @@ final class ReferenceGrammarRuleTest extends GrammarRuleTestCase
         yield 'empty' => [''];
         yield 'whitespace only' => ['   '];
         yield 'illegal character' => ['foo!bar'];
+        yield 'trailing after call' => ['foo()bar'];
         yield 'dangling "::"' => ['Some\Any::'];
     }
 
