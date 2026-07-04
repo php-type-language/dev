@@ -9,18 +9,18 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTag;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\InheritanceTag;
+use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\MixinTag\MixinTag;
 use TypeLang\PhpDoc\DocBlock\Tag\MixinTag\MixinTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTag;
-use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TypedTagInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
 use TypeLang\PhpDoc\Exception\MalformedTagException;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\TagFactory;
@@ -82,7 +82,7 @@ final class TypedTagTest extends TestCase
     #[Test]
     public function nameIsIntrinsicToTheTag(): void
     {
-        $statement = new TypeStatement(new TypeParser()->parse('bool'), 'bool');
+        $statement = new TypeReference(new TypeParser()->parse('bool'), 'bool');
 
         $tag = new ReturnTagDefinition()
             ->create('whatever-was-written', new MatchedResult(['type' => [$statement]]));
