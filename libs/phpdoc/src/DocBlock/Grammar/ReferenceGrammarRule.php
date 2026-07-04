@@ -57,9 +57,7 @@ final readonly class ReferenceGrammarRule implements RuleInterface
     {
         // A variable: "$name".
         if ($reference[0] === '$') {
-            $name = $this->name(\substr($reference, 1));
-
-            return $name !== null ? new VariableReference($name) : null;
+            return $this->parseVariable($reference);
         }
 
         // A class member: "Class::member".
@@ -74,15 +72,41 @@ final readonly class ReferenceGrammarRule implements RuleInterface
 
         // A function: "name()".
         if (\str_ends_with($reference, '()')) {
-            $symbol = $this->symbol(\substr($reference, 0, -2));
-
-            return $symbol !== null ? new FunctionReference($symbol) : null;
+            return $this->parseFunction($reference);
         }
 
-        // A class: "name".
+        // A class or global constant: "name".
+        return $this->parseSymbol($reference);
+    }
+
+    /**
+     * Parses a variable: "$name".
+     */
+    private function parseVariable(string $reference): ?VariableReference
+    {
+        $name = $this->name(\substr($reference, 1));
+
+        return $name === null ? null : new VariableReference($name);
+    }
+
+    /**
+     * Parses a function: "name()".
+     */
+    private function parseFunction(string $reference): ?FunctionReference
+    {
+        $symbol = $this->symbol(\substr($reference, 0, -2));
+
+        return $symbol === null ? null : new FunctionReference($symbol);
+    }
+
+    /**
+     * Parses a class or global constant: "name".
+     */
+    private function parseSymbol(string $reference): ?SymbolReference
+    {
         $symbol = $this->symbol($reference);
 
-        return $symbol !== null ? new SymbolReference($symbol) : null;
+        return $symbol === null ? null : new SymbolReference($symbol);
     }
 
     private function parseClassMember(string $class, string $member): ?CodeReference
@@ -95,22 +119,52 @@ final readonly class ReferenceGrammarRule implements RuleInterface
 
         // A property: "$name".
         if ($member[0] === '$') {
-            $name = $this->name(\substr($member, 1));
-
-            return $name !== null ? new ClassPropertyReference($symbol, $name) : null;
+            return $this->parseClassProperty($symbol, $member);
         }
 
         // A method: "name()".
         if (\str_ends_with($member, '()')) {
-            $name = $this->name(\substr($member, 0, -2));
-
-            return $name !== null ? new ClassMethodReference($symbol, $name) : null;
+            return $this->parseClassMethod($symbol, $member);
         }
 
         // A constant: "name".
+        return $this->parseClassConstant($symbol, $member);
+    }
+
+    /**
+     * Parses the "$name" part of a "Class::$name" property reference.
+     *
+     * @param non-empty-string $class
+     */
+    private function parseClassProperty(string $class, string $member): ?ClassPropertyReference
+    {
+        $name = $this->name(\substr($member, 1));
+
+        return $name === null ? null : new ClassPropertyReference($class, $name);
+    }
+
+    /**
+     * Parses the "name()" part of a "Class::name()" method reference.
+     *
+     * @param non-empty-string $class
+     */
+    private function parseClassMethod(string $class, string $member): ?ClassMethodReference
+    {
+        $name = $this->name(\substr($member, 0, -2));
+
+        return $name === null ? null : new ClassMethodReference($class, $name);
+    }
+
+    /**
+     * Parses the "name" part of a "Class::name" constant reference.
+     *
+     * @param non-empty-string $class
+     */
+    private function parseClassConstant(string $class, string $member): ?ClassConstantReference
+    {
         $name = $this->name($member);
 
-        return $name !== null ? new ClassConstantReference($symbol, $name) : null;
+        return $name === null ? null : new ClassConstantReference($class, $name);
     }
 
     /**
