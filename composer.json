@@ -10,8 +10,6 @@
         "php": "^8.4",
         "type-lang/parser": "^2.0",
         "type-lang/phpdoc": "^2.0",
-        "type-lang/phpdoc-standard-tags": "^2.0",
-        "type-lang/phpdoc-template-tags": "^2.0",
         "type-lang/printer": "^2.0",
         "type-lang/types": "^2.0"
     },
@@ -30,12 +28,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-             "TypeLang\\DocBlock\\Tests\\": "libs/docblock/tests",
              "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
              "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
              "TypeLang\\PhpDoc\\Tests\\": "libs/phpdoc/tests",
-             "TypeLang\\PhpDoc\\Standard\\Tests\\": "libs/phpdoc-standard-tags/tests",
-             "TypeLang\\PhpDoc\\Template\\Tests\\": "libs/phpdoc-template-tags/tests",
              "TypeLang\\Type\\Tests\\": "libs/types/tests"
         }
     },

@@ -13,8 +13,6 @@
         <testsuite name="components">
             <directory>libs/parser/tests</directory>
             <directory>libs/phpdoc/tests</directory>
-            <directory>libs/phpdoc-standard-tags/tests</directory>
-            <directory>libs/phpdoc-template-tags/tests</directory>
             <directory>libs/printer/tests</directory>
             <directory>libs/types/tests</directory>
         </testsuite>
@@ -26,8 +24,6 @@
         <include>
             <directory>libs/parser/src</directory>
             <directory>libs/phpdoc/src</directory>
-            <directory>libs/phpdoc-standard-tags/src</directory>
-            <directory>libs/phpdoc-template-tags/src</directory>
             <directory>libs/printer/src</directory>
             <directory>libs/types/src</directory>
         </include>
