@@ -46,6 +46,6 @@ final class MixinTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new MixinTag(self::NAME, $type, $description);
+        return new MixinTag($name, $type, $description);
     }
 }

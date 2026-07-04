@@ -24,10 +24,11 @@ final class PropertyReadTagDefinition extends MagicPropertyTagDefinition
     }
 
     protected function make(
+        string $name,
         TypeReference $type,
         string $variable,
         ?DescriptionInterface $description,
     ): PropertyReadTag {
-        return new PropertyReadTag(self::NAME, $type, $variable, $description);
+        return new PropertyReadTag($name, $type, $variable, $description);
     }
 }

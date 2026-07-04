@@ -38,6 +38,6 @@ final class PureUnlessCallableIsImpureTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new PureUnlessCallableIsImpureTag(self::NAME, $description);
+        return new PureUnlessCallableIsImpureTag($name, $description);
     }
 }

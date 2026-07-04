@@ -38,6 +38,6 @@ final class FilesourceTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new FilesourceTag(self::NAME, $description);
+        return new FilesourceTag($name, $description);
     }
 }

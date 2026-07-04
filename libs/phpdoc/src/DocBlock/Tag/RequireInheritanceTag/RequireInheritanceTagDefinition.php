@@ -43,10 +43,11 @@ abstract class RequireInheritanceTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return $this->make($type, $description);
+        return $this->make($name, $type, $description);
     }
 
     abstract protected function make(
+        string $name,
         TypeReference $type,
         ?DescriptionInterface $description,
     ): RequireInheritanceTag;

@@ -38,6 +38,6 @@ final class SealPropertiesTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new SealPropertiesTag(self::NAME, $description);
+        return new SealPropertiesTag($name, $description);
     }
 }

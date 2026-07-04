@@ -38,6 +38,6 @@ final class InternalTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new InternalTag(self::NAME, $description);
+        return new InternalTag($name, $description);
     }
 }

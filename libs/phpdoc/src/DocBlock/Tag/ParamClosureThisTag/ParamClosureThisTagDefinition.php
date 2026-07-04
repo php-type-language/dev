@@ -51,6 +51,6 @@ final class ParamClosureThisTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new ParamClosureThisTag(self::NAME, $type, $variable, $description);
+        return new ParamClosureThisTag($name, $type, $variable, $description);
     }
 }

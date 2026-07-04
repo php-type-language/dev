@@ -38,6 +38,6 @@ final class IgnoreTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new IgnoreTag(self::NAME, $description);
+        return new IgnoreTag($name, $description);
     }
 }

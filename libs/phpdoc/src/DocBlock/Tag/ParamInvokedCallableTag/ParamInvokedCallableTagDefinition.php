@@ -41,13 +41,14 @@ abstract class ParamInvokedCallableTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return $this->make($variable, $description);
+        return $this->make($name, $variable, $description);
     }
 
     /**
      * @param non-empty-string $variable
      */
     abstract protected function make(
+        string $name,
         string $variable,
         ?DescriptionInterface $description,
     ): ParamInvokedCallableTag;

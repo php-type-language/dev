@@ -26,9 +26,10 @@ final class ImplementsTagDefinition extends InheritanceTagDefinition
     }
 
     protected function make(
+        string $name,
         TypeReference $type,
         ?DescriptionInterface $description,
     ): ImplementsTag {
-        return new ImplementsTag(self::NAME, $type, $description);
+        return new ImplementsTag($name, $type, $description);
     }
 }

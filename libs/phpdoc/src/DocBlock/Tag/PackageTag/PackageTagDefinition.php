@@ -37,6 +37,6 @@ final class PackageTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new PackageTag(self::NAME, $description);
+        return new PackageTag($name, $description);
     }
 }

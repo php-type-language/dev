@@ -37,6 +37,6 @@ final class CategoryTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new CategoryTag(self::NAME, $description);
+        return new CategoryTag($name, $description);
     }
 }

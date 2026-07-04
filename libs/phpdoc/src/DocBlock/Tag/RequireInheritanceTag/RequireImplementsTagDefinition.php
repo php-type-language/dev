@@ -25,9 +25,10 @@ final class RequireImplementsTagDefinition extends RequireInheritanceTagDefiniti
     }
 
     protected function make(
+        string $name,
         TypeReference $type,
         ?DescriptionInterface $description,
     ): RequireImplementsTag {
-        return new RequireImplementsTag(self::NAME, $type, $description);
+        return new RequireImplementsTag($name, $type, $description);
     }
 }

@@ -26,9 +26,10 @@ final class UseTagDefinition extends InheritanceTagDefinition
     }
 
     protected function make(
+        string $name,
         TypeReference $type,
         ?DescriptionInterface $description,
     ): UseTag {
-        return new UseTag(self::NAME, $type, $description);
+        return new UseTag($name, $type, $description);
     }
 }

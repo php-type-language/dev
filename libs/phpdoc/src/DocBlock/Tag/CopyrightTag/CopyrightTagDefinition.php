@@ -37,6 +37,6 @@ final class CopyrightTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new CopyrightTag(self::NAME, $description);
+        return new CopyrightTag($name, $description);
     }
 }

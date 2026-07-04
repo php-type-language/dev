@@ -27,9 +27,10 @@ final class ExtendsTagDefinition extends InheritanceTagDefinition
     }
 
     protected function make(
+        string $name,
         TypeReference $type,
         ?DescriptionInterface $description,
     ): ExtendsTag {
-        return new ExtendsTag(self::NAME, $type, $description);
+        return new ExtendsTag($name, $type, $description);
     }
 }

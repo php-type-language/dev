@@ -25,10 +25,11 @@ final class PropertyTagDefinition extends MagicPropertyTagDefinition
     }
 
     protected function make(
+        string $name,
         TypeReference $type,
         string $variable,
         ?DescriptionInterface $description,
     ): PropertyTag {
-        return new PropertyTag(self::NAME, $type, $variable, $description);
+        return new PropertyTag($name, $type, $variable, $description);
     }
 }

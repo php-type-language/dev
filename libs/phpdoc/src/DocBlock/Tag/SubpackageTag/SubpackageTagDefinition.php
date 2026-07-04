@@ -38,6 +38,6 @@ final class SubpackageTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new SubpackageTag(self::NAME, $description);
+        return new SubpackageTag($name, $description);
     }
 }

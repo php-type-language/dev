@@ -37,6 +37,6 @@ final class TodoTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new TodoTag(self::NAME, $description);
+        return new TodoTag($name, $description);
     }
 }

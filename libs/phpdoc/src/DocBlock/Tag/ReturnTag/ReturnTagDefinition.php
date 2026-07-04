@@ -49,6 +49,6 @@ final class ReturnTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new ReturnTag(self::NAME, $type, $description);
+        return new ReturnTag($name, $type, $description);
     }
 }

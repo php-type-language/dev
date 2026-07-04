@@ -38,6 +38,6 @@ final class ReadonlyTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new ReadonlyTag(self::NAME, $description);
+        return new ReadonlyTag($name, $description);
     }
 }

@@ -37,6 +37,6 @@ final class InheritDocTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new InheritDocTag(self::NAME, $description);
+        return new InheritDocTag($name, $description);
     }
 }

@@ -38,6 +38,6 @@ final class FinalTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new FinalTag(self::NAME, $description);
+        return new FinalTag($name, $description);
     }
 }

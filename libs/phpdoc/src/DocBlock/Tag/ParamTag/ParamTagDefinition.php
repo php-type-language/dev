@@ -53,6 +53,6 @@ final class ParamTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new ParamTag(self::NAME, $type, $variable, $description);
+        return new ParamTag($name, $type, $variable, $description);
     }
 }

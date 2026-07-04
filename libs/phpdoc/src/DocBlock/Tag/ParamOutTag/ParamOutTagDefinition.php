@@ -51,6 +51,6 @@ final class ParamOutTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new ParamOutTag(self::NAME, $type, $variable, $description);
+        return new ParamOutTag($name, $type, $variable, $description);
     }
 }

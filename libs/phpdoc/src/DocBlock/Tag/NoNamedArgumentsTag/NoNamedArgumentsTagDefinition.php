@@ -38,6 +38,6 @@ final class NoNamedArgumentsTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new NoNamedArgumentsTag(self::NAME, $description);
+        return new NoNamedArgumentsTag($name, $description);
     }
 }

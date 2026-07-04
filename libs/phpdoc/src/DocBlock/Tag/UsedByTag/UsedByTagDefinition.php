@@ -46,6 +46,6 @@ final class UsedByTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new UsedByTag(self::NAME, $reference, $description);
+        return new UsedByTag($name, $reference, $description);
     }
 }

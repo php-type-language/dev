@@ -37,6 +37,6 @@ final class AbstractTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new AbstractTag(self::NAME, $description);
+        return new AbstractTag($name, $description);
     }
 }

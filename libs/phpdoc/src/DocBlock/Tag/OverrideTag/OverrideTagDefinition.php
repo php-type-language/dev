@@ -37,6 +37,6 @@ final class OverrideTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new OverrideTag(self::NAME, $description);
+        return new OverrideTag($name, $description);
     }
 }

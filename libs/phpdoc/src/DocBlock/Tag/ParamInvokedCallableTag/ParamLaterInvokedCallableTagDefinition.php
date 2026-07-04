@@ -24,9 +24,10 @@ final class ParamLaterInvokedCallableTagDefinition extends ParamInvokedCallableT
     }
 
     protected function make(
+        string $name,
         string $variable,
         ?DescriptionInterface $description,
     ): ParamLaterInvokedCallableTag {
-        return new ParamLaterInvokedCallableTag(self::NAME, $variable, $description);
+        return new ParamLaterInvokedCallableTag($name, $variable, $description);
     }
 }

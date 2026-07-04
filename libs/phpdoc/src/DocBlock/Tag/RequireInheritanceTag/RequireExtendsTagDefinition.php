@@ -25,9 +25,10 @@ final class RequireExtendsTagDefinition extends RequireInheritanceTagDefinition
     }
 
     protected function make(
+        string $name,
         TypeReference $type,
         ?DescriptionInterface $description,
     ): RequireExtendsTag {
-        return new RequireExtendsTag(self::NAME, $type, $description);
+        return new RequireExtendsTag($name, $type, $description);
     }
 }

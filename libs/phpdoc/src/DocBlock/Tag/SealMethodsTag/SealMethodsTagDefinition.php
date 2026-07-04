@@ -38,6 +38,6 @@ final class SealMethodsTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new SealMethodsTag(self::NAME, $description);
+        return new SealMethodsTag($name, $description);
     }
 }

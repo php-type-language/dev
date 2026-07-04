@@ -47,13 +47,14 @@ abstract class MagicPropertyTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return $this->make($type, $variable, $description);
+        return $this->make($name, $type, $variable, $description);
     }
 
     /**
      * @param non-empty-string $variable
      */
     abstract protected function make(
+        string $name,
         TypeReference $type,
         string $variable,
         ?DescriptionInterface $description,

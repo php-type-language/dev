@@ -45,6 +45,6 @@ final class UnusedParamTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new UnusedParamTag(self::NAME, $variable, $description);
+        return new UnusedParamTag($name, $variable, $description);
     }
 }

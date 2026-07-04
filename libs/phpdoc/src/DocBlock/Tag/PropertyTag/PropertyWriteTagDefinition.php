@@ -25,10 +25,11 @@ final class PropertyWriteTagDefinition extends MagicPropertyTagDefinition
     }
 
     protected function make(
+        string $name,
         TypeReference $type,
         string $variable,
         ?DescriptionInterface $description,
     ): PropertyWriteTag {
-        return new PropertyWriteTag(self::NAME, $type, $variable, $description);
+        return new PropertyWriteTag($name, $type, $variable, $description);
     }
 }

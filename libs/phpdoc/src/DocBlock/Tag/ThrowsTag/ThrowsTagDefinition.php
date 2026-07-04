@@ -49,6 +49,6 @@ final class ThrowsTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new ThrowsTag(self::NAME, $type, $description);
+        return new ThrowsTag($name, $type, $description);
     }
 }

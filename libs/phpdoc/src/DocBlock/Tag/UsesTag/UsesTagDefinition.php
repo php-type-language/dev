@@ -46,6 +46,6 @@ final class UsesTagDefinition extends TagDefinition
         /** @var DescriptionInterface|null $description */
         $description = $result->find('description');
 
-        return new UsesTag(self::NAME, $reference, $description);
+        return new UsesTag($name, $reference, $description);
     }
 }

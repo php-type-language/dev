@@ -24,9 +24,10 @@ final class ParamImmediatelyInvokedCallableTagDefinition extends ParamInvokedCal
     }
 
     protected function make(
+        string $name,
         string $variable,
         ?DescriptionInterface $description,
     ): ParamImmediatelyInvokedCallableTag {
-        return new ParamImmediatelyInvokedCallableTag(self::NAME, $variable, $description);
+        return new ParamImmediatelyInvokedCallableTag($name, $variable, $description);
     }
 }
