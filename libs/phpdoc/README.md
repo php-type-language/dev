@@ -219,7 +219,7 @@ its description.
 - [x] `@author`
 - [x] `@category` — Used to organize groups of packages together
 - [x] `@copyright` — Used to document the copyright information of any _Element_
-- [ ] `@deprecated`
+- [x] `@deprecated`
 - [ ] `@example`
 - [x] `@extends` — Allows to extend templated classes and interfaces
 - [x] `@filesource`
@@ -230,7 +230,7 @@ its description.
 - [x] `@inheritdoc`
 - [x] `@inherits` — An alias of the `@extends` tag
 - [x] `@internal`
-- [ ] `@license` — Used to indicate which license is applicable
+- [x] `@license` — Used to indicate which license is applicable
 - [x] `@link` — Indicates a custom relation between the associated _Element_ and a website identified by an absolute URI
 - [ ] `@method` — Declares which "_magic_" methods are callable
 - [x] `@mixin`
@@ -254,7 +254,7 @@ its description.
 - [x] `@seal-methods`
 - [x] `@seal-properties`
 - [x] `@see` — Indicates a reference from the associated _Symbol(s)_ to a website or other _Symbol(s)_
-- [ ] `@since`
+- [x] `@since`
 - [ ] `@source`
 - [x] `@subpackage` — Categorizes _Element(s)_ into logical subdivisions
 - [ ] `@suppress`
@@ -272,7 +272,7 @@ its description.
 - [x] `@used-by`
 - [x] `@uses`
 - [ ] `@var` — Documents the _Type_ of the following _Element_
-- [ ] `@version`
+- [x] `@version`
 
 
 **Psalm**
