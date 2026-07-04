@@ -7,7 +7,7 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Grammar;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\Type\NamedTypeNode;
@@ -26,7 +26,7 @@ final class TypeGrammarRuleTest extends GrammarRuleTestCase
     {
         $statement = $this->matchText('array<int, string>');
 
-        self::assertInstanceOf(TypeStatement::class, $statement);
+        self::assertInstanceOf(TypeReference::class, $statement);
         self::assertInstanceOf(NamedTypeNode::class, $statement->type);
         self::assertSame('array', (string) $statement->type->name);
     }
@@ -39,7 +39,7 @@ final class TypeGrammarRuleTest extends GrammarRuleTestCase
     {
         $statement = $this->matchText('array<int, string>');
 
-        self::assertInstanceOf(TypeStatement::class, $statement);
+        self::assertInstanceOf(TypeReference::class, $statement);
         self::assertSame('array<int, string>', $statement->source);
         self::assertSame('array<int, string>', (string) $statement);
     }
@@ -85,7 +85,7 @@ final class TypeGrammarRuleTest extends GrammarRuleTestCase
         $cursor = new Cursor('int rest', base: 100);
         $statement = $this->matchCursor($cursor);
 
-        self::assertInstanceOf(TypeStatement::class, $statement);
+        self::assertInstanceOf(TypeReference::class, $statement);
         self::assertSame(104, $cursor->offset);
     }
 

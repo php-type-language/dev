@@ -38,7 +38,7 @@ final class DefinitionTest extends TestCase
 
         self::assertInstanceOf(LinkTag::class, $tag);
         self::assertSame('link', $tag->name);
-        self::assertSame('https://example.com', (string) $tag->uri);
+        self::assertSame('https://example.com', (string) $tag->reference);
         self::assertInstanceOf(DescriptionInterface::class, $tag->description);
         self::assertSame('Some description', (string) $tag->description);
     }
@@ -49,7 +49,7 @@ final class DefinitionTest extends TestCase
         $tag = self::factory()->create('link', 'https://example.com');
 
         self::assertInstanceOf(LinkTag::class, $tag);
-        self::assertSame('https://example.com', (string) $tag->uri);
+        self::assertSame('https://example.com', (string) $tag->reference);
         self::assertNull($tag->description);
     }
 
