@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Tag;
+namespace TypeLang\PhpDoc\DocBlock\TagDefinition;
 
 use TypeLang\PhpDoc\Parser\Grammar\Rule\RuleInterface;
 

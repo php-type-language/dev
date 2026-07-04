@@ -6,9 +6,9 @@ namespace TypeLang\PhpDoc\DocBlock\Tag\InternalTag;
 
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
-use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
-use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\Spec;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinition;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 
 /**
  * The "`@internal`" tag marks an element as internal to its package, or, when

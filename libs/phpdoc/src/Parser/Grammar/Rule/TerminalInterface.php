@@ -15,7 +15,7 @@ interface TerminalInterface extends RuleInterface
      *
      * @var non-empty-string|null
      */
-    public ?string $alias = null {
+    public ?string $alias {
         get;
     }
 }

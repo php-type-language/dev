@@ -9,9 +9,9 @@ use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
-use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
-use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
-use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\Spec;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinition;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 
 /**
  * The "`@param-out`" tag documents the type that a by-reference argument holds

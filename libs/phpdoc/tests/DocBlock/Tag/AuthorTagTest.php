@@ -6,10 +6,14 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Combinator\AuthorNameCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTag;
 use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTagDefinition;
 use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
+use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
+use TypeLang\PhpDoc\Parser\TagSpecificationParser;
 use TypeLang\PhpDoc\TagFactory;
 use TypeLang\PhpDoc\Tests\TestCase;
 
@@ -50,14 +54,24 @@ final class AuthorTagTest extends TestCase
 
     private static function factory(): TagFactory
     {
-        return new TagFactory(
-            definitions: [
-                AuthorTagDefinition::NAME => new AuthorTagDefinition(),
-            ],
-            combinators: [
-                AuthorNameCombinator::NAME => new AuthorNameCombinator(),
-                EmailCombinator::NAME => new EmailCombinator(),
-            ],
-        );
+        $factory = new \ReflectionClass(TagFactory::class)
+            ->newLazyProxy(function () use (&$factory) {
+                return new TagFactory(
+                    definitions: [
+                        AuthorTagDefinition::NAME => new AuthorTagDefinition(),
+                    ],
+                    combinators: [
+                        AuthorNameCombinator::NAME => new AuthorNameCombinator(),
+                        EmailCombinator::NAME => new EmailCombinator(),
+                        DescriptionCombinator::NAME => new DescriptionCombinator(
+                            new BalancedBraceAwareParser(
+                                new StringTagParser($factory)
+                            ),
+                        ),
+                    ],
+                );
+            });
+
+        return $factory;
     }
 }

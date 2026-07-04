@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Grammar\Exception;
 
-use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 
 final class InvalidCombinatorForDefinitionException extends InvalidCombinatorException
 {

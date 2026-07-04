@@ -6,9 +6,9 @@ namespace TypeLang\PhpDoc\DocBlock\Tag\PureUnlessCallableIsImpureTag;
 
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
-use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\DocBlock\Tag\TagSpecification;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\Spec;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinition;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 
 /**
  * The "`@pure-unless-callable-is-impure`" tag declares a function pure unless a
@@ -26,8 +26,8 @@ final class PureUnlessCallableIsImpureTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            spec: TagSpecification::maybe(
-                TagSpecification::rule(DescriptionCombinator::NAME, 'description'),
+            spec: Spec::maybe(
+                Spec::rule(DescriptionCombinator::NAME, 'description'),
             ),
             isInline: false,
         );

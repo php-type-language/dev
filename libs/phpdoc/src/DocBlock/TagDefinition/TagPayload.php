@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Tag\Definition;
+namespace TypeLang\PhpDoc\DocBlock\TagDefinition;
 
-use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\UncapturedRuleException;
 
 /**

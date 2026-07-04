@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Tag\Definition;
+namespace TypeLang\PhpDoc\DocBlock\TagDefinition;
 
 use TypeLang\PhpDoc\Parser\Grammar\Rule\AlternationRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\LiteralRule;

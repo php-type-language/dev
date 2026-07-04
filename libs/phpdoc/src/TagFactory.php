@@ -7,10 +7,10 @@ namespace TypeLang\PhpDoc;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
 use TypeLang\PhpDoc\DocBlock\Tag\GenericTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
-use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Grammar;
-use TypeLang\PhpDoc\Parser\TagParser;
+use TypeLang\PhpDoc\Parser\TagSpecificationParser;
 
 /**
  * Builds a tag from its name and suffix using the matching
@@ -37,7 +37,7 @@ final readonly class TagFactory implements TagFactoryInterface, \IteratorAggrega
      */
     private array $definitions;
 
-    private TagParser $parser;
+    private TagSpecificationParser $parser;
 
     /**
      * @param iterable<non-empty-string, TagDefinitionInterface> $definitions
@@ -48,7 +48,7 @@ final readonly class TagFactory implements TagFactoryInterface, \IteratorAggrega
         iterable $combinators = [],
         private TagDefinitionInterface $genericTagDefinition = new GenericTagDefinition(),
     ) {
-        $this->parser = new TagParser($combinators);
+        $this->parser = new TagSpecificationParser($combinators);
         $this->definitions = \iterator_to_array($definitions);
     }
 

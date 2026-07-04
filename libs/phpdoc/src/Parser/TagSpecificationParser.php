@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser;
 
-use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
-use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
+use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\Exception\MalformedTagException;
 use TypeLang\PhpDoc\Parser\Grammar\Context;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
@@ -17,7 +17,7 @@ use TypeLang\PhpDoc\Parser\Grammar\Grammar;
 /**
  * @phpstan-import-type CombinatorType from Grammar
  */
-final readonly class TagParser
+final readonly class TagSpecificationParser
 {
     private Grammar $grammar;
 
