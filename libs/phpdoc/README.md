@@ -239,8 +239,8 @@ its description.
 - [ ] `@override` — Marks a method as overriding an inherited definition
 - [x] `@param` — Documents a single argument of a function or method
 - [x] `@param-closure-this`
-- [ ] `@param-immediately-invoked-callable`
-- [ ] `@param-later-invoked-callable`
+- [x] `@param-immediately-invoked-callable`
+- [x] `@param-later-invoked-callable`
 - [x] `@param-out`
 - [x] `@property` — Declares which "_magic_" properties are supported
 - [x] `@property-read` — Declares "_magic_" properties supported for reading
@@ -267,7 +267,7 @@ its description.
 - [x] `@throw` — Seems quite common (typo in code). An alias of the `@throws` tag
 - [x] `@throws` — Indicates the type of `\Throwable` an _Element_ may throw
 - [ ] `@todo`
-- [ ] `@unused-param`
+- [x] `@unused-param`
 - [x] `@use` — An alias of the `@template-use` tag
 - [ ] `@used-by`
 - [ ] `@uses`

@@ -19,6 +19,8 @@ use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\UseTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\MixinTag\MixinTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamClosureThisTag\ParamClosureThisTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamInvokedCallableTag\ParamImmediatelyInvokedCallableTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamInvokedCallableTag\ParamLaterInvokedCallableTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamOutTag\ParamOutTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyReadTagDefinition;
@@ -31,6 +33,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\UnusedParamTag\UnusedParamTagDefinition;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
 use TypeLang\PhpDoc\Exception\TagParsingException;
@@ -128,6 +131,9 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             PropertyTagDefinition::NAME => new PropertyTagDefinition(),
             PropertyReadTagDefinition::NAME => new PropertyReadTagDefinition(),
             PropertyWriteTagDefinition::NAME => new PropertyWriteTagDefinition(),
+            ParamImmediatelyInvokedCallableTagDefinition::NAME => new ParamImmediatelyInvokedCallableTagDefinition(),
+            ParamLaterInvokedCallableTagDefinition::NAME => new ParamLaterInvokedCallableTagDefinition(),
+            UnusedParamTagDefinition::NAME => new UnusedParamTagDefinition(),
         ];
     }
 
