@@ -76,19 +76,19 @@ final class TypedTagTest extends TestCase
     }
 
     /**
-     * The name is intrinsic to the definition, never taken from the name it is
-     * invoked with, so a definition always produces its own canonical name.
+     * The produced tag carries the name it was actually invoked with, so an
+     * alias keeps the name it was written with.
      */
     #[Test]
-    public function nameIsIntrinsicToTheTag(): void
+    public function nameComesFromTheParsedName(): void
     {
         $statement = new TypeReference(new TypeParser()->parse('bool'), 'bool');
 
         $tag = new ReturnTagDefinition()
-            ->create('whatever-was-written', new TagPayload(['type' => [$statement]]));
+            ->create('returns', new TagPayload(['type' => [$statement]]));
 
         self::assertInstanceOf(ReturnTag::class, $tag);
-        self::assertSame('return', $tag->name);
+        self::assertSame('returns', $tag->name);
     }
 
     /**
@@ -108,36 +108,36 @@ final class TypedTagTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{string, class-string<TypedTagInterface>, string}>
+     * @return iterable<string, array{string, class-string<TypedTagInterface>}>
      */
     public static function tagProvider(): iterable
     {
-        yield '@return' => ['return', ReturnTag::class, 'return'];
-        yield '@throws' => ['throws', ThrowsTag::class, 'throws'];
-        yield '@mixin' => ['mixin', MixinTag::class, 'mixin'];
-        yield '@extends' => ['extends', ExtendsTag::class, 'extends'];
+        yield '@return' => ['return', ReturnTag::class];
+        yield '@throws' => ['throws', ThrowsTag::class];
+        yield '@mixin' => ['mixin', MixinTag::class];
+        yield '@extends' => ['extends', ExtendsTag::class];
 
-        // Documented aliases resolve to the same tag, but keep the canonical name.
-        yield '@returns is an alias of @return' => ['returns', ReturnTag::class, 'return'];
-        yield '@throw is an alias of @throws' => ['throw', ThrowsTag::class, 'throws'];
-        yield '@inherits is an alias of @extends' => ['inherits', ExtendsTag::class, 'extends'];
-        yield '@template-extends is an alias of @extends' => ['template-extends', ExtendsTag::class, 'extends'];
+        // Documented aliases resolve to the same tag class, keeping the name
+        // they were written with.
+        yield '@returns is an alias of @return' => ['returns', ReturnTag::class];
+        yield '@throw is an alias of @throws' => ['throw', ThrowsTag::class];
+        yield '@inherits is an alias of @extends' => ['inherits', ExtendsTag::class];
+        yield '@template-extends is an alias of @extends' => ['template-extends', ExtendsTag::class];
     }
 
     /**
      * @param class-string<TypedTagInterface> $expected
-     * @param non-empty-string $canonical
      */
     #[Test]
     #[DataProvider('tagProvider')]
-    public function tagResolvesThroughTheRealParser(string $name, string $expected, string $canonical): void
+    public function tagResolvesThroughTheRealParser(string $name, string $expected): void
     {
         $block = new \TypeLang\PhpDoc\DocBlockParser()
             ->parse(\sprintf('/** @%s Some\\Type */', $name));
 
         self::assertCount(1, $block->tags);
         self::assertInstanceOf($expected, $block->tags[0]);
-        self::assertSame($canonical, $block->tags[0]->name);
+        self::assertSame($name, $block->tags[0]->name);
     }
 
     private static function factory(): TagFactory

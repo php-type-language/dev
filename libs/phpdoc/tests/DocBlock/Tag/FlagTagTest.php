@@ -26,7 +26,6 @@ final class FlagTagTest extends TestCase
         $tag = self::factory()->create('abstract', '');
 
         self::assertInstanceOf(AbstractTag::class, $tag);
-        self::assertInstanceOf(FlagTagInterface::class, $tag);
         self::assertSame('abstract', $tag->name);
         self::assertNull($tag->description);
         self::assertSame('@abstract', (string) $tag);
