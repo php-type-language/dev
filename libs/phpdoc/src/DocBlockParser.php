@@ -7,8 +7,10 @@ namespace TypeLang\PhpDoc;
 use JetBrains\PhpStorm\Language;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
+use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\Link\LinkTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\See\SeeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\TagFactoryInterface;
@@ -63,6 +65,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
     {
         return new Grammar([
             UriGrammarRule::NAME => new UriGrammarRule(),
+            ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
         ]);
     }
 
@@ -73,6 +76,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
     {
         return [
             LinkTagDefinition::NAME => new LinkTagDefinition(),
+            SeeTagDefinition::NAME => new SeeTagDefinition(),
         ];
     }
 

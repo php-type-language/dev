@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Reference;
 
+/**
+ * A reference to an external resource identified by a URI, for example
+ * a web page.
+ *
+ * Such a reference always points outside of the described codebase, so it
+ * is always external.
+ */
 final readonly class UriReference implements ReferenceInterface
 {
     public bool $isExternal;
 
     public function __construct(
         /**
-         * The URI MUST be complete and well-formed as specified in RFC2396.
+         * The URI of the referenced resource.
          *
-         * @link https://www.ietf.org/rfc/rfc2396.txt
          * @var non-empty-string
          */
         public string $uri,
