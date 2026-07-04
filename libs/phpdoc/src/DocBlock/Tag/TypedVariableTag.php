@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
-use TypeLang\Type\TypeNode;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 
 /**
  * A tag whose body is a type applied to a variable, followed by an optional
@@ -16,7 +15,7 @@ abstract class TypedVariableTag extends TypedTag implements VariableTagInterface
 {
     public function __construct(
         string $name,
-        TypeStatement $statement,
+        TypeReference $statement,
         /**
          * @var non-empty-string
          */

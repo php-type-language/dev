@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 
 /**
  * The "`@implements`" tag makes a generic interface concrete by providing the
@@ -26,7 +26,7 @@ final class ImplementsTagDefinition extends InheritanceTagDefinition
     }
 
     protected function make(
-        TypeStatement $type,
+        TypeReference $type,
         ?DescriptionInterface $description,
     ): ImplementsTag {
         return new ImplementsTag(self::NAME, $type, $description);

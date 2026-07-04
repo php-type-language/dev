@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag;
 
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\RuleInterface;
 
 abstract class TagDefinition implements TagDefinitionInterface
 {
@@ -13,7 +13,7 @@ abstract class TagDefinition implements TagDefinitionInterface
          * @var non-empty-string
          */
         public readonly string $name,
-        public readonly Rule $rule,
+        public readonly RuleInterface $rule,
         public readonly bool $isInline = false,
     ) {}
 

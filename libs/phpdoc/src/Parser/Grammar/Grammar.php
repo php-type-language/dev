@@ -6,7 +6,9 @@ namespace TypeLang\PhpDoc\Parser\Grammar;
 
 use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidTagRuleException;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\AlternationRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\RuleInterface;
 
 /**
  * The named terminals ({@see MatchRule}) that tag definitions may reference.

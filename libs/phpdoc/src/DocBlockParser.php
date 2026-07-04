@@ -8,13 +8,16 @@ use JetBrains\PhpStorm\Language;
 use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
+use TypeLang\PhpDoc\DocBlock\Grammar\AuthorNameGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Grammar\EmailGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\CategoryTag\CategoryTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\CopyrightTag\CopyrightTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\FilesourceTag\FilesourceTagDefinition;
@@ -52,6 +55,8 @@ use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TodoTag\TodoTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UnusedParamTag\UnusedParamTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\UsedByTag\UsedByTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\UsesTag\UsesTagDefinition;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
 use TypeLang\PhpDoc\Exception\TagParsingException;
@@ -64,6 +69,7 @@ use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
 use TypeLang\PhpDoc\Parser\Splitter\StringSplitter;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
+use TypeLang\Printer\PrettyPrinter;
 
 /**
  * @phpstan-import-type RuleType from Grammar
@@ -108,10 +114,10 @@ final readonly class DocBlockParser implements DocBlockParserInterface
         return [
             UriGrammarRule::NAME => new UriGrammarRule(),
             ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
-            TypeGrammarRule::NAME => new TypeGrammarRule(
-                typeParser: $typeParser,
-            ),
+            TypeGrammarRule::NAME => new TypeGrammarRule($typeParser),
             VariableGrammarRule::NAME => new VariableGrammarRule(),
+            AuthorNameGrammarRule::NAME => new AuthorNameGrammarRule(),
+            EmailGrammarRule::NAME => new EmailGrammarRule(),
             DescriptionGrammarRule::NAME => new \ReflectionClass(DescriptionGrammarRule::class)
                 ->newLazyProxy(fn(): DescriptionGrammarRule => new DescriptionGrammarRule(
                     descriptionParser: $this->descriptionParser,
@@ -124,25 +130,29 @@ final readonly class DocBlockParser implements DocBlockParserInterface
      */
     private function createDefaultTagDefinitions(): array
     {
+        $return = new ReturnTagDefinition();
+        $throws = new ThrowsTagDefinition();
+        $extends = new ExtendsTagDefinition();
+        $implements = new ImplementsTagDefinition();
+        $use = new UseTagDefinition();
+
         return [
             LinkTagDefinition::NAME => new LinkTagDefinition(),
             SeeTagDefinition::NAME => new SeeTagDefinition(),
-
-            ReturnTagDefinition::NAME => $return = new ReturnTagDefinition(),
+            ReturnTagDefinition::NAME => $return,
             'returns' => $return, // A fairly common typo in code
-            ThrowsTagDefinition::NAME => $throws = new ThrowsTagDefinition(),
+            ThrowsTagDefinition::NAME => $throws,
             'throw' => $throws, // A fairly common typo in code
             MixinTagDefinition::NAME => new MixinTagDefinition(),
-            ExtendsTagDefinition::NAME => $extends = new ExtendsTagDefinition(),
+            ExtendsTagDefinition::NAME => $extends,
             'inherits' => $extends,
             'template-extends' => $extends,
-            ImplementsTagDefinition::NAME => $implements = new ImplementsTagDefinition(),
+            ImplementsTagDefinition::NAME => $implements,
             'template-implements' => $implements,
-            UseTagDefinition::NAME => $use = new UseTagDefinition(),
+            UseTagDefinition::NAME => $use,
             'template-use' => $use,
             RequireExtendsTagDefinition::NAME => new RequireExtendsTagDefinition(),
             RequireImplementsTagDefinition::NAME => new RequireImplementsTagDefinition(),
-
             ParamTagDefinition::NAME => new ParamTagDefinition(),
             ParamOutTagDefinition::NAME => new ParamOutTagDefinition(),
             ParamClosureThisTagDefinition::NAME => new ParamClosureThisTagDefinition(),
@@ -152,7 +162,6 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             ParamImmediatelyInvokedCallableTagDefinition::NAME => new ParamImmediatelyInvokedCallableTagDefinition(),
             ParamLaterInvokedCallableTagDefinition::NAME => new ParamLaterInvokedCallableTagDefinition(),
             UnusedParamTagDefinition::NAME => new UnusedParamTagDefinition(),
-
             AbstractTagDefinition::NAME => new AbstractTagDefinition(),
             ApiTagDefinition::NAME => new ApiTagDefinition(),
             FinalTagDefinition::NAME => new FinalTagDefinition(),
@@ -171,6 +180,9 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             CopyrightTagDefinition::NAME => new CopyrightTagDefinition(),
             PackageTagDefinition::NAME => new PackageTagDefinition(),
             SubpackageTagDefinition::NAME => new SubpackageTagDefinition(),
+            UsesTagDefinition::NAME => new UsesTagDefinition(),
+            UsedByTagDefinition::NAME => new UsedByTagDefinition(),
+            AuthorTagDefinition::NAME => new AuthorTagDefinition(),
         ];
     }
 

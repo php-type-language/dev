@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag\PropertyTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 
 /**
  * The "`@property`" tag declares a magic property that can be both read and
@@ -25,7 +25,7 @@ final class PropertyTagDefinition extends MagicPropertyTagDefinition
     }
 
     protected function make(
-        TypeStatement $type,
+        TypeReference $type,
         string $variable,
         ?DescriptionInterface $description,
     ): PropertyTag {

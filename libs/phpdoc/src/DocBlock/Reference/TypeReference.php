@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Type;
+namespace TypeLang\PhpDoc\DocBlock\Reference;
 
 use TypeLang\Type\TypeNode;
 
 /**
  * A parsed type together with the exact source text it was read from.
  */
-final readonly class TypeStatement implements \Stringable
+final readonly class TypeReference implements ReferenceInterface
 {
+    public bool $isExternal;
+
     public function __construct(
         public TypeNode $type,
         /**
@@ -19,7 +21,9 @@ final readonly class TypeStatement implements \Stringable
          * @var non-empty-string
          */
         public string $source,
-    ) {}
+    ) {
+        $this->isExternal = false;
+    }
 
     public function __toString(): string
     {

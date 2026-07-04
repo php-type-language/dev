@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 
 /**
  * The "`@extends`" tag makes a generic parent class or interface concrete by
@@ -27,7 +27,7 @@ final class ExtendsTagDefinition extends InheritanceTagDefinition
     }
 
     protected function make(
-        TypeStatement $type,
+        TypeReference $type,
         ?DescriptionInterface $description,
     ): ExtendsTag {
         return new ExtendsTag(self::NAME, $type, $description);

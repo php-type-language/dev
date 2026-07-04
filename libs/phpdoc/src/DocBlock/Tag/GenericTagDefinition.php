@@ -8,7 +8,7 @@ use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
 
 final class GenericTagDefinition extends TagDefinition
 {
@@ -24,7 +24,7 @@ final class GenericTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new Optional(
+            rule: new OptionalityRule(
                 new MatchRule(DescriptionGrammarRule::NAME, 'description'),
             ),
             isInline: $isInline,

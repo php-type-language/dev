@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 
 /**
  * The "`@require-extends`" tag constrains a trait so that it may only be used
@@ -25,7 +25,7 @@ final class RequireExtendsTagDefinition extends RequireInheritanceTagDefinition
     }
 
     protected function make(
-        TypeStatement $type,
+        TypeReference $type,
         ?DescriptionInterface $description,
     ): RequireExtendsTag {
         return new RequireExtendsTag(self::NAME, $type, $description);

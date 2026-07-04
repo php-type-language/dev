@@ -11,8 +11,8 @@ use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@link`" tag can be used to define a relation, or link, between
@@ -37,9 +37,9 @@ final class LinkTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequenceOf(
+            rule: new SequencingRule(
                 new MatchRule(UriGrammarRule::NAME, 'uri'),
-                new Optional(
+                new OptionalityRule(
                     new MatchRule(DescriptionGrammarRule::NAME, 'description'),
                 ),
             ),

@@ -8,7 +8,7 @@ use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
 
 /**
  * A tag that marks an element and carries no value beyond an optional
@@ -23,7 +23,7 @@ abstract class FlagTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: $name,
-            rule: new Optional(
+            rule: new OptionalityRule(
                 new MatchRule(DescriptionGrammarRule::NAME, 'description'),
             ),
             isInline: $isInline,

@@ -9,20 +9,17 @@ use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 
 /**
  * Matches an inner rule as many times as it applies.
- *
- * Each repetition captures under the same alias, retrieved together with
- * {@see MatchedResult::getAll()}.
  */
-final class Repeat extends Rule
+final readonly class RepetitionRule implements ProductionInterface
 {
     public function __construct(
-        private readonly Rule $rule,
+        private RuleInterface $rule,
         /**
          * Least number of repetitions required to match.
          *
          * @var int<0, max>
          */
-        private readonly int $min = 0,
+        private int $min = 0,
     ) {}
 
     public function match(Context $context): void

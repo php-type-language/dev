@@ -13,9 +13,9 @@ use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\OneOf;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\AlternationRule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@see`" tag can be used to define a {@see CodeReference element}.
@@ -45,12 +45,12 @@ final class SeeTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequenceOf(
-                new OneOf(
+            rule: new SequencingRule(
+                new AlternationRule(
                     new MatchRule(ReferenceGrammarRule::NAME, 'ref'),
                     new MatchRule(UriGrammarRule::NAME, 'ref'),
                 ),
-                new Optional(
+                new OptionalityRule(
                     new MatchRule(DescriptionGrammarRule::NAME, 'description'),
                 ),
             ),

@@ -8,12 +8,12 @@ use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@param-out`" tag documents the type that a by-reference argument holds
@@ -31,10 +31,10 @@ final class ParamOutTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequenceOf(
+            rule: new SequencingRule(
                 new MatchRule(TypeGrammarRule::NAME, 'type'),
                 new MatchRule(VariableGrammarRule::NAME, 'variable'),
-                new Optional(
+                new OptionalityRule(
                     new MatchRule(DescriptionGrammarRule::NAME, 'description'),
                 ),
             ),
@@ -44,7 +44,7 @@ final class ParamOutTagDefinition extends TagDefinition
 
     public function create(string $name, MatchedResult $result): ParamOutTag
     {
-        /** @var TypeStatement $type */
+        /** @var TypeReference $type */
         $type = $result->get('type');
 
         /** @var non-empty-string $variable */

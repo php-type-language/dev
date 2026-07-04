@@ -7,12 +7,12 @@ namespace TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * A tag that constrains a trait so that it may only be used within a class
@@ -27,9 +27,9 @@ abstract class RequireInheritanceTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: $name,
-            rule: new SequenceOf(
+            rule: new SequencingRule(
                 new MatchRule(TypeGrammarRule::NAME, 'type'),
-                new Optional(
+                new OptionalityRule(
                     new MatchRule(DescriptionGrammarRule::NAME, 'description'),
                 ),
             ),
@@ -39,7 +39,7 @@ abstract class RequireInheritanceTagDefinition extends TagDefinition
 
     final public function create(string $name, MatchedResult $result): RequireInheritanceTag
     {
-        /** @var TypeStatement $type */
+        /** @var TypeReference $type */
         $type = $result->get('type');
 
         /** @var DescriptionInterface|null $description */
@@ -49,7 +49,7 @@ abstract class RequireInheritanceTagDefinition extends TagDefinition
     }
 
     abstract protected function make(
-        TypeStatement $type,
+        TypeReference $type,
         ?DescriptionInterface $description,
     ): RequireInheritanceTag;
 }

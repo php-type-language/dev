@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 
 /**
  * The "`@require-implements`" tag constrains a trait so that it may only be
@@ -25,7 +25,7 @@ final class RequireImplementsTagDefinition extends RequireInheritanceTagDefiniti
     }
 
     protected function make(
-        TypeStatement $type,
+        TypeReference $type,
         ?DescriptionInterface $description,
     ): RequireImplementsTag {
         return new RequireImplementsTag(self::NAME, $type, $description);

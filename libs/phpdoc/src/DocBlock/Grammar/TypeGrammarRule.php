@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Grammar;
 
 use TypeLang\Parser\TypeParserInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
+use TypeLang\Printer\PrinterInterface;
 
 /**
  * Reads a type from the cursor, consuming exactly the part that forms
@@ -16,17 +17,17 @@ use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
  *
  * The result pairs the parsed type with the source text it was read from.
  *
- * @implements RuleInterface<TypeStatement>
+ * @implements RuleInterface<TypeReference>
  */
 final readonly class TypeGrammarRule implements RuleInterface
 {
     public const string NAME = 'Type';
 
     public function __construct(
-        private TypeParserInterface $typeParser,
+        private TypeParserInterface $typeParser
     ) {}
 
-    public function __invoke(Cursor $cursor): TypeStatement
+    public function __invoke(Cursor $cursor): TypeReference
     {
         $start = $cursor->position;
         $source = $cursor->readRemainder();
@@ -50,6 +51,6 @@ final readonly class TypeGrammarRule implements RuleInterface
             throw new NoMatchException('Expected a type');
         }
 
-        return new TypeStatement($result->type, $consumed);
+        return new TypeReference($result->type, $consumed);
     }
 }

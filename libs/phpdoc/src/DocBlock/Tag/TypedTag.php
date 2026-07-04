@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -22,7 +22,7 @@ abstract class TypedTag extends Tag implements TypedTagInterface
         /**
          * The parsed type together with its original source text.
          */
-        protected readonly TypeStatement $statement,
+        protected readonly TypeReference $statement,
         ?DescriptionInterface $description = null,
     ) {
         parent::__construct($name, $description);

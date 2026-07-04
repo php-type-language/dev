@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
+use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 
 /**
  * The "`@use`" tag makes a generic trait concrete by providing the type
@@ -26,7 +26,7 @@ final class UseTagDefinition extends InheritanceTagDefinition
     }
 
     protected function make(
-        TypeStatement $type,
+        TypeReference $type,
         ?DescriptionInterface $description,
     ): UseTag {
         return new UseTag(self::NAME, $type, $description);

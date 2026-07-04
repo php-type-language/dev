@@ -15,7 +15,7 @@ use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
  * delegating the parsing (including any inline tags) to the description parser.
  *
  * There is nothing to read when only whitespace is left, so wrap it in
- * {@see Optional} to make the description optional.
+ * {@see OptionalityRule} to make the description optional.
  *
  * @implements RuleInterface<DescriptionInterface>
  */

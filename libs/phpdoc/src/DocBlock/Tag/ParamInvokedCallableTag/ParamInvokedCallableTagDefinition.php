@@ -10,8 +10,8 @@ use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * A callable argument annotated by the moment at which it is invoked.
@@ -25,9 +25,9 @@ abstract class ParamInvokedCallableTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: $name,
-            rule: new SequenceOf(
+            rule: new SequencingRule(
                 new MatchRule(VariableGrammarRule::NAME, 'variable'),
-                new Optional(
+                new OptionalityRule(
                     new MatchRule(DescriptionGrammarRule::NAME, 'description'),
                 ),
             ),

@@ -10,16 +10,16 @@ use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 /**
  * Matches the first of the given alternatives that applies.
  */
-final class OneOf extends Rule
+final readonly class AlternationRule implements ProductionInterface
 {
     /**
-     * @var list<Rule>
+     * @var non-empty-list<RuleInterface>
      */
-    private readonly array $rules;
+    private array $rules;
 
-    public function __construct(Rule ...$rules)
+    public function __construct(RuleInterface $rule, RuleInterface ...$other)
     {
-        $this->rules = \array_values($rules);
+        $this->rules = \array_values([$rule, ...$other]);
     }
 
     public function match(Context $context): void

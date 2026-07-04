@@ -10,8 +10,8 @@ use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequenceOf;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
+use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@unused-param`" tag marks an argument that is intentionally left
@@ -29,9 +29,9 @@ final class UnusedParamTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequenceOf(
+            rule: new SequencingRule(
                 new MatchRule(VariableGrammarRule::NAME, 'variable'),
-                new Optional(
+                new OptionalityRule(
                     new MatchRule(DescriptionGrammarRule::NAME, 'description'),
                 ),
             ),
