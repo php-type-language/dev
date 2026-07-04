@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Grammar;
 
 use TypeLang\Parser\TypeParserInterface;
+use TypeLang\PhpDoc\DocBlock\Type\TypeStatement;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
-use TypeLang\Type\TypeNode;
 
 /**
  * Reads a type from the cursor, consuming exactly the part that forms
  * a valid type and leaving any trailing text (such as a description) untouched.
  *
- * @implements RuleInterface<TypeNode>
+ * The result pairs the parsed type with the source text it was read from.
+ *
+ * @implements RuleInterface<TypeStatement>
  */
 final readonly class TypeGrammarRule implements RuleInterface
 {
@@ -24,7 +26,7 @@ final readonly class TypeGrammarRule implements RuleInterface
         private TypeParserInterface $typeParser,
     ) {}
 
-    public function __invoke(Cursor $cursor): TypeNode
+    public function __invoke(Cursor $cursor): TypeStatement
     {
         $start = $cursor->position;
         $source = $cursor->readRemainder();
@@ -40,6 +42,14 @@ final readonly class TypeGrammarRule implements RuleInterface
 
         $cursor->position = $start + $result->offset;
 
-        return $result->type;
+        // The tolerant offset also covers the whitespace up to the next token,
+        // so the trailing run is trimmed off the preserved type text.
+        $consumed = \rtrim(\substr($source, 0, $result->offset));
+
+        if ($consumed === '') {
+            throw new NoMatchException('Expected a type');
+        }
+
+        return new TypeStatement($result->type, $consumed);
     }
 }
