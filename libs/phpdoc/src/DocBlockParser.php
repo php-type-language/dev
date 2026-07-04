@@ -13,11 +13,23 @@ use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\CategoryTag\CategoryTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\CopyrightTag\CopyrightTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\FilesourceTag\FilesourceTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\FinalTag\FinalTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\IgnoreTag\IgnoreTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\InheritDocTag\InheritDocTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\InternalTag\InternalTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ImplementsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\UseTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\MixinTag\MixinTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\NoNamedArgumentsTag\NoNamedArgumentsTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\OverrideTag\OverrideTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PackageTag\PackageTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamClosureThisTag\ParamClosureThisTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamInvokedCallableTag\ParamImmediatelyInvokedCallableTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamInvokedCallableTag\ParamLaterInvokedCallableTagDefinition;
@@ -26,13 +38,19 @@ use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyReadTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyWriteTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PureUnlessCallableIsImpureTag\PureUnlessCallableIsImpureTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ReadonlyTag\ReadonlyTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag\RequireExtendsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag\RequireImplementsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SealMethodsTag\SealMethodsTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SealPropertiesTag\SealPropertiesTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SubpackageTag\SubpackageTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\TodoTag\TodoTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UnusedParamTag\UnusedParamTagDefinition;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
@@ -134,6 +152,25 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             ParamImmediatelyInvokedCallableTagDefinition::NAME => new ParamImmediatelyInvokedCallableTagDefinition(),
             ParamLaterInvokedCallableTagDefinition::NAME => new ParamLaterInvokedCallableTagDefinition(),
             UnusedParamTagDefinition::NAME => new UnusedParamTagDefinition(),
+
+            AbstractTagDefinition::NAME => new AbstractTagDefinition(),
+            ApiTagDefinition::NAME => new ApiTagDefinition(),
+            FinalTagDefinition::NAME => new FinalTagDefinition(),
+            FilesourceTagDefinition::NAME => new FilesourceTagDefinition(),
+            IgnoreTagDefinition::NAME => new IgnoreTagDefinition(),
+            InheritDocTagDefinition::NAME => new InheritDocTagDefinition(),
+            InternalTagDefinition::NAME => new InternalTagDefinition(),
+            NoNamedArgumentsTagDefinition::NAME => new NoNamedArgumentsTagDefinition(),
+            OverrideTagDefinition::NAME => new OverrideTagDefinition(),
+            ReadonlyTagDefinition::NAME => new ReadonlyTagDefinition(),
+            SealMethodsTagDefinition::NAME => new SealMethodsTagDefinition(),
+            SealPropertiesTagDefinition::NAME => new SealPropertiesTagDefinition(),
+            PureUnlessCallableIsImpureTagDefinition::NAME => new PureUnlessCallableIsImpureTagDefinition(),
+            TodoTagDefinition::NAME => new TodoTagDefinition(),
+            CategoryTagDefinition::NAME => new CategoryTagDefinition(),
+            CopyrightTagDefinition::NAME => new CopyrightTagDefinition(),
+            PackageTagDefinition::NAME => new PackageTagDefinition(),
+            SubpackageTagDefinition::NAME => new SubpackageTagDefinition(),
         ];
     }
 

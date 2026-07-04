@@ -214,29 +214,29 @@ its description.
 
 **Standard**
 
-- [ ] `@abstract` — Declare any _Element_ as abstract
-- [ ] `@api` — Highlight _Element_ as being part of the public API
+- [x] `@abstract` — Declare any _Element_ as abstract
+- [x] `@api` — Highlight _Element_ as being part of the public API
 - [ ] `@author`
-- [ ] `@category` — Used to organize groups of packages together
-- [ ] `@copyright` — Used to document the copyright information of any _Element_
+- [x] `@category` — Used to organize groups of packages together
+- [x] `@copyright` — Used to document the copyright information of any _Element_
 - [ ] `@deprecated`
 - [ ] `@example`
 - [x] `@extends` — Allows to extend templated classes and interfaces
-- [ ] `@filesource`
-- [ ] `@final` — Declare any _Element_ as final
+- [x] `@filesource`
+- [x] `@final` — Declare any _Element_ as final
 - [ ] `@global`
-- [ ] `@ignore` — Tells documentation systems that an _Element_ is not to be processed
+- [x] `@ignore` — Tells documentation systems that an _Element_ is not to be processed
 - [x] `@implements` — Allows to extend templated interfaces
-- [ ] `@inheritdoc`
+- [x] `@inheritdoc`
 - [x] `@inherits` — An alias of the `@extends` tag
-- [ ] `@internal`
+- [x] `@internal`
 - [ ] `@license` — Used to indicate which license is applicable
 - [x] `@link` — Indicates a custom relation between the associated _Element_ and a website identified by an absolute URI
 - [ ] `@method` — Declares which "_magic_" methods are callable
 - [x] `@mixin`
-- [ ] `@no-named-arguments` — Indicates that argument names may change in the future
-- [ ] `@package` — Categorizes _Element(s)_ into logical subdivisions
-- [ ] `@override` — Marks a method as overriding an inherited definition
+- [x] `@no-named-arguments` — Indicates that argument names may change in the future
+- [x] `@package` — Categorizes _Element(s)_ into logical subdivisions
+- [x] `@override` — Marks a method as overriding an inherited definition
 - [x] `@param` — Documents a single argument of a function or method
 - [x] `@param-closure-this`
 - [x] `@param-immediately-invoked-callable`
@@ -245,18 +245,18 @@ its description.
 - [x] `@property` — Declares which "_magic_" properties are supported
 - [x] `@property-read` — Declares "_magic_" properties supported for reading
 - [x] `@property-write` — Declares "_magic_" properties supported for writing
-- [ ] `@pure-unless-callable-is-impure`
-- [ ] `@readonly`
+- [x] `@pure-unless-callable-is-impure`
+- [x] `@readonly`
 - [x] `@require-extends`
 - [x] `@require-implements`
 - [x] `@return` — Documents the return value of a function or method ()
 - [x] `@returns` — Seems quite common (typo in code). An alias of the `@return` tag
-- [ ] `@seal-methods`
-- [ ] `@seal-properties`
+- [x] `@seal-methods`
+- [x] `@seal-properties`
 - [x] `@see` — Indicates a reference from the associated _Symbol(s)_ to a website or other _Symbol(s)_
 - [ ] `@since`
 - [ ] `@source`
-- [ ] `@subpackage` — Categorizes _Element(s)_ into logical subdivisions
+- [x] `@subpackage` — Categorizes _Element(s)_ into logical subdivisions
 - [ ] `@suppress`
 - [ ] `@template` — Declares a generic type parameter
 - [ ] `@template-contravariant` — Declares a generic contravariant type parameter
@@ -266,7 +266,7 @@ its description.
 - [x] `@template-use` — Allows to extend templated traits
 - [x] `@throw` — Seems quite common (typo in code). An alias of the `@throws` tag
 - [x] `@throws` — Indicates the type of `\Throwable` an _Element_ may throw
-- [ ] `@todo`
+- [x] `@todo`
 - [x] `@unused-param`
 - [x] `@use` — An alias of the `@template-use` tag
 - [ ] `@used-by`
