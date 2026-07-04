@@ -9,11 +9,8 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\ComponentInterface;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
 use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
-use TypeLang\PhpDoc\DocBlock\Tag\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
-use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
-use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Tests\TestCase;
 
 final class DescriptionParserTest extends TestCase
@@ -24,7 +21,7 @@ final class DescriptionParserTest extends TestCase
     public static function parserDataProvider(): iterable
     {
         yield 'BalancedBraceAwareParser' => [
-            new BalancedBraceAwareParser(new StringTagParser(new TagFactory())),
+            self::createDescriptionParser(),
         ];
     }
 

@@ -7,7 +7,7 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Description;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
 use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
-use TypeLang\PhpDoc\DocBlock\Tag\GenericTag;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Tests\TestCase;
 
@@ -17,7 +17,7 @@ final class TaggedDescriptionTest extends TestCase
     public function constructorStoresComponentsAsList(): void
     {
         $first = new Description('a');
-        $second = new GenericTag('see');
+        $second = new Tag('see');
 
         $description = new TaggedDescription([5 => $first, 9 => $second]);
 
@@ -33,7 +33,7 @@ final class TaggedDescriptionTest extends TestCase
     #[Test]
     public function constructorAcceptsTraversable(): void
     {
-        $tag = new GenericTag('see');
+        $tag = new Tag('see');
 
         $description = new TaggedDescription(new \ArrayIterator([$tag]));
 
@@ -43,7 +43,7 @@ final class TaggedDescriptionTest extends TestCase
     #[Test]
     public function tagsContainsOnlyTagComponents(): void
     {
-        $tag = new GenericTag('see');
+        $tag = new Tag('see');
 
         $description = new TaggedDescription([
             new Description('text '),
@@ -67,7 +67,7 @@ final class TaggedDescriptionTest extends TestCase
     {
         $description = new TaggedDescription([
             new Description('a'),
-            new GenericTag('see'),
+            new Tag('see'),
             new Description('b'),
         ]);
 
@@ -121,7 +121,7 @@ final class TaggedDescriptionTest extends TestCase
     #[Test]
     public function iteratorYieldsAllComponentsInOrder(): void
     {
-        $components = [new Description('a'), new GenericTag('see'), new Description('b')];
+        $components = [new Description('a'), new Tag('see'), new Description('b')];
         $description = new TaggedDescription($components);
 
         $this->assertSame($components, \iterator_to_array($description, false));
@@ -130,7 +130,7 @@ final class TaggedDescriptionTest extends TestCase
     #[Test]
     public function tagComponentsAreTagInterfaceInstances(): void
     {
-        $description = new TaggedDescription([new GenericTag('see')]);
+        $description = new TaggedDescription([new Tag('see')]);
 
         $this->assertContainsOnlyInstancesOf(TagInterface::class, $description->tags);
     }

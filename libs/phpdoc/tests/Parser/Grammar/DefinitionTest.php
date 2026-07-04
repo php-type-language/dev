@@ -11,12 +11,12 @@ use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTag;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
-use TypeLang\PhpDoc\DocBlock\Tag\TagFactory;
 use TypeLang\PhpDoc\Exception\MalformedTagException;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Grammar;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
+use TypeLang\PhpDoc\TagFactory;
 use TypeLang\PhpDoc\Tests\TestCase;
 
 final class DefinitionTest extends TestCase
@@ -24,7 +24,7 @@ final class DefinitionTest extends TestCase
     #[Test]
     public function ruleStringifiesToItsGrammar(): void
     {
-        self::assertSame('<URI> [ <description> ]', (string) new LinkTagDefinition()->rule);
+        self::assertSame('<URI> [ <Description> ]', (string) new LinkTagDefinition()->rule);
     }
 
     #[Test]
@@ -33,7 +33,6 @@ final class DefinitionTest extends TestCase
         $tag = self::factory()->create(
             'link',
             'https://example.com Some description',
-            self::descriptions(),
         );
 
         self::assertInstanceOf(LinkTag::class, $tag);
@@ -46,7 +45,7 @@ final class DefinitionTest extends TestCase
     #[Test]
     public function matchesUriWithoutDescription(): void
     {
-        $tag = self::factory()->create('link', 'https://example.com', self::descriptions());
+        $tag = self::factory()->create('link', 'https://example.com');
 
         self::assertInstanceOf(LinkTag::class, $tag);
         self::assertSame('https://example.com', (string) $tag->uri);
@@ -63,7 +62,6 @@ final class DefinitionTest extends TestCase
         $tag = self::factory()->create(
             'link',
             'https://example.com see {@link X}',
-            self::descriptions(),
         );
 
         self::assertInstanceOf(LinkTag::class, $tag);
@@ -75,9 +73,9 @@ final class DefinitionTest extends TestCase
     public function missingRequiredUriIsMalformed(): void
     {
         $this->expectException(MalformedTagException::class);
-        $this->expectExceptionMessage('Malformed "@link" tag, expected: <URI> [ <description> ]');
+        $this->expectExceptionMessage('Malformed "@link" tag, expected: <URI> [ <Description> ]');
 
-        self::factory()->create('link', '', self::descriptions());
+        self::factory()->create('link', '');
     }
 
     /**
@@ -87,7 +85,7 @@ final class DefinitionTest extends TestCase
     public function malformedTagReportsFailureOffset(): void
     {
         try {
-            self::factory()->create('link', '     ', self::descriptions());
+            self::factory()->create('link', '     ');
             self::fail('Expected a MalformedTagException');
         } catch (MalformedTagException $e) {
             self::assertSame(5, $e->offset);
@@ -102,7 +100,7 @@ final class DefinitionTest extends TestCase
     #[Test]
     public function unregisteredTagFallsBackToPlainTag(): void
     {
-        $tag = self::factory()->create('unknown', 'free text', self::descriptions());
+        $tag = self::factory()->create('unknown', 'free text');
 
         self::assertNotInstanceOf(LinkTag::class, $tag);
         self::assertSame('unknown', $tag->name);
@@ -117,14 +115,14 @@ final class DefinitionTest extends TestCase
     {
         $this->expectException(MalformedTagException::class);
 
-        self::factory()->create('link', "\t", self::descriptions());
+        self::factory()->create('link', "\t");
     }
 
     private static function factory(): TagFactory
     {
         return new TagFactory(
             definitions: ['link' => new LinkTagDefinition()],
-            grammar: self::grammar(),
+            rules: self::grammar(),
         );
     }
 
@@ -145,6 +143,6 @@ final class DefinitionTest extends TestCase
 
     private static function descriptions(): DescriptionParserInterface
     {
-        return new BalancedBraceAwareParser(new StringTagParser(new TagFactory()));
+        return new BalancedBraceAwareParser(new StringTagParser(self::createTagFactory()));
     }
 }

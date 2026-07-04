@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\Tests\Bench\DocBlockParser;
+namespace TypeLang\PhpDoc\Tests\Bench;
 
 abstract readonly class DocBlockParserBench
 {

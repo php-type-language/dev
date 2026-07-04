@@ -6,7 +6,6 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
-use TypeLang\PhpDoc\DocBlock\Tag\GenericTag;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Tests\TestCase;
@@ -20,13 +19,13 @@ final class TagTest extends TestCase
     #[Test]
     public function constructorStoresName(): void
     {
-        $this->assertSame('param', new GenericTag('param')->name);
+        $this->assertSame('param', new Tag('param')->name);
     }
 
     #[Test]
     public function descriptionDefaultsToNull(): void
     {
-        $this->assertNull(new GenericTag('param')->description);
+        $this->assertNull(new Tag('param')->description);
     }
 
     #[Test]
@@ -34,12 +33,12 @@ final class TagTest extends TestCase
     {
         $description = new Description('int $a');
 
-        $this->assertSame($description, new GenericTag('param', $description)->description);
+        $this->assertSame($description, new Tag('param', $description)->description);
     }
 
     #[Test]
     public function implementsTagInterface(): void
     {
-        $this->assertInstanceOf(TagInterface::class, new GenericTag('param'));
+        $this->assertInstanceOf(TagInterface::class, new Tag('param'));
     }
 }

@@ -9,7 +9,6 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
-use TypeLang\PhpDoc\DocBlock\Tag\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\EmptyTagLineException;
 use TypeLang\PhpDoc\Exception\EmptyTagNameException;
@@ -30,7 +29,7 @@ final class TagParserTest extends TestCase
     public static function parserDataProvider(): iterable
     {
         yield 'StringTagParser' => [
-            new StringTagParser(new TagFactory()),
+            new StringTagParser(self::createTagFactory()),
         ];
     }
 
@@ -76,7 +75,7 @@ final class TagParserTest extends TestCase
             'empty definition' => ['', EmptyTagLineException::class, '', null],
             'missing "@" prefix' => ['foo bar', InvalidTagPrefixException::class, '', 'foo bar'],
             '"@" followed by whitespace' => ['@ foo', EmptyTagNameException::class, '', ' foo'],
-            'bare "@"' => ['@', EmptyTagNameException::class, '', null],
+            'bare "@"' => ['@', EmptyTagNameException::class, '', ''],
             // Punctuation such as "!" is not a name character.
             '"@" followed by punctuation' => ['@!bad', EmptyTagNameException::class, '', '!bad'],
         ];
@@ -249,7 +248,7 @@ final class TagParserTest extends TestCase
      */
     private static function descriptions(): DescriptionParserInterface
     {
-        return new BalancedBraceAwareParser(new StringTagParser(new TagFactory()));
+        return self::createDescriptionParser();
     }
 
     /**
