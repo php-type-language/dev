@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc;
 
 use JetBrains\PhpStorm\Language;
+use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
 use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Tag\Link\LinkTagDefinition;
-use TypeLang\PhpDoc\DocBlock\Tag\See\SeeTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TagFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\TagFactoryInterface;
@@ -63,9 +66,13 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
     private function createDefaultGrammar(): Grammar
     {
+        $typeParser = new TypeParser();
+
         return new Grammar([
             UriGrammarRule::NAME => new UriGrammarRule(),
             ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
+            TypeGrammarRule::NAME => new TypeGrammarRule($typeParser),
+            VariableGrammarRule::NAME => new VariableGrammarRule(),
         ]);
     }
 

@@ -58,7 +58,7 @@ final class Context
         }
     }
 
-    public function result(): MatchedResult
+    public function toMatchedResult(): MatchedResult
     {
         $grouped = [];
 

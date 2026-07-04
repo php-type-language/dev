@@ -24,21 +24,19 @@ final readonly class ReferenceGrammarRule implements RuleInterface
     public const string NAME = 'reference';
 
     /**
-     * The ASCII characters allowed in a method, constant, property or variable
-     * name.
+     * Validates a member name: letters, digits and "_".
      */
-    private const string NAME_CHARS = 'abcdefghijklmnopqrstuvwxyz'
-        . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        . '0123456789'
-        . '_';
+    private NameValidator $names;
 
-    private string $nameTerminators;
-    private string $symbolTerminators;
+    /**
+     * Validates a class name: letters, digits, "_" and "\".
+     */
+    private NameValidator $symbols;
 
     public function __construct()
     {
-        $this->nameTerminators = self::terminatorsExcept(self::NAME_CHARS);
-        $this->symbolTerminators = self::terminatorsExcept(self::NAME_CHARS . '\\');
+        $this->names = new NameValidator();
+        $this->symbols = new NameValidator('\\');
     }
 
     public function __invoke(Cursor $cursor): CodeReference
@@ -84,7 +82,7 @@ final readonly class ReferenceGrammarRule implements RuleInterface
      */
     private function parseVariable(string $reference): ?VariableReference
     {
-        $name = $this->name(\substr($reference, 1));
+        $name = $this->names->validate(\substr($reference, 1));
 
         return $name === null ? null : new VariableReference($name);
     }
@@ -94,7 +92,7 @@ final readonly class ReferenceGrammarRule implements RuleInterface
      */
     private function parseFunction(string $reference): ?FunctionReference
     {
-        $symbol = $this->symbol(\substr($reference, 0, -2));
+        $symbol = $this->symbols->validate(\substr($reference, 0, -2));
 
         return $symbol === null ? null : new FunctionReference($symbol);
     }
@@ -104,14 +102,14 @@ final readonly class ReferenceGrammarRule implements RuleInterface
      */
     private function parseSymbol(string $reference): ?SymbolReference
     {
-        $symbol = $this->symbol($reference);
+        $symbol = $this->symbols->validate($reference);
 
         return $symbol === null ? null : new SymbolReference($symbol);
     }
 
     private function parseClassMember(string $class, string $member): ?CodeReference
     {
-        $symbol = $this->symbol($class);
+        $symbol = $this->symbols->validate($class);
 
         if ($symbol === null || $member === '') {
             return null;
@@ -138,7 +136,7 @@ final readonly class ReferenceGrammarRule implements RuleInterface
      */
     private function parseClassProperty(string $class, string $member): ?ClassPropertyReference
     {
-        $name = $this->name(\substr($member, 1));
+        $name = $this->names->validate(\substr($member, 1));
 
         return $name === null ? null : new ClassPropertyReference($class, $name);
     }
@@ -150,7 +148,7 @@ final readonly class ReferenceGrammarRule implements RuleInterface
      */
     private function parseClassMethod(string $class, string $member): ?ClassMethodReference
     {
-        $name = $this->name(\substr($member, 0, -2));
+        $name = $this->names->validate(\substr($member, 0, -2));
 
         return $name === null ? null : new ClassMethodReference($class, $name);
     }
@@ -162,53 +160,8 @@ final readonly class ReferenceGrammarRule implements RuleInterface
      */
     private function parseClassConstant(string $class, string $member): ?ClassConstantReference
     {
-        $name = $this->name($member);
+        $name = $this->names->validate($member);
 
         return $name === null ? null : new ClassConstantReference($class, $name);
-    }
-
-    /**
-     * Returns $value when it is a class name (letters, digits, "_" and "\"),
-     * otherwise null.
-     *
-     * @return non-empty-string|null
-     */
-    private function symbol(string $value): ?string
-    {
-        return $value !== '' && \strcspn($value, $this->symbolTerminators) === \strlen($value)
-            ? $value
-            : null;
-    }
-
-    /**
-     * Returns $value when it is a member name (letters, digits and "_"),
-     * otherwise null.
-     *
-     * @return non-empty-string|null
-     */
-    private function name(string $value): ?string
-    {
-        return $value !== '' && \strcspn($value, $this->nameTerminators) === \strlen($value)
-            ? $value
-            : null;
-    }
-
-    /**
-     * The ASCII characters that are not in $allowed; a value built only from
-     * allowed characters (any byte above 0x7F included) contains none of them.
-     */
-    private static function terminatorsExcept(string $allowed): string
-    {
-        $mask = '';
-
-        for ($byte = 0x00; $byte <= 0x7F; ++$byte) {
-            $char = \chr($byte);
-
-            if (!\str_contains($allowed, $char)) {
-                $mask .= $char;
-            }
-        }
-
-        return $mask;
     }
 }
