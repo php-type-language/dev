@@ -221,36 +221,36 @@ its description.
 - [ ] `@copyright` — Used to document the copyright information of any _Element_
 - [ ] `@deprecated`
 - [ ] `@example`
-- [ ] `@extends` — Allows to extend templated classes and interfaces
+- [x] `@extends` — Allows to extend templated classes and interfaces
 - [ ] `@filesource`
 - [ ] `@final` — Declare any _Element_ as final
 - [ ] `@global`
 - [ ] `@ignore` — Tells documentation systems that an _Element_ is not to be processed
-- [ ] `@implements` — Allows to extend templated interfaces
+- [x] `@implements` — Allows to extend templated interfaces
 - [ ] `@inheritdoc`
-- [ ] `@inherits` — An alias of the `@extends` tag
+- [x] `@inherits` — An alias of the `@extends` tag
 - [ ] `@internal`
 - [ ] `@license` — Used to indicate which license is applicable
 - [x] `@link` — Indicates a custom relation between the associated _Element_ and a website identified by an absolute URI
 - [ ] `@method` — Declares which "_magic_" methods are callable
-- [ ] `@mixin`
+- [x] `@mixin`
 - [ ] `@no-named-arguments` — Indicates that argument names may change in the future
 - [ ] `@package` — Categorizes _Element(s)_ into logical subdivisions
 - [ ] `@override` — Marks a method as overriding an inherited definition
-- [ ] `@param` — Documents a single argument of a function or method
-- [ ] `@param-closure-this`
+- [x] `@param` — Documents a single argument of a function or method
+- [x] `@param-closure-this`
 - [ ] `@param-immediately-invoked-callable`
 - [ ] `@param-later-invoked-callable`
-- [ ] `@param-out`
-- [ ] `@property` — Declares which "_magic_" properties are supported
-- [ ] `@property-read` — Declares "_magic_" properties supported for reading
-- [ ] `@property-write` — Declares "_magic_" properties supported for writing
+- [x] `@param-out`
+- [x] `@property` — Declares which "_magic_" properties are supported
+- [x] `@property-read` — Declares "_magic_" properties supported for reading
+- [x] `@property-write` — Declares "_magic_" properties supported for writing
 - [ ] `@pure-unless-callable-is-impure`
 - [ ] `@readonly`
-- [ ] `@require-extends`
-- [ ] `@require-implements`
-- [ ] `@return` — Documents the return value of a function or method
-- [ ] `@returns` — An alias of the `@return` tag
+- [x] `@require-extends`
+- [x] `@require-implements`
+- [x] `@return` — Documents the return value of a function or method ()
+- [x] `@returns` — Seems quite common (typo in code). An alias of the `@return` tag
 - [ ] `@seal-methods`
 - [ ] `@seal-properties`
 - [x] `@see` — Indicates a reference from the associated _Symbol(s)_ to a website or other _Symbol(s)_
@@ -261,14 +261,14 @@ its description.
 - [ ] `@template` — Declares a generic type parameter
 - [ ] `@template-contravariant` — Declares a generic contravariant type parameter
 - [ ] `@template-covariant` — Declares a generic covariant type parameter
-- [ ] `@template-extends` — An alias of the `@extends` tag
-- [ ] `@template-implements` — An alias of the `@implements` tag
-- [ ] `@template-use` — Allows to extend templated traits
-- [ ] `@throw` — An alias of the `@throws` tag
-- [ ] `@throws` — Indicates the type of `\Throwable` an _Element_ may throw
+- [x] `@template-extends` — An alias of the `@extends` tag
+- [x] `@template-implements` — An alias of the `@implements` tag
+- [x] `@template-use` — Allows to extend templated traits
+- [x] `@throw` — Seems quite common (typo in code). An alias of the `@throws` tag
+- [x] `@throws` — Indicates the type of `\Throwable` an _Element_ may throw
 - [ ] `@todo`
 - [ ] `@unused-param`
-- [ ] `@use` — An alias of the `@template-use` tag
+- [x] `@use` — An alias of the `@template-use` tag
 - [ ] `@used-by`
 - [ ] `@uses`
 - [ ] `@var` — Documents the _Type_ of the following _Element_
