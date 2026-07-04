@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Tag\Link;
+namespace TypeLang\PhpDoc\DocBlock\Tag\LinkTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;

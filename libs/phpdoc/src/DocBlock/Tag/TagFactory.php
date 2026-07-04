@@ -84,11 +84,12 @@ final readonly class TagFactory implements TagFactoryInterface, \IteratorAggrega
             );
         }
 
-        return $definition->create($name, $context->result());
+        return $definition->create($name, $context->toMatchedResult());
     }
 
     public function getIterator(): \Traversable
     {
+        /** @var \ArrayIterator<non-empty-string, TagDefinitionInterface> */
         return new \ArrayIterator($this->definitions);
     }
 
