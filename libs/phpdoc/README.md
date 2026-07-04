@@ -216,7 +216,7 @@ its description.
 
 - [x] `@abstract` — Declare any _Element_ as abstract
 - [x] `@api` — Highlight _Element_ as being part of the public API
-- [ ] `@author`
+- [x] `@author`
 - [x] `@category` — Used to organize groups of packages together
 - [x] `@copyright` — Used to document the copyright information of any _Element_
 - [ ] `@deprecated`
@@ -269,8 +269,8 @@ its description.
 - [x] `@todo`
 - [x] `@unused-param`
 - [x] `@use` — An alias of the `@template-use` tag
-- [ ] `@used-by`
-- [ ] `@uses`
+- [x] `@used-by`
+- [x] `@uses`
 - [ ] `@var` — Documents the _Type_ of the following _Element_
 - [ ] `@version`
 
