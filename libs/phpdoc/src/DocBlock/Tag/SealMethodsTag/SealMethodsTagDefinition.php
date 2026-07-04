@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\SealMethodsTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\TagSpecification;
 
 /**
  * The "`@seal-methods`" tag forbids declaring magic methods beyond those
@@ -15,17 +18,26 @@ use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
  * "@seal-methods" [ <Description> ]
  * ```
  */
-final class SealMethodsTagDefinition extends FlagTagDefinition
+final class SealMethodsTagDefinition extends TagDefinition
 {
     public const string NAME = 'seal-methods';
 
     public function __construct()
     {
-        parent::__construct(self::NAME);
+        parent::__construct(
+            name: self::NAME,
+            spec: TagSpecification::maybe(
+                TagSpecification::rule(DescriptionCombinator::NAME, 'description'),
+            ),
+            isInline: false,
+        );
     }
 
-    protected function make(?DescriptionInterface $description): SealMethodsTag
+    public function create(string $name, TagPayload $result): SealMethodsTag
     {
+        /** @var DescriptionInterface|null $description */
+        $description = $result->find('description');
+
         return new SealMethodsTag(self::NAME, $description);
     }
 }

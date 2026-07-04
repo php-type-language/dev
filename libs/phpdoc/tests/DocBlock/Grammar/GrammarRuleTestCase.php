@@ -6,7 +6,7 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Grammar;
 
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Grammar;
-use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Tests\TestCase;
 
 /**
@@ -17,7 +17,7 @@ abstract class GrammarRuleTestCase extends TestCase
     /**
      * @return RuleType
      */
-    abstract protected function rule(): RuleInterface;
+    abstract protected function rule(): CombinatorInterface;
 
     protected function matchCursor(Cursor $cursor): mixed
     {

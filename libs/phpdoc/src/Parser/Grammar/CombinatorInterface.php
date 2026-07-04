@@ -7,7 +7,7 @@ namespace TypeLang\PhpDoc\Parser\Grammar;
 /**
  * @template-covariant TResult of mixed = mixed
  */
-interface RuleInterface
+interface CombinatorInterface
 {
     /**
      * @return TResult

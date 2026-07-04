@@ -6,15 +6,15 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Grammar;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 
 final class VariableGrammarRuleTest extends GrammarRuleTestCase
 {
-    protected function rule(): VariableGrammarRule
+    protected function rule(): VariableCombinator
     {
-        return new VariableGrammarRule();
+        return new VariableCombinator();
     }
 
     /**

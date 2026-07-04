@@ -6,8 +6,8 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamInvokedCallableTag\ParamImmediatelyInvokedCallableTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamInvokedCallableTag\ParamImmediatelyInvokedCallableTagDefinition;
@@ -111,9 +111,9 @@ final class VariableTagTest extends TestCase
                 ParamLaterInvokedCallableTagDefinition::NAME => new ParamLaterInvokedCallableTagDefinition(),
                 UnusedParamTagDefinition::NAME => new UnusedParamTagDefinition(),
             ],
-            rules: [
-                VariableGrammarRule::NAME => new VariableGrammarRule(),
-                DescriptionGrammarRule::NAME => new DescriptionGrammarRule(self::createDescriptionParser()),
+            combinators: [
+                VariableCombinator::NAME => new VariableCombinator(),
+                DescriptionCombinator::NAME => new DescriptionCombinator(self::createDescriptionParser()),
             ],
         );
     }

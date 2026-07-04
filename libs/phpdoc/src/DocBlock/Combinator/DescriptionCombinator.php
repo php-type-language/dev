@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Grammar;
+namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 /**
  * Reads the trailing description, consuming everything that is left and
@@ -17,9 +17,9 @@ use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
  * There is nothing to read when only whitespace is left, so wrap it in
  * {@see OptionalityRule} to make the description optional.
  *
- * @implements RuleInterface<DescriptionInterface>
+ * @implements CombinatorInterface<DescriptionInterface>
  */
-final readonly class DescriptionGrammarRule implements RuleInterface
+final readonly class DescriptionCombinator implements CombinatorInterface
 {
     public const string NAME = 'Description';
 

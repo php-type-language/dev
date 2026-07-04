@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Grammar;
+namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
-final readonly class UriGrammarRule implements RuleInterface
+final readonly class UriCombinator implements CombinatorInterface
 {
     public const string NAME = 'URI';
 

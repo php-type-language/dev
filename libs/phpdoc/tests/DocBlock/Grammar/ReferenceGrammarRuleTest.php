@@ -6,7 +6,7 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Grammar;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
 use TypeLang\PhpDoc\DocBlock\Reference\ClassConstantReference;
 use TypeLang\PhpDoc\DocBlock\Reference\ClassMethodReference;
 use TypeLang\PhpDoc\DocBlock\Reference\ClassPropertyReference;
@@ -19,9 +19,9 @@ use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 
 final class ReferenceGrammarRuleTest extends GrammarRuleTestCase
 {
-    protected function rule(): ReferenceGrammarRule
+    protected function rule(): ReferenceCombinator
     {
-        return new ReferenceGrammarRule();
+        return new ReferenceCombinator();
     }
 
     /**

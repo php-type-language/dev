@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\TodoTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\TagSpecification;
 
 /**
  * The "`@todo`" tag records a task that still needs to be done for an element.
@@ -14,17 +17,26 @@ use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
  * "@todo" [ <Description> ]
  * ```
  */
-final class TodoTagDefinition extends FlagTagDefinition
+final class TodoTagDefinition extends TagDefinition
 {
     public const string NAME = 'todo';
 
     public function __construct()
     {
-        parent::__construct(self::NAME);
+        parent::__construct(
+            name: self::NAME,
+            spec: TagSpecification::maybe(
+                TagSpecification::rule(DescriptionCombinator::NAME, 'description'),
+            ),
+            isInline: false,
+        );
     }
 
-    protected function make(?DescriptionInterface $description): TodoTag
+    public function create(string $name, TagPayload $result): TodoTag
     {
+        /** @var DescriptionInterface|null $description */
+        $description = $result->find('description');
+
         return new TodoTag(self::NAME, $description);
     }
 }

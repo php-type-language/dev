@@ -26,7 +26,7 @@ use TypeLang\PhpDoc\Parser\TagParser;
  * );
  * ```
  *
- * @phpstan-import-type RuleType from Grammar
+ * @phpstan-import-type CombinatorType from Grammar
  *
  * @template-implements \IteratorAggregate<non-empty-string, TagDefinitionInterface>
  */
@@ -41,14 +41,14 @@ final readonly class TagFactory implements TagFactoryInterface, \IteratorAggrega
 
     /**
      * @param iterable<non-empty-string, TagDefinitionInterface> $definitions
-     * @param iterable<non-empty-string, RuleType> $rules
+     * @param iterable<non-empty-string, CombinatorType> $combinators
      */
     public function __construct(
         iterable $definitions = [],
-        iterable $rules = [],
+        iterable $combinators = [],
         private TagDefinitionInterface $genericTagDefinition = new GenericTagDefinition(),
     ) {
-        $this->parser = new TagParser($rules);
+        $this->parser = new TagParser($combinators);
         $this->definitions = \iterator_to_array($definitions);
     }
 

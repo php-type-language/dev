@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\Parser\Grammar;
+namespace TypeLang\PhpDoc\DocBlock\Tag\Definition;
 
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\UncapturedRuleException;
@@ -17,7 +17,7 @@ use TypeLang\PhpDoc\Parser\Grammar\Exception\UncapturedRuleException;
  * $result->getAll('parameter'); // every value captured under the alias
  * ```
  */
-final readonly class MatchedResult
+final readonly class TagPayload
 {
     public function __construct(
         /**

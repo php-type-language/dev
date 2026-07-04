@@ -7,9 +7,9 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Parser\TypeParser;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTagDefinition;
@@ -94,10 +94,10 @@ final class TypedVariableTagTest extends TestCase
                 ParamTagDefinition::NAME => new ParamTagDefinition(),
                 PropertyReadTagDefinition::NAME => new PropertyReadTagDefinition(),
             ],
-            rules: [
-                TypeGrammarRule::NAME => new TypeGrammarRule(new TypeParser()),
-                VariableGrammarRule::NAME => new VariableGrammarRule(),
-                DescriptionGrammarRule::NAME => new DescriptionGrammarRule(self::createDescriptionParser()),
+            combinators: [
+                TypeCombinator::NAME => new TypeCombinator(new TypeParser()),
+                VariableCombinator::NAME => new VariableCombinator(),
+                DescriptionCombinator::NAME => new DescriptionCombinator(self::createDescriptionParser()),
             ],
         );
     }

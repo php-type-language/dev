@@ -7,8 +7,8 @@ namespace TypeLang\PhpDoc\Tests\Parser\Grammar;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTag;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
@@ -25,7 +25,7 @@ final class DefinitionTest extends TestCase
     #[Test]
     public function ruleStringifiesToItsGrammar(): void
     {
-        self::assertSame('<URI> [ <Description> ]', (string) new LinkTagDefinition()->rule);
+        self::assertSame('<URI> [ <Description> ]', (string) new LinkTagDefinition()->spec);
     }
 
     #[Test]
@@ -127,7 +127,7 @@ final class DefinitionTest extends TestCase
     {
         return new TagFactory(
             definitions: ['link' => new LinkTagDefinition()],
-            rules: self::grammar(),
+            combinators: self::grammar(),
         );
     }
 
@@ -140,8 +140,8 @@ final class DefinitionTest extends TestCase
     {
         $grammar = new Grammar();
 
-        $grammar->add(UriGrammarRule::NAME, new UriGrammarRule());
-        $grammar->add(DescriptionGrammarRule::NAME, new DescriptionGrammarRule(self::descriptions()));
+        $grammar->add(UriCombinator::NAME, new UriCombinator());
+        $grammar->add(DescriptionCombinator::NAME, new DescriptionCombinator(self::descriptions()));
 
         return $grammar;
     }

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\InheritDocTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
+use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 
 /**
  * The "`@inheritdoc`" tag reuses the documentation of the parent element.
@@ -14,17 +17,26 @@ use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
  * "@inheritdoc" [ <Description> ]
  * ```
  */
-final class InheritDocTagDefinition extends FlagTagDefinition
+final class InheritDocTagDefinition extends TagDefinition
 {
     public const string NAME = 'inheritdoc';
 
     public function __construct()
     {
-        parent::__construct(self::NAME, isInline: true);
+        parent::__construct(
+            name: self::NAME,
+            spec: Spec::maybe(
+                Spec::rule(DescriptionCombinator::NAME, 'description'),
+            ),
+            isInline: true,
+        );
     }
 
-    protected function make(?DescriptionInterface $description): InheritDocTag
+    public function create(string $name, TagPayload $result): InheritDocTag
     {
+        /** @var DescriptionInterface|null $description */
+        $description = $result->find('description');
+
         return new InheritDocTag(self::NAME, $description);
     }
 }

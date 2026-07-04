@@ -6,7 +6,7 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTag;
 use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\FlagTagInterface;
@@ -81,8 +81,8 @@ final class FlagTagTest extends TestCase
                 InternalTagDefinition::NAME => new InternalTagDefinition(),
                 TodoTagDefinition::NAME => new TodoTagDefinition(),
             ],
-            rules: [
-                DescriptionGrammarRule::NAME => new DescriptionGrammarRule(self::createDescriptionParser()),
+            combinators: [
+                DescriptionCombinator::NAME => new DescriptionCombinator(self::createDescriptionParser()),
             ],
         );
     }

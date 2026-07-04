@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\ReturnTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@return`" tag documents the value that a function or method returns to
@@ -33,17 +31,17 @@ final class ReturnTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequencingRule(
-                new MatchRule(TypeGrammarRule::NAME, 'type'),
-                new OptionalityRule(
-                    new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+            spec: Spec::sequence(
+                Spec::rule(TypeCombinator::NAME, 'type'),
+                Spec::maybe(
+                    Spec::rule(DescriptionCombinator::NAME, 'description'),
                 ),
             ),
             isInline: false,
         );
     }
 
-    public function create(string $name, MatchedResult $result): ReturnTag
+    public function create(string $name, TagPayload $result): ReturnTag
     {
         /** @var TypeReference $type */
         $type = $result->get('type');

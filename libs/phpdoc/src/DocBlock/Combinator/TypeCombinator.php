@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Grammar;
+namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\Parser\TypeParserInterface;
 use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\Printer\PrinterInterface;
 
 /**
@@ -17,9 +17,9 @@ use TypeLang\Printer\PrinterInterface;
  *
  * The result pairs the parsed type with the source text it was read from.
  *
- * @implements RuleInterface<TypeReference>
+ * @implements CombinatorInterface<TypeReference>
  */
-final readonly class TypeGrammarRule implements RuleInterface
+final readonly class TypeCombinator implements CombinatorInterface
 {
     public const string NAME = 'Type';
 

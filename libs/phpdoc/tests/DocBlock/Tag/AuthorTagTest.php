@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\DocBlock\Grammar\AuthorNameGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\EmailGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\AuthorNameCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTag;
 use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTagDefinition;
 use TypeLang\PhpDoc\DocBlockParser;
@@ -54,9 +54,9 @@ final class AuthorTagTest extends TestCase
             definitions: [
                 AuthorTagDefinition::NAME => new AuthorTagDefinition(),
             ],
-            rules: [
-                AuthorNameGrammarRule::NAME => new AuthorNameGrammarRule(),
-                EmailGrammarRule::NAME => new EmailGrammarRule(),
+            combinators: [
+                AuthorNameCombinator::NAME => new AuthorNameCombinator(),
+                EmailCombinator::NAME => new EmailCombinator(),
             ],
         );
     }

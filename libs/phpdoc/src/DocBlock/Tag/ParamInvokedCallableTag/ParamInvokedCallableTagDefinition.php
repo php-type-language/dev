@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\ParamInvokedCallableTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * A callable argument annotated by the moment at which it is invoked.
@@ -25,17 +23,17 @@ abstract class ParamInvokedCallableTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: $name,
-            rule: new SequencingRule(
-                new MatchRule(VariableGrammarRule::NAME, 'variable'),
-                new OptionalityRule(
-                    new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+            spec: Spec::sequence(
+                Spec::rule(VariableCombinator::NAME, 'variable'),
+                Spec::maybe(
+                    Spec::rule(DescriptionCombinator::NAME, 'description'),
                 ),
             ),
             isInline: false,
         );
     }
 
-    final public function create(string $name, MatchedResult $result): ParamInvokedCallableTag
+    final public function create(string $name, TagPayload $result): ParamInvokedCallableTag
     {
         /** @var non-empty-string $variable */
         $variable = $result->get('variable');

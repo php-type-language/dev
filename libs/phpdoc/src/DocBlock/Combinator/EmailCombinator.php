@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Grammar;
+namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 /**
  * Reads an email address up to its closing ">".
  *
- * @implements RuleInterface<non-empty-string>
+ * @implements CombinatorInterface<non-empty-string>
  */
-final readonly class EmailGrammarRule implements RuleInterface
+final readonly class EmailCombinator implements CombinatorInterface
 {
     public const string NAME = 'Email';
 

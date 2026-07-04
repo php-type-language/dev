@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\LinkTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@link`" tag can be used to define a relation, or link, between
@@ -37,17 +35,17 @@ final class LinkTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequencingRule(
-                new MatchRule(UriGrammarRule::NAME, 'uri'),
-                new OptionalityRule(
-                    new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+            spec: Spec::sequence(
+                Spec::rule(UriCombinator::NAME, 'uri'),
+                Spec::maybe(
+                    Spec::rule(DescriptionCombinator::NAME, 'description'),
                 ),
             ),
             isInline: true,
         );
     }
 
-    public function create(string $name, MatchedResult $result): LinkTag
+    public function create(string $name, TagPayload $result): LinkTag
     {
         /** @var UriReference $uri */
         $uri = $result->get('uri');

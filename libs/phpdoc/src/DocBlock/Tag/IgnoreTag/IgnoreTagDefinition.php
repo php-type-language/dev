@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\IgnoreTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
+use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 
 /**
  * The "`@ignore`" tag tells documentation tooling to skip the element it is
@@ -15,17 +18,26 @@ use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
  * "@ignore" [ <Description> ]
  * ```
  */
-final class IgnoreTagDefinition extends FlagTagDefinition
+final class IgnoreTagDefinition extends TagDefinition
 {
     public const string NAME = 'ignore';
 
     public function __construct()
     {
-        parent::__construct(self::NAME);
+        parent::__construct(
+            name: self::NAME,
+            spec: Spec::maybe(
+                Spec::rule(DescriptionCombinator::NAME, 'description'),
+            ),
+            isInline: false,
+        );
     }
 
-    protected function make(?DescriptionInterface $description): IgnoreTag
+    public function create(string $name, TagPayload $result): IgnoreTag
     {
+        /** @var DescriptionInterface|null $description */
+        $description = $result->find('description');
+
         return new IgnoreTag(self::NAME, $description);
     }
 }

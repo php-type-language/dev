@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag;
 
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\RuleInterface;
 
 /**
@@ -25,9 +25,9 @@ interface TagDefinitionInterface extends \Stringable
     }
 
     /**
-     * The shape of the tag body.
+     * Tag definition specification: shape of the tag body.
      */
-    public RuleInterface $rule {
+    public RuleInterface $spec {
         get;
     }
 
@@ -44,9 +44,9 @@ interface TagDefinitionInterface extends \Stringable
     }
 
     /**
-     * Builds the tag from the values captured while matching {@see $rule}.
+     * Builds the tag from the values captured while matching {@see $spec}.
      *
      * @param non-empty-string $name the tag name, without the leading "@"
      */
-    public function create(string $name, MatchedResult $result): TagInterface;
+    public function create(string $name, TagPayload $result): TagInterface;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\AuthorTag;
 
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 /**
@@ -21,8 +22,9 @@ final class AuthorTag extends Tag
          * @var non-empty-string|null
          */
         public readonly ?string $email = null,
+        ?DescriptionInterface $description = null,
     ) {
-        parent::__construct($name);
+        parent::__construct($name, $description);
     }
 
     public function __toString(): string

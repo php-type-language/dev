@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\AbstractTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
+use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 
 /**
  * The "`@abstract`" tag declares an element as abstract.
@@ -14,17 +17,26 @@ use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
  * "@abstract" [ <Description> ]
  * ```
  */
-final class AbstractTagDefinition extends FlagTagDefinition
+final class AbstractTagDefinition extends TagDefinition
 {
     public const string NAME = 'abstract';
 
     public function __construct()
     {
-        parent::__construct(self::NAME);
+        parent::__construct(
+            name: self::NAME,
+            spec: Spec::maybe(
+                Spec::rule(DescriptionCombinator::NAME, 'description'),
+            ),
+            isInline: false,
+        );
     }
 
-    protected function make(?DescriptionInterface $description): AbstractTag
+    public function create(string $name, TagPayload $result): AbstractTag
     {
+        /** @var DescriptionInterface|null $description */
+        $description = $result->find('description');
+
         return new AbstractTag(self::NAME, $description);
     }
 }

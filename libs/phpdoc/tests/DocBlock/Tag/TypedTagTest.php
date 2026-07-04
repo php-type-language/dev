@@ -7,9 +7,10 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Parser\TypeParser;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTag;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\InheritanceTag;
@@ -22,7 +23,6 @@ use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TypedTagInterface;
 use TypeLang\PhpDoc\Exception\MalformedTagException;
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 use TypeLang\PhpDoc\TagFactory;
 use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\Type\NamedTypeNode;
@@ -85,7 +85,7 @@ final class TypedTagTest extends TestCase
         $statement = new TypeReference(new TypeParser()->parse('bool'), 'bool');
 
         $tag = new ReturnTagDefinition()
-            ->create('whatever-was-written', new MatchedResult(['type' => [$statement]]));
+            ->create('whatever-was-written', new TagPayload(['type' => [$statement]]));
 
         self::assertInstanceOf(ReturnTag::class, $tag);
         self::assertSame('return', $tag->name);
@@ -149,9 +149,9 @@ final class TypedTagTest extends TestCase
                 MixinTagDefinition::NAME => new MixinTagDefinition(),
                 ExtendsTagDefinition::NAME => new ExtendsTagDefinition(),
             ],
-            rules: [
-                TypeGrammarRule::NAME => new TypeGrammarRule(new TypeParser()),
-                DescriptionGrammarRule::NAME => new DescriptionGrammarRule(self::createDescriptionParser()),
+            combinators: [
+                TypeCombinator::NAME => new TypeCombinator(new TypeParser()),
+                DescriptionCombinator::NAME => new DescriptionCombinator(self::createDescriptionParser()),
             ],
         );
     }

@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\SeeTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Reference\CodeReference;
 use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\AlternationRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@see`" tag can be used to define a {@see CodeReference element}.
@@ -45,20 +42,20 @@ final class SeeTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequencingRule(
-                new AlternationRule(
-                    new MatchRule(ReferenceGrammarRule::NAME, 'ref'),
-                    new MatchRule(UriGrammarRule::NAME, 'ref'),
+            spec: Spec::sequence(
+                Spec::oneOf(
+                    Spec::rule(ReferenceCombinator::NAME, 'ref'),
+                    Spec::rule(UriCombinator::NAME, 'ref'),
                 ),
-                new OptionalityRule(
-                    new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+                Spec::maybe(
+                    Spec::rule(DescriptionCombinator::NAME, 'description'),
                 ),
             ),
             isInline: true,
         );
     }
 
-    public function create(string $name, MatchedResult $result): SeeTag
+    public function create(string $name, TagPayload $result): SeeTag
     {
         /** @var CodeReference|UriReference $reference */
         $reference = $result->get('ref');

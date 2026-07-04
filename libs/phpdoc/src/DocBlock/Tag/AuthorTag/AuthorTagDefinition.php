@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\AuthorTag;
 
-use TypeLang\PhpDoc\DocBlock\Grammar\AuthorNameGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\EmailGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\AuthorNameCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
+use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\LiteralRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@author`" tag documents the author of an element, together with an
@@ -29,21 +28,24 @@ final class AuthorTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequencingRule(
-                new MatchRule(AuthorNameGrammarRule::NAME, 'author'),
-                new OptionalityRule(
-                    new SequencingRule(
-                        new LiteralRule('<'),
-                        new MatchRule(EmailGrammarRule::NAME, 'email'),
-                        new LiteralRule('>'),
+            spec: Spec::sequence(
+                Spec::rule(AuthorNameCombinator::NAME, 'author'),
+                Spec::maybe(
+                    Spec::sequence(
+                        Spec::literal('<'),
+                        Spec::rule(EmailCombinator::NAME, 'email'),
+                        Spec::literal('>'),
                     ),
+                ),
+                Spec::maybe(
+                    Spec::rule(DescriptionCombinator::NAME, 'description'),
                 ),
             ),
             isInline: false,
         );
     }
 
-    public function create(string $name, MatchedResult $result): AuthorTag
+    public function create(string $name, TagPayload $result): AuthorTag
     {
         /** @var non-empty-string $author */
         $author = $result->get('author');
@@ -51,6 +53,14 @@ final class AuthorTagDefinition extends TagDefinition
         /** @var non-empty-string|null $email */
         $email = $result->find('email');
 
-        return new AuthorTag(self::NAME, $author, $email);
+        /** @var DescriptionInterface|null $description */
+        $description = $result->find('description');
+
+        return new AuthorTag(
+            name: self::NAME,
+            author: $author,
+            email: $email,
+            description: $description,
+        );
     }
 }

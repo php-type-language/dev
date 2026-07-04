@@ -6,7 +6,7 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Grammar;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Parser\TypeParser;
-use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
@@ -16,9 +16,9 @@ use TypeLang\Type\UnionTypeNode;
 
 final class TypeGrammarRuleTest extends GrammarRuleTestCase
 {
-    protected function rule(): TypeGrammarRule
+    protected function rule(): TypeCombinator
     {
-        return new TypeGrammarRule(new TypeParser());
+        return new TypeCombinator(new TypeParser());
     }
 
     #[Test]

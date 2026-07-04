@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Grammar;
 
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+
 /**
  * The state shared by the rules of a single match: the {@see Cursor}, the
  * {@see Grammar} and the collected captures.
@@ -55,7 +57,7 @@ final class Context
         }
     }
 
-    public function toMatchedResult(): MatchedResult
+    public function toMatchedResult(): TagPayload
     {
         $grouped = [];
 
@@ -63,6 +65,6 @@ final class Context
             $grouped[$alias][] = $value;
         }
 
-        return new MatchedResult($grouped);
+        return new TagPayload($grouped);
     }
 }

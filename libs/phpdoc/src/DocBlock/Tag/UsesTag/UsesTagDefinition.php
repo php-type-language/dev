@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\UsesTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Reference\CodeReference;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\OptionalityRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\SequencingRule;
 
 /**
  * The "`@uses`" tag indicates that the described element uses the referenced
@@ -30,17 +28,17 @@ final class UsesTagDefinition extends TagDefinition
     {
         parent::__construct(
             name: self::NAME,
-            rule: new SequencingRule(
-                new MatchRule(ReferenceGrammarRule::NAME, 'reference'),
-                new OptionalityRule(
-                    new MatchRule(DescriptionGrammarRule::NAME, 'description'),
+            spec: Spec::sequence(
+                Spec::rule(ReferenceCombinator::NAME, 'reference'),
+                Spec::maybe(
+                    Spec::rule(DescriptionCombinator::NAME, 'description'),
                 ),
             ),
             isInline: false,
         );
     }
 
-    public function create(string $name, MatchedResult $result): UsesTag
+    public function create(string $name, TagPayload $result): UsesTag
     {
         /** @var CodeReference $reference */
         $reference = $result->get('reference');

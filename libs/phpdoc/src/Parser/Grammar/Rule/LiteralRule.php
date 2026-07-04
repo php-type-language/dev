@@ -16,7 +16,7 @@ final readonly class LiteralRule implements TerminalInterface
         /**
          * @var non-empty-string
          */
-        private string $literal,
+        private string $value,
         /**
          * @var non-empty-string|null
          */
@@ -25,8 +25,8 @@ final readonly class LiteralRule implements TerminalInterface
 
     public function match(Context $context): void
     {
-        if (!$context->cursor->readLiteral($this->literal)) {
-            throw new NoMatchException(\sprintf('Expected "%s"', $this->literal));
+        if (!$context->cursor->readLiteral($this->value)) {
+            throw new NoMatchException(\sprintf('Expected "%s"', $this->value));
         }
 
         if ($this->alias !== null) {
@@ -36,6 +36,6 @@ final readonly class LiteralRule implements TerminalInterface
 
     public function __toString(): string
     {
-        return \sprintf('"%s"', $this->literal);
+        return \sprintf('"%s"', $this->value);
     }
 }

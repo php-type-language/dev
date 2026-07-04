@@ -7,11 +7,11 @@ namespace TypeLang\PhpDoc\Tests;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use TypeLang\Parser\TypeParser;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\GenericTagDefinition;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
@@ -35,37 +35,37 @@ abstract class TestCase extends BaseTestCase
         $typeParser = new TypeParser();
 
         $baseRules = [
-            UriGrammarRule::NAME => new UriGrammarRule(),
-            ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
-            TypeGrammarRule::NAME => new TypeGrammarRule(typeParser: $typeParser),
-            VariableGrammarRule::NAME => new VariableGrammarRule(),
+            UriCombinator::NAME => new UriCombinator(),
+            ReferenceCombinator::NAME => new ReferenceCombinator(),
+            TypeCombinator::NAME => new TypeCombinator(typeParser: $typeParser),
+            VariableCombinator::NAME => new VariableCombinator(),
         ];
 
         $tagFactory = null;
 
-        $baseRules[DescriptionGrammarRule::NAME] = new \ReflectionClass(DescriptionGrammarRule::class)
-            ->newLazyProxy(function () use (&$tagFactory): DescriptionGrammarRule {
+        $baseRules[DescriptionCombinator::NAME] = new \ReflectionClass(DescriptionCombinator::class)
+            ->newLazyProxy(function () use (&$tagFactory): DescriptionCombinator {
                 if ($tagFactory === null) {
-                    return new DescriptionGrammarRule(new BalancedBraceAwareParser(
+                    return new DescriptionCombinator(new BalancedBraceAwareParser(
                         new StringTagParser(new TagFactory(
-                            rules: [
-                                UriGrammarRule::NAME => new UriGrammarRule(),
-                                ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
-                                TypeGrammarRule::NAME => new TypeGrammarRule(typeParser: new TypeParser()),
-                                VariableGrammarRule::NAME => new VariableGrammarRule(),
+                            combinators: [
+                                UriCombinator::NAME => new UriCombinator(),
+                                ReferenceCombinator::NAME => new ReferenceCombinator(),
+                                TypeCombinator::NAME => new TypeCombinator(typeParser: new TypeParser()),
+                                VariableCombinator::NAME => new VariableCombinator(),
                             ],
                             genericTagDefinition: new GenericTagDefinition(isInline: true),
                         )),
                     ));
                 }
 
-                return new DescriptionGrammarRule(
+                return new DescriptionCombinator(
                     new BalancedBraceAwareParser(new StringTagParser($tagFactory)),
                 );
             });
 
         $tagFactory = new TagFactory(
-            rules: $baseRules,
+            combinators: $baseRules,
             genericTagDefinition: new GenericTagDefinition(isInline: true),
         );
         return $tagFactory;

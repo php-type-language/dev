@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Grammar\Exception;
 
-class InvalidTagRuleException extends GrammarException
+class InvalidCombinatorException extends GrammarException
 {
     final public function __construct(
         public string $name,
@@ -19,7 +19,7 @@ class InvalidTagRuleException extends GrammarException
         string $name,
         ?\Throwable $previous = null,
     ): self {
-        $message = \vsprintf('Grammar rule "%s" is not registered', [
+        $message = \vsprintf('Tag combinator rule "%s" is not registered', [
             \addcslashes($name, '"'),
         ]);
 

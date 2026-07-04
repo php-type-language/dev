@@ -6,14 +6,14 @@ namespace TypeLang\PhpDoc\Parser\Grammar\Exception;
 
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 
-final class InvalidTagRuleForDefinitionException extends InvalidTagRuleException
+final class InvalidCombinatorForDefinitionException extends InvalidCombinatorException
 {
     public static function becauseInvalidRuleForDefinition(
         string $name,
         TagDefinitionInterface $definition,
         ?\Throwable $previous = null,
     ): self {
-        $message = \vsprintf('Could not parse "%s", because rule "%s" is not registered', [
+        $message = \vsprintf('Could not parse "%s", because combinator rule "%s" is not registered', [
             \addcslashes((string) $definition, '"'),
             \addcslashes($name, '"'),
         ]);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\DocBlock\Grammar;
+namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\PhpDoc\DocBlock\Reference\ClassConstantReference;
 use TypeLang\PhpDoc\DocBlock\Reference\ClassMethodReference;
@@ -13,13 +13,13 @@ use TypeLang\PhpDoc\DocBlock\Reference\SymbolReference;
 use TypeLang\PhpDoc\DocBlock\Reference\VariableReference;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 /**
  * Reads a reference to a code element: a class, a function, a class method, a
  * class constant, a class property or a variable.
  */
-final readonly class ReferenceGrammarRule implements RuleInterface
+final readonly class ReferenceCombinator implements CombinatorInterface
 {
     public const string NAME = 'Reference';
 

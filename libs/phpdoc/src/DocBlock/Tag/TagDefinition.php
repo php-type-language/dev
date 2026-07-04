@@ -13,12 +13,12 @@ abstract class TagDefinition implements TagDefinitionInterface
          * @var non-empty-string
          */
         public readonly string $name,
-        public readonly RuleInterface $rule,
+        public readonly RuleInterface $spec,
         public readonly bool $isInline = false,
     ) {}
 
     public function __toString(): string
     {
-        return \sprintf('"@%s" %s', $this->name, $this->rule);
+        return \sprintf('"@%s" %s', $this->name, $this->spec);
     }
 }

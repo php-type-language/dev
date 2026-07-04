@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
 use TypeLang\PhpDoc\DocBlock\Reference\ClassMethodReference;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ReferencedTagInterface;
@@ -64,9 +64,9 @@ final class ReferenceTagTest extends TestCase
                 UsesTagDefinition::NAME => new UsesTagDefinition(),
                 UsedByTagDefinition::NAME => new UsedByTagDefinition(),
             ],
-            rules: [
-                ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
-                DescriptionGrammarRule::NAME => new DescriptionGrammarRule(self::createDescriptionParser()),
+            combinators: [
+                ReferenceCombinator::NAME => new ReferenceCombinator(),
+                DescriptionCombinator::NAME => new DescriptionCombinator(self::createDescriptionParser()),
             ],
         );
     }

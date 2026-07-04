@@ -4,41 +4,41 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser;
 
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
 use TypeLang\PhpDoc\Exception\MalformedTagException;
 use TypeLang\PhpDoc\Parser\Grammar\Context;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
-use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidTagRuleException;
-use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidTagRuleForDefinitionException;
+use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidCombinatorException;
+use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidCombinatorForDefinitionException;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\PhpDoc\Parser\Grammar\Grammar;
-use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
 
 /**
- * @phpstan-import-type RuleType from Grammar
+ * @phpstan-import-type CombinatorType from Grammar
  */
 final readonly class TagParser
 {
     private Grammar $grammar;
 
     /**
-     * @param iterable<non-empty-string, RuleType> $rules
+     * @param iterable<non-empty-string, CombinatorType> $combinators
      */
-    public function __construct(iterable $rules)
+    public function __construct(iterable $combinators)
     {
-        $this->grammar = new Grammar($rules);
+        $this->grammar = new Grammar($combinators);
     }
 
-    public function parse(TagDefinitionInterface $definition, string $name, string $suffix): MatchedResult
+    public function parse(TagDefinitionInterface $definition, string $name, string $suffix): TagPayload
     {
         $cursor = new Cursor($suffix);
         $context = new Context($cursor, $this->grammar);
-        $rule = $definition->rule;
+        $rule = $definition->spec;
 
         try {
             $rule->match($context);
-        } catch (InvalidTagRuleException $e) {
-            throw InvalidTagRuleForDefinitionException::becauseInvalidRuleForDefinition(
+        } catch (InvalidCombinatorException $e) {
+            throw InvalidCombinatorForDefinitionException::becauseInvalidRuleForDefinition(
                 name: $e->name,
                 definition: $definition,
                 previous: $e,

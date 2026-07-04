@@ -8,13 +8,13 @@ use JetBrains\PhpStorm\Language;
 use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
-use TypeLang\PhpDoc\DocBlock\Grammar\AuthorNameGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\EmailGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
-use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\AuthorNameCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTagDefinition;
@@ -69,10 +69,9 @@ use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
 use TypeLang\PhpDoc\Parser\Splitter\StringSplitter;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
-use TypeLang\Printer\PrettyPrinter;
 
 /**
- * @phpstan-import-type RuleType from Grammar
+ * @phpstan-import-type CombinatorType from Grammar
  */
 final readonly class DocBlockParser implements DocBlockParserInterface
 {
@@ -105,21 +104,21 @@ final readonly class DocBlockParser implements DocBlockParserInterface
     }
 
     /**
-     * @return array<non-empty-string, RuleType>
+     * @return array<non-empty-string, CombinatorType>
      */
-    private function createDefaultRules(): array
+    private function createDefaultCombinators(): array
     {
         $typeParser = new TypeParser();
 
         return [
-            UriGrammarRule::NAME => new UriGrammarRule(),
-            ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
-            TypeGrammarRule::NAME => new TypeGrammarRule($typeParser),
-            VariableGrammarRule::NAME => new VariableGrammarRule(),
-            AuthorNameGrammarRule::NAME => new AuthorNameGrammarRule(),
-            EmailGrammarRule::NAME => new EmailGrammarRule(),
-            DescriptionGrammarRule::NAME => new \ReflectionClass(DescriptionGrammarRule::class)
-                ->newLazyProxy(fn(): DescriptionGrammarRule => new DescriptionGrammarRule(
+            UriCombinator::NAME => new UriCombinator(),
+            ReferenceCombinator::NAME => new ReferenceCombinator(),
+            TypeCombinator::NAME => new TypeCombinator($typeParser),
+            VariableCombinator::NAME => new VariableCombinator(),
+            AuthorNameCombinator::NAME => new AuthorNameCombinator(),
+            EmailCombinator::NAME => new EmailCombinator(),
+            DescriptionCombinator::NAME => new \ReflectionClass(DescriptionCombinator::class)
+                ->newLazyProxy(fn(): DescriptionCombinator => new DescriptionCombinator(
                     descriptionParser: $this->descriptionParser,
                 )),
         ];
@@ -189,7 +188,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
     private function createTagFactory(): TagFactoryInterface
     {
         $definitions = $this->createDefaultTagDefinitions();
-        $rules = $this->createDefaultRules();
+        $rules = $this->createDefaultCombinators();
 
         return new TagFactory($definitions, $rules);
     }

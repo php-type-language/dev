@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\DocBlock\Tag\NoNamedArgumentsTag;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
-use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\TagPayload;
+use TypeLang\PhpDoc\DocBlock\Tag\Definition\Spec;
+use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 
 /**
  * The "`@no-named-arguments`" tag indicates that the argument names may change
@@ -15,17 +18,26 @@ use TypeLang\PhpDoc\DocBlock\Tag\FlagTagDefinition;
  * "@no-named-arguments" [ <Description> ]
  * ```
  */
-final class NoNamedArgumentsTagDefinition extends FlagTagDefinition
+final class NoNamedArgumentsTagDefinition extends TagDefinition
 {
     public const string NAME = 'no-named-arguments';
 
     public function __construct()
     {
-        parent::__construct(self::NAME);
+        parent::__construct(
+            name: self::NAME,
+            spec: Spec::maybe(
+                Spec::rule(DescriptionCombinator::NAME, 'description'),
+            ),
+            isInline: false,
+        );
     }
 
-    protected function make(?DescriptionInterface $description): NoNamedArgumentsTag
+    public function create(string $name, TagPayload $result): NoNamedArgumentsTag
     {
+        /** @var DescriptionInterface|null $description */
+        $description = $result->find('description');
+
         return new NoNamedArgumentsTag(self::NAME, $description);
     }
 }

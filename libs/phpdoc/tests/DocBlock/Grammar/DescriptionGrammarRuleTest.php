@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
 use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
-use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\GenericTagDefinition;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
@@ -18,16 +18,16 @@ use TypeLang\PhpDoc\TagFactory;
 
 final class DescriptionGrammarRuleTest extends GrammarRuleTestCase
 {
-    protected function rule(): DescriptionGrammarRule
+    protected function rule(): DescriptionCombinator
     {
-        return new \ReflectionClass(DescriptionGrammarRule::class)
-            ->newLazyProxy(function (DescriptionGrammarRule $proxy) {
-                return new DescriptionGrammarRule(
+        return new \ReflectionClass(DescriptionCombinator::class)
+            ->newLazyProxy(function (DescriptionCombinator $proxy) {
+                return new DescriptionCombinator(
                     descriptionParser: new BalancedBraceAwareParser(
                         tagParser: new StringTagParser(
                             tagFactory: new TagFactory(
-                                rules: [
-                                    DescriptionGrammarRule::NAME => $proxy,
+                                combinators: [
+                                    DescriptionCombinator::NAME => $proxy,
                                 ],
                                 genericTagDefinition: new GenericTagDefinition(isInline: true),
                             ),

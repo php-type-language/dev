@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Grammar;
 
-use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidTagRuleException;
+use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidCombinatorException;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\AlternationRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\RuleInterface;
 
 /**
  * The named terminals ({@see MatchRule}) that tag definitions may reference.
@@ -17,7 +15,7 @@ use TypeLang\PhpDoc\Parser\Grammar\Rule\RuleInterface;
  * {@see NoMatchException} when the input does not fit.
  *
  * ```
- * $grammar->addRule('URI', static function (Cursor $cursor): string {
+ * $grammar->add('URI', static function (Cursor $cursor): string {
  *     $uri = $cursor->readWord();
  *
  *     if ($uri === '') {
@@ -28,34 +26,34 @@ use TypeLang\PhpDoc\Parser\Grammar\Rule\RuleInterface;
  * });
  * ```
  *
- * @phpstan-type RuleType callable(Cursor): mixed
+ * @phpstan-type CombinatorType callable(Cursor): mixed
  *
- * @template-implements \IteratorAggregate<non-empty-string, RuleType>
+ * @template-implements \IteratorAggregate<non-empty-string, CombinatorType>
  */
 final class Grammar implements \Countable, \IteratorAggregate
 {
     /**
-     * @var array<non-empty-string, RuleType>
+     * @var array<non-empty-string, CombinatorType>
      */
-    private array $rules = [];
+    private array $combinators = [];
 
     /**
-     * @param iterable<non-empty-string, RuleType> $rules
+     * @param iterable<non-empty-string, CombinatorType> $rules
      */
     public function __construct(iterable $rules = [])
     {
-        $this->rules = \iterator_to_array($rules);
+        $this->combinators = \iterator_to_array($rules);
     }
 
     /**
      * Registers (or overrides) a named terminal reader.
      *
      * @param non-empty-string $name
-     * @param RuleType $reader
+     * @param CombinatorType $reader
      */
     public function add(string $name, callable $reader): void
     {
-        $this->rules[$name] = $reader;
+        $this->combinators[$name] = $reader;
     }
 
     /**
@@ -63,24 +61,24 @@ final class Grammar implements \Countable, \IteratorAggregate
      */
     public function has(string $name): bool
     {
-        return isset($this->rules[$name]);
+        return isset($this->combinators[$name]);
     }
 
     /**
      * @param non-empty-string $name
-     * @return RuleType
-     * @throws InvalidTagRuleException
+     * @return CombinatorType
+     * @throws InvalidCombinatorException
      */
     public function get(string $name): callable
     {
-        return $this->rules[$name]
-            ?? throw InvalidTagRuleException::becauseInvalidRule($name);
+        return $this->combinators[$name]
+            ?? throw InvalidCombinatorException::becauseInvalidRule($name);
     }
 
     public function getIterator(): \Traversable
     {
-        /** @var \ArrayIterator<non-empty-string, RuleType> */
-        return new \ArrayIterator($this->rules);
+        /** @var \ArrayIterator<non-empty-string, CombinatorType> */
+        return new \ArrayIterator($this->combinators);
     }
 
     /**
@@ -88,6 +86,6 @@ final class Grammar implements \Countable, \IteratorAggregate
      */
     public function count(): int
     {
-        return \count($this->rules);
+        return \count($this->combinators);
     }
 }
