@@ -7,6 +7,7 @@ namespace TypeLang\PhpDoc\Tests\Parser\Grammar;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Description\TaggedDescription;
+use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTag;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
@@ -128,14 +129,16 @@ final class DefinitionTest extends TestCase
     }
 
     /**
-     * A grammar whose only terminal, `URI`, reads a single whitespace-delimited
-     * word and rejects an empty one.
+     * A grammar with the two terminals a `@link` tag references: `URI`, which
+     * reads a single whitespace-delimited word, and `description`, which
+     * consumes the trailing text.
      */
     private static function grammar(): Grammar
     {
         $grammar = new Grammar();
 
-        $grammar->add('URI', new UriGrammarRule());
+        $grammar->add(UriGrammarRule::NAME, new UriGrammarRule());
+        $grammar->add(DescriptionGrammarRule::NAME, new DescriptionGrammarRule(self::descriptions()));
 
         return $grammar;
     }

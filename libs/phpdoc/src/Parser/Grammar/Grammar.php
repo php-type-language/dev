@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Grammar;
 
+use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidTagRuleException;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
 
@@ -66,15 +67,17 @@ final class Grammar implements \Countable, \IteratorAggregate
     /**
      * @param non-empty-string $name
      * @return RuleType
+     * @throws InvalidTagRuleException
      */
     public function get(string $name): callable
     {
         return $this->rules[$name]
-            ?? throw new \LogicException(\sprintf('Grammar rule "%s" is not registered', $name));
+            ?? throw InvalidTagRuleException::becauseInvalidRule($name);
     }
 
     public function getIterator(): \Traversable
     {
+        /** @var \ArrayIterator<non-empty-string, RuleType> */
         return new \ArrayIterator($this->rules);
     }
 

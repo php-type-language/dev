@@ -15,7 +15,7 @@ use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
  */
 final readonly class VariableGrammarRule implements RuleInterface
 {
-    public const string NAME = 'variable';
+    public const string NAME = 'Variable';
 
     /**
      * Validates a variable name: letters, digits and "_".

@@ -8,6 +8,7 @@ use JetBrains\PhpStorm\Language;
 use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
+use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
@@ -31,6 +32,9 @@ use TypeLang\PhpDoc\Parser\Splitter\StringSplitter;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
 
+/**
+ * @phpstan-import-type RuleType from Grammar
+ */
 final readonly class DocBlockParser implements DocBlockParserInterface
 {
     public TagFactoryInterface $tags;
@@ -45,13 +49,10 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             splitter: $this->createDocBlockSplitter(),
         );
 
-        $this->tagParser = $this->createTagParser(
-            factory: $this->tags = $this->createTagFactory(),
-        );
+        $this->tags = $this->createTagFactory();
 
-        $this->descriptionParser = $this->createDescriptionParser(
-            parser: $this->tagParser,
-        );
+        $this->tagParser = $this->createTagParser($this->tags);
+        $this->descriptionParser = $this->createDescriptionParser($this->tagParser);
     }
 
     private function createAnalyzer(SplitterInterface $splitter): DocBlockAnalyzer
@@ -64,16 +65,25 @@ final readonly class DocBlockParser implements DocBlockParserInterface
         return new StringSplitter();
     }
 
-    private function createDefaultGrammar(): Grammar
+    /**
+     * @return array<non-empty-string, RuleType>
+     */
+    private function createDefaultRules(): array
     {
         $typeParser = new TypeParser();
 
-        return new Grammar([
+        return [
             UriGrammarRule::NAME => new UriGrammarRule(),
             ReferenceGrammarRule::NAME => new ReferenceGrammarRule(),
-            TypeGrammarRule::NAME => new TypeGrammarRule($typeParser),
+            TypeGrammarRule::NAME => new TypeGrammarRule(
+                typeParser: $typeParser,
+            ),
             VariableGrammarRule::NAME => new VariableGrammarRule(),
-        ]);
+            DescriptionGrammarRule::NAME => new \ReflectionClass(DescriptionGrammarRule::class)
+                ->newLazyProxy(fn(): DescriptionGrammarRule => new DescriptionGrammarRule(
+                    parser: $this->descriptionParser,
+                )),
+        ];
     }
 
     /**
@@ -89,10 +99,10 @@ final readonly class DocBlockParser implements DocBlockParserInterface
 
     private function createTagFactory(): TagFactoryInterface
     {
-        return new TagFactory(
-            definitions: $this->createDefaultTagDefinitions(),
-            grammar: $this->createDefaultGrammar(),
-        );
+        $definitions = $this->createDefaultTagDefinitions();
+        $rules = $this->createDefaultRules();
+
+        return new TagFactory($definitions, $rules);
     }
 
     private function createTagParser(TagFactoryInterface $factory): TagParserInterface

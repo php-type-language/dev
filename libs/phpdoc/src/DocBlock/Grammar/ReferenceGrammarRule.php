@@ -21,7 +21,7 @@ use TypeLang\PhpDoc\Parser\Grammar\RuleInterface;
  */
 final readonly class ReferenceGrammarRule implements RuleInterface
 {
-    public const string NAME = 'reference';
+    public const string NAME = 'Reference';
 
     /**
      * Validates a member name: letters, digits and "_".

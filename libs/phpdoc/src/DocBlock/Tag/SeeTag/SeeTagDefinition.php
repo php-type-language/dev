@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag\SeeTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Reference\CodeReference;
 use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Description;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\OneOf;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
@@ -55,7 +55,7 @@ final class SeeTagDefinition extends TagDefinition
                 new MatchRule(UriGrammarRule::NAME, 'ref'),
             ),
             new Optional(
-                new Description('description'),
+                new MatchRule(DescriptionGrammarRule::NAME, 'description'),
             ),
         );
     }

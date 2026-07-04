@@ -10,4 +10,4 @@ namespace TypeLang\PhpDoc\Parser\Grammar\Exception;
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\PhpDoc\Parser\Grammar
  */
-final class NoMatchException extends \RuntimeException {}
+final class NoMatchException extends GrammarException {}

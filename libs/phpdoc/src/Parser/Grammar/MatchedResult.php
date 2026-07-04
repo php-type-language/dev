@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Parser\Grammar;
 
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
+use TypeLang\PhpDoc\Parser\Grammar\Exception\UncapturedRuleException;
 
 /**
  * The values a match captured, addressed by alias, handed to
@@ -35,12 +36,12 @@ final readonly class MatchedResult
     /**
      * Returns the single value captured under $alias.
      *
-     * @throws \OutOfBoundsException when nothing was captured under the alias
+     * @throws UncapturedRuleException when nothing was captured under the alias
      */
     public function get(string $alias): mixed
     {
         $values = $this->captures[$alias]
-            ?? throw new \OutOfBoundsException(\sprintf('No value captured under "%s"', $alias));
+            ?? throw UncapturedRuleException::becauseValueNotCaptured($alias);
 
         return $values[0];
     }

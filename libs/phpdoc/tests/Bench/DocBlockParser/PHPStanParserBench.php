@@ -9,13 +9,12 @@ use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\RetryThreshold;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
-use PHPStan\PhpDocParser\ParserConfig;
 use PHPStan\PhpDocParser\Lexer\Lexer;
 use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
-
+use PHPStan\PhpDocParser\ParserConfig;
 
 #[Revs(20), Warmup(5), Iterations(15), BeforeMethods('prepare'), RetryThreshold(2)]
 final readonly class PHPStanParserBench extends DocBlockParserBench

@@ -18,10 +18,10 @@ use TypeLang\Type\TypeNode;
  */
 final readonly class TypeGrammarRule implements RuleInterface
 {
-    public const string NAME = 'type';
+    public const string NAME = 'Type';
 
     public function __construct(
-        private TypeParserInterface $parser,
+        private TypeParserInterface $typeParser,
     ) {}
 
     public function __invoke(Cursor $cursor): TypeNode
@@ -36,7 +36,7 @@ final readonly class TypeGrammarRule implements RuleInterface
         // Tolerant parsing yields the type together with the offset of the next
         // token after it, so the cursor is left at the start of the trailing
         // text (e.g. a description) rather than at the end of the buffer.
-        $result = $this->parser->parseTolerant($source);
+        $result = $this->typeParser->parseTolerant($source);
 
         $cursor->seek($start + $result->offset);
 

@@ -6,7 +6,7 @@ namespace TypeLang\PhpDoc\DocBlock\Tag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 
-class Tag implements TagInterface
+abstract class Tag implements TagInterface
 {
     public function __construct(
         public readonly string $name = '',

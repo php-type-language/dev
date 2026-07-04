@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\DocBlock\Tag\LinkTag;
 
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
+use TypeLang\PhpDoc\DocBlock\Grammar\DescriptionGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinition;
 use TypeLang\PhpDoc\Parser\Grammar\MatchedResult;
-use TypeLang\PhpDoc\Parser\Grammar\Rule\Description;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\MatchRule;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\Optional;
 use TypeLang\PhpDoc\Parser\Grammar\Rule\Rule;
@@ -43,7 +43,7 @@ final class LinkTagDefinition extends TagDefinition
         $this->rule = new SequenceOf(
             new MatchRule(UriGrammarRule::NAME, 'uri'),
             new Optional(
-                new Description('description'),
+                new MatchRule(DescriptionGrammarRule::NAME, 'description'),
             ),
         );
     }

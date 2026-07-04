@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser\Grammar;
 
-use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
-
 /**
  * The state shared by the rules of a single match: the {@see Cursor}, the
- * {@see Grammar}, the description parser and the collected captures.
+ * {@see Grammar} and the collected captures.
  *
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\PhpDoc
@@ -23,7 +21,6 @@ final class Context
     public function __construct(
         public readonly Cursor $cursor,
         public readonly Grammar $grammar,
-        public readonly DescriptionParserInterface $descriptions,
     ) {}
 
     public function capture(string $alias, mixed $value): void

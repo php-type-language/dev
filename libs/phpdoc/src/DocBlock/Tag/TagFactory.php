@@ -8,6 +8,8 @@ use TypeLang\PhpDoc\Exception\MalformedTagException;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Context;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
+use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidTagRuleException;
+use TypeLang\PhpDoc\Parser\Grammar\Exception\InvalidTagRuleForDefinitionException;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\PhpDoc\Parser\Grammar\Grammar;
 
@@ -25,6 +27,8 @@ use TypeLang\PhpDoc\Parser\Grammar\Grammar;
  * );
  * ```
  *
+ * @phpstan-import-type RuleType from Grammar
+ *
  * @template-implements \IteratorAggregate<non-empty-string, TagDefinitionInterface>
  */
 final readonly class TagFactory implements TagFactoryInterface, \IteratorAggregate
@@ -34,47 +38,38 @@ final readonly class TagFactory implements TagFactoryInterface, \IteratorAggrega
      */
     private array $definitions;
 
+    private Grammar $grammar;
+
     /**
      * @param iterable<non-empty-string, TagDefinitionInterface> $definitions
+     * @param iterable<non-empty-string, RuleType> $rules
      */
     public function __construct(
         iterable $definitions = [],
-        /**
-         * The terminals the definitions reference.
-         */
-        private Grammar $grammar = new Grammar(),
+        iterable $rules = [],
+        private TagDefinitionInterface $genericTagDefinition = new GenericTagDefinition(),
     ) {
         $this->definitions = \iterator_to_array($definitions);
+        $this->grammar = new Grammar($rules);
     }
 
     public function create(string $name, string $suffix, DescriptionParserInterface $descriptions): TagInterface
     {
-        $definition = $this->definitions[$name] ?? null;
+        $definition = $this->definitions[$name]
+            ?? $this->genericTagDefinition;
 
-        // An unregistered tag keeps its whole suffix as a description.
-        if ($definition === null) {
-            return new Tag($name, $descriptions->tryParse($suffix));
-        }
-
-        return $this->apply($name, $suffix, $definition, $descriptions);
-    }
-
-    /**
-     * @param non-empty-string $name
-     * @throws MalformedTagException when the suffix does not match the grammar
-     */
-    private function apply(
-        string $name,
-        string $suffix,
-        TagDefinitionInterface $definition,
-        DescriptionParserInterface $descriptions,
-    ): TagInterface {
         $cursor = new Cursor($suffix);
-        $context = new Context($cursor, $this->grammar, $descriptions);
+        $context = new Context($cursor, $this->grammar);
         $rule = $definition->rule;
 
         try {
             $rule->match($context);
+        } catch (InvalidTagRuleException $e) {
+            throw InvalidTagRuleForDefinitionException::becauseInvalidRuleForDefinition(
+                name: $e->name,
+                definition: $definition,
+                previous: $e,
+            );
         } catch (NoMatchException) {
             throw MalformedTagException::becauseTagBodyIsMalformed(
                 tag: $name,
