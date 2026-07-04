@@ -13,9 +13,23 @@ use TypeLang\PhpDoc\DocBlock\Grammar\ReferenceGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\UriGrammarRule;
 use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
+use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ImplementsTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\UseTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\MixinTag\MixinTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamClosureThisTag\ParamClosureThisTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamOutTag\ParamOutTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyReadTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyWriteTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag\RequireExtendsTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag\RequireImplementsTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagDefinitionInterface;
+use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
@@ -92,6 +106,28 @@ final readonly class DocBlockParser implements DocBlockParserInterface
         return [
             LinkTagDefinition::NAME => new LinkTagDefinition(),
             SeeTagDefinition::NAME => new SeeTagDefinition(),
+
+            ReturnTagDefinition::NAME => $return = new ReturnTagDefinition(),
+            'returns' => $return, // A fairly common typo in code
+            ThrowsTagDefinition::NAME => $throws = new ThrowsTagDefinition(),
+            'throw' => $throws, // A fairly common typo in code
+            MixinTagDefinition::NAME => new MixinTagDefinition(),
+            ExtendsTagDefinition::NAME => $extends = new ExtendsTagDefinition(),
+            'inherits' => $extends,
+            'template-extends' => $extends,
+            ImplementsTagDefinition::NAME => $implements = new ImplementsTagDefinition(),
+            'template-implements' => $implements,
+            UseTagDefinition::NAME => $use = new UseTagDefinition(),
+            'template-use' => $use,
+            RequireExtendsTagDefinition::NAME => new RequireExtendsTagDefinition(),
+            RequireImplementsTagDefinition::NAME => new RequireImplementsTagDefinition(),
+
+            ParamTagDefinition::NAME => new ParamTagDefinition(),
+            ParamOutTagDefinition::NAME => new ParamOutTagDefinition(),
+            ParamClosureThisTagDefinition::NAME => new ParamClosureThisTagDefinition(),
+            PropertyTagDefinition::NAME => new PropertyTagDefinition(),
+            PropertyReadTagDefinition::NAME => new PropertyReadTagDefinition(),
+            PropertyWriteTagDefinition::NAME => new PropertyWriteTagDefinition(),
         ];
     }
 
