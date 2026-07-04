@@ -30,80 +30,224 @@ be installed using the following command in a root of your project:
 composer require type-lang/phpdoc
 ```
 
+
+## Quick Start
+
+```php
+$parser = new \TypeLang\PhpDoc\DocBlockParser();
+$result = $parser->parse(<<<'PHPDOC'
+    /**
+     * Example description {@see some} and blah-blah-blah.
+     *
+     * @Example\Annotation("foo")
+     * @return array<non-empty-string, TypeStatement>
+     * @throws \Throwable
+     */
+    PHPDOC);
+
+var_dump($result);
+```
+
+
+### Structural Elements
+
+**DocBlock**
+
+DocBlock is a representation of the comment object.
+
+```php
+/**                                 |
+ * Hello world                      | ← DocBlock's description.
+ *                                  |
+ * @param int $example              | ← DocBlock's tag #1.
+ * @throws \Throwable Description   | ← DocBlock's tag #2.
+ */                                 |
+```
+
+In the form of a DTO, this DocBlock will look like this
+
+```php
+/**
+ * DocBlock structure pseudocode (real impl may differ)
+ * 
+ * @template-implements \Traversable<array-key, Tag>
+ * @template-implements \ArrayAccess<array-key, Tag>
+ */
+final readonly class DocBlock
+{
+    public ?DescriptionInterface $description;
+
+    public list<Tag> $tags;
+}
+```
+
+**Description**
+
+Each description can be implemented by two different instances:
+
+```
+   DescriptionInterface
+             │
+     ┌───────┴───────┐
+     │               │
+Description   TaggedDescription
+```
+
+The simple `Description` instance looks like generic text:
+
+```php
+/**                  |
+ * Hello world       | ← This is a simple description
+   ↑↑↑↑↑↑↑↑↑↑↑       |
+ */
+```
+
+In the form of a DTO, this DocBlock will look like this:
+```php
+/**
+ * Simple description structure pseudocode (real impl may differ)
+ */
+class Description implements DescriptionInterface
+{
+    public string $value;
+}
+```
+
+However, each description may contain inline tags. In this case, such an implementation 
+would be represented as `TaggedDescription`:
+
+```php
+/**
+               ↓↓↓↓↓↓↓↓↓↓↓                         | ← This is a nested tag of the description.
+ * Hello world {@see some} and blah-blah-blah.     |
+   ↑↑↑↑↑↑↑↑↑↑↑             ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑     | ← This is part of the template.
+ */
+```
+
+In the form of a DTO, this DocBlock will look like this:
+
+```php
+/**
+ * Tagged (composite) description structure pseudocode (real impl may differ)
+ * 
+ * @template-implements \Traversable<array-key, Tag>
+ * @template-implements \ArrayAccess<array-key, Tag>
+ */
+class TaggedDescription implements DescriptionInterface
+{
+    public list<Tag> $tags;
+
+    public list<Tag|DescriptionInterface> $components;
+}
+```
+
+**Tag**
+
+A `Tag` represents a name (ID) and its contents.
+
+```php
+/**
+    ↓↓↓↓↓↓                                 | ← This is a tag name.
+ * @throws \Throwable An error occurred.   |
+           ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑   | ← This is tag suffix.
+ */
+```
+
+```php
+/**
+ * Common tag structure pseudocode (real impl may differ)
+ */
+class Tag
+{
+    public non-empty-string $name;
+
+    public ?DescriptionInterface $description;
+}
+
+/**
+ * Throws tag structure pseudocode (real impl may differ)
+ */
+class ThrowsTag extends Tag
+{
+    public TypeStatement $type;
+}
+```
+
+
 ## Supported Tags
 
-- [x] `@abstract` - Declare any _Element_ as abstract
-- [x] `@api` - Highlight _Element_ as being part of the public API
+- [ ] `@abstract` - Declare any _Element_ as abstract
+- [ ] `@api` - Highlight _Element_ as being part of the public API
 - [ ] `@author` - TODO
-- [x] `@category` - Used to organize groups of packages together
-- [x] `@copyright` - Used to document the copyright information of any _Element_.
+- [ ] `@category` - Used to organize groups of packages together
+- [ ] `@copyright` - Used to document the copyright information of any _Element_.
 - [ ] `@deprecated` - TODO
 - [ ] `@example` - TODO
-- [x] `@extends` - Allows to extend templated classes and interfaces
+- [ ] `@extends` - Allows to extend templated classes and interfaces
 - [ ] `@filesource` - TODO
-- [x] `@final` - Declare any _Element_ as final
+- [ ] `@final` - Declare any _Element_ as final
 - [ ] `@global` - TODO
-- [x] `@ignore` - Used to tell documentation systems that _Element_ are 
-      not to be processed.
-- [x] `@implements` - Allows to extend templated interfaces
+- [ ] `@ignore` - Used to tell documentation systems that _Element_ are
+  not to be processed.
+- [ ] `@implements` - Allows to extend templated interfaces
 - [ ] `@inheritdoc` - TODO
-- [x] `@inherits` - An alias of `@extends` tag
+- [ ] `@inherits` - An alias of `@extends` tag
 - [ ] `@internal` - TODO
-- [x] `@license` - Used to indicate which license is applicable
-- [x] `@link` - Indicates a custom relation between the associated _Element_ 
-      and a website, which is identified by an absolute URI
-- [x] `@method` - Allows a class to know which "_magic_" methods are callable
+- [ ] `@license` - Used to indicate which license is applicable
+- [x] `@link` - Indicates a custom relation between the associated _Element_
+  and a website, which is identified by an absolute URI
+- [ ] `@method` - Allows a class to know which "_magic_" methods are callable
 - [ ] `@mixin` - TODO
-- [x] `@no-named-arguments` - Indicates that argument names may be 
-      changed in the future.
-- [x] `@package` - Used to categorize _Element(s)_ into logical subdivisions
-- [x] `@override` - Mention to see if the method is actually overriding a definition
-- [x] `@param` - Used to document a single argument of a function or method
+- [ ] `@no-named-arguments` - Indicates that argument names may be
+  changed in the future.
+- [ ] `@package` - Used to categorize _Element(s)_ into logical subdivisions
+- [ ] `@override` - Mention to see if the method is actually overriding a definition
+- [ ] `@param` - Used to document a single argument of a function or method
 - [ ] `@param-closure-this` - TODO
 - [ ] `@param-immediately-invoked-callable` - TODO
 - [ ] `@param-later-invoked-callable` - TODO
 - [ ] `@param-out` - TODO
-- [x] `@property` - Used to declare which "_magic_" properties are supported
-- [x] `@property-read` - Used to declare which "_magic_" properties are supported for reading
-- [x] `@property-write` - Used to declare which "_magic_" properties are supported for writing
+- [ ] `@property` - Used to declare which "_magic_" properties are supported
+- [ ] `@property-read` - Used to declare which "_magic_" properties are supported for reading
+- [ ] `@property-write` - Used to declare which "_magic_" properties are supported for writing
 - [ ] `@pure-unless-callable-is-impure` - TODO
 - [ ] `@readonly` - TODO
 - [ ] `@require-extends` - TODO
 - [ ] `@require-implements` - TODO
-- [x] `@return` - Used to document the return value of functions or methods
-- [x] `@returns` - An alias of `@return` tag
+- [ ] `@return` - Used to document the return value of functions or methods
+- [ ] `@returns` - An alias of `@return` tag
 - [ ] `@seal-methods` - TODO
 - [ ] `@seal-properties` - TODO
-- [x] `@see` - Indicates a reference from the associated _Symbol(s)_ to a 
-      website or other _Symbol(s)_
+- [x] `@see` - Indicates a reference from the associated _Symbol(s)_ to a
+  website or other _Symbol(s)_
 - [ ] `@since` - TODO
 - [ ] `@source` - TODO
-- [x] `@subpackage` - Used to categorize _Element(s)_ into logical subdivisions
+- [ ] `@subpackage` - Used to categorize _Element(s)_ into logical subdivisions
 - [ ] `@suppress` - TODO
-- [x] `@template` - Allows classes (and class-like entries), functions and
-      methods to declare a generic type parameter
-- [x] `@template-contravariant` - Allows classes (and class-like entries),
-      functions and methods to declare a generic contravariant type parameter
-- [x] `@template-covariant` - Allows classes (and class-like entries), functions
-      and methods to declare a generic covariant type parameter
-- [x] `@template-extends` - An alias of `@extends` tag
-- [x] `@template-implements` - An alias of `@implements` tag
-- [x] `@template-use` - Allows to extend templated traits
-- [x] `@throw` - An alias of `@throws` tag
-- [x] `@throws` - Used to indicate whether _Element_ throw a specific type 
-      of `\Throwable` (exception or error)
+- [ ] `@template` - Allows classes (and class-like entries), functions and
+  methods to declare a generic type parameter
+- [ ] `@template-contravariant` - Allows classes (and class-like entries),
+  functions and methods to declare a generic contravariant type parameter
+- [ ] `@template-covariant` - Allows classes (and class-like entries), functions
+  and methods to declare a generic covariant type parameter
+- [ ] `@template-extends` - An alias of `@extends` tag
+- [ ] `@template-implements` - An alias of `@implements` tag
+- [ ] `@template-use` - Allows to extend templated traits
+- [ ] `@throw` - An alias of `@throws` tag
+- [ ] `@throws` - Used to indicate whether _Element_ throw a specific type
+  of `\Throwable` (exception or error)
 - [ ] `@todo` - TODO
 - [ ] `@unused-param` - TODO
-- [x] `@use` - An alias of `@template-use` tag
+- [ ] `@use` - An alias of `@template-use` tag
 - [ ] `@used-by` - TODO
 - [ ] `@uses` - TODO
-- [x] `@var` - Document the _Type_ of the following _Element_
+- [ ] `@var` - Document the _Type_ of the following _Element_
 - [ ] `@version` - TODO
 
 ### Psalm Tags
 
 - [ ] `@psalm-allow-private-mutation` - TODO
-- [x] `@psalm-api` - Vendor-specific `@api` alias
+- [ ] `@psalm-api` - Vendor-specific `@api` alias
 - [ ] `@psalm-assert` - TODO
 - [ ] `@psalm-assert-if-false` - TODO
 - [ ] `@psalm-assert-if-true` - TODO
@@ -113,7 +257,7 @@ composer require type-lang/phpdoc
 - [ ] `@psalm-consistent-constructor` - TODO
 - [ ] `@psalm-consistent-templates` - TODO
 - [ ] `@psalm-external-mutation-free` - TODO
-- [x] `@psalm-extends` - Vendor-specific `@extends` alias
+- [ ] `@psalm-extends` - Vendor-specific `@extends` alias
 - [ ] `@psalm-flow` - TODO
 - [ ] `@psalm-if-this-is` - TODO
 - [ ] `@psalm-ignore-falsable-return` - TODO
@@ -122,27 +266,27 @@ composer require type-lang/phpdoc
 - [ ] `@psalm-ignore-variable-method` - TODO
 - [ ] `@psalm-ignore-variable-property` - TODO
 - [ ] `@psalm-immutable` - TODO
-- [x] `@psalm-implements` - Vendor-specific `@implements` alias
+- [ ] `@psalm-implements` - Vendor-specific `@implements` alias
 - [ ] `@psalm-import-type` - TODO
 - [ ] `@psalm-inheritors` - TODO
 - [ ] `@psalm-internal` - TODO
-- [x] `@psalm-method` - Vendor-specific `@method` alias
+- [ ] `@psalm-method` - Vendor-specific `@method` alias
 - [ ] `@psalm-mutation-free` - TODO
 - [ ] `@psalm-no-seal-methods` - TODO
 - [ ] `@psalm-no-seal-properties` - TODO
 - [ ] `@psalm-override-method-visibility` - TODO
 - [ ] `@psalm-override-property-visibility` - TODO
-- [x] `@psalm-param` - Vendor-specific `@param` alias
+- [ ] `@psalm-param` - Vendor-specific `@param` alias
 - [ ] `@psalm-param-out` - TODO
-- [x] `@psalm-property` - Vendor-specific `@property` alias
-- [x] `@psalm-property-read` - Vendor-specific `@property-read` alias
-- [x] `@psalm-property-write` - Vendor-specific `@property-write` alias
+- [ ] `@psalm-property` - Vendor-specific `@property` alias
+- [ ] `@psalm-property-read` - Vendor-specific `@property-read` alias
+- [ ] `@psalm-property-write` - Vendor-specific `@property-write` alias
 - [ ] `@psalm-pure` - TODO
 - [ ] `@psalm-readonly` - TODO
 - [ ] `@psalm-readonly-allow-private-mutation` - TODO
 - [ ] `@psalm-require-extends` - TODO
 - [ ] `@psalm-require-implements` - TODO
-- [x] `@psalm-return` - Vendor-specific `@return` alias
+- [ ] `@psalm-return` - Vendor-specific `@return` alias
 - [ ] `@psalm-scope-this` - TODO
 - [ ] `@psalm-seal-methods` - TODO
 - [ ] `@psalm-seal-properties` - TODO
@@ -154,14 +298,14 @@ composer require type-lang/phpdoc
 - [ ] `@psalm-taint-source` - TODO
 - [ ] `@psalm-taint-specialize` - TODO
 - [ ] `@psalm-taint-unescape` - TODO
-- [x] `@psalm-template` - Vendor-specific `@template` alias
-- [x] `@psalm-template-contravariant` - Vendor-specific `@template-contravariant` alias
-- [x] `@psalm-template-covariant` - Vendor-specific `@template-covariant` alias
+- [ ] `@psalm-template` - Vendor-specific `@template` alias
+- [ ] `@psalm-template-contravariant` - Vendor-specific `@template-contravariant` alias
+- [ ] `@psalm-template-covariant` - Vendor-specific `@template-covariant` alias
 - [ ] `@psalm-this-out` - TODO
 - [ ] `@psalm-trace` - TODO
 - [ ] `@psalm-type` - TODO
-- [x] `@psalm-use` - Vendor-specific `@use` alias
-- [x] `@psalm-var` - Vendor-specific `@var` alias
+- [ ] `@psalm-use` - Vendor-specific `@use` alias
+- [ ] `@psalm-var` - Vendor-specific `@var` alias
 - [ ] `@psalm-variadic` - TODO
 - [ ] `@psalm-yield` - TODO
 
@@ -180,8 +324,8 @@ composer require type-lang/phpdoc
 - [ ] `@phpstan-implements` - TODO
 - [ ] `@phpstan-import-type` - TODO
 - [ ] `@phpstan-impure` - TODO
-- [x] `@phpstan-method` - Vendor-specific `@method` alias
-- [x] `@phpstan-param` - Vendor-specific `@param` alias
+- [ ] `@phpstan-method` - Vendor-specific `@method` alias
+- [ ] `@phpstan-param` - Vendor-specific `@param` alias
 - [ ] `@phpstan-param-closure-this` - TODO
 - [ ] `@phpstan-param-immediately-invoked-callable` - TODO
 - [ ] `@phpstan-param-later-invoked-callable` - TODO
@@ -197,18 +341,18 @@ composer require type-lang/phpdoc
 - [ ] `@phpstan-require-implements` - TODO
 - [ ] `@phpstan-return` - Vendor-specific `@return` alias
 - [ ] `@phpstan-self-out` - TODO
-- [x] `@phpstan-template` - Vendor-specific `@template` alias
-- [x] `@phpstan-template-contravariant` - Vendor-specific `@template-contravariant` alias
-- [x] `@phpstan-template-covariant` - Vendor-specific `@template-covariant` alias
+- [ ] `@phpstan-template` - Vendor-specific `@template` alias
+- [ ] `@phpstan-template-contravariant` - Vendor-specific `@template-contravariant` alias
+- [ ] `@phpstan-template-covariant` - Vendor-specific `@template-covariant` alias
 - [ ] `@phpstan-this-out` - TODO
-- [x] `@phpstan-throws` - Vendor-specific `@throws` alias
+- [ ] `@phpstan-throws` - Vendor-specific `@throws` alias
 - [ ] `@phpstan-type` - TODO
 - [ ] `@phpstan-use` - TODO
-- [x] `@phpstan-var` - Vendor-specific `@var` alias
+- [ ] `@phpstan-var` - Vendor-specific `@var` alias
 
 ### Phan Tags
 
-- [x] `@phan-abstract` - Vendor-specific `@abstract` alias
+- [ ] `@phan-abstract` - Vendor-specific `@abstract` alias
 - [ ] `@phan-assert` - TODO
 - [ ] `@phan-assert-false-condition` - TODO
 - [ ] `@phan-assert-if-false` - TODO
@@ -216,200 +360,34 @@ composer require type-lang/phpdoc
 - [ ] `@phan-assert-true-condition` - TODO
 - [ ] `@phan-closure-scope` - TODO
 - [ ] `@phan-constructor-used-for-side-effects` - TODO
-- [x] `@phan-extends` - Vendor-specific `@extends` alias
+- [ ] `@phan-extends` - Vendor-specific `@extends` alias
 - [ ] `@phan-file-suppress` - TODO
 - [ ] `@phan-forbid-undeclared-magic-methods` - TODO
 - [ ] `@phan-forbid-undeclared-magic-properties` - TODO
 - [ ] `@phan-hardcode-return-type` - TODO
 - [ ] `@phan-immutable` - TODO
-- [x] `@phan-inherits` - Vendor-specific `@extends` alias
-- [x] `@phan-method` - Vendor-specific `@method` alias
+- [ ] `@phan-inherits` - Vendor-specific `@extends` alias
+- [ ] `@phan-method` - Vendor-specific `@method` alias
 - [ ] `@phan-mixin` - TODO
 - [ ] `@phan-output-reference` - TODO
-- [x] `@phan-override` - Vendor-specific `@override` alias
-- [x] `@phan-param` - Vendor-specific `@param` alias
-- [x] `@phan-property` - Vendor-specific `@property` alias
-- [x] `@phan-property-read` - Vendor-specific `@property-read` alias
-- [x] `@phan-property-write` - Vendor-specific `@property-write` alias
+- [ ] `@phan-override` - Vendor-specific `@override` alias
+- [ ] `@phan-param` - Vendor-specific `@param` alias
+- [ ] `@phan-property` - Vendor-specific `@property` alias
+- [ ] `@phan-property-read` - Vendor-specific `@property-read` alias
+- [ ] `@phan-property-write` - Vendor-specific `@property-write` alias
 - [ ] `@phan-pure` - TODO
 - [ ] `@phan-read-only` - TODO
 - [ ] `@phan-real-return` - TODO
-- [x] `@phan-return` - Vendor-specific `@return` alias
+- [ ] `@phan-return` - Vendor-specific `@return` alias
 - [ ] `@phan-side-effect-free` - TODO
 - [ ] `@phan-suppress-current-line` - TODO
 - [ ] `@phan-suppress-next-line` - TODO
 - [ ] `@phan-suppress-next-next-line` - TODO
 - [ ] `@phan-suppress-previous-line` - TODO
-- [x] `@phan-template` - Vendor-specific `@template` alias
+- [ ] `@phan-template` - Vendor-specific `@template` alias
 - [ ] `@phan-transient` - TODO
 - [ ] `@phan-type` - TODO
 - [ ] `@phan-unused-param` - TODO
-- [x] `@phan-var` - Vendor-specific `@var` alias
+- [ ] `@phan-var` - Vendor-specific `@var` alias
 - [ ] `@phan-write-only` - TODO
 - [ ] `@phanclosurescope` - TODO
-
-## Quick Start
-
-```php
-$parser = new \TypeLang\PhpDoc\DocBlock\Parser();
-$result = $parser->parse(<<<'PHPDOC'
-    /**
-     * Example description {@see some} and blah-blah-blah.
-     *
-     * @Example\Annotation("foo")
-     * @return array<non-empty-string, TypeStatement>
-     * @throws \Throwable
-     */
-    PHPDOC);
-
-var_dump($result);
-```
-
-**Expected Output:**
-
-```php
-TypeLang\PhpDoc\DocBlock\DocBlock\DocBlock {
-  +description: TypeLang\PhpDoc\DocBlock\Description\TaggedDescription {
-    +components: array:3 [
-      0 => TypeLang\PhpDoc\DocBlock\Description\Description {
-        #value: "Example description "
-      }
-      1 => TypeLang\PhpDoc\DocBlock\DocBlock\Tag\SeeTag\SeeTag {
-        +description: null
-        +name: "see"
-        +ref: TypeLang\PhpDoc\DocBlock\DocBlock\Tag\Shared\Reference\TypeSymbolReference {
-          +type: TypeLang\Type\NamedTypeNode { … }
-        }
-      }
-      2 => TypeLang\PhpDoc\DocBlock\Description\Description {
-        #value: " and blah-blah-blah.\n"
-      }
-    ]
-  }
-  +tags: array:3 [
-    0 => TypeLang\PhpDoc\DocBlock\DocBlock\Tag\Tag {
-      +description: TypeLang\PhpDoc\DocBlock\Description\Description {
-        #value: "("foo")\n"
-      }
-      +name: "Example\Annotation"
-    }
-    1 => TypeLang\PhpDoc\DocBlock\DocBlock\Tag\ReturnTag\ReturnTag {
-      +description: null
-      +name: "return"
-      +type: TypeLang\Type\NamedTypeNode { … }
-    }
-    2 => TypeLang\PhpDoc\DocBlock\DocBlock\Tag\ThrowsTag\ThrowsTag {
-      +description: null
-      +name: "throws"
-      +type: TypeLang\Type\NamedTypeNode { … }
-    }
-  ]
-}
-```
-
-### Structural Elements
-
-**DocBlock**
-
-DocBlock is a representation of the comment object.
-
-```php
-/**                                 |
- * Hello world                      | ← DocBlock's description.
- *                                  |
- * @param int $example              | ← DocBlock's tag #1.
- * @throws \Throwable Description   | ← DocBlock's tag #2.
- */                                 |
-```
-
-- `$description` ― Provides a `Description` object.
-- `$tags` ― Provides a list of `Tag` objects.
-
-```php
-/**
- * DocBlock structure pseudocode (real impl may differ)
- * 
- * @template-implements \Traversable<array-key, Tag>
- * @template-implements \ArrayAccess<array-key, Tag>
- */
-class DocBlock
-{
-    public ?Description $description { get; }
-
-    public iterable<array-key, Tag> $tags { get; }
-}
-```
-
-**Description**
-
-Description is a representation of the description object which may contain
-other tags.
-
-```php
-/**
-               ↓↓↓↓↓↓↓↓↓↓↓                         | ← This is a nested tag of the description.
- * Hello world {@see some} and blah-blah-blah.     |
-   ↑↑↑↑↑↑↑↑↑↑↑             ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑     | ← This is part of the template.
- */
-```
-
-- `$tags` ― Provides a list of `Tag` objects.
-- `$components` ― Provides a list of `Tag|Description` objects.
-
-```php
-/**
- * Simple description structure pseudocode (real impl may differ)
- */
-class Description implements \Stringable {}
-
-/**
- * Tagged (composite) description structure pseudocode (real impl may differ)
- * 
- * @template-implements \Traversable<array-key, Tag>
- * @template-implements \ArrayAccess<array-key, Tag>
- */
-class TaggedDescription extends Description implements 
-    \Traversable, 
-    \ArrayAccess,
-    \Countable
-{
-    public iterable<array-key, Tag> $tags { get; }
-    
-    public iterable<array-key, Tag|Description> $components { get; }
-}
-```
-
-**Tag**
-
-A Tag represents a name (ID) and its contents.
-
-```php
-/**
-    ↓↓↓↓↓↓                                 | ← This is a tag name.
- * @throws \Throwable An error occurred.   |
-           ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑   | ← This is tag description.
- */
-```
-
-- `$name` ― Provides a tag's name (ID).
-- `$description` ― Provides an optional description of the tag.
-
-```php
-/**
- * Common tag structure pseudocode (real impl may differ)
- */
-class Tag implements \Stringable
-{
-    public non-empty-string $name { get; }
-
-    public ?Description $description { get; }
-}
-
-/**
- * Throws tag structure pseudocode (real impl may differ)
- */
-class ThrowsTag extends Tag
-{
-    public TypeStatement $type;
-}
-```
