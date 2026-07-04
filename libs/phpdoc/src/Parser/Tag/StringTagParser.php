@@ -74,7 +74,7 @@ final readonly class StringTagParser implements TagParserInterface
     {
         return new InvalidTag(
             reason: InvalidTagPrefixException::becauseTagPrefixIsInvalid($definition),
-            description: new Description($definition),
+            description: Description::createIfNotEmpty($definition),
         );
     }
 
@@ -82,7 +82,7 @@ final readonly class StringTagParser implements TagParserInterface
     {
         return new InvalidTag(
             reason: EmptyTagNameException::becauseTagNameIsEmpty($definition),
-            description: new Description(\substr($definition, 1)),
+            description: Description::createIfNotEmpty(\substr($definition, 1)),
         );
     }
 

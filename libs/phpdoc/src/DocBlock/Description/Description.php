@@ -10,6 +10,15 @@ final readonly class Description implements DescriptionInterface
         public string $value = '',
     ) {}
 
+    public static function createIfNotEmpty(string $value): ?self
+    {
+        if ($value === '') {
+            return null;
+        }
+
+        return new self($value);
+    }
+
     public function __toString(): string
     {
         return $this->value;
