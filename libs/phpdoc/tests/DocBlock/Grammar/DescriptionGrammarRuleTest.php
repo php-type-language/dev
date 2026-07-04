@@ -14,21 +14,29 @@ use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
-use TypeLang\PhpDoc\Tests\TestCase;
 
-final class DescriptionGrammarRuleTest extends TestCase
+final class DescriptionGrammarRuleTest extends GrammarRuleTestCase
 {
-    private function rule(): DescriptionGrammarRule
+    protected function rule(): DescriptionGrammarRule
     {
-        return new DescriptionGrammarRule(
-            new BalancedBraceAwareParser(new StringTagParser(new TagFactory())),
-        );
+        return new \ReflectionClass(DescriptionGrammarRule::class)
+            ->newLazyProxy(function (DescriptionGrammarRule $proxy) {
+                return new DescriptionGrammarRule(
+                    descriptionParser: new BalancedBraceAwareParser(
+                        tagParser: new StringTagParser(
+                            tagFactory: new TagFactory(rules: [
+                                DescriptionGrammarRule::NAME => $proxy,
+                            ]),
+                        ),
+                    ),
+                );
+            });
     }
 
     #[Test]
     public function readsThePlainTrailingText(): void
     {
-        $description = $this->rule()(new Cursor('Some description text'));
+        $description = $this->matchText('Some description text');
 
         self::assertInstanceOf(Description::class, $description);
         self::assertSame('Some description text', (string) $description);
@@ -41,7 +49,7 @@ final class DescriptionGrammarRuleTest extends TestCase
     #[Test]
     public function keepsInlineTags(): void
     {
-        $description = $this->rule()(new Cursor('see {@link X}'));
+        $description = $this->matchText('see {@link X}');
 
         self::assertInstanceOf(TaggedDescription::class, $description);
         self::assertSame('see {@link X}', (string) $description);
@@ -54,8 +62,9 @@ final class DescriptionGrammarRuleTest extends TestCase
     public function consumesTheEntireRemainder(): void
     {
         $cursor = new Cursor('a b c');
-        $description = $this->rule()($cursor);
+        $description = $this->matchCursor($cursor);
 
+        self::assertInstanceOf(Description::class, $description);
         self::assertSame('a b c', (string) $description);
         self::assertTrue($cursor->isEof);
     }
@@ -75,6 +84,6 @@ final class DescriptionGrammarRuleTest extends TestCase
     {
         $this->expectException(NoMatchException::class);
 
-        $this->rule()(new Cursor($input));
+        $this->matchText($input);
     }
 }

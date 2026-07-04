@@ -9,10 +9,14 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Grammar\VariableGrammarRule;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Tests\TestCase;
 
-final class VariableGrammarRuleTest extends TestCase
+final class VariableGrammarRuleTest extends GrammarRuleTestCase
 {
+    protected function rule(): VariableGrammarRule
+    {
+        return new VariableGrammarRule();
+    }
+
     /**
      * @return iterable<string, array{string, string}>
      */
@@ -27,7 +31,7 @@ final class VariableGrammarRuleTest extends TestCase
     #[DataProvider('variableDataProvider')]
     public function returnsTheNameWithoutTheDollar(string $input, string $expected): void
     {
-        $name = new VariableGrammarRule()(new Cursor($input));
+        $name = $this->matchText($input);
 
         self::assertSame($expected, $name);
     }
@@ -39,7 +43,7 @@ final class VariableGrammarRuleTest extends TestCase
     public function stopsAtTheFirstWhitespace(): void
     {
         $cursor = new Cursor('$var and the rest');
-        $name = new VariableGrammarRule()($cursor);
+        $name = $this->matchCursor($cursor);
 
         self::assertSame('var', $name);
         self::assertSame(4, $cursor->offset);
@@ -64,6 +68,6 @@ final class VariableGrammarRuleTest extends TestCase
     {
         $this->expectException(NoMatchException::class);
 
-        new VariableGrammarRule()(new Cursor($input));
+        $this->matchText($input);
     }
 }

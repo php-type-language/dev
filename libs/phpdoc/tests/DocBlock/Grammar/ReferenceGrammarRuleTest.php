@@ -16,10 +16,14 @@ use TypeLang\PhpDoc\DocBlock\Reference\SymbolReference;
 use TypeLang\PhpDoc\DocBlock\Reference\VariableReference;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Tests\TestCase;
 
-final class ReferenceGrammarRuleTest extends TestCase
+final class ReferenceGrammarRuleTest extends GrammarRuleTestCase
 {
+    protected function rule(): ReferenceGrammarRule
+    {
+        return new ReferenceGrammarRule();
+    }
+
     /**
      * Each reference, mapped to the expected reference class and the string it
      * stringifies back to.
@@ -44,7 +48,7 @@ final class ReferenceGrammarRuleTest extends TestCase
     #[DataProvider('referenceDataProvider')]
     public function producesTheExpectedReference(string $input, string $expected, string $stringified): void
     {
-        $reference = new ReferenceGrammarRule()(new Cursor($input));
+        $reference = $this->matchText($input);
 
         self::assertInstanceOf($expected, $reference);
         self::assertSame($stringified, (string) $reference);
@@ -53,7 +57,7 @@ final class ReferenceGrammarRuleTest extends TestCase
     #[Test]
     public function classMethodExposesClassAndName(): void
     {
-        $reference = new ReferenceGrammarRule()(new Cursor('Some\Any\Ololo::foo()'));
+        $reference = $this->matchText('Some\Any\Ololo::foo()');
 
         self::assertInstanceOf(ClassMethodReference::class, $reference);
         self::assertSame('Some\Any\Ololo', $reference->class);
@@ -67,7 +71,7 @@ final class ReferenceGrammarRuleTest extends TestCase
     public function stopsAtTheFirstWhitespace(): void
     {
         $cursor = new Cursor('$var and the rest');
-        $reference = new ReferenceGrammarRule()($cursor);
+        $reference = $this->matchCursor($cursor);
 
         self::assertInstanceOf(VariableReference::class, $reference);
         self::assertSame('var', $reference->name);
@@ -91,6 +95,6 @@ final class ReferenceGrammarRuleTest extends TestCase
     {
         $this->expectException(NoMatchException::class);
 
-        new ReferenceGrammarRule()(new Cursor($input));
+        $this->matchText($input);
     }
 }

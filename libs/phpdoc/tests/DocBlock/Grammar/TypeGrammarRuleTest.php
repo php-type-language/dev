@@ -9,15 +9,14 @@ use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Grammar\TypeGrammarRule;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
-use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\NullableTypeNode;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\UnionTypeNode;
 
-final class TypeGrammarRuleTest extends TestCase
+final class TypeGrammarRuleTest extends GrammarRuleTestCase
 {
-    private function rule(): TypeGrammarRule
+    protected function rule(): TypeGrammarRule
     {
         return new TypeGrammarRule(new TypeParser());
     }
@@ -25,7 +24,7 @@ final class TypeGrammarRuleTest extends TestCase
     #[Test]
     public function producesANamedType(): void
     {
-        $type = $this->rule()(new Cursor('array<int, string>'));
+        $type = $this->matchText('array<int, string>');
 
         self::assertInstanceOf(NamedTypeNode::class, $type);
         self::assertSame('array', (string) $type->name);
@@ -34,7 +33,7 @@ final class TypeGrammarRuleTest extends TestCase
     #[Test]
     public function producesANullableType(): void
     {
-        $type = $this->rule()(new Cursor('?string'));
+        $type = $this->matchText('?string');
 
         self::assertInstanceOf(NullableTypeNode::class, $type);
     }
@@ -42,7 +41,7 @@ final class TypeGrammarRuleTest extends TestCase
     #[Test]
     public function producesAUnionType(): void
     {
-        $type = $this->rule()(new Cursor('int|string'));
+        $type = $this->matchText('int|string');
 
         self::assertInstanceOf(UnionTypeNode::class, $type);
     }
@@ -55,7 +54,7 @@ final class TypeGrammarRuleTest extends TestCase
     public function stopsAfterTheType(): void
     {
         $cursor = new Cursor('int|string and the rest');
-        $type = $this->rule()($cursor);
+        $type = $this->matchCursor($cursor);
 
         self::assertInstanceOf(UnionTypeNode::class, $type);
         self::assertSame(11, $cursor->offset);
@@ -69,7 +68,7 @@ final class TypeGrammarRuleTest extends TestCase
     public function respectsTheCursorBase(): void
     {
         $cursor = new Cursor('int rest', base: 100);
-        $type = $this->rule()($cursor);
+        $type = $this->matchCursor($cursor);
 
         self::assertInstanceOf(TypeNode::class, $type);
         self::assertSame(104, $cursor->offset);
@@ -80,6 +79,6 @@ final class TypeGrammarRuleTest extends TestCase
     {
         $this->expectException(NoMatchException::class);
 
-        $this->rule()(new Cursor(''));
+        $this->matchText('');
     }
 }
