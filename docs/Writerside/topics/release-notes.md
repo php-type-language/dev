@@ -15,7 +15,7 @@ supported versions of PHP is carried out as quickly as possible.
 Support and availability of LTS versions is not expected yet.
 
 When referencing the TypeLang Components from your application
-or package, you should always use a version constraint such as `^1.0`, since
+or package, you should always use a version constraint such as `^2.0`, since
 major releases of TypeLang do include breaking changes.
 
 ### Named Arguments
@@ -30,9 +30,9 @@ named argument backward compatibility in minor releases.
 ## Support Policy
 
 The components support at least the minimum
-[supported version of PHP](https://www.php.net/supported-versions.php).
+[(active) supported version of PHP](https://www.php.net/supported-versions.php).
 
-- Requires `PHP 8.1.0` or higher.
+- Requires `PHP 8.4.0` or higher.
 
 The components do not require specific extensions. The entire set used is
 either included in the standard build, is used in the vast majority of
@@ -43,7 +43,9 @@ installations, or can be replaced with a polyfill.
 - May require `ext-json`.
 - May require `ext-mbstring` (or `symfony/polyfill-mbstring`).
 
-| Version | PHP       | Release          |
-|---------|-----------|------------------|
-| 1.x     | 8.1 - 8.4 | April 15th, 2024 |
-| 2.x     | *---*     | *---*            |
+A major release approximately every ~2 years.
+
+| Version | PHP       | Release          | Support Until     |
+|---------|-----------|------------------|-------------------|
+| 1.x     | 8.1 - 8.5 | April 15th, 2024 | September 1, 2026 |
+| 2.x     | 8.4 - *   | ~2026            | ~2028             |
