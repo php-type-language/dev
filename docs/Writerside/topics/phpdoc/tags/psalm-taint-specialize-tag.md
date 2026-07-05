@@ -1,0 +1,19 @@
+# @psalm-taint-specialize
+
+<primary-label ref="phpdoc-component"/>
+<secondary-label ref="not-implemented"/>
+
+The `@psalm-taint-specialize` tag tells Psalm to track tainted data
+separately per call site, rather than merging taint information from
+all callers together. It is part of Psalm's taint-analysis
+annotations.
+
+<note>
+Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
+a docblock containing this tag returns a plain <code>Tag</code>, its whole
+suffix folded into the description. See
+<a href="custom-tags.md">Custom Tags</a> for the current workaround if you
+need to recognize it yourself.
+</note>
+
+See [Psalm's security analysis annotations](https://psalm.dev/docs/security_analysis/annotations/).
