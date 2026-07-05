@@ -226,8 +226,8 @@ its description.
   > `"@copyright" [ <Description> ]`
 - [x] `@deprecated` — Marks an _Element_ as deprecated, optionally since a given version
   > `"@deprecated" [ <Version> ] [ <Description> ]`
-- [ ] `@example` — Points to an example source file illustrating the use of an _Element_
-  > `"@example" [ <Location> [ <StartLine> [ <LineCount> ] ] ] [ <Description> ]`
+- [x] `@example` — Points to an example source file illustrating the use of an _Element_
+  > `"@example" (<URL> | <URI>) [ <StartLine> [ <LineCount> ] ] [ <Description> ]`
 - [x] `@extends` — Allows to extend templated classes and interfaces
   > `"@extends" <Type> [ <Description> ]`
 - [x] `@filesource` — Tells documentation tooling to include the source of the current file in its output

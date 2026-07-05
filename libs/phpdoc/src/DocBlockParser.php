@@ -26,6 +26,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\AuthorTag\AuthorTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\CategoryTag\CategoryTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\CopyrightTag\CopyrightTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\DeprecatedTag\DeprecatedTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ExampleTag\ExampleTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\FilesourceTag\FilesourceTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\FinalTag\FinalTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\GlobalTag\GlobalTagDefinition;
@@ -222,6 +223,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             SuppressTagDefinition::NAME => new SuppressTagDefinition(),
             SourceTagDefinition::NAME => new SourceTagDefinition(),
             MethodTagDefinition::NAME => new MethodTagDefinition(),
+            ExampleTagDefinition::NAME => new ExampleTagDefinition(),
         ];
     }
 
