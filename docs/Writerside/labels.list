@@ -22,20 +22,6 @@
         The implementation of the functionality available for installation
         of "type-lang/phpdoc" component.
     </primary-label>
-    <primary-label href="https://packagist.org/packages/type-lang/phpdoc-standard-tags"
-                   id="phpdoc-standard-component" name="type-lang/phpdoc-standard-tags" short-name="e" color="strawberry">
-        The implementation of the functionality available for installation
-        of "type-lang/phpdoc-standard-tags" component.
-
-        This is an extension to the core "type-lang/phpdoc" component.
-    </primary-label>
-    <primary-label href="https://packagist.org/packages/type-lang/phpdoc-template-tags"
-                   id="phpdoc-template-component" name="type-lang/phpdoc-template-tags" short-name="e" color="strawberry">
-        The implementation of the functionality available for installation
-        of "type-lang/phpdoc-template-tags" component.
-
-        This is an extension to the core "type-lang/phpdoc" component.
-    </primary-label>
     <primary-label href="https://packagist.org/packages/type-lang/reader"
         id="reader-component" name="type-lang/reader" short-name="c" color="purple">
         The implementation of the functionality available for installation
@@ -46,11 +32,16 @@
         third-party tools (e.g. PHPStan or Psalm) and has no alternatives.
     </primary-label>
 
-    <secondary-label id="wip" name="WIP" color="red">Work in progress</secondary-label>
+    <secondary-label id="wip" name="WIP" color="red">Work in progress. Documentation may be outdated or incomplete</secondary-label>
     <secondary-label id="beta" name="β" color="tangerine">Beta</secondary-label>
     <secondary-label id="tl1.1" name="TypeLang >= 1.1" color="strawberry">Available since type-lang/parser 1.1+</secondary-label>
     <secondary-label id="tl1.2" name="TypeLang >= 1.2" color="strawberry">Available since type-lang/parser 1.2+</secondary-label>
     <secondary-label id="tl1.4" name="TypeLang >= 1.4" color="strawberry">Available since type-lang/parser 1.4+</secondary-label>
     <secondary-label id="tl1.6" name="TypeLang >= 1.6" color="strawberry">Available since type-lang/parser 1.6+</secondary-label>
     <secondary-label id="r1.1" name="TypeLang >= 1.1" color="strawberry">Available since type-lang/reader 1.1+</secondary-label>
+    <secondary-label id="inline-tag" name="inline" color="tangerine">May also be used inline, as a "{@tag}" sequence inside a description</secondary-label>
+    <secondary-label id="alias-tag" name="alias" color="gray">A different spelling recognized for an already documented tag</secondary-label>
+    <secondary-label id="psalm-tag" name="Psalm" color="blue">Originates from Psalm's own annotation vocabulary</secondary-label>
+    <secondary-label id="phpstan-tag" name="PHPStan" color="green">Originates from PHPStan's own annotation vocabulary</secondary-label>
+    <secondary-label id="not-implemented" name="Not implemented" color="red">Not currently recognized by this parser; listed here for reference only</secondary-label>
 </labels>
