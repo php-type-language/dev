@@ -10,7 +10,7 @@ use TypeLang\PhpDoc\DocBlock\Combinator\AuthorNameCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\TemplateNameCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\NameCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\UrlCombinator;
@@ -129,7 +129,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             AuthorNameCombinator::NAME => new AuthorNameCombinator(),
             EmailCombinator::NAME => new EmailCombinator(),
             VersionCombinator::NAME => new VersionCombinator(),
-            TemplateNameCombinator::NAME => new TemplateNameCombinator(),
+            NameCombinator::NAME => new NameCombinator(),
             DescriptionCombinator::NAME => new \ReflectionClass(DescriptionCombinator::class)
                 ->newLazyProxy(fn(): DescriptionCombinator => new DescriptionCombinator(
                     descriptionParser: $this->descriptionParser,
@@ -147,6 +147,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             'template-extends' => ExtendsTagDefinition::NAME,
             'template-implements' => ImplementsTagDefinition::NAME,
             'template-use' => UseTagDefinition::NAME,
+            'template-invariant' => TemplateTagDefinition::NAME,
             // A fairly common typos in code
             'returns' => ReturnTagDefinition::NAME,
             'throw' => ThrowsTagDefinition::NAME,

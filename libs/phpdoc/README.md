@@ -258,9 +258,10 @@ its description.
 - [ ] `@source`
 - [x] `@subpackage` — Categorizes _Element(s)_ into logical subdivisions
 - [ ] `@suppress`
-- [ ] `@template` — Declares a generic type parameter
-- [ ] `@template-contravariant` — Declares a generic contravariant type parameter
-- [ ] `@template-covariant` — Declares a generic covariant type parameter
+- [x] `@template` — Declares a generic type parameter
+- [x] `@template-contravariant` — Declares a generic contravariant type parameter
+- [x] `@template-covariant` — Declares a generic covariant type parameter
+- [x] `@template-invariant` — An alias of the `@template` tag
 - [x] `@template-extends` — An alias of the `@extends` tag
 - [x] `@template-implements` — An alias of the `@implements` tag
 - [x] `@template-use` — Allows to extend templated traits
