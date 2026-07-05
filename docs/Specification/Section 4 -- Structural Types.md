@@ -119,7 +119,7 @@ ParseException: Duplicate key "1"
 
 An explicit field MAY be marked _optional_ by placing a question mark before
 the colon. An optional key (`key?: Type`) states that the field may be
-absent; this is distinct from an optional value (`key: Type?`), which states
+absent; this is distinct from an optional value (`key: ?Type`), which states
 that the field is always present but its value may be `null`.
 
 ```typescript
@@ -127,7 +127,7 @@ array{ key?: Type }
 ```
 
 ```typescript
-array{ key: Type? }
+array{ key: ?Type }
 ```
 
 ### Unsealed Shapes

@@ -1065,10 +1065,10 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 </section>
 <section id="sec-Optional-Fields" secid="6.1.2">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Optional-Fields">6.1.2</a></span>Optional Fields</h3>
-<p>An explicit field MAY be marked <em>optional</em> by placing a question mark before the colon. An optional key (<code>key?: Type</code>) states that the field may be absent; this is distinct from an optional value (<code>key: Type?</code>), which states that the field is always present but its value may be <code>null</code>.</p>
+<p>An explicit field MAY be marked <em>optional</em> by placing a question mark before the colon. An optional key (<code>key?: Type</code>) states that the field may be absent; this is distinct from an optional value (<code>key: ?Type</code>), which states that the field is always present but its value may be <code>null</code>.</p>
 <pre data-language="typescript"><code>array<span class="token punctuation">{</span> key<span class="token operator">?</span><span class="token operator">:</span> Type <span class="token punctuation">}</span>
 </code></pre>
-<pre data-language="typescript"><code>array<span class="token punctuation">{</span> key<span class="token operator">:</span> Type<span class="token operator">?</span> <span class="token punctuation">}</span>
+<pre data-language="typescript"><code>array<span class="token punctuation">{</span> key<span class="token operator">:</span> <span class="token operator">?</span>Type <span class="token punctuation">}</span>
 </code></pre>
 </section>
 <section id="sec-Unsealed-Shapes" secid="6.1.3">
