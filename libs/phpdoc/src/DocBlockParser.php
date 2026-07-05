@@ -9,6 +9,7 @@ use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Combinator\AuthorNameCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\NameCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
@@ -56,6 +57,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\SealMethodsTag\SealMethodsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SealPropertiesTag\SealPropertiesTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SinceTag\SinceTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SourceTag\SourceTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SubpackageTag\SubpackageTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SuppressTag\SuppressTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
@@ -131,6 +133,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             VariableCombinator::NAME => new VariableCombinator(),
             AuthorNameCombinator::NAME => new AuthorNameCombinator(),
             EmailCombinator::NAME => new EmailCombinator(),
+            IntegerCombinator::NAME => new IntegerCombinator(),
             VersionCombinator::NAME => new VersionCombinator(),
             NameCombinator::NAME => new NameCombinator(),
             DescriptionCombinator::NAME => new \ReflectionClass(DescriptionCombinator::class)
@@ -213,6 +216,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             VarTagDefinition::NAME => new VarTagDefinition(),
             GlobalTagDefinition::NAME => new GlobalTagDefinition(),
             SuppressTagDefinition::NAME => new SuppressTagDefinition(),
+            SourceTagDefinition::NAME => new SourceTagDefinition(),
         ];
     }
 
