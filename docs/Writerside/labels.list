@@ -48,9 +48,9 @@
 
     <secondary-label id="wip" name="WIP" color="red">Work in progress</secondary-label>
     <secondary-label id="beta" name="β" color="tangerine">Beta</secondary-label>
-    <secondary-label id="tl1.1" name="parser v1.1+" color="strawberry">Available since type-lang/parser 1.1+</secondary-label>
-    <secondary-label id="tl1.2" name="parser v1.2+" color="strawberry">Available since type-lang/parser 1.2+</secondary-label>
-    <secondary-label id="tl1.4" name="parser v1.4+" color="strawberry">Available since type-lang/parser 1.4+</secondary-label>
-    <secondary-label id="tl1.6" name="parser v1.6+" color="strawberry">Available since type-lang/parser 1.6+</secondary-label>
-    <secondary-label id="r1.1" name="reader v1.1+" color="strawberry">Available since type-lang/reader 1.1+</secondary-label>
+    <secondary-label id="tl1.1" name="TypeLang >= 1.1" color="strawberry">Available since type-lang/parser 1.1+</secondary-label>
+    <secondary-label id="tl1.2" name="TypeLang >= 1.2" color="strawberry">Available since type-lang/parser 1.2+</secondary-label>
+    <secondary-label id="tl1.4" name="TypeLang >= 1.4" color="strawberry">Available since type-lang/parser 1.4+</secondary-label>
+    <secondary-label id="tl1.6" name="TypeLang >= 1.6" color="strawberry">Available since type-lang/parser 1.6+</secondary-label>
+    <secondary-label id="r1.1" name="TypeLang >= 1.1" color="strawberry">Available since type-lang/reader 1.1+</secondary-label>
 </labels>
