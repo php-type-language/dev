@@ -68,7 +68,7 @@ $traverser = new Traverser([
         public function enter(Node $node): ?Command
         {
             if ($node instanceof TemplateArgumentNode) {
-                return Command::SKIP_CHILDREN;
+                return Command::SkipChildren;
             }
 
             echo \sprintf(" - %s\n", $node::class);

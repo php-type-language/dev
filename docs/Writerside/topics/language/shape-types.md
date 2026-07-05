@@ -2,80 +2,135 @@
 
 <show-structure for="chapter" depth="2"/>
 
-Each **composite** type can be rigidly described by a structural type called a
-"shape". A shape within the PHP language can be applied to any array or object
-and contain either implicit or explicit keys.
+Each composite type can be rigidly described by a structural type called a
+"_shape_".
+
+## Shape Keys
+
+A shape within the PHP language can be applied to any array or object
+and contain either **implicit** or **explicit** keys.
+
+<compare first-title="Explicit Keys" second-title="Implicit Keys">
+
+```php
+array{
+    a: First,
+    42: Second,
+    OTHER_*: Third,
+}
+```
+
+```php
+array{
+    First,
+    Second,
+    Third,
+}
+```
+</compare>
+
+> The use of **explicit** and **implicit** keys in one shape is **not allowed**
+{style="warning"}
+
+
+### Implicit Keys
+
+An implicit field has no key at all: only its type is specified, and the
+field's position within the shape determines its (numeric) index.
+
+> ```php
+> array{
+>     First,
+>     Second,
+>     Third,
+> }
+> ```
+
+
+### Explicit Keys
+
+An explicit field is prefixed with a key, followed by a colon (`:`) and then
+the field's type: `key: Type`. The simplest form of a key is an
+[identifier](basic-types.md), the same as used for a type name.
+
+> ```php
+> array{
+>     a: First,
+>     b: Second,
+> }
+> ```
+
+
+### Numeric Keys
+
+An explicit key may also be an [integer literal](literal-types.md#integer).
+
+> ```php
+> array{
+>     42: Example,
+> }
+> ```
+
+### String Keys
+
+An explicit key may also be a [string literal](literal-types.md#strings),
+which allows characters that are not permitted in an
+[identifier](basic-types.md), including [escape sequences](literal-types.md#escape-sequences).
+
+> ```php
+> array{
+>     "name-some": First,
+>     "escape\nchars": Second,
+> }
+> ```
+
+### Constant Keys
+
+<secondary-label ref="tl1.6"/>
+
+In addition to identifiers, numbers and strings, a field key may also be a
+[class constant](const-types.md#class-constants).
 
 <tabs>
-<tab title="named explicit keys">
+<tab title="Examples">
 
-```php
-array{
-    a: first,
-    b: second
-}
-```
-</tab>
-<tab title="numeric explicit keys">
+> A [class constant](const-types.md#class-constants) as a field key.
+> ```php
+> array{
+>     Path\To\ClassName::CONSTANT_NAME: string,
+> }
+> ```
 
-```php
-array{
-    1: first,
-    42: second
-}
-```
-</tab>
-<tab title="string explicit keys">
-
-```php
-array{
-    "name-some": first,
-    "escape\nchars": second
-}
-```
-</tab>
-<tab title="implicit keys">
-
-```php
-array{
-    first,
-    second
-}
-```
 </tab>
 </tabs>
 
-> The use of **explicit** and **implicit** keys in one shape is not allowed 
-> and causes an exception during parsing.
+### Constant Mask Keys
+
+A field key may also be a [class constant mask or global constant
+mask](const-types.md#constant-masks), referring to a whole set of constants
+sharing a common prefix.
+
+<tabs>
+<tab title="Examples">
+
+> A [class constant mask](const-types.md#constant-masks) as a field key.
 > ```php
 > array{
->     named: first,
->     second
+>     Path\To\ClassName::PREFIX_*: string,
 > }
 > ```
-> 
-> An error similar to the one below should occur.
-> ```
-> ParseException: Cannot mix numeric and named keys.
-> ```
-{style="warning"}
 
-> Support for other types of **keys**, such as const mask (`Class::CONST_*`)
-> is not currently available.
+> A [global constant mask](const-types.md#constant-masks) as a field key.
 > ```php
 > array{
->     Class::CONST_*: string,
->     ...
+>     JSON_*: string,
 > }
 > ```
-> 
-> An error similar to the one below should occur.
-> ```
-> ParseException: Syntax error, unexpected ":"
-> ```
-{style="warning"}
 
-### Optional Fields
+</tab>
+</tabs>
+
+## Optional Fields
 
 Specifying fields (keys) allows the optionality of the presence of a field.
 Such fields are indicated by a question mark (`?`) **before** the colon (`:`) 
@@ -91,12 +146,12 @@ array{
 
 ```php
 array{
-    key: Type?,
+    key: ?Type,
 }
 ```
 </compare>
 
-### Unsealed Shapes
+## Unsealed Shapes
 
 Unsealed (unclosed) shapes mean that the composite type can contain additional
 fields beyond those described in the shape. Such types must be terminated with
@@ -119,7 +174,7 @@ array{
 </compare>
 
 
-### Typed Shapes
+## Typed Shapes
 
 In addition, such shapes can describe template arguments (types) for values
 or for keys and values, which are described after the ellipsis (`...`) char

@@ -23,14 +23,10 @@
                      toc-title="Callables"/>
         <toc-element topic="offset-access.md"
                      toc-title="Offsets"/>
-                        <!-- TODO -->
         <toc-element topic="conditional-types.md"
-                     toc-title="Conditions"
-                     hidden="true" />
-        <toc-element topic="comparison.md"
-                     toc-title="Comparison of syntax between different tools" />
-
-        <toc-element toc-title="See also">
+                     toc-title="Conditions" />
+        <toc-element toc-title="Community Tools"
+            topic="comparison.md">
             <toc-element toc-title="PHPStan" href="https://phpstan.org/writing-php-code/phpdoc-types" />
             <toc-element toc-title="Psalm" href="https://psalm.dev/docs/annotating_code/typing_in_psalm/" />
             <toc-element toc-title="PhpStorm" href="https://www.jetbrains.com/help/phpstorm/php-type-checking.html" />

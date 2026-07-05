@@ -44,17 +44,17 @@ General table across all type parsing capabilities
     <tr>
         <td>
             <note>
-                <format style="bold" color="DarkSeaGreen">62/62</format>
+                <format style="bold" color="DarkSeaGreen">69/69</format>
             </note>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">42/62</format>
+                <format style="bold" color="RosyBrown">43/69</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">46/62</format>
+                <format style="bold" color="RosyBrown">47/69</format>
             </warning>
         </td>
     </tr>
@@ -81,7 +81,7 @@ Below is a list of simple, logical and other common types.
         <td></td>
         <td>
             <note>
-                <format style="bold" color="DarkSeaGreen">11/12</format>
+                <format style="bold" color="DarkSeaGreen">12/12</format>
             </note>
         </td>
         <td>
@@ -367,17 +367,17 @@ Below is a list of conditional types.
         <td></td>
         <td>
             <note>
-                <format style="bold" color="DarkSeaGreen">6/6</format>
+                <format style="bold" color="DarkSeaGreen">10/10</format>
             </note>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">4/6</format>
+                <format style="bold" color="RosyBrown">4/10</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">4/6</format>
+                <format style="bold" color="RosyBrown">4/10</format>
             </warning>
         </td>
     </tr>
@@ -532,6 +532,94 @@ Below is a list of conditional types.
             <a href="https://phpstan.org/r/529ccac7-2c9b-4a59-837f-26c846bd216f">
                 Not Supported
             </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <a href="conditional-types.md" anchor="comparison-operators">
+                Less-than conditional types
+            </a>
+            <code-block lang="typescript">
+            T &lt; A ? B : C
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td>
+            <icon src="ko.svg"/>
+            Not Supported
+        </td>
+        <td>
+            <icon src="ko.svg"/>
+            Not Supported
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <a href="conditional-types.md" anchor="comparison-operators">
+                Greater-than conditional types
+            </a>
+            <code-block lang="typescript">
+            T &gt; A ? B : C
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td>
+            <icon src="ko.svg"/>
+            Not Supported
+        </td>
+        <td>
+            <icon src="ko.svg"/>
+            Not Supported
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <a href="conditional-types.md" anchor="comparison-operators">
+                Less-than-or-equal conditional types
+            </a>
+            <code-block lang="typescript">
+            T &lt;= A ? B : C
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td>
+            <icon src="ko.svg"/>
+            Not Supported
+        </td>
+        <td>
+            <icon src="ko.svg"/>
+            Not Supported
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <a href="conditional-types.md" anchor="comparison-operators">
+                Greater-than-or-equal conditional types
+            </a>
+            <code-block lang="typescript">
+            T &gt;= A ? B : C
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td>
+            <icon src="ko.svg"/>
+            Not Supported
+        </td>
+        <td>
+            <icon src="ko.svg"/>
+            Not Supported
         </td>
     </tr>
 </table>
@@ -1043,17 +1131,17 @@ Below is a list of grammar of shaped types.
         <td></td>
         <td>
             <note>
-                <format style="bold" color="DarkSeaGreen">11/11</format>
+                <format style="bold" color="DarkSeaGreen">13/13</format>
             </note>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">9/11</format>
+                <format style="bold" color="RosyBrown">10/13</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">10/11</format>
+                <format style="bold" color="RosyBrown">10/13</format>
             </warning>
         </td>
     </tr>
@@ -1459,6 +1547,48 @@ Below is a list of grammar of shaped types.
             object {
                 #[inline, assert(not&lt;"">)]
                 name: string
+            }
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td>
+            <icon src="warning.svg"/>
+            <a href="https://github.com/phpstan/phpdoc-parser/releases/tag/2.3.0">
+                PHPStan parser only (since 2.3)
+            </a>
+        </td>
+        <td><icon src="ko.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <a href="shape-types.md" anchor="constant-keys">
+                Class constant shape keys
+            </a>
+            <code-block lang="typescript">
+            array{
+                Path\To\ClassName::CONSTANT_NAME: string,
+            }
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <a href="shape-types.md" anchor="constant-mask-keys">
+                Constant mask shape keys
+            </a>
+            <code-block lang="typescript">
+            array{
+                Path\To\ClassName::PREFIX_*: string,
+                JSON_*: string,
             }
             </code-block>
         </td>
