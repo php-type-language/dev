@@ -1,4 +1,4 @@
-# The Printer Component
+# Type Printer Component
 
 <primary-label ref="printer-component"/>
 <show-structure for="chapter" depth="2"/>
@@ -16,7 +16,8 @@ formats.
 </tldr>
 
 **Requirements:**
-* `PHP >= 8.1`
+* `PHP >= 8.4`
+* `ext-mbstring` <sup>optional</sup>
 
 ## Usage
 

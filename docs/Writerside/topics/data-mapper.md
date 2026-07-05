@@ -1,6 +1,7 @@
-# Data Mapper
+# Type Mapper
 
 <primary-label ref="mapper-component" xmlns=""/>
+<secondary-label ref="wip"/>
 <show-structure for="chapter" depth="2"/>
 
 A mapper is a system that transforms internal data into external data 

@@ -1,4 +1,4 @@
-# The Reader Component
+# Type Reader Component
 
 <primary-label ref="reader-component"/>
 <show-structure for="chapter" depth="2"/>
@@ -16,7 +16,8 @@ converting it into the TypeLang AST Nodes.
 </tldr>
 
 **Requirements:**
-* `PHP >= 8.1`
+* `PHP >= 8.4`
+* `ext-mbstring` <sup>optional</sup>
 
 ## Usage
 
