@@ -26,7 +26,7 @@ final class ImplicitFieldNodeTest extends TestCase
     {
         $node = new ImplicitFieldNode(new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertFalse($node->optional);
+        $this->assertFalse($node->isOptional);
     }
 
     #[Test]
@@ -37,7 +37,7 @@ final class ImplicitFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertTrue($node->optional);
+        $this->assertTrue($node->isOptional);
     }
 
     #[Test]

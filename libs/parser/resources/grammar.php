@@ -461,11 +461,11 @@ return [
                 return $children[0];
             }
 
-            if ($children[0]->variadic) {
+            if ($children[0]->isVariadic) {
                 throw SemanticException::fromVariadicWithDefault($offset);
             }
 
-            $children[0]->optional = true;
+            $children[0]->isOptional = true;
 
             return $children[0];
         },
@@ -477,11 +477,11 @@ return [
                 return $children[0];
             }
 
-            if ($children[1]->variadic) {
+            if ($children[1]->isVariadic) {
                 throw SemanticException::fromVariadicRedefinition($offset);
             }
 
-            $children[1]->variadic = true;
+            $children[1]->isVariadic = true;
 
             return $children[1];
         },
@@ -499,13 +499,13 @@ return [
                 if ($modifier instanceof Phplrt\Contracts\Lexer\TokenInterface) {
                     switch ($modifier->getName()) {
                         case 'T_AMP':
-                            $result->output = true;
+                            $result->isOutput = true;
                             break;
                         case 'T_ELLIPSIS':
-                            if ($result->variadic) {
+                            if ($result->isVariadic) {
                                 throw SemanticException::fromVariadicRedefinition($offset);
                             }
-                            $result->variadic = true;
+                            $result->isVariadic = true;
                             break;
                     }
                 }
@@ -535,13 +535,13 @@ return [
                 if ($modifier instanceof Phplrt\Contracts\Lexer\TokenInterface) {
                     switch ($modifier->getName()) {
                         case 'T_AMP':
-                            $result->output = true;
+                            $result->isOutput = true;
                             break;
                         case 'T_ELLIPSIS':
-                            if ($result->variadic) {
+                            if ($result->isVariadic) {
                                 throw SemanticException::fromVariadicRedefinition($offset);
                             }
-                            $result->variadic = true;
+                            $result->isVariadic = true;
                             break;
                     }
                 }

@@ -21,9 +21,9 @@ final class CallableParameterNodeTest extends TestCase
 
         $this->assertSame($type, $node->type);
         $this->assertNull($node->name);
-        $this->assertFalse($node->output);
-        $this->assertFalse($node->variadic);
-        $this->assertFalse($node->optional);
+        $this->assertFalse($node->isOutput);
+        $this->assertFalse($node->isVariadic);
+        $this->assertFalse($node->isOptional);
         $this->assertNull($node->attributes);
     }
 
@@ -53,10 +53,10 @@ final class CallableParameterNodeTest extends TestCase
     {
         $node = new CallableParameterNode(
             type: new NamedTypeNode(Name::createFromString('string')),
-            output: true,
+            isOutput: true,
         );
 
-        $this->assertTrue($node->output);
+        $this->assertTrue($node->isOutput);
     }
 
     #[Test]
@@ -64,10 +64,10 @@ final class CallableParameterNodeTest extends TestCase
     {
         $node = new CallableParameterNode(
             type: new NamedTypeNode(Name::createFromString('string')),
-            variadic: true,
+            isVariadic: true,
         );
 
-        $this->assertTrue($node->variadic);
+        $this->assertTrue($node->isVariadic);
     }
 
     #[Test]
@@ -75,10 +75,10 @@ final class CallableParameterNodeTest extends TestCase
     {
         $node = new CallableParameterNode(
             type: new NamedTypeNode(Name::createFromString('string')),
-            optional: true,
+            isOptional: true,
         );
 
-        $this->assertTrue($node->optional);
+        $this->assertTrue($node->isOptional);
     }
 
     #[Test]
@@ -94,7 +94,7 @@ final class CallableParameterNodeTest extends TestCase
     {
         $node = new CallableParameterNode(
             type: new NamedTypeNode(Name::createFromString('int')),
-            output: true,
+            isOutput: true,
         );
 
         $this->assertSame('output', (string) $node);
@@ -105,7 +105,7 @@ final class CallableParameterNodeTest extends TestCase
     {
         $node = new CallableParameterNode(
             type: new NamedTypeNode(Name::createFromString('int')),
-            variadic: true,
+            isVariadic: true,
         );
 
         $this->assertSame('variadic', (string) $node);
@@ -116,7 +116,7 @@ final class CallableParameterNodeTest extends TestCase
     {
         $node = new CallableParameterNode(
             type: new NamedTypeNode(Name::createFromString('int')),
-            optional: true,
+            isOptional: true,
         );
 
         $this->assertSame('optional', (string) $node);
@@ -127,8 +127,8 @@ final class CallableParameterNodeTest extends TestCase
     {
         $node = new CallableParameterNode(
             type: new NamedTypeNode(Name::createFromString('int')),
-            output: true,
-            optional: true,
+            isOutput: true,
+            isOptional: true,
         );
 
         $this->assertSame('output, optional', (string) $node);
@@ -147,8 +147,8 @@ final class CallableParameterNodeTest extends TestCase
         $this->expectException(\TypeError::class);
         new CallableParameterNode(
             type: new NamedTypeNode(Name::createFromString('int')),
-            variadic: true,
-            optional: true,
+            isVariadic: true,
+            isOptional: true,
         );
     }
 

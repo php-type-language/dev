@@ -41,7 +41,7 @@ final class NamedFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('string')),
         );
 
-        $this->assertFalse($node->optional);
+        $this->assertFalse($node->isOptional);
     }
 
     #[Test]
@@ -53,7 +53,7 @@ final class NamedFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertTrue($node->optional);
+        $this->assertTrue($node->isOptional);
     }
 
     #[Test]

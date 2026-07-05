@@ -14,16 +14,16 @@ final class CallableParameterNode extends Node implements \Stringable
     public function __construct(
         public ?TypeNode $type = null,
         public ?VariableLiteralNode $name = null,
-        public bool $output = false,
-        public bool $variadic = false,
-        public bool $optional = false,
+        public bool $isOutput = false,
+        public bool $isVariadic = false,
+        public bool $isOptional = false,
         public ?AttributeGroupListNode $attributes = null,
     ) {
         assert($type !== null || $name !== null, new \TypeError(
             'Required indication of the type or name of the parameter (one of)',
         ));
 
-        assert($variadic === false || $optional === false, new \TypeError(
+        assert($isVariadic === false || $isOptional === false, new \TypeError(
             'Parameter cannot be both variable and optional (variadic parameter is already optional)',
         ));
     }
@@ -32,15 +32,15 @@ final class CallableParameterNode extends Node implements \Stringable
     {
         $result = [];
 
-        if ($this->output) {
+        if ($this->isOutput) {
             $result[] = 'output';
         }
 
-        if ($this->variadic) {
+        if ($this->isVariadic) {
             $result[] = 'variadic';
         }
 
-        if ($this->optional) {
+        if ($this->isOptional) {
             $result[] = 'optional';
         }
 

@@ -23,13 +23,13 @@ final class ClassConstMaskFieldNode extends ExplicitFieldNode
     public function __construct(
         ClassConstMaskNode $key,
         TypeNode $type,
-        bool $optional = false,
+        bool $isOptional = false,
         ?AttributeGroupListNode $attributes = null,
     ) {
         parent::__construct(
             key: $key,
             type: $type,
-            optional: $optional,
+            isOptional: $isOptional,
             attributes: $attributes,
         );
     }

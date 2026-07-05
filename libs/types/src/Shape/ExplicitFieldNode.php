@@ -25,12 +25,12 @@ abstract class ExplicitFieldNode extends FieldNode
          */
         public mixed $key,
         TypeNode $type,
-        bool $optional = false,
+        bool $isOptional = false,
         ?AttributeGroupListNode $attributes = null,
     ) {
         parent::__construct(
             type: $type,
-            optional: $optional,
+            isOptional: $isOptional,
             attributes: $attributes,
         );
     }

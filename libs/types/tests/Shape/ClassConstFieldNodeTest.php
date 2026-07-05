@@ -56,7 +56,7 @@ final class ClassConstFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('int')),
         );
 
-        $this->assertFalse($node->optional);
+        $this->assertFalse($node->isOptional);
     }
 
     #[Test]
@@ -68,7 +68,7 @@ final class ClassConstFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertTrue($node->optional);
+        $this->assertTrue($node->isOptional);
     }
 
     #[Test]

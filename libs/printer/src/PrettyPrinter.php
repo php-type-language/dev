@@ -260,7 +260,7 @@ class PrettyPrinter extends Printer
         $name = $this->printShapeFieldName($field);
 
         if ($name !== '') {
-            if ($field->optional) {
+            if ($field->isOptional) {
                 $name .= '?';
             }
 
@@ -448,11 +448,11 @@ class PrettyPrinter extends Printer
             $result .= ' ';
         }
 
-        if ($node->output) {
+        if ($node->isOutput) {
             $result .= '&';
         }
 
-        if ($node->variadic) {
+        if ($node->isVariadic) {
             $result .= '...';
         }
 
@@ -461,7 +461,7 @@ class PrettyPrinter extends Printer
             $result .= $this->printLiteralNode($node->name);
         }
 
-        if ($node->optional) {
+        if ($node->isOptional) {
             $result .= '=';
         }
 
