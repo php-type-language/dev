@@ -321,7 +321,7 @@ its description.
 - [x] `@seal-properties` - Forbids declaring magic properties beyond those already documented
   > `"@seal-properties" [ <Description> ]`
 - [x] `@suppress` - Silences the diagnostics that would otherwise be reported for an _Element_
-  > `"@suppress" <Name> { "," <Name> } [ <Description> ]`
+  > `"@suppress" <IssueName> { "," <IssueName> } [ <Description> ]`
 - [x] `@unused-param` - Marks an argument that is intentionally left unused
   > `"@unused-param" <Variable> [ <Description> ]`
 
