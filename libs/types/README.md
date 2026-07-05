@@ -2,6 +2,16 @@
     <img align="center" src="https://github.com/php-type-language/.github/blob/master/assets/dark.png?raw=true">
 </a>
 
+<p align="center">
+    <a href="https://packagist.org/packages/type-lang/types"><img src="https://poser.pugx.org/type-lang/types/require/php?style=for-the-badge" alt="PHP 8.1+"></a>
+    <a href="https://packagist.org/packages/type-lang/types"><img src="https://poser.pugx.org/type-lang/types/version?style=for-the-badge" alt="Latest Stable Version"></a>
+    <a href="https://packagist.org/packages/type-lang/types"><img src="https://poser.pugx.org/type-lang/types/v/unstable?style=for-the-badge" alt="Latest Unstable Version"></a>
+    <a href="https://raw.githubusercontent.com/php-type-language/types/blob/master/LICENSE"><img src="https://poser.pugx.org/type-lang/types/license?style=for-the-badge" alt="License MIT"></a>
+</p>
+<p align="center">
+    <a href="https://github.com/php-type-language/types/actions"><img src="https://github.com/php-type-language/types/workflows/tests/badge.svg"></a>
+</p>
+
 ---
 
 # TypeLang DTO Types

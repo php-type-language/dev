@@ -2,8 +2,6 @@
     <img align="center" src="https://github.com/php-type-language/.github/blob/master/assets/dark.png?raw=true">
 </a>
 
----
-
 <p align="center">
     <a href="https://packagist.org/packages/type-lang/printer"><img src="https://poser.pugx.org/type-lang/printer/require/php?style=for-the-badge" alt="PHP 8.4+"></a>
     <a href="https://packagist.org/packages/type-lang/printer"><img src="https://poser.pugx.org/type-lang/printer/version?style=for-the-badge" alt="Latest Stable Version"></a>
@@ -13,6 +11,8 @@
 <p align="center">
     <a href="https://github.com/php-type-language/printer/actions"><img src="https://github.com/php-type-language/printer/workflows/tests/badge.svg"></a>
 </p>
+
+---
 
 Reference implementation for TypeLang Printer.
 
