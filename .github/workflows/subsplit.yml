@@ -25,10 +25,12 @@ jobs:
             split_repository: 'phpdoc'
           - local_path: 'libs/printer'
             split_repository: 'printer'
+          - local_path: 'libs/reader'
+            split_repository: 'reader'
           - local_path: 'libs/types'
             split_repository: 'types'
-          # - local_path: 'docs'
-          #   split_repository: 'docs'
+          - local_path: 'docs'
+            split_repository: 'docs'
     steps:
       - uses: actions/checkout@v7
 
