@@ -250,7 +250,7 @@ its description.
   > `"@license" ( <URL> [ <Description> ] | <Description> )`
 - [x] `@link` — Indicates a custom relation between the associated _Element_ and a website identified by an absolute URI
   > `"@link" <URI> [ <Description> ]`
-- [ ] `@method` — Declares which "_magic_" methods are callable
+- [x] `@method` — Declares which "_magic_" methods are callable
   > `"@method" [ "static" ] <Type> <Name> "(" [ <Type> <Variable> { "," <Type> <Variable> } ] ")" [ <Description> ]`
 - [x] `@mixin` — Declares that the members of the referenced _Type_ are magically available on the described class
   > `"@mixin" <Type> [ <Description> ]`
