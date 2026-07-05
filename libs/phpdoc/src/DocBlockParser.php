@@ -26,6 +26,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\CopyrightTag\CopyrightTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\DeprecatedTag\DeprecatedTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\FilesourceTag\FilesourceTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\FinalTag\FinalTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\GlobalTag\GlobalTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\IgnoreTag\IgnoreTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ImplementsTagDefinition;
@@ -56,6 +57,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\SealPropertiesTag\SealPropertiesTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SinceTag\SinceTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SubpackageTag\SubpackageTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SuppressTag\SuppressTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagDefinition;
@@ -65,6 +67,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\TodoTag\TodoTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UnusedParamTag\UnusedParamTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UsedByTag\UsedByTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UsesTag\UsesTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VersionTag\VersionTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
@@ -207,6 +210,9 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             SinceTagDefinition::NAME => new SinceTagDefinition(),
             DeprecatedTagDefinition::NAME => new DeprecatedTagDefinition(),
             LicenseTagDefinition::NAME => new LicenseTagDefinition(),
+            VarTagDefinition::NAME => new VarTagDefinition(),
+            GlobalTagDefinition::NAME => new GlobalTagDefinition(),
+            SuppressTagDefinition::NAME => new SuppressTagDefinition(),
         ];
     }
 
