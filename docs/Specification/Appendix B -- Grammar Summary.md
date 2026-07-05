@@ -1,10 +1,12 @@
 # B. Appendix: Grammar Summary
 
-This appendix consolidates every grammar production defined in this specification.
-Lexical productions (double colon `::`) appear first, followed by syntactic
-productions (single colon `:`).
+This appendix consolidates every grammar production defined in this
+specification. Lexical productions (double colon `::`) appear first, followed
+by syntactic productions (single colon `:`). It is provided for convenience
+and is non-normative; in the event of any discrepancy between this appendix
+and the body of this specification, the body governs.
 
-## Source Text
+**Source Text**
 
 SourceCharacter :: "Any Unicode code point"
 
@@ -18,7 +20,7 @@ Letter :: one of
 
 Digit :: one of `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
-## Ignored Tokens
+**Ignored Tokens**
 
 Ignored ::
 
@@ -44,12 +46,12 @@ BlockComment :: `/*` BlockCommentChar\* `*/`
 
 BlockCommentChar :: SourceCharacter but not `*/`
 
-## Lexical Tokens
+**Lexical Tokens**
 
 Token ::
 
 - Punctuator
-- Name
+- NameToken
 - Variable
 - IntLiteral
 - FloatLiteral
@@ -59,12 +61,12 @@ Token ::
 
 Punctuator :: one of
 
-- `?` `|` `&` `*` `,` `:` `;` `=` `!`
+- `?` `|` `&` `*` `,` `:` `=`
 - `(` `)` `[` `]` `{` `}`
 - `<` `>` `<=` `>=`
 - `::` `\` `...` `#[`
 
-Name :: NameStart NameContinue\* [lookahead != NameContinue]
+NameToken :: NameStart NameContinue\* [lookahead != NameContinue]
 
 NameStart ::
 
@@ -84,7 +86,7 @@ Variable :: `$` NameStart NameContinue\*
 
 ThisVariable :: `$this` [lookahead != NameContinue]
 
-## Literal Tokens
+**Literal Tokens**
 
 BoolLiteral :: one of `true` `false` [lookahead != NameContinue]
 
@@ -172,7 +174,7 @@ HexEscape :: `x` HexDigit HexDigit?
 
 UnicodeEscape :: `u` `{` HexDigit+ `}`
 
-## Types
+**Types**
 
 Type : Expression
 
@@ -192,7 +194,7 @@ ConditionalOperand :
 
 ConditionalOperator : one of `is` `is not` `>=` `<=` `<` `>`
 
-## Logical Types
+**Logical Types**
 
 LogicalType : UnionType
 
@@ -204,7 +206,7 @@ UnaryType : NullableType
 
 NullableType : `?`? PostfixType
 
-## List and Offset Access Types
+**List and Offset Access Types**
 
 PostfixType : PrimaryType TypeSuffix\*
 
@@ -217,7 +219,7 @@ ListSuffix : `[` `]`
 
 OffsetSuffix : `[` Type `]`
 
-## Primary Types
+**Primary Types**
 
 PrimaryType :
 
@@ -227,7 +229,7 @@ PrimaryType :
 - CallableType
 - NamedType
 
-## Names
+**Names**
 
 Name :
 
@@ -240,10 +242,10 @@ RelativeName : Identifier (`\` Identifier)\*
 
 Identifier :
 
-- Name
+- NameToken
 - ReservedWord
 
-## Named and Generic Types
+**Named and Generic Types**
 
 NamedType : Name (TemplateArguments | ShapeFields)?
 
@@ -255,7 +257,7 @@ TemplateArgumentHint : Identifier Type
 
 TemplateArgumentType : Type
 
-## Literal and Constant Types
+**Literal and Constant Types**
 
 LiteralType :
 
@@ -264,11 +266,6 @@ LiteralType :
 - IntLiteral
 - FloatLiteral
 - StringLiteral
-- ConstantType
-
-ConstantType :
-
-- Name
 - ClassConstant
 - ConstantMask
 
@@ -280,7 +277,7 @@ ConstantMask :
 - Name `::` Identifier `*`
 - Name `::` `*`
 
-## Shape Types
+**Shape Types**
 
 ShapeFields : `{` ShapeBody? `,`? `}`
 
@@ -309,7 +306,7 @@ ShapeValue : Type
 
 UnsealedShape : `...` TemplateArguments?
 
-## Callable Types
+**Callable Types**
 
 CallableType : Name `(` CallableParameters? `)` CallableReturnType?
 
@@ -329,7 +326,7 @@ ParameterModifiers :
 - `&` `...`?
 - `...` `&`?
 
-## Attributes
+**Attributes**
 
 AttributeGroups : AttributeGroup+
 
