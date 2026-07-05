@@ -39,14 +39,6 @@ the <a href="contribution.md#security-issues">special procedure instead</a>.
 </warning>
 
 You may submit a bug report using GitHub Issues.
-- [Documentation](https://github.com/php-type-language/docs/issues)
-- [Language Parser Component (type-lang/parser)](https://github.com/php-type-language/parser/issues)
-- [Mapper Component (type-lang/mapper)](https://github.com/php-type-language/mapper/issues)
-- [Printer Component (type-lang/printer)](https://github.com/php-type-language/printer/issues)
-- [Reader Component (type-lang/reader)](https://github.com/php-type-language/reader/issues)
-- [PHPDoc Parser Component (type-lang/phpdoc)](https://github.com/php-type-language/phpdoc/issues)
-- [PHPDoc Standard Tags (type-lang/phpdoc-standard-tags)](https://github.com/php-type-language/phpdoc-standard-tags/issues)
-- [PHPDoc Template Tags (type-lang/phpdoc-template-tags)](https://github.com/php-type-language/phpdoc-template-tags/issues)
 
 Please follow some basic rules:
 
@@ -148,7 +140,7 @@ provide a bug fix or to propose enhancements to TypeLang Components.
     </code-block>
   </step>
   <step>
-    Checking and correcting coding style (we follow <a href="https://www.php-fig.org/per/coding-style/">PER Coding Style 2.0</a>).
+    Checking and correcting coding style (we follow <a href="https://www.php-fig.org/per/coding-style/">PER Coding Style 3.0</a>).
     <code-block lang="Bash">
     composer phpcs:fix
     </code-block>
