@@ -215,213 +215,412 @@ its description.
 **Standard**
 
 - [x] `@abstract` — Declare any _Element_ as abstract
+  > `"@abstract" [ <Description> ]`
 - [x] `@api` — Highlight _Element_ as being part of the public API
-- [x] `@author`
+  > `"@api" [ <Description> ]`
+- [x] `@author` — Documents the author of an _Element_, together with an optional email address
+  > `"@author" <AuthorName> [ "<" <Email> ">" ] [ <Description> ]`
 - [x] `@category` — Used to organize groups of packages together
+  > `"@category" [ <Description> ]`
 - [x] `@copyright` — Used to document the copyright information of any _Element_
-- [x] `@deprecated`
-- [ ] `@example`
+  > `"@copyright" [ <Description> ]`
+- [x] `@deprecated` — Marks an _Element_ as deprecated, optionally since a given version
+  > `"@deprecated" [ <Version> ] [ <Description> ]`
+- [ ] `@example` — Points to an example source file illustrating the use of an _Element_
+  > `"@example" [ <Location> [ <StartLine> [ <LineCount> ] ] ] [ <Description> ]`
 - [x] `@extends` — Allows to extend templated classes and interfaces
-- [x] `@filesource`
+  > `"@extends" <Type> [ <Description> ]`
+- [x] `@filesource` — Tells documentation tooling to include the source of the current file in its output
+  > `"@filesource" [ <Description> ]`
 - [x] `@final` — Declare any _Element_ as final
-- [x] `@global`
+  > `"@final" [ <Description> ]`
+- [x] `@global` — Documents a global variable that a function relies on
+  > `"@global" <Type> <Variable> [ <Description> ]`
 - [x] `@ignore` — Tells documentation systems that an _Element_ is not to be processed
+  > `"@ignore" [ <Description> ]`
 - [x] `@implements` — Allows to extend templated interfaces
-- [x] `@inheritdoc`
+  > `"@implements" <Type> [ <Description> ]`
+- [x] `@inheritdoc` — Reuses the documentation of the parent _Element_
+  > `"@inheritdoc" [ <Description> ]`
 - [x] `@inherits` — An alias of the `@extends` tag
-- [x] `@internal`
+  > `"@inherits" <Type> [ <Description> ]`
+- [x] `@internal` — Marks an _Element_ as internal to its package, or, when used inline, documents information meant only for that package's maintainers
+  > `"@internal" [ <Description> ]`
 - [x] `@license` — Used to indicate which license is applicable
+  > `"@license" ( <URL> [ <Description> ] | <Description> )`
 - [x] `@link` — Indicates a custom relation between the associated _Element_ and a website identified by an absolute URI
+  > `"@link" <URI> [ <Description> ]`
 - [ ] `@method` — Declares which "_magic_" methods are callable
-- [x] `@mixin`
+  > `"@method" [ "static" ] <Type> <Name> "(" [ <Type> <Variable> { "," <Type> <Variable> } ] ")" [ <Description> ]`
+- [x] `@mixin` — Declares that the members of the referenced _Type_ are magically available on the described class
+  > `"@mixin" <Type> [ <Description> ]`
 - [x] `@no-named-arguments` — Indicates that argument names may change in the future
+  > `"@no-named-arguments" [ <Description> ]`
 - [x] `@package` — Categorizes _Element(s)_ into logical subdivisions
+  > `"@package" [ <Description> ]`
 - [x] `@override` — Marks a method as overriding an inherited definition
+  > `"@override" [ <Description> ]`
 - [x] `@param` — Documents a single argument of a function or method
-- [x] `@param-closure-this`
-- [x] `@param-immediately-invoked-callable`
-- [x] `@param-later-invoked-callable`
-- [x] `@param-out`
+  > `"@param" <Type> <Variable> [ <Description> ]`
+- [x] `@param-closure-this` — Documents the bound `$this` type of a closure passed as an argument
+  > `"@param-closure-this" <Type> <Variable> [ <Description> ]`
+- [x] `@param-immediately-invoked-callable` — Marks a callable argument that is invoked before the function or method returns
+  > `"@param-immediately-invoked-callable" <Variable> [ <Description> ]`
+- [x] `@param-later-invoked-callable` — Marks a callable argument that is invoked after the function or method returns
+  > `"@param-later-invoked-callable" <Variable> [ <Description> ]`
+- [x] `@param-out` — Documents the type that a by-reference argument holds after the function or method returns
+  > `"@param-out" <Type> <Variable> [ <Description> ]`
 - [x] `@property` — Declares which "_magic_" properties are supported
+  > `"@property" <Type> <Variable> [ <Description> ]`
 - [x] `@property-read` — Declares "_magic_" properties supported for reading
+  > `"@property-read" <Type> <Variable> [ <Description> ]`
 - [x] `@property-write` — Declares "_magic_" properties supported for writing
-- [x] `@pure-unless-callable-is-impure`
-- [x] `@readonly`
-- [x] `@require-extends`
-- [x] `@require-implements`
+  > `"@property-write" <Type> <Variable> [ <Description> ]`
+- [x] `@pure-unless-callable-is-impure` — Declares a function pure unless a callable it receives is itself impure
+  > `"@pure-unless-callable-is-impure" [ <Description> ]`
+- [x] `@readonly` — Declares that a property may only be written once, during initialization
+  > `"@readonly" [ <Description> ]`
+- [x] `@require-extends` — Constrains a trait so that it may only be used within a class that extends the given _Type_
+  > `"@require-extends" <Type> [ <Description> ]`
+- [x] `@require-implements` — Constrains a trait so that it may only be used within a class that implements the given interface
+  > `"@require-implements" <Type> [ <Description> ]`
 - [x] `@return` — Documents the return value of a function or method ()
+  > `"@return" <Type> [ <Description> ]`
 - [x] `@returns` — Seems quite common (typo in code). An alias of the `@return` tag
-- [x] `@seal-methods`
-- [x] `@seal-properties`
+  > `"@returns" <Type> [ <Description> ]`
+- [x] `@seal-methods` — Forbids declaring magic methods beyond those already documented
+  > `"@seal-methods" [ <Description> ]`
+- [x] `@seal-properties` — Forbids declaring magic properties beyond those already documented
+  > `"@seal-properties" [ <Description> ]`
 - [x] `@see` — Indicates a reference from the associated _Symbol(s)_ to a website or other _Symbol(s)_
-- [x] `@since`
-- [x] `@source`
+  > `"@see" ( <Reference> | <URI> ) [ <Description> ]`
+- [x] `@since` — Documents the version at which an _Element_ became available
+  > `"@since" [ <Version> ] [ <Description> ]`
+- [x] `@source` — Points at a range of lines of the documented _Element_'s source
+  > `"@source" <Start> [ <Count> ] [ <Description> ]`
 - [x] `@subpackage` — Categorizes _Element(s)_ into logical subdivisions
-- [x] `@suppress`
+  > `"@subpackage" [ <Description> ]`
+- [x] `@suppress` — Silences the diagnostics that would otherwise be reported for an _Element_
+  > `"@suppress" [ <Description> ]`
 - [x] `@template` — Declares a generic type parameter
+  > `"@template" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
 - [x] `@template-contravariant` — Declares a generic contravariant type parameter
+  > `"@template-contravariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
 - [x] `@template-covariant` — Declares a generic covariant type parameter
+  > `"@template-covariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
 - [x] `@template-invariant` — An alias of the `@template` tag
+  > `"@template-invariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
 - [x] `@template-extends` — An alias of the `@extends` tag
+  > `"@template-extends" <Type> [ <Description> ]`
 - [x] `@template-implements` — An alias of the `@implements` tag
+  > `"@template-implements" <Type> [ <Description> ]`
 - [x] `@template-use` — Allows to extend templated traits
+  > `"@template-use" <Type> [ <Description> ]`
 - [x] `@throw` — Seems quite common (typo in code). An alias of the `@throws` tag
+  > `"@throw" <Type> [ <Description> ]`
 - [x] `@throws` — Indicates the type of `\Throwable` an _Element_ may throw
-- [x] `@todo`
-- [x] `@unused-param`
+  > `"@throws" <Type> [ <Description> ]`
+- [x] `@todo` — Records a task that still needs to be done for an _Element_
+  > `"@todo" [ <Description> ]`
+- [x] `@unused-param` — Marks an argument that is intentionally left unused
+  > `"@unused-param" <Variable> [ <Description> ]`
 - [x] `@use` — An alias of the `@template-use` tag
-- [x] `@used-by`
-- [x] `@uses`
+  > `"@use" <Type> [ <Description> ]`
+- [x] `@used-by` — Indicates that the described _Element_ is used by the referenced one
+  > `"@used-by" <Reference> [ <Description> ]`
+- [x] `@uses` — Indicates that the described _Element_ uses the referenced one
+  > `"@uses" <Reference> [ <Description> ]`
 - [x] `@var` — Documents the _Type_ of the following _Element_
-- [x] `@version`
+  > `"@var" <Type> [ <Variable> ] [ <Description> ]`
+- [x] `@version` — Documents the current version of an _Element_
+  > `"@version" [ <Version> ] [ <Description> ]`
 
 
 **Psalm**
 
-- [ ] `@psalm-allow-private-mutation`
+- [ ] `@psalm-allow-private-mutation` — Allows a private-scope mutation of an otherwise immutable property
+  > `"@psalm-allow-private-mutation" [ <Description> ]`
 - [ ] `@psalm-api` — Vendor-specific `@api` alias
-- [ ] `@psalm-assert`
-- [ ] `@psalm-assert-if-false`
-- [ ] `@psalm-assert-if-true`
+  > `"@psalm-api" [ <Description> ]`
+- [ ] `@psalm-assert` — Asserts that an argument or variable is narrowed to the given _Type_ after the call
+  > `"@psalm-assert" <Type> <Variable>`
+- [ ] `@psalm-assert-if-false` — Asserts the given _Type_ when the function returns `false`
+  > `"@psalm-assert-if-false" <Type> <Variable>`
+- [ ] `@psalm-assert-if-true` — Asserts the given _Type_ when the function returns `true`
+  > `"@psalm-assert-if-true" <Type> <Variable>`
 - [ ] `@psalm-assert-untainted`
-- [ ] `@psalm-check-type`
-- [ ] `@psalm-check-type-exact`
-- [ ] `@psalm-consistent-constructor`
-- [ ] `@psalm-consistent-templates`
-- [ ] `@psalm-external-mutation-free`
+  > TODO
+- [ ] `@psalm-check-type` — Asserts that a variable resolves to the given _Type_, for debugging purposes
+  > `"@psalm-check-type" <Variable> "=" <Type>`
+- [ ] `@psalm-check-type-exact` — Asserts that a variable resolves to exactly the given _Type_, disallowing narrower or wider matches
+  > `"@psalm-check-type-exact" <Variable> "=" <Type>`
+- [ ] `@psalm-consistent-constructor` — Requires that all subclasses declare a constructor compatible with the parent's
+  > `"@psalm-consistent-constructor" [ <Description> ]`
+- [ ] `@psalm-consistent-templates` — Requires that all subclasses use the same template parameters as the parent
+  > `"@psalm-consistent-templates" [ <Description> ]`
+- [ ] `@psalm-external-mutation-free` — Declares that a method never mutates state observable from outside the object
+  > `"@psalm-external-mutation-free" [ <Description> ]`
 - [ ] `@psalm-extends` — Vendor-specific `@extends` alias
+  > `"@psalm-extends" <Type> [ <Description> ]`
 - [ ] `@psalm-flow`
-- [ ] `@psalm-if-this-is`
-- [ ] `@psalm-ignore-falsable-return`
-- [ ] `@psalm-ignore-nullable-return`
-- [ ] `@psalm-ignore-var`
-- [ ] `@psalm-ignore-variable-method`
-- [ ] `@psalm-ignore-variable-property`
-- [ ] `@psalm-immutable`
+  > TODO
+- [ ] `@psalm-if-this-is` — Narrows the type of `$this` inside a method when the given _Type_ matches
+  > `"@psalm-if-this-is" <Type>`
+- [ ] `@psalm-ignore-falsable-return` — Tells Psalm to ignore a possible `false` value in the return type
+  > `"@psalm-ignore-falsable-return" [ <Description> ]`
+- [ ] `@psalm-ignore-nullable-return` — Tells Psalm to ignore a possible `null` value in the return type
+  > `"@psalm-ignore-nullable-return" [ <Description> ]`
+- [ ] `@psalm-ignore-var` — Excludes the following `@var` annotation from being used for inference
+  > `"@psalm-ignore-var" [ <Description> ]`
+- [ ] `@psalm-ignore-variable-method` — Suppresses "undefined method" issues for methods called on the variable
+  > `"@psalm-ignore-variable-method" [ <Description> ]`
+- [ ] `@psalm-ignore-variable-property` — Suppresses "undefined property" issues for properties accessed on the variable
+  > `"@psalm-ignore-variable-property" [ <Description> ]`
+- [ ] `@psalm-immutable` — Declares a class as immutable
+  > `"@psalm-immutable" [ <Description> ]`
 - [ ] `@psalm-implements` — Vendor-specific `@implements` alias
-- [ ] `@psalm-import-type`
-- [ ] `@psalm-inheritors`
-- [ ] `@psalm-internal`
+  > `"@psalm-implements" <Type> [ <Description> ]`
+- [ ] `@psalm-import-type` — Imports a `@psalm-type` alias declared in another class
+  > `"@psalm-import-type" <Name> "from" <Type> [ "as" <Name> ]`
+- [ ] `@psalm-inheritors` — Restricts which classes are allowed to extend or implement the described type
+  > `"@psalm-inheritors" <Type>`
+- [ ] `@psalm-internal` — Marks an _Element_ as internal to the given namespace
+  > `"@psalm-internal" [ <Name> ] [ <Description> ]`
 - [ ] `@psalm-method` — Vendor-specific `@method` alias
-- [ ] `@psalm-mutation-free`
-- [ ] `@psalm-no-seal-methods`
-- [ ] `@psalm-no-seal-properties`
-- [ ] `@psalm-override-method-visibility`
-- [ ] `@psalm-override-property-visibility`
+  > `"@psalm-method" [ "static" ] <Type> <Name> "(" [ <Type> <Variable> { "," <Type> <Variable> } ] ")" [ <Description> ]`
+- [ ] `@psalm-mutation-free` — Declares that a method never mutates any state
+  > `"@psalm-mutation-free" [ <Description> ]`
+- [ ] `@psalm-no-seal-methods` — Allows declaring magic methods beyond those already documented
+  > `"@psalm-no-seal-methods" [ <Description> ]`
+- [ ] `@psalm-no-seal-properties` — Allows declaring magic properties beyond those already documented
+  > `"@psalm-no-seal-properties" [ <Description> ]`
+- [ ] `@psalm-override-method-visibility` — Allows a subclass to override a method with a different visibility
+  > `"@psalm-override-method-visibility" [ <Description> ]`
+- [ ] `@psalm-override-property-visibility` — Allows a subclass to override a property with a different visibility
+  > `"@psalm-override-property-visibility" [ <Description> ]`
 - [ ] `@psalm-param` — Vendor-specific `@param` alias
-- [ ] `@psalm-param-out`
+  > `"@psalm-param" <Type> <Variable> [ <Description> ]`
+- [ ] `@psalm-param-out` — Documents the type that a by-reference argument holds after the function or method returns
+  > `"@psalm-param-out" <Type> <Variable> [ <Description> ]`
 - [ ] `@psalm-property` — Vendor-specific `@property` alias
+  > `"@psalm-property" <Type> <Variable> [ <Description> ]`
 - [ ] `@psalm-property-read` — Vendor-specific `@property-read` alias
+  > `"@psalm-property-read" <Type> <Variable> [ <Description> ]`
 - [ ] `@psalm-property-write` — Vendor-specific `@property-write` alias
-- [ ] `@psalm-pure`
-- [ ] `@psalm-readonly`
-- [ ] `@psalm-readonly-allow-private-mutation`
-- [ ] `@psalm-require-extends`
-- [ ] `@psalm-require-implements`
+  > `"@psalm-property-write" <Type> <Variable> [ <Description> ]`
+- [ ] `@psalm-pure` — Declares a function or method as pure (free of side effects)
+  > `"@psalm-pure" [ <Description> ]`
+- [ ] `@psalm-readonly` — Declares that a property may only be written once, during initialization
+  > `"@psalm-readonly" [ <Description> ]`
+- [ ] `@psalm-readonly-allow-private-mutation` — Allows a readonly property to be mutated from within the declaring class
+  > `"@psalm-readonly-allow-private-mutation" [ <Description> ]`
+- [ ] `@psalm-require-extends` — Constrains a trait so that it may only be used within a class that extends the given _Type_
+  > `"@psalm-require-extends" <Type> [ <Description> ]`
+- [ ] `@psalm-require-implements` — Constrains a trait so that it may only be used within a class that implements the given interface
+  > `"@psalm-require-implements" <Type> [ <Description> ]`
 - [ ] `@psalm-return` — Vendor-specific `@return` alias
-- [ ] `@psalm-scope-this`
-- [ ] `@psalm-seal-methods`
-- [ ] `@psalm-seal-properties`
-- [ ] `@psalm-self-out`
-- [ ] `@psalm-stub-override`
-- [ ] `@psalm-suppress`
-- [ ] `@psalm-taint-escape`
-- [ ] `@psalm-taint-sink`
-- [ ] `@psalm-taint-source`
-- [ ] `@psalm-taint-specialize`
-- [ ] `@psalm-taint-unescape`
+  > `"@psalm-return" <Type> [ <Description> ]`
+- [ ] `@psalm-scope-this` — Binds the type of `$this` inside a `Closure`
+  > `"@psalm-scope-this" <Type>`
+- [ ] `@psalm-seal-methods` — Forbids declaring magic methods beyond those already documented
+  > `"@psalm-seal-methods" [ <Description> ]`
+- [ ] `@psalm-seal-properties` — Forbids declaring magic properties beyond those already documented
+  > `"@psalm-seal-properties" [ <Description> ]`
+- [ ] `@psalm-self-out` — Documents the refined type of `$this` after the method call
+  > `"@psalm-self-out" <Type> [ <Description> ]`
+- [ ] `@psalm-stub-override` — Marks a stub declaration as intentionally overriding the real signature
+  > `"@psalm-stub-override" [ <Description> ]`
+- [ ] `@psalm-suppress` — Silences the listed issue types for an _Element_
+  > `"@psalm-suppress" <Name> { "," <Name> } [ <Description> ]`
+- [ ] `@psalm-taint-escape` — Marks a value as no longer tainted after passing through the described _Element_
+  > `"@psalm-taint-escape" <Name>`
+- [ ] `@psalm-taint-sink` — Marks an argument as a taint sink for the given taint type
+  > `"@psalm-taint-sink" <Name> <Variable>`
+- [ ] `@psalm-taint-source` — Marks the return value as a taint source of the given type
+  > `"@psalm-taint-source" <Name>`
+- [ ] `@psalm-taint-specialize` — Tracks tainted data separately per call site
+  > `"@psalm-taint-specialize" [ <Description> ]`
+- [ ] `@psalm-taint-unescape` — Marks a value as tainted again after passing through the described _Element_
+  > `"@psalm-taint-unescape" <Name>`
 - [ ] `@psalm-template` — Vendor-specific `@template` alias
+  > `"@psalm-template" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
 - [ ] `@psalm-template-contravariant` — Vendor-specific `@template-contravariant` alias
+  > `"@psalm-template-contravariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
 - [ ] `@psalm-template-covariant` — Vendor-specific `@template-covariant` alias
-- [ ] `@psalm-this-out`
-- [ ] `@psalm-trace`
-- [ ] `@psalm-type`
+  > `"@psalm-template-covariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
+- [ ] `@psalm-this-out` — An alias of the `@psalm-self-out` tag
+  > `"@psalm-this-out" <Type> [ <Description> ]`
+- [ ] `@psalm-trace` — Outputs the inferred type of a variable, for debugging purposes
+  > `"@psalm-trace" <Variable>`
+- [ ] `@psalm-type` — Declares a local alias for a complex _Type_
+  > `"@psalm-type" <Name> "=" <Type>`
 - [ ] `@psalm-use` — Vendor-specific `@use` alias
+  > `"@psalm-use" <Type> [ <Description> ]`
 - [ ] `@psalm-var` — Vendor-specific `@var` alias
-- [ ] `@psalm-variadic`
-- [ ] `@psalm-yield`
+  > `"@psalm-var" <Type> [ <Variable> ] [ <Description> ]`
+- [ ] `@psalm-variadic` — Declares that magic `__call`/`__callStatic` accepts a variadic list of arguments
+  > `"@psalm-variadic" [ <Description> ]`
+- [ ] `@psalm-yield` — Documents the type yielded by a `Generator`
+  > `"@psalm-yield" <Type> [ <Description> ]`
 
 
 **PHPStan**
 
-- [ ] `@phpstan-allow-private-mutation`
-- [ ] `@phpstan-assert`
-- [ ] `@phpstan-assert-if-false`
-- [ ] `@phpstan-assert-if-true`
-- [ ] `@phpstan-consistent-constructor`
+- [ ] `@phpstan-allow-private-mutation` — Allows a private-scope mutation of an otherwise immutable property
+  > `"@phpstan-allow-private-mutation" [ <Description> ]`
+- [ ] `@phpstan-assert` — Asserts that an argument or variable is narrowed to the given _Type_ after the call
+  > `"@phpstan-assert" <Type> <Variable>`
+- [ ] `@phpstan-assert-if-false` — Asserts the given _Type_ when the function returns `false`
+  > `"@phpstan-assert-if-false" <Type> <Variable>`
+- [ ] `@phpstan-assert-if-true` — Asserts the given _Type_ when the function returns `true`
+  > `"@phpstan-assert-if-true" <Type> <Variable>`
+- [ ] `@phpstan-consistent-constructor` — Requires that all subclasses declare a constructor compatible with the parent's
+  > `"@phpstan-consistent-constructor" [ <Description> ]`
 - [ ] `@phpstan-extends` — Vendor-specific `@extends` alias
-- [ ] `@phpstan-ignore`
-- [ ] `@phpstan-ignore-line`
-- [ ] `@phpstan-ignore-next-line`
-- [ ] `@phpstan-immutable`
+  > `"@phpstan-extends" <Type> [ <Description> ]`
+- [ ] `@phpstan-ignore` — Silences the listed error identifiers reported on the following line
+  > `"@phpstan-ignore" <Name> { "," <Name> } [ <Description> ]`
+- [ ] `@phpstan-ignore-line` — Silences any error reported on the current line
+  > `"@phpstan-ignore-line" [ <Description> ]`
+- [ ] `@phpstan-ignore-next-line` — Silences any error reported on the next line
+  > `"@phpstan-ignore-next-line" [ <Description> ]`
+- [ ] `@phpstan-immutable` — Declares a class as immutable
+  > `"@phpstan-immutable" [ <Description> ]`
 - [ ] `@phpstan-implements` — Vendor-specific `@implements` alias
-- [ ] `@phpstan-import-type`
-- [ ] `@phpstan-impure`
+  > `"@phpstan-implements" <Type> [ <Description> ]`
+- [ ] `@phpstan-import-type` — Imports a `@phpstan-type` alias declared in another class
+  > `"@phpstan-import-type" <Name> "from" <Type> [ "as" <Name> ]`
+- [ ] `@phpstan-impure` — Declares a function or method as impure (has side effects)
+  > `"@phpstan-impure" [ <Description> ]`
 - [ ] `@phpstan-method` — Vendor-specific `@method` alias
+  > `"@phpstan-method" [ "static" ] <Type> <Name> "(" [ <Type> <Variable> { "," <Type> <Variable> } ] ")" [ <Description> ]`
 - [ ] `@phpstan-param` — Vendor-specific `@param` alias
-- [ ] `@phpstan-param-closure-this`
-- [ ] `@phpstan-param-immediately-invoked-callable`
-- [ ] `@phpstan-param-later-invoked-callable`
-- [ ] `@phpstan-param-out`
+  > `"@phpstan-param" <Type> <Variable> [ <Description> ]`
+- [ ] `@phpstan-param-closure-this` — Documents the bound `$this` type of a closure passed as an argument
+  > `"@phpstan-param-closure-this" <Type> <Variable> [ <Description> ]`
+- [ ] `@phpstan-param-immediately-invoked-callable` — Marks a callable argument that is invoked before the function or method returns
+  > `"@phpstan-param-immediately-invoked-callable" <Variable> [ <Description> ]`
+- [ ] `@phpstan-param-later-invoked-callable` — Marks a callable argument that is invoked after the function or method returns
+  > `"@phpstan-param-later-invoked-callable" <Variable> [ <Description> ]`
+- [ ] `@phpstan-param-out` — Documents the type that a by-reference argument holds after the function or method returns
+  > `"@phpstan-param-out" <Type> <Variable> [ <Description> ]`
 - [ ] `@phpstan-property` — Vendor-specific `@property` alias
+  > `"@phpstan-property" <Type> <Variable> [ <Description> ]`
 - [ ] `@phpstan-property-read` — Vendor-specific `@property-read` alias
+  > `"@phpstan-property-read" <Type> <Variable> [ <Description> ]`
 - [ ] `@phpstan-property-write` — Vendor-specific `@property-write` alias
-- [ ] `@phpstan-pure`
-- [ ] `@phpstan-pure-unless-callable-is-impure`
-- [ ] `@phpstan-readonly`
-- [ ] `@phpstan-readonly-allow-private-mutation`
-- [ ] `@phpstan-require-extends`
-- [ ] `@phpstan-require-implements`
+  > `"@phpstan-property-write" <Type> <Variable> [ <Description> ]`
+- [ ] `@phpstan-pure` — Declares a function or method as pure (free of side effects)
+  > `"@phpstan-pure" [ <Description> ]`
+- [ ] `@phpstan-pure-unless-callable-is-impure` — Declares a function pure unless a callable it receives is itself impure
+  > `"@phpstan-pure-unless-callable-is-impure" [ <Description> ]`
+- [ ] `@phpstan-readonly` — Declares that a property may only be written once, during initialization
+  > `"@phpstan-readonly" [ <Description> ]`
+- [ ] `@phpstan-readonly-allow-private-mutation` — Allows a readonly property to be mutated from within the declaring class
+  > `"@phpstan-readonly-allow-private-mutation" [ <Description> ]`
+- [ ] `@phpstan-require-extends` — Constrains a trait so that it may only be used within a class that extends the given _Type_
+  > `"@phpstan-require-extends" <Type> [ <Description> ]`
+- [ ] `@phpstan-require-implements` — Constrains a trait so that it may only be used within a class that implements the given interface
+  > `"@phpstan-require-implements" <Type> [ <Description> ]`
 - [ ] `@phpstan-return` — Vendor-specific `@return` alias
-- [ ] `@phpstan-self-out`
+  > `"@phpstan-return" <Type> [ <Description> ]`
+- [ ] `@phpstan-self-out` — Documents the refined type of `$this` after the method call
+  > `"@phpstan-self-out" <Type> [ <Description> ]`
 - [ ] `@phpstan-template` — Vendor-specific `@template` alias
+  > `"@phpstan-template" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
 - [ ] `@phpstan-template-contravariant` — Vendor-specific `@template-contravariant` alias
+  > `"@phpstan-template-contravariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
 - [ ] `@phpstan-template-covariant` — Vendor-specific `@template-covariant` alias
-- [ ] `@phpstan-this-out`
+  > `"@phpstan-template-covariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
+- [ ] `@phpstan-this-out` — An alias of the `@phpstan-self-out` tag
+  > `"@phpstan-this-out" <Type> [ <Description> ]`
 - [ ] `@phpstan-throws` — Vendor-specific `@throws` alias
-- [ ] `@phpstan-type`
-- [ ] `@phpstan-use`
+  > `"@phpstan-throws" <Type> [ <Description> ]`
+- [ ] `@phpstan-type` — Declares a local alias for a complex _Type_
+  > `"@phpstan-type" <Name> "=" <Type>`
+- [ ] `@phpstan-use` — Allows to extend templated traits
+  > `"@phpstan-use" <Type> [ <Description> ]`
 - [ ] `@phpstan-var` — Vendor-specific `@var` alias
+  > `"@phpstan-var" <Type> [ <Variable> ] [ <Description> ]`
 
 
 **Phan**
 
 - [ ] `@phan-abstract` — Vendor-specific `@abstract` alias
-- [ ] `@phan-assert`
+  > `"@phan-abstract" [ <Description> ]`
+- [ ] `@phan-assert` — Asserts that an argument or variable is narrowed to the given _Type_ after the call
+  > `"@phan-assert" <Type> <Variable>`
 - [ ] `@phan-assert-false-condition`
-- [ ] `@phan-assert-if-false`
-- [ ] `@phan-assert-if-true`
+  > TODO
+- [ ] `@phan-assert-if-false` — Asserts the given _Type_ when the function returns `false`
+  > `"@phan-assert-if-false" <Type> <Variable>`
+- [ ] `@phan-assert-if-true` — Asserts the given _Type_ when the function returns `true`
+  > `"@phan-assert-if-true" <Type> <Variable>`
 - [ ] `@phan-assert-true-condition`
-- [ ] `@phan-closure-scope`
-- [ ] `@phan-constructor-used-for-side-effects`
+  > TODO
+- [ ] `@phan-closure-scope` — Binds the type of `$this` inside a `Closure`
+  > `"@phan-closure-scope" <Type>`
+- [ ] `@phan-constructor-used-for-side-effects` — Declares that a constructor's return value is intentionally discarded by callers
+  > `"@phan-constructor-used-for-side-effects" [ <Description> ]`
 - [ ] `@phan-extends` — Vendor-specific `@extends` alias
-- [ ] `@phan-file-suppress`
-- [ ] `@phan-forbid-undeclared-magic-methods`
-- [ ] `@phan-forbid-undeclared-magic-properties`
-- [ ] `@phan-hardcode-return-type`
-- [ ] `@phan-immutable`
-- [ ] `@phan-inherits` — Vendor-specific `@extends` alias
+  > `"@phan-extends" <Type> [ <Description> ]`
+- [ ] `@phan-file-suppress` — Silences the listed issue types for the whole file
+  > `"@phan-file-suppress" <Name> { "," <Name> } [ <Description> ]`
+- [ ] `@phan-forbid-undeclared-magic-methods` — Forbids calling undeclared magic methods on the class
+  > `"@phan-forbid-undeclared-magic-methods" [ <Description> ]`
+- [ ] `@phan-forbid-undeclared-magic-properties` — Forbids accessing undeclared magic properties on the class
+  > `"@phan-forbid-undeclared-magic-properties" [ <Description> ]`
+- [ ] `@phan-hardcode-return-type` — Forces the analyzer to use the documented return type instead of the inferred one
+  > `"@phan-hardcode-return-type" [ <Description> ]`
+- [ ] `@phan-immutable` — Declares a class as immutable
+  > `"@phan-immutable" [ <Description> ]`
+- [ ] `@phan-inherits` — An alias of the `@extends` tag
+  > `"@phan-inherits" <Type> [ <Description> ]`
 - [ ] `@phan-method` — Vendor-specific `@method` alias
-- [ ] `@phan-mixin`
-- [ ] `@phan-output-reference`
+  > `"@phan-method" [ "static" ] <Type> <Name> "(" [ <Type> <Variable> { "," <Type> <Variable> } ] ")" [ <Description> ]`
+- [ ] `@phan-mixin` — Declares that the members of the referenced _Type_ are magically available on the described class
+  > `"@phan-mixin" <Type> [ <Description> ]`
+- [ ] `@phan-output-reference` — Marks a by-reference argument as output-only
+  > `"@phan-output-reference" [ <Description> ]`
 - [ ] `@phan-override` — Vendor-specific `@override` alias
+  > `"@phan-override" [ <Description> ]`
 - [ ] `@phan-param` — Vendor-specific `@param` alias
+  > `"@phan-param" <Type> <Variable> [ <Description> ]`
 - [ ] `@phan-property` — Vendor-specific `@property` alias
+  > `"@phan-property" <Type> <Variable> [ <Description> ]`
 - [ ] `@phan-property-read` — Vendor-specific `@property-read` alias
+  > `"@phan-property-read" <Type> <Variable> [ <Description> ]`
 - [ ] `@phan-property-write` — Vendor-specific `@property-write` alias
-- [ ] `@phan-pure`
-- [ ] `@phan-read-only`
-- [ ] `@phan-real-return`
+  > `"@phan-property-write" <Type> <Variable> [ <Description> ]`
+- [ ] `@phan-pure` — Declares a function or method as pure (free of side effects)
+  > `"@phan-pure" [ <Description> ]`
+- [ ] `@phan-read-only` — Declares that a property may only be written once, during initialization
+  > `"@phan-read-only" [ <Description> ]`
+- [ ] `@phan-real-return` — Documents the actual native return type, distinct from the documented `@return`
+  > `"@phan-real-return" <Type> [ <Description> ]`
 - [ ] `@phan-return` — Vendor-specific `@return` alias
-- [ ] `@phan-side-effect-free`
-- [ ] `@phan-suppress-current-line`
-- [ ] `@phan-suppress-next-line`
-- [ ] `@phan-suppress-next-next-line`
-- [ ] `@phan-suppress-previous-line`
+  > `"@phan-return" <Type> [ <Description> ]`
+- [ ] `@phan-side-effect-free` — Declares a function or method as free of side effects
+  > `"@phan-side-effect-free" [ <Description> ]`
+- [ ] `@phan-suppress-current-line` — Silences the listed issue types reported on the current line
+  > `"@phan-suppress-current-line" <Name> { "," <Name> } [ <Description> ]`
+- [ ] `@phan-suppress-next-line` — Silences the listed issue types reported on the next line
+  > `"@phan-suppress-next-line" <Name> { "," <Name> } [ <Description> ]`
+- [ ] `@phan-suppress-next-next-line` — Silences the listed issue types reported two lines below
+  > `"@phan-suppress-next-next-line" <Name> { "," <Name> } [ <Description> ]`
+- [ ] `@phan-suppress-previous-line` — Silences the listed issue types reported on the previous line
+  > `"@phan-suppress-previous-line" <Name> { "," <Name> } [ <Description> ]`
 - [ ] `@phan-template` — Vendor-specific `@template` alias
-- [ ] `@phan-transient`
+  > `"@phan-template" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]`
+- [ ] `@phan-transient` — Marks a property as excluded from serialization
+  > `"@phan-transient" [ <Description> ]`
 - [ ] `@phan-type`
-- [ ] `@phan-unused-param`
+  > TODO
+- [ ] `@phan-unused-param` — Marks an argument that is intentionally left unused
+  > `"@phan-unused-param" <Variable> [ <Description> ]`
 - [ ] `@phan-var` — Vendor-specific `@var` alias
-- [ ] `@phan-write-only`
-- [ ] `@phanclosurescope`
+  > `"@phan-var" <Type> [ <Variable> ] [ <Description> ]`
+- [ ] `@phan-write-only` — Declares that a property may only be written, never read
+  > `"@phan-write-only" [ <Description> ]`
+- [ ] `@phanclosurescope` — An alias of the `@phan-closure-scope` tag
+  > `"@phanclosurescope" <Type>`
