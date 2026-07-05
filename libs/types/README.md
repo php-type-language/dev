@@ -28,8 +28,6 @@ composer require type-lang/types
 
 ## Node Overview
 
-### Core Nodes
-
 All nodes extend the abstract `Node` class and expose a single common property:
 
 ```php
@@ -37,23 +35,43 @@ All nodes extend the abstract `Node` class and expose a single common property:
 public int $offset = 0;
 ```
 
-#### `Identifier`
+### `Identifier`
 
 A single name segment such as `string`, `MyClass`, or `non-empty-string`.
 Virtual identifiers (containing `-`) are common in PHPStan/Psalm type aliases.
 
 ```php
-$id = new Identifier('non-empty-string');
+$id = Identifier::createFromString('  example  '); // trims whitespace
 
-$id->value;      // 'non-empty-string'
-$id->isVirtual;  // true  — contains "-"
+$id->value;      // 'example'
+$id->isVirtual;  // false
 $id->isBuiltin;  // false
 $id->isSpecial;  // false
 
-$id = Identifier::createFromString('  int  '); // trims whitespace
+//
+// Virtual vs. Builtin vs. Special
+//
+
+// e.g. "array-key", "positive-int", etc.
+$virtual = new Identifier('non-empty-string'); 
+$virtual->isVirtual;  // true (contains "-")
+$virtual->isBuiltin;  // false
+$virtual->isSpecial;  // false
+
+// e.g. "float", "bool", "null", "true", etc.
+$builtin = new Identifier('int');
+$builtin->isVirtual;  // false
+$builtin->isBuiltin;  // true
+$builtin->isSpecial;  // false
+
+// e.g. "self", "parent", etc.
+$special = new Identifier('static');
+$special->isVirtual;  // false
+$special->isBuiltin;  // false
+$special->isSpecial;  // true
 ```
 
-#### `Name`
+### `Name`
 
 A fully- or partially-qualified name composed of `Identifier` segments.
 
@@ -66,12 +84,16 @@ $name->first->value;     // 'TypeLang'
 $name->last->value;      // 'Node'
 $name->toString();       // '\TypeLang\Parser\Node'
 
-$name->slice(1)->toString();                      // 'Parser\Node'
-$name->toUnqualified()->toString();               // 'TypeLang\Parser\Node'
-$name->mergeWith(Name::createFromString('Node\Sub'))->toString(); // '\TypeLang\Parser\Node\Sub'
+$name->slice(1)
+    ->toString();        // 'Parser\Node'
+    
+$name->toUnqualified()
+    ->toString();        // 'TypeLang\Parser\Node'
+    
+$name->mergeWith(Name::createFromString('Node\Sub'))
+    ->toString();        // '\TypeLang\Parser\Node\Sub'
 ```
 
----
 
 ### Type Nodes
 
@@ -89,8 +111,12 @@ new NamedTypeNode(Name::createFromString('int'));
 new NamedTypeNode(
     name: Name::createFromString('array'),
     arguments: new TemplateArgumentListNode([
-        new TemplateArgumentNode(new NamedTypeNode(Name::createFromString('string'))),
-        new TemplateArgumentNode(new NamedTypeNode(Name::createFromString('int'))),
+        new TemplateArgumentNode(new NamedTypeNode(
+            Name::createFromString('string'),
+        )),
+        new TemplateArgumentNode(new NamedTypeNode(
+            Name::createFromString('int'),
+        )),
     ]),
 );
 ```
@@ -109,7 +135,13 @@ Represent `A|B|C` and `A&B&C` respectively. Nested unions (or intersections)
 of the same kind are automatically flattened.
 
 ```php
-new UnionTypeNode(
+$union = new UnionTypeNode(
+    new NamedTypeNode(Name::createFromString('int')),
+    new NamedTypeNode(Name::createFromString('string')),
+    new NamedTypeNode(Name::createFromString('null')),
+);
+
+$intersection = new IntersectionTypeNode(
     new NamedTypeNode(Name::createFromString('int')),
     new NamedTypeNode(Name::createFromString('string')),
     new NamedTypeNode(Name::createFromString('null')),
@@ -121,7 +153,8 @@ new UnionTypeNode(
 Represents the array-shorthand `Type[]`.
 
 ```php
-new TypesListNode(new NamedTypeNode(Name::createFromString('int'))); // int[]
+// int[]
+new TypesListNode(new NamedTypeNode(Name::createFromString('int')));
 ```
 
 #### `TypeOffsetAccessNode`
@@ -144,8 +177,12 @@ Represents a callable signature.
 new CallableTypeNode(
     name: Name::createFromString('callable'),
     parameters: new CallableParameterListNode([
-        new CallableParameterNode(type: new NamedTypeNode(Name::createFromString('int'))),
-        new CallableParameterNode(type: new NamedTypeNode(Name::createFromString('string'))),
+        new CallableParameterNode(
+            type: new NamedTypeNode(Name::createFromString('int')),
+        ),
+        new CallableParameterNode(
+            type: new NamedTypeNode(Name::createFromString('string')),
+        ),
     ]),
     type: new NamedTypeNode(Name::createFromString('bool')),
 );
@@ -171,20 +208,18 @@ new TernaryExpressionNode(
 Represent constant references and wildcard masks.
 
 ```php
+// Status::ACTIVE
 new ClassConstNode(
     class:    Name::createFromString('Status'),
     constant: new Identifier('ACTIVE'),
 );
-// → Status::ACTIVE
 
+// Status::*
 new ClassConstMaskNode(class: Name::createFromString('Status'));
-// → Status::*
 
+// Foo\Bar\*
 new ConstMaskNode(name: Name::createFromString('Foo\Bar'));
-// → Foo\Bar\*
 ```
-
----
 
 ### Literal Nodes
 
@@ -192,24 +227,32 @@ All literals extend `LiteralNode` and expose `$value` (native PHP type)
 and `$raw` (original source token). Most support a static `parse()` factory.
 
 ```php
-BoolLiteralNode::parse('true');   // value: true,  raw: 'true'
-BoolLiteralNode::parse('False');  // value: false, raw: 'False'
+// value: true,  raw: 'true'
+BoolLiteralNode::parse('true');
+// value: false, raw: 'False'
+BoolLiteralNode::parse('False');
 
-IntLiteralNode::parse('0xFF');    // value: 255,   raw: '0xFF', decimal: '255'
-IntLiteralNode::parse('0b1010');  // value: 10,    raw: '0b1010'
-IntLiteralNode::parse('1_000');   // value: 1000,  raw: '1_000'
+// value: 255,   raw: '0xFF', decimal: '255'
+IntLiteralNode::parse('0xFF');
+// value: 10,    raw: '0b1010'
+IntLiteralNode::parse('0b1010');
+// value: 1000,  raw: '1_000'
+IntLiteralNode::parse('1_000');
 
-FloatLiteralNode::parse('1.5e2'); // value: 150.0, raw: '1.5e2'
+// value: 150.0, raw: '1.5e2'
+FloatLiteralNode::parse('1.5e2');
+ 
+// value: null,  raw: 'Null'
+new NullLiteralNode('Null');
 
-NullLiteralNode();                // value: null,  raw: 'null'
+// decodes escape sequences
+StringLiteralNode::parse('"hello\nworld"');
+// no escape decoding
+StringLiteralNode::parse("'raw'");
 
-StringLiteralNode::parse('"hello\nworld"'); // decodes escape sequences
-StringLiteralNode::parse("'raw'");          // no escape decoding
-
-VariableLiteralNode::parse('$name'); // value: 'name' (no $), raw: '$name'
+// value: 'name' (no $), raw: '$name'
+VariableLiteralNode::parse('$name');
 ```
-
----
 
 ### Condition Nodes
 
@@ -225,9 +268,8 @@ and hold `public TypeNode $subject` and `public TypeNode $target`.
 | `LessThanConditionNode`           | `subject < target`      |
 | `LessThanOrEqualConditionNode`    | `subject <= target`     |
 
----
 
-### Shape Nodes (`Shape/`)
+### Shape Nodes
 
 Shape fields describe the entries of a structured array type.
 
@@ -235,26 +277,25 @@ Shape fields describe the entries of a structured array type.
 array{key: string, 0: int, 'literal': bool, ...}
 ```
 
-| Class                     | Key type             | Example                    |
-|---------------------------|----------------------|----------------------------|
-| `ImplicitFieldNode`       | none (positional)    | `array{string}`            |
-| `NamedFieldNode`          | `Identifier`         | `array{key: string}`       |
-| `StringNamedFieldNode`    | `StringLiteralNode`  | `array{'key': string}`     |
-| `NumericFieldNode`        | `IntLiteralNode`     | `array{0: string}`         |
-| `ClassConstFieldNode`     | `ClassConstNode`     | `array{Foo::BAR: string}`  |
-| `ClassConstMaskFieldNode` | `ClassConstMaskNode` | `array{Foo::BAR*: string}` |
-| `ConstMaskFieldNode`      | `ConstMaskNode`      | `array{Foo\*: string}`     |
+| Class                     | Key type             | Example                     |
+|---------------------------|----------------------|-----------------------------|
+| `ImplicitFieldNode`       | none (positional)    | `array{string}`             |
+| `NamedFieldNode`          | `Identifier`         | `array{key: string}`        |
+| `StringNamedFieldNode`    | `StringLiteralNode`  | `array{'key': string}`      |
+| `NumericFieldNode`        | `IntLiteralNode`     | `array{0: string}`          |
+| `ClassConstFieldNode`     | `ClassConstNode`     | `array{Foo::BAR: string}`   |
+| `ClassConstMaskFieldNode` | `ClassConstMaskNode` | `array{Foo::BAR_*: string}` |
+| `ConstMaskFieldNode`      | `ConstMaskNode`      | `array{Foo\*: string}`      |
 
-All field nodes inherit `public TypeNode $type`, `public bool $optional`, and
+All field nodes inherit `public TypeNode $type`, `public bool $isOptional`, and
 `public ?AttributeGroupListNode $attributes` from `FieldNode`. Explicit fields
 also expose a string `$index` property for the key's string representation.
 
 `FieldsListNode` collects the fields and marks the shape as sealed or unsealed
 (`$sealed = true` means no extra keys allowed; `...` in source makes it unsealed).
 
----
 
-### Template Argument Nodes (`Template/`)
+### Template Argument Nodes
 
 ```php
 // array<covariant T, int>
@@ -269,9 +310,8 @@ new TemplateArgumentListNode([
 ]);
 ```
 
----
 
-### Callable Parameter Nodes (`Callable/`)
+### Callable Parameter Nodes
 
 ```php
 // callable(int $a, string ...$b): void
@@ -281,20 +321,19 @@ new CallableParameterListNode([
         name: VariableLiteralNode::parse('$a'),
     ),
     new CallableParameterNode(
-        type:     new NamedTypeNode(Name::createFromString('string')),
-        name:     VariableLiteralNode::parse('$b'),
-        variadic: true,
+        type:       new NamedTypeNode(Name::createFromString('string')),
+        name:       VariableLiteralNode::parse('$b'),
+        isVariadic: true,
     ),
 ]);
 ```
 
 Constraints enforced by `CallableParameterNode`:
 - At least one of `$type` or `$name` must be provided.
-- `$variadic` and `$optional` cannot both be `true`.
+- `$isVariadic` and `$isOptional` cannot both be `true`.
 
----
 
-### Attribute Nodes (`Attribute/`)
+### Attribute Nodes
 
 Represent PHP-attribute-style annotations that some type systems attach to type positions.
 
@@ -310,7 +349,6 @@ AttributeGroupListNode          (#[X] #[Y])
             └── AttributeArgumentNode  (value: StringLiteralNode 'Use X instead')
 ```
 
----
 
 ### Node Lists
 
@@ -327,5 +365,3 @@ $list->last;           // last item
 $index = $list->findIndex($node); // position by identity, or null
 foreach ($list as $item) { ... }
 ```
-
----
