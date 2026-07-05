@@ -231,12 +231,12 @@ An attribute is additional metadata for a parameter.
 
 > Simple attribute with one argument for each callable parameter.
 > ```typescript
-> Example\Functor(#[type<int8>] int $a): void
+> Example\Functor(#[type(int8)] int $a): void
 > ```
 
 > Multiple attributes in one group.
 > ```typescript
-> Example\Functor(#[type<int8>, const] int&): void
+> Example\Functor(#[type(int8), const] int&): void
 > ```
 
 > Multiple attribute groups.
