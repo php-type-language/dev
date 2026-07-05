@@ -41,7 +41,7 @@ jobs:
         with:
           branch: "master"
           package_directory: 'libs/${{ matrix.package.local_path }}'
-          repository_organization: 'boson-php'
+          repository_organization: 'php-type-language'
           repository_name: '${{ matrix.package.split_repository }}'
           user_name: "SerafimArts"
           user_email: "nesk@xakep.ru"
@@ -56,7 +56,7 @@ jobs:
           tag: ${GITHUB_REF#refs/tags/}
           branch: "master"
           package_directory: 'libs/${{ matrix.package.local_path }}'
-          repository_organization: 'boson-php'
+          repository_organization: 'php-type-language'
           repository_name: '${{ matrix.package.split_repository }}'
           user_name: "SerafimArts"
           user_email: "nesk@xakep.ru"
