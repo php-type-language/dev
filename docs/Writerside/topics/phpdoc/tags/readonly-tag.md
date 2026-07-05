@@ -19,16 +19,14 @@ or virtual properties exposed through `__get`/`__set` and documented with
 >  * @property-read string $id
 >  * @readonly
 >  */
-> class Entity
-> {
-> }
+> class Entity {}
 > ```
 
 > With a description explaining why it isn't a native readonly property.
 > ```php
 > /**
->  * @readonly Assigned lazily on first access; kept
->  *     mutable internally.
+>  * @readonly Assigned lazily on first access; kept mutable
+>  *     internally.
 >  */
 > public $identifier;
 > ```

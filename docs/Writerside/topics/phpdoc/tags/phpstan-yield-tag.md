@@ -19,5 +19,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-This spelling has no dedicated anchor on PHPStan's
-[PHPDoc basics](https://phpstan.org/writing-php-code/phpdocs-basics) page.
+See PHPStan's [PHPDoc basics](https://phpstan.org/writing-php-code/phpdocs-basics) page.

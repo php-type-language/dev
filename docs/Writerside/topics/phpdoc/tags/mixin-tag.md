@@ -22,10 +22,7 @@ checking for code that would otherwise only work by accident at runtime.
 >  */
 > class QueryBuilder
 > {
->     public function __call(
->         string $name,
->         array $arguments,
->     ): mixed {
+>     public function __call(string $name, array $arguments): mixed {
 >         return $this->connection
 >             ->$name(...$arguments);
 >     }

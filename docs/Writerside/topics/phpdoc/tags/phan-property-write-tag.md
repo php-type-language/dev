@@ -16,5 +16,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-Defined by [Phan](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code);
-this specific alias has no dedicated anchor on that page.
+Defined by [Phan](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).

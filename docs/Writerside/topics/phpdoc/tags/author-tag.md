@@ -36,15 +36,15 @@ Parsing an `@author` tag produces an `AuthorTag` instance exposing:
 final class AuthorTag extends Tag
 {
     public function __construct(
+        string $name,
         public readonly string $author,
         public readonly ?string $email = null,
+        ?DescriptionInterface $description = null,
     ) {
+        parent::__construct($name, $description);
     }
 }
 ```
-
-Every tag also carries `$name` and an optional `$description` inherited
-from the base `Tag` class, omitted above for brevity.
 
 Multiple `@author` tags may appear on the same element when several people
 share responsibility for it; each one is parsed independently.

@@ -29,8 +29,7 @@ be discoverable by reading the initializer and tracing every assignment.
 > Naming the type alone, with a description but no explicit variable.
 > ```php
 > /**
->  * @staticvar array Memoized results,
->  *            keyed by input hash.
+>  * @staticvar array Memoized results, keyed by input hash.
 >  */
 > ```
 

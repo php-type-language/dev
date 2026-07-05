@@ -17,9 +17,7 @@ keyed and valued with specific types rather than `mixed`.
 > /**
 >  * @implements ArrayAccess<int, User>
 >  */
-> final class UserList implements ArrayAccess
-> {
-> }
+> final class UserList implements ArrayAccess {}
 > ```
 
 > Implementing a generic repository interface with a concrete entity type.
@@ -27,10 +25,7 @@ keyed and valued with specific types rather than `mixed`.
 > /**
 >  * @implements RepositoryInterface<Order>
 >  */
-> final class OrderRepository
->     implements RepositoryInterface
-> {
-> }
+> final class OrderRepository implements RepositoryInterface {}
 > ```
 
 Parsing an `@implements` tag produces a tag exposing `$type` — the `TypeNode`

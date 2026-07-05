@@ -19,16 +19,13 @@ magic methods, so a standalone `@static` tag is mostly relevant elsewhere.
 >  * @property Connection $default
 >  * @static
 >  */
-> class ConnectionRegistry
-> {
-> }
+> class ConnectionRegistry {}
 > ```
 
 > With a description explaining the intent.
 > ```php
 > /**
->  * @static Shared across all instances of
->  *         the registry.
+>  * @static Shared across all instances of the registry.
 >  */
 > ```
 

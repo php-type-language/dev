@@ -19,5 +19,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-Planned as this component's own Advanced-category tag; no verified
-third-party origin exists for it elsewhere.
+Planned as this component's own Advanced-category tag.

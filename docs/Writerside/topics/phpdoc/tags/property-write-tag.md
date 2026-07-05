@@ -20,10 +20,7 @@ the object never exposes in its original form.
 >  */
 > class Account
 > {
->     public function __set(
->         string $name,
->         mixed $value,
->     ): void {
+>     public function __set(string $name, mixed $value): void {
 >         /* ... */
 >     }
 > }
@@ -32,12 +29,10 @@ the object never exposes in its original form.
 > A write-only property with a description.
 > ```php
 > /**
->  * @property-write LoggerInterface $logger
->  *     Replaces the logger used internally.
+>  * @property-write LoggerInterface $logger Replaces the logger
+>  *     used internally.
 >  */
-> class Service
-> {
-> }
+> class Service {}
 > ```
 
 Parsing a `@property-write` tag produces a `TypedVariableTag` instance

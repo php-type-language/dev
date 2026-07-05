@@ -18,6 +18,3 @@ suffix folded into the description. See
 <a href="custom-tags.md">Custom Tags</a> for the current workaround if you
 need to recognize it yourself.
 </note>
-
-This exact spelling could not be confirmed on Psalm's main
-annotations page.

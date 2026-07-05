@@ -25,10 +25,7 @@ be assumed pure just because the callback itself might be.
 >  * @param callable(Event): void $listener
 >  * @param-later-invoked-callable $listener
 >  */
-> function on(
->     string $event,
->     callable $listener,
-> ): void
+> function on(string $event, callable $listener): void
 > ```
 
 > With a description explaining when it actually runs.

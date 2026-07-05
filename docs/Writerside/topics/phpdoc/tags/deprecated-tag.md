@@ -16,21 +16,16 @@ deprecated and what to use in its place.
 > /**
 >  * @deprecated 2.0 Use Mailer::send() instead.
 >  */
-> public function dispatch(
->     Message $message,
-> ): bool
+> public function dispatch(Message $message): bool
 > ```
 
 > Without a version, just explaining the reason.
 > ```php
 > /**
->  * @deprecated No longer needed now that
->  *             transport is chosen
+>  * @deprecated No longer needed now that transport is chosen
 >  *             automatically.
 >  */
-> public function withTransport(
->     Transport $transport,
-> ): static
+> public function withTransport(Transport $transport): static
 > ```
 
 Parsing a `@deprecated` tag produces a `DeprecatedTag` instance exposing
@@ -38,14 +33,11 @@ Parsing a `@deprecated` tag produces a `DeprecatedTag` instance exposing
 when none was given — alongside the inherited `$description`.
 
 ```php
-final class DeprecatedTag extends VersionedTag
-{
-    public function __construct(
-        public readonly ?string $version = null,
-    ) {
-    }
-}
+final class DeprecatedTag extends VersionedTag {}
 ```
+
+`VersionedTag` itself declares the `$version` property (and the
+constructor that fills it in) — `DeprecatedTag` adds nothing of its own.
 
 <note>
 IDEs and static analyzers commonly treat <code>@deprecated</code> as more

@@ -24,8 +24,8 @@ individual elements.
 > With a description explaining why the listing is useful here.
 > ```php
 > /**
->  * @filesource Reference implementation;
->  *             read alongside the interface.
+>  * @filesource Reference implementation; read alongside the
+>  *             interface.
 >  */
 > ```
 

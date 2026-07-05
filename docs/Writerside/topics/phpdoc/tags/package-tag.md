@@ -18,16 +18,14 @@ structured.
 > /**
 >  * @package Mail
 >  */
-> final class Mailer
-> {
-> }
+> final class Mailer {}
 > ```
 
 > With a short description of the grouping.
 > ```php
 > /**
->  * @package Mail Everything related to
->  *          composing and sending messages.
+>  * @package Mail Everything related to composing and sending
+>  *          messages.
 >  */
 > ```
 

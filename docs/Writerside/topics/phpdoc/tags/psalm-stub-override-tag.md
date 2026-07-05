@@ -15,5 +15,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-Defined by Psalm; no dedicated documentation page could be
-confirmed for this exact tag.
+Defined by Psalm.

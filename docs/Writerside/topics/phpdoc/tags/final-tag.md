@@ -16,8 +16,8 @@ generated stubs and interfaces where the native modifier does not apply.
 > Marking a method as final without declaring the whole class final.
 > ```php
 > /**
->  * @final Overriding this would break the
->  *        transaction guarantees below.
+>  * @final Overriding this would break the transaction guarantees
+>  *        below.
 >  */
 > public function commit(): void
 > ```
@@ -27,9 +27,7 @@ generated stubs and interfaces where the native modifier does not apply.
 > /**
 >  * @final
 >  */
-> class Money
-> {
-> }
+> class Money {}
 > ```
 
 Parsing a `@final` tag produces a `FinalTag` instance. Being a pure marker,

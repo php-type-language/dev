@@ -14,19 +14,16 @@ collect every `@todo` across a codebase into a single worklist.
 > Describing the outstanding work directly.
 > ```php
 > /**
->  * @todo Support cancellation once the
->  *       transport exposes it.
+>  * @todo Support cancellation once the transport exposes it.
 >  */
-> public function send(
->     Message $message,
-> ): bool
+> public function send(Message $message): bool
 > ```
 
 > Referencing a tracking issue alongside the description.
 > ```php
 > /**
->  * @todo Validate recipient addresses
->  *       before dispatch (see ISSUE-482).
+>  * @todo Validate recipient addresses before dispatch (see
+>  *       ISSUE-482).
 >  */
 > ```
 

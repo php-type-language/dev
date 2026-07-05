@@ -23,10 +23,7 @@ callable might be kept and invoked at some unrelated point in time.
 >  * @param callable(int): int $mapper
 >  * @param-immediately-invoked-callable $mapper
 >  */
-> function transform(
->     array $items,
->     callable $mapper,
-> ): array
+> function transform(array $items, callable $mapper): array
 > ```
 
 > With a description explaining why it matters here.

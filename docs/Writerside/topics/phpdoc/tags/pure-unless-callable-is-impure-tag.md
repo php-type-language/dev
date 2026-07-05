@@ -23,10 +23,7 @@ supplied at each call site.
 > /**
 >  * @pure-unless-callable-is-impure
 >  */
-> function mapValues(
->     array $items,
->     callable $mapper,
-> ): array
+> function mapValues(array $items, callable $mapper): array
 > ```
 
 > With a description naming the parameter the purity depends on.

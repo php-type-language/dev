@@ -14,22 +14,18 @@ value it is caching.
 
 > Binding a generic caching trait's value type.
 > ```php
-> /**
->  * @use Cacheable<Product>
->  */
 > final class ProductRepository
 > {
+>     /** @use Cacheable<Product> */
 >     use Cacheable;
 > }
 > ```
 
 > Binding a comparable trait to the class it is mixed into.
 > ```php
-> /**
->  * @use ComparableTrait<Money>
->  */
 > final class Money
 > {
+>     /** @use ComparableTrait<Money> */
 >     use ComparableTrait;
 > }
 > ```
@@ -53,12 +49,7 @@ parses to the same `UseTag` instance. See also
 equivalent tags used on a generic parent class or interface.
 
 <note>
-No PSR-19 section or dedicated phpDocumentor page defines the bare
-<code>@use</code> spelling — it is distinct from <a href="uses-tag.md">
-<code>@uses</code></a>, which documents a dependency relationship, not a
-generic trait's type arguments. <code>@use</code> is this library's chosen
-canonical spelling, chosen to parallel <code>@extends</code> and
-<code>@implements</code>. In practice, real-world PHPStan and Psalm
-documentation more commonly shows the <code>@template-use</code> spelling,
+In practice, real-world PHPStan and Psalm documentation more commonly shows 
+the <code>@template-use</code> spelling,
 which this component recognizes as an alias.
 </note>

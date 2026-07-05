@@ -24,9 +24,7 @@ silently.
 >  * @property string $name
 >  * @seal-properties
 >  */
-> class Record
-> {
-> }
+> class Record {}
 > ```
 
 > With a description explaining the intent.
@@ -36,9 +34,7 @@ silently.
 >  * @seal-properties Every magic property this
 >  * class exposes is listed above.
 >  */
-> class Entry
-> {
-> }
+> class Entry {}
 > ```
 
 Parsing a `@seal-properties` tag produces a `FlagTag` instance. Being a

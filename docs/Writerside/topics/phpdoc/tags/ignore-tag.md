@@ -19,16 +19,14 @@ confuse readers of the public reference.
 > /**
 >  * @ignore
 >  */
-> protected function debugDump(): void
-> {
-> }
+> protected function debugDump(): void {}
 > ```
 
 > With a description explaining why it's excluded.
 > ```php
 > /**
->  * @ignore Scaffolding left over from the
->  *         migration; will be removed.
+>  * @ignore Scaffolding left over from the migration; will be
+>  *         removed.
 >  */
 > ```
 

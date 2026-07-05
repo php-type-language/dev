@@ -23,10 +23,7 @@ analyzers are stuck assuming the same type applies in both directions.
 >  * @param string|null $error
 >  * @param-out string $error
 >  */
-> function tryParse(
->     string $input,
->     ?string &$error,
-> ): bool
+> function tryParse(string $input, ?string &$error): bool
 > ```
 
 > With a description of what the narrower outgoing type represents.
@@ -36,10 +33,7 @@ analyzers are stuck assuming the same type applies in both directions.
 >  * @param-out non-empty-list<int> $matches Populated only when the
 >  * function returns true.
 >  */
-> function findAll(
->     string $pattern,
->     array &$matches,
-> ): bool
+> function findAll(string $pattern, array &$matches): bool
 > ```
 
 Parsing a `@param-out` tag produces a `TypedVariableTag` instance exposing:

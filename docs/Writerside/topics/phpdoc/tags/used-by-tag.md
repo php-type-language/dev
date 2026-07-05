@@ -20,9 +20,7 @@ discoverable by reading either side.
 > /**
 >  * @used-by Mailer::send()
 >  */
-> function normalizeAddress(
->     string $address,
-> ): string {
+> function normalizeAddress(string $address): string {
 >     /* ... */
 > }
 > ```
@@ -30,8 +28,7 @@ discoverable by reading either side.
 > With a description explaining the dependency.
 > ```php
 > /**
->  * @used-by ReportExporter::export()
->  *     Relies on the column order
+>  * @used-by ReportExporter::export() Relies on the column order
 >  *     returned here.
 >  */
 > function columns(): array

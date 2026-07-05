@@ -5,9 +5,8 @@
 
 The `@phan-override` tag is Phan's vendor-specific `@override`
 alias, unrelated in origin to this component's own
-[@override](override-tag.md): unlike that tag, whose bare spelling
-has no confirmed third-party source (see that page), `@phan-override`
-is a real Phan-defined tag.
+[@override](override-tag.md): `@phan-override` is a real,
+independently documented Phan tag.
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
@@ -17,5 +16,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-This prefixed spelling has no dedicated anchor on
-[Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).
+See [Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).

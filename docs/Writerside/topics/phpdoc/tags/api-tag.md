@@ -17,20 +17,15 @@ releases without a deprecation notice.
 > /**
 >  * @api
 >  */
-> final class Mailer
-> {
-> }
+> final class Mailer {}
 > ```
 
 > With a description explaining the guarantee.
 > ```php
 > /**
->  * @api Stable since 2.0; changes follow
->  *      semantic versioning.
+>  * @api Stable since 2.0; changes follow semantic versioning.
 >  */
-> public function send(
->     Message $message,
-> ): bool
+> public function send(Message $message): bool
 > ```
 
 Parsing an `@api` tag produces an `ApiTag` instance. Being a pure marker, it

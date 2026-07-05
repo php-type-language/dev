@@ -28,12 +28,11 @@ when the referenced element carries no annotation of its own.
 > With a description explaining the dependency.
 > ```php
 > /**
->  * @uses Config::DEFAULT_TIMEOUT Falls
->  *     back to this when none is given.
+>  * @uses Config::DEFAULT_TIMEOUT Falls back to this when none is
+>  *       given.
 >  */
-> function connect(
->     ?int $timeout = null,
-> ): void {
+> function connect(?int $timeout = null): void 
+> {
 >     /* ... */
 > }
 > ```

@@ -19,6 +19,5 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-This exact spelling could not be confirmed under Psalm's own
-documentation, where the confirmed name for the same feature is
-`@psalm-this-out`.
+The confirmed spelling for the same feature under Psalm's own
+documentation is [@psalm-this-out](psalm-this-out-tag.md).

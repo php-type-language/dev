@@ -22,10 +22,7 @@ prefixed spelling makes the connection to the class's own
 >  * @template T
 >  * @extends Repository<T>
 >  */
-> abstract class BaseRepository
->     extends Repository
-> {
-> }
+> abstract class BaseRepository extends Repository {}
 > ```
 
 </tab>
@@ -36,10 +33,7 @@ prefixed spelling makes the connection to the class's own
 >  * @template T
 >  * @template-extends Repository<T>
 >  */
-> abstract class BaseRepository
->     extends Repository
-> {
-> }
+> abstract class BaseRepository extends Repository {}
 > ```
 
 </tab>

@@ -26,9 +26,7 @@ parameter being consumed somewhere in a way that substitution would break.
 > final class Collection
 > {
 >     /** @param T $item */
->     private function __construct(
->         private readonly mixed $item,
->     ) {}
+>     private function __construct(private readonly mixed $item) {}
 >
 >     /** @return T */
 >     public function get(): mixed

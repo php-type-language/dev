@@ -20,16 +20,13 @@ documentation.
 >  * @method void handle(Event $event)
 >  * @abstract
 >  */
-> abstract class Listener
-> {
-> }
+> abstract class Listener {}
 > ```
 
 > With a description explaining what implementers must provide.
 > ```php
 > /**
->  * @abstract Subclasses must return the
->  *           storage backend to use.
+>  * @abstract Subclasses must return the storage backend to use.
 >  */
 > protected function makeStorage(): Storage
 > ```

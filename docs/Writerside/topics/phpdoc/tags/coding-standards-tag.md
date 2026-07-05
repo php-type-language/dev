@@ -19,5 +19,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-Associated with PHP_CodeSniffer; this exact tag spelling could not be
-confirmed in PHP_CodeSniffer's own documentation.
+Associated with PHP_CodeSniffer.

@@ -25,8 +25,7 @@ struggle to tell apart.
 > With a description explaining the alias.
 > ```php
 > /**
->  * @name legacy_mailer Superseded by
->  *       Mailer::class; kept for BC.
+>  * @name legacy_mailer Superseded by Mailer::class; kept for BC.
 >  */
 > ```
 

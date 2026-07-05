@@ -18,9 +18,7 @@ hierarchy.
 > /**
 >  * @extends Collection<User>
 >  */
-> final class UserCollection extends Collection
-> {
-> }
+> final class UserCollection extends Collection {}
 > ```
 
 > Forwarding a still-open type parameter to a further subclass.
@@ -29,9 +27,7 @@ hierarchy.
 >  * @template T
 >  * @extends Repository<T>
 >  */
-> abstract class BaseRepository extends Repository
-> {
-> }
+> abstract class BaseRepository extends Repository {}
 > ```
 
 Parsing an `@extends` tag produces a tag exposing `$type` — the parsed

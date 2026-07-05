@@ -29,10 +29,7 @@ ones, do not allow that substitution.
 >      * @param T $a
 >      * @param T $b
 >      */
->     public function compare(
->         mixed $a,
->         mixed $b,
->     ): int;
+>     public function compare(mixed $a, mixed $b): int;
 > }
 > ```
 
@@ -52,8 +49,7 @@ final class TemplateContravariantTag extends TypeParameterTag
 PHPStan supports contravariant template parameters — see its
 [generics variance error reference](https://phpstan.org/error-identifiers/generics.variance),
 though that page does not spell out the `@template-contravariant` tag name
-verbatim; no separate narrative write-up comparable to the covariant one
-above was found. Psalm's own
+verbatim. Psalm's own
 [templated annotations](https://psalm.dev/docs/annotating_code/templated_annotations/)
 page does not separately call out contravariance the way it does for
 covariant parameters.

@@ -22,16 +22,13 @@ appears in generated documentation.
 >  * @property string $token
 >  * @access private
 >  */
-> class Session
-> {
-> }
+> class Session {}
 > ```
 
 > With a description explaining the reasoning.
 > ```php
 > /**
->  * @access protected Only subclasses should
->  *         read the raw buffer.
+>  * @access protected Only subclasses should read the raw buffer.
 >  */
 > ```
 

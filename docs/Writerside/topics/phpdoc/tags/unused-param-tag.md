@@ -18,18 +18,16 @@ whole function, this tag suppresses it for exactly the one parameter named.
 > ignores.
 > ```php
 > /**
->  * @unused-param $context
+>  * @unused-param $ctx
 >  */
-> public function handle(
->     Request $request,
->     array $context,
-> ): Response
+> public function handle(Request $request, array $ctx): Response
 > ```
 
 > With a description explaining why the argument is unused.
 > ```php
 > /**
->  * @unused-param $previous This listener never needs the old value.
+>  * @unused-param $previous This listener never needs the 
+>  *               old value.
 >  */
 > function onChange(mixed $current, mixed $previous): void
 > ```
@@ -45,8 +43,3 @@ final class UnusedParamTag extends VariableTag
     public readonly string $variable;
 }
 ```
-
-No third-party tool's documentation was found defining a dedicated
-per-parameter "mark this argument as intentionally unused" tag under this
-or any other name — neither PHPStan, Psalm, nor Phan appear to have one.
-This tag's origin could not be verified against an upstream source.

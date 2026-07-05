@@ -20,20 +20,16 @@ reused across several tags that each highlight a different part of it.
 > /**
 >  * @example docs/examples/mailer-basic.php
 >  */
-> public function send(
->     Message $message,
-> ): bool
+> public function send(Message $message): bool
 > ```
 
 > Narrowed to the lines that show the relevant usage.
 > ```php
 > /**
->  * @example docs/examples/mailer-retry.php 12 8
->  *          Configuring a retry policy.
+>  * @example docs/examples/mailer-retry.php 12 8 Configuring a
+>  *          retry policy.
 >  */
-> public function withRetries(
->     int $attempts,
-> ): static
+> public function withRetries(int $attempts): static
 > ```
 
 Parsing an `@example` tag produces an `ExampleTag` instance exposing:

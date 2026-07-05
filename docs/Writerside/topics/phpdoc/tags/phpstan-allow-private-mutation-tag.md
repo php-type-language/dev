@@ -4,9 +4,7 @@
 <secondary-label ref="not-implemented"/>
 
 The `@phpstan-allow-private-mutation` tag allows a private-scope mutation
-of an otherwise immutable property, defined by PHPStan. This exact
-spelling could not be verified on PHPStan's own writing-php-code pages, so
-no link is given here.
+of an otherwise immutable property, defined by PHPStan.
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing

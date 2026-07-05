@@ -5,8 +5,6 @@
 
 The `@phpstan-consistent-constructor` tag requires that all subclasses
 declare a constructor compatible with the parent's, defined by PHPStan.
-This exact spelling could not be verified on PHPStan's own writing-php-code
-pages, so no link is given here.
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing

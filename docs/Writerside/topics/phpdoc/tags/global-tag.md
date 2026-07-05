@@ -30,8 +30,7 @@ outside its own parameters.
 > With a description explaining how the global is used.
 > ```php
 > /**
->  * @global Config $config Read for the
->  *         current retry policy.
+>  * @global Config $config Read for the current retry policy.
 >  */
 > ```
 

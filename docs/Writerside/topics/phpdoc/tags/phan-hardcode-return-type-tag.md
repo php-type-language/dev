@@ -15,5 +15,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-Defined by Phan; no verified current documentation page could be
-found for this exact tag.
+Defined by Phan.

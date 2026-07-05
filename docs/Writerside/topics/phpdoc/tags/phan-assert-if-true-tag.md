@@ -18,5 +18,4 @@ need to recognize it yourself.
 </note>
 
 Defined by Phan; see the "Assertions" section of
-[Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code)
-(no dedicated anchor for this exact tag).
+[Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).

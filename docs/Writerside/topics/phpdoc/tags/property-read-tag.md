@@ -27,12 +27,10 @@ accidental assignment to a value that the class was never meant to accept.
 > A read-only property with a description.
 > ```php
 > /**
->  * @property-read DateTimeImmutable $createdAt
->  *     When the record was inserted.
+>  * @property-read DateTimeImmutable $createdAt When the record was
+>  *     inserted.
 >  */
-> class Record
-> {
-> }
+> class Record {}
 > ```
 
 Parsing a `@property-read` tag produces a `TypedVariableTag` instance

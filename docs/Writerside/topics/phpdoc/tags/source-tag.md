@@ -28,8 +28,7 @@ file, `@source` always refers back to the element it is written on.
 > From a given line through the rest of the element, with a description.
 > ```php
 > /**
->  * @source 10 The core resolution
->  *         algorithm starts here.
+>  * @source 10 The core resolution algorithm starts here.
 >  */
 > ```
 

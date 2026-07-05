@@ -19,11 +19,9 @@ PHPStan and Psalm documentation than the bare `@use` form.
 <tab title="Canonical">
 
 > ```php
-> /**
->  * @use Cacheable<Product>
->  */
 > final class ProductRepository
 > {
+>    /** @use Cacheable<Product> */
 >     use Cacheable;
 > }
 > ```
@@ -32,11 +30,9 @@ PHPStan and Psalm documentation than the bare `@use` form.
 <tab title="Alias">
 
 > ```php
-> /**
->  * @template-use Cacheable<Product>
->  */
 > final class ProductRepository
 > {
+>     /** @template-use Cacheable<Product> */
 >     use Cacheable;
 > }
 > ```

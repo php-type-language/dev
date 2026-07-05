@@ -16,4 +16,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-This spelling's own anchor could not be confirmed on [Psalm's supported annotations reference](https://psalm.dev/docs/annotating_code/supported_annotations/).
+See [Psalm's supported annotations reference](https://psalm.dev/docs/annotating_code/supported_annotations/).

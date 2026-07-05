@@ -27,10 +27,7 @@ per magic property the class exposes.
 >         /* ... */
 >     }
 >
->     public function __set(
->         string $name,
->         mixed $value,
->     ): void {
+>     public function __set(string $name, mixed $value): void {
 >         /* ... */
 >     }
 > }
@@ -40,12 +37,10 @@ per magic property the class exposes.
 > ```php
 > /**
 >  * @property int $id The record's primary key.
->  * @property DateTimeImmutable $createdAt
->  *     When the record was inserted.
+>  * @property DateTimeImmutable $createdAt When the record was
+>  *     inserted.
 >  */
-> class Record
-> {
-> }
+> class Record {}
 > ```
 
 Parsing a `@property` tag produces a `TypedVariableTag` instance exposing:

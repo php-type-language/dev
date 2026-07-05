@@ -15,5 +15,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-This prefixed spelling has no dedicated anchor on
-[Psalm's supported annotations](https://psalm.dev/docs/annotating_code/supported_annotations/) page.
+See [Psalm's supported annotations](https://psalm.dev/docs/annotating_code/supported_annotations/).

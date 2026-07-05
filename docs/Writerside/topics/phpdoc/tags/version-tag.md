@@ -17,16 +17,14 @@ what the element currently is, not when any part of it arrived.
 > /**
 >  * @version 1.4.2
 >  */
-> final class Mailer
-> {
-> }
+> final class Mailer {}
 > ```
 
 > With a short description alongside the version.
 > ```php
 > /**
->  * @version 2.0.0-beta.1 Transport
->  *     negotiation is not yet finalized.
+>  * @version 2.0.0-beta.1 Transport negotiation is not yet
+>  *          finalized.
 >  */
 > ```
 

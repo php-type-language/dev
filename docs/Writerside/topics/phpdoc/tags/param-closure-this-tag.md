@@ -21,9 +21,7 @@ closure that reads `$this` has no documented type to check against.
 >  * @param Closure(): string $formatter
 >  * @param-closure-this Builder $formatter
 >  */
-> function withFormatter(
->     Closure $formatter,
-> ): static
+> function withFormatter(Closure $formatter): static
 > ```
 
 > With a description explaining the binding.

@@ -19,5 +19,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-Associated with PhpStorm; no dedicated page confirming this exact tag
-could be found.
+Associated with PhpStorm.

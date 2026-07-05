@@ -6,8 +6,7 @@
 The `@phan-unused-param` tag marks an argument that is
 intentionally left unused, similar to
 [@unused-param](unused-param-tag.md), which this component
-already recognizes bare (itself with no confirmed upstream
-origin of its own).
+already recognizes bare.
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
@@ -17,5 +16,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-Defined by Phan, a static analyzer for PHP; no dedicated
-documentation page could be confirmed for this tag.
+Defined by Phan, a static analyzer for PHP.

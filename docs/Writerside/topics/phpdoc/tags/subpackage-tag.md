@@ -19,16 +19,14 @@ identifies.
 >  * @package Mail
 >  * @subpackage Transport
 >  */
-> final class SmtpTransport
-> {
-> }
+> final class SmtpTransport {}
 > ```
 
 > With a description of what the subsection covers.
 > ```php
 > /**
->  * @subpackage Transport Concrete delivery
->  *             mechanisms for outgoing mail.
+>  * @subpackage Transport Concrete delivery mechanisms for outgoing
+>  *             mail.
 >  */
 > ```
 

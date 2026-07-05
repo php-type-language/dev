@@ -23,9 +23,7 @@ error instead of silently allowed through.
 >  * @method static setAge(int $age)
 >  * @seal-methods
 >  */
-> class Builder
-> {
-> }
+> class Builder {}
 > ```
 
 > With a description explaining the intent.
@@ -34,9 +32,7 @@ error instead of silently allowed through.
 >  * @method string getName()
 >  * @seal-methods No further magic methods will ever be added here.
 >  */
-> class ReadOnlyModel
-> {
-> }
+> class ReadOnlyModel {}
 > ```
 
 Parsing a `@seal-methods` tag produces a `FlagTag` instance. Being a pure

@@ -18,12 +18,9 @@ keeping the rest of the description intact.
 > An entire method excluded from the public API.
 > ```php
 > /**
->  * @internal Used by the container to wire
->  *           up lazy proxies.
+>  * @internal Used by the container to wire up lazy proxies.
 >  */
-> public function __setDependencies(
->     array $dependencies,
-> ): void
+> public function __setDependencies(array $dependencies): void
 > ```
 
 > An inline note tucked inside an otherwise public description.
@@ -33,9 +30,7 @@ keeping the rest of the description intact.
 >  * Encoding is UTF-8 for now; revisit once
 >  * transports negotiate charsets.}
 >  */
-> public function format(
->     Message $message,
-> ): string
+> public function format(Message $message): string
 > ```
 
 Parsing an `@internal` tag produces an `InternalTag` instance. Being a pure

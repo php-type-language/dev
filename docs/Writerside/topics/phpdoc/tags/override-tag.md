@@ -26,7 +26,7 @@ attribute has no effect.
 > ```php
 > /**
 >  * @override Adds retry handling on top of the
->  * base transport.
+>  *           base transport.
 >  */
 > public function send(Message $message): bool
 > ```
@@ -42,14 +42,10 @@ Being a pure marker, it adds nothing beyond the `$name`
 and optional `$description` every [Tag](phpdoc.md#tag)
 already carries.
 
-No PSR, phpDocumentor, PHPStan, or Psalm documentation was
-found defining an `@override` phpdoc tag under this exact
-name and grammar. It resembles PHP 8.3's native
-`#[\Override]` *attribute* — and covers the cases that
-attribute can't, such as codebases still supporting older
-PHP versions, or interfaces and traits, where the native
-attribute has no effect — but that attribute is a distinct
-language feature, not this tag's origin. Phan has its own,
-unrelated `@phan-override`. This tag appears to be this
-library's own convention, without a confirmed third-party
-source.
+It resembles PHP 8.3's native `#[\Override]` *attribute* —
+and covers the cases that attribute can't, such as codebases
+still supporting older PHP versions, or interfaces and
+traits, where the native attribute has no effect — but that
+attribute is a distinct language feature, not this tag's
+origin. Phan has its own, unrelated `@phan-override`. This
+tag is this library's own convention.

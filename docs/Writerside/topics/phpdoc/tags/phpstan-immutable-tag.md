@@ -5,9 +5,7 @@
 
 The `@phpstan-immutable` tag declares a class as immutable, defined by
 PHPStan. It documents the same concept as this component's own
-[@immutable](immutable-tag.md) tag. This exact spelling could not be
-verified with a dedicated anchor on PHPStan's own pages, so no link is
-given here.
+[@immutable](immutable-tag.md) tag. 
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing

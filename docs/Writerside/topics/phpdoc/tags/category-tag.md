@@ -24,8 +24,8 @@ module, `@category` places that module within a wider organizational scheme.
 > With additional context about the grouping.
 > ```php
 > /**
->  * @category Database Drivers and connection
->  *           pooling for relational stores.
+>  * @category Database Drivers and connection pooling for
+>  *           relational stores.
 >  */
 > ```
 

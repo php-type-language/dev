@@ -21,10 +21,7 @@ stays free to rename parameters without it counting as a break.
 > /**
 >  * @no-named-arguments
 >  */
-> public function configure(
->     string $host,
->     int $port,
-> ): void
+> public function configure(string $host, int $port): void
 > ```
 
 > With a description explaining why.
@@ -33,11 +30,7 @@ stays free to rename parameters without it counting as a break.
 >  * @no-named-arguments Parameter names will
 >  * change once the driver abstraction lands.
 >  */
-> function connect(
->     string $dsn,
->     ?string $user,
->     ?string $password,
-> ): PDO
+> function connect(string $dsn, ?string $user, ?string $password): PDO
 > ```
 
 Parsing a `@no-named-arguments` tag produces a `FlagTag` instance. Being a

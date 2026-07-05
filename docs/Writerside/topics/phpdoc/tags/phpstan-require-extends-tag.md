@@ -17,5 +17,4 @@ need to recognize it yourself.
 </note>
 
 PHPStan's [PHPDoc basics](https://phpstan.org/writing-php-code/phpdocs-basics)
-page confirms the concept in prose, though it has no dedicated anchor for
-this prefixed spelling.
+page confirms the concept in prose.

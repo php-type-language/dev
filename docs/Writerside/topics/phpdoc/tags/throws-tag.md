@@ -16,10 +16,9 @@ reached or a thrown type that was never declared.
 > own tag.
 > ```php
 > /**
->  * @throws NotFoundException If the user
->  *         does not exist.
->  * @throws AccessDeniedException If the
->  *         current user lacks permission.
+>  * @throws NotFoundException If the user does not exist.
+>  * @throws AccessDeniedException If the current user lacks
+>  *         permission.
 >  */
 > function fetchUser(int $id): User
 > {

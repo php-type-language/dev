@@ -21,10 +21,7 @@ own `@template` parameters explicit, which some codebases prefer.
 > /**
 >  * @implements ArrayAccess<int, User>
 >  */
-> final class UserList
->     implements ArrayAccess
-> {
-> }
+> final class UserList implements ArrayAccess {}
 > ```
 
 </tab>
@@ -34,10 +31,7 @@ own `@template` parameters explicit, which some codebases prefer.
 > /**
 >  * @template-implements ArrayAccess<int, User>
 >  */
-> final class UserList
->     implements ArrayAccess
-> {
-> }
+> final class UserList implements ArrayAccess {}
 > ```
 
 </tab>

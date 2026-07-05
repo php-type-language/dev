@@ -17,16 +17,13 @@ without having to parse a separate license header.
 > /**
 >  * @copyright 2024 Acme Corp
 >  */
-> final class Mailer
-> {
-> }
+> final class Mailer {}
 > ```
 
 > A range of years, used on a file that has been maintained over time.
 > ```php
 > /**
->  * @copyright 2018-2024 Acme Corp.
->  *            All rights reserved.
+>  * @copyright 2018-2024 Acme Corp. All rights reserved.
 >  */
 > ```
 

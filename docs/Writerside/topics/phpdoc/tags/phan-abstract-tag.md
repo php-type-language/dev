@@ -16,5 +16,4 @@ suffix folded into the description. See
 need to recognize it yourself.
 </note>
 
-This prefixed spelling has no dedicated anchor on
-[Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).
+See [Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).

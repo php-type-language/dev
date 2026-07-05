@@ -20,9 +20,7 @@ place of the PHP keyword — this component accepts either.
 > /**
 >  * @extends Collection<User>
 >  */
-> final class UserCollection extends Collection
-> {
-> }
+> final class UserCollection extends Collection {}
 > ```
 
 </tab>
@@ -32,9 +30,7 @@ place of the PHP keyword — this component accepts either.
 > /**
 >  * @inherits Collection<User>
 >  */
-> final class UserCollection extends Collection
-> {
-> }
+> final class UserCollection extends Collection {}
 > ```
 
 </tab>
