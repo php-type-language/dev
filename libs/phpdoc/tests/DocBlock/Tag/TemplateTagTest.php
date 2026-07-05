@@ -60,6 +60,20 @@ final class TemplateTagTest extends TestCase
         self::assertNull($tag->default);
     }
 
+    /**
+     * A word that merely starts with "of" is not the "of" keyword, so it stays
+     * part of the description.
+     */
+    #[Test]
+    public function keywordRespectsWordBoundary(): void
+    {
+        $tag = self::factory()->create('template', 'T offset from the base');
+
+        self::assertSame('T', $tag->parameter);
+        self::assertNull($tag->bound);
+        self::assertSame('offset from the base', (string) $tag->description);
+    }
+
     #[Test]
     public function varianceTagsResolveThroughTheRealParser(): void
     {
