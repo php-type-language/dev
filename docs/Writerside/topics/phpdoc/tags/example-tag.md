@@ -26,8 +26,8 @@ reused across several tags that each highlight a different part of it.
 > Narrowed to the lines that show the relevant usage.
 > ```php
 > /**
->  * @example docs/examples/mailer-retry.php 12 8 Configuring a
->  *          retry policy.
+>  * @example docs/examples/mailer-retry.php 12 8 Configuring a retry
+>  *          policy.
 >  */
 > public function withRetries(int $attempts): static
 > ```

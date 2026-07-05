@@ -27,8 +27,8 @@ stays free to rename parameters without it counting as a break.
 > With a description explaining why.
 > ```php
 > /**
->  * @no-named-arguments Parameter names will
->  * change once the driver abstraction lands.
+>  * @no-named-arguments Parameter names will change once the driver
+>  *                     abstraction lands.
 >  */
 > function connect(string $dsn, ?string $user, ?string $password): PDO
 > ```

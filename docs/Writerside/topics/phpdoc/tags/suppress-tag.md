@@ -25,8 +25,8 @@ analysis of the element altogether.
 > Silencing several diagnostics at once, with a description explaining why.
 > ```php
 > /**
->  * @suppress UndefinedMethod, PossiblyUnusedMethod
->  * Called only from tests.
+>  * @suppress UndefinedMethod, PossiblyUnusedMethod Called only from
+>  *           tests.
 >  */
 > ```
 

@@ -31,8 +31,8 @@ silently.
 > ```php
 > /**
 >  * @property-read DateTimeImmutable $createdAt
->  * @seal-properties Every magic property this
->  * class exposes is listed above.
+>  * @seal-properties Every magic property this class exposes is
+>  *                  listed above.
 >  */
 > class Entry {}
 > ```

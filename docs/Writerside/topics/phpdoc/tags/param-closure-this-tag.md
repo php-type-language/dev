@@ -28,9 +28,9 @@ closure that reads `$this` has no documented type to check against.
 > ```php
 > /**
 >  * @param Closure(int): void $callback
->  * @param-closure-this Connection $callback
->  * Bound before dispatch so the callback can
->  * reach the connection's protected members.
+>  * @param-closure-this Connection $callback Bound before dispatch so
+>  *                     the callback can reach the connection's
+>  *                     protected members.
 >  */
 > function onConnect(Closure $callback): void
 > ```

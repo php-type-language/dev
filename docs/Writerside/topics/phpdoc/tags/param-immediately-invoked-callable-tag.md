@@ -29,9 +29,10 @@ callable might be kept and invoked at some unrelated point in time.
 > With a description explaining why it matters here.
 > ```php
 > /**
->  * @param-immediately-invoked-callable $callback
->  * Runs before the lock is released, so it can
->  * safely mutate the shared buffer.
+>  * @param-immediately-invoked-callable $callback Runs before the
+>  *                                     lock is released, so it can
+>  *                                     safely mutate the shared
+>  *                                     buffer.
 >  */
 > function withLock(callable $callback): mixed
 > ```

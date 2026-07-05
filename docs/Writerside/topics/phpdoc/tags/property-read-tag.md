@@ -28,7 +28,7 @@ accidental assignment to a value that the class was never meant to accept.
 > ```php
 > /**
 >  * @property-read DateTimeImmutable $createdAt When the record was
->  *     inserted.
+>  *                inserted.
 >  */
 > class Record {}
 > ```

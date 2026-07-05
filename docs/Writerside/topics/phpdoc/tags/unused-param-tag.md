@@ -26,8 +26,7 @@ whole function, this tag suppresses it for exactly the one parameter named.
 > With a description explaining why the argument is unused.
 > ```php
 > /**
->  * @unused-param $previous This listener never needs the 
->  *               old value.
+>  * @unused-param $previous This listener never needs the old value.
 >  */
 > function onChange(mixed $current, mixed $previous): void
 > ```

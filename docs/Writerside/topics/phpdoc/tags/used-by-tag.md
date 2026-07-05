@@ -29,7 +29,7 @@ discoverable by reading either side.
 > ```php
 > /**
 >  * @used-by ReportExporter::export() Relies on the column order
->  *     returned here.
+>  *          returned here.
 >  */
 > function columns(): array
 > {

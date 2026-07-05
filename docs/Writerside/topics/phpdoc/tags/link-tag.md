@@ -25,8 +25,8 @@ be a well-formed URI, never a class, method, or constant reference.
 > relevant.
 > ```php
 > /**
->  * @link https://example.com/docs/rate-limits
->  * Applies to all public endpoints.
+>  * @link https://example.com/docs/rate-limits Applies to all public
+>  *       endpoints.
 >  */
 > ```
 

@@ -29,8 +29,8 @@ the object never exposes in its original form.
 > A write-only property with a description.
 > ```php
 > /**
->  * @property-write LoggerInterface $logger Replaces the logger
->  *     used internally.
+>  * @property-write LoggerInterface $logger Replaces the logger used
+>  *                 internally.
 >  */
 > class Service {}
 > ```

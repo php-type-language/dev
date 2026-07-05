@@ -31,9 +31,9 @@ be assumed pure just because the callback itself might be.
 > With a description explaining when it actually runs.
 > ```php
 > /**
->  * @param-later-invoked-callable $callback
->  * Invoked once the response arrives, which
->  * may be long after this method returns.
+>  * @param-later-invoked-callable $callback Invoked once the response
+>  *                               arrives, which may be long after
+>  *                               this method returns.
 >  */
 > function then(callable $callback): static
 > ```

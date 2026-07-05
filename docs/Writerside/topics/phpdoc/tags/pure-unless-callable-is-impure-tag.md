@@ -29,8 +29,8 @@ supplied at each call site.
 > With a description naming the parameter the purity depends on.
 > ```php
 > /**
->  * @pure-unless-callable-is-impure Purity
->  * follows whatever $reducer does.
+>  * @pure-unless-callable-is-impure Purity follows whatever $reducer
+>  *                                 does.
 >  */
 > function reduce(
 >     array $items,

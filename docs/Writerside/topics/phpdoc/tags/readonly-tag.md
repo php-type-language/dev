@@ -26,7 +26,7 @@ or virtual properties exposed through `__get`/`__set` and documented with
 > ```php
 > /**
 >  * @readonly Assigned lazily on first access; kept mutable
->  *     internally.
+>  *           internally.
 >  */
 > public $identifier;
 > ```

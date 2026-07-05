@@ -31,7 +31,7 @@ analyzers are stuck assuming the same type applies in both directions.
 > /**
 >  * @param list<int> $matches
 >  * @param-out non-empty-list<int> $matches Populated only when the
->  * function returns true.
+>  *            function returns true.
 >  */
 > function findAll(string $pattern, array &$matches): bool
 > ```

@@ -38,7 +38,7 @@ per magic property the class exposes.
 > /**
 >  * @property int $id The record's primary key.
 >  * @property DateTimeImmutable $createdAt When the record was
->  *     inserted.
+>  *           inserted.
 >  */
 > class Record {}
 > ```

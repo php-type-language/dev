@@ -25,8 +25,7 @@ attribute has no effect.
 > implementation.
 > ```php
 > /**
->  * @override Adds retry handling on top of the
->  *           base transport.
+>  * @override Adds retry handling on top of the base transport.
 >  */
 > public function send(Message $message): bool
 > ```
