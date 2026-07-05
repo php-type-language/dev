@@ -67,6 +67,11 @@ key may be a bare identifier, an integer literal, a string literal, or a
 [constant](#sec-Constant-Types) reference — that is, a {ClassConstant} or a
 {ConstantMask}.
 
+Note: An {Identifier}, a {ClassConstant} and a {ConstantMask} may each begin
+with the same {Name}. As in [Primary Types](#sec-Primary-Types), these are
+distinguished by what follows: a bare {Identifier} key is one not followed by
+`::` or a trailing `*`.
+
 ```typescript
 array{ name: First, count: Second }
 ```

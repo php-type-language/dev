@@ -249,11 +249,7 @@ PrimaryType :
 
 A _primary type_ is the tightest-binding form. It is one of: a parenthesized
 {Type}, the `$this` type, a literal type, a callable type (see
-[Callable Types](#sec-Callable-Types)), or a named type. Per the ordered-choice
-discipline that governs every alternation in this grammar (see
-[Grammar Notation](#sec-Grammar-Notation)), these five alternatives are
-attempted in the order listed, and the first that matches at the current
-position is selected.
+[Callable Types](#sec-Callable-Types)), or a named type.
 
 A parenthesized type is used to override precedence; it denotes exactly the
 type it encloses:
@@ -270,14 +266,14 @@ $this
 ```
 
 Note: Each of {CallableType}, {NamedType}, and the {ClassConstant} and
-{ConstantMask} forms of {LiteralType} begins with a {Name}. Because a
-{LiteralType} is attempted before a {CallableType} or a {NamedType} (see
-above), these are distinguished, in effect, by the token that follows the
-name: `*` selects a [constant mask](#sec-Constant-Masks); `::` selects a
+{ConstantMask} forms of {LiteralType} begins with a {Name}. Once a complete
+{Name} has been recognized, these four are distinguished by the single token
+that immediately follows it: `*` selects a
+[constant mask](#sec-Constant-Masks); `::` selects a
 [class constant](#sec-Class-Constants); `(` selects a
 [callable type](#sec-Callable-Types); `<` or `{` selects a
 [generic or shape](#sec-Generic-Types) named type; any other following token
-leaves a plain named type.
+(or the end of the document) leaves a plain named type.
 
 ## Names and Namespaces
 

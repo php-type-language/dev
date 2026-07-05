@@ -106,18 +106,22 @@ NameToken :: NameStart NameContinue\* [lookahead != NameContinue]
 makes explicit that a {NameToken} is always the longest possible sequence,
 and cannot be followed by another {NameContinue} character.
 
-**Ordered Choice.** Unless a production states otherwise, its alternatives
-are attempted in the order in which they are written, and the first
-alternative that matches at the current position is selected; a later
-alternative is attempted only once every earlier alternative has failed to
-match. This discipline applies uniformly to every alternation in both the
-lexical and the syntactic grammar and, in particular, is what allows this
-specification to describe an unambiguous grammar despite alternatives whose
-languages overlap — for example, the five alternatives of
-[PrimaryType](#sec-Primary-Types), or the five alternatives of
-[ShapeKey](#sec-Shape-Fields). This is analogous to the ordered choice of a
-parsing expression grammar, and is a stronger guarantee than the mere absence
-of ambiguity provided by a classical context-free grammar.
+**Overlapping Alternatives.** The order in which a production's alternatives
+are written carries no meaning by itself. Some alternatives, however, cannot
+be told apart by their first symbol alone — for example, {ClassConstant},
+{ConstantMask}, {CallableType} and {NamedType} (see
+[Primary Types](#sec-Primary-Types)) all begin with a {Name}. In every such
+case, this specification identifies, either through an explicit lookahead
+restriction or through an accompanying Note, the further input that
+determines which alternative applies at that position — typically the single
+token that follows a fully recognized {Name} or {Identifier}. The grammar
+described by this specification is unambiguous in the sense that, once that
+further input is consulted, at most one alternative can match at any
+position. This specification prescribes neither a parsing algorithm nor an
+implementation strategy; it is satisfied by any implementation — whether
+based on recursive descent, an LL(_k_) or LALR parser generator, a parsing
+expression grammar, or any other technique — that accepts exactly the
+documents, and performs exactly the disambiguation, described herein.
 
 ## Grammar Semantics
 
