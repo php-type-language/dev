@@ -442,7 +442,7 @@ Complete example for reading and printing types from an entire class.
 
 ```php
 $class = new \ReflectionClass(Path\To\Example::class);
-$printer = new \TypeLang\Printer\PrettyPrinter();
+$printer = new \TypeLang\Printer\PrettyTypePrinter();
 $converter = new \TypeLang\Reader\ReflectionReader();
 
 

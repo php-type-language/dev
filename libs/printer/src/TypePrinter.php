@@ -7,7 +7,7 @@ namespace TypeLang\Printer;
 use TypeLang\Type\LogicalTypeNode;
 use TypeLang\Type\TypeNode;
 
-abstract class Printer implements PrinterInterface
+abstract class TypePrinter implements TypePrinterInterface
 {
     /**
      * @var non-empty-string

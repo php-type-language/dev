@@ -42,7 +42,7 @@ use TypeLang\Type\TypeOffsetAccessNode;
 use TypeLang\Type\TypesListNode;
 use TypeLang\Type\UnionTypeNode;
 
-class PrettyPrinter extends Printer
+class PrettyTypePrinter extends TypePrinter
 {
     public const bool DEFAULT_WRAP_INTERSECTION_TYPE = true;
 

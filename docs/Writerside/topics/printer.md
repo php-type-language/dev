@@ -41,7 +41,7 @@ contains an `print()` method for displaying ASTs as formatted strings.
 
 ```php
 $parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\PrettyPrinter();
+$printer = new TypeLang\Printer\PrettyTypePrinter();
 
 $result = $parser->parse(<<<'PHP'
     object{key: type, some: (list<T>|some<T>),
@@ -90,7 +90,7 @@ echo $printer->print($result);
 
 ```php
 $parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\PrettyPrinter();
+$printer = new TypeLang\Printer\PrettyTypePrinter();
 
 $result = $parser->parse(<<<'PHP'
     callable(...A &$a)|callable(B &...$b)
@@ -133,7 +133,7 @@ echo $printer->print($result);
 
 ```php
 $parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\PrettyPrinter();
+$printer = new TypeLang\Printer\PrettyTypePrinter();
 
 $result = $parser->parse(<<<'PHP'
     $arg is null ? non-empty-string : int<0, max>

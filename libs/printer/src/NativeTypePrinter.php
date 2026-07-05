@@ -26,7 +26,7 @@ use TypeLang\Type\TypeOffsetAccessNode;
 use TypeLang\Type\TypesListNode;
 use TypeLang\Type\UnionTypeNode;
 
-class NativeTypePrinter extends PrettyPrinter
+class NativeTypePrinter extends PrettyTypePrinter
 {
     /**
      * @var array<non-empty-string, non-empty-string>

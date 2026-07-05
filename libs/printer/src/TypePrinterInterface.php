@@ -6,7 +6,7 @@ namespace TypeLang\Printer;
 
 use TypeLang\Type\TypeNode;
 
-interface PrinterInterface
+interface TypePrinterInterface
 {
     public function print(TypeNode $stmt): string;
 }

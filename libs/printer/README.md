@@ -52,7 +52,7 @@ echo $native->print($type);
 // Expected Output:
 // array
 
-$phpdoc = new \TypeLang\Printer\PrettyPrinter();
+$phpdoc = new \TypeLang\Printer\PrettyTypePrinter();
 echo $phpdoc->print($type);
 
 // Expected Output:
