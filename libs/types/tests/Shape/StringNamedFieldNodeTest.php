@@ -20,8 +20,8 @@ final class StringNamedFieldNodeTest extends TestCase
         $type = new NamedTypeNode(Name::createFromString('string'));
         $node = new StringNamedFieldNode($key, $type);
 
-        $this->assertSame($key, $node->key);
-        $this->assertSame($type, $node->type);
+        self::assertSame($key, $node->key);
+        self::assertSame($type, $node->type);
     }
 
     #[Test]
@@ -30,7 +30,7 @@ final class StringNamedFieldNodeTest extends TestCase
         $key = new StringLiteralNode('field-name');
         $node = new StringNamedFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame('field-name', $node->index);
+        self::assertSame('field-name', $node->index);
     }
 
     #[Test]
@@ -41,7 +41,7 @@ final class StringNamedFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('string')),
         );
 
-        $this->assertFalse($node->isOptional);
+        self::assertFalse($node->isOptional);
     }
 
     #[Test]
@@ -53,7 +53,7 @@ final class StringNamedFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertTrue($node->isOptional);
+        self::assertTrue($node->isOptional);
     }
 
     #[Test]
@@ -64,6 +64,6 @@ final class StringNamedFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('int')),
         );
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

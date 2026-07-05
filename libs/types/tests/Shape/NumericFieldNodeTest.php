@@ -20,8 +20,8 @@ final class NumericFieldNodeTest extends TestCase
         $type = new NamedTypeNode(Name::createFromString('string'));
         $node = new NumericFieldNode($key, $type);
 
-        $this->assertSame($key, $node->key);
-        $this->assertSame($type, $node->type);
+        self::assertSame($key, $node->key);
+        self::assertSame($type, $node->type);
     }
 
     #[Test]
@@ -30,7 +30,7 @@ final class NumericFieldNodeTest extends TestCase
         $key = IntLiteralNode::parse('42');
         $node = new NumericFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame('42', $node->index);
+        self::assertSame('42', $node->index);
     }
 
     #[Test]
@@ -39,7 +39,7 @@ final class NumericFieldNodeTest extends TestCase
         $key = IntLiteralNode::parse('0');
         $node = new NumericFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame('0', $node->index);
+        self::assertSame('0', $node->index);
     }
 
     #[Test]
@@ -50,7 +50,7 @@ final class NumericFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('string')),
         );
 
-        $this->assertFalse($node->isOptional);
+        self::assertFalse($node->isOptional);
     }
 
     #[Test]
@@ -62,7 +62,7 @@ final class NumericFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertTrue($node->isOptional);
+        self::assertTrue($node->isOptional);
     }
 
     #[Test]
@@ -73,6 +73,6 @@ final class NumericFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('int')),
         );
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

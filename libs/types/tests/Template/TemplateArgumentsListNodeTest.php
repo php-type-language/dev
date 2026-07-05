@@ -23,9 +23,9 @@ final class TemplateArgumentsListNodeTest extends TestCase
     {
         $list = new TemplateArgumentListNode();
 
-        $this->assertCount(0, $list);
-        $this->assertNull($list->first);
-        $this->assertNull($list->last);
+        self::assertCount(0, $list);
+        self::assertNull($list->first);
+        self::assertNull($list->last);
     }
 
     #[Test]
@@ -35,9 +35,9 @@ final class TemplateArgumentsListNodeTest extends TestCase
         $b = $this->makeArg('int');
         $list = new TemplateArgumentListNode([$a, $b]);
 
-        $this->assertCount(2, $list);
-        $this->assertSame($a, $list->first);
-        $this->assertSame($b, $list->last);
+        self::assertCount(2, $list);
+        self::assertSame($a, $list->first);
+        self::assertSame($b, $list->last);
     }
 
     #[Test]
@@ -47,8 +47,8 @@ final class TemplateArgumentsListNodeTest extends TestCase
         $b = $this->makeArg('int');
         $list = new TemplateArgumentListNode([$a, $b]);
 
-        $this->assertSame(0, $list->findIndex($a));
-        $this->assertSame(1, $list->findIndex($b));
+        self::assertSame(0, $list->findIndex($a));
+        self::assertSame(1, $list->findIndex($b));
     }
 
     #[Test]
@@ -56,7 +56,7 @@ final class TemplateArgumentsListNodeTest extends TestCase
     {
         $list = new TemplateArgumentListNode([$this->makeArg('int')]);
 
-        $this->assertNull($list->findIndex($this->makeArg('string')));
+        self::assertNull($list->findIndex($this->makeArg('string')));
     }
 
     #[Test]
@@ -65,8 +65,8 @@ final class TemplateArgumentsListNodeTest extends TestCase
         $a = $this->makeArg('string');
         $list = new TemplateArgumentListNode([$a]);
 
-        $this->assertSame($a, $list[0]);
-        $this->assertNull($list[1]);
+        self::assertSame($a, $list[0]);
+        self::assertNull($list[1]);
     }
 
     #[Test]
@@ -74,8 +74,8 @@ final class TemplateArgumentsListNodeTest extends TestCase
     {
         $list = new TemplateArgumentListNode([$this->makeArg('int')]);
 
-        $this->assertTrue(isset($list[0]));
-        $this->assertFalse(isset($list[1]));
+        self::assertTrue(isset($list[0]));
+        self::assertFalse(isset($list[1]));
     }
 
     #[Test]
@@ -86,8 +86,8 @@ final class TemplateArgumentsListNodeTest extends TestCase
         $list = new TemplateArgumentListNode([$a, $b]);
         unset($list[0]);
 
-        $this->assertCount(1, $list);
-        $this->assertSame($b, $list[0]);
+        self::assertCount(1, $list);
+        self::assertSame($b, $list[0]);
     }
 
     #[Test]
@@ -97,7 +97,7 @@ final class TemplateArgumentsListNodeTest extends TestCase
         $b = $this->makeArg('int');
         $list = new TemplateArgumentListNode([$a, $b]);
 
-        $this->assertSame([$a, $b], \iterator_to_array($list));
+        self::assertSame([$a, $b], \iterator_to_array($list));
     }
 
     #[Test]
@@ -105,6 +105,6 @@ final class TemplateArgumentsListNodeTest extends TestCase
     {
         $list = new TemplateArgumentListNode();
 
-        $this->assertSame(0, $list->offset);
+        self::assertSame(0, $list->offset);
     }
 }

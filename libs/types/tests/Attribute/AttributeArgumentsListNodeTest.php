@@ -23,9 +23,9 @@ final class AttributeArgumentsListNodeTest extends TestCase
     {
         $list = new AttributeArgumentListNode();
 
-        $this->assertCount(0, $list);
-        $this->assertNull($list->first);
-        $this->assertNull($list->last);
+        self::assertCount(0, $list);
+        self::assertNull($list->first);
+        self::assertNull($list->last);
     }
 
     #[Test]
@@ -35,7 +35,7 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $b = $this->makeArg('int');
         $list = new AttributeArgumentListNode([$a, $b]);
 
-        $this->assertCount(2, $list);
+        self::assertCount(2, $list);
     }
 
     #[Test]
@@ -45,8 +45,8 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $b = $this->makeArg('int');
         $list = new AttributeArgumentListNode([$a, $b]);
 
-        $this->assertSame($a, $list->first);
-        $this->assertSame($b, $list->last);
+        self::assertSame($a, $list->first);
+        self::assertSame($b, $list->last);
     }
 
     #[Test]
@@ -54,8 +54,8 @@ final class AttributeArgumentsListNodeTest extends TestCase
     {
         $list = new AttributeArgumentListNode([$this->makeArg('int')]);
 
-        $this->assertTrue(isset($list[0]));
-        $this->assertFalse(isset($list[1]));
+        self::assertTrue(isset($list[0]));
+        self::assertFalse(isset($list[1]));
     }
 
     #[Test]
@@ -64,8 +64,8 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $arg = $this->makeArg('string');
         $list = new AttributeArgumentListNode([$arg]);
 
-        $this->assertSame($arg, $list[0]);
-        $this->assertNull($list[1]);
+        self::assertSame($arg, $list[0]);
+        self::assertNull($list[1]);
     }
 
     #[Test]
@@ -76,7 +76,7 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $list = new AttributeArgumentListNode([$a]);
         $list[0] = $b;
 
-        $this->assertSame($b, $list[0]);
+        self::assertSame($b, $list[0]);
     }
 
     #[Test]
@@ -87,8 +87,8 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $list = new AttributeArgumentListNode([$a, $b]);
         unset($list[0]);
 
-        $this->assertCount(1, $list);
-        $this->assertSame($b, $list[0]);
+        self::assertCount(1, $list);
+        self::assertSame($b, $list[0]);
     }
 
     #[Test]
@@ -98,8 +98,8 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $b = $this->makeArg('int');
         $list = new AttributeArgumentListNode([$a, $b]);
 
-        $this->assertSame(0, $list->findIndex($a));
-        $this->assertSame(1, $list->findIndex($b));
+        self::assertSame(0, $list->findIndex($a));
+        self::assertSame(1, $list->findIndex($b));
     }
 
     #[Test]
@@ -108,7 +108,7 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $list = new AttributeArgumentListNode([$this->makeArg('int')]);
         $absent = $this->makeArg('string');
 
-        $this->assertNull($list->findIndex($absent));
+        self::assertNull($list->findIndex($absent));
     }
 
     #[Test]
@@ -118,7 +118,7 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $b = $this->makeArg('int');
         $list = new AttributeArgumentListNode([$a, $b]);
 
-        $this->assertSame([$a, $b], \iterator_to_array($list));
+        self::assertSame([$a, $b], \iterator_to_array($list));
     }
 
     #[Test]
@@ -126,6 +126,6 @@ final class AttributeArgumentsListNodeTest extends TestCase
     {
         $list = new AttributeArgumentListNode();
 
-        $this->assertSame(0, $list->offset);
+        self::assertSame(0, $list->offset);
     }
 }

@@ -17,7 +17,7 @@ final class NullableTypeNodeTest extends TestCase
         $inner = new NamedTypeNode(Name::createFromString('string'));
         $node = new NullableTypeNode($inner);
 
-        $this->assertSame($inner, $node->type);
+        self::assertSame($inner, $node->type);
     }
 
     #[Test]
@@ -26,7 +26,7 @@ final class NullableTypeNodeTest extends TestCase
         $inner = new NamedTypeNode(Name::createFromString('int'));
         $node = new NullableTypeNode($inner);
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 
     #[Test]
@@ -35,7 +35,7 @@ final class NullableTypeNodeTest extends TestCase
         $inner = new NullableTypeNode(new NamedTypeNode(Name::createFromString('bool')));
         $outer = new NullableTypeNode($inner);
 
-        $this->assertSame($inner, $outer->type);
-        $this->assertInstanceOf(NullableTypeNode::class, $outer->type);
+        self::assertSame($inner, $outer->type);
+        self::assertInstanceOf(NullableTypeNode::class, $outer->type);
     }
 }

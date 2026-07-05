@@ -18,7 +18,7 @@ final class ImplicitFieldNodeTest extends TestCase
         $type = new NamedTypeNode(Name::createFromString('string'));
         $node = new ImplicitFieldNode($type);
 
-        $this->assertSame($type, $node->type);
+        self::assertSame($type, $node->type);
     }
 
     #[Test]
@@ -26,7 +26,7 @@ final class ImplicitFieldNodeTest extends TestCase
     {
         $node = new ImplicitFieldNode(new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertFalse($node->isOptional);
+        self::assertFalse($node->isOptional);
     }
 
     #[Test]
@@ -37,7 +37,7 @@ final class ImplicitFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertTrue($node->isOptional);
+        self::assertTrue($node->isOptional);
     }
 
     #[Test]
@@ -45,7 +45,7 @@ final class ImplicitFieldNodeTest extends TestCase
     {
         $node = new ImplicitFieldNode(new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame('required', (string) $node);
+        self::assertSame('required', (string) $node);
     }
 
     #[Test]
@@ -56,7 +56,7 @@ final class ImplicitFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertSame('optional', (string) $node);
+        self::assertSame('optional', (string) $node);
     }
 
     #[Test]
@@ -64,7 +64,7 @@ final class ImplicitFieldNodeTest extends TestCase
     {
         $node = new ImplicitFieldNode(new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertNull($node->attributes);
+        self::assertNull($node->attributes);
     }
 
     #[Test]
@@ -72,6 +72,6 @@ final class ImplicitFieldNodeTest extends TestCase
     {
         $node = new ImplicitFieldNode(new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

@@ -20,8 +20,8 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo')]);
 
-        $this->assertCount(1, $name);
-        $this->assertSame('Foo', (string) $name);
+        self::assertCount(1, $name);
+        self::assertSame('Foo', (string) $name);
     }
 
     #[Test]
@@ -29,8 +29,8 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo'), $this->id('Bar')]);
 
-        $this->assertCount(2, $name);
-        $this->assertSame('Foo\Bar', $name->toString());
+        self::assertCount(2, $name);
+        self::assertSame('Foo\Bar', $name->toString());
     }
 
     #[Test]
@@ -38,7 +38,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo')]);
 
-        $this->assertFalse($name->isFullyQualified);
+        self::assertFalse($name->isFullyQualified);
     }
 
     #[Test]
@@ -46,7 +46,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo')], true);
 
-        $this->assertTrue($name->isFullyQualified);
+        self::assertTrue($name->isFullyQualified);
     }
 
     #[Test]
@@ -54,7 +54,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo'), $this->id('Bar')]);
 
-        $this->assertSame('Foo', $name->first->value);
+        self::assertSame('Foo', $name->first->value);
     }
 
     #[Test]
@@ -62,7 +62,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo'), $this->id('Bar')]);
 
-        $this->assertSame('Bar', $name->last->value);
+        self::assertSame('Bar', $name->last->value);
     }
 
     #[Test]
@@ -70,7 +70,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo')]);
 
-        $this->assertTrue($name->isSimple);
+        self::assertTrue($name->isSimple);
     }
 
     #[Test]
@@ -78,7 +78,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo'), $this->id('Bar')]);
 
-        $this->assertFalse($name->isSimple);
+        self::assertFalse($name->isSimple);
     }
 
     #[Test]
@@ -86,7 +86,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('self')]);
 
-        $this->assertTrue($name->isSpecial);
+        self::assertTrue($name->isSpecial);
     }
 
     #[Test]
@@ -94,7 +94,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('self'), $this->id('Foo')]);
 
-        $this->assertFalse($name->isSpecial);
+        self::assertFalse($name->isSpecial);
     }
 
     #[Test]
@@ -102,7 +102,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('int')]);
 
-        $this->assertTrue($name->isBuiltin);
+        self::assertTrue($name->isBuiltin);
     }
 
     #[Test]
@@ -110,7 +110,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('int'), $this->id('Foo')]);
 
-        $this->assertFalse($name->isBuiltin);
+        self::assertFalse($name->isBuiltin);
     }
 
     #[Test]
@@ -118,8 +118,8 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('Foo');
 
-        $this->assertSame('Foo', $name->toString());
-        $this->assertFalse($name->isFullyQualified);
+        self::assertSame('Foo', $name->toString());
+        self::assertFalse($name->isFullyQualified);
     }
 
     #[Test]
@@ -127,8 +127,8 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('Foo\Bar\Baz');
 
-        $this->assertSame('Foo\Bar\Baz', $name->toString());
-        $this->assertCount(3, $name);
+        self::assertSame('Foo\Bar\Baz', $name->toString());
+        self::assertCount(3, $name);
     }
 
     #[Test]
@@ -136,8 +136,8 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('\Foo\Bar');
 
-        $this->assertTrue($name->isFullyQualified);
-        $this->assertSame('\Foo\Bar', $name->toString());
+        self::assertTrue($name->isFullyQualified);
+        self::assertSame('\Foo\Bar', $name->toString());
     }
 
     #[Test]
@@ -145,7 +145,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromStringSegments(['Foo', 'Bar']);
 
-        $this->assertSame('Foo\Bar', $name->toString());
+        self::assertSame('Foo\Bar', $name->toString());
     }
 
     #[Test]
@@ -154,7 +154,7 @@ final class NameTest extends TestCase
         $name = Name::createFromString('A\B\C');
         $sliced = $name->slice(1);
 
-        $this->assertSame('B\C', $sliced->toString());
+        self::assertSame('B\C', $sliced->toString());
     }
 
     #[Test]
@@ -163,7 +163,7 @@ final class NameTest extends TestCase
         $name = Name::createFromString('A\B\C');
         $sliced = $name->slice(0, 2);
 
-        $this->assertSame('A\B', $sliced->toString());
+        self::assertSame('A\B', $sliced->toString());
     }
 
     #[Test]
@@ -174,7 +174,7 @@ final class NameTest extends TestCase
 
         $result = $a->withAdded($b);
 
-        $this->assertSame('Some\Any\Test\Class', $result->toString());
+        self::assertSame('Some\Any\Test\Class', $result->toString());
     }
 
     #[Test]
@@ -185,7 +185,7 @@ final class NameTest extends TestCase
 
         $result = $name->mergeWith($alias);
 
-        $this->assertSame('Some\Any\Class', $result->toString());
+        self::assertSame('Some\Any\Class', $result->toString());
     }
 
     #[Test]
@@ -194,8 +194,8 @@ final class NameTest extends TestCase
         $name = Name::createFromString('Foo\Bar');
         $fq = $name->toFullQualified();
 
-        $this->assertTrue($fq->isFullyQualified);
-        $this->assertSame('\Foo\Bar', $fq->toString());
+        self::assertTrue($fq->isFullyQualified);
+        self::assertSame('\Foo\Bar', $fq->toString());
     }
 
     #[Test]
@@ -204,7 +204,7 @@ final class NameTest extends TestCase
         $name = Name::createFromString('\Foo\Bar');
         $fq = $name->toFullQualified();
 
-        $this->assertTrue($fq->isFullyQualified);
+        self::assertTrue($fq->isFullyQualified);
     }
 
     #[Test]
@@ -213,8 +213,8 @@ final class NameTest extends TestCase
         $name = Name::createFromString('\Foo\Bar');
         $uq = $name->toUnqualified();
 
-        $this->assertFalse($uq->isFullyQualified);
-        $this->assertSame('Foo\Bar', $uq->toString());
+        self::assertFalse($uq->isFullyQualified);
+        self::assertSame('Foo\Bar', $uq->toString());
     }
 
     #[Test]
@@ -222,7 +222,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('A\B\C');
 
-        $this->assertSame(['A', 'B', 'C'], $name->toStringArray());
+        self::assertSame(['A', 'B', 'C'], $name->toStringArray());
     }
 
     #[Test]
@@ -230,7 +230,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('Foo\Bar');
 
-        $this->assertSame(['foo', 'bar'], $name->toLowercaseStringArray());
+        self::assertSame(['foo', 'bar'], $name->toLowercaseStringArray());
     }
 
     #[Test]
@@ -238,7 +238,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('\Foo\Bar');
 
-        $this->assertSame('Foo\Bar', $name->toUnqualifiedString());
+        self::assertSame('Foo\Bar', $name->toUnqualifiedString());
     }
 
     #[Test]
@@ -246,7 +246,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('Foo\Bar');
 
-        $this->assertSame('\Foo\Bar', $name->toFullQualifiedString());
+        self::assertSame('\Foo\Bar', $name->toFullQualifiedString());
     }
 
     #[Test]
@@ -255,9 +255,9 @@ final class NameTest extends TestCase
         $name = Name::createFromString('A\B');
         $collected = \iterator_to_array($name);
 
-        $this->assertCount(2, $collected);
-        $this->assertSame('A', $collected[0]->value);
-        $this->assertSame('B', $collected[1]->value);
+        self::assertCount(2, $collected);
+        self::assertSame('A', $collected[0]->value);
+        self::assertSame('B', $collected[1]->value);
     }
 
     #[Test]
@@ -265,7 +265,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('A\B\C');
 
-        $this->assertSame(3, $name->count());
+        self::assertSame(3, $name->count());
     }
 
     #[Test]
@@ -273,7 +273,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('Foo\Bar');
 
-        $this->assertSame('foo\bar', $name->toLowerString());
+        self::assertSame('foo\bar', $name->toLowerString());
     }
 
     #[Test]
@@ -285,15 +285,18 @@ final class NameTest extends TestCase
         /** @var Name $restored */
         $restored = \unserialize(\serialize($name));
 
-        $this->assertInstanceOf(Name::class, $restored);
-        $this->assertSame(['Foo', 'Bar'], $restored->toStringArray());
-        $this->assertSame(10, $restored->offset);
+        self::assertInstanceOf(Name::class, $restored);
+        self::assertSame(['Foo', 'Bar'], $restored->toStringArray());
+        self::assertSame(10, $restored->offset);
     }
 
     #[Test]
     public function constructorThrowsOnEmptySegmentsArray(): void
     {
+        self::skipWhenAssertsAreDisabled();
+
         $this->expectException(\InvalidArgumentException::class);
+
         new Name([]);
     }
 }

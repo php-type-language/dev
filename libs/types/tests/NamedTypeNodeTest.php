@@ -18,7 +18,7 @@ final class NamedTypeNodeTest extends TestCase
         $name = Name::createFromString('int');
         $node = new NamedTypeNode($name);
 
-        $this->assertSame($name, $node->name);
+        self::assertSame($name, $node->name);
     }
 
     #[Test]
@@ -26,7 +26,7 @@ final class NamedTypeNodeTest extends TestCase
     {
         $node = new NamedTypeNode(Name::createFromString('array'));
 
-        $this->assertNull($node->arguments);
+        self::assertNull($node->arguments);
     }
 
     #[Test]
@@ -34,7 +34,7 @@ final class NamedTypeNodeTest extends TestCase
     {
         $node = new NamedTypeNode(Name::createFromString('array'));
 
-        $this->assertNull($node->fields);
+        self::assertNull($node->fields);
     }
 
     #[Test]
@@ -43,7 +43,7 @@ final class NamedTypeNodeTest extends TestCase
         $args = new TemplateArgumentListNode();
         $node = new NamedTypeNode(Name::createFromString('array'), $args);
 
-        $this->assertSame($args, $node->arguments);
+        self::assertSame($args, $node->arguments);
     }
 
     #[Test]
@@ -52,7 +52,7 @@ final class NamedTypeNodeTest extends TestCase
         $fields = new FieldsListNode();
         $node = new NamedTypeNode(Name::createFromString('array'), null, $fields);
 
-        $this->assertSame($fields, $node->fields);
+        self::assertSame($fields, $node->fields);
     }
 
     #[Test]
@@ -60,6 +60,6 @@ final class NamedTypeNodeTest extends TestCase
     {
         $node = new NamedTypeNode(Name::createFromString('string'));
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

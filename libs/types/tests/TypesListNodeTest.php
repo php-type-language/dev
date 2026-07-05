@@ -17,7 +17,7 @@ final class TypesListNodeTest extends TestCase
         $inner = new NamedTypeNode(Name::createFromString('string'));
         $node = new TypesListNode($inner);
 
-        $this->assertSame($inner, $node->type);
+        self::assertSame($inner, $node->type);
     }
 
     #[Test]
@@ -25,7 +25,7 @@ final class TypesListNodeTest extends TestCase
     {
         $node = new TypesListNode(new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 
     #[Test]
@@ -34,6 +34,6 @@ final class TypesListNodeTest extends TestCase
         $inner = new TypesListNode(new NamedTypeNode(Name::createFromString('int')));
         $outer = new TypesListNode($inner);
 
-        $this->assertSame($inner, $outer->type);
+        self::assertSame($inner, $outer->type);
     }
 }

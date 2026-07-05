@@ -18,8 +18,8 @@ final class ClassConstMaskNodeTest extends TestCase
         $const = new Identifier('STATUS_');
         $node = new ClassConstMaskNode($class, $const);
 
-        $this->assertSame($class, $node->class);
-        $this->assertSame($const, $node->constant);
+        self::assertSame($class, $node->class);
+        self::assertSame($const, $node->constant);
     }
 
     #[Test]
@@ -28,7 +28,7 @@ final class ClassConstMaskNodeTest extends TestCase
         $class = Name::createFromString('MyClass');
         $node = new ClassConstMaskNode($class);
 
-        $this->assertNull($node->constant);
+        self::assertNull($node->constant);
     }
 
     #[Test]
@@ -37,8 +37,8 @@ final class ClassConstMaskNodeTest extends TestCase
         $class = Name::createFromString('MyEnum');
         $node = new ClassConstMaskNode($class, null);
 
-        $this->assertSame($class, $node->class);
-        $this->assertNull($node->constant);
+        self::assertSame($class, $node->class);
+        self::assertNull($node->constant);
     }
 
     #[Test]
@@ -46,6 +46,6 @@ final class ClassConstMaskNodeTest extends TestCase
     {
         $node = new ClassConstMaskNode(Name::createFromString('Foo'));
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

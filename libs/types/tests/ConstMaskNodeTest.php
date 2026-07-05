@@ -16,7 +16,7 @@ final class ConstMaskNodeTest extends TestCase
         $name = Name::createFromString('SOME_CONST');
         $node = new ConstMaskNode($name);
 
-        $this->assertSame($name, $node->name);
+        self::assertSame($name, $node->name);
     }
 
     #[Test]
@@ -24,7 +24,7 @@ final class ConstMaskNodeTest extends TestCase
     {
         $node = new ConstMaskNode(Name::createFromString('SOME_CONST'));
 
-        $this->assertSame('SOME_CONST*', (string) $node);
+        self::assertSame('SOME_CONST*', (string) $node);
     }
 
     #[Test]
@@ -32,7 +32,7 @@ final class ConstMaskNodeTest extends TestCase
     {
         $node = new ConstMaskNode(Name::createFromString('Vendor\Package\STATUS'));
 
-        $this->assertSame('Vendor\Package\STATUS*', (string) $node);
+        self::assertSame('Vendor\Package\STATUS*', (string) $node);
     }
 
     #[Test]
@@ -40,6 +40,6 @@ final class ConstMaskNodeTest extends TestCase
     {
         $node = new ConstMaskNode(Name::createFromString('FOO'));
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

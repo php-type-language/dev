@@ -20,8 +20,8 @@ final class ConstMaskFieldNodeTest extends TestCase
         $type = new NamedTypeNode(Name::createFromString('int'));
         $node = new ConstMaskFieldNode($key, $type);
 
-        $this->assertSame($key, $node->key);
-        $this->assertSame($type, $node->type);
+        self::assertSame($key, $node->key);
+        self::assertSame($type, $node->type);
     }
 
     #[Test]
@@ -30,7 +30,7 @@ final class ConstMaskFieldNodeTest extends TestCase
         $key = new ConstMaskNode(Name::createFromString('MY_CONST'));
         $node = new ConstMaskFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame('MY_CONST*', $node->index);
+        self::assertSame('MY_CONST*', $node->index);
     }
 
     #[Test]
@@ -39,7 +39,7 @@ final class ConstMaskFieldNodeTest extends TestCase
         $key = new ConstMaskNode(Name::createFromString('Vendor\Pkg\STATUS'));
         $node = new ConstMaskFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame('Vendor\Pkg\STATUS*', $node->index);
+        self::assertSame('Vendor\Pkg\STATUS*', $node->index);
     }
 
     #[Test]
@@ -50,7 +50,7 @@ final class ConstMaskFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('int')),
         );
 
-        $this->assertFalse($node->isOptional);
+        self::assertFalse($node->isOptional);
     }
 
     #[Test]
@@ -62,7 +62,7 @@ final class ConstMaskFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertTrue($node->isOptional);
+        self::assertTrue($node->isOptional);
     }
 
     #[Test]
@@ -73,6 +73,6 @@ final class ConstMaskFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('int')),
         );
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

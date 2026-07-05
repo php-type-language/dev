@@ -67,7 +67,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     ) {
         $segments = \iterator_to_array($segments, false);
 
-        assert($segments !== [], new \InvalidArgumentException('Name segments count can not be empty'));
+        \assert($segments !== [], new \InvalidArgumentException('Name segments count can not be empty'));
 
         $this->segments = $segments;
     }

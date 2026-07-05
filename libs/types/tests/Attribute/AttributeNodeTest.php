@@ -18,7 +18,7 @@ final class AttributeNodeTest extends TestCase
         $name = Name::createFromString('Deprecated');
         $node = new AttributeNode($name);
 
-        $this->assertSame($name, $node->name);
+        self::assertSame($name, $node->name);
     }
 
     #[Test]
@@ -26,7 +26,7 @@ final class AttributeNodeTest extends TestCase
     {
         $node = new AttributeNode(Name::createFromString('Pure'));
 
-        $this->assertNull($node->arguments);
+        self::assertNull($node->arguments);
     }
 
     #[Test]
@@ -35,7 +35,7 @@ final class AttributeNodeTest extends TestCase
         $args = new AttributeArgumentListNode();
         $node = new AttributeNode(Name::createFromString('Attr'), $args);
 
-        $this->assertSame($args, $node->arguments);
+        self::assertSame($args, $node->arguments);
     }
 
     #[Test]
@@ -43,6 +43,6 @@ final class AttributeNodeTest extends TestCase
     {
         $node = new AttributeNode(Name::createFromString('Attr'));
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

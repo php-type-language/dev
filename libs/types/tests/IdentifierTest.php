@@ -15,7 +15,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('MyClass');
 
-        $this->assertSame('MyClass', $id->value);
+        self::assertSame('MyClass', $id->value);
     }
 
     #[Test]
@@ -23,7 +23,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('Foo');
 
-        $this->assertSame(0, $id->offset);
+        self::assertSame(0, $id->offset);
     }
 
     #[Test]
@@ -31,8 +31,8 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('Foo');
 
-        $this->assertSame('Foo', (string) $id);
-        $this->assertSame('Foo', $id->toString());
+        self::assertSame('Foo', (string) $id);
+        self::assertSame('Foo', $id->toString());
     }
 
     #[Test]
@@ -40,7 +40,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('FooBar');
 
-        $this->assertSame('foobar', $id->toLowerString());
+        self::assertSame('foobar', $id->toLowerString());
     }
 
     #[Test]
@@ -48,7 +48,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('non-empty-string');
 
-        $this->assertTrue($id->isVirtual);
+        self::assertTrue($id->isVirtual);
     }
 
     #[Test]
@@ -56,7 +56,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('string');
 
-        $this->assertFalse($id->isVirtual);
+        self::assertFalse($id->isVirtual);
     }
 
     #[Test]
@@ -65,7 +65,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier($name);
 
-        $this->assertTrue($id->isSpecial);
+        self::assertTrue($id->isSpecial);
     }
 
     public static function provideSpecialNames(): iterable
@@ -78,7 +78,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('MyClass');
 
-        $this->assertFalse($id->isSpecial);
+        self::assertFalse($id->isSpecial);
     }
 
     #[Test]
@@ -87,7 +87,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier($name);
 
-        $this->assertTrue($id->isBuiltin);
+        self::assertTrue($id->isBuiltin);
     }
 
     public static function provideBuiltinNames(): iterable
@@ -105,7 +105,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('MyClass');
 
-        $this->assertFalse($id->isBuiltin);
+        self::assertFalse($id->isBuiltin);
     }
 
     #[Test]
@@ -113,7 +113,7 @@ final class IdentifierTest extends TestCase
     {
         $id = Identifier::createFromString('  Foo  ');
 
-        $this->assertSame('Foo', $id->value);
+        self::assertSame('Foo', $id->value);
     }
 
     #[Test]
@@ -122,7 +122,7 @@ final class IdentifierTest extends TestCase
         $id = new Identifier('Foo');
         $result = Identifier::createFromString($id);
 
-        $this->assertSame($id, $result);
+        self::assertSame($id, $result);
     }
 
     #[Test]
@@ -130,8 +130,8 @@ final class IdentifierTest extends TestCase
     {
         $id = Identifier::createFromString('Bar');
 
-        $this->assertInstanceOf(Identifier::class, $id);
-        $this->assertSame('Bar', $id->value);
+        self::assertInstanceOf(Identifier::class, $id);
+        self::assertSame('Bar', $id->value);
     }
 
     #[Test]
@@ -151,32 +151,32 @@ final class IdentifierTest extends TestCase
     #[Test]
     public function isLooksLikeSpecialReturnsTrueForSpecialNames(): void
     {
-        $this->assertTrue(Identifier::isLooksLikeSpecial('self'));
-        $this->assertTrue(Identifier::isLooksLikeSpecial('SELF'));
-        $this->assertTrue(Identifier::isLooksLikeSpecial('parent'));
-        $this->assertTrue(Identifier::isLooksLikeSpecial('static'));
+        self::assertTrue(Identifier::isLooksLikeSpecial('self'));
+        self::assertTrue(Identifier::isLooksLikeSpecial('SELF'));
+        self::assertTrue(Identifier::isLooksLikeSpecial('parent'));
+        self::assertTrue(Identifier::isLooksLikeSpecial('static'));
     }
 
     #[Test]
     public function isLooksLikeSpecialReturnsFalseForOtherNames(): void
     {
-        $this->assertFalse(Identifier::isLooksLikeSpecial('Foo'));
-        $this->assertFalse(Identifier::isLooksLikeSpecial('int'));
+        self::assertFalse(Identifier::isLooksLikeSpecial('Foo'));
+        self::assertFalse(Identifier::isLooksLikeSpecial('int'));
     }
 
     #[Test]
     public function isLooksLikeBuiltinReturnsTrueForBuiltinNames(): void
     {
-        $this->assertTrue(Identifier::isLooksLikeBuiltin('int'));
-        $this->assertTrue(Identifier::isLooksLikeBuiltin('INT'));
-        $this->assertTrue(Identifier::isLooksLikeBuiltin('string'));
+        self::assertTrue(Identifier::isLooksLikeBuiltin('int'));
+        self::assertTrue(Identifier::isLooksLikeBuiltin('INT'));
+        self::assertTrue(Identifier::isLooksLikeBuiltin('string'));
     }
 
     #[Test]
     public function isLooksLikeBuiltinReturnsFalseForCustomNames(): void
     {
-        $this->assertFalse(Identifier::isLooksLikeBuiltin('Foo'));
-        $this->assertFalse(Identifier::isLooksLikeBuiltin('self'));
+        self::assertFalse(Identifier::isLooksLikeBuiltin('Foo'));
+        self::assertFalse(Identifier::isLooksLikeBuiltin('self'));
     }
 
     #[Test]
@@ -188,8 +188,8 @@ final class IdentifierTest extends TestCase
         /** @var Identifier $restored */
         $restored = \unserialize(\serialize($id));
 
-        $this->assertInstanceOf(Identifier::class, $restored);
-        $this->assertSame('MyClass', $restored->value);
-        $this->assertSame(42, $restored->offset);
+        self::assertInstanceOf(Identifier::class, $restored);
+        self::assertSame('MyClass', $restored->value);
+        self::assertSame(42, $restored->offset);
     }
 }

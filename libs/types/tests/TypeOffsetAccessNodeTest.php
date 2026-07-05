@@ -18,8 +18,8 @@ final class TypeOffsetAccessNodeTest extends TestCase
         $access = new NamedTypeNode(Name::createFromString('string'));
         $node = new TypeOffsetAccessNode($type, $access);
 
-        $this->assertSame($type, $node->type);
-        $this->assertSame($access, $node->access);
+        self::assertSame($type, $node->type);
+        self::assertSame($access, $node->access);
     }
 
     #[Test]
@@ -30,7 +30,7 @@ final class TypeOffsetAccessNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('key')),
         );
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 
     #[Test]
@@ -42,6 +42,6 @@ final class TypeOffsetAccessNodeTest extends TestCase
             $access,
         );
 
-        $this->assertSame($access, $node->access);
+        self::assertSame($access, $node->access);
     }
 }

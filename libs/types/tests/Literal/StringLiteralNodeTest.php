@@ -15,8 +15,8 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = new StringLiteralNode('hello', '"hello"');
 
-        $this->assertSame('hello', $node->value);
-        $this->assertSame('"hello"', $node->raw);
+        self::assertSame('hello', $node->value);
+        self::assertSame('"hello"', $node->raw);
     }
 
     #[Test]
@@ -24,8 +24,8 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = new StringLiteralNode('hello');
 
-        $this->assertSame('hello', $node->value);
-        $this->assertSame('"hello"', $node->raw);
+        self::assertSame('hello', $node->value);
+        self::assertSame('"hello"', $node->raw);
     }
 
     #[Test]
@@ -33,7 +33,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = new StringLiteralNode('hello', '"hello"');
 
-        $this->assertSame('"hello"', (string) $node);
+        self::assertSame('"hello"', (string) $node);
     }
 
     #[Test]
@@ -41,8 +41,8 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::parse('"hello"');
 
-        $this->assertSame('hello', $node->value);
-        $this->assertSame('"hello"', $node->raw);
+        self::assertSame('hello', $node->value);
+        self::assertSame('"hello"', $node->raw);
     }
 
     #[Test]
@@ -50,8 +50,8 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::parse("'hello'");
 
-        $this->assertSame('hello', $node->value);
-        $this->assertSame("'hello'", $node->raw);
+        self::assertSame('hello', $node->value);
+        self::assertSame("'hello'", $node->raw);
     }
 
     #[Test]
@@ -59,7 +59,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::parse('"say \\"hello\\""');
 
-        $this->assertSame('say "hello"', $node->value);
+        self::assertSame('say "hello"', $node->value);
     }
 
     #[Test]
@@ -67,7 +67,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::parse("'it\\'s'");
 
-        $this->assertSame("it's", $node->value);
+        self::assertSame("it's", $node->value);
     }
 
     #[Test]
@@ -75,7 +75,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::parse('"line1\\nline2"');
 
-        $this->assertSame("line1\nline2", $node->value);
+        self::assertSame("line1\nline2", $node->value);
     }
 
     #[Test]
@@ -83,7 +83,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::parse('"col1\\tcol2"');
 
-        $this->assertSame("col1\tcol2", $node->value);
+        self::assertSame("col1\tcol2", $node->value);
     }
 
     #[Test]
@@ -91,7 +91,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::parse('"\\x41"');
 
-        $this->assertSame('A', $node->value);
+        self::assertSame('A', $node->value);
     }
 
     #[Test]
@@ -99,7 +99,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::parse('"\\u{0041}"');
 
-        $this->assertSame('A', $node->value);
+        self::assertSame('A', $node->value);
     }
 
     #[Test]
@@ -107,7 +107,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::createFromDoubleQuotedString('"world"');
 
-        $this->assertSame('world', $node->value);
+        self::assertSame('world', $node->value);
     }
 
     #[Test]
@@ -115,7 +115,7 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = StringLiteralNode::createFromSingleQuotedString("'world'");
 
-        $this->assertSame('world', $node->value);
+        self::assertSame('world', $node->value);
     }
 
     #[Test]
@@ -137,6 +137,6 @@ final class StringLiteralNodeTest extends TestCase
     {
         $node = new StringLiteralNode('test');
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

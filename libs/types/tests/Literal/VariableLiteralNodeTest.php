@@ -15,8 +15,8 @@ final class VariableLiteralNodeTest extends TestCase
     {
         $node = new VariableLiteralNode('$foo');
 
-        $this->assertSame('foo', $node->value);
-        $this->assertSame('$foo', $node->raw);
+        self::assertSame('foo', $node->value);
+        self::assertSame('$foo', $node->raw);
     }
 
     #[Test]
@@ -24,7 +24,7 @@ final class VariableLiteralNodeTest extends TestCase
     {
         $node = new VariableLiteralNode('$bar');
 
-        $this->assertSame('$bar', (string) $node);
+        self::assertSame('$bar', (string) $node);
     }
 
     #[Test]
@@ -32,8 +32,8 @@ final class VariableLiteralNodeTest extends TestCase
     {
         $node = VariableLiteralNode::parse('myVar');
 
-        $this->assertSame('myVar', $node->value);
-        $this->assertSame('$myVar', $node->raw);
+        self::assertSame('myVar', $node->value);
+        self::assertSame('$myVar', $node->raw);
     }
 
     #[Test]
@@ -41,8 +41,8 @@ final class VariableLiteralNodeTest extends TestCase
     {
         $node = VariableLiteralNode::parse('$myVar');
 
-        $this->assertSame('myVar', $node->value);
-        $this->assertSame('$myVar', $node->raw);
+        self::assertSame('myVar', $node->value);
+        self::assertSame('$myVar', $node->raw);
     }
 
     #[Test]
@@ -50,7 +50,7 @@ final class VariableLiteralNodeTest extends TestCase
     {
         $node = new VariableLiteralNode('$x');
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 
     #[Test]

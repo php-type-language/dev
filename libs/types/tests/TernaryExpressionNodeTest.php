@@ -28,9 +28,9 @@ final class TernaryExpressionNodeTest extends TestCase
 
         $node = new TernaryExpressionNode($condition, $then, $else);
 
-        $this->assertSame($condition, $node->condition);
-        $this->assertSame($then, $node->then);
-        $this->assertSame($else, $node->else);
+        self::assertSame($condition, $node->condition);
+        self::assertSame($then, $node->then);
+        self::assertSame($else, $node->else);
     }
 
     #[Test]
@@ -42,6 +42,6 @@ final class TernaryExpressionNodeTest extends TestCase
             $this->named('B'),
         );
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

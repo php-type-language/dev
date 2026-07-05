@@ -15,8 +15,8 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $node = new FloatLiteralNode(3.14, '3.14');
 
-        $this->assertSame(3.14, $node->value);
-        $this->assertSame('3.14', $node->raw);
+        self::assertSame(3.14, $node->value);
+        self::assertSame('3.14', $node->raw);
     }
 
     #[Test]
@@ -24,8 +24,8 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $node = FloatLiteralNode::parse('1.5');
 
-        $this->assertSame(1.5, $node->value);
-        $this->assertSame('1.5', $node->raw);
+        self::assertSame(1.5, $node->value);
+        self::assertSame('1.5', $node->raw);
     }
 
     #[Test]
@@ -33,7 +33,7 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $node = new FloatLiteralNode(3.14, '3.14');
 
-        $this->assertSame('3.14', (string) $node);
+        self::assertSame('3.14', (string) $node);
     }
 
     #[Test]
@@ -41,8 +41,8 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $node = FloatLiteralNode::parse('3.14');
 
-        $this->assertSame(3.14, $node->value);
-        $this->assertSame('3.14', $node->raw);
+        self::assertSame(3.14, $node->value);
+        self::assertSame('3.14', $node->raw);
     }
 
     #[Test]
@@ -50,7 +50,7 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $node = FloatLiteralNode::parse('-1.5');
 
-        $this->assertSame(-1.5, $node->value);
+        self::assertSame(-1.5, $node->value);
     }
 
     #[Test]
@@ -58,7 +58,7 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $node = FloatLiteralNode::parse('1.5e2');
 
-        $this->assertSame(150.0, $node->value);
+        self::assertSame(150.0, $node->value);
     }
 
     #[Test]
@@ -66,8 +66,8 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $node = FloatLiteralNode::parse('not-a-number');
 
-        $this->assertSame(0.0, $node->value);
-        $this->assertSame('not-a-number', $node->raw);
+        self::assertSame(0.0, $node->value);
+        self::assertSame('not-a-number', $node->raw);
     }
 
     #[Test]
@@ -75,6 +75,6 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $node = FloatLiteralNode::parse('0.0');
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

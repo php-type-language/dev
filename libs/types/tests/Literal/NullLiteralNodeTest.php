@@ -15,7 +15,7 @@ final class NullLiteralNodeTest extends TestCase
     {
         $node = new NullLiteralNode();
 
-        $this->assertNull($node->value);
+        self::assertNull($node->value);
     }
 
     #[Test]
@@ -23,7 +23,7 @@ final class NullLiteralNodeTest extends TestCase
     {
         $node = new NullLiteralNode();
 
-        $this->assertSame('null', $node->raw);
+        self::assertSame('null', $node->raw);
     }
 
     #[Test]
@@ -31,8 +31,8 @@ final class NullLiteralNodeTest extends TestCase
     {
         $node = new NullLiteralNode('NULL');
 
-        $this->assertSame('NULL', $node->raw);
-        $this->assertNull($node->value);
+        self::assertSame('NULL', $node->raw);
+        self::assertNull($node->value);
     }
 
     #[Test]
@@ -40,7 +40,7 @@ final class NullLiteralNodeTest extends TestCase
     {
         $node = new NullLiteralNode();
 
-        $this->assertSame('null', (string) $node);
+        self::assertSame('null', (string) $node);
     }
 
     #[Test]
@@ -48,6 +48,6 @@ final class NullLiteralNodeTest extends TestCase
     {
         $node = new NullLiteralNode();
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

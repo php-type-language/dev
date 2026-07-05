@@ -23,8 +23,8 @@ final class IntersectionTypeNodeTest extends TestCase
         $b = $this->named('Stringable');
         $node = new IntersectionTypeNode($a, $b);
 
-        $this->assertCount(2, $node);
-        $this->assertSame([$a, $b], $node->statements);
+        self::assertCount(2, $node);
+        self::assertSame([$a, $b], $node->statements);
     }
 
     #[Test]
@@ -35,7 +35,7 @@ final class IntersectionTypeNodeTest extends TestCase
         $c = $this->named('C');
         $node = new IntersectionTypeNode($a, $b, $c);
 
-        $this->assertCount(3, $node);
+        self::assertCount(3, $node);
     }
 
     #[Test]
@@ -48,8 +48,8 @@ final class IntersectionTypeNodeTest extends TestCase
         $inner = new IntersectionTypeNode($a, $b);
         $outer = new IntersectionTypeNode($inner, $c);
 
-        $this->assertCount(3, $outer);
-        $this->assertSame([$a, $b, $c], $outer->statements);
+        self::assertCount(3, $outer);
+        self::assertSame([$a, $b, $c], $outer->statements);
     }
 
     #[Test]
@@ -59,7 +59,7 @@ final class IntersectionTypeNodeTest extends TestCase
         $b = $this->named('Stringable');
         $node = new IntersectionTypeNode($a, $b);
 
-        $this->assertSame([$a, $b], \iterator_to_array($node));
+        self::assertSame([$a, $b], \iterator_to_array($node));
     }
 
     #[Test]
@@ -67,6 +67,6 @@ final class IntersectionTypeNodeTest extends TestCase
     {
         $node = new IntersectionTypeNode($this->named('A'), $this->named('B'));
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

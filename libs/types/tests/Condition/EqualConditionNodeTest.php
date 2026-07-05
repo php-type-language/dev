@@ -19,8 +19,8 @@ final class EqualConditionNodeTest extends TestCase
         $target = new NamedTypeNode(Name::createFromString('string'));
         $node = new EqualConditionNode($subject, $target);
 
-        $this->assertSame($subject, $node->subject);
-        $this->assertSame($target, $node->target);
+        self::assertSame($subject, $node->subject);
+        self::assertSame($target, $node->target);
     }
 
     #[Test]
@@ -31,6 +31,6 @@ final class EqualConditionNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('string')),
         );
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

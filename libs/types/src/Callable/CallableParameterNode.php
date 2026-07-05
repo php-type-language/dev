@@ -19,11 +19,11 @@ final class CallableParameterNode extends Node implements \Stringable
         public bool $isOptional = false,
         public ?AttributeGroupListNode $attributes = null,
     ) {
-        assert($type !== null || $name !== null, new \TypeError(
+        \assert($type !== null || $name !== null, new \TypeError(
             'Required indication of the type or name of the parameter (one of)',
         ));
 
-        assert($isVariadic === false || $isOptional === false, new \TypeError(
+        \assert($isVariadic === false || $isOptional === false, new \TypeError(
             'Parameter cannot be both variable and optional (variadic parameter is already optional)',
         ));
     }

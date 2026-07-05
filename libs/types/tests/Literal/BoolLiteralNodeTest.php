@@ -15,8 +15,8 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = new BoolLiteralNode(true);
 
-        $this->assertTrue($node->value);
-        $this->assertSame('true', $node->raw);
+        self::assertTrue($node->value);
+        self::assertSame('true', $node->raw);
     }
 
     #[Test]
@@ -24,8 +24,8 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = new BoolLiteralNode(false);
 
-        $this->assertFalse($node->value);
-        $this->assertSame('false', $node->raw);
+        self::assertFalse($node->value);
+        self::assertSame('false', $node->raw);
     }
 
     #[Test]
@@ -33,8 +33,8 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = new BoolLiteralNode(true, 'TRUE');
 
-        $this->assertTrue($node->value);
-        $this->assertSame('TRUE', $node->raw);
+        self::assertTrue($node->value);
+        self::assertSame('TRUE', $node->raw);
     }
 
     #[Test]
@@ -42,7 +42,7 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = new BoolLiteralNode(true);
 
-        $this->assertSame('true', (string) $node);
+        self::assertSame('true', (string) $node);
     }
 
     #[Test]
@@ -50,8 +50,8 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = BoolLiteralNode::parse('true');
 
-        $this->assertTrue($node->value);
-        $this->assertSame('true', $node->raw);
+        self::assertTrue($node->value);
+        self::assertSame('true', $node->raw);
     }
 
     #[Test]
@@ -59,7 +59,7 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = BoolLiteralNode::parse('TRUE');
 
-        $this->assertTrue($node->value);
+        self::assertTrue($node->value);
     }
 
     #[Test]
@@ -67,7 +67,7 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = BoolLiteralNode::parse('false');
 
-        $this->assertFalse($node->value);
+        self::assertFalse($node->value);
     }
 
     #[Test]
@@ -75,7 +75,7 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = BoolLiteralNode::parse('FALSE');
 
-        $this->assertFalse($node->value);
+        self::assertFalse($node->value);
     }
 
     #[Test]
@@ -83,7 +83,7 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = BoolLiteralNode::parse('yes');
 
-        $this->assertFalse($node->value);
+        self::assertFalse($node->value);
     }
 
     #[Test]
@@ -91,6 +91,6 @@ final class BoolLiteralNodeTest extends TestCase
     {
         $node = new BoolLiteralNode(true);
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

@@ -24,8 +24,8 @@ final class UnionTypeNodeTest extends TestCase
         $b = $this->named('string');
         $node = new UnionTypeNode($a, $b);
 
-        $this->assertCount(2, $node);
-        $this->assertSame([$a, $b], $node->statements);
+        self::assertCount(2, $node);
+        self::assertSame([$a, $b], $node->statements);
     }
 
     #[Test]
@@ -36,7 +36,7 @@ final class UnionTypeNodeTest extends TestCase
         $c = $this->named('null');
         $node = new UnionTypeNode($a, $b, $c);
 
-        $this->assertCount(3, $node);
+        self::assertCount(3, $node);
     }
 
     #[Test]
@@ -49,8 +49,8 @@ final class UnionTypeNodeTest extends TestCase
         $inner = new UnionTypeNode($a, $b);
         $outer = new UnionTypeNode($inner, $c);
 
-        $this->assertCount(3, $outer);
-        $this->assertSame([$a, $b, $c], $outer->statements);
+        self::assertCount(3, $outer);
+        self::assertSame([$a, $b, $c], $outer->statements);
     }
 
     #[Test]
@@ -60,7 +60,7 @@ final class UnionTypeNodeTest extends TestCase
         $b = $this->named('string');
         $node = new UnionTypeNode($a, $b);
 
-        $this->assertSame([$a, $b], \iterator_to_array($node));
+        self::assertSame([$a, $b], \iterator_to_array($node));
     }
 
     #[Test]
@@ -68,7 +68,7 @@ final class UnionTypeNodeTest extends TestCase
     {
         $node = new UnionTypeNode($this->named('int'), $this->named('string'), $this->named('bool'));
 
-        $this->assertSame(3, $node->count());
+        self::assertSame(3, $node->count());
     }
 
     #[Test]
@@ -81,8 +81,8 @@ final class UnionTypeNodeTest extends TestCase
         $inner = new IntersectionTypeNode($a, $b);
         $outer = new UnionTypeNode($inner, $c);
 
-        $this->assertCount(2, $outer);
-        $this->assertSame($inner, $outer->statements[0]);
+        self::assertCount(2, $outer);
+        self::assertSame($inner, $outer->statements[0]);
     }
 
     #[Test]
@@ -96,8 +96,8 @@ final class UnionTypeNodeTest extends TestCase
         /** @var UnionTypeNode $restored */
         $restored = \unserialize(\serialize($node));
 
-        $this->assertInstanceOf(UnionTypeNode::class, $restored);
-        $this->assertCount(2, $restored);
-        $this->assertSame(5, $restored->offset);
+        self::assertInstanceOf(UnionTypeNode::class, $restored);
+        self::assertCount(2, $restored);
+        self::assertSame(5, $restored->offset);
     }
 }

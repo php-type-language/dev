@@ -22,9 +22,9 @@ final class AttributeGroupNodeTest extends TestCase
     {
         $group = new AttributeGroupNode();
 
-        $this->assertCount(0, $group);
-        $this->assertNull($group->first);
-        $this->assertNull($group->last);
+        self::assertCount(0, $group);
+        self::assertNull($group->first);
+        self::assertNull($group->last);
     }
 
     #[Test]
@@ -34,9 +34,9 @@ final class AttributeGroupNodeTest extends TestCase
         $b = $this->makeAttr('Deprecated');
         $group = new AttributeGroupNode([$a, $b]);
 
-        $this->assertCount(2, $group);
-        $this->assertSame($a, $group->first);
-        $this->assertSame($b, $group->last);
+        self::assertCount(2, $group);
+        self::assertSame($a, $group->first);
+        self::assertSame($b, $group->last);
     }
 
     #[Test]
@@ -46,8 +46,8 @@ final class AttributeGroupNodeTest extends TestCase
         $b = $this->makeAttr('Deprecated');
         $group = new AttributeGroupNode([$a, $b]);
 
-        $this->assertSame(0, $group->findIndex($a));
-        $this->assertSame(1, $group->findIndex($b));
+        self::assertSame(0, $group->findIndex($a));
+        self::assertSame(1, $group->findIndex($b));
     }
 
     #[Test]
@@ -55,7 +55,7 @@ final class AttributeGroupNodeTest extends TestCase
     {
         $group = new AttributeGroupNode([$this->makeAttr('Pure')]);
 
-        $this->assertNull($group->findIndex($this->makeAttr('Other')));
+        self::assertNull($group->findIndex($this->makeAttr('Other')));
     }
 
     #[Test]
@@ -65,7 +65,7 @@ final class AttributeGroupNodeTest extends TestCase
         $b = $this->makeAttr('B');
         $group = new AttributeGroupNode([$a, $b]);
 
-        $this->assertSame([$a, $b], \iterator_to_array($group));
+        self::assertSame([$a, $b], \iterator_to_array($group));
     }
 
     #[Test]
@@ -73,6 +73,6 @@ final class AttributeGroupNodeTest extends TestCase
     {
         $group = new AttributeGroupNode();
 
-        $this->assertSame(0, $group->offset);
+        self::assertSame(0, $group->offset);
     }
 }

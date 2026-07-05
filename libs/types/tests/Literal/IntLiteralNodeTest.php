@@ -16,9 +16,9 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = new IntLiteralNode(42, '42', '42');
 
-        $this->assertSame(42, $node->value);
-        $this->assertSame('42', $node->raw);
-        $this->assertSame('42', $node->decimal);
+        self::assertSame(42, $node->value);
+        self::assertSame('42', $node->raw);
+        self::assertSame('42', $node->decimal);
     }
 
     #[Test]
@@ -26,9 +26,9 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = new IntLiteralNode(42, '0x2A', '42');
 
-        $this->assertSame(42, $node->value);
-        $this->assertSame('0x2A', $node->raw);
-        $this->assertSame('42', $node->decimal);
+        self::assertSame(42, $node->value);
+        self::assertSame('0x2A', $node->raw);
+        self::assertSame('42', $node->decimal);
     }
 
     #[Test]
@@ -36,7 +36,7 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = new IntLiteralNode(42, '0x2A', '42');
 
-        $this->assertSame('0x2A', (string) $node);
+        self::assertSame('0x2A', (string) $node);
     }
 
     #[Test]
@@ -45,8 +45,8 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse($input);
 
-        $this->assertSame($expected, $node->value);
-        $this->assertSame($input, $node->raw);
+        self::assertSame($expected, $node->value);
+        self::assertSame($input, $node->raw);
     }
 
     public static function provideDecimalIntegers(): iterable
@@ -64,7 +64,7 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse('-42');
 
-        $this->assertSame(-42, $node->value);
+        self::assertSame(-42, $node->value);
     }
 
     #[Test]
@@ -72,7 +72,7 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse('0xFF');
 
-        $this->assertSame(255, $node->value);
+        self::assertSame(255, $node->value);
     }
 
     #[Test]
@@ -80,7 +80,7 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse('0b1010');
 
-        $this->assertSame(10, $node->value);
+        self::assertSame(10, $node->value);
     }
 
     #[Test]
@@ -88,7 +88,7 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse('0o17');
 
-        $this->assertSame(15, $node->value);
+        self::assertSame(15, $node->value);
     }
 
     #[Test]
@@ -96,7 +96,7 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse('017');
 
-        $this->assertSame(15, $node->value);
+        self::assertSame(15, $node->value);
     }
 
     #[Test]
@@ -104,7 +104,7 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse('1_000_000');
 
-        $this->assertSame(1000000, $node->value);
+        self::assertSame(1000000, $node->value);
     }
 
     #[Test]
@@ -112,7 +112,7 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse((string) \PHP_INT_MIN);
 
-        $this->assertSame(\PHP_INT_MIN, $node->value);
+        self::assertSame(\PHP_INT_MIN, $node->value);
     }
 
     #[Test]
@@ -120,6 +120,6 @@ final class IntLiteralNodeTest extends TestCase
     {
         $node = IntLiteralNode::parse('0');
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

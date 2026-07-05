@@ -18,7 +18,7 @@ final class CallableTypeNodeTest extends TestCase
         $name = Name::createFromString('callable');
         $node = new CallableTypeNode($name);
 
-        $this->assertSame($name, $node->name);
+        self::assertSame($name, $node->name);
     }
 
     #[Test]
@@ -26,8 +26,8 @@ final class CallableTypeNodeTest extends TestCase
     {
         $node = new CallableTypeNode(Name::createFromString('callable'));
 
-        $this->assertInstanceOf(CallableParameterListNode::class, $node->parameters);
-        $this->assertCount(0, $node->parameters);
+        self::assertInstanceOf(CallableParameterListNode::class, $node->parameters);
+        self::assertCount(0, $node->parameters);
     }
 
     #[Test]
@@ -35,7 +35,7 @@ final class CallableTypeNodeTest extends TestCase
     {
         $node = new CallableTypeNode(Name::createFromString('callable'));
 
-        $this->assertNull($node->type);
+        self::assertNull($node->type);
     }
 
     #[Test]
@@ -44,7 +44,7 @@ final class CallableTypeNodeTest extends TestCase
         $params = new CallableParameterListNode();
         $node = new CallableTypeNode(Name::createFromString('callable'), $params);
 
-        $this->assertSame($params, $node->parameters);
+        self::assertSame($params, $node->parameters);
     }
 
     #[Test]
@@ -57,7 +57,7 @@ final class CallableTypeNodeTest extends TestCase
             $returnType,
         );
 
-        $this->assertSame($returnType, $node->type);
+        self::assertSame($returnType, $node->type);
     }
 
     #[Test]
@@ -65,6 +65,6 @@ final class CallableTypeNodeTest extends TestCase
     {
         $node = new CallableTypeNode(Name::createFromString('callable'));
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

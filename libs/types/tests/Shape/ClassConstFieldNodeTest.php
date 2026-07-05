@@ -26,8 +26,8 @@ final class ClassConstFieldNodeTest extends TestCase
         $type = new NamedTypeNode(Name::createFromString('int'));
         $node = new ClassConstFieldNode($key, $type);
 
-        $this->assertSame($key, $node->key);
-        $this->assertSame($type, $node->type);
+        self::assertSame($key, $node->key);
+        self::assertSame($type, $node->type);
     }
 
     #[Test]
@@ -36,7 +36,7 @@ final class ClassConstFieldNodeTest extends TestCase
         $key = $this->makeKey('MyEnum', 'ACTIVE');
         $node = new ClassConstFieldNode($key, new NamedTypeNode(Name::createFromString('string')));
 
-        $this->assertSame('MyEnum::ACTIVE', $node->index);
+        self::assertSame('MyEnum::ACTIVE', $node->index);
     }
 
     #[Test]
@@ -45,7 +45,7 @@ final class ClassConstFieldNodeTest extends TestCase
         $key = $this->makeKey('Vendor\Package\Status', 'OK');
         $node = new ClassConstFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        $this->assertSame('Vendor\Package\Status::OK', $node->index);
+        self::assertSame('Vendor\Package\Status::OK', $node->index);
     }
 
     #[Test]
@@ -56,7 +56,7 @@ final class ClassConstFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('int')),
         );
 
-        $this->assertFalse($node->isOptional);
+        self::assertFalse($node->isOptional);
     }
 
     #[Test]
@@ -68,7 +68,7 @@ final class ClassConstFieldNodeTest extends TestCase
             true,
         );
 
-        $this->assertTrue($node->isOptional);
+        self::assertTrue($node->isOptional);
     }
 
     #[Test]
@@ -79,6 +79,6 @@ final class ClassConstFieldNodeTest extends TestCase
             new NamedTypeNode(Name::createFromString('int')),
         );
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 }

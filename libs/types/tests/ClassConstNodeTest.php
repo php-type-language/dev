@@ -18,8 +18,8 @@ final class ClassConstNodeTest extends TestCase
         $const = new Identifier('MY_CONST');
         $node = new ClassConstNode($class, $const);
 
-        $this->assertSame($class, $node->class);
-        $this->assertSame($const, $node->constant);
+        self::assertSame($class, $node->class);
+        self::assertSame($const, $node->constant);
     }
 
     #[Test]
@@ -30,7 +30,7 @@ final class ClassConstNodeTest extends TestCase
             new Identifier('BAR'),
         );
 
-        $this->assertSame(0, $node->offset);
+        self::assertSame(0, $node->offset);
     }
 
     #[Test]
@@ -40,7 +40,7 @@ final class ClassConstNodeTest extends TestCase
         $const = new Identifier('STATUS');
         $node = new ClassConstNode($class, $const);
 
-        $this->assertTrue($node->class->isFullyQualified);
-        $this->assertSame('STATUS', $node->constant->value);
+        self::assertTrue($node->class->isFullyQualified);
+        self::assertSame('STATUS', $node->constant->value);
     }
 }

@@ -23,9 +23,9 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode();
 
-        $this->assertCount(0, $list);
-        $this->assertNull($list->first);
-        $this->assertNull($list->last);
+        self::assertCount(0, $list);
+        self::assertNull($list->first);
+        self::assertNull($list->last);
     }
 
     #[Test]
@@ -33,7 +33,7 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode();
 
-        $this->assertTrue($list->sealed);
+        self::assertTrue($list->sealed);
     }
 
     #[Test]
@@ -41,7 +41,7 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode([], false);
 
-        $this->assertFalse($list->sealed);
+        self::assertFalse($list->sealed);
     }
 
     #[Test]
@@ -51,9 +51,9 @@ final class FieldsListNodeTest extends TestCase
         $b = $this->makeField('int');
         $list = new FieldsListNode([$a, $b]);
 
-        $this->assertCount(2, $list);
-        $this->assertSame($a, $list->first);
-        $this->assertSame($b, $list->last);
+        self::assertCount(2, $list);
+        self::assertSame($a, $list->first);
+        self::assertSame($b, $list->last);
     }
 
     #[Test]
@@ -61,7 +61,7 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode([], true);
 
-        $this->assertSame('sealed', (string) $list);
+        self::assertSame('sealed', (string) $list);
     }
 
     #[Test]
@@ -69,7 +69,7 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode([], false);
 
-        $this->assertSame('unsealed', (string) $list);
+        self::assertSame('unsealed', (string) $list);
     }
 
     #[Test]
@@ -79,8 +79,8 @@ final class FieldsListNodeTest extends TestCase
         $b = $this->makeField('int');
         $list = new FieldsListNode([$a, $b]);
 
-        $this->assertSame(0, $list->findIndex($a));
-        $this->assertSame(1, $list->findIndex($b));
+        self::assertSame(0, $list->findIndex($a));
+        self::assertSame(1, $list->findIndex($b));
     }
 
     #[Test]
@@ -88,7 +88,7 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode([$this->makeField('int')]);
 
-        $this->assertNull($list->findIndex($this->makeField('string')));
+        self::assertNull($list->findIndex($this->makeField('string')));
     }
 
     #[Test]
@@ -99,8 +99,8 @@ final class FieldsListNodeTest extends TestCase
         $list = new FieldsListNode([$a, $b]);
         unset($list[0]);
 
-        $this->assertCount(1, $list);
-        $this->assertSame($b, $list[0]);
+        self::assertCount(1, $list);
+        self::assertSame($b, $list[0]);
     }
 
     #[Test]
@@ -110,7 +110,7 @@ final class FieldsListNodeTest extends TestCase
         $b = $this->makeField('int');
         $list = new FieldsListNode([$a, $b]);
 
-        $this->assertSame([$a, $b], \iterator_to_array($list));
+        self::assertSame([$a, $b], \iterator_to_array($list));
     }
 
     #[Test]
@@ -118,6 +118,6 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode();
 
-        $this->assertSame(0, $list->offset);
+        self::assertSame(0, $list->offset);
     }
 }

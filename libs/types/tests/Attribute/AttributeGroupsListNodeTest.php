@@ -28,9 +28,9 @@ final class AttributeGroupsListNodeTest extends TestCase
     {
         $list = new AttributeGroupListNode();
 
-        $this->assertCount(0, $list);
-        $this->assertNull($list->first);
-        $this->assertNull($list->last);
+        self::assertCount(0, $list);
+        self::assertNull($list->first);
+        self::assertNull($list->last);
     }
 
     #[Test]
@@ -40,9 +40,9 @@ final class AttributeGroupsListNodeTest extends TestCase
         $g2 = $this->makeGroup('Deprecated');
         $list = new AttributeGroupListNode([$g1, $g2]);
 
-        $this->assertCount(2, $list);
-        $this->assertSame($g1, $list->first);
-        $this->assertSame($g2, $list->last);
+        self::assertCount(2, $list);
+        self::assertSame($g1, $list->first);
+        self::assertSame($g2, $list->last);
     }
 
     #[Test]
@@ -51,9 +51,9 @@ final class AttributeGroupsListNodeTest extends TestCase
         $g = $this->makeGroup('Pure');
         $list = new AttributeGroupListNode([$g]);
 
-        $this->assertTrue(isset($list[0]));
-        $this->assertSame($g, $list[0]);
-        $this->assertNull($list[1]);
+        self::assertTrue(isset($list[0]));
+        self::assertSame($g, $list[0]);
+        self::assertNull($list[1]);
     }
 
     #[Test]
@@ -64,8 +64,8 @@ final class AttributeGroupsListNodeTest extends TestCase
         $list = new AttributeGroupListNode([$g1, $g2]);
         unset($list[0]);
 
-        $this->assertCount(1, $list);
-        $this->assertSame($g2, $list[0]);
+        self::assertCount(1, $list);
+        self::assertSame($g2, $list[0]);
     }
 
     #[Test]
@@ -73,6 +73,6 @@ final class AttributeGroupsListNodeTest extends TestCase
     {
         $list = new AttributeGroupListNode();
 
-        $this->assertSame(0, $list->offset);
+        self::assertSame(0, $list->offset);
     }
 }
