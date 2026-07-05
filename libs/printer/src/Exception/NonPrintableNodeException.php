@@ -6,21 +6,12 @@ namespace TypeLang\Printer\Exception;
 
 use TypeLang\Type\Node;
 
-class NonPrintableNodeException extends \InvalidArgumentException implements PrinterExceptionInterface
+final class NonPrintableNodeException extends PrinterException
 {
-    final public const ERROR_CODE_INVALID_NODE = 0x01;
-
-    protected const CODE_LAST = self::ERROR_CODE_INVALID_NODE;
-
-    final public function __construct(string $message, int $code = 0, ?\Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
-
-    public static function fromInvalidNode(Node $node): self
+    public static function becauseInvalidNodeGiven(Node $node, ?\Throwable $previous = null): self
     {
         $message = \sprintf('Could not print unknown node "%s"', $node::class);
 
-        return new static($message, self::ERROR_CODE_INVALID_NODE);
+        return new self($message, 0, $previous);
     }
 }

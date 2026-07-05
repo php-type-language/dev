@@ -138,7 +138,7 @@ class PrettyPrinter extends Printer
             $stmt instanceof TernaryExpressionNode => $this->printTernaryType($stmt),
             $stmt instanceof TypesListNode => $this->printTypeListNode($stmt),
             $stmt instanceof TypeOffsetAccessNode => $this->printTypeOffsetAccessNode($stmt),
-            default => throw NonPrintableNodeException::fromInvalidNode($stmt),
+            default => throw NonPrintableNodeException::becauseInvalidNodeGiven($stmt),
         };
     }
 
@@ -567,7 +567,7 @@ class PrettyPrinter extends Printer
             $node instanceof LessThanOrEqualConditionNode => '<=',
             $node instanceof GreaterThanConditionNode => '>',
             $node instanceof LessThanConditionNode => '<',
-            default => throw NonPrintableNodeException::fromInvalidNode($node),
+            default => throw NonPrintableNodeException::becauseInvalidNodeGiven($node),
         };
     }
 

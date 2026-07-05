@@ -118,7 +118,7 @@ class NativeTypePrinter extends PrettyPrinter
         return match (true) {
             $node instanceof EqualConditionNode => '===',
             $node instanceof NotEqualConditionNode => '!==',
-            default => throw NonPrintableNodeException::fromInvalidNode($node),
+            default => throw NonPrintableNodeException::becauseInvalidNodeGiven($node),
         };
     }
 
