@@ -13,10 +13,14 @@ permissions:
 env:
   INSTANCE: Writerside/tl
   DOCKER_VERSION: '2026.06.8817'
+  CONFIG_JSON_PRODUCT: 'TL'
+  CONFIG_JSON_VERSION: '2.0'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      artifact: ${{ steps.define-ids.outputs.artifact }}
 
     steps:
       - name: Checkout Repository
