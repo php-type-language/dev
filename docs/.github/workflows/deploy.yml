@@ -17,7 +17,7 @@ env:
   # Replace HI with the ID of the instance in capital letters
   ARTIFACT: webHelpTL2-all.zip
   # Writerside docker image version
-  DOCKER_VERSION: '2025.04.8412'
+  DOCKER_VERSION: '2026.06.8817'
   CONFIG_JSON_PRODUCT: 'TL'
   CONFIG_JSON_VERSION: '1.0'
 
