@@ -7,6 +7,7 @@ namespace TypeLang\PhpDoc;
 use JetBrains\PhpStorm\Language;
 use TypeLang\Parser\TypeParser;
 use TypeLang\PhpDoc\DocBlock\Combinator\AuthorNameCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\CallableTypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\EmailCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator;
@@ -36,6 +37,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\InheritDocTag\InheritDocTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InternalTag\InternalTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\LicenseTag\LicenseTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\MethodTag\MethodTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\MixinTag\MixinTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\NoNamedArgumentsTag\NoNamedArgumentsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\OverrideTag\OverrideTagDefinition;
@@ -124,12 +126,14 @@ final readonly class DocBlockParser implements DocBlockParserInterface
     private function createDefaultCombinators(): array
     {
         $typeParser = new TypeParser();
+        $types = new TypeCombinator($typeParser);
 
         return [
             UriCombinator::NAME => new UriCombinator(),
             UrlCombinator::NAME => new UrlCombinator(),
             ReferenceCombinator::NAME => new ReferenceCombinator(),
-            TypeCombinator::NAME => new TypeCombinator($typeParser),
+            TypeCombinator::NAME => $types,
+            CallableTypeCombinator::NAME => new CallableTypeCombinator($types),
             VariableCombinator::NAME => new VariableCombinator(),
             AuthorNameCombinator::NAME => new AuthorNameCombinator(),
             EmailCombinator::NAME => new EmailCombinator(),
@@ -217,6 +221,7 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             GlobalTagDefinition::NAME => new GlobalTagDefinition(),
             SuppressTagDefinition::NAME => new SuppressTagDefinition(),
             SourceTagDefinition::NAME => new SourceTagDefinition(),
+            MethodTagDefinition::NAME => new MethodTagDefinition(),
         ];
     }
 
