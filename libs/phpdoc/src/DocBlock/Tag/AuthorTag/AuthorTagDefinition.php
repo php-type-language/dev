@@ -17,7 +17,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
  * optional email address.
  *
  * ```
- * "@author" <AuthorName> [ "<" <Email> ">" ]
+ * "@author" <AuthorName> [ "<" <Email> ">" ] [ <Description> ]
  * ```
  */
 final class AuthorTagDefinition extends TagDefinition
