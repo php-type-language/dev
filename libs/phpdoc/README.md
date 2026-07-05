@@ -224,7 +224,7 @@ its description.
 - [x] `@extends` — Allows to extend templated classes and interfaces
 - [x] `@filesource`
 - [x] `@final` — Declare any _Element_ as final
-- [ ] `@global`
+- [x] `@global`
 - [x] `@ignore` — Tells documentation systems that an _Element_ is not to be processed
 - [x] `@implements` — Allows to extend templated interfaces
 - [x] `@inheritdoc`
@@ -255,9 +255,9 @@ its description.
 - [x] `@seal-properties`
 - [x] `@see` — Indicates a reference from the associated _Symbol(s)_ to a website or other _Symbol(s)_
 - [x] `@since`
-- [ ] `@source`
+- [x] `@source`
 - [x] `@subpackage` — Categorizes _Element(s)_ into logical subdivisions
-- [ ] `@suppress`
+- [x] `@suppress`
 - [x] `@template` — Declares a generic type parameter
 - [x] `@template-contravariant` — Declares a generic contravariant type parameter
 - [x] `@template-covariant` — Declares a generic covariant type parameter
@@ -272,7 +272,7 @@ its description.
 - [x] `@use` — An alias of the `@template-use` tag
 - [x] `@used-by`
 - [x] `@uses`
-- [ ] `@var` — Documents the _Type_ of the following _Element_
+- [x] `@var` — Documents the _Type_ of the following _Element_
 - [x] `@version`
 
 
