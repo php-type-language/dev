@@ -31,14 +31,14 @@ the grammar describes as invalid.
 This specification is maintained by the
 [PHP Type Language](https://github.com/php-type-language) project.
 
-# [Overview](Section 1 -- Overview.md)
+# [Overview](Section%201%20--%20Overview.md)
 
-# [Lexical Grammar](Section 2 -- Lexical Grammar.md)
+# [Lexical Grammar](Section%202%20--%20Lexical%20Grammar.md)
 
-# [Types](Section 3 -- Types.md)
+# [Types](Section%203%20--%20Types.md)
 
-# [Structural Types](Section 4 -- Structural Types.md)
+# [Structural Types](Section%204%20--%20Structural%20Types.md)
 
-# [Appendix: Notation Conventions](Appendix A -- Notation Conventions.md)
+# [Appendix: Notation Conventions](Appendix%20A%20--%20Notation%20Conventions.md)
 
-# [Appendix: Grammar Summary](Appendix B -- Grammar Summary.md)
+# [Appendix: Grammar Summary](Appendix%20B%20--%20Grammar%20Summary.md)

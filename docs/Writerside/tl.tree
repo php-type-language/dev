@@ -33,7 +33,7 @@
             <toc-element toc-title="phpDocumentor" href="https://docs.phpdoc.org/guide/guides/types.html" />
         </toc-element>
         <toc-element toc-title="Specification"
-                     href="/static/spec.html" />
+                     href="https://typelang.dev/static/spec.html" />
     </toc-element>
 
     <toc-element toc-title="Mapper"
