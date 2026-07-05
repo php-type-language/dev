@@ -1,10 +1,15 @@
-# The Parser Component
+# Type Parser Component
 
 <primary-label ref="parser-component"/>
+<link-summary>
+Parses TypeLang syntax into an AST of `TypeLang\Type\*` nodes, with strict and
+tolerant parsing modes, feature toggling, and grammar checking.
+</link-summary>
 <show-structure for="chapter" depth="2"/>
 
-A parser component is used to analyze and construct types AST with their
-information and grammar checking.
+The parser component analyzes a [TypeLang](introduction.md) type declaration
+string and builds an <tooltip term="AST">AST</tooltip> (Abstract Syntax Tree)
+out of it, checking the grammar along the way.
 
 ## Installation
 
@@ -16,77 +21,91 @@ information and grammar checking.
 </tldr>
 
 **Requirements:**
-* `PHP >= 8.1`
-* `ext-pcre`
-* `ext-mbstring` <sup>optional</sup>
+* `PHP >= 8.4`
 
-## Usage
+## Quick Start
 
-To create a parser instance, the `TypeLang\Parser\Parser` class is used.
-To run code analysis, you should use the `parse()` method.
+The `TypeLang\Parser\TypeParser` class is the entry point of the component.
+Its `parse()` method turns a type declaration string into a
+`TypeLang\Type\TypeNode` instance.
 
 ```php
 $parser = new TypeLang\Parser\TypeParser();
 
-$result = $parser->parse('example');
+$type = $parser->parse('array{ key: int }');
+
+var_dump($type);
 ```
 
 ```php
-TypeLang\Type\NamedTypeNode {
-  +offset: 0
-  +name: TypeLang\Type\Name {
-    +offset: 0
-    -parts: array:1 [
-      0 => TypeLang\Type\Identifier {
-        +offset: 0
-        +value: "example"
+object(TypeLang\Type\NamedTypeNode)#1 (4) {
+  ["offset"]=> int(0)
+  ["name"]=> object(TypeLang\Type\Name)#2 (3) {
+    ["offset"]=> int(0)
+    ["segments"]=> array(1) {
+      [0]=> object(TypeLang\Type\Identifier)#3 (2) {
+        ["offset"]=> int(0)
+        ["value"]=> string(5) "array"
       }
-    ]
+    }
+    ["isFullyQualified"]=> bool(false)
   }
-  +arguments: null
-  +fields: null
+  ["arguments"]=> NULL
+  ["fields"]=> object(TypeLang\Type\Shape\FieldsListNode)#4 (3) {
+    ["offset"]=> int(7)
+    ["items"]=> array(1) {
+      [0]=> object(TypeLang\Type\Shape\NamedFieldNode)#5 (5) { ... }
+    }
+    ["sealed"]=> bool(true)
+  }
 }
 ```
 {collapsible="true" collapsed-title="Result"}
 
-### Feature Toggling
+Every node exposes an `$offset` (byte offset in the source where the node
+starts) and, depending on its kind, a handful of other public properties. The
+node classes themselves (`TypeLang\Type\*`) belong to the separate
+`type-lang/types` package — plain AST Nodes.
 
-You can enable or disable a set of parser features if your task requires only
-partial support of the functionality. Such a feature allows you to conveniently 
-implement more strict functionality.
+> If a statement cannot be parsed, `parse()` throws an exception implementing
+> `TypeLang\Parser\Exception\ParserExceptionInterface`. See the [tolerant
+> mode](tolerant-mode.md) page for a way to parse partially valid input
+> instead of failing outright.
+> {style="note"}
 
-```php
-$parser = new TypeLang\Parser\TypeParser(
-    literals: false,
-);
+## Strict vs. Tolerant Parsing
 
-$result = $parser->parse('42');
+`TypeParser` implements two parsing strategies, both declared on
+`TypeParserInterface`:
 
-// Uncaught TypeLang\Parser\Exception\ParseException:
-//   Literal values not allowed in "42" at column 1
-```
+* `parse(): TypeNode` — strict mode. Requires the whole input to be a
+  syntactically valid type statement; throws a `ParserExceptionInterface` on
+  the first error.
+* `parseTolerant(): ParsedResult` — tolerant mode. Parses as much of the
+  input as it can and returns a `TypeLang\Parser\ParsedResult` object
+  containing the (possibly partial) type and the offset up to which the
+  source was actually consumed — regardless of what follows. Useful for
+  phpdoc/docblock parsing where a type declaration is followed by a
+  free-text description. See [Tolerant mode](tolerant-mode.md).
 
-### Parser Arguments
+## Parser Arguments
 
-The first argument of the `TypeLang\Parser\Parser::parse(<source>)` method corresponds to the source code data
-and can be of the following types:
-
-<deflist>
-<def title="Method signature">
+The `parse()`/`parseTolerant()` methods accept the source code in
+any of the following forms:
 
 <tabs>
   <tab title="string">
 
   ```php
-  $result = $parser->parse(<<<'CODE'
+  $type = $parser->parse(<<<'CODE'
       object{ key?: int<0, max> }
   CODE);
   ```
   </tab>
   <tab title="resource (stream)">
-  
+
   ```php
-  $result = $parser->parse(
+  $type = $parser->parse(
       fopen(__DIR__ . '/source.txt', 'rb'),
   );
   ```
@@ -94,7 +113,7 @@ and can be of the following types:
   <tab title="SplFileInfo">
 
   ```php
-  $result = $parser->parse(
+  $type = $parser->parse(
       new SplFileInfo(__DIR__ . '/source.txt'),
   );
   ```
@@ -102,11 +121,37 @@ and can be of the following types:
   <tab title="ReadableInterface">
 
   ```php
-  $result = $parser->parse(
+  $type = $parser->parse(
       Phplrt\Source\File::fromPathname(__DIR__ . '/source.txt'),
   );
   ```
   </tab>
 </tabs>
+
+## What's Next
+
+<deflist>
+<def title="Feature toggling">
+
+Enable or disable individual language constructs (generics, shapes,
+unions, ...) — see [](features.md).
+
+</def>
+<def title="Tolerant mode">
+
+Parse a type declaration embedded in free-form text, such as a phpdoc
+annotation — see [](tolerant-mode.md).
+
+</def>
+<def title="Visitors">
+
+Traverse, search, and rewrite a parsed AST — see [](visitors.md).
+
+</def>
+<def title="Name resolution">
+
+Resolve short/relative names in an AST against `use` statements or any other
+custom rule — see [](type-resolver.md).
+
 </def>
 </deflist>
