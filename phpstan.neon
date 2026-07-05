@@ -5,9 +5,8 @@ includes:
   # Components
   - libs/parser/phpstan.neon
   - libs/phpdoc/phpstan.neon
-  # - libs/phpdoc-standard-tags/phpstan.neon
-  # - libs/phpdoc-template-tags/phpstan.neon
-  # - libs/printer/phpstan.neon
+  - libs/printer/phpstan.neon
+  # - libs/reader/phpstan.neon
   - libs/types/phpstan.neon
 parameters:
   level: max

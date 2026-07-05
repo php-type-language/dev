@@ -10,12 +10,8 @@
          backupStaticProperties="false"
 >
     <testsuites>
-        <testsuite name="components">
-            <directory>libs/parser/tests</directory>
-            <directory>libs/phpdoc/tests</directory>
-            <directory>libs/printer/tests</directory>
-            <directory>libs/reader/tests</directory>
-            <directory>libs/types/tests</directory>
+        <testsuite name="Component Tests">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 
@@ -23,11 +19,7 @@
 
     <source>
         <include>
-            <directory>libs/parser/src</directory>
-            <directory>libs/phpdoc/src</directory>
-            <directory>libs/printer/src</directory>
-            <directory>libs/reader/src</directory>
-            <directory>libs/types/src</directory>
+            <directory suffix=".php">src</directory>
         </include>
     </source>
 
