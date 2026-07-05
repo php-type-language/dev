@@ -1,5 +1,7 @@
 # Reflection Reader
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Reads metadata from the PHP class definition.
 </link-summary>

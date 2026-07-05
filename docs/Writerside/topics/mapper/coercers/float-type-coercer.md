@@ -1,5 +1,7 @@
 # Float Coercion
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Cast passed value into a PHP float type.
 </link-summary>

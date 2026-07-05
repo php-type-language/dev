@@ -1,5 +1,6 @@
 # Custom Type
 
+<secondary-label ref="wip"/>
 <show-structure for="chapter" depth="2"/>
 
 To implement a custom type, you should create a class that implements 

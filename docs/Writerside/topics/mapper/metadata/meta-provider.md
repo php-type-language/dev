@@ -1,5 +1,7 @@
 # Metadata Providers
 
+<secondary-label ref="wip"/>
+
 Metadata providers are responsible for "freezing" (building) and 
 providing "frozen" metadata.
 

@@ -1,5 +1,7 @@
 # Type Metadata
 
+<secondary-label ref="wip"/>
+
 Type metadata is a DTO containing information about composite types, such as
 objects, enums, etc., that can be used to supplement existing PHP code.
 

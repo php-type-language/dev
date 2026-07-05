@@ -1,5 +1,6 @@
 # Metadata Configuration
 
+<secondary-label ref="wip"/>
 <show-structure for="chapter" depth="3"/>
 
 Metadata allows you to configure rules for processing objects and supplementing

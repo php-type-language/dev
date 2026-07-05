@@ -1,5 +1,7 @@
 # String Coercion
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Cast passed value into a PHP string type.
 </link-summary>

@@ -1,5 +1,7 @@
 # Type Extractor
 
+<secondary-label ref="wip"/>
+
 A type extractor is a class responsible for inferring a type from a value.
 
 An extractor can be used both when [normalizing](data-mapper.md#usage) an 

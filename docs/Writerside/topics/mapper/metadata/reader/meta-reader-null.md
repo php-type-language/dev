@@ -1,5 +1,7 @@
 # Null Reader
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Reads only the minimum required data (class name) from the class definition.
 </link-summary>

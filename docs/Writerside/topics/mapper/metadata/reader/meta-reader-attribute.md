@@ -1,5 +1,7 @@
 # Attribute Reader
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Reads metadata using PHP attributes
 </link-summary>

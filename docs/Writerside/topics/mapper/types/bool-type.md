@@ -1,5 +1,7 @@
 # BoolType
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Checks for a boolean value and returns a boolean value.
 </link-summary>

@@ -1,5 +1,6 @@
 # Standard Platform
 
+<secondary-label ref="wip"/>
 <show-structure for="chapter" depth="2"/>
 
 <link-summary>

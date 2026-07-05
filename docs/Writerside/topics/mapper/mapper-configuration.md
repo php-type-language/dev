@@ -1,5 +1,7 @@
 # Configuration
 
+<secondary-label ref="wip"/>
+
 Configuration is a `TypeLang\Mapper\Configuration` DTO passed to the
 `TypeLang\Mapper\Mapper` constructor, containing a list of general mapper
 settings.

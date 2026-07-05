@@ -1,5 +1,7 @@
 # Type Builders
 
+<secondary-label ref="wip"/>
+
 The Type Builder is a factory class that acts as a layer between the
 [type declaration](basic-types.md) (like `non-empty-string`) and the
 [type instance](types.md) (like `NonEmptyStringType`).

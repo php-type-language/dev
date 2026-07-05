@@ -1,5 +1,7 @@
 # Custom Type Extractor
 
+<secondary-label ref="wip"/>
+
 To implement a custom type extractor, you should implement your own class that 
 uses the `TypeLang\Mapper\Type\Extractor\Factory\TypeExtractorFactoryInterface` 
 interface that provides `getDefinitionByValue()` method.

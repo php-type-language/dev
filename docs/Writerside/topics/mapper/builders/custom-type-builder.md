@@ -1,5 +1,7 @@
 # Custom Type Builder
 
+<secondary-label ref="wip"/>
+
 To create a custom type, it may make sense to create a factory (i.e., a type 
 builder). This ensures that the [type object](types.md) is created correctly 
 and with the required constructor arguments.
@@ -68,13 +70,9 @@ public function isSupported(TypeStatement $statement): bool
 }
 ```
 
-Each named type is implemented using
-[the `NamedTypeNode` instance](ast-type-statements.md#named-types).
-
-<tip>
-A more detailed description of some of the available nodes in 
-<a href="ast-type-statements.md">the <code>TypeStatement</code> documentation pages</a>
-</tip>
+Each named type is implemented using a `NamedTypeNode` instance — a plain
+DTO from the `type-lang/types` package, exposing `$name`, `$arguments`, and
+`$fields`.
 
 
 ### Building

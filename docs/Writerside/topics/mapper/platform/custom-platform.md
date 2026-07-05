@@ -1,5 +1,7 @@
 # Custom Platform
 
+<secondary-label ref="wip"/>
+
 You can create your own platform, which will contain your own set of types and 
 rules for processing them.
 

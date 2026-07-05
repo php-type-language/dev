@@ -1,5 +1,7 @@
 # InMemory Metadata Provider
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Caches metadata in RAM
 </link-summary>

@@ -1,5 +1,7 @@
 # Bool Coercion
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Cast passed value into a PHP boolean type.
 </link-summary>

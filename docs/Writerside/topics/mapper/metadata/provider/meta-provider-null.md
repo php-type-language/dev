@@ -1,5 +1,7 @@
 # Null Metadata Provider
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Returns empty metadata objects
 </link-summary>

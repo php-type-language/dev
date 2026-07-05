@@ -1,5 +1,7 @@
 # Array Key Coercion
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Cast passed value into a PHP "array key" type.
 </link-summary>

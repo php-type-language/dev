@@ -1,5 +1,7 @@
 # PSR-6 Cache Metadata Provider
 
+<secondary-label ref="wip"/>
+
 <link-summary>
 Returns metadata using intermediate caching in the PSR-6 cache
 </link-summary>
