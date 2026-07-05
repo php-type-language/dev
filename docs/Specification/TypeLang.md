@@ -1,4 +1,4 @@
-# TypeLang
+# PHP TypeLang Specification
 
 _Current Working Draft_
 
