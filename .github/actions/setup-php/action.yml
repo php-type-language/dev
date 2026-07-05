@@ -25,10 +25,10 @@ runs:
     - name: Checkout
       uses: actions/checkout@v5
 
-    - name: Setup PHP ${{ matrix.php }}
+    - name: Setup PHP ${{ inputs.php }}
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php }}
+        php-version: ${{ inputs.php }}
         ini-values: "memory_limit=-1"
 
     - name: Validate Composer
@@ -42,12 +42,12 @@ runs:
       uses: actions/cache@v5
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
-        restore-keys: ${{ runner.os }}-${{ matrix.php }}-composer-
+        key: ${{ runner.os }}-${{ inputs.php }}-composer-${{ hashFiles('**/composer.json') }}
+        restore-keys: ${{ runner.os }}-${{ inputs.php }}-composer-
 
     - name: Install Dependencies
       uses: nick-invision/retry@v4
       with:
         timeout_minutes: 5
         max_attempts: 3
-        command: composer update --prefer-${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+        command: composer update --prefer-${{ inputs.stability }} --prefer-dist --no-interaction --no-progress
