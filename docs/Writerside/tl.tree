@@ -26,12 +26,14 @@
         <toc-element topic="conditional-types.md"
                      toc-title="Conditions" />
         <toc-element toc-title="Community Tools"
-            topic="comparison.md">
+                     topic="comparison.md">
             <toc-element toc-title="PHPStan" href="https://phpstan.org/writing-php-code/phpdoc-types" />
             <toc-element toc-title="Psalm" href="https://psalm.dev/docs/annotating_code/typing_in_psalm/" />
             <toc-element toc-title="PhpStorm" href="https://www.jetbrains.com/help/phpstorm/php-type-checking.html" />
             <toc-element toc-title="phpDocumentor" href="https://docs.phpdoc.org/guide/guides/types.html" />
         </toc-element>
+        <toc-element toc-title="Specification"
+                     href="/static/spec.html" />
     </toc-element>
 
     <toc-element toc-title="Mapper"
