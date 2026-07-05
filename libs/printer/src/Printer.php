@@ -47,9 +47,6 @@ abstract class Printer implements PrinterInterface
         return $this->make($stmt);
     }
 
-    /**
-     * @return non-empty-string
-     */
     abstract protected function make(TypeNode $stmt): string;
 
     /**

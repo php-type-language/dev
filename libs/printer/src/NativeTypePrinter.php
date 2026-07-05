@@ -109,6 +109,7 @@ class NativeTypePrinter extends PrettyPrinter
     #[\Override]
     protected function printTernaryType(TernaryExpressionNode $node): string
     {
+        /** @var non-empty-string */
         return $this->make(new UnionTypeNode($node->then, $node->else));
     }
 

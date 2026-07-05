@@ -356,6 +356,7 @@ class PrettyPrinter extends Printer
      */
     protected function printTemplateArgumentNode(TemplateArgumentNode $argument): string
     {
+        /** @var non-empty-string $result */
         $result = $this->make($argument->value);
 
         if ($argument->hint !== null) {
@@ -372,7 +373,7 @@ class PrettyPrinter extends Printer
     {
         return \vsprintf('%s::%s', [
             $node->class->toString(),
-            (string) $node->constant?->toString(),
+            $node->constant->toString(),
         ]);
     }
 
@@ -436,6 +437,7 @@ class PrettyPrinter extends Printer
         $result = 'mixed';
 
         if ($node->type !== null) {
+            /** @var non-empty-string $result */
             $result = $this->make($node->type);
         }
 
@@ -494,7 +496,7 @@ class PrettyPrinter extends Printer
             nodes: [$type],
         );
 
-        return $visitor->isFound();
+        return $visitor->isFound;
     }
 
     /**
