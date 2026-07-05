@@ -14,7 +14,7 @@
         "type-lang/types": "^2.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.95.8",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "jetbrains/phpstorm-attributes": "^1.2",
         "phpbench/phpbench": "^1.7",
         "phpdocumentor/reflection-docblock": "^6.0",
@@ -23,8 +23,8 @@
         "phpstan/phpstan": "^2.2",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^12.0|^13.0",
-        "symfony/var-dumper": "^7.4|^8.1"
+        "phpunit/phpunit": "^13.0",
+        "symfony/var-dumper": "^7.4|^8.0"
     },
     "autoload-dev": {
         "psr-4": {
