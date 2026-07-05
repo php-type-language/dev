@@ -13,14 +13,13 @@ jobs:
       matrix:
         php: [ '8.4' ]
         os: [ ubuntu-latest ]
-        stability: [ 'stable' ]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7
       - name: Set Git To Use LF
         run: |
           git config --global core.autocrlf false
           git config --global core.eol lf
-      - name: Checkout
-        uses: actions/checkout@v7
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
@@ -42,7 +41,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: composer update --prefer-${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+          command: composer update --prefer-dist --no-interaction --no-progress
       # Action
       - name: Composer Audit
         run: composer audit --abandoned=report
