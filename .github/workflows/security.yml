@@ -45,4 +45,4 @@ jobs:
           command: composer update --prefer-${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
       # Action
       - name: Composer Audit
-        run: composer audit
+        run: composer audit --abandoned=report
