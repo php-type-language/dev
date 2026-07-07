@@ -140,7 +140,7 @@
         </toc-element>
         <toc-element toc-title="Psalm" topic="psalm-tags.md">
             <toc-element topic="psalm-allow-private-mutation-tag.md" wip="true" />
-            <toc-element topic="psalm-api-tag.md" wip="true" />
+            <toc-element topic="psalm-api-tag.md" />
             <toc-element topic="psalm-assert-tag.md" wip="true" />
             <toc-element topic="psalm-assert-if-false-tag.md" wip="true" />
             <toc-element topic="psalm-assert-if-true-tag.md" wip="true" />
@@ -150,7 +150,7 @@
             <toc-element topic="psalm-consistent-constructor-tag.md" wip="true" />
             <toc-element topic="psalm-consistent-templates-tag.md" wip="true" />
             <toc-element topic="psalm-external-mutation-free-tag.md" wip="true" />
-            <toc-element topic="psalm-extends-tag.md" wip="true" />
+            <toc-element topic="psalm-extends-tag.md" />
             <toc-element topic="psalm-flow-tag.md" wip="true" />
             <toc-element topic="psalm-if-this-is-tag.md" wip="true" />
             <toc-element topic="psalm-ignore-falsable-return-tag.md" wip="true" />
@@ -158,47 +158,47 @@
             <toc-element topic="psalm-ignore-var-tag.md" wip="true" />
             <toc-element topic="psalm-ignore-variable-method-tag.md" wip="true" />
             <toc-element topic="psalm-ignore-variable-property-tag.md" wip="true" />
-            <toc-element topic="psalm-immutable-tag.md" wip="true" />
-            <toc-element topic="psalm-implements-tag.md" wip="true" />
+            <toc-element topic="psalm-immutable-tag.md" />
+            <toc-element topic="psalm-implements-tag.md" />
             <toc-element topic="psalm-import-type-tag.md" wip="true" />
             <toc-element topic="psalm-inheritors-tag.md" wip="true" />
-            <toc-element topic="psalm-internal-tag.md" wip="true" />
-            <toc-element topic="psalm-method-tag.md" wip="true" />
+            <toc-element topic="psalm-internal-tag.md" />
+            <toc-element topic="psalm-method-tag.md" />
             <toc-element topic="psalm-mutation-free-tag.md" wip="true" />
             <toc-element topic="psalm-no-seal-methods-tag.md" wip="true" />
             <toc-element topic="psalm-no-seal-properties-tag.md" wip="true" />
             <toc-element topic="psalm-override-method-visibility-tag.md" wip="true" />
             <toc-element topic="psalm-override-property-visibility-tag.md" wip="true" />
-            <toc-element topic="psalm-param-tag.md" wip="true" />
-            <toc-element topic="psalm-param-out-tag.md" wip="true" />
-            <toc-element topic="psalm-property-tag.md" wip="true" />
-            <toc-element topic="psalm-property-read-tag.md" wip="true" />
-            <toc-element topic="psalm-property-write-tag.md" wip="true" />
+            <toc-element topic="psalm-param-tag.md" />
+            <toc-element topic="psalm-param-out-tag.md" />
+            <toc-element topic="psalm-property-tag.md" />
+            <toc-element topic="psalm-property-read-tag.md" />
+            <toc-element topic="psalm-property-write-tag.md" />
             <toc-element topic="psalm-pure-tag.md" wip="true" />
-            <toc-element topic="psalm-readonly-tag.md" wip="true" />
+            <toc-element topic="psalm-readonly-tag.md" />
             <toc-element topic="psalm-readonly-allow-private-mutation-tag.md" wip="true" />
-            <toc-element topic="psalm-require-extends-tag.md" wip="true" />
-            <toc-element topic="psalm-require-implements-tag.md" wip="true" />
-            <toc-element topic="psalm-return-tag.md" wip="true" />
+            <toc-element topic="psalm-require-extends-tag.md" />
+            <toc-element topic="psalm-require-implements-tag.md" />
+            <toc-element topic="psalm-return-tag.md" />
             <toc-element topic="psalm-scope-this-tag.md" wip="true" />
-            <toc-element topic="psalm-seal-methods-tag.md" wip="true" />
-            <toc-element topic="psalm-seal-properties-tag.md" wip="true" />
+            <toc-element topic="psalm-seal-methods-tag.md" />
+            <toc-element topic="psalm-seal-properties-tag.md" />
             <toc-element topic="psalm-self-out-tag.md" wip="true" />
             <toc-element topic="psalm-stub-override-tag.md" wip="true" />
-            <toc-element topic="psalm-suppress-tag.md" wip="true" />
+            <toc-element topic="psalm-suppress-tag.md" />
             <toc-element topic="psalm-taint-escape-tag.md" wip="true" />
             <toc-element topic="psalm-taint-sink-tag.md" wip="true" />
             <toc-element topic="psalm-taint-source-tag.md" wip="true" />
             <toc-element topic="psalm-taint-specialize-tag.md" wip="true" />
             <toc-element topic="psalm-taint-unescape-tag.md" wip="true" />
-            <toc-element topic="psalm-template-tag.md" wip="true" />
-            <toc-element topic="psalm-template-contravariant-tag.md" wip="true" />
-            <toc-element topic="psalm-template-covariant-tag.md" wip="true" />
+            <toc-element topic="psalm-template-tag.md" />
+            <toc-element topic="psalm-template-contravariant-tag.md" />
+            <toc-element topic="psalm-template-covariant-tag.md" />
             <toc-element topic="psalm-this-out-tag.md" wip="true" />
             <toc-element topic="psalm-trace-tag.md" wip="true" />
             <toc-element topic="psalm-type-tag.md" wip="true" />
-            <toc-element topic="psalm-use-tag.md" wip="true" />
-            <toc-element topic="psalm-var-tag.md" wip="true" />
+            <toc-element topic="psalm-use-tag.md" />
+            <toc-element topic="psalm-var-tag.md" />
             <toc-element topic="psalm-variadic-tag.md" wip="true" />
             <toc-element topic="psalm-yield-tag.md" wip="true" />
         </toc-element>
@@ -208,43 +208,43 @@
             <toc-element topic="phpstan-assert-if-false-tag.md" wip="true" />
             <toc-element topic="phpstan-assert-if-true-tag.md" wip="true" />
             <toc-element topic="phpstan-consistent-constructor-tag.md" wip="true" />
-            <toc-element topic="phpstan-extends-tag.md" wip="true" />
+            <toc-element topic="phpstan-extends-tag.md" />
             <toc-element topic="phpstan-ignore-tag.md" wip="true" />
             <toc-element topic="phpstan-ignore-line-tag.md" wip="true" />
             <toc-element topic="phpstan-ignore-next-line-tag.md" wip="true" />
-            <toc-element topic="phpstan-immutable-tag.md" wip="true" />
-            <toc-element topic="phpstan-implements-tag.md" wip="true" />
+            <toc-element topic="phpstan-immutable-tag.md" />
+            <toc-element topic="phpstan-implements-tag.md" />
             <toc-element topic="phpstan-import-type-tag.md" wip="true" />
             <toc-element topic="phpstan-impure-tag.md" wip="true" />
-            <toc-element topic="phpstan-method-tag.md" wip="true" />
-            <toc-element topic="phpstan-param-tag.md" wip="true" />
-            <toc-element topic="phpstan-param-closure-this-tag.md" wip="true" />
-            <toc-element topic="phpstan-param-immediately-invoked-callable-tag.md" wip="true" />
-            <toc-element topic="phpstan-param-later-invoked-callable-tag.md" wip="true" />
-            <toc-element topic="phpstan-param-out-tag.md" wip="true" />
-            <toc-element topic="phpstan-property-tag.md" wip="true" />
-            <toc-element topic="phpstan-property-read-tag.md" wip="true" />
-            <toc-element topic="phpstan-property-write-tag.md" wip="true" />
+            <toc-element topic="phpstan-method-tag.md" />
+            <toc-element topic="phpstan-param-tag.md" />
+            <toc-element topic="phpstan-param-closure-this-tag.md" />
+            <toc-element topic="phpstan-param-immediately-invoked-callable-tag.md" />
+            <toc-element topic="phpstan-param-later-invoked-callable-tag.md" />
+            <toc-element topic="phpstan-param-out-tag.md" />
+            <toc-element topic="phpstan-property-tag.md" />
+            <toc-element topic="phpstan-property-read-tag.md" />
+            <toc-element topic="phpstan-property-write-tag.md" />
             <toc-element topic="phpstan-pure-tag.md" wip="true" />
-            <toc-element topic="phpstan-pure-unless-callable-is-impure-tag.md" wip="true" />
-            <toc-element topic="phpstan-readonly-tag.md" wip="true" />
+            <toc-element topic="phpstan-pure-unless-callable-is-impure-tag.md" />
+            <toc-element topic="phpstan-readonly-tag.md" />
             <toc-element topic="phpstan-readonly-allow-private-mutation-tag.md" wip="true" />
-            <toc-element topic="phpstan-require-extends-tag.md" wip="true" />
-            <toc-element topic="phpstan-require-implements-tag.md" wip="true" />
-            <toc-element topic="phpstan-return-tag.md" wip="true" />
+            <toc-element topic="phpstan-require-extends-tag.md" />
+            <toc-element topic="phpstan-require-implements-tag.md" />
+            <toc-element topic="phpstan-return-tag.md" />
             <toc-element topic="phpstan-self-out-tag.md" wip="true" />
-            <toc-element topic="phpstan-template-tag.md" wip="true" />
-            <toc-element topic="phpstan-template-contravariant-tag.md" wip="true" />
-            <toc-element topic="phpstan-template-covariant-tag.md" wip="true" />
+            <toc-element topic="phpstan-template-tag.md" />
+            <toc-element topic="phpstan-template-contravariant-tag.md" />
+            <toc-element topic="phpstan-template-covariant-tag.md" />
             <toc-element topic="phpstan-this-out-tag.md" wip="true" />
-            <toc-element topic="phpstan-throws-tag.md" wip="true" />
+            <toc-element topic="phpstan-throws-tag.md" />
             <toc-element topic="phpstan-type-tag.md" wip="true" />
-            <toc-element topic="phpstan-use-tag.md" wip="true" />
-            <toc-element topic="phpstan-var-tag.md" wip="true" />
+            <toc-element topic="phpstan-use-tag.md" />
+            <toc-element topic="phpstan-var-tag.md" />
             <toc-element topic="phpstan-yield-tag.md" wip="true" />
         </toc-element>
         <toc-element toc-title="Phan" topic="phan-tags.md">
-            <toc-element topic="phan-abstract-tag.md" wip="true" />
+            <toc-element topic="phan-abstract-tag.md" />
             <toc-element topic="phan-assert-tag.md" wip="true" />
             <toc-element topic="phan-assert-false-condition-tag.md" wip="true" />
             <toc-element topic="phan-assert-if-false-tag.md" wip="true" />
@@ -252,35 +252,35 @@
             <toc-element topic="phan-assert-true-condition-tag.md" wip="true" />
             <toc-element topic="phan-closure-scope-tag.md" wip="true" />
             <toc-element topic="phan-constructor-used-for-side-effects-tag.md" wip="true" />
-            <toc-element topic="phan-extends-tag.md" wip="true" />
+            <toc-element topic="phan-extends-tag.md" />
             <toc-element topic="phan-file-suppress-tag.md" wip="true" />
             <toc-element topic="phan-forbid-undeclared-magic-methods-tag.md" wip="true" />
             <toc-element topic="phan-forbid-undeclared-magic-properties-tag.md" wip="true" />
             <toc-element topic="phan-hardcode-return-type-tag.md" wip="true" />
-            <toc-element topic="phan-immutable-tag.md" wip="true" />
-            <toc-element topic="phan-inherits-tag.md" wip="true" />
-            <toc-element topic="phan-method-tag.md" wip="true" />
-            <toc-element topic="phan-mixin-tag.md" wip="true" />
+            <toc-element topic="phan-immutable-tag.md" />
+            <toc-element topic="phan-inherits-tag.md" />
+            <toc-element topic="phan-method-tag.md" />
+            <toc-element topic="phan-mixin-tag.md" />
             <toc-element topic="phan-output-reference-tag.md" wip="true" />
-            <toc-element topic="phan-override-tag.md" wip="true" />
-            <toc-element topic="phan-param-tag.md" wip="true" />
-            <toc-element topic="phan-property-tag.md" wip="true" />
-            <toc-element topic="phan-property-read-tag.md" wip="true" />
-            <toc-element topic="phan-property-write-tag.md" wip="true" />
+            <toc-element topic="phan-override-tag.md" />
+            <toc-element topic="phan-param-tag.md" />
+            <toc-element topic="phan-property-tag.md" />
+            <toc-element topic="phan-property-read-tag.md" />
+            <toc-element topic="phan-property-write-tag.md" />
             <toc-element topic="phan-pure-tag.md" wip="true" />
-            <toc-element topic="phan-read-only-tag.md" wip="true" />
+            <toc-element topic="phan-read-only-tag.md" />
             <toc-element topic="phan-real-return-tag.md" wip="true" />
-            <toc-element topic="phan-return-tag.md" wip="true" />
+            <toc-element topic="phan-return-tag.md" />
             <toc-element topic="phan-side-effect-free-tag.md" wip="true" />
             <toc-element topic="phan-suppress-current-line-tag.md" wip="true" />
             <toc-element topic="phan-suppress-next-line-tag.md" wip="true" />
             <toc-element topic="phan-suppress-next-next-line-tag.md" wip="true" />
             <toc-element topic="phan-suppress-previous-line-tag.md" wip="true" />
-            <toc-element topic="phan-template-tag.md" wip="true" />
+            <toc-element topic="phan-template-tag.md" />
             <toc-element topic="phan-transient-tag.md" wip="true" />
             <toc-element topic="phan-type-tag.md" wip="true" />
-            <toc-element topic="phan-unused-param-tag.md" wip="true" />
-            <toc-element topic="phan-var-tag.md" wip="true" />
+            <toc-element topic="phan-unused-param-tag.md" />
+            <toc-element topic="phan-var-tag.md" />
             <toc-element topic="phan-write-only-tag.md" wip="true" />
             <toc-element topic="phanclosurescope-tag.md" wip="true" />
         </toc-element>

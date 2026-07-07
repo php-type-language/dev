@@ -59,11 +59,9 @@ available; the platforms passed in extend it, each overriding an entry only when
 it reuses the same tag, alias or combinator name.
 
 <note>
-Constructed without arguments, <code>DocBlockParser</code> loads the
-<code>PhpDocumentorPlatform</code> on top of the standard one, so the legacy
-phpDocumentor tags are recognized out of the box. Passing your own
-<code>platforms</code> replaces that default — re-add
-<code>new PhpDocumentorPlatform()</code> to the list if you still want those tags.
+Constructed without arguments, <code>DocBlockParser</code> loads all available 
+platforms. Passing your own <code>platforms</code> replaces that
+default — re-add the ones you still want to the list.
 </note>
 
 The definitions that end up registered are exposed as `$parser->tags` (a
