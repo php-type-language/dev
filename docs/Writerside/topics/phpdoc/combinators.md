@@ -3,7 +3,7 @@
 <primary-label ref="phpdoc-component"/>
 <show-structure for="chapter" depth="2"/>
 
-Every named building block a [tag's grammar](custom-tags.md) is assembled
+Every named building block a [tag's grammar](grammar.md) is assembled
 from — a type, a variable, a URI, an email address — is a **combinator**:
 a small object that knows how to read exactly one piece of syntax and
 nothing else. `Spec::rule(TypeCombinator::NAME, 'type')` in
@@ -29,7 +29,7 @@ the value it read, or throws `NoMatchException` and leaves the cursor
 exactly where it found it. That second case matters: a combinator that
 partially consumes input before deciding it does not fit would corrupt
 whichever alternative the surrounding grammar tries next — see
-[`Spec::oneOf()`](custom-tags.md), which relies on being able to roll back
+[`Spec::oneOf()`](grammar.md), which relies on being able to roll back
 cleanly.
 
 The `Cursor` itself offers the handful of reading operations most
@@ -43,7 +43,7 @@ whatever is left entirely.
 
 ## Built-in Combinators
 
-Thirteen combinators cover every built-in tag's grammar between them:
+Fourteen combinators cover every built-in tag's grammar between them:
 
 <table style="both">
     <tr>
@@ -52,9 +52,9 @@ Thirteen combinators cover every built-in tag's grammar between them:
         <td>Reads</td>
     </tr>
     <tr>
-        <td><code>Access</code></td>
         <td><code>Visibility</code></td>
-        <td>One of <code>public</code>, <code>protected</code> or <code>private</code>.</td>
+        <td><code>Visibility</code></td>
+        <td>Method or property visibility.</td>
     </tr>
     <tr>
         <td><code>AuthorName</code></td>
@@ -64,7 +64,7 @@ Thirteen combinators cover every built-in tag's grammar between them:
     <tr>
         <td><code>CallableType</code></td>
         <td><code>TypeReference</code></td>
-        <td>A <a href="callable-types.md">type</a>, accepted only when it is a callable.</td>
+        <td>A <a href="callable-types.md">TypeLang callable type</a>.</td>
     </tr>
     <tr>
         <td><code>Description</code></td>
@@ -116,6 +116,11 @@ Thirteen combinators cover every built-in tag's grammar between them:
         <td><code>string</code></td>
         <td>A <code>$name</code>, without the leading <code>$</code>.</td>
     </tr>
+    <tr>
+        <td><code>Version</code></td>
+        <td><code>string</code></td>
+        <td>A word beginning with a digit; <br />anything else is left for the description.</td>
+    </tr>
 </table>
 
 ## Writing One of Your Own
@@ -153,7 +158,7 @@ Three habits keep a combinator well-behaved inside a larger grammar:
 
 * **Fail before consuming.** Throw `NoMatchException` the moment the input
   is found not to fit, before reading anything that would belong to what
-  comes next — a combinator that consumes first and validates afterwards
+  comes next — a combinator that consumes first and validates afterward
   leaves the cursor somewhere a sibling alternative can no longer make sense
   of.
 * **Consume only your own syntax.** Whitespace meant to separate one grammar
@@ -165,5 +170,5 @@ Three habits keep a combinator well-behaved inside a larger grammar:
   surrounding `Spec::oneOf()` take over is safer than silently picking one.
 
 Once written, a combinator with a `NAME` constant is used from a tag's
-`$spec` exactly like a built-in one — see
-[Declaring a Tag's Grammar](custom-tags.md).
+`$spec` exactly like a built-in one — see [Grammar](grammar.md). To make it
+available to the parser, register it on a [platform](platforms.md).

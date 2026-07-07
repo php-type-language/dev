@@ -156,10 +156,12 @@ fragments and the nested tags found among them.
 ```
 
 Only a handful of tags — [@see](see-tag.md), [@link](link-tag.md),
-[@internal](internal-tag.md) and [@inheritdoc](inheritdoc-tag.md) — are
-ever recognized this way. A `{@param}` written in running text, for instance, is never lifted
-out: `@param` only makes sense as a whole tag line, so the braces around it
-stay exactly as written, as plain text.
+[@internal](internal-tag.md), [@inheritdoc](inheritdoc-tag.md),
+[@example](example-tag.md) and [@source](source-tag.md) — are ever recognized
+this way. Whether a tag may be lifted out of running text is declared by its
+[placement](definitions.md#inline-tags); a `{@param}`, for instance, is never
+lifted out: `@param` is a block-only tag, so the braces around it stay exactly
+as written, as plain text.
 
 ### Tag
 
