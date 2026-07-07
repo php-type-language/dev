@@ -54,7 +54,7 @@ abstract class TestCase extends BaseTestCase
                                 TypeCombinator::NAME => new TypeCombinator(typeParser: new TypeParser()),
                                 VariableCombinator::NAME => new VariableCombinator(),
                             ],
-                            genericTagDefinition: new GenericTagDefinition(isInline: true),
+                            genericTagDefinition: new GenericTagDefinition(),
                         )),
                     ));
                 }
@@ -66,7 +66,7 @@ abstract class TestCase extends BaseTestCase
 
         $tagFactory = new TagFactory(
             combinators: $baseRules,
-            genericTagDefinition: new GenericTagDefinition(isInline: true),
+            genericTagDefinition: new GenericTagDefinition(),
         );
 
         return $tagFactory;

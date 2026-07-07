@@ -29,7 +29,7 @@ final class DescriptionGrammarRuleTest extends GrammarRuleTestCase
                                 combinators: [
                                     DescriptionCombinator::NAME => $proxy,
                                 ],
-                                genericTagDefinition: new GenericTagDefinition(isInline: true),
+                                genericTagDefinition: new GenericTagDefinition(),
                             ),
                         ),
                     ),
