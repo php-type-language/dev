@@ -69,6 +69,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\StaticTag\StaticTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\StaticVarTag\StaticVarTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SubpackageTag\SubpackageTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SuppressTag\SuppressTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagDefinition;
@@ -93,13 +94,17 @@ use TypeLang\PhpDoc\Parser\Splitter\SplitterInterface;
 use TypeLang\PhpDoc\Parser\Splitter\StringSplitter;
 use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
+use TypeLang\PhpDoc\Parser\TagFactory;
+use TypeLang\PhpDoc\Parser\TagRegistry;
 
 /**
  * @phpstan-import-type CombinatorType from Grammar
  */
 final readonly class DocBlockParser implements DocBlockParserInterface
 {
-    public TagFactoryInterface $tags;
+    public TagFactoryInterface $factory;
+
+    public TagRegistryInterface $tags;
 
     private DocBlockAnalyzer $docBlockAnalyzer;
     private TagParserInterface $tagParser;
@@ -111,9 +116,10 @@ final readonly class DocBlockParser implements DocBlockParserInterface
             splitter: $this->createDocBlockSplitter(),
         );
 
-        $this->tags = $this->createTagFactory();
+        $this->tags = $this->createTagRegistry();
+        $this->factory = $this->createTagFactory($this->tags);
 
-        $this->tagParser = $this->createTagParser($this->tags);
+        $this->tagParser = $this->createTagParser($this->factory);
         $this->descriptionParser = $this->createDescriptionParser($this->tagParser);
     }
 
@@ -239,11 +245,18 @@ final readonly class DocBlockParser implements DocBlockParserInterface
         ];
     }
 
-    private function createTagFactory(): TagFactoryInterface
+    private function createTagRegistry(): TagRegistryInterface
     {
-        return new TagFactory(
+        return new TagRegistry(
             definitions: $this->createDefaultTagDefinitions(),
             aliases: $this->createDefaultTagAliases(),
+        );
+    }
+
+    private function createTagFactory(TagRegistryInterface $registry): TagFactoryInterface
+    {
+        return new TagFactory(
+            registry: $registry,
             combinators: $this->createDefaultCombinators(),
         );
     }

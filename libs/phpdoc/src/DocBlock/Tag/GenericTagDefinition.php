@@ -16,9 +16,9 @@ final class GenericTagDefinition extends TagDefinition
     public const string NAME = '<Tag>';
 
     /**
-     * @param TagPlacement $placement Generic (unknown) tag has no dedicated
+     * @param TagPlacement $placement generic (unknown) tag has no dedicated
      *        definition, so its placement cannot be inferred from the tag
-     *        itself and is decided by the caller.
+     *        itself and is decided by the caller
      */
     public function __construct(TagPlacement $placement = TagPlacement::DEFAULT)
     {

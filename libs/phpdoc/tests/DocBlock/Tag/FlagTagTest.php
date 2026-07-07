@@ -16,7 +16,8 @@ use TypeLang\PhpDoc\DocBlock\Tag\TodoTag\TodoTag;
 use TypeLang\PhpDoc\DocBlock\Tag\TodoTag\TodoTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 use TypeLang\PhpDoc\DocBlockParser;
-use TypeLang\PhpDoc\TagFactory;
+use TypeLang\PhpDoc\Parser\TagFactory;
+use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
 final class FlagTagTest extends TestCase
@@ -75,15 +76,14 @@ final class FlagTagTest extends TestCase
 
     private static function factory(): TagFactory
     {
-        return new TagFactory(
-            definitions: [
-                AbstractTagDefinition::NAME => new AbstractTagDefinition(),
-                InternalTagDefinition::NAME => new InternalTagDefinition(),
-                TodoTagDefinition::NAME => new TodoTagDefinition(),
-            ],
-            combinators: [
-                DescriptionCombinator::NAME => new DescriptionCombinator(self::createDescriptionParser()),
-            ],
-        );
+        $registry = new TagRegistry([
+            AbstractTagDefinition::NAME => new AbstractTagDefinition(),
+            InternalTagDefinition::NAME => new InternalTagDefinition(),
+            TodoTagDefinition::NAME => new TodoTagDefinition(),
+        ]);
+
+        return new TagFactory($registry, [
+            DescriptionCombinator::NAME => new DescriptionCombinator(self::createDescriptionParser()),
+        ]);
     }
 }
