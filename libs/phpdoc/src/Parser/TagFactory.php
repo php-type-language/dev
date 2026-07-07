@@ -8,7 +8,7 @@ use TypeLang\PhpDoc\DocBlock\Description\Description;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
-use TypeLang\PhpDoc\Parser\Grammar\Grammar;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\TagFactoryInterface;
 use TypeLang\PhpDoc\TagRegistryInterface;
 
@@ -26,7 +26,7 @@ use TypeLang\PhpDoc\TagRegistryInterface;
  * );
  * ```
  *
- * @phpstan-import-type CombinatorType from Grammar
+ * @phpstan-import-type CombinatorType from CombinatorInterface
  */
 final readonly class TagFactory implements TagFactoryInterface
 {

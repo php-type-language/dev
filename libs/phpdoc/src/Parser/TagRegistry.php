@@ -6,7 +6,7 @@ namespace TypeLang\PhpDoc\Parser;
 
 use TypeLang\PhpDoc\DocBlock\Tag\GenericTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
-use TypeLang\PhpDoc\Parser\Grammar\Grammar;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\TagRegistryInterface;
 
 /**
@@ -23,7 +23,7 @@ use TypeLang\PhpDoc\TagRegistryInterface;
  * );
  * ```
  *
- * @phpstan-import-type CombinatorType from Grammar
+ * @phpstan-import-type CombinatorType from CombinatorInterface
  *
  * @template-implements \IteratorAggregate<non-empty-string, TagDefinitionInterface>
  */
