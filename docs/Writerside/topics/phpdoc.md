@@ -61,7 +61,57 @@ $block = $parser->parse(<<<'PHPDOC'
      * @return bool
      */
     PHPDOC);
+
+var_dump($block);
 ```
+
+```
+TypeLang\PhpDoc\DocBlock\DocBlock {
+  +tags: array:3 [
+    0 => TypeLang\PhpDoc\DocBlock\Tag\SeeTag\SeeTag {
+      +name: "see"
+      +description: TypeLang\PhpDoc\DocBlock\Description\Description {
+        +value: "The underlying transport."
+      }
+      +reference: TypeLang\PhpDoc\DocBlock\Reference\ClassMethodReference {
+        +isExternal: false
+        +class: "Mailer"
+        +name: "send"
+      }
+    }
+    1 => TypeLang\PhpDoc\DocBlock\Tag\LinkTag\LinkTag {
+      +name: "link"
+      +description: TypeLang\PhpDoc\DocBlock\Description\Description {
+        +value: "Delivery documentation."
+      }
+      +reference: TypeLang\PhpDoc\DocBlock\Reference\UriReference {
+        +isExternal: true
+        +uri: "https://example.com/docs"
+      }
+    }
+    2 => TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTag {
+      +name: "return"
+      +description: null
+      +type: TypeLang\Type\NamedTypeNode {
+        +name: TypeLang\Type\Name {
+          +segments: array:1 [
+            0 => TypeLang\Type\Identifier {
+              +value: "bool"
+            }
+          ]
+          +isFullyQualified: false
+        }
+        +arguments: null
+        +fields: null
+      }
+    }
+  ]
+  +description: TypeLang\PhpDoc\DocBlock\Description\Description {
+    +value: "Sends a notification to the given recipient.\n"
+  }
+}
+```
+{collapsible="true" collapsed-title="Result"}
 
 The description — everything written before the first tag — is available as
 `$block->description`, and the tags themselves form an ordered, countable,
