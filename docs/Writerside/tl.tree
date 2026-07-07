@@ -63,13 +63,13 @@
     </toc-element>
 
     <toc-element topic="phpdoc.md" toc-title="PHPDoc Parser">
-        <toc-element toc-title="Standard Tags">
+        <toc-element toc-title="Standard Tags" topic="standard-tags.md">
             <toc-element topic="abstract-tag.md" />
             <toc-element topic="api-tag.md" />
             <toc-element topic="deprecated-tag.md" />
             <toc-element topic="extends-tag.md" />
             <toc-element topic="final-tag.md" />
-            <toc-element topic="immutable-tag.md" wip="true" />
+            <toc-element topic="immutable-tag.md" />
             <toc-element topic="implements-tag.md" />
             <toc-element topic="inherits-tag.md" />
             <toc-element topic="internal-tag.md" />
@@ -96,14 +96,12 @@
             <toc-element topic="template-use-tag.md" />
             <toc-element topic="throws-tag.md" />
             <toc-element topic="throw-tag.md" />
-            <toc-element topic="todo-tag.md" />
             <toc-element topic="use-tag.md" />
             <toc-element topic="var-tag.md" />
-            <toc-element topic="version-tag.md" />
         </toc-element>
-        <toc-element toc-title="Advanced Tags">
+        <toc-element toc-title="Advanced Tags" topic="advanced-tags.md">
             <toc-element topic="no-named-arguments-tag.md" />
-            <toc-element topic="not-deprecated-tag.md" wip="true" />
+            <toc-element topic="not-deprecated-tag.md" />
             <toc-element topic="param-closure-this-tag.md" />
             <toc-element topic="param-immediately-invoked-callable-tag.md" />
             <toc-element topic="param-later-invoked-callable-tag.md" />
@@ -114,7 +112,7 @@
             <toc-element topic="suppress-tag.md" />
             <toc-element topic="unused-param-tag.md" />
         </toc-element>
-        <toc-element toc-title="phpDocumentor">
+        <toc-element toc-title="phpDocumentor" topic="phpdocumentor-tags.md">
             <toc-element topic="access-tag.md" />
             <toc-element topic="author-tag.md" />
             <toc-element topic="category-tag.md" />
@@ -134,11 +132,13 @@
             <toc-element topic="staticvar-tag.md" />
             <toc-element topic="subpackage-tag.md" />
             <toc-element topic="toc-tag.md" wip="true" />
+            <toc-element topic="todo-tag.md" />
             <toc-element topic="tutorial-tag.md" wip="true" />
             <toc-element topic="used-by-tag.md" />
             <toc-element topic="uses-tag.md" />
+            <toc-element topic="version-tag.md" />
         </toc-element>
-        <toc-element toc-title="Psalm">
+        <toc-element toc-title="Psalm" topic="psalm-tags.md">
             <toc-element topic="psalm-allow-private-mutation-tag.md" wip="true" />
             <toc-element topic="psalm-api-tag.md" wip="true" />
             <toc-element topic="psalm-assert-tag.md" wip="true" />
@@ -202,7 +202,7 @@
             <toc-element topic="psalm-variadic-tag.md" wip="true" />
             <toc-element topic="psalm-yield-tag.md" wip="true" />
         </toc-element>
-        <toc-element toc-title="PHPStan">
+        <toc-element toc-title="PHPStan" topic="phpstan-tags.md">
             <toc-element topic="phpstan-allow-private-mutation-tag.md" wip="true" />
             <toc-element topic="phpstan-assert-tag.md" wip="true" />
             <toc-element topic="phpstan-assert-if-false-tag.md" wip="true" />
@@ -243,7 +243,7 @@
             <toc-element topic="phpstan-var-tag.md" wip="true" />
             <toc-element topic="phpstan-yield-tag.md" wip="true" />
         </toc-element>
-        <toc-element toc-title="Phan">
+        <toc-element toc-title="Phan" topic="phan-tags.md">
             <toc-element topic="phan-abstract-tag.md" wip="true" />
             <toc-element topic="phan-assert-tag.md" wip="true" />
             <toc-element topic="phan-assert-false-condition-tag.md" wip="true" />
@@ -284,14 +284,14 @@
             <toc-element topic="phan-write-only-tag.md" wip="true" />
             <toc-element topic="phanclosurescope-tag.md" wip="true" />
         </toc-element>
-        <toc-element toc-title="PhpStorm">
+        <toc-element toc-title="PhpStorm" topic="phpstorm-tags.md">
             <toc-element topic="noinspection-tag.md" wip="true" />
             <toc-element topic="language-tag.md" wip="true" />
             <toc-element topic="expected-exception-tag.md" wip="true" />
             <toc-element topic="formatter-off-tag.md" wip="true" />
             <toc-element topic="formatter-on-tag.md" wip="true" />
         </toc-element>
-        <toc-element toc-title="PHP CodeSniffer">
+        <toc-element toc-title="PHP CodeSniffer" topic="phpcs-tags.md">
             <toc-element topic="phpcs-suppress-tag.md" wip="true" />
             <toc-element topic="coding-standards-ignore-start-tag.md" wip="true" />
             <toc-element topic="coding-standards-ignore-end-tag.md" wip="true" />

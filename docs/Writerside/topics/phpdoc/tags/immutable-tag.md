@@ -1,11 +1,9 @@
 # @immutable
 
 <primary-label ref="phpdoc-component"/>
-<secondary-label ref="not-implemented"/>
 
 The `@immutable` tag declares a class as immutable, meaning none of its
-state can change after construction. It is listed among this component's
-own Standard-category tags, though real enforcement exists independently
+state can change after construction. Real enforcement exists independently
 in Psalm (`@psalm-immutable`), PHPStan (`@phpstan-immutable`) and Phan
 (`@phan-immutable`).
 
@@ -13,12 +11,25 @@ in Psalm (`@psalm-immutable`), PHPStan (`@phpstan-immutable`) and Phan
 "@immutable" [ <Description> ]
 ```
 
-<note>
-Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
-a docblock containing this tag returns a plain <code>Tag</code>, its whole
-suffix folded into the description. See
-<a href="custom-tags.md">Custom Tags</a> for the current workaround if you
-need to recognize it yourself.
-</note>
+> A value object whose state is fixed once built.
+> ```php
+> /**
+>  * @immutable
+>  */
+> final class Money {}
+> ```
 
-Planned as a Standard-category tag of this component.
+> With a description explaining the guarantee.
+> ```php
+> /**
+>  * @immutable Every "with*" method returns a new instance.
+>  */
+> ```
+
+Parsing an `@immutable` tag produces an `ImmutableTag` instance. Being a
+pure marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](phpdoc.md#tag) already carries.
+
+```php
+final class ImmutableTag extends FlagTag {}
+```

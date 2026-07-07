@@ -21,7 +21,7 @@ PHPStan and Psalm documentation than the bare `@use` form.
 > ```php
 > final class ProductRepository
 > {
->    /** @use Cacheable<Product> */
+>     /** @use Cacheable<Product> */
 >     use Cacheable;
 > }
 > ```
