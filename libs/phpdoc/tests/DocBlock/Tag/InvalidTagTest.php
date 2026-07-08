@@ -7,7 +7,6 @@ namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Tag\InvalidTag;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
-use TypeLang\PhpDoc\Tests\TestCase;
 
 final class InvalidTagTest extends TagTestCase
 {

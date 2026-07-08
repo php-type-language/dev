@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\PhpDoc\DocBlock\Description\Description;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
-use TypeLang\PhpDoc\Tests\TestCase;
 
 final class TagTest extends TagTestCase
 {

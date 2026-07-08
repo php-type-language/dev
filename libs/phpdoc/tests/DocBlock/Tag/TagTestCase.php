@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Tests\DocBlock\Tag;
 
+use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\DocBlockParserInterface;
 use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
+use TypeLang\PhpDoc\Parser\Grammar\Cursor;
 use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Platform\PlatformInterface;
-use TypeLang\PhpDoc\Platform\StandardPlatform;
 use TypeLang\PhpDoc\TagFactoryInterface;
 use TypeLang\PhpDoc\TagRegistryInterface;
 use TypeLang\PhpDoc\Tests\TestCase;
@@ -21,6 +22,30 @@ use TypeLang\PhpDoc\Tests\TestCase;
  */
 abstract class TagTestCase extends TestCase
 {
+    private static ?DocBlockParserInterface $defaultParser = null;
+
+    /**
+     * @param non-empty-string $tag
+     */
+    protected static function parseTag(string $tag): TagInterface
+    {
+        $tags = self::parseTags('/** ' . $tag . ' */');
+
+        self::assertCount(1, $tags, 'The docblock is expected to contain a single tag');
+
+        return $tags[0];
+    }
+
+    /**
+     * @return list<TagInterface>
+     */
+    protected static function parseTags(string $docBlock): array
+    {
+        return (self::$defaultParser ??= DocBlockParser::createDefault())
+            ->parse($docBlock)
+            ->tags;
+    }
+
     /**
      * @param array<non-empty-string, TagDefinitionInterface> $tags
      * @param array<non-empty-string, non-empty-string> $aliases
@@ -34,7 +59,7 @@ abstract class TagTestCase extends TestCase
 
     /**
      * @param array<non-empty-string, TagDefinitionInterface> $tags
-     * @param array<non-empty-string, CombinatorType> $combinators
+     * @param array<non-empty-string, (callable(Cursor): mixed)> $combinators
      * @param array<non-empty-string, non-empty-string> $aliases
      */
     protected function createFactory(
@@ -49,7 +74,7 @@ abstract class TagTestCase extends TestCase
 
     /**
      * @param array<non-empty-string, TagDefinitionInterface> $tags
-     * @param array<non-empty-string, CombinatorType> $combinators
+     * @param array<non-empty-string, (callable(Cursor): mixed)> $combinators
      * @param array<non-empty-string, non-empty-string> $aliases
      */
     protected function createPlatform(
@@ -65,7 +90,7 @@ abstract class TagTestCase extends TestCase
                 public iterable $tags,
                 /** @var iterable<non-empty-string, non-empty-string> */
                 public iterable $aliases,
-                /** @var iterable<non-empty-string, CombinatorType> */
+                /** @var iterable<non-empty-string, (callable(Cursor): mixed)> */
                 public iterable $combinators,
             ) {}
         };
@@ -73,7 +98,7 @@ abstract class TagTestCase extends TestCase
 
     /**
      * @param array<non-empty-string, TagDefinitionInterface> $tags
-     * @param array<non-empty-string, CombinatorType> $combinators
+     * @param array<non-empty-string, (callable(Cursor): mixed)> $combinators
      * @param array<non-empty-string, non-empty-string> $aliases
      */
     protected function createDocBlockParser(
@@ -81,8 +106,19 @@ abstract class TagTestCase extends TestCase
         array $combinators = [],
         array $aliases = [],
     ): DocBlockParserInterface {
-        return new DocBlockParser([
-            $this->createPlatform($tags, $combinators, $aliases),
-        ]);
+        $platform = $this->createPlatform($tags, $combinators, $aliases);
+
+        return $this->createDocBlockParserWithPlatform($platform);
+    }
+
+    protected function createDocBlockParserWithPlatform(
+        PlatformInterface ...$platform,
+    ): DocBlockParserInterface {
+        return new DocBlockParser($platform);
+    }
+
+    protected function createDefaultDocBlockParser(): DocBlockParserInterface
+    {
+        return DocBlockParser::createDefault();
     }
 }
