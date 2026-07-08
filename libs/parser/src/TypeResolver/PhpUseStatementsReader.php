@@ -84,8 +84,7 @@ final readonly class PhpUseStatementsReader
             if ($current->id === \T_NAME_QUALIFIED || $current->id === \T_STRING) {
                 $result = $current->text;
             } elseif ($current->text === ';' || $current->text === '{') {
-                // A namespace name is terminated either by ";" (single-statement
-                // syntax) or by "{" (bracketed/multiple namespace syntax).
+                // A namespace name is terminated either by ";" or "{"
                 $tokens->next();
 
                 return $result ?? '';
@@ -146,19 +145,15 @@ final readonly class PhpUseStatementsReader
             if ($current->id === \T_USE) {
                 $tokens->next();
 
-                $statements = $this->fetchUseStatement($tokens);
-
-                if ($statements === null) {
-                    continue;
+                foreach ($this->fetchUseStatement($tokens) as [$namespace, $alias]) {
+                    if ($alias === null) {
+                        yield $namespace;
+                    } else {
+                        yield $alias => $namespace;
+                    }
                 }
 
-                [$namespace, $alias] = $statements;
-
-                if ($alias === null) {
-                    yield $namespace;
-                } else {
-                    yield $alias => $namespace;
-                }
+                continue;
             }
 
             $tokens->next();
@@ -170,49 +165,204 @@ final readonly class PhpUseStatementsReader
     /**
      * @param \Iterator<array-key, \PhpToken> $tokens
      *
-     * @return array{non-empty-string, non-empty-string|null}|null
+     * @return list<array{non-empty-string, non-empty-string|null}>
      */
-    private function fetchUseStatement(\Iterator $tokens): ?array
+    private function fetchUseStatement(\Iterator $tokens): array
     {
-        $alias = $namespace = null;
+        $buffer = $this->readStatementTokens($tokens);
+
+        if ($buffer === []) {
+            return [];
+        }
+
+        // A closure "use (...)" capture clause is not an import statement.
+        if ($buffer[0]->text === '(') {
+            return [];
+        }
+
+        // "use function Some\fun;" and "use const Some\CONST;" are imports too;
+        // drop the leading "function"/"const" keyword and read the rest as usual.
+        if ($buffer[0]->id === \T_FUNCTION || $buffer[0]->id === \T_CONST) {
+            \array_shift($buffer);
+        }
+
+        if ($buffer === []) {
+            return [];
+        }
+
+        $braceOffset = $this->indexOfBrace($buffer);
+
+        // Plain "use Some\Name (as Alias)?;".
+        if ($braceOffset === null) {
+            $import = $this->parseImport($buffer);
+
+            return $import === null ? [] : [$import];
+        }
+
+        // Group "use Some\Prefix\{ Name (as Alias)?, ... };".
+        return $this->parseGroupImports($buffer, $braceOffset);
+    }
+
+    /**
+     * Consumes the tokens of the current statement up to and including the
+     * terminating ";", returning the significant (non-whitespace, non-comment)
+     * ones.
+     *
+     * @param \Iterator<array-key, \PhpToken> $tokens
+     *
+     * @return list<\PhpToken>
+     */
+    private function readStatementTokens(\Iterator $tokens): array
+    {
+        $buffer = [];
 
         while ($tokens->valid()) {
             $current = $tokens->current();
+            $tokens->next();
 
-            switch ($current->id) {
-                case \T_NAME_QUALIFIED:
-                    /** @var non-empty-string $namespace */
-                    $namespace = $current->text;
-                    break;
-                case \T_STRING:
-                    /** @var non-empty-string $alias */
-                    $alias = $current->text;
-                    break;
-                default:
-                    // TODO Group "use" statements not supported yet
-                    if ($current->text === '{') {
-                        return null;
-                    }
-
-                    if ($current->text === ';') {
-                        $tokens->next();
-
-                        if ($namespace === null) {
-                            return null;
-                        }
-
-                        return [$namespace, $alias];
-                    }
+            if ($current->text === ';') {
+                break;
             }
 
-            $tokens->next();
+            if ($current->id === \T_WHITESPACE
+                || $current->id === \T_COMMENT
+                || $current->id === \T_DOC_COMMENT
+            ) {
+                continue;
+            }
+
+            $buffer[] = $current;
         }
 
-        if ($namespace === null) {
+        return $buffer;
+    }
+
+    /**
+     * @param list<\PhpToken> $buffer
+     *
+     * @return int<0, max>|null
+     */
+    private function indexOfBrace(array $buffer): ?int
+    {
+        foreach ($buffer as $offset => $token) {
+            if ($token->text === '{') {
+                return $offset;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param list<\PhpToken> $buffer
+     * @param int<0, max> $braceOffset
+     *
+     * @return list<array{non-empty-string, non-empty-string|null}>
+     */
+    private function parseGroupImports(array $buffer, int $braceOffset): array
+    {
+        $prefix = $this->readName(\array_slice($buffer, 0, $braceOffset));
+
+        if ($prefix === '') {
+            return [];
+        }
+
+        $imports = [];
+        $member = [];
+
+        foreach (\array_slice($buffer, $braceOffset + 1) as $token) {
+            if ($token->text === '}') {
+                break;
+            }
+
+            if ($token->text === ',') {
+                $import = $this->parseImport($member, $prefix);
+
+                if ($import !== null) {
+                    $imports[] = $import;
+                }
+
+                $member = [];
+
+                continue;
+            }
+
+            $member[] = $token;
+        }
+
+        $import = $this->parseImport($member, $prefix);
+
+        if ($import !== null) {
+            $imports[] = $import;
+        }
+
+        return $imports;
+    }
+
+    /**
+     * @param list<\PhpToken> $tokens
+     * @param non-empty-string|null $prefix
+     *
+     * @return array{non-empty-string, non-empty-string|null}|null
+     */
+    private function parseImport(array $tokens, ?string $prefix = null): ?array
+    {
+        $nameTokens = [];
+        $alias = null;
+        $afterAs = false;
+
+        foreach ($tokens as $token) {
+            if ($token->id === \T_AS) {
+                $afterAs = true;
+
+                continue;
+            }
+
+            if ($afterAs) {
+                if ($token->id === \T_STRING) {
+                    $alias = $token->text;
+                }
+
+                continue;
+            }
+
+            $nameTokens[] = $token;
+        }
+
+        $name = $this->readName($nameTokens);
+
+        if ($name === '') {
             return null;
         }
 
-        return [$namespace, $alias];
+        if ($prefix !== null) {
+            $name = $prefix . '\\' . $name;
+        }
+
+        return [$name, $alias === '' ? null : $alias];
+    }
+
+    /**
+     * Joins a sequence of name tokens into a namespace string, trimming any
+     * leading (fully qualified) or trailing (group prefix) separators.
+     *
+     * @param list<\PhpToken> $tokens
+     */
+    private function readName(array $tokens): string
+    {
+        $result = '';
+
+        foreach ($tokens as $token) {
+            if ($token->id === \T_STRING
+                || $token->id === \T_NAME_QUALIFIED
+                || $token->id === \T_NAME_FULLY_QUALIFIED
+                || $token->id === \T_NS_SEPARATOR
+            ) {
+                $result .= $token->text;
+            }
+        }
+
+        return \trim($result, '\\');
     }
 
     /**
