@@ -50,7 +50,7 @@ Parsing a comment is a single call: hand `DocBlockParser::parse()` the raw
 ```php
 use TypeLang\PhpDoc\DocBlockParser;
 
-$parser = new DocBlockParser();
+$parser = DocBlockParser::createDefault();
 
 $block = $parser->parse(<<<'PHPDOC'
     /**
@@ -112,6 +112,16 @@ TypeLang\PhpDoc\DocBlock\DocBlock {
 }
 ```
 {collapsible="true" collapsed-title="Result"}
+
+<note>
+<code>DocBlockParser::createDefault()</code> is the batteries-included entry
+point: it recognizes every built-in tag — the standard set plus the
+phpDocumentor, Psalm, PHPStan, Phan, PhpStorm and PHP CodeSniffer families.
+Construct <code>new DocBlockParser()</code> instead to load only the
+<code>StandardPlatform</code>, or pass your own
+<a href="platforms.md">platforms</a> to the constructor to extend that standard
+set with more tags.
+</note>
 
 The description — everything written before the first tag — is available as
 `$block->description`, and the tags themselves form an ordered, countable,

@@ -143,9 +143,13 @@ A platform's four properties register the three kinds of thing the parser needs:
 * **`$aliases`** maps an alternative spelling to a canonical tag name.
 
 <note>
-The built-in <code>StandardPlatform</code> is always loaded first, so every tag
-in the sidebar stays available; a platform passed in only adds to it, or
-overrides an entry when it reuses a name.
+The built-in <code>StandardPlatform</code> is always loaded first, so every
+standard tag stays available; a platform passed in only adds to it, or overrides
+an entry when it reuses a name. The other built-in families (phpDocumentor,
+Psalm, PHPStan, Phan, PhpStorm, PHP CodeSniffer) are <b>not</b> loaded by the
+constructor — list them alongside your own platform when you need them, or see
+<a href="platforms.md"><code>DocBlockParser::createDefault()</code></a> for the
+full built-in set.
 </note>
 
 ## Where to Go Next

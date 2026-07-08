@@ -54,14 +54,23 @@ $parser = new DocBlockParser(platforms: [
 $block = $parser->parse('/** @money 100 USD */');
 ```
 
-The `StandardPlatform` is always loaded first, so every built-in tag stays
+The `StandardPlatform` is always loaded first, so every standard tag stays
 available; the platforms passed in extend it, each overriding an entry only when
 it reuses the same tag, alias or combinator name.
 
 <note>
-Constructed without arguments, <code>DocBlockParser</code> loads all available 
-platforms. Passing your own <code>platforms</code> replaces that
-default — re-add the ones you still want to the list.
+<code>new DocBlockParser()</code> with no arguments loads <b>only</b> the
+<code>StandardPlatform</code> — the standard tags, and nothing else. To load
+every built-in platform as well (phpDocumentor, Psalm, PHPStan, Phan, PhpStorm
+and PHP CodeSniffer), use the <code>DocBlockParser::createDefault()</code>
+factory:
+
+<code-block lang="php">
+$parser = DocBlockParser::createDefault();
+</code-block>
+
+To register your own platform on top of the built-in tool families, list them
+together in the constructor rather than passing yours alone.
 </note>
 
 The definitions that end up registered are exposed as `$parser->tags` (a
