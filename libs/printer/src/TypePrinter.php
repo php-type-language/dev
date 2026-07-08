@@ -30,13 +30,7 @@ abstract class TypePrinter implements TypePrinterInterface
     protected int $nesting = 0;
 
     public function __construct(
-        /**
-         * @var non-empty-string
-         */
         public readonly string $newLine = self::DEFAULT_NEW_LINE_DELIMITER,
-        /**
-         * @var non-empty-string
-         */
         public readonly string $indention = self::DEFAULT_INDENTION,
     ) {}
 

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * List of builtin type aliases of psalm 5.x-dev
+ * List of builtin type aliases of psalm ~6.x
  */
 return [
     // int
@@ -13,6 +13,10 @@ return [
     'negative-int' => 'int',
     'non-negative-int' => 'int',
     'literal-int' => 'int',
+    'int-range' => 'int',
+    'int-mask' => 'int',
+    'int-mask-of' => 'int',
+    'numeric' => 'int|float|string',
     // string
     'non-empty-string' => 'string',
     'truthy-string' => 'string',
@@ -54,6 +58,7 @@ return [
     'closed-resource' => 'mixed',
     'non-empty-mixed' => 'mixed',
     'key-of' => 'mixed',
+    'value-of' => 'mixed',
     // never
     'never-return' => 'never',
     'never-returns' => 'never',

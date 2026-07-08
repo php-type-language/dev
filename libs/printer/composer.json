@@ -18,6 +18,7 @@
         }
     },
     "require-dev": {
+        "type-lang/parser": "^2.0",
         "phpstan/phpstan": "^2.2",
         "phpunit/phpunit": "^13.2"
     },

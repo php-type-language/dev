@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * List of builtin type aliases of phpstan 2.1.x-dev
+ * List of builtin type aliases of phpstan ~2.2
  */
 return [
     // int
@@ -31,6 +31,8 @@ return [
     'non-empty-lowercase-string' => 'string',
     'non-empty-uppercase-string' => 'string',
     'non-empty-literal-string' => 'string',
+    'non-decimal-int-string' => 'string',
+    'decimal-int-string' => 'string',
     // bool
     'boolean' => 'bool',
     // float

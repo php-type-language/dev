@@ -55,10 +55,6 @@ class PrettyTypePrinter extends TypePrinter
      */
     public const int DEFAULT_MULTILINE_SHAPE = 1;
 
-    /**
-     * @param non-empty-string $newLine
-     * @param non-empty-string $indention
-     */
     public function __construct(
         string $newLine = self::DEFAULT_NEW_LINE_DELIMITER,
         string $indention = self::DEFAULT_INDENTION,
@@ -73,7 +69,7 @@ class PrettyTypePrinter extends TypePrinter
          * // Type|Some|Any
          * ```
          */
-        public bool $wrapUnionType = self::DEFAULT_WRAP_UNION_TYPE,
+        public readonly bool $wrapUnionType = self::DEFAULT_WRAP_UNION_TYPE,
         /**
          * Wrap intersection type (joined by "&") by whitespaces.
          *
@@ -85,7 +81,7 @@ class PrettyTypePrinter extends TypePrinter
          *  // Type&Some&Any
          *  ```
          */
-        public bool $wrapIntersectionType = self::DEFAULT_WRAP_INTERSECTION_TYPE,
+        public readonly bool $wrapIntersectionType = self::DEFAULT_WRAP_INTERSECTION_TYPE,
         /**
          * Add whitespace at the start of callable return type.
          *
@@ -97,7 +93,7 @@ class PrettyTypePrinter extends TypePrinter
          * // callable():void
          * ```
          */
-        public bool $wrapCallableReturnType = self::DEFAULT_WRAP_CALLABLE_RETURN_TYPE,
+        public readonly bool $wrapCallableReturnType = self::DEFAULT_WRAP_CALLABLE_RETURN_TYPE,
         /**
          * The number of elements in the shape after which it is
          * formatted as multiline.
@@ -115,7 +111,7 @@ class PrettyTypePrinter extends TypePrinter
          *
          * @var int<0, max>
          */
-        public int $multilineShape = self::DEFAULT_MULTILINE_SHAPE,
+        public readonly int $multilineShape = self::DEFAULT_MULTILINE_SHAPE,
     ) {
         parent::__construct($newLine, $indention);
     }

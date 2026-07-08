@@ -114,16 +114,6 @@ class NativeTypePrinter extends PrettyTypePrinter
     }
 
     #[\Override]
-    protected function printCondition(Condition $node): string
-    {
-        return match (true) {
-            $node instanceof EqualConditionNode => '===',
-            $node instanceof NotEqualConditionNode => '!==',
-            default => throw NonPrintableNodeException::becauseInvalidNodeGiven($node),
-        };
-    }
-
-    #[\Override]
     protected function printClassConstMaskNode(ClassConstMaskNode $node): string
     {
         return 'mixed';
