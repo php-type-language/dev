@@ -1,10 +1,32 @@
 # Type Printer Component
 
 <primary-label ref="printer-component"/>
+<link-summary>
+Turns a `TypeLang\Type\*` AST back into a type string, either as a
+high-fidelity TypeLang rendering or as a PHP-compatible one.
+</link-summary>
 <show-structure for="chapter" depth="2"/>
 
-The printer package is responsible for visualizing the AST as string 
-formats.
+The printer component is the inverse of the [parser](parser.md): where the
+parser turns a type string into an <tooltip term="AST">AST</tooltip>, the
+printer turns that AST back into a string. It walks a
+`TypeLang\Type\TypeNode` and renders every node — a union, a shape, a
+conditional type — into readable text.
+
+It ships with two printers that render the very same AST differently:
+
+<deflist>
+    <def title="TypeLang\Printer\PrettyTypePrinter">
+        Renders the type as faithfully as possible, preserving every detail
+        the AST carries — shapes, generics, conditional types and all. See
+        <a href="pretty-printer.md">Pretty Printer</a>.
+    </def>
+    <def title="TypeLang\Printer\NativeTypePrinter">
+        Renders the closest type PHP itself would accept, collapsing anything
+        without a native equivalent down to a supported approximation. See
+        <a href="native-printer.md">Native Printer</a>.
+    </def>
+</deflist>
 
 ## Installation
 
@@ -19,153 +41,139 @@ formats.
 * `PHP >= 8.4`
 * `ext-mbstring` <sup>optional</sup>
 
-## Usage
+## Quick Start
 
-Package supports two printer classes.
+Every printer implements `TypeLang\Printer\TypePrinterInterface`, a single
+`print()` method that takes a `TypeNode` and returns its string form. The AST
+usually comes straight from the [parser](parser.md), but any hand-built or
+rewritten `TypeLang\Type\*` node graph prints just as well.
+
+<tabs>
+<tab title="PrettyTypePrinter">
+
+```php
+use TypeLang\Parser\TypeParser;
+use TypeLang\Printer\PrettyTypePrinter;
+
+$type = new TypeParser()->parse('non-empty-list<positive-int>|null');
+
+echo new PrettyTypePrinter()->print($type);
+```
+
+> Renders the type exactly as written, only normalizing whitespace.
+> ```
+> non-empty-list<positive-int> | null
+> ```
+
+</tab>
+<tab title="NativeTypePrinter">
+
+```php
+use TypeLang\Parser\TypeParser;
+use TypeLang\Printer\NativeTypePrinter;
+
+$type = new TypeParser()->parse('non-empty-list<positive-int>|null');
+
+echo new NativeTypePrinter()->print($type);
+```
+
+> Collapses everything down to a type PHP would accept: `non-empty-list<…>`
+> becomes `array`.
+> ```
+> array|null
+> ```
+
+</tab>
+</tabs>
+
+<tip>
+A printer is stateless between calls and cheap to keep around. Construct it
+once — with whatever formatting options you need — and reuse the instance
+across the application rather than building a new one per type.
+</tip>
+
+## Choosing a Printer
+
+Both printers accept the same AST; they differ only in what they render.
+
+|                        | [Pretty](pretty-printer.md) | [Native](native-printer.md) |
+|------------------------|-----------------------------|-----------------------------|
+| **Goal**               | faithful, human-readable    | valid PHP syntax            |
+| `array{id: int}`       | `array{id: int}`            | `array`                     |
+| `int[]`                | `int[]`                     | `iterable`                  |
+| `positive-int`         | `positive-int`              | `int`                       |
+| `Foo::BAR`             | `Foo::BAR`                  | `mixed`                     |
+| `int<0, max>`          | `int<0, max>`               | `int`                       |
+| `$arg is null ? A : B` | `($arg is null ? A : B)`    | `A│B`                       |
+
+Reach for the **pretty** printer to display a type to a human — an error
+message, a generated docblock, a diff — where every detail matters. Reach for
+the **native** printer to emit something PHP can actually use — a property
+type, a parameter hint, generated code.
+
+## Formatting
+
+Both printers share two constructor arguments, declared on the common
+`TypeLang\Printer\TypePrinter` base:
 
 <deflist>
-    <def title="TypeLang\Printer\PrettyPrinter">
-        Used to display types as accurately as possible.
+    <def title="newLine">
+        The line-break string inserted between the lines of a multi-line
+        rendering. Defaults to <code>"\n"</code>.
     </def>
-    <def title="TypeLang\Printer\NativeTypePrinter">
-        Used to display types compatible with PHP.
+    <def title="indention">
+        The string used for a single indentation level. Defaults to four
+        spaces.
     </def>
 </deflist>
 
-Any printer implements the `TypeLang\Printer\PrinterInterface` interface, which 
-contains an `print()` method for displaying ASTs as formatted strings.
-
-### Shapes
-
-<tabs>
-<tab title="PrettyPrinter">
-
 ```php
-$parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\PrettyTypePrinter();
-
-$result = $parser->parse(<<<'PHP'
-    object{key: type, some: (list<T>|some<T>),
-        ...<non-empty-string, int>}
-    PHP);
-
-echo $printer->print($result);
+$printer = new PrettyTypePrinter(
+    newLine: "\r\n",
+    indention: "\t",
+);
 ```
 
-> Displays types as accurately as possible.
-> ```php
-> object{
->     key: type,
->     some: list<T>|some<T>,
->     ...<non-empty-string, int>
-> }
-> ```
+<note>
+The <code>NativeTypePrinter</code> takes its type aliases as the
+<b>first</b> constructor argument, so pass <code>newLine</code> and
+<code>indention</code> by name — see <a href="native-printer.md">Native
+Printer</a>.
+</note>
 
-</tab>
-<tab title="NativeTypePrinter">
+## Error Handling
 
-```php
-$parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\NativeTypePrinter();
-
-$result = $parser->parse(<<<'PHP'
-    object{key: type, some: (list<T>|some<T>),
-        ...<non-empty-string, int>}
-    PHP);
-
-echo $printer->print($result);
-```
-
-> Displays types that are compatible with PHP.
-> ```php
-> object
-> ```
-
-</tab>
-</tabs>
-
-### Callables
-
-<tabs>
-<tab title="PrettyPrinter">
+A printer only knows how to render the nodes that make up a valid type. If it
+is handed a node it cannot render — a malformed, hand-built AST, or a node
+kind it does not support — it throws a
+`TypeLang\Printer\Exception\NonPrintableNodeException`.
 
 ```php
-$parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\PrettyTypePrinter();
-
-$result = $parser->parse(<<<'PHP'
-    callable(...A &$a)|callable(B &...$b)
-    PHP);
-
-echo $printer->print($result);
+try {
+    echo $printer->print($node);
+} catch (\TypeLang\Printer\Exception\PrinterExceptionInterface $e) {
+    // Every exception the component throws implements this interface.
+}
 ```
 
-> Displays types as accurately as possible.
-> ```php
-> callable(A &...$a)|callable(B &...$b)
-> ```
+An AST produced by the [parser](parser.md) is always printable, so this only
+becomes a concern when constructing or rewriting the node graph by hand.
 
-</tab>
-<tab title="NativeTypePrinter">
+## What's Next
 
-```php
-$parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\NativeTypePrinter();
+<deflist>
+<def title="Pretty Printer">
 
-$result = $parser->parse(<<<'PHP'
-    callable(...A &$a)|callable(B &...$b)
-    PHP);
+The high-fidelity renderer and its formatting options — union and
+intersection spacing, callable return types, and multi-line shapes. See
+[](pretty-printer.md).
 
-echo $printer->print($result);
-```
+</def>
+<def title="Native Printer">
 
-> Displays types that are compatible with PHP.
-> ```php
-> callable
-> ```
+The PHP-compatible renderer: how each unsupported construct is approximated,
+and the built-in and custom type aliases it applies. See
+[](native-printer.md).
 
-</tab>
-</tabs>
-
-### Conditional
-
-<tabs>
-<tab title="PrettyPrinter">
-
-```php
-$parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\PrettyTypePrinter();
-
-$result = $parser->parse(<<<'PHP'
-    $arg is null ? non-empty-string : int<0, max>
-    PHP);
-
-echo $printer->print($result);
-```
-
-> Displays types as accurately as possible.
-> ```php
-> ($arg is null ? non-empty-string : int<0, max>)
-> ```
-
-</tab>
-<tab title="NativeTypePrinter">
-
-```php
-$parser = new TypeLang\Parser\TypeParser();
-$printer = new TypeLang\Printer\NativeTypePrinter();
-
-$result = $parser->parse(<<<'PHP'
-    $arg is null ? non-empty-string : int<0, max>
-    PHP);
-
-echo $printer->print($result);
-```
-
-> Displays types that are compatible with PHP.
-> ```php
-> string|int
-> ```
-
-</tab>
-</tabs>
+</def>
+</deflist>

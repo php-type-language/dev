@@ -37,10 +37,10 @@
     </toc-element>
 
     <toc-element topic="parser.md" toc-title="Type Parser">
-        <toc-element topic="features.md" />
         <toc-element topic="tolerant-mode.md" />
-        <toc-element topic="type-resolver.md" />
+        <toc-element topic="features.md" />
         <toc-element topic="visitors.md">
+            <toc-element topic="type-resolver.md" />
             <toc-element topic="matcher-visitor.md"/>
             <toc-element topic="class-name-matcher-visitor.md"/>
             <toc-element topic="dumper-visitor.md"/>
@@ -53,6 +53,8 @@
     </toc-element>
 
     <toc-element topic="printer.md" toc-title="Type Printer">
+        <toc-element topic="pretty-printer.md" />
+        <toc-element topic="native-printer.md" />
         <toc-element toc-title="GitHub" href="https://github.com/php-type-language/printer" />
         <toc-element toc-title="Packagist" href="https://packagist.org/packages/type-lang/printer" />
     </toc-element>
