@@ -18,6 +18,29 @@ final readonly class TypeResolver
     ) {}
 
     /**
+     * Registers a non-aliased `use Some\Any;` import, so that every relative
+     * name starting with the imported one is expanded to its full form.
+     *
+     * For example, for such code:
+     * ```
+     * use TypeLang\Parser\Node;
+     * ```
+     *
+     * You need to add an import like this:
+     * ```
+     * $resolver = new TypeResolver()
+     *     ->withTypeImport('TypeLang\Parser\Node');
+     *
+     * $ast = new TypeParser()
+     *     ->parse('Node\SemanticException');
+     *
+     * $resolver->resolve($ast);
+     *
+     * // Expected Output:
+     * // > TypeLang\Parser\Node\SemanticException
+     * echo $ast->name->toString();
+     * ```
+     *
      * @api
      * @param non-empty-string $name
      */
@@ -27,6 +50,29 @@ final readonly class TypeResolver
     }
 
     /**
+     * Registers an aliased `use Some\Any as AliasName;` import, so that every
+     * relative name starting with the alias is expanded to the imported type.
+     *
+     * For example, for such code:
+     * ```
+     * use TypeLang\Parser\Exception as Error;
+     * ```
+     *
+     * You need to add an import like this:
+     * ```
+     * $resolver = new TypeResolver()
+     *     ->withTypeImportAs('TypeLang\Parser\Exception', 'Error');
+     *
+     * $ast = new TypeParser()
+     *     ->parse('Error\SemanticException');
+     *
+     * $resolver->resolve($ast);
+     *
+     * // Expected Output:
+     * // > TypeLang\Parser\Exception\SemanticException
+     * echo $ast->name->toString();
+     * ```
+     *
      * @api
      * @param non-empty-string $name
      * @param non-empty-string $alias
@@ -45,6 +91,30 @@ final readonly class TypeResolver
         ]);
     }
 
+    /**
+     * Rewrites every type name in the given AST according to the registered
+     * imports, mutating and returning the same node instance.
+     *
+     * ```
+     * $ast = new TypeParser()
+     *     ->parse(<<<'PHP'
+     *         array { Node, Error\SemanticException }
+     *         PHP);
+     *
+     * new TypeResolver()
+     *     ->withTypeImport('TypeLang\Parser\Node')
+     *     ->withTypeImportAs('TypeLang\Parser\Exception', 'Error')
+     *     ->resolve($ast);
+     *
+     * // Expected Output:
+     * // > array{
+     * // >     TypeLang\Parser\Node,
+     * // >     TypeLang\Parser\Exception\SemanticException
+     * // > }
+     * ```
+     *
+     * @api
+     */
     public function resolve(TypeNode $type): TypeNode
     {
         $traverser = $this->createTraverser();
