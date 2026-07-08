@@ -15,49 +15,22 @@ is the utility for it.
 
 ## How It Works
 
-`TypeResolver::resolve()` walks the whole node graph (via the same
-[`Traverser`](visitors.md) machinery used for [`TypeMapVisitor`](type-map-visitor.md))
-and, for every `TypeLang\Type\Name` it finds, calls your `$transform`
-callback. If the callback returns a `Name`, it replaces the original one **in
-place**; if it returns `null`, the original name is left untouched.
+`TypeResolver` is an immutable builder. You register the imports it should
+resolve against — through the fluent `withTypeImport()` / `withTypeImportAs()`
+methods (or the constructor) — and then call `resolve()`. It walks the whole
+node graph (via the same [`Traverser`](visitors.md) machinery used by
+[`TypeMapVisitor`](type-map-visitor.md)) and rewrites every matching
+`TypeLang\Type\Name` it finds **in place**.
 
 ```php
-interface TypeResolverInterface
+final readonly class TypeResolver
 {
-    /**
-     * @param callable(Name): (Name|null) $transform
-     */
-    public function resolve(
-        TypeNode $type, 
-        callable $transform,
-    ): TypeNode;
+    public function withTypeImport(string $name): self;
+
+    public function withTypeImportAs(string $name, string $alias): self;
+
+    public function resolve(TypeNode $type): TypeNode;
 }
-```
-
-```php
-use TypeLang\Parser\TypeParser;
-use TypeLang\Parser\TypeResolver;
-use TypeLang\Type\Name;
-
-
-$type = new TypeParser()
-    ->parse('User|Admin');
-
-
-new TypeResolver()
-    ->resolve($type, static function (Name $name): ?Name {
-        if ($name->toLowerString() === 'user') {
-            return Name::createFromString('App\\Example\\User');
-        }
-
-        return null;
-    });
-
-
-// App\Example\User
-echo $type->statements[0]->name->toString();
-// Admin
-echo $type->statements[1]->name->toString();
 ```
 
 > `resolve()` **mutates** and returns the **same** `$type` instance you passed
@@ -67,10 +40,9 @@ echo $type->statements[1]->name->toString();
 
 ## Resolving Against PHP `use` Statements
 
-The most common use case — resolving relative names the same way PHP resolves
-class references against the `use` statements of the file a phpdoc comment
-lives in — is covered by the ready-made `TypeResolver\PhpUseStatementsTransformer`,
-an implementation of `TransformerInterface` (`__invoke(Name $name): ?Name`).
+The most common use case is resolving relative names the same way PHP resolves
+class references against the `use` statements of the file a phpdoc comment lives
+in.
 
 Given PHP source that declares:
 
@@ -79,44 +51,43 @@ use TypeLang\Parser\Node;
 use TypeLang\Parser\Exception as Error;
 ```
 
-build the equivalent transformer by listing the plain imports as values and
-the aliased ones as `alias => target` pairs:
+register the plain imports with `withTypeImport()` and the aliased ones with
+`withTypeImportAs()`:
 
 ```php
-use TypeLang\Parser\TypeResolver\PhpUseStatementsTransformer;
+use TypeLang\Parser\TypeResolver;
 
-$transformer = new PhpUseStatementsTransformer([
+$resolver = new TypeResolver()
     // use TypeLang\Parser\Node;
-    'TypeLang\Parser\Node',
+    ->withTypeImport('TypeLang\Parser\Node')
     // use TypeLang\Parser\Exception as Error;
-    'Error' => 'TypeLang\Parser\Exception',
-]);
+    ->withTypeImportAs('TypeLang\Parser\Exception', 'Error');
 ```
 
-Applying it resolves every first segment of a name that matches one of the
-imports, and merges in the rest of the name unchanged:
+Applying it resolves the first segment of every name that matches one of the
+imports (case-insensitively, just like PHP) and merges in the rest of the name
+unchanged:
 
 ```php
-use TypeLang\Parser\TypeResolver\PhpUseStatementsTransformer;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeResolver;
 
 // parse array shape with 2 named types
-$sourceAst = $parser->parse(<<<'PHP'
-    array{ 
-        Node,
-        Error\SemanticException
-    }
-    PHP);
+$statement = new TypeParser()
+    ->parse(<<<'PHP'
+        array{
+            Node,
+            Error\SemanticException
+        }
+        PHP);
 
 // resolve type names
-new TypeResolver()
-    ->resolve($sourceAst, new PhpUseStatementsTransformer([
-        // use TypeLang\Parser\Node;
-        'TypeLang\Parser\Node',
-        // use TypeLang\Parser\Exception as Error;
-        'Error' => 'TypeLang\Parser\Exception',
-    ]));
+$statement = new TypeResolver()
+    ->withTypeImport('TypeLang\Parser\Node')
+    ->withTypeImportAs('TypeLang\Parser\Exception', 'Error')
+    ->resolve($statement);
 
-foreach ($sourceAst->fields->items as $field) {
+foreach ($statement->fields->items as $field) {
     echo $field->type->name->toString(), "\n";
 }
 
@@ -125,11 +96,39 @@ foreach ($sourceAst->fields->items as $field) {
 //   TypeLang\Parser\Exception\SemanticException
 ```
 
-## Writing a Custom Transformer
+Because `TypeResolver` is immutable, `withTypeImport()` and
+`withTypeImportAs()` return a new instance each time and never mutate the
+receiver — the same resolver can be safely shared and extended for different
+contexts.
 
-Because `TransformerInterface` is a single-method contract, any callable
-works — a closure, an invokable object backed by a symbol table, a PSR-4
-autoloader lookup, and so on. `PhpUseStatementsTransformer` is just the
-built-in implementation for the most common case; nothing stops you from
-implementing `TransformerInterface` yourself for anything more specific your
-application needs (resolving against a runtime class map, a container, etc).
+### Passing Imports Through the Constructor
+
+If you already have the whole import list assembled, hand it to the constructor
+directly instead of chaining `with*` calls. Plain imports are listed as values
+and aliased ones as `alias => target` pairs:
+
+```php
+use TypeLang\Parser\TypeResolver;
+
+$resolver = new TypeResolver([
+    // use TypeLang\Parser\Node;
+    'TypeLang\Parser\Node',
+    // use TypeLang\Parser\Exception as Error;
+    'Error' => 'TypeLang\Parser\Exception',
+]);
+
+$statement = $resolver->resolve($statement);
+```
+
+For a plain import the alias is inferred from the last segment of the name
+(`TypeLang\Parser\Node` becomes reachable as `Node`), which mirrors how a
+`use` statement without an explicit `as` behaves.
+
+## Custom Name Rewriting
+
+`TypeResolver` is intentionally scoped to `use`-statement semantics. When you
+need to rewrite names some other way — against a runtime class map, a DI
+container, a PSR-4 lookup, and so on — drop down to
+[`TypeMapVisitor`](type-map-visitor.md), which calls a callback of your own for
+every `Name` in the AST. `TypeResolver` is simply the ready-made configuration
+of that visitor for the most common case.
