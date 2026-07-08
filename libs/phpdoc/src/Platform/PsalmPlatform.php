@@ -6,6 +6,9 @@ namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\PhpDoc\DocBlock\Tag\AllowPrivateMutationTag\AllowPrivateMutationTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertIfFalseTag\AssertIfFalseTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertIfTrueTag\AssertIfTrueTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertTag\AssertTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ConsistentConstructorTag\ConsistentConstructorTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ImmutableTag\ImmutableTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
@@ -76,6 +79,9 @@ final class PsalmPlatform extends Platform
     public iterable $tags {
         get => [
             'psalm-allow-private-mutation' => new AllowPrivateMutationTagDefinition(),
+            'psalm-assert' => new AssertTagDefinition(),
+            'psalm-assert-if-true' => new AssertIfTrueTagDefinition(),
+            'psalm-assert-if-false' => new AssertIfFalseTagDefinition(),
             'psalm-consistent-constructor' => new ConsistentConstructorTagDefinition(),
             'psalm-pure' => new PureTagDefinition(),
             'psalm-readonly-allow-private-mutation' => new ReadonlyAllowPrivateMutationTagDefinition(),

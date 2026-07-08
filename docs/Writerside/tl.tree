@@ -141,9 +141,9 @@
         <toc-element toc-title="Psalm" topic="psalm-tags.md">
             <toc-element topic="psalm-allow-private-mutation-tag.md" />
             <toc-element topic="psalm-api-tag.md" />
-            <toc-element topic="psalm-assert-tag.md" wip="true" />
-            <toc-element topic="psalm-assert-if-false-tag.md" wip="true" />
-            <toc-element topic="psalm-assert-if-true-tag.md" wip="true" />
+            <toc-element topic="psalm-assert-tag.md" />
+            <toc-element topic="psalm-assert-if-false-tag.md" />
+            <toc-element topic="psalm-assert-if-true-tag.md" />
             <toc-element topic="psalm-assert-untainted-tag.md" />
             <toc-element topic="psalm-check-type-tag.md" wip="true" />
             <toc-element topic="psalm-check-type-exact-tag.md" wip="true" />
@@ -204,9 +204,9 @@
         </toc-element>
         <toc-element toc-title="PHPStan" topic="phpstan-tags.md">
             <toc-element topic="phpstan-allow-private-mutation-tag.md" />
-            <toc-element topic="phpstan-assert-tag.md" wip="true" />
-            <toc-element topic="phpstan-assert-if-false-tag.md" wip="true" />
-            <toc-element topic="phpstan-assert-if-true-tag.md" wip="true" />
+            <toc-element topic="phpstan-assert-tag.md" />
+            <toc-element topic="phpstan-assert-if-false-tag.md" />
+            <toc-element topic="phpstan-assert-if-true-tag.md" />
             <toc-element topic="phpstan-consistent-constructor-tag.md" />
             <toc-element topic="phpstan-extends-tag.md" />
             <toc-element topic="phpstan-ignore-tag.md" wip="true" />
@@ -245,10 +245,10 @@
         </toc-element>
         <toc-element toc-title="Phan" topic="phan-tags.md">
             <toc-element topic="phan-abstract-tag.md" />
-            <toc-element topic="phan-assert-tag.md" wip="true" />
+            <toc-element topic="phan-assert-tag.md" />
             <toc-element topic="phan-assert-false-condition-tag.md" wip="true" />
-            <toc-element topic="phan-assert-if-false-tag.md" wip="true" />
-            <toc-element topic="phan-assert-if-true-tag.md" wip="true" />
+            <toc-element topic="phan-assert-if-false-tag.md" />
+            <toc-element topic="phan-assert-if-true-tag.md" />
             <toc-element topic="phan-assert-true-condition-tag.md" wip="true" />
             <toc-element topic="phan-closure-scope-tag.md" />
             <toc-element topic="phan-constructor-used-for-side-effects-tag.md" />

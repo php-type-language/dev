@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertIfFalseTag\AssertIfFalseTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertIfTrueTag\AssertIfTrueTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertTag\AssertTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ImmutableTag\ImmutableTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\MethodTag\MethodTagDefinition;
@@ -52,6 +55,9 @@ final class PhanPlatform extends Platform
      */
     public iterable $tags {
         get => [
+            'phan-assert' => new AssertTagDefinition(),
+            'phan-assert-if-true' => new AssertIfTrueTagDefinition(),
+            'phan-assert-if-false' => new AssertIfFalseTagDefinition(),
             'phan-pure' => new PureTagDefinition(),
             PhanClosureScopeTagDefinition::NAME => new PhanClosureScopeTagDefinition(),
             PhanConstructorUsedForSideEffectsTagDefinition::NAME => new PhanConstructorUsedForSideEffectsTagDefinition(),

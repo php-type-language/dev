@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\PhpDoc\DocBlock\Tag\AllowPrivateMutationTag\AllowPrivateMutationTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertIfFalseTag\AssertIfFalseTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertIfTrueTag\AssertIfTrueTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\AssertTag\AssertTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ConsistentConstructorTag\ConsistentConstructorTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ImmutableTag\ImmutableTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
@@ -59,6 +62,9 @@ final class PhpStanPlatform extends Platform
     public iterable $tags {
         get => [
             'phpstan-allow-private-mutation' => new AllowPrivateMutationTagDefinition(),
+            'phpstan-assert' => new AssertTagDefinition(),
+            'phpstan-assert-if-true' => new AssertIfTrueTagDefinition(),
+            'phpstan-assert-if-false' => new AssertIfFalseTagDefinition(),
             'phpstan-consistent-constructor' => new ConsistentConstructorTagDefinition(),
             'phpstan-pure' => new PureTagDefinition(),
             'phpstan-readonly-allow-private-mutation' => new ReadonlyAllowPrivateMutationTagDefinition(),
