@@ -13,7 +13,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@psalm-assert-untainted`" tag asserts that the given variable holds
+ * The `@psalm-assert-untainted` tag asserts that the given variable holds
  * no tainted data from this point on.
  *
  * ```

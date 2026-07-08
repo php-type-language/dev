@@ -15,7 +15,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@assert-if-false`" tag asserts the given type for a variable, but
+ * The `@assert-if-false` tag asserts the given type for a variable, but
  * only when the function returns `false`.
  *
  * ```

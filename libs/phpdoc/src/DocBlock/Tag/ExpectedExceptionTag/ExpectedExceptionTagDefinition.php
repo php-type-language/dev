@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@expectedException`" tag declares the `Throwable` a test method is
+ * The `@expectedException` tag declares the `Throwable` a test method is
  * expected to throw.
  *
  * ```

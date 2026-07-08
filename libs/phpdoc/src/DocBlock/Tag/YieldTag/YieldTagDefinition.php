@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@yield`" tag documents the type yielded by a `Generator`, distinct
+ * The `@yield` tag documents the type yielded by a `Generator`, distinct
  * from the type it returns on completion.
  *
  * ```

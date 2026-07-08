@@ -36,7 +36,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 
 /**
- * The Phan platform: the "@phan-*" tag family understood by Phan.
+ * The Phan platform: the `@phan-*` tag family understood by Phan.
  *
  * Tags that restate an existing one are wired as aliases onto it; Phan's own
  * marker tags are contributed as their own flag definitions.

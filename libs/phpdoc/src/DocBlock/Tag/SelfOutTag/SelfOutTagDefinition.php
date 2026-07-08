@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@self-out`" tag documents the refined type of `$this` after a
+ * The `@self-out` tag documents the refined type of `$this` after a
  * method call, letting callers see a narrower object type than the one
  * they started with.
  *

@@ -13,7 +13,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@psalm-trace`" tag outputs the inferred type of the given variable,
+ * The `@psalm-trace` tag outputs the inferred type of the given variable,
  * for debugging purposes.
  *
  * ```

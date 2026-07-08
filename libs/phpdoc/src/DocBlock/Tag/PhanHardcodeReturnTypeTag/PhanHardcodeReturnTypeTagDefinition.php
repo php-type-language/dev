@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@phan-hardcode-return-type`" tag forces the documented return type
+ * The `@phan-hardcode-return-type` tag forces the documented return type
  * to be used instead of the type otherwise inferred from the method body.
  *
  * ```

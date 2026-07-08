@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@psalm-inheritors`" tag restricts which classes are allowed to
+ * The `@psalm-inheritors` tag restricts which classes are allowed to
  * extend or implement the described type.
  *
  * ```

@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@psalm-if-this-is`" tag narrows the type of `$this` inside a
+ * The `@psalm-if-this-is` tag narrows the type of `$this` inside a
  * method when the given type matches.
  *
  * ```

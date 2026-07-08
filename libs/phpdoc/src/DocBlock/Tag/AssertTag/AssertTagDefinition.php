@@ -15,7 +15,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The "`@assert`" tag asserts that the given variable is narrowed to a
+ * The `@assert` tag asserts that the given variable is narrowed to a
  * specified type once the call returns.
  *
  * ```

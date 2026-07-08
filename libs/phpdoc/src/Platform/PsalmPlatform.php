@@ -59,7 +59,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\YieldTag\YieldTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 
 /**
- * The Psalm platform: the "@psalm-*" tag family understood by Psalm.
+ * The Psalm platform: the `@psalm-*` tag family understood by Psalm.
  *
  * Tags that restate an existing one are wired as aliases onto it; Psalm's own
  * marker tags are contributed as their own flag definitions.
