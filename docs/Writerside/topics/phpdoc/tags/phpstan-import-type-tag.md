@@ -1,18 +1,26 @@
 # @phpstan-import-type
 
 <primary-label ref="phpdoc-component"/>
-<secondary-label ref="not-implemented"/>
 
 The `@phpstan-import-type` tag imports a `@phpstan-type` alias declared
 in another class, defined by PHPStan.
 
-<note>
-Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
-a docblock containing this tag returns a plain <code>Tag</code>, its whole
-suffix folded into the description. See
-<a href="custom-tags.md">Custom Tags</a> for the current workaround if you
-need to recognize it yourself.
-</note>
+```
+"@phpstan-import-type" <Name> "from" <Type>
+    [ "as" <Name> ]
+```
+
+Parsing a `@phpstan-import-type` tag produces an `ImportTypeAliasTag` instance,
+carrying the imported `$alias`, the `$type` it is imported from, and the
+optional local `$as` name alongside the `$name` every [Tag](phpdoc.md#tag)
+already provides.
+
+```php
+final class ImportTypeAliasTag extends Tag {}
+```
+
+The same `ImportTypeAliasTag` is produced by [@psalm-import-type](psalm-import-type-tag.md), which restates
+the same concept for Psalm.
 
 Documented by
 [PHPStan](https://phpstan.org/writing-php-code/phpdoc-types#local-type-aliases).

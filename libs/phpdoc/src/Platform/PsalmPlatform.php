@@ -11,6 +11,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\AssertIfTrueTag\AssertIfTrueTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\AssertTag\AssertTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ConsistentConstructorTag\ConsistentConstructorTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ImmutableTag\ImmutableTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\ImportTypeAliasTag\ImportTypeAliasTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ExtendsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\ImplementsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\InheritanceTag\UseTagDefinition;
@@ -88,6 +89,7 @@ final class PsalmPlatform extends Platform
             'psalm-assert-if-true' => new AssertIfTrueTagDefinition(),
             'psalm-assert-if-false' => new AssertIfFalseTagDefinition(),
             'psalm-consistent-constructor' => new ConsistentConstructorTagDefinition(),
+            'psalm-import-type' => new ImportTypeAliasTagDefinition(),
             'psalm-pure' => new PureTagDefinition(),
             'psalm-readonly-allow-private-mutation' => new ReadonlyAllowPrivateMutationTagDefinition(),
             'psalm-self-out' => new SelfOutTagDefinition(),

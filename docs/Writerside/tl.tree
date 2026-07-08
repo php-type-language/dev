@@ -160,7 +160,7 @@
             <toc-element topic="psalm-ignore-variable-property-tag.md" />
             <toc-element topic="psalm-immutable-tag.md" />
             <toc-element topic="psalm-implements-tag.md" />
-            <toc-element topic="psalm-import-type-tag.md" wip="true" />
+            <toc-element topic="psalm-import-type-tag.md" />
             <toc-element topic="psalm-inheritors-tag.md" />
             <toc-element topic="psalm-internal-tag.md" />
             <toc-element topic="psalm-method-tag.md" />
@@ -214,7 +214,7 @@
             <toc-element topic="phpstan-ignore-next-line-tag.md" />
             <toc-element topic="phpstan-immutable-tag.md" />
             <toc-element topic="phpstan-implements-tag.md" />
-            <toc-element topic="phpstan-import-type-tag.md" wip="true" />
+            <toc-element topic="phpstan-import-type-tag.md" />
             <toc-element topic="phpstan-impure-tag.md" />
             <toc-element topic="phpstan-method-tag.md" />
             <toc-element topic="phpstan-param-tag.md" />
