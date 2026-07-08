@@ -187,7 +187,7 @@
             <toc-element topic="psalm-stub-override-tag.md" />
             <toc-element topic="psalm-suppress-tag.md" />
             <toc-element topic="psalm-taint-escape-tag.md" />
-            <toc-element topic="psalm-taint-sink-tag.md" wip="true" />
+            <toc-element topic="psalm-taint-sink-tag.md" />
             <toc-element topic="psalm-taint-source-tag.md" />
             <toc-element topic="psalm-taint-specialize-tag.md" />
             <toc-element topic="psalm-taint-unescape-tag.md" />
