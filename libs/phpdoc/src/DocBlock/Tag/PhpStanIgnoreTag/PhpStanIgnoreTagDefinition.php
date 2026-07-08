@@ -13,11 +13,11 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
 
 /**
- * The `phpstan-ignore` tag silences the listed error identifiers
+ * The `@​phpstan-ignore` tag silences the listed error identifiers
  * reported on the current line.
  *
  * ```
- * "phpstan-ignore" <IssueName> { "," <IssueName> } [ <Description> ]
+ * "@​phpstan-ignore" <IssueName> { "," <IssueName> } [ <Description> ]
  * ```
  */
 final class PhpStanIgnoreTagDefinition extends TagDefinition
