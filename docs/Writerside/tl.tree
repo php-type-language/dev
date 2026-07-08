@@ -145,8 +145,8 @@
             <toc-element topic="psalm-assert-if-false-tag.md" />
             <toc-element topic="psalm-assert-if-true-tag.md" />
             <toc-element topic="psalm-assert-untainted-tag.md" />
-            <toc-element topic="psalm-check-type-tag.md" wip="true" />
-            <toc-element topic="psalm-check-type-exact-tag.md" wip="true" />
+            <toc-element topic="psalm-check-type-tag.md" />
+            <toc-element topic="psalm-check-type-exact-tag.md" />
             <toc-element topic="psalm-consistent-constructor-tag.md" />
             <toc-element topic="psalm-consistent-templates-tag.md" />
             <toc-element topic="psalm-external-mutation-free-tag.md" />

@@ -9,6 +9,8 @@ use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\AssertIfFalseTag\AssertIfFalseTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\AssertIfTrueTag\AssertIfTrueTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\AssertTag\AssertTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\CheckTypeTag\PsalmCheckTypeExactTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\CheckTypeTag\PsalmCheckTypeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ConsistentConstructorTag\ConsistentConstructorTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ImmutableTag\ImmutableTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ImportTypeAliasTag\ImportTypeAliasTagDefinition;
@@ -95,6 +97,8 @@ final class PsalmPlatform extends Platform
             'psalm-self-out' => new SelfOutTagDefinition(),
             'psalm-type' => new TypeAliasTagDefinition(),
             'psalm-yield' => new YieldTagDefinition(),
+            PsalmCheckTypeTagDefinition::NAME => new PsalmCheckTypeTagDefinition(),
+            PsalmCheckTypeExactTagDefinition::NAME => new PsalmCheckTypeExactTagDefinition(),
             PsalmAssertUntaintedTagDefinition::NAME => new PsalmAssertUntaintedTagDefinition(),
             PsalmConsistentTemplatesTagDefinition::NAME => new PsalmConsistentTemplatesTagDefinition(),
             PsalmIfThisIsTagDefinition::NAME => new PsalmIfThisIsTagDefinition(),
