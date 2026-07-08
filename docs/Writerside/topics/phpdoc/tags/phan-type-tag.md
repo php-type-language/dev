@@ -1,21 +1,23 @@
 # @phan-type
 
 <primary-label ref="phpdoc-component"/>
-<secondary-label ref="not-implemented"/>
 
 The `@phan-type` tag declares a local alias for a complex type.
 
 ```
-"@phan-type" <Name> "=" <Type>
+"@phan-type" <Name> [ "=" ] <Type>
 ```
 
-<note>
-Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
-a docblock containing this tag returns a plain <code>Tag</code>, its whole
-suffix folded into the description. See
-<a href="custom-tags.md">Custom Tags</a> for the current workaround if you
-need to recognize it yourself.
-</note>
+Parsing a `@phan-type` tag produces a `TypeAliasTag` instance, carrying the
+parsed `$alias` name and its `$type` alongside the `$name` every
+[Tag](phpdoc.md#tag) already provides.
+
+```php
+final class TypeAliasTag extends Tag {}
+```
+
+The same `TypeAliasTag` is produced by [@psalm-type](psalm-type-tag.md) and [@phpstan-type](phpstan-type-tag.md), which restate
+the same concept for their respective tools.
 
 Defined by Phan, a static analyzer for PHP; no dedicated
 documentation page could be confirmed for this tag.

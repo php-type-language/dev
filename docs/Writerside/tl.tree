@@ -196,7 +196,7 @@
             <toc-element topic="psalm-template-covariant-tag.md" />
             <toc-element topic="psalm-this-out-tag.md" />
             <toc-element topic="psalm-trace-tag.md" />
-            <toc-element topic="psalm-type-tag.md" wip="true" />
+            <toc-element topic="psalm-type-tag.md" />
             <toc-element topic="psalm-use-tag.md" />
             <toc-element topic="psalm-var-tag.md" />
             <toc-element topic="psalm-variadic-tag.md" />
@@ -238,7 +238,7 @@
             <toc-element topic="phpstan-template-covariant-tag.md" />
             <toc-element topic="phpstan-this-out-tag.md" />
             <toc-element topic="phpstan-throws-tag.md" />
-            <toc-element topic="phpstan-type-tag.md" wip="true" />
+            <toc-element topic="phpstan-type-tag.md" />
             <toc-element topic="phpstan-use-tag.md" />
             <toc-element topic="phpstan-var-tag.md" />
             <toc-element topic="phpstan-yield-tag.md" />
@@ -278,7 +278,7 @@
             <toc-element topic="phan-suppress-previous-line-tag.md" />
             <toc-element topic="phan-template-tag.md" />
             <toc-element topic="phan-transient-tag.md" />
-            <toc-element topic="phan-type-tag.md" wip="true" />
+            <toc-element topic="phan-type-tag.md" />
             <toc-element topic="phan-unused-param-tag.md" />
             <toc-element topic="phan-var-tag.md" />
             <toc-element topic="phan-write-only-tag.md" />

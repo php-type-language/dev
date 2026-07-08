@@ -1,22 +1,24 @@
 # @psalm-type
 
 <primary-label ref="phpdoc-component"/>
-<secondary-label ref="not-implemented"/>
 
 The `@psalm-type` tag declares a local alias for a complex type,
 which can then be reused across the codebase. It is defined by the
 static analyzer Psalm.
 
 ```
-"@psalm-type" <Name> "=" <Type>
+"@psalm-type" <Name> [ "=" ] <Type>
 ```
 
-<note>
-Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
-a docblock containing this tag returns a plain <code>Tag</code>, its whole
-suffix folded into the description. See
-<a href="custom-tags.md">Custom Tags</a> for the current workaround if you
-need to recognize it yourself.
-</note>
+Parsing a `@psalm-type` tag produces a `TypeAliasTag` instance, carrying the
+parsed `$alias` name and its `$type` alongside the `$name` every
+[Tag](phpdoc.md#tag) already provides.
+
+```php
+final class TypeAliasTag extends Tag {}
+```
+
+The same `TypeAliasTag` is produced by [@phpstan-type](phpstan-type-tag.md) and [@phan-type](phan-type-tag.md), which restate
+the same concept for their respective tools.
 
 See [Psalm's supported annotations](https://psalm.dev/docs/annotating_code/supported_annotations/#psalm-type).

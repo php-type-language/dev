@@ -58,6 +58,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\SuppressTag\SuppressTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\TypeAliasTag\TypeAliasTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\YieldTag\YieldTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
@@ -90,6 +91,7 @@ final class PsalmPlatform extends Platform
             'psalm-pure' => new PureTagDefinition(),
             'psalm-readonly-allow-private-mutation' => new ReadonlyAllowPrivateMutationTagDefinition(),
             'psalm-self-out' => new SelfOutTagDefinition(),
+            'psalm-type' => new TypeAliasTagDefinition(),
             'psalm-yield' => new YieldTagDefinition(),
             PsalmAssertUntaintedTagDefinition::NAME => new PsalmAssertUntaintedTagDefinition(),
             PsalmConsistentTemplatesTagDefinition::NAME => new PsalmConsistentTemplatesTagDefinition(),

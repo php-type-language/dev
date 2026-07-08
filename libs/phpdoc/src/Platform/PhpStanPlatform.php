@@ -38,6 +38,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\TypeAliasTag\TypeAliasTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\YieldTag\YieldTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
@@ -70,6 +71,7 @@ final class PhpStanPlatform extends Platform
             'phpstan-pure' => new PureTagDefinition(),
             'phpstan-readonly-allow-private-mutation' => new ReadonlyAllowPrivateMutationTagDefinition(),
             'phpstan-self-out' => new SelfOutTagDefinition(),
+            'phpstan-type' => new TypeAliasTagDefinition(),
             'phpstan-yield' => new YieldTagDefinition(),
             PhpStanImpureTagDefinition::NAME => new PhpStanImpureTagDefinition(),
             PhpStanIgnoreTagDefinition::NAME => new PhpStanIgnoreTagDefinition(),
