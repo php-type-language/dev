@@ -46,7 +46,7 @@ class PrettyTypePrinter extends TypePrinter
 {
     public const bool DEFAULT_WRAP_INTERSECTION_TYPE = true;
 
-    public const bool DEFAULT_WRAP_UNION_TYPE = true;
+    public const bool DEFAULT_WRAP_UNION_TYPE = false;
 
     public const bool DEFAULT_WRAP_CALLABLE_RETURN_TYPE = true;
 
