@@ -1,7 +1,6 @@
 # @expectedException
 
 <primary-label ref="phpdoc-component"/>
-<secondary-label ref="not-implemented"/>
 
 The `@expectedException` tag declares the `Throwable` a test method is
 expected to throw. It is an old PHPUnit-era convention that predates the
@@ -11,12 +10,12 @@ expected to throw. It is an old PHPUnit-era convention that predates the
 "@expectedException" <Type> [ <Description> ]
 ```
 
-<note>
-Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
-a docblock containing this tag returns a plain <code>Tag</code>, its whole
-suffix folded into the description. See
-<a href="custom-tags.md">Custom Tags</a> for the current workaround if you
-need to recognize it yourself.
-</note>
+Parsing a `@expectedException` tag produces a `ExpectedExceptionTag` instance, carrying the
+parsed `$type` alongside the `$name` and optional `$description` every
+[Tag](phpdoc.md#tag) already provides.
+
+```php
+final class ExpectedExceptionTag extends TypedTag {}
+```
 
 A historical PHPUnit convention, not a PhpStorm tag.

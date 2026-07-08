@@ -21,16 +21,19 @@ use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyWriteTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmAssertUntaintedTag\PsalmAssertUntaintedTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmConsistentTemplatesTag\PsalmConsistentTemplatesTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmExternalMutationFreeTag\PsalmExternalMutationFreeTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PsalmIfThisIsTag\PsalmIfThisIsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmIgnoreFalsableReturnTag\PsalmIgnoreFalsableReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmIgnoreNullableReturnTag\PsalmIgnoreNullableReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmIgnoreVariableMethodTag\PsalmIgnoreVariableMethodTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmIgnoreVariablePropertyTag\PsalmIgnoreVariablePropertyTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmIgnoreVarTag\PsalmIgnoreVarTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PsalmInheritorsTag\PsalmInheritorsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmMutationFreeTag\PsalmMutationFreeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmNoSealMethodsTag\PsalmNoSealMethodsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmNoSealPropertiesTag\PsalmNoSealPropertiesTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmOverrideMethodVisibilityTag\PsalmOverrideMethodVisibilityTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmOverridePropertyVisibilityTag\PsalmOverridePropertyVisibilityTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PsalmScopeThisTag\PsalmScopeThisTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmStubOverrideTag\PsalmStubOverrideTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmTaintSpecializeTag\PsalmTaintSpecializeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmTraceTag\PsalmTraceTagDefinition;
@@ -43,11 +46,13 @@ use TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag\RequireImplementsTagDefin
 use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SealMethodsTag\SealMethodsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SealPropertiesTag\SealPropertiesTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SelfOutTag\SelfOutTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\SuppressTag\SuppressTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\YieldTag\YieldTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 
 /**
@@ -74,8 +79,13 @@ final class PsalmPlatform extends Platform
             'psalm-consistent-constructor' => new ConsistentConstructorTagDefinition(),
             'psalm-pure' => new PureTagDefinition(),
             'psalm-readonly-allow-private-mutation' => new ReadonlyAllowPrivateMutationTagDefinition(),
+            'psalm-self-out' => new SelfOutTagDefinition(),
+            'psalm-yield' => new YieldTagDefinition(),
             PsalmAssertUntaintedTagDefinition::NAME => new PsalmAssertUntaintedTagDefinition(),
             PsalmConsistentTemplatesTagDefinition::NAME => new PsalmConsistentTemplatesTagDefinition(),
+            PsalmIfThisIsTagDefinition::NAME => new PsalmIfThisIsTagDefinition(),
+            PsalmInheritorsTagDefinition::NAME => new PsalmInheritorsTagDefinition(),
+            PsalmScopeThisTagDefinition::NAME => new PsalmScopeThisTagDefinition(),
             PsalmExternalMutationFreeTagDefinition::NAME => new PsalmExternalMutationFreeTagDefinition(),
             PsalmMutationFreeTagDefinition::NAME => new PsalmMutationFreeTagDefinition(),
             PsalmIgnoreFalsableReturnTagDefinition::NAME => new PsalmIgnoreFalsableReturnTagDefinition(),
@@ -120,6 +130,7 @@ final class PsalmPlatform extends Platform
             'psalm-template' => TemplateTagDefinition::NAME,
             'psalm-template-contravariant' => TemplateContravariantTagDefinition::NAME,
             'psalm-template-covariant' => TemplateCovariantTagDefinition::NAME,
+            'psalm-this-out' => 'psalm-self-out',
             'psalm-use' => UseTagDefinition::NAME,
             'psalm-var' => VarTagDefinition::NAME,
         ];

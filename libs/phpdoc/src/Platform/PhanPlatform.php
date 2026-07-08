@@ -11,10 +11,13 @@ use TypeLang\PhpDoc\DocBlock\Tag\MethodTag\MethodTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\MixinTag\MixinTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\OverrideTag\OverrideTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PhanClosureScopeTag\PhanClosureScopeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PhanConstructorUsedForSideEffectsTag\PhanConstructorUsedForSideEffectsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PhanForbidUndeclaredMagicMethodsTag\PhanForbidUndeclaredMagicMethodsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PhanForbidUndeclaredMagicPropertiesTag\PhanForbidUndeclaredMagicPropertiesTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PhanHardcodeReturnTypeTag\PhanHardcodeReturnTypeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PhanOutputReferenceTag\PhanOutputReferenceTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PhanRealReturnTag\PhanRealReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PhanSideEffectFreeTag\PhanSideEffectFreeTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PhanTransientTag\PhanTransientTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PhanWriteOnlyTag\PhanWriteOnlyTagDefinition;
@@ -50,7 +53,10 @@ final class PhanPlatform extends Platform
     public iterable $tags {
         get => [
             'phan-pure' => new PureTagDefinition(),
+            PhanClosureScopeTagDefinition::NAME => new PhanClosureScopeTagDefinition(),
             PhanConstructorUsedForSideEffectsTagDefinition::NAME => new PhanConstructorUsedForSideEffectsTagDefinition(),
+            PhanHardcodeReturnTypeTagDefinition::NAME => new PhanHardcodeReturnTypeTagDefinition(),
+            PhanRealReturnTagDefinition::NAME => new PhanRealReturnTagDefinition(),
             PhanForbidUndeclaredMagicMethodsTagDefinition::NAME => new PhanForbidUndeclaredMagicMethodsTagDefinition(),
             PhanForbidUndeclaredMagicPropertiesTagDefinition::NAME => new PhanForbidUndeclaredMagicPropertiesTagDefinition(),
             PhanSideEffectFreeTagDefinition::NAME => new PhanSideEffectFreeTagDefinition(),
@@ -66,6 +72,7 @@ final class PhanPlatform extends Platform
     public iterable $aliases {
         get => [
             'phan-abstract' => AbstractTagDefinition::NAME,
+            'phanclosurescope' => PhanClosureScopeTagDefinition::NAME,
             'phan-extends' => ExtendsTagDefinition::NAME,
             'phan-immutable' => ImmutableTagDefinition::NAME,
             'phan-inherits' => ExtendsTagDefinition::NAME,

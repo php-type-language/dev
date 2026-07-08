@@ -29,11 +29,13 @@ use TypeLang\PhpDoc\DocBlock\Tag\ReadonlyTag\ReadonlyTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag\RequireExtendsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\RequireInheritanceTag\RequireImplementsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\SelfOutTag\SelfOutTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateContravariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateCovariantTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TemplateTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\YieldTag\YieldTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 
 /**
@@ -60,6 +62,8 @@ final class PhpStanPlatform extends Platform
             'phpstan-consistent-constructor' => new ConsistentConstructorTagDefinition(),
             'phpstan-pure' => new PureTagDefinition(),
             'phpstan-readonly-allow-private-mutation' => new ReadonlyAllowPrivateMutationTagDefinition(),
+            'phpstan-self-out' => new SelfOutTagDefinition(),
+            'phpstan-yield' => new YieldTagDefinition(),
             PhpStanImpureTagDefinition::NAME => new PhpStanImpureTagDefinition(),
             PhpStanIgnoreLineTagDefinition::NAME => new PhpStanIgnoreLineTagDefinition(),
             PhpStanIgnoreNextLineTagDefinition::NAME => new PhpStanIgnoreNextLineTagDefinition(),
@@ -91,6 +95,7 @@ final class PhpStanPlatform extends Platform
             'phpstan-template' => TemplateTagDefinition::NAME,
             'phpstan-template-contravariant' => TemplateContravariantTagDefinition::NAME,
             'phpstan-template-covariant' => TemplateCovariantTagDefinition::NAME,
+            'phpstan-this-out' => 'phpstan-self-out',
             'phpstan-throws' => ThrowsTagDefinition::NAME,
             'phpstan-use' => UseTagDefinition::NAME,
             'phpstan-var' => VarTagDefinition::NAME,
