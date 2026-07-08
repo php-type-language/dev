@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Platform;
 
+use TypeLang\PhpDoc\DocBlock\Combinator\FlowTypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\AllowPrivateMutationTag\AllowPrivateMutationTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\AssertIfFalseTag\AssertIfFalseTagDefinition;
@@ -27,6 +28,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\PropertyTag\PropertyWriteTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmAssertUntaintedTag\PsalmAssertUntaintedTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmConsistentTemplatesTag\PsalmConsistentTemplatesTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmExternalMutationFreeTag\PsalmExternalMutationFreeTagDefinition;
+use TypeLang\PhpDoc\DocBlock\Tag\PsalmFlowTag\PsalmFlowTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmIfThisIsTag\PsalmIfThisIsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmIgnoreFalsableReturnTag\PsalmIgnoreFalsableReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\PsalmIgnoreNullableReturnTag\PsalmIgnoreNullableReturnTagDefinition;
@@ -65,12 +67,15 @@ use TypeLang\PhpDoc\DocBlock\Tag\TypeAliasTag\TypeAliasTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\YieldTag\YieldTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
+use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 /**
  * The Psalm platform: the `@psalm-*` tag family understood by Psalm.
  *
  * Tags that restate an existing one are wired as aliases onto it; Psalm's own
  * marker tags are contributed as their own flag definitions.
+ *
+ * @phpstan-import-type CombinatorType from CombinatorInterface
  */
 final class PsalmPlatform extends Platform
 {
@@ -105,6 +110,7 @@ final class PsalmPlatform extends Platform
             PsalmInheritorsTagDefinition::NAME => new PsalmInheritorsTagDefinition(),
             PsalmScopeThisTagDefinition::NAME => new PsalmScopeThisTagDefinition(),
             PsalmExternalMutationFreeTagDefinition::NAME => new PsalmExternalMutationFreeTagDefinition(),
+            PsalmFlowTagDefinition::NAME => new PsalmFlowTagDefinition(),
             PsalmMutationFreeTagDefinition::NAME => new PsalmMutationFreeTagDefinition(),
             PsalmIgnoreFalsableReturnTagDefinition::NAME => new PsalmIgnoreFalsableReturnTagDefinition(),
             PsalmIgnoreNullableReturnTagDefinition::NAME => new PsalmIgnoreNullableReturnTagDefinition(),
@@ -155,6 +161,15 @@ final class PsalmPlatform extends Platform
             'psalm-this-out' => 'psalm-self-out',
             'psalm-use' => UseTagDefinition::NAME,
             'psalm-var' => VarTagDefinition::NAME,
+        ];
+    }
+
+    /**
+     * @var iterable<non-empty-string, CombinatorType>
+     */
+    public iterable $combinators {
+        get => [
+            FlowTypeCombinator::NAME => new FlowTypeCombinator(),
         ];
     }
 }

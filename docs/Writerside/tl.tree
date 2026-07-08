@@ -151,7 +151,7 @@
             <toc-element topic="psalm-consistent-templates-tag.md" />
             <toc-element topic="psalm-external-mutation-free-tag.md" />
             <toc-element topic="psalm-extends-tag.md" />
-            <toc-element topic="psalm-flow-tag.md" wip="true" />
+            <toc-element topic="psalm-flow-tag.md" />
             <toc-element topic="psalm-if-this-is-tag.md" />
             <toc-element topic="psalm-ignore-falsable-return-tag.md" />
             <toc-element topic="psalm-ignore-nullable-return-tag.md" />
