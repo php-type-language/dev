@@ -186,11 +186,11 @@
             <toc-element topic="psalm-self-out-tag.md" />
             <toc-element topic="psalm-stub-override-tag.md" />
             <toc-element topic="psalm-suppress-tag.md" />
-            <toc-element topic="psalm-taint-escape-tag.md" wip="true" />
+            <toc-element topic="psalm-taint-escape-tag.md" />
             <toc-element topic="psalm-taint-sink-tag.md" wip="true" />
-            <toc-element topic="psalm-taint-source-tag.md" wip="true" />
+            <toc-element topic="psalm-taint-source-tag.md" />
             <toc-element topic="psalm-taint-specialize-tag.md" />
-            <toc-element topic="psalm-taint-unescape-tag.md" wip="true" />
+            <toc-element topic="psalm-taint-unescape-tag.md" />
             <toc-element topic="psalm-template-tag.md" />
             <toc-element topic="psalm-template-contravariant-tag.md" />
             <toc-element topic="psalm-template-covariant-tag.md" />
@@ -285,19 +285,19 @@
             <toc-element topic="phanclosurescope-tag.md" />
         </toc-element>
         <toc-element toc-title="PhpStorm" topic="phpstorm-tags.md">
-            <toc-element topic="noinspection-tag.md" wip="true" />
-            <toc-element topic="language-tag.md" wip="true" />
+            <toc-element topic="noinspection-tag.md" />
+            <toc-element topic="language-tag.md" />
             <toc-element topic="expected-exception-tag.md" />
             <toc-element topic="formatter-off-tag.md" />
             <toc-element topic="formatter-on-tag.md" />
         </toc-element>
         <toc-element toc-title="PHP CodeSniffer" topic="phpcs-tags.md">
-            <toc-element topic="phpcs-suppress-tag.md" wip="true" />
+            <toc-element topic="phpcs-suppress-tag.md" />
             <toc-element topic="coding-standards-ignore-start-tag.md" />
             <toc-element topic="coding-standards-ignore-end-tag.md" />
             <toc-element topic="coding-standards-ignore-line-tag.md" />
             <toc-element topic="coding-standards-ignore-file-tag.md" />
-            <toc-element topic="coding-standards-tag.md" wip="true" />
+            <toc-element topic="coding-standards-tag.md" />
         </toc-element>
         <toc-element topic="custom-tags.md" toc-title="Custom Tags">
             <toc-element topic="tags.md" />
