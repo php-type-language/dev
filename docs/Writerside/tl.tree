@@ -144,7 +144,7 @@
             <toc-element topic="psalm-assert-tag.md" wip="true" />
             <toc-element topic="psalm-assert-if-false-tag.md" wip="true" />
             <toc-element topic="psalm-assert-if-true-tag.md" wip="true" />
-            <toc-element topic="psalm-assert-untainted-tag.md" wip="true" />
+            <toc-element topic="psalm-assert-untainted-tag.md" />
             <toc-element topic="psalm-check-type-tag.md" wip="true" />
             <toc-element topic="psalm-check-type-exact-tag.md" wip="true" />
             <toc-element topic="psalm-consistent-constructor-tag.md" />
@@ -195,7 +195,7 @@
             <toc-element topic="psalm-template-contravariant-tag.md" />
             <toc-element topic="psalm-template-covariant-tag.md" />
             <toc-element topic="psalm-this-out-tag.md" wip="true" />
-            <toc-element topic="psalm-trace-tag.md" wip="true" />
+            <toc-element topic="psalm-trace-tag.md" />
             <toc-element topic="psalm-type-tag.md" wip="true" />
             <toc-element topic="psalm-use-tag.md" />
             <toc-element topic="psalm-var-tag.md" />

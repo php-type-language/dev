@@ -1,21 +1,27 @@
 # @psalm-trace
 
 <primary-label ref="phpdoc-component"/>
-<secondary-label ref="not-implemented"/>
 
-The `@psalm-trace` tag outputs the inferred type of a variable, for
-debugging purposes. It is defined by the static analyzer Psalm.
+The `@psalm-trace` tag outputs the inferred type of the given variable, for
+debugging purposes.
 
 ```
-"@psalm-trace" <Variable>
+"@psalm-trace" <Variable> [ <Description> ]
 ```
 
-<note>
-Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
-a docblock containing this tag returns a plain <code>Tag</code>, its whole
-suffix folded into the description. See
-<a href="custom-tags.md">Custom Tags</a> for the current workaround if you
-need to recognize it yourself.
-</note>
+> Inspecting the type Psalm infers for a variable.
+> ```php
+> /**
+>  * @psalm-trace $result
+>  */
+> ```
+
+Parsing a `@psalm-trace` tag produces a `PsalmTraceTag` instance, carrying
+the traced `$variable` alongside the `$name` and optional `$description`
+every [Tag](phpdoc.md#tag) already provides.
+
+```php
+final class PsalmTraceTag extends VariableTag {}
+```
 
 See [Psalm's supported annotations](https://psalm.dev/docs/annotating_code/supported_annotations/#psalm-trace).
