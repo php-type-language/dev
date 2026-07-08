@@ -83,7 +83,9 @@ final readonly class PhpUseStatementsReader
 
             if ($current->id === \T_NAME_QUALIFIED || $current->id === \T_STRING) {
                 $result = $current->text;
-            } elseif ($current->text === ';') {
+            } elseif ($current->text === ';' || $current->text === '{') {
+                // A namespace name is terminated either by ";" (single-statement
+                // syntax) or by "{" (bracketed/multiple namespace syntax).
                 $tokens->next();
 
                 return $result ?? '';
