@@ -6,8 +6,16 @@ namespace TypeLang\Parser\Tests\TypeResolver;
 
 use TypeLang\Parser\TypeResolver\PhpUseStatementsReader;
 use TypeLang\Parser\Tests\TypeResolver\Stub\ClassWithGroupUsesStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\ClosureUseStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\CommentsAroundUsesStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\FunctionAndConstUseStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\GroupUseStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\LeadingBackslashUseStub;
 use TypeLang\Parser\Tests\TypeResolver\Stub\MultipleNamespacesClassStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\NoImportsStub;
 use TypeLang\Parser\Tests\TypeResolver\Stub\SimpleClassStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\TraitUsageStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\TwoClassesInFileStub;
 
 final class PhpUseStatementsReaderTest extends TypeResolverTestCase
 {
@@ -99,5 +107,121 @@ final class PhpUseStatementsReaderTest extends TypeResolverTestCase
     public function testReturnsEmptyForInternalClass(): void
     {
         self::assertSame([], $this->read(\stdClass::class));
+    }
+
+    /**
+     * A class with no imports at all yields an empty list.
+     */
+    public function testReturnsEmptyForClassWithoutImports(): void
+    {
+        self::assertSame([], $this->read(NoImportsStub::class));
+    }
+
+    /**
+     * Comments (line, block and hash) interleaved with the `use` statements
+     * are irrelevant and must not affect the extracted imports.
+     */
+    public function testIgnoresCommentsAroundImports(): void
+    {
+        self::assertSame([
+            'Some\First',
+            'Aliased' => 'Some\Second',
+            'Some\Third',
+        ], $this->read(CommentsAroundUsesStub::class));
+    }
+
+    /**
+     * Namespace-level imports belong to every class in the block, so a class
+     * declared after another one still reports them.
+     */
+    public function testReadsImportsSharedBySeveralClassesInOneFile(): void
+    {
+        self::assertSame([
+            'Some\Shared',
+            'Alias' => 'Some\Other',
+        ], $this->read(TwoClassesInFileStub::class));
+    }
+
+    /**
+     * A `use TraitName;` inside the class body imports a trait into the class,
+     * not a type name into the file, and must not be reported.
+     */
+    public function testIgnoresTraitUsageInsideClassBody(): void
+    {
+        self::assertSame([
+            'Some\ImportedClass',
+        ], $this->read(TraitUsageStub::class));
+    }
+
+    /**
+     * The `use (...)` clause of a closure captures variables and has nothing to
+     * do with imports, so only the real import is reported.
+     */
+    public function testIgnoresClosureUseClause(): void
+    {
+        self::assertSame([
+            'Some\RealImport',
+        ], $this->read(ClosureUseStub::class));
+    }
+
+    /**
+     * A class living in the global scope of a file that declares no namespace
+     * at all still has its imports read.
+     *
+     * @throws \ReflectionException
+     */
+    public function testReadsImportsForClassWithoutNamespaceDeclaration(): void
+    {
+        require_once __DIR__ . '/Stub/GlobalScopeStub.php';
+
+        // The class has no namespace, so it cannot be referenced as a compile
+        // time `::class` constant; resolve it dynamically instead.
+        $class = 'GlobalScopeStub';
+
+        if (!\class_exists('GlobalScopeStub')) {
+            self::fail('The global-scope stub class was not loaded');
+        }
+
+        self::assertSame([
+            'Some\Any',
+            'Alias' => 'Some\Any\Thing',
+        ], $this->read($class));
+    }
+
+    /**
+     * A group `use A\{B, C as D};` is a shorthand for listing each import
+     * individually and is expanded into the same entries.
+     */
+    public function testExpandsGroupUseStatements(): void
+    {
+        self::assertSame([
+            'Some\Group\First',
+            'Alias' => 'Some\Group\Second',
+            'Some\Group\Third',
+        ], $this->read(GroupUseStub::class));
+    }
+
+    /**
+     * `use function` and `use const` import symbols from other symbol tables,
+     * not type names, so a type-import reader must leave them out.
+     */
+    public function testIgnoresFunctionAndConstImports(): void
+    {
+        self::assertSame([
+            'Some\ClassName',
+            'Alias' => 'Some\Aliased',
+        ], $this->read(FunctionAndConstUseStub::class));
+    }
+
+    /**
+     * A leading `\` in a `use` is redundant (imports are always absolute), so
+     * `use \Some\Any;` must be read exactly like `use Some\Any;`.
+     */
+    public function testReadsImportsWrittenWithLeadingBackslash(): void
+    {
+        self::assertSame([
+            'Some\Any',
+            'Alias' => 'Some\Any\Thing',
+        ], $this->read(LeadingBackslashUseStub::class));
     }
 }
