@@ -233,4 +233,242 @@ final class TypeResolverTest extends TestCase
         self::assertSame('Error', $this->resolveName($base, 'Error'));
         self::assertSame('TypeLang\Parser\Exception', $this->resolveName($derived, 'Error'));
     }
+
+    public function testResolvesImportsPassedThroughConstructor(): void
+    {
+        $resolver = new TypeResolver([
+            'TypeLang\Parser\Node',
+            'Error' => 'TypeLang\Parser\Exception',
+        ]);
+
+        self::assertSame('TypeLang\Parser\Node', $this->resolveName($resolver, 'Node'));
+        self::assertSame(
+            'TypeLang\Parser\Exception\SemanticException',
+            $this->resolveName($resolver, 'Error\SemanticException'),
+        );
+    }
+
+    /**
+     * An alias, like a real `use ... as`, is matched case-insensitively.
+     *
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string}>
+     */
+    public static function aliasCaseDataProvider(): iterable
+    {
+        yield 'exact' => ['Error\Sub', 'TypeLang\Parser\Exception\Sub'];
+        yield 'lower' => ['error\Sub', 'TypeLang\Parser\Exception\Sub'];
+        yield 'upper' => ['ERROR\Sub', 'TypeLang\Parser\Exception\Sub'];
+    }
+
+    #[DataProvider('aliasCaseDataProvider')]
+    public function testMatchesAliasCaseInsensitively(string $code, string $expected): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImportAs('TypeLang\Parser\Exception', 'Error');
+
+        self::assertSame($expected, $this->resolveName($resolver, $code));
+    }
+
+    public function testResolvesNamesInsideCallableType(): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node')
+            ->withTypeImportAs('App\Err\Exception', 'Error');
+
+        self::assertSame(<<<'AST'
+            CallableTypeNode
+              Name(callable)
+                Identifier(callable)
+              Callable\CallableParameterListNode
+                Callable\CallableParameterNode(simple)
+                  NamedTypeNode
+                    Name(App\Node)
+                      Identifier(App)
+                      Identifier(Node)
+              NamedTypeNode
+                Name(App\Err\Exception)
+                  Identifier(App)
+                  Identifier(Err)
+                  Identifier(Exception)
+            AST, $this->print($resolver->resolve($this->parse('callable(Node): Error'))));
+    }
+
+    public function testResolvesClassInClassConstant(): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node');
+
+        self::assertSame(<<<'AST'
+            ClassConstNode
+              Name(App\Node)
+                Identifier(App)
+                Identifier(Node)
+              Identifier(FOO)
+            AST, $this->print($resolver->resolve($this->parse('Node::FOO'))));
+    }
+
+    public function testResolvesClassInClassConstantMask(): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node');
+
+        self::assertSame(<<<'AST'
+            ClassConstMaskNode
+              Name(App\Node)
+                Identifier(App)
+                Identifier(Node)
+            AST, $this->print($resolver->resolve($this->parse('Node::*'))));
+    }
+
+    public function testResolvesNamesInsideIntersection(): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node')
+            ->withTypeImportAs('App\Err\Exception', 'Error');
+
+        self::assertSame(<<<'AST'
+            IntersectionTypeNode
+              NamedTypeNode
+                Name(App\Node)
+                  Identifier(App)
+                  Identifier(Node)
+              NamedTypeNode
+                Name(App\Err\Exception)
+                  Identifier(App)
+                  Identifier(Err)
+                  Identifier(Exception)
+            AST, $this->print($resolver->resolve($this->parse('Node&Error'))));
+    }
+
+    public function testResolvesNamesInsideConditional(): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node')
+            ->withTypeImportAs('App\Err\Exception', 'Error');
+
+        self::assertSame(<<<'AST'
+            TernaryExpressionNode
+              Condition\EqualConditionNode
+                NamedTypeNode
+                  Name(App\Node)
+                    Identifier(App)
+                    Identifier(Node)
+                NamedTypeNode
+                  Name(App\Err\Exception)
+                    Identifier(App)
+                    Identifier(Err)
+                    Identifier(Exception)
+              Literal\BoolLiteralNode(true)
+              Literal\BoolLiteralNode(false)
+            AST, $this->print($resolver->resolve($this->parse('Node is Error ? true : false'))));
+    }
+
+    /**
+     * A name prefixed with the `namespace` keyword is relative to the current
+     * namespace, not to a `use` import, so it must never be substituted.
+     */
+    public function testDoesNotResolveNamespaceRelativePrefix(): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node');
+
+        self::assertSame('namespace\Node', $this->resolveName($resolver, 'namespace\Node'));
+    }
+
+    /**
+     * Only the first segment is matched against the import table; a name whose
+     * first segment differs is left untouched even when a later segment equals
+     * an alias.
+     *
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function nonMatchingNameDataProvider(): iterable
+    {
+        yield 'unrelated root' => ['Other\Node'];
+        yield 'alias buried in tail' => ['Some\Error\Thing'];
+        // The fully-qualified target of the import itself starts with `App`,
+        // not with the `Node` alias, so re-resolving it is a no-op.
+        yield 'already written out' => ['App\Node'];
+    }
+
+    #[DataProvider('nonMatchingNameDataProvider')]
+    public function testDoesNotResolveNonMatchingName(string $code): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node')
+            ->withTypeImportAs('App\Err\Exception', 'Error');
+
+        self::assertSame($code, $this->resolveName($resolver, $code));
+    }
+
+    /**
+     * Nodes that carry no {@see Name} at all (literal types) pass through the
+     * resolver completely untouched — same instance, identical structure.
+     *
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function literalTypeDataProvider(): iterable
+    {
+        yield 'int' => ['42'];
+        yield 'string' => ['"foo"'];
+        yield 'bool true' => ['true'];
+        yield 'bool false' => ['false'];
+        yield 'null' => ['null'];
+    }
+
+    #[DataProvider('literalTypeDataProvider')]
+    public function testLeavesLiteralTypesUntouched(string $code): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node');
+
+        $source = $this->parse($code);
+        $before = $this->print($source);
+
+        $result = $resolver->resolve($source);
+
+        self::assertSame($source, $result);
+        self::assertSame($before, $this->print($result));
+    }
+
+    /**
+     * A type that references nothing the resolver knows about is returned
+     * byte-for-byte identical, regardless of how deeply it is nested.
+     */
+    public function testLeavesUnrelatedCompoundTypeUntouched(): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('App\Node');
+
+        $source = $this->parse('array<int, non-empty-string>|callable(bool): void');
+        $before = $this->print($source);
+
+        self::assertSame($before, $this->print($resolver->resolve($source)));
+    }
+
+    /**
+     * An empty resolver has no rules, so it may not alter any name.
+     */
+    public function testEmptyResolverIsANoOp(): void
+    {
+        $source = $this->parse('array{Node, Error\Sub}');
+        $before = $this->print($source);
+
+        self::assertSame($before, $this->print(new TypeResolver()->resolve($source)));
+    }
+
+    /**
+     * An import must resolve to at least one name segment; a value consisting
+     * only of namespace separators is malformed and has to blow up rather than
+     * silently produce a broken, segment-less name.
+     */
+    public function testMalformedImportIsRejected(): void
+    {
+        $resolver = new TypeResolver()
+            ->withTypeImport('\\');
+
+        $this->expectException(\Throwable::class);
+
+        $resolver->resolve($this->parse('Node'));
+    }
 }
