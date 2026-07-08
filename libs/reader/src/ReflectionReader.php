@@ -130,7 +130,7 @@ final class ReflectionReader implements ReaderInterface
     {
         $result = $this->convertNonNullNamedType($type);
 
-        if ($type->allowsNull() && $type->getName() !== 'null') {
+        if ($type->allowsNull() && !\in_array($type->getName(), ['null', 'mixed'])) {
             return new NullableTypeNode($result);
         }
 
