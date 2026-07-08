@@ -41,7 +41,6 @@ final readonly class TypeResolver
      * echo $ast->name->toString();
      * ```
      *
-     * @api
      * @param non-empty-string $name
      */
     public function withTypeImport(string $name): self
@@ -73,7 +72,6 @@ final readonly class TypeResolver
      * echo $ast->name->toString();
      * ```
      *
-     * @api
      * @param non-empty-string $name
      * @param non-empty-string $alias
      */
@@ -112,8 +110,6 @@ final readonly class TypeResolver
      * // >     TypeLang\Parser\Exception\SemanticException
      * // > }
      * ```
-     *
-     * @api
      */
     public function resolve(TypeNode $type): TypeNode
     {
