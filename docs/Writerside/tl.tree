@@ -209,7 +209,7 @@
             <toc-element topic="phpstan-assert-if-true-tag.md" />
             <toc-element topic="phpstan-consistent-constructor-tag.md" />
             <toc-element topic="phpstan-extends-tag.md" />
-            <toc-element topic="phpstan-ignore-tag.md" wip="true" />
+            <toc-element topic="phpstan-ignore-tag.md" />
             <toc-element topic="phpstan-ignore-line-tag.md" />
             <toc-element topic="phpstan-ignore-next-line-tag.md" />
             <toc-element topic="phpstan-immutable-tag.md" />
@@ -253,7 +253,7 @@
             <toc-element topic="phan-closure-scope-tag.md" />
             <toc-element topic="phan-constructor-used-for-side-effects-tag.md" />
             <toc-element topic="phan-extends-tag.md" />
-            <toc-element topic="phan-file-suppress-tag.md" wip="true" />
+            <toc-element topic="phan-file-suppress-tag.md" />
             <toc-element topic="phan-forbid-undeclared-magic-methods-tag.md" />
             <toc-element topic="phan-forbid-undeclared-magic-properties-tag.md" />
             <toc-element topic="phan-hardcode-return-type-tag.md" />
@@ -272,10 +272,10 @@
             <toc-element topic="phan-real-return-tag.md" />
             <toc-element topic="phan-return-tag.md" />
             <toc-element topic="phan-side-effect-free-tag.md" />
-            <toc-element topic="phan-suppress-current-line-tag.md" wip="true" />
-            <toc-element topic="phan-suppress-next-line-tag.md" wip="true" />
-            <toc-element topic="phan-suppress-next-next-line-tag.md" wip="true" />
-            <toc-element topic="phan-suppress-previous-line-tag.md" wip="true" />
+            <toc-element topic="phan-suppress-current-line-tag.md" />
+            <toc-element topic="phan-suppress-next-line-tag.md" />
+            <toc-element topic="phan-suppress-next-next-line-tag.md" />
+            <toc-element topic="phan-suppress-previous-line-tag.md" />
             <toc-element topic="phan-template-tag.md" />
             <toc-element topic="phan-transient-tag.md" />
             <toc-element topic="phan-type-tag.md" wip="true" />
