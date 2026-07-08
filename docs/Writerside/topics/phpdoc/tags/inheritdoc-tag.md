@@ -3,20 +3,20 @@
 <primary-label ref="phpdoc-component"/>
 <secondary-label ref="inline-tag"/>
 
-The `@inheritdoc` tag tells documentation generators to pull in the
+The `@inheritDoc` tag tells documentation generators to pull in the
 description and tags of the method or class being overridden or implemented,
 instead of repeating them. It saves an overriding method from having to
 restate a parent's contract word for word when it isn't changing that
 contract, only its implementation.
 
 ```
-"@inheritdoc" [ <Description> ]
+"@inheritDoc" [ <Description> ]
 ```
 
 > As a standalone tag, inheriting the parent docblock wholesale.
 > ```php
 > /**
->  * @inheritdoc
+>  * @inheritDoc
 >  */
 > public function send(Message $message): bool
 > ```
@@ -25,13 +25,13 @@ contract, only its implementation.
 > text.
 > ```php
 > /**
->  * {@inheritdoc} Also flushes the queue before
+>  * {@inheritDoc} Also flushes the queue before
 >  * returning.
 >  */
 > public function send(Message $message): bool
 > ```
 
-Parsing an `@inheritdoc` tag produces an `InheritDocTag`
+Parsing an `@inheritDoc` tag produces an `InheritDocTag`
 instance:
 
 ```php

@@ -1,18 +1,24 @@
 # @psalm-allow-private-mutation
 
 <primary-label ref="phpdoc-component"/>
-<secondary-label ref="not-implemented"/>
 
 The `@psalm-allow-private-mutation` tag allows a private-scope mutation
 of an otherwise immutable property. It is defined by the static
 analyzer Psalm.
 
-<note>
-Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing
-a docblock containing this tag returns a plain <code>Tag</code>, its whole
-suffix folded into the description. See
-<a href="custom-tags.md">Custom Tags</a> for the current workaround if you
-need to recognize it yourself.
-</note>
+```
+"@psalm-allow-private-mutation" [ <Description> ]
+```
+
+Parsing a `@psalm-allow-private-mutation` tag produces a `AllowPrivateMutationTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](phpdoc.md#tag) already carries.
+
+```php
+final class AllowPrivateMutationTag extends FlagTag {}
+```
+
+The same `AllowPrivateMutationTag` is produced by [@phpstan-allow-private-mutation](phpstan-allow-private-mutation-tag.md), which restate the
+same concept for their respective tools.
 
 See [Psalm's supported annotations](https://psalm.dev/docs/annotating_code/supported_annotations/#psalm-allow-private-mutation).
