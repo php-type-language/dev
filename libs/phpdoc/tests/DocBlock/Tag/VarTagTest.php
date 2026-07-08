@@ -16,7 +16,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class VarTagTest extends TestCase
+final class VarTagTest extends TagTestCase
 {
     #[Test]
     public function parsesTypeOnly(): void

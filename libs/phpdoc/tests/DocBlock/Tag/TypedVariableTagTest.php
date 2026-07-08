@@ -29,7 +29,7 @@ use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\Type\NamedTypeNode;
 
-final class TypedVariableTagTest extends TestCase
+final class TypedVariableTagTest extends TagTestCase
 {
     #[Test]
     public function parsesTypeVariableAndDescription(): void

@@ -23,7 +23,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class SuppressTagTest extends TestCase
+final class SuppressTagTest extends TagTestCase
 {
     #[Test]
     public function parsesSingleIssue(): void

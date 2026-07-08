@@ -20,7 +20,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class ReferenceTagTest extends TestCase
+final class ReferenceTagTest extends TagTestCase
 {
     #[Test]
     public function parsesCodeReferenceWithDescription(): void

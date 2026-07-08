@@ -9,7 +9,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\PsalmTaintSinkTag\PsalmTaintSinkTag;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class PsalmTaintSinkTagTest extends TestCase
+final class PsalmTaintSinkTagTest extends TagTestCase
 {
     #[Test]
     public function parsesNameAndVariable(): void

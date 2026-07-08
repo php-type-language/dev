@@ -17,7 +17,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class ExampleTagTest extends TestCase
+final class ExampleTagTest extends TagTestCase
 {
     #[Test]
     public function parsesLocationWithStartCountAndDescription(): void

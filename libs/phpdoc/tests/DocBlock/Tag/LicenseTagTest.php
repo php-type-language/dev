@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class LicenseTagTest extends TestCase
+final class LicenseTagTest extends TagTestCase
 {
     #[Test]
     public function parsesUrlForm(): void

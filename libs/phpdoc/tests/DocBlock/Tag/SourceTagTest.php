@@ -14,7 +14,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class SourceTagTest extends TestCase
+final class SourceTagTest extends TagTestCase
 {
     #[Test]
     public function parsesStartCountAndDescription(): void

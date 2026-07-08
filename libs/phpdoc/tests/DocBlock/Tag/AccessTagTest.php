@@ -16,7 +16,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class AccessTagTest extends TestCase
+final class AccessTagTest extends TagTestCase
 {
     #[Test]
     public function parsesVisibilityAndDescription(): void

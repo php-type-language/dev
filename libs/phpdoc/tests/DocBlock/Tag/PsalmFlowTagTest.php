@@ -11,7 +11,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\PsalmFlowTag\PsalmFlowTag;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class PsalmFlowTagTest extends TestCase
+final class PsalmFlowTagTest extends TagTestCase
 {
     #[Test]
     public function parsesFlowTypeWithVariable(): void

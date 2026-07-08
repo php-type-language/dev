@@ -59,7 +59,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class FlagTagTest extends TestCase
+final class FlagTagTest extends TagTestCase
 {
     #[Test]
     public function parsesWithoutDescription(): void

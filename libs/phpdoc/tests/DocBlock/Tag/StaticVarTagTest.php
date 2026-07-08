@@ -17,7 +17,7 @@ use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\Type\NamedTypeNode;
 
-final class StaticVarTagTest extends TestCase
+final class StaticVarTagTest extends TagTestCase
 {
     #[Test]
     public function parsesTypeVariableAndDescription(): void

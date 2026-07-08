@@ -17,7 +17,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class AuthorTagTest extends TestCase
+final class AuthorTagTest extends TagTestCase
 {
     #[Test]
     public function parsesNameAndEmail(): void

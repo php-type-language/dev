@@ -11,7 +11,7 @@ use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\Type\NamedTypeNode;
 
-final class TypeAliasTagTest extends TestCase
+final class TypeAliasTagTest extends TagTestCase
 {
     #[Test]
     public function parsesAliasWithExplicitAssignment(): void

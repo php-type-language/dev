@@ -11,7 +11,7 @@ use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\Type\NamedTypeNode;
 
-final class ImportTypeAliasTagTest extends TestCase
+final class ImportTypeAliasTagTest extends TagTestCase
 {
     #[Test]
     public function parsesImportWithoutLocalName(): void

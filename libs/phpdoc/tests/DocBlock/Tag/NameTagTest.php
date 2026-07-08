@@ -15,7 +15,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class NameTagTest extends TestCase
+final class NameTagTest extends TagTestCase
 {
     #[Test]
     public function parsesAliasAndDescription(): void

@@ -19,7 +19,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class TemplateTagTest extends TestCase
+final class TemplateTagTest extends TagTestCase
 {
     #[Test]
     public function parsesNameBoundDefaultAndDescription(): void

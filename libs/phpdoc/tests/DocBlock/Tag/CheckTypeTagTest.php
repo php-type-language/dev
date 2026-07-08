@@ -13,7 +13,7 @@ use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\Type\NamedTypeNode;
 
-final class CheckTypeTagTest extends TestCase
+final class CheckTypeTagTest extends TagTestCase
 {
     #[Test]
     public function parsesVariableAndType(): void

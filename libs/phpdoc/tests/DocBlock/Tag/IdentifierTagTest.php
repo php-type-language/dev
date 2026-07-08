@@ -17,7 +17,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\PsalmTaintUnescapeTag\PsalmTaintUnescapeTag;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class IdentifierTagTest extends TestCase
+final class IdentifierTagTest extends TagTestCase
 {
     #[Test]
     public function parsesIdentifierWithoutDescription(): void

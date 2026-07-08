@@ -25,7 +25,7 @@ use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 
-final class VariableTagTest extends TestCase
+final class VariableTagTest extends TagTestCase
 {
     #[Test]
     public function parsesVariableWithDescription(): void

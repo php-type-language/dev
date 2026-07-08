@@ -17,9 +17,8 @@ use TypeLang\PhpDoc\DocBlock\Tag\VersionTag\VersionTagDefinition;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistry;
-use TypeLang\PhpDoc\Tests\TestCase;
 
-final class VersionedTagTest extends TestCase
+final class VersionedTagTest extends TagTestCase
 {
     #[Test]
     public function parsesVersionAndDescription(): void

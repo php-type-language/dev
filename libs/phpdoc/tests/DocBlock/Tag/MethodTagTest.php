@@ -18,7 +18,7 @@ use TypeLang\PhpDoc\Parser\TagRegistry;
 use TypeLang\PhpDoc\Tests\TestCase;
 use TypeLang\Type\NamedTypeNode;
 
-final class MethodTagTest extends TestCase
+final class MethodTagTest extends TagTestCase
 {
     #[Test]
     public function parsesCallableCarryingItsOwnReturnType(): void
