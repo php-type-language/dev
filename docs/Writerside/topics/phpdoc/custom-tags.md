@@ -30,7 +30,7 @@ integer, then a name, then an optional description:
 ```php
 $spec = Spec::sequence(
     Spec::rule(IntegerCombinator::NAME, 'amount', 'Amount'),
-    Spec::rule(NameCombinator::NAME, 'currency', 'currency'),
+    Spec::rule(NameCombinator::NAME, 'currency', 'Currency'),
     Spec::maybe(
         Spec::rule(DescriptionCombinator::NAME, 'description'),
     ),
@@ -38,8 +38,8 @@ $spec = Spec::sequence(
 ```
 
 Each `Spec::rule()` takes the combinator that reads that part of the line, the
-alias its captured value is stored under, and — optionally — the name it renders
-as in the grammar above.
+alias its captured value is stored under, and — optionally — the name (e.g. 
+`Amount` or `Currency`) it renders as in the grammar above.
 
 <tip>
 The building blocks named here — <code>Integer</code>, <code>Name</code>,
