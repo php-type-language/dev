@@ -29,6 +29,10 @@ final readonly class TypeResolver
 
     public function withTypeImportAs(string $name, string $alias): self;
 
+    public function withTypeImportsFromClass(\ReflectionClass $class): self;
+
+    public function withTypeImportsFromFunction(\ReflectionFunctionAbstract $function): self;
+
     public function resolve(TypeNode $type): TypeNode;
 }
 ```
@@ -123,6 +127,61 @@ $statement = $resolver->resolve($statement);
 For a plain import the alias is inferred from the last segment of the name
 (`TypeLang\Parser\Node` becomes reachable as `Node`), which mirrors how a
 `use` statement without an explicit `as` behaves.
+
+## Reading Imports From Reflection
+
+Instead of listing imports by hand, `TypeResolver` can read them straight from
+the source file of a reflected class or function — resolving type names exactly
+as PHP would inside that element.
+
+Given a class whose file declares:
+
+```php
+namespace App;
+
+use TypeLang\Parser\Node;
+use TypeLang\Parser\Exception as Error;
+
+final class Example {}
+```
+
+`withTypeImportsFromClass()` registers both of its imports:
+
+```php
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeResolver;
+
+$statement = new TypeParser()
+    ->parse('Node|Error\SemanticException');
+
+$statement = new TypeResolver()
+    ->withTypeImportsFromClass(new ReflectionClass(App\Example::class))
+    ->resolve($statement);
+
+foreach ($statement->statements as $type) {
+    echo $type->name->toString(), "\n";
+}
+
+// Expected Output:
+//   TypeLang\Parser\Node
+//   TypeLang\Parser\Exception\SemanticException
+```
+
+`withTypeImportsFromFunction()` does the same for a free function or a method —
+both are a `ReflectionFunctionAbstract` — reading the imports of the file the
+function is declared in:
+
+```php
+use TypeLang\Parser\TypeResolver;
+
+$resolver = new TypeResolver()
+    ->withTypeImportsFromFunction(new ReflectionFunction('App\example'));
+```
+
+> Only the file header, up to the element's own declaration, is scanned, and
+> only real `use` imports are collected — a trait `use` inside a class body or
+> a closure `use (...)` capture is never mistaken for an import.
+> {style="note"}
 
 ## Custom Name Rewriting
 
