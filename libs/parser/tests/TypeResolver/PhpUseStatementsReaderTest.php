@@ -32,7 +32,7 @@ final class PhpUseStatementsReaderTest extends TypeResolverTestCase
      */
     private function read(string $class): array
     {
-        return $this->reader->getUseStatements(new \ReflectionClass($class));
+        return $this->reader->getClassUseStatements(new \ReflectionClass($class));
     }
 
     public function testReadsPlainAndAliasedImports(): void
