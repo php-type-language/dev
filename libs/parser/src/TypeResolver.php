@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Parser;
 
 use TypeLang\Parser\Traverser\TypeMapVisitor;
+use TypeLang\Parser\TypeResolver\PhpUseStatementsReader;
 use TypeLang\Parser\TypeResolver\PhpUseStatementsTransformer;
 use TypeLang\Type\TypeNode;
 
@@ -78,6 +79,47 @@ final readonly class TypeResolver
     public function withTypeImportAs(string $name, string $alias): self
     {
         return new self([...$this->imports, $alias => $name]);
+    }
+
+    /**
+     * Registers every `use` import declared in the source file of the given
+     * class, so that type names are resolved exactly as they would be inside
+     * that class.
+     *
+     * For a class whose file declares:
+     * ```
+     * namespace App;
+     *
+     * use TypeLang\Parser\Node;
+     * use TypeLang\Parser\Exception as Error;
+     *
+     * final class Example {}
+     * ```
+     *
+     * You can reuse its imports like this:
+     * ```
+     * $ast = new TypeParser()
+     *     ->parse(<<<'PHP'
+     *         Error\SemanticException
+     *         PHP);
+     *
+     * $ast = new TypeResolver()
+     *     ->withTypeImportsOf(new \ReflectionClass(App\Example::class))
+     *     ->resolve($ast);
+     *
+     * // Expected Output:
+     * // > TypeLang\Parser\Exception\SemanticException
+     * echo $ast->name->toString();
+     * ```
+     *
+     * @param \ReflectionClass<object> $class
+     */
+    public function withTypeImportsFromClass(\ReflectionClass $class): self
+    {
+        $statements = new PhpUseStatementsReader()
+            ->getUseStatements($class);
+
+        return new self([...$this->imports, ...$statements]);
     }
 
     private function createTraverser(): TraverserInterface

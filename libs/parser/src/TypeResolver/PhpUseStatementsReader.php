@@ -133,36 +133,57 @@ final readonly class PhpUseStatementsReader
     }
 
     /**
+     * Reads the type imports of the current namespace.
+     *
+     * Import statements always precede any other statement in a namespace, so
+     * reading stops as soon as a token that cannot open a "use" statement is
+     * reached — function/class declarations, closures and so on are never
+     * descended into.
+     *
      * @param \Iterator<array-key, \PhpToken> $tokens
      *
      * @return \Iterator<int|non-empty-string, non-empty-string>
      */
-    private function lookupUseStatements(\Iterator $tokens): \Iterator
+    private function readImports(\Iterator $tokens): \Iterator
     {
         while ($tokens->valid()) {
             $current = $tokens->current();
 
-            if ($current->id === \T_USE) {
+            if ($current->id === \T_WHITESPACE
+                || $current->id === \T_COMMENT
+                || $current->id === \T_DOC_COMMENT
+            ) {
                 $tokens->next();
-
-                foreach ($this->fetchUseStatement($tokens) as [$namespace, $alias]) {
-                    if ($alias === null) {
-                        yield $namespace;
-                    } else {
-                        yield $alias => $namespace;
-                    }
-                }
 
                 continue;
             }
 
-            $tokens->next();
-        }
+            // The first token that does not open a "use" statement ends the
+            // import section of the namespace.
+            if ($current->id !== \T_USE) {
+                break;
+            }
 
-        return $tokens;
+            // Skip the "use" keyword.
+            $tokens->next();
+
+            foreach ($this->fetchUseStatement($tokens) as [$namespace, $alias]) {
+                if ($alias === null) {
+                    yield $namespace;
+                } else {
+                    yield $alias => $namespace;
+                }
+            }
+        }
     }
 
     /**
+     * Reads a single "use" statement (the tokens after the "use" keyword up to
+     * and including the terminating ";") and returns the imports it declares.
+     *
+     * A statement may declare several imports — a comma-separated list or a
+     * group "use" — and covers "use function"/"use const" alike.
+     *
      * @param \Iterator<array-key, \PhpToken> $tokens
      *
      * @return list<array{non-empty-string, non-empty-string|null}>
@@ -171,36 +192,33 @@ final readonly class PhpUseStatementsReader
     {
         $buffer = $this->readStatementTokens($tokens);
 
-        if ($buffer === []) {
-            return [];
+        $offset = 0;
+
+        // "use function Some\fn;" and "use const Some\CONST;" are imports too;
+        // the "function"/"const" modifier is not part of the imported name.
+        if (isset($buffer[0]) && ($buffer[0]->id === \T_FUNCTION || $buffer[0]->id === \T_CONST)) {
+            $offset = 1;
         }
 
-        // A closure "use (...)" capture clause is not an import statement.
-        if ($buffer[0]->text === '(') {
-            return [];
+        $entries = \array_slice($buffer, $offset);
+        $prefix = null;
+
+        // A group "use Some\Prefix\{ A, B as C };" shares a common prefix; peel
+        // it off and read the brace-enclosed entries against it.
+        $open = $this->offsetOf($entries, '{');
+
+        if ($open !== null) {
+            $prefix = $this->readName(\array_slice($entries, 0, $open));
+
+            if ($prefix === '') {
+                return [];
+            }
+
+            $close = $this->offsetOf($entries, '}') ?? \count($entries);
+            $entries = \array_slice($entries, $open + 1, $close - $open - 1);
         }
 
-        // "use function Some\fun;" and "use const Some\CONST;" are imports too;
-        // drop the leading "function"/"const" keyword and read the rest as usual.
-        if ($buffer[0]->id === \T_FUNCTION || $buffer[0]->id === \T_CONST) {
-            \array_shift($buffer);
-        }
-
-        if ($buffer === []) {
-            return [];
-        }
-
-        $braceOffset = $this->indexOfBrace($buffer);
-
-        // Plain "use Some\Name (as Alias)?;".
-        if ($braceOffset === null) {
-            $import = $this->parseImport($buffer);
-
-            return $import === null ? [] : [$import];
-        }
-
-        // Group "use Some\Prefix\{ Name (as Alias)?, ... };".
-        return $this->parseGroupImports($buffer, $braceOffset);
+        return $this->parseEntries($entries, $prefix);
     }
 
     /**
@@ -238,59 +256,36 @@ final readonly class PhpUseStatementsReader
     }
 
     /**
-     * @param list<\PhpToken> $buffer
+     * Splits a comma-separated list of import entries and parses each of them,
+     * optionally prepending a shared group prefix.
      *
-     * @return int<0, max>|null
-     */
-    private function indexOfBrace(array $buffer): ?int
-    {
-        foreach ($buffer as $offset => $token) {
-            if ($token->text === '{') {
-                return $offset;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param list<\PhpToken> $buffer
-     * @param int<0, max> $braceOffset
+     * @param list<\PhpToken> $tokens
+     * @param non-empty-string|null $prefix
      *
      * @return list<array{non-empty-string, non-empty-string|null}>
      */
-    private function parseGroupImports(array $buffer, int $braceOffset): array
+    private function parseEntries(array $tokens, ?string $prefix): array
     {
-        $prefix = $this->readName(\array_slice($buffer, 0, $braceOffset));
-
-        if ($prefix === '') {
-            return [];
-        }
-
         $imports = [];
-        $member = [];
+        $entry = [];
 
-        foreach (\array_slice($buffer, $braceOffset + 1) as $token) {
-            if ($token->text === '}') {
-                break;
-            }
-
+        foreach ($tokens as $token) {
             if ($token->text === ',') {
-                $import = $this->parseImport($member, $prefix);
+                $import = $this->parseEntry($entry, $prefix);
 
                 if ($import !== null) {
                     $imports[] = $import;
                 }
 
-                $member = [];
+                $entry = [];
 
                 continue;
             }
 
-            $member[] = $token;
+            $entry[] = $token;
         }
 
-        $import = $this->parseImport($member, $prefix);
+        $import = $this->parseEntry($entry, $prefix);
 
         if ($import !== null) {
             $imports[] = $import;
@@ -301,11 +296,30 @@ final readonly class PhpUseStatementsReader
 
     /**
      * @param list<\PhpToken> $tokens
+     *
+     * @return int<0, max>|null
+     */
+    private function offsetOf(array $tokens, string $text): ?int
+    {
+        foreach ($tokens as $offset => $token) {
+            if ($token->text === $text) {
+                return $offset;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Parses a single "Name (as Alias)?" import entry, prepending the group
+     * prefix when one is given.
+     *
+     * @param list<\PhpToken> $tokens
      * @param non-empty-string|null $prefix
      *
      * @return array{non-empty-string, non-empty-string|null}|null
      */
-    private function parseImport(array $tokens, ?string $prefix = null): ?array
+    private function parseEntry(array $tokens, ?string $prefix): ?array
     {
         $nameTokens = [];
         $alias = null;
@@ -379,6 +393,6 @@ final readonly class PhpUseStatementsReader
 
         $tokens = $this->skipUnimportantNamespaces($class, $tokens);
 
-        return $this->lookupUseStatements($tokens);
+        return $this->readImports($tokens);
     }
 }
