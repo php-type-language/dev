@@ -11,6 +11,7 @@ use TypeLang\Parser\Tests\TypeResolver\Stub\CommentsAroundUsesStub;
 use TypeLang\Parser\Tests\TypeResolver\Stub\FunctionAndConstUseStub;
 use TypeLang\Parser\Tests\TypeResolver\Stub\GroupUseStub;
 use TypeLang\Parser\Tests\TypeResolver\Stub\LeadingBackslashUseStub;
+use TypeLang\Parser\Tests\TypeResolver\Stub\MultipleImportsPerStatementStub;
 use TypeLang\Parser\Tests\TypeResolver\Stub\MultipleNamespacesClassStub;
 use TypeLang\Parser\Tests\TypeResolver\Stub\NoImportsStub;
 use TypeLang\Parser\Tests\TypeResolver\Stub\SimpleClassStub;
@@ -166,5 +167,21 @@ final class PhpUseStatementsReaderTest extends TypeResolverTestCase
             'Some\Any',
             'Alias' => 'Some\Any\Thing',
         ], $this->read(LeadingBackslashUseStub::class));
+    }
+
+    /**
+     * A single `use A, B as C, D;` statement declares several imports at once,
+     * each of which must be reported individually.
+     */
+    public function testReadsMultipleImportsInOneStatement(): void
+    {
+        self::assertSame([
+            // use Some\A,
+            'Some\A',
+            // Some\B as Bee,
+            'Bee' => 'Some\B',
+            // Some\C;
+            'Some\C',
+        ], $this->read(MultipleImportsPerStatementStub::class));
     }
 }
