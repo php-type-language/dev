@@ -117,7 +117,53 @@ final readonly class TypeResolver
     public function withTypeImportsFromClass(\ReflectionClass $class): self
     {
         $statements = new PhpUseStatementsReader()
-            ->getUseStatements($class);
+            ->getClassUseStatements($class);
+
+        return new self([...$this->imports, ...$statements]);
+    }
+
+    /**
+     * Registers every `use` import available in the source file of the given
+     * function or method, so that type names are resolved exactly as they
+     * would be inside that function's body.
+     *
+     * For a function whose file declares:
+     * ```
+     * namespace App;
+     *
+     * use TypeLang\Parser\Node;
+     * use TypeLang\Parser\Exception as Error;
+     *
+     * function example(): void {}
+     * ```
+     *
+     * You can reuse its imports like this:
+     * ```
+     * $ast = new TypeParser()
+     *     ->parse(<<<'PHP'
+     *         Error\SemanticException
+     *         PHP);
+     *
+     * $ast = new TypeResolver()
+     *     ->withTypeImportsFromFunction(new \ReflectionFunction('App\example'))
+     *     ->resolve($ast);
+     *
+     * // Expected Output:
+     * // > TypeLang\Parser\Exception\SemanticException
+     * echo $ast->name->toString();
+     * ```
+     */
+    public function withTypeImportsFromFunction(\ReflectionFunctionAbstract $function): self
+    {
+        if ($function instanceof \ReflectionMethod) {
+            // For methods, we find the class and search by it. This will
+            // allow us to traverse fewer PHP tokens (optimize), since the
+            // class declaration is "higher".
+            return $this->withTypeImportsFromClass($function->getDeclaringClass());
+        }
+
+        $statements = new PhpUseStatementsReader()
+            ->getFunctionUseStatements($function);
 
         return new self([...$this->imports, ...$statements]);
     }

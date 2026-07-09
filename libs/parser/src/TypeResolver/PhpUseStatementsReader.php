@@ -4,8 +4,20 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\TypeResolver;
 
+use TypeLang\Parser\TypeResolver\PhpUseStatementsReader\NamespaceFinder;
+use TypeLang\Parser\TypeResolver\PhpUseStatementsReader\ReflectionSourcePrefixReader;
+
 final readonly class PhpUseStatementsReader
 {
+    private ReflectionSourcePrefixReader $reader;
+    private NamespaceFinder $namespace;
+
+    public function __construct()
+    {
+        $this->reader = new ReflectionSourcePrefixReader();
+        $this->namespace = new NamespaceFinder();
+    }
+
     /**
      * Return array of use statements from class.
      *
@@ -13,51 +25,33 @@ final readonly class PhpUseStatementsReader
      *
      * @return array<int|non-empty-string, non-empty-string>
      */
-    public function getUseStatements(\ReflectionClass $class): array
+    public function getClassUseStatements(\ReflectionClass $class): array
     {
         try {
-            $header = $this->getCodeHeader($class);
+            $header = $this->reader->readClassHeader($class);
         } catch (\Throwable) {
             $header = '';
         }
 
-        return [...$this->parse($class, $header)];
+        return [...$this->parse($class->getNamespaceName(), $header)];
     }
 
     /**
-     * Read file source up to the line where our class is defined.
+     * Return array of use statements from function.
      *
-     * @param \ReflectionClass<object> $class
+     * @param \ReflectionFunctionAbstract $function
      *
-     * @throws \LogicException
-     * @throws \RuntimeException
+     * @return array<int|non-empty-string, non-empty-string>
      */
-    private function getCodeHeader(\ReflectionClass $class): string
+    public function getFunctionUseStatements(\ReflectionFunctionAbstract $function): array
     {
-        $pathname = $class->getFileName();
-
-        if ($pathname === false || !$class->isUserDefined()) {
-            return '';
+        try {
+            $header = $this->reader->readFunctionHeader($function);
+        } catch (\Throwable) {
+            $header = '';
         }
 
-        $source = new \SplFileObject($pathname);
-        $source->flock(\LOCK_SH);
-
-        $line = 0;
-        $result = '';
-
-        while (!$source->eof()) {
-            if (++$line >= $class->getStartLine()) {
-                break;
-            }
-
-            $result .= $source->fgets();
-        }
-
-        $source->flock(\LOCK_UN);
-        unset($source);
-
-        return $result;
+        return [...$this->parse($function->getNamespaceName(), $header)];
     }
 
     /**
@@ -69,76 +63,23 @@ final readonly class PhpUseStatementsReader
     }
 
     /**
-     * @param \Iterator<array-key, \PhpToken> $tokens
-     */
-    private function readNamespace(\Iterator $tokens): string
-    {
-        // Skip "namespace" token.
-        $tokens->next();
-
-        $result = null;
-
-        while ($tokens->valid()) {
-            $current = $tokens->current();
-
-            if ($current->id === \T_NAME_QUALIFIED || $current->id === \T_STRING) {
-                $result = $current->text;
-            } elseif ($current->text === ';' || $current->text === '{') {
-                // A namespace name is terminated either by ";" or "{"
-                $tokens->next();
-
-                return $result ?? '';
-            }
-
-            $tokens->next();
-        }
-
-        return $result ?? '';
-    }
-
-    /**
-     * @param \ReflectionClass<object> $class
-     * @param \Iterator<array-key, \PhpToken> $tokens
+     * Parse the use statements from read source by tokenizing and reading the
+     * tokens. Returns an array of use statements and aliases.
      *
-     * @return \Iterator<array-key, \PhpToken>
+     * @return \Iterator<int|non-empty-string, non-empty-string>
      */
-    private function skipUnimportantNamespaces(\ReflectionClass $class, \Iterator $tokens): \Iterator
+    private function parse(string $namespace, string $source): \Iterator
     {
-        $expected = $class->getNamespaceName();
+        $tokens = $this->lex($source);
 
-        $atLeastOneNamespace = false;
+        // Rewind tokens iterator to expected namespace start offset
+        $tokens = $this->namespace->rewind($namespace, $tokens);
 
-        while ($tokens->valid()) {
-            $current = $tokens->current();
-
-            switch ($current->id) {
-                case \T_NAMESPACE:
-                    $atLeastOneNamespace = true;
-                    if ($this->readNamespace($tokens) === $expected) {
-                        return $tokens;
-                    }
-                    break;
-
-                case \T_USE:
-                    if ($atLeastOneNamespace === false) {
-                        return $tokens;
-                    }
-                    break;
-            }
-
-            $tokens->next();
-        }
-
-        return $tokens;
+        return $this->readImports($tokens);
     }
 
     /**
      * Reads the type imports of the current namespace.
-     *
-     * Import statements always precede any other statement in a namespace, so
-     * reading stops as soon as a token that cannot open a "use" statement is
-     * reached — function/class declarations, closures and so on are never
-     * descended into.
      *
      * @param \Iterator<array-key, \PhpToken> $tokens
      *
@@ -178,11 +119,7 @@ final readonly class PhpUseStatementsReader
     }
 
     /**
-     * Reads a single "use" statement (the tokens after the "use" keyword up to
-     * and including the terminating ";") and returns the imports it declares.
-     *
-     * A statement may declare several imports — a comma-separated list or a
-     * group "use" — and covers "use function"/"use const" alike.
+     * Reads a single "use" statement and returns the imports it declares.
      *
      * @param \Iterator<array-key, \PhpToken> $tokens
      *
@@ -194,8 +131,7 @@ final readonly class PhpUseStatementsReader
 
         $offset = 0;
 
-        // "use function Some\fn;" and "use const Some\CONST;" are imports too;
-        // the "function"/"const" modifier is not part of the imported name.
+        // "use function Some\fn;" and "use const Some\CONST;" are imports too
         if (isset($buffer[0]) && ($buffer[0]->id === \T_FUNCTION || $buffer[0]->id === \T_CONST)) {
             $offset = 1;
         }
@@ -203,8 +139,7 @@ final readonly class PhpUseStatementsReader
         $entries = \array_slice($buffer, $offset);
         $prefix = null;
 
-        // A group "use Some\Prefix\{ A, B as C };" shares a common prefix; peel
-        // it off and read the brace-enclosed entries against it.
+        // A group "use Some\Prefix\{ A, B as C };" shares a common prefix
         $open = $this->offsetOf($entries, '{');
 
         if ($open !== null) {
@@ -223,8 +158,7 @@ final readonly class PhpUseStatementsReader
 
     /**
      * Consumes the tokens of the current statement up to and including the
-     * terminating ";", returning the significant (non-whitespace, non-comment)
-     * ones.
+     * terminating ";"
      *
      * @param \Iterator<array-key, \PhpToken> $tokens
      *
@@ -256,8 +190,7 @@ final readonly class PhpUseStatementsReader
     }
 
     /**
-     * Splits a comma-separated list of import entries and parses each of them,
-     * optionally prepending a shared group prefix.
+     * Splits a comma-separated list of import entries
      *
      * @param list<\PhpToken> $tokens
      * @param non-empty-string|null $prefix
@@ -311,8 +244,7 @@ final readonly class PhpUseStatementsReader
     }
 
     /**
-     * Parses a single "Name (as Alias)?" import entry, prepending the group
-     * prefix when one is given.
+     * Parses a single "Name (as Alias)?" import entry
      *
      * @param list<\PhpToken> $tokens
      * @param non-empty-string|null $prefix
@@ -357,9 +289,6 @@ final readonly class PhpUseStatementsReader
     }
 
     /**
-     * Joins a sequence of name tokens into a namespace string, trimming any
-     * leading (fully qualified) or trailing (group prefix) separators.
-     *
      * @param list<\PhpToken> $tokens
      */
     private function readName(array $tokens): string
@@ -377,22 +306,5 @@ final readonly class PhpUseStatementsReader
         }
 
         return \trim($result, '\\');
-    }
-
-    /**
-     * Parse the use statements from read source by tokenizing and reading the
-     * tokens. Returns an array of use statements and aliases.
-     *
-     * @param \ReflectionClass<object> $class
-     *
-     * @return \Iterator<int|non-empty-string, non-empty-string>
-     */
-    private function parse(\ReflectionClass $class, string $source): \Iterator
-    {
-        $tokens = $this->lex($source);
-
-        $tokens = $this->skipUnimportantNamespaces($class, $tokens);
-
-        return $this->readImports($tokens);
     }
 }
