@@ -35,12 +35,30 @@ one Phan should trust.
   `@phan-extends`, and the rest, each shadowing its unprefixed counterpart
   for Phan specifically.
 
+<note>
+Nearly every tag in this group is recognized once the <b>Phan</b> platform is
+enabled. It ships with the library as <code>PhanPlatform</code> and is loaded by
+the <a href="platforms.md"><code>DocBlockParser::createDefault()</code></a>
+factory:
+
+<code-block lang="php">
+$parser = DocBlockParser::createDefault();
+</code-block>
+
+Alternatively, pass <code>new PhanPlatform()</code> to the parser constructor to
+add it on top of the standard tags. A bare <code>new DocBlockParser()</code>
+loads the standard platform only, so an unrecognized <code>@phan-*</code> tag
+then falls back to a plain <a href="phpdoc.md#tag">Tag</a>.
+</note>
+
 <warning>
-The tags in this group are listed for reference only. They are catalogued so
-the vocabulary is documented in one place, but are <b>not yet recognized</b>
-by the parser — a docblock containing one currently falls back to a plain
-<a href="phpdoc.md#tag">Tag</a>. Their pages are marked work-in-progress in
-the sidebar.
+Two assertion tags in this group are not yet recognized —
+<a href="phan-assert-true-condition-tag.md">@phan-assert-true-condition</a> and
+<a href="phan-assert-false-condition-tag.md">@phan-assert-false-condition</a>.
+A docblock containing either currently falls back to a plain
+<a href="phpdoc.md#tag">Tag</a>. The shorter forms
+<code>@phan-assert</code>, <code>@phan-assert-if-true</code> and
+<code>@phan-assert-if-false</code> are fully supported.
 </warning>
 
 For the authoritative definitions, see

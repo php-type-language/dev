@@ -30,13 +30,22 @@ written against earlier PHP_CodeSniffer releases.
   [@codingStandards](coding-standards-tag.md), the bare root of that legacy
   family.
 
-<warning>
-The tags in this group are listed for reference only. They are catalogued so
-the vocabulary is documented in one place, but are <b>not yet recognized</b>
-by the parser — a docblock containing one currently falls back to a plain
-<a href="phpdoc.md#tag">Tag</a>. Their pages are marked work-in-progress in
-the sidebar.
-</warning>
+<note>
+Every tag in this group is recognized once the <b>PHP CodeSniffer</b> platform
+is enabled. It ships with the library as <code>PhpCodeSnifferPlatform</code> and
+is loaded by the
+<a href="platforms.md"><code>DocBlockParser::createDefault()</code></a> factory:
+
+<code-block lang="php">
+$parser = DocBlockParser::createDefault();
+</code-block>
+
+Alternatively, pass <code>new PhpCodeSnifferPlatform()</code> to the parser
+constructor to add it on top of the standard tags. A bare
+<code>new DocBlockParser()</code> loads the standard platform only, so an
+unrecognized <code>@phpcs:*</code> or <code>@codingStandards*</code> tag then
+falls back to a plain <a href="phpdoc.md#tag">Tag</a>.
+</note>
 
 For the authoritative behavior, see
 [PHP_CodeSniffer's wiki on ignoring code](https://github.com/PHPCSStandards/PHP_CodeSniffer/wiki/Advanced-Usage#ignoring-parts-of-a-file).

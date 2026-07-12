@@ -41,13 +41,20 @@ vendor-neutral spellings such as <a href="suppress-tag.md">@suppress</a> and
 <a href="param-out-tag.md">@param-out</a>.
 </note>
 
-<warning>
-The tags in this group are listed for reference only. They are catalogued so
-the vocabulary is documented in one place, but are <b>not yet recognized</b>
-by the parser — a docblock containing one currently falls back to a plain
-<a href="phpdoc.md#tag">Tag</a>. Their pages are marked work-in-progress in
-the sidebar.
-</warning>
+<note>
+Every tag in this group is recognized once the <b>Psalm</b> platform is enabled.
+It ships with the library as <code>PsalmPlatform</code> and is loaded by the
+<a href="platforms.md"><code>DocBlockParser::createDefault()</code></a> factory:
+
+<code-block lang="php">
+$parser = DocBlockParser::createDefault();
+</code-block>
+
+Alternatively, pass <code>new PsalmPlatform()</code> to the parser constructor to
+add it on top of the standard tags. A bare <code>new DocBlockParser()</code>
+loads the standard platform only, so an unrecognized <code>@psalm-*</code> tag
+then falls back to a plain <a href="phpdoc.md#tag">Tag</a>.
+</note>
 
 For the authoritative definitions, see
 [Psalm's supported annotations](https://psalm.dev/docs/annotating_code/supported_annotations/).
