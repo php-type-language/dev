@@ -17,23 +17,35 @@ one Phan should trust.
 
 ## What This Group Covers
 
-* **Assertions** — `@phan-assert`, `@phan-assert-true-condition`,
-  `@phan-assert-false-condition`, `@phan-assert-if-true`,
-  `@phan-assert-if-false`.
-* **Line-scoped suppression** — `@phan-suppress-current-line`,
-  `@phan-suppress-next-line`, `@phan-suppress-next-next-line`,
-  `@phan-suppress-previous-line`, and the file-wide `@phan-file-suppress`.
-* **Return types** — `@phan-real-return`, `@phan-hardcode-return-type`,
+* **Assertions** — [@phan-assert](phan-assert-tag.md),
+  [@phan-assert-true-condition](phan-assert-true-condition-tag.md),
+  [@phan-assert-false-condition](phan-assert-false-condition-tag.md),
+  [@phan-assert-if-true](phan-assert-if-true-tag.md),
+  [@phan-assert-if-false](phan-assert-if-false-tag.md).
+* **Line-scoped suppression** —
+  [@phan-suppress-current-line](phan-suppress-current-line-tag.md),
+  [@phan-suppress-next-line](phan-suppress-next-line-tag.md),
+  [@phan-suppress-next-next-line](phan-suppress-next-next-line-tag.md),
+  [@phan-suppress-previous-line](phan-suppress-previous-line-tag.md), and the
+  file-wide [@phan-file-suppress](phan-file-suppress-tag.md).
+* **Return types** — [@phan-real-return](phan-real-return-tag.md),
+  [@phan-hardcode-return-type](phan-hardcode-return-type-tag.md),
   distinguishing the type Phan should infer from the one it should report.
-* **Magic-member policy** — `@phan-forbid-undeclared-magic-methods`,
-  `@phan-forbid-undeclared-magic-properties`,
-  `@phan-read-only`, `@phan-write-only`.
-* **Purity and immutability** — `@phan-pure`, `@phan-side-effect-free`,
-  `@phan-immutable`, `@phan-constructor-used-for-side-effects`.
-* **Prefixed overrides** — `@phan-var`, `@phan-param`, `@phan-return`,
-  `@phan-property`, `@phan-method`, `@phan-template`, `@phan-mixin`,
-  `@phan-extends`, and the rest, each shadowing its unprefixed counterpart
-  for Phan specifically.
+* **Magic-member policy** —
+  [@phan-forbid-undeclared-magic-methods](phan-forbid-undeclared-magic-methods-tag.md),
+  [@phan-forbid-undeclared-magic-properties](phan-forbid-undeclared-magic-properties-tag.md),
+  [@phan-read-only](phan-read-only-tag.md),
+  [@phan-write-only](phan-write-only-tag.md).
+* **Purity and immutability** — [@phan-pure](phan-pure-tag.md),
+  [@phan-side-effect-free](phan-side-effect-free-tag.md),
+  [@phan-immutable](phan-immutable-tag.md),
+  [@phan-constructor-used-for-side-effects](phan-constructor-used-for-side-effects-tag.md).
+* **Prefixed overrides** — [@phan-var](phan-var-tag.md),
+  [@phan-param](phan-param-tag.md), [@phan-return](phan-return-tag.md),
+  [@phan-property](phan-property-tag.md),
+  [@phan-method](phan-method-tag.md), [@phan-template](phan-template-tag.md),
+  [@phan-mixin](phan-mixin-tag.md), [@phan-extends](phan-extends-tag.md), and
+  the rest, each shadowing its unprefixed counterpart for Phan specifically.
 
 <note>
 Nearly every tag in this group is recognized once the <b>Phan</b> platform is

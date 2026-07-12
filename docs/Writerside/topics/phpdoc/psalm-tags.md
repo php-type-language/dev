@@ -21,17 +21,29 @@ Psalm is the analyzer reading it."
 
 The tags here span Psalm's full feature surface, including:
 
-* **Assertions** — `@psalm-assert`, `@psalm-assert-if-true`,
-  `@psalm-assert-if-false`, `@psalm-assert-untainted`.
-* **Immutability and purity** — `@psalm-immutable`, `@psalm-pure`,
-  `@psalm-mutation-free`, `@psalm-external-mutation-free`,
-  `@psalm-readonly`.
-* **Taint analysis** — `@psalm-taint-source`, `@psalm-taint-sink`,
-  `@psalm-taint-escape`, `@psalm-taint-specialize`, and related flow tags.
-* **Type aliases and generics** — `@psalm-type`, `@psalm-import-type`,
-  `@psalm-template` (with its covariant and contravariant forms).
-* **Prefixed overrides** — `@psalm-param`, `@psalm-return`, `@psalm-var`,
-  `@psalm-property`, `@psalm-method`, and the rest, each shadowing its
+* **Assertions** — [@psalm-assert](psalm-assert-tag.md),
+  [@psalm-assert-if-true](psalm-assert-if-true-tag.md),
+  [@psalm-assert-if-false](psalm-assert-if-false-tag.md),
+  [@psalm-assert-untainted](psalm-assert-untainted-tag.md).
+* **Immutability and purity** — [@psalm-immutable](psalm-immutable-tag.md),
+  [@psalm-pure](psalm-pure-tag.md),
+  [@psalm-mutation-free](psalm-mutation-free-tag.md),
+  [@psalm-external-mutation-free](psalm-external-mutation-free-tag.md),
+  [@psalm-readonly](psalm-readonly-tag.md).
+* **Taint analysis** — [@psalm-taint-source](psalm-taint-source-tag.md),
+  [@psalm-taint-sink](psalm-taint-sink-tag.md),
+  [@psalm-taint-escape](psalm-taint-escape-tag.md),
+  [@psalm-taint-specialize](psalm-taint-specialize-tag.md), and related
+  [flow tags](psalm-flow-tag.md).
+* **Type aliases and generics** — [@psalm-type](psalm-type-tag.md),
+  [@psalm-import-type](psalm-import-type-tag.md),
+  [@psalm-template](psalm-template-tag.md) (with its
+  [covariant](psalm-template-covariant-tag.md) and
+  [contravariant](psalm-template-contravariant-tag.md) forms).
+* **Prefixed overrides** — [@psalm-param](psalm-param-tag.md),
+  [@psalm-return](psalm-return-tag.md), [@psalm-var](psalm-var-tag.md),
+  [@psalm-property](psalm-property-tag.md),
+  [@psalm-method](psalm-method-tag.md), and the rest, each shadowing its
   unprefixed counterpart for Psalm specifically.
 
 <note>

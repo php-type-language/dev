@@ -19,18 +19,30 @@ disagree.
 
 ## What This Group Covers
 
-* **Assertions** — `@phpstan-assert`, `@phpstan-assert-if-true`,
-  `@phpstan-assert-if-false`.
+* **Assertions** — [@phpstan-assert](phpstan-assert-tag.md),
+  [@phpstan-assert-if-true](phpstan-assert-if-true-tag.md),
+  [@phpstan-assert-if-false](phpstan-assert-if-false-tag.md).
 * **Diagnostic suppression** — the `@phpstan-ignore` family
-  (`@phpstan-ignore`, `@phpstan-ignore-line`, `@phpstan-ignore-next-line`).
-* **Purity and immutability** — `@phpstan-pure`, `@phpstan-impure`,
-  `@phpstan-immutable`, `@phpstan-readonly`,
-  `@phpstan-pure-unless-callable-is-impure`.
-* **Type aliases and generics** — `@phpstan-type`, `@phpstan-import-type`,
-  `@phpstan-template` (with its covariant and contravariant forms).
-* **Prefixed overrides** — `@phpstan-param`, `@phpstan-return`,
-  `@phpstan-var`, `@phpstan-property`, `@phpstan-method`,
-  `@phpstan-param-out`, `@phpstan-self-out`, and the rest, each shadowing
+  ([@phpstan-ignore](phpstan-ignore-tag.md),
+  [@phpstan-ignore-line](phpstan-ignore-line-tag.md),
+  [@phpstan-ignore-next-line](phpstan-ignore-next-line-tag.md)).
+* **Purity and immutability** — [@phpstan-pure](phpstan-pure-tag.md),
+  [@phpstan-impure](phpstan-impure-tag.md),
+  [@phpstan-immutable](phpstan-immutable-tag.md),
+  [@phpstan-readonly](phpstan-readonly-tag.md),
+  [@phpstan-pure-unless-callable-is-impure](phpstan-pure-unless-callable-is-impure-tag.md).
+* **Type aliases and generics** — [@phpstan-type](phpstan-type-tag.md),
+  [@phpstan-import-type](phpstan-import-type-tag.md),
+  [@phpstan-template](phpstan-template-tag.md) (with its
+  [covariant](phpstan-template-covariant-tag.md) and
+  [contravariant](phpstan-template-contravariant-tag.md) forms).
+* **Prefixed overrides** — [@phpstan-param](phpstan-param-tag.md),
+  [@phpstan-return](phpstan-return-tag.md),
+  [@phpstan-var](phpstan-var-tag.md),
+  [@phpstan-property](phpstan-property-tag.md),
+  [@phpstan-method](phpstan-method-tag.md),
+  [@phpstan-param-out](phpstan-param-out-tag.md),
+  [@phpstan-self-out](phpstan-self-out-tag.md), and the rest, each shadowing
   its unprefixed counterpart for PHPStan specifically.
 
 <note>
