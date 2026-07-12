@@ -6,7 +6,7 @@ includes:
   - libs/parser/phpstan.neon
   - libs/phpdoc/phpstan.neon
   - libs/printer/phpstan.neon
-  # - libs/reader/phpstan.neon
+  - libs/reader/phpstan.neon
   - libs/types/phpstan.neon
 parameters:
   level: max

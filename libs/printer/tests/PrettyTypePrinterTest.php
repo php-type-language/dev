@@ -16,11 +16,6 @@ final class PrettyTypePrinterTest extends TestCase
     /**
      * @param non-empty-string $newLine
      * @param non-empty-string $indention
-     * @param bool $wrapUnionType
-     * @param bool $wrapIntersectionType
-     * @param bool $wrapCallableReturnType
-     * @param int $multilineShape
-     * @return PrettyTypePrinter
      */
     private function printer(
         string $newLine = "\n",

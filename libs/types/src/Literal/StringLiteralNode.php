@@ -137,8 +137,12 @@ final class StringLiteralNode extends LiteralNode implements ParsableLiteralNode
      */
     private static function renderHexadecimalSequences(string $body): string
     {
-        return @\preg_replace_callback(self::HEX_SEQUENCE_PATTERN, static fn(array $matches): string
-            => \chr((int) \hexdec($matches[1])), $body) ?? $body;
+        $callback = static fn(array $matches): string
+            // @phpstan-ignore-next-line : A hexdec returns int<0, 255>
+            => \chr((int) \hexdec($matches[1]));
+
+        return @\preg_replace_callback(self::HEX_SEQUENCE_PATTERN, $callback, $body)
+            ?? $body;
     }
 
     /**
@@ -150,6 +154,7 @@ final class StringLiteralNode extends LiteralNode implements ParsableLiteralNode
     private static function renderUtfSequences(string $body): string
     {
         return @\preg_replace_callback(self::UTF_SEQUENCE_PATTERN, static function (array $matches): string {
+            /** @var int<0, 1114112> $code */
             $code = (int) \hexdec($matches[1]);
 
             // @phpstan-ignore-next-line : PHPStan false-positive mb_chr evaluation
@@ -158,6 +163,7 @@ final class StringLiteralNode extends LiteralNode implements ParsableLiteralNode
             }
 
             if (0x80 > $code %= 0x200000) {
+                // @phpstan-ignore-next-line : Code is valid
                 return \chr($code);
             }
 

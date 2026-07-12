@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Printer\Exception\NonPrintableNodeException;
 use TypeLang\Type\CallableTypeNode;
 use TypeLang\Type\ClassConstMaskNode;
 use TypeLang\Type\ClassConstNode;
-use TypeLang\Type\Condition\Condition;
-use TypeLang\Type\Condition\EqualConditionNode;
-use TypeLang\Type\Condition\NotEqualConditionNode;
 use TypeLang\Type\ConstMaskNode;
 use TypeLang\Type\IntersectionTypeNode;
 use TypeLang\Type\Literal\BoolLiteralNode;
