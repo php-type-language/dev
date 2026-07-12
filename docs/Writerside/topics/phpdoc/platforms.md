@@ -69,8 +69,16 @@ factory:
 $parser = DocBlockParser::createDefault();
 </code-block>
 
-To register your own platform on top of the built-in tool families, list them
-together in the constructor rather than passing yours alone.
+To register your own platform on top of the built-in tool families, pass it to
+<code>createDefault()</code> via the <code>$additionalPlatforms</code> argument —
+it is appended after the built-in platforms, so it extends them and overrides an
+entry only when it reuses the same name:
+
+<code-block lang="php">
+$parser = DocBlockParser::createDefault(additionalPlatforms: [
+    new MoneyPlatform(),
+]);
+</code-block>
 </note>
 
 The definitions that end up registered are exposed as `$parser->tags` (a
