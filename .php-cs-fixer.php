@@ -5,7 +5,11 @@ use PhpCsFixer\Finder;
 use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
 const PHPCS_DIRECTORIES = [
-    __DIR__ . '/libs',
+    __DIR__ . '/libs/parser/src',
+    __DIR__ . '/libs/phpdoc/src',
+    __DIR__ . '/libs/printer/src',
+    __DIR__ . '/libs/reader/src',
+    __DIR__ . '/libs/types/src',
 ];
 
 const PHPCS_IGNORE_FILES = [
