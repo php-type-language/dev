@@ -84,14 +84,22 @@ final readonly class TagRegistry implements TagRegistryInterface, \IteratorAggre
         return $result;
     }
 
+    public function has(string $name): bool
+    {
+        $lowercase = \strtolower($name);
+
+        return isset($this->aliases[$lowercase])
+            || isset($this->definitions[$lowercase]);
+    }
+
     public function get(string $name): TagDefinitionInterface
     {
         // normalize
-        $name = \strtolower($name);
+        $lowercase = \strtolower($name);
         // canonicalize
-        $name = $this->aliases[$name] ?? $name;
+        $canonical = $this->aliases[$lowercase] ?? $lowercase;
 
-        return $this->definitions[$name]
+        return $this->definitions[$canonical]
             ?? $this->genericTagDefinition;
     }
 
