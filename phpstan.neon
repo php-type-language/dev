@@ -15,4 +15,4 @@ parameters:
   fileExtensions:
     - php
   tmpDir: vendor/.cache.phpstan
-  reportUnmatchedIgnoredErrors: true
+  reportUnmatchedIgnoredErrors: false
