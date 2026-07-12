@@ -14,57 +14,53 @@
 
 ---
 
-Reference implementation for TypeLang Printer.
+## About
 
-## Resources
+The reference printer for **TypeLang**. It renders `TypeLang\Type\*` AST nodes
+back into their string representation.
 
-- [Documentation](https://typelang.dev)
+Two printers are provided:
+
+- `NativeTypePrinter` — outputs a valid, native PHP type declaration.
+- `PrettyTypePrinter` — outputs the full PHPStan/Psalm-style type, formatted
+  across multiple lines.
+
+Full documentation is available at [typelang.dev](https://typelang.dev).
 
 ## Installation
 
-TypeLang Printer is available as Composer repository and can be installed
-using the following command in a root of your project:
+Install the package via [Composer](https://getcomposer.org):
 
 ```sh
 composer require type-lang/printer
 ```
 
-## Quick Start
+**Requirements:** 
+- PHP 8.4+
+
+## Usage
+
+Parse a type into an AST (using [`type-lang/parser`](https://packagist.org/packages/type-lang/parser)),
+then print it back with either printer:
 
 ```php
-$parser = new \TypeLang\Parser\TypeParser();
-$type = $parser->parseType(<<<'PHP'
+$parser = new TypeLang\Parser\TypeParser();
+
+$type = $parser->parse(<<<'PHP'
     array{
-        field1: (callable(Example,int):mixed),
+        field1: (callable(Example, int): mixed),
         field2: list<Some>,
-        field3: iterable<array-key, array{int, non-empty-string}>,
-        Some::CONST_*,
-        "\njson_flags": \JSON_*,
         ...
     }
     PHP);
 
-// Print Statement
-
-$native = new \TypeLang\Printer\NativeTypePrinter();
-echo $native->print($type);
-
-// Expected Output:
+echo new TypeLang\Printer\NativeTypePrinter()->print($type);
 // array
 
-$phpdoc = new \TypeLang\Printer\PrettyTypePrinter();
-echo $phpdoc->print($type);
-
-// Expected Output:
+echo new TypeLang\Printer\PrettyTypePrinter()->print($type);
 // array{
 //     field1: callable(Example, int): mixed,
 //     field2: list<Some>,
-//     field3: iterable<array-key, array{
-//         int,
-//         non-empty-string
-//     }>,
-//     Some::CONST_*,
-//     "\njson_flags": \JSON_*,
 //     ...
 // }
 ```
