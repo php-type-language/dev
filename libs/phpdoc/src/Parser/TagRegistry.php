@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Parser;
 
-use TypeLang\PhpDoc\DocBlock\Tag\GenericTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\TagRegistryInterface;
@@ -29,77 +28,22 @@ use TypeLang\PhpDoc\TagRegistryInterface;
  */
 final readonly class TagRegistry implements TagRegistryInterface, \IteratorAggregate
 {
-    /**
-     * @var array<non-empty-lowercase-string, TagDefinitionInterface>
-     */
-    private array $definitions;
-
-    /**
-     * @var array<non-empty-lowercase-string, non-empty-lowercase-string>
-     */
-    private array $aliases;
-
-    /**
-     * @param iterable<non-empty-string, TagDefinitionInterface> $definitions
-     * @param iterable<non-empty-string, non-empty-string> $aliases
-     */
     public function __construct(
-        iterable $definitions = [],
-        iterable $aliases = [],
-        private TagDefinitionInterface $genericTagDefinition = new GenericTagDefinition(),
-    ) {
-        $this->definitions = $this->formatDefinitions($definitions);
-        $this->aliases = $this->formatAliases($aliases);
-    }
-
-    /**
-     * @param iterable<non-empty-string, TagDefinitionInterface> $definitions
-     * @return array<non-empty-lowercase-string, TagDefinitionInterface>
-     */
-    private function formatDefinitions(iterable $definitions): array
-    {
-        $result = [];
-
-        foreach ($definitions as $name => $definition) {
-            $result[\strtolower($name)] = $definition;
-        }
-
-        \ksort($result);
-
-        return $result;
-    }
-
-    /**
-     * @param iterable<non-empty-string, non-empty-string> $aliases
-     * @return array<non-empty-lowercase-string, non-empty-lowercase-string>
-     */
-    private function formatAliases(iterable $aliases): array
-    {
-        $result = [];
-
-        foreach ($aliases as $alias => $name) {
-            $result[\strtolower($alias)] = \strtolower($name);
-        }
-
-        return $result;
-    }
+        /**
+         * @var array<non-empty-lowercase-string, TagDefinitionInterface>
+         */
+        private array $definitions,
+        private TagDefinitionInterface $genericTagDefinition,
+    ) {}
 
     public function has(string $name): bool
     {
-        $lowercase = \strtolower($name);
-
-        return isset($this->aliases[$lowercase])
-            || isset($this->definitions[$lowercase]);
+        return isset($this->definitions[\strtolower($name)]);
     }
 
     public function get(string $name): TagDefinitionInterface
     {
-        // normalize
-        $lowercase = \strtolower($name);
-        // canonicalize
-        $canonical = $this->aliases[$lowercase] ?? $lowercase;
-
-        return $this->definitions[$canonical]
+        return $this->definitions[\strtolower($name)]
             ?? $this->genericTagDefinition;
     }
 
