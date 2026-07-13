@@ -11,6 +11,8 @@
 >
     <testsuites>
         <testsuite name="components">
+            <directory>libs/mapper/tests</directory>
+            <directory>libs/mapper/libs/property-accessor/tests</directory>
             <directory>libs/parser/tests</directory>
             <directory>libs/phpdoc/tests</directory>
             <directory>libs/printer/tests</directory>
@@ -23,6 +25,8 @@
 
     <source>
         <include>
+            <directory>libs/mapper/src</directory>
+            <directory>libs/mapper/libs/property-accessor/src</directory>
             <directory>libs/parser/src</directory>
             <directory>libs/phpdoc/src</directory>
             <directory>libs/printer/src</directory>

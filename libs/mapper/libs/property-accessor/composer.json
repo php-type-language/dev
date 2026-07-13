@@ -1,34 +1,24 @@
 {
-    "name": "type-lang/parser",
+    "name": "local/property-accessor",
     "type": "library",
-    "description": "Library for parsing and validating TypeLang syntax and converting it into AST nodes",
-    "keywords": ["parser", "language", "php", "phpdoc"],
+    "description": "Library for property availability and read/write operations",
+    "keywords": ["property", "index", "access", "extraction", "injection", "reflection"],
     "license": "MIT",
-    "support": {
-        "source": "https://github.com/php-type-language/parser",
-        "issues": "https://github.com/php-type-language/parser/issues"
-    },
     "require": {
-        "php": "^8.4",
-        "type-lang/types": "^2.0",
-        "phplrt/lexer": "^3.7",
-        "phplrt/parser": "^3.7",
-        "phplrt/source": "^3.7"
+        "php": "^8.4"
     },
     "autoload": {
         "psr-4": {
-            "TypeLang\\Parser\\": "src"
+            "TypeLang\\PropertyAccessor\\": "src"
         }
     },
     "require-dev": {
-        "jetbrains/phpstorm-attributes": "^1.2",
-        "phplrt/compiler": "^3.7.5",
         "phpstan/phpstan": "^2.2",
         "phpunit/phpunit": "^13.2"
     },
     "autoload-dev": {
         "psr-4": {
-            "TypeLang\\Parser\\Tests\\": "tests"
+            "TypeLang\\PropertyAccessor\\Tests\\": "tests"
         }
     },
     "extra": {
@@ -41,6 +31,7 @@
         "sort-packages": true,
         "platform-check": true,
         "bin-compat": "full",
+        "optimize-autoloader": true,
         "preferred-install": {
             "*": "dist"
         }
