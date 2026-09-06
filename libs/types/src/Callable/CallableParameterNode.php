@@ -9,7 +9,7 @@ use TypeLang\Type\Literal\VariableLiteralNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
 
-final class CallableParameterNode extends Node implements \Stringable
+final class CallableParameterNode extends Node
 {
     public function __construct(
         public ?TypeNode $type = null,
@@ -37,28 +37,5 @@ final class CallableParameterNode extends Node implements \Stringable
     public function is(string $class): bool
     {
         return $this instanceof $class;
-    }
-
-    public function __toString(): string
-    {
-        $result = [];
-
-        if ($this->isOutput) {
-            $result[] = 'output';
-        }
-
-        if ($this->isVariadic) {
-            $result[] = 'variadic';
-        }
-
-        if ($this->isOptional) {
-            $result[] = 'optional';
-        }
-
-        if ($result === []) {
-            return 'simple';
-        }
-
-        return \implode(', ', $result);
     }
 }

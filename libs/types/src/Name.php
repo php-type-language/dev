@@ -23,6 +23,9 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public readonly array $parts;
 
+    public readonly Identifier $first;
+    public readonly Identifier $last;
+
     /**
      * @param iterable<array-key, Identifier> $parts
      */
@@ -39,6 +42,9 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
         \assert($parts !== [], new \InvalidArgumentException('Name parts count can not be empty'));
 
         $this->parts = $parts;
+
+        $this->first = \reset($parts);
+        $this->last = \end($parts);
     }
 
     public static function createFromString(string|\Stringable $name): self
@@ -62,7 +68,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function getFirstPart(): Identifier
     {
-        return $this->parts[0];
+        return $this->first;
     }
 
     /**
@@ -72,7 +78,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function getFirstPartAsString(): string
     {
-        return \reset($this->parts)->toString();
+        return $this->first->toString();
     }
 
     /**
@@ -82,7 +88,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function getFirstPartAsLowerString(): string
     {
-        return \reset($this->parts)->toLowerString();
+        return $this->first->toLowerString();
     }
 
     /**
@@ -90,7 +96,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function getLastPart(): Identifier
     {
-        return $this->parts[\count($this->parts) - 1];
+        return $this->last;
     }
 
     /**
@@ -100,7 +106,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function getLastPartAsString(): string
     {
-        return \end($this->parts)->toString();
+        return $this->last->toString();
     }
 
     /**
@@ -110,7 +116,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function getLastPartAsLowerString(): string
     {
-        return \end($this->parts)->toLowerString();
+        return $this->last->toLowerString();
     }
 
     /**

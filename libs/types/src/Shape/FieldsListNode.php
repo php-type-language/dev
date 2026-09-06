@@ -9,7 +9,7 @@ use TypeLang\Type\NodeList;
 /**
  * @template-extends NodeList<FieldNode>
  */
-final class FieldsListNode extends NodeList implements \Stringable
+final class FieldsListNode extends NodeList
 {
     /**
      * @param list<FieldNode> $list
@@ -19,10 +19,5 @@ final class FieldsListNode extends NodeList implements \Stringable
         public bool $sealed = true,
     ) {
         parent::__construct($list);
-    }
-
-    public function __toString(): string
-    {
-        return $this->sealed ? 'sealed' : 'unsealed';
     }
 }

@@ -8,7 +8,7 @@ use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
 
-abstract class FieldNode extends Node implements \Stringable
+abstract class FieldNode extends Node
 {
     public function __construct(
         public TypeNode $type,
@@ -25,10 +25,5 @@ abstract class FieldNode extends Node implements \Stringable
     public function is(string $class): bool
     {
         return $this instanceof $class;
-    }
-
-    public function __toString(): string
-    {
-        return $this->isOptional ? 'optional' : 'required';
     }
 }
