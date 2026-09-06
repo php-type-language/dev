@@ -68,7 +68,6 @@ $features = new TypeParserFeatures()
 | `unions`         | `T\|U`                             | `Union types not allowed`                |
 | `intersections`  | `T&U`                              | `Intersection types not allowed`         |
 | `conditions`     | `T is U ? A : B`                   | `Conditional expressions not allowed`    |
-| `attributes`     | `#[attr]` on fields/args/params    | see below                                |
 
 ### Literals
 
@@ -231,49 +230,4 @@ $parser->parse('T is U ? 23 : 42');
 
 ```
 Conditional expressions not allowed in "T is U ? 23 : 42" at column 1
-```
-
-### Attributes
-
-Unlike the other flags, `attributes` is checked independently at every
-place attributes may occur — currently on
-[shape fields](shape-types.md#attributes), on
-[template arguments](generic-types.md#attributes), and on
-[callable parameters](callable-types.md#attributes) — each reporting its own
-message.
-
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    attributes: false,
-));
-
-$parser->parse(<<<'PHP'
-    array{
-        #[name("new_name"), skip_when_empty]
-        oldName: int,
-    }
-    PHP);
-```
-
-```
-Shape field attributes not allowed in "array{\n #[name("new_name"),
-…" (33+) on line 2 at column 5
-```
-
-```php
-$parser->parse('Collection<#[a] T>');
-```
-
-```
-Template argument attributes not allowed in "Collection<#[a] T>" 
-at column 12
-```
-
-```php
-$parser->parse('callable(#[a] int $x): void');
-```
-
-```
-Callable parameter attributes not allowed in "callable(#[a] int $x): void" 
-at column 10
 ```

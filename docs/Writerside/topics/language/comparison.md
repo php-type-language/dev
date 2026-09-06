@@ -250,28 +250,6 @@ Below is a list of simple, logical and other common types.
     </tr>
     <tr>
         <td colspan="4">
-            <a href="generic-types.md" anchor="attributes">
-                Template argument attributes
-            </a>
-            <code-block lang="typescript">
-                ExampleCollection&lt;#[assert(not&lt;"0">)] array-key>
-            </code-block>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
             <a href="const-types.md" anchor="class-constants">
                 Class constant types
             </a>
@@ -1537,30 +1515,6 @@ Below is a list of grammar of shaped types.
                 </def>
             </deflist>
         </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="shape-types.md" anchor="attributes">
-                Shape field attributes
-            </a>
-            <code-block lang="typescript">
-            object {
-                #[inline, assert(not&lt;"">)]
-                name: string
-            }
-            </code-block>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="warning.svg"/>
-            <a href="https://github.com/phpstan/phpdoc-parser/releases/tag/2.3.0">
-                PHPStan parser only (since 2.3)
-            </a>
-        </td>
-        <td><icon src="ko.svg"/></td>
     </tr>
     <tr>
         <td colspan="4">

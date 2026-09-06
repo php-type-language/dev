@@ -148,32 +148,14 @@ parameter description.
 
 ### Variadic Parameters
 
-Variadic parameters are indicated by the "`...`" and can be placed either
-_before the type_ or _before the parameter name._
+Variadic parameters are indicated by the "`...`" placed after the type. Where
+a parameter carries both markers, the ampersand ("`&`") comes first.
 
 > Variadic parameter cannot be optional since they are already optional.
 {style="warning"}
 
 <tabs>
 <tab title="Examples">
-
-> Callable type with one variadic parameter.
-> ```typescript
-> foo(...T)
-> ```
-
-> Callable type with one variadic named parameter.
-> ```typescript
-> foo(...T $name)
-> ```
-
-> Callable type with one variadic output named parameter.
-> ```typescript
-> foo(...T &$name)
-> ```
-
-</tab>
-<tab title="Alternative Syntax">
 
 > Callable type with one variadic parameter.
 > ```typescript
@@ -193,14 +175,25 @@ _before the type_ or _before the parameter name._
 </tab>
 <tab title="Counterexamples">
 
-> The ellipses (`...`) must come before or after the type.
+> The ellipsis (`...`) must be placed after the parameter's type.
 > ```typescript
-> foo(...T...)
+> foo(...T)
 > ```
 >
 > An error similar to the one below should occur
 > ```
 > ParseException: Syntax error, unexpected "..."
+> ```
+> {style="warning"}
+
+> The ampersand (`&`) must be placed before the ellipsis (`...`).
+> ```typescript
+> foo(T ...&$name)
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected "&"
 > ```
 > {style="warning"}
 
@@ -212,53 +205,6 @@ _before the type_ or _before the parameter name._
 > An error similar to the one below should occur
 > ```
 > ParseException: Cannot have variadic param with a default
-> ```
-> {style="warning"}
-
-</tab>
-</tabs>
-
-
-## Attributes
-
-<secondary-label ref="tl1.2"/>
-
-Each callable parameter allows you to define list of additional attributes.
-An attribute is additional metadata for a parameter.
-
-<tabs>
-<tab title="Examples">
-
-> Simple attribute with one argument for each callable parameter.
-> ```typescript
-> Example\Functor(#[type(int8)] int $a): void
-> ```
-
-> Multiple attributes in one group.
-> ```typescript
-> Example\Functor(#[type(int8), const] int&): void
-> ```
-
-> Multiple attribute groups.
-> ```typescript
-> Example\OnCreate(
->     #[deprecated]
->     #[inline]
->     (callback(T): void) $callback=,
-> ): void
-> ```
-
-</tab>
-<tab title="Counterexamples">
-
-> Only valid identifiers are allowed.
-> ```typescript
-> Example\Functor(#[42] int $a): void
-> ```
->
-> An error similar to the one below should occur
-> ```
-> ParseException: Syntax error, unexpected "42"
 > ```
 > {style="warning"}
 
