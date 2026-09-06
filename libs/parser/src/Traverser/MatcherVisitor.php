@@ -32,6 +32,7 @@ class MatcherVisitor extends Visitor
     public function before(): void
     {
         $this->node = null;
+        $this->shouldContinue = false;
     }
 
     public function enter(Node $node): ?Command

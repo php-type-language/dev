@@ -161,6 +161,36 @@ final class MatcherVisitorTest extends TestCase
     }
 
     #[Test]
+    public function theSameVisitorCanBeUsedSeveralTimes(): void
+    {
+        $visitor = new MatcherVisitor(static fn(Node $node): bool => $node instanceof NamedTypeNode);
+        $traverser = Traverser::new([$visitor]);
+
+        $traverser->traverse([$this->type('First')]);
+        $expected = $this->type('Second');
+        $traverser->traverse([$expected]);
+
+        self::assertTrue($visitor->hasMatches());
+        self::assertSame($expected, $visitor->node);
+    }
+
+    #[Test]
+    public function theBreakConditionDoesNotAffectTheNextTraversal(): void
+    {
+        $visitor = new MatcherVisitor(
+            matcher: static fn(Node $node): bool => $node instanceof Name,
+            break: static fn(Node $node): bool => $node instanceof UnionTypeNode,
+        );
+
+        $traverser = Traverser::new([$visitor]);
+
+        $traverser->traverse([new UnionTypeNode($this->type('A'), $this->type('B'))]);
+        $traverser->traverse([$this->type('Foo\\Bar')]);
+
+        self::assertTrue($visitor->hasMatches());
+    }
+
+    #[Test]
     public function theMatcherReceivesEveryVisitedNode(): void
     {
         $visited = [];
