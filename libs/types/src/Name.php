@@ -28,6 +28,8 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
 
     /**
      * @param iterable<array-key, Identifier> $parts
+     * @throws \InvalidArgumentException in case of parts are empty or contain
+     *         something else than an {@see Identifier}
      */
     public function __construct(
         iterable $parts,
@@ -39,12 +41,24 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
             default => \array_values($parts),
         };
 
-        \assert($parts !== [], new \InvalidArgumentException('Name parts count can not be empty'));
+        if ($parts === []) {
+            throw new \InvalidArgumentException('Name parts count can not be empty');
+        }
+
+        $first = \reset($parts);
+        $last = \end($parts);
+
+        if (!$first instanceof Identifier || !$last instanceof Identifier) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Name parts must contain only %s instances',
+                Identifier::class,
+            ));
+        }
 
         $this->parts = $parts;
 
-        $this->first = \reset($parts);
-        $this->last = \end($parts);
+        $this->first = $first;
+        $this->last = $last;
     }
 
     public static function createFromString(string|\Stringable $name): self
@@ -413,9 +427,12 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function __unserialize(array $data): void
     {
-        $this->parts = $data[0] ?? throw new \UnexpectedValueException(
+        $this->parts = $parts = $data[0] ?? throw new \UnexpectedValueException(
             message: 'Unable to unserialize Name segments',
         );
+
+        $this->first = \reset($parts);
+        $this->last = \end($parts);
 
         $this->offset = $data[1] ?? 0;
         $this->isFullyQualified = $data[2] ?? self::IS_FULLY_QUALIFIED_DEFAULT_VALUE;

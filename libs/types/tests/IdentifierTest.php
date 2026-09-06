@@ -342,4 +342,20 @@ final class IdentifierTest extends TestCase
         self::assertSame('someclass', $id->toLowerString());
         self::assertSame('SomeClass', $id->value);
     }
+
+    #[Test]
+    public function constructorThrowsOnEmptyValue(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new Identifier('');
+    }
+
+    #[Test]
+    public function constructorKeepsSurroundingWhitespace(): void
+    {
+        $id = new Identifier(' A ');
+
+        self::assertSame(' A ', $id->value);
+    }
 }

@@ -38,12 +38,19 @@ final class Identifier extends Node implements \Stringable
         'false',
     ];
 
+    /**
+     * @throws \InvalidArgumentException in case of an empty value
+     */
     public function __construct(
         /**
          * @var non-empty-string
          */
         public readonly string $value,
-    ) {}
+    ) {
+        if ($value === '') {
+            throw new \InvalidArgumentException('Name identifier cannot be empty');
+        }
+    }
 
     public static function createFromString(string|\Stringable $value): self
     {

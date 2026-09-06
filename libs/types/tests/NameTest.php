@@ -285,8 +285,6 @@ final class NameTest extends TestCase
     #[Test]
     public function constructorThrowsOnEmptySegmentsArray(): void
     {
-        self::skipWhenAssertsAreDisabled();
-
         $this->expectException(\InvalidArgumentException::class);
 
         new Name([]);
@@ -367,8 +365,6 @@ final class NameTest extends TestCase
     #[Test]
     public function createFromStringThrowsOnEmptyString(): void
     {
-        self::skipWhenAssertsAreDisabled();
-
         $this->expectException(\InvalidArgumentException::class);
 
         Name::createFromString('');
@@ -377,8 +373,6 @@ final class NameTest extends TestCase
     #[Test]
     public function createFromStringThrowsOnDelimiterOnlyString(): void
     {
-        self::skipWhenAssertsAreDisabled();
-
         $this->expectException(\InvalidArgumentException::class);
 
         Name::createFromString('\\');
@@ -623,5 +617,83 @@ final class NameTest extends TestCase
 
         self::assertSame(['Foo', 'Bar'], $name->getPartsAsString());
         self::assertSame($name->toArrayStrings(), $name->getPartsAsString());
+    }
+
+    #[Test]
+    public function serializationRoundtripRestoresBoundaryParts(): void
+    {
+        $name = Name::createFromString('Foo\Bar\Baz');
+
+        /** @var Name $restored */
+        $restored = \unserialize(\serialize($name));
+
+        self::assertSame('Foo', $restored->first->value);
+        self::assertSame('Baz', $restored->last->value);
+        self::assertSame('Foo', $restored->getFirstPart()->value);
+        self::assertSame('Baz', $restored->getLastPart()->value);
+    }
+
+    #[Test]
+    public function unserializedNameIsFullyUsable(): void
+    {
+        $name = Name::createFromString('self');
+
+        /** @var Name $restored */
+        $restored = \unserialize(\serialize($name));
+
+        self::assertTrue($restored->isSimple());
+        self::assertTrue($restored->isSpecial());
+        self::assertFalse($restored->isBuiltin());
+        self::assertSame('self', $restored->getFirstPartAsString());
+    }
+
+    #[Test]
+    public function unserializeThrowsOnEmptyParts(): void
+    {
+        $name = Name::createFromString('Foo');
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $name->__unserialize([[]]);
+    }
+
+    #[Test]
+    public function unserializeThrowsOnNonIdentifierParts(): void
+    {
+        $name = Name::createFromString('Foo');
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        /** @phpstan-ignore-next-line */
+        $name->__unserialize([['Foo']]);
+    }
+
+    #[Test]
+    public function constructorThrowsOnNonIdentifierParts(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        /** @phpstan-ignore-next-line */
+        new Name(['Foo']);
+    }
+
+    #[Test]
+    public function sliceThrowsWhenTheResultIsEmpty(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $name->slice(5);
+    }
+
+    #[Test]
+    public function sliceOfZeroLengthThrows(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $name->slice(0, 0);
     }
 }
