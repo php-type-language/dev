@@ -9,7 +9,7 @@
         "issues": "https://github.com/php-type-language/reader/issues"
     },
     "require": {
-        "php": "^8.4",
+        "php": "^8.1",
         "type-lang/types": "^2.0"
     },
     "autoload": {
@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^2.2.5",
-        "phpunit/phpunit": "^13.2.4",
+        "phpunit/phpunit": "^10.5 || ^11.5 || ^12.4 || ^13.2.4",
         "type-lang/printer": "^2.0"
     },
     "autoload-dev": {
