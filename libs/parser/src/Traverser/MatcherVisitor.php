@@ -6,18 +6,8 @@ namespace TypeLang\Parser\Traverser;
 
 use TypeLang\Type\Node;
 
-/**
- * @property-read bool $isFound An alias of {@see isFound()} method.
- */
 class MatcherVisitor extends Visitor
 {
-    /**
-     * @var list<non-empty-string>
-     */
-    private const VIRTUAL_PROPERTIES = [
-        'isFound',
-    ];
-
     public ?Node $node = null;
 
     private bool $shouldContinue = false;
@@ -34,24 +24,9 @@ class MatcherVisitor extends Visitor
     /**
      * Returns {@see true} in case of a node matching the criteria was found.
      */
-    public function isFound(): bool
+    public function hasMatches(): bool
     {
         return $this->node !== null;
-    }
-
-    public function __get(string $name): mixed
-    {
-        return match ($name) {
-            'isFound' => $this->isFound(),
-            default => throw new \OutOfRangeException(
-                message: \sprintf('Undefined property %s::$%s', static::class, $name),
-            ),
-        };
-    }
-
-    public function __isset(string $name): bool
-    {
-        return \in_array($name, self::VIRTUAL_PROPERTIES, true);
     }
 
     public function before(): void
