@@ -64,7 +64,7 @@ Punctuator :: one of
 - `?` `|` `&` `*` `,` `:` `=`
 - `(` `)` `[` `]` `{` `}`
 - `<` `>` `<=` `>=`
-- `::` `\` `...` `#[`
+- `::` `\` `...`
 
 NameToken :: NameStart NameContinue\* [lookahead != NameContinue]
 
@@ -251,7 +251,7 @@ NamedType : Name (TemplateArguments | ShapeFields)?
 
 TemplateArguments : `<` TemplateArgument (`,` TemplateArgument)\* `,`? `>`
 
-TemplateArgument : AttributeGroups? (TemplateArgumentHint | TemplateArgumentType)
+TemplateArgument : TemplateArgumentHint | TemplateArgumentType
 
 TemplateArgumentHint : Identifier Type
 
@@ -288,7 +288,7 @@ ShapeBody :
 
 ShapeFieldList : ShapeField (`,` ShapeField)\*
 
-ShapeField : AttributeGroups? (ExplicitField | ImplicitField)
+ShapeField : ExplicitField | ImplicitField
 
 ExplicitField : ShapeKey `?`? `:` ShapeValue
 
@@ -314,28 +314,4 @@ CallableParameters : CallableParameter (`,` CallableParameter)\* `,`?
 
 CallableReturnType : `:` Type
 
-CallableParameter : AttributeGroups? CallableParameterBody `=`?
-
-CallableParameterBody :
-
-- `...`? Type ParameterModifiers? Variable?
-- ParameterModifiers? Variable
-
-ParameterModifiers :
-
-- `&` `...`?
-- `...` `&`?
-
-**Attributes**
-
-AttributeGroups : AttributeGroup+
-
-AttributeGroup : `#[` AttributeList `,`? `]`
-
-AttributeList : Attribute (`,` Attribute)\*
-
-Attribute : Name AttributeArguments?
-
-AttributeArguments : `(` AttributeArgument (`,` AttributeArgument)\* `,`? `)`
-
-AttributeArgument : Type
+CallableParameter : Type `&`? `...`? Variable? `=`?

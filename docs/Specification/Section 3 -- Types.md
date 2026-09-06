@@ -348,7 +348,7 @@ implementation and is outside the scope of this specification.
 
 TemplateArguments : `<` TemplateArgument (`,` TemplateArgument)\* `,`? `>`
 
-TemplateArgument : AttributeGroups? (TemplateArgumentHint | TemplateArgumentType)
+TemplateArgument : TemplateArgumentHint | TemplateArgumentType
 
 TemplateArgumentType : Type
 
@@ -427,15 +427,6 @@ HashMap<is Request>
 
 ```
 ParseException: Syntax error, unexpected "Request"
-```
-
-### Template Argument Attributes
-
-Each template argument MAY additionally be prefixed with one or more
-[attribute groups](#sec-Attributes), providing metadata for the argument.
-
-```typescript
-HashMap<#[name("key")] T, #[name("value")] U>
 ```
 
 ## Literal Types

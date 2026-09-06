@@ -74,7 +74,6 @@
 <li><a href="#sec-Named-Types"><span class="spec-secid">5.7</span>Named Types</a></li>
 <li><a href="#sec-Generic-Types"><span class="spec-secid">5.8</span>Generic Types</a><ol>
 <li><a href="#sec-Template-Argument-Hints"><span class="spec-secid">5.8.1</span>Template Argument Hints</a></li>
-<li><a href="#sec-Template-Argument-Attributes"><span class="spec-secid">5.8.2</span>Template Argument Attributes</a></li>
 </ol>
 </li>
 <li><a href="#sec-Literal-Types"><span class="spec-secid">5.9</span>Literal Types</a></li>
@@ -91,15 +90,12 @@
 <li><a href="#sec-Shape-Fields"><span class="spec-secid">6.1.1</span>Shape Fields</a></li>
 <li><a href="#sec-Optional-Fields"><span class="spec-secid">6.1.2</span>Optional Fields</a></li>
 <li><a href="#sec-Unsealed-Shapes"><span class="spec-secid">6.1.3</span>Unsealed Shapes</a></li>
-<li><a href="#sec-Shape-Field-Attributes"><span class="spec-secid">6.1.4</span>Shape Field Attributes</a></li>
 </ol>
 </li>
 <li><a href="#sec-Callable-Types"><span class="spec-secid">6.2</span>Callable Types</a><ol>
 <li><a href="#sec-Callable-Parameters"><span class="spec-secid">6.2.1</span>Callable Parameters</a></li>
-<li><a href="#sec-Callable-Parameter-Attributes"><span class="spec-secid">6.2.2</span>Callable Parameter Attributes</a></li>
 </ol>
 </li>
-<li><a href="#sec-Attributes"><span class="spec-secid">6.3</span>Attributes</a></li>
 </ol>
 </li>
 <li><a href="#sec-Appendix-Notation-Conventions"><span class="spec-secid">A</span>Appendix: Notation Conventions</a><ol>
@@ -176,7 +172,6 @@
 <li>Binary (<code>0b1010</code>), octal (<code>0o42</code>, legacy <code>042</code>) and hexadecimal (<code>0xDEAD</code>) integer literals.</li>
 <li>Escape, hexadecimal and Unicode sequences inside double-quoted string literals.</li>
 <li>Global constant masks such as <code>JSON_*</code>.</li>
-<li>Attributes (<code>#[...]</code>) on template arguments, shape fields and callable parameters.</li>
 <li>A uniform conditional (ternary) type syntax that also permits comparison operators and Yoda-style operands.</li>
 </ul>
 <p>A detailed feature-by-feature comparison is maintained alongside the project documentation and is out of scope for this specification.</p>
@@ -284,9 +279,6 @@ Although <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a
 </div>
 <p>A TypeLang source document MAY contain comments. A <em>line comment</em> begins with either the <code>//</code> or <code>#</code> marker and continues up to, but not including, the next <span class="spec-nt"><a href="#LineTerminator" data-name="LineTerminator">LineTerminator</a></span> (or the end of the source, whichever occurs first). A <em>block comment</em> begins with <code>/*</code> and continues up to and including the next <code>*/</code>.</p>
 <p>Comments are <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a></span> and have no bearing on the meaning of a document.</p>
-<div id="note-9c60e" class="spec-note">
-<a href="#note-9c60e">Note</a>
-The <code>#</code> line comment marker and the <code>#[</code> attribute marker share a leading character. Because lexical analysis prefers the longest match, the sequence <code>#[</code> is always scanned as the start of an attribute (see <a href="#sec-Attributes">Attributes</a>) rather than as the start of a comment.</div>
 </section>
 </section>
 <section id="sec-Lexical-Tokens" secid="4.3">
@@ -313,10 +305,10 @@ The <code>#</code> line comment marker and the <code>#[</code> attribute marker 
 <tr>
 <td class="spec-rhs"><span class="spec-t">&lt;</span></td><td class="spec-rhs"><span class="spec-t">&gt;</span></td><td class="spec-rhs"><span class="spec-t">&lt;=</span></td><td class="spec-rhs"><span class="spec-t">&gt;=</span></td></tr>
 <tr>
-<td class="spec-rhs"><span class="spec-t">::</span></td><td class="spec-rhs"><span class="spec-t">\</span></td><td class="spec-rhs"><span class="spec-t">...</span></td><td class="spec-rhs"><span class="spec-t">#[</span></td></tr>
+<td class="spec-rhs"><span class="spec-t">::</span></td><td class="spec-rhs"><span class="spec-t">\</span></td><td class="spec-rhs"><span class="spec-t">...</span></td></tr>
 </table></div></div>
 </div>
-<p>TypeLang documents use punctuation to describe structure. Several punctuators share a leading character (for example, <code>&lt;</code> and <code>&lt;=</code>; <code>:</code> and <code>::</code>; <code>.</code> in <code>...</code>; <code>#</code> in <code>#[</code>); in every such case, the longest matching punctuator is taken.</p>
+<p>TypeLang documents use punctuation to describe structure. Several punctuators share a leading character (for example, <code>&lt;</code> and <code>&lt;=</code>; <code>:</code> and <code>::</code>; <code>.</code> in <code>...</code>); in every such case, the longest matching punctuator is taken.</p>
 </section>
 <section id="sec-Names" secid="4.3.2">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Names">4.3.2</a></span>Names</h3>
@@ -860,7 +852,7 @@ Each of <span class="spec-nt"><a href="#CallableType" data-name="CallableType">C
 <span class="spec-nt"><a href="#TemplateArguments" data-name="TemplateArguments">TemplateArguments</a></span><div class="spec-rhs"><span class="spec-t">&lt;</span><span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">&gt;</span></div>
 </div>
 <div class="spec-production" id="TemplateArgument">
-<span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeGroups" data-name="AttributeGroups">AttributeGroups</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">(TemplateArgumentHint</span><span class="spec-t">|</span><span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span><span class="spec-t">)</span></div>
+<span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span></div>
 </div>
 <div class="spec-production" id="TemplateArgumentType">
 <span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
@@ -899,12 +891,6 @@ Throughout this document, the term <em>template argument</em> refers to a value 
 <pre id="example-54add" class="spec-counter-example" data-language="typescript"><a href="#example-54add">Counter Example № 11</a><code>HashMap<span class="token operator">&lt;</span><span class="token keyword">is</span> Request<span class="token operator">></span>
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected "Request"
-</code></pre>
-</section>
-<section id="sec-Template-Argument-Attributes" secid="5.8.2">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Template-Argument-Attributes">5.8.2</a></span>Template Argument Attributes</h3>
-<p>Each template argument MAY additionally be prefixed with one or more <a href="#sec-Attributes">attribute groups</a>, providing metadata for the argument.</p>
-<pre data-language="typescript"><code>HashMap<span class="token operator">&lt;</span>#<span class="token punctuation">[</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">"key"</span><span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token constant">T</span><span class="token punctuation">,</span> #<span class="token punctuation">[</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">"value"</span><span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token constant">U</span><span class="token operator">></span>
 </code></pre>
 </section>
 </section>
@@ -990,7 +976,7 @@ Because the grammar of a class or global constant name is identical to that of a
 </section>
 <section id="sec-Structural-Types" secid="6">
 <h1><span class="spec-secid" title="link to this section"><a href="#sec-Structural-Types">6</a></span>Structural Types</h1>
-<p>This section defines the structural type forms &mdash; <em>shapes</em> and <em>callables</em> &mdash; and the <em>attribute</em> syntax shared by several constructs. Each of these forms builds on the <a href="#sec-Named-Types">named type</a> grammar introduced in the previous section.</p>
+<p>This section defines the structural type forms &mdash; <em>shapes</em> and <em>callables</em>. Each of these forms builds on the <a href="#sec-Named-Types">named type</a> grammar introduced in the previous section.</p>
 <section id="sec-Shape-Types" secid="6.1">
 <h2><span class="spec-secid" title="link to this section"><a href="#sec-Shape-Types">6.1</a></span>Shape Types</h2>
 <div class="spec-production" id="ShapeFields">
@@ -1020,7 +1006,7 @@ Because the grammar of a class or global constant name is identical to that of a
 <section id="sec-Shape-Fields" secid="6.1.1">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Shape-Fields">6.1.1</a></span>Shape Fields</h3>
 <div class="spec-production" id="ShapeField">
-<span class="spec-nt"><a href="#ShapeField" data-name="ShapeField">ShapeField</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeGroups" data-name="AttributeGroups">AttributeGroups</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">(ExplicitField</span><span class="spec-t">|</span><span class="spec-nt"><a href="#ImplicitField" data-name="ImplicitField">ImplicitField</a></span><span class="spec-t">)</span></div>
+<span class="spec-nt"><a href="#ShapeField" data-name="ShapeField">ShapeField</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ExplicitField" data-name="ExplicitField">ExplicitField</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#ImplicitField" data-name="ImplicitField">ImplicitField</a></span></div>
 </div>
 <div class="spec-production" id="ExplicitField">
 <span class="spec-nt"><a href="#ExplicitField" data-name="ExplicitField">ExplicitField</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ShapeKey" data-name="ShapeKey">ShapeKey</a></span><span class="spec-quantified"><span class="spec-t">?</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">:</span><span class="spec-nt"><a href="#ShapeValue" data-name="ShapeValue">ShapeValue</a></span></div>
@@ -1086,18 +1072,6 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <pre data-language="typescript"><code>array<span class="token punctuation">{</span> user<span class="token operator">:</span> User<span class="token punctuation">,</span> <span class="token operator">...</span><span class="token operator">&lt;</span><span class="token builtin">string</span><span class="token punctuation">,</span> object<span class="token operator">></span> <span class="token punctuation">}</span>
 </code></pre>
 </section>
-<section id="sec-Shape-Field-Attributes" secid="6.1.4">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Shape-Field-Attributes">6.1.4</a></span>Shape Field Attributes</h3>
-<p>Each shape field MAY be prefixed with one or more <a href="#sec-Attributes">attribute groups</a>:</p>
-<pre data-language="typescript"><code>App\Domain\User<span class="token punctuation">{</span>
-    #<span class="token punctuation">[</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">"user_name"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
-    userName<span class="token operator">:</span> non<span class="token operator">-</span>empty<span class="token operator">-</span><span class="token builtin">string</span><span class="token punctuation">,</span>
-    #<span class="token punctuation">[</span>skip_when_empty<span class="token punctuation">]</span>
-    friends<span class="token operator">:</span> list<span class="token operator">&lt;</span>App\Domain\User<span class="token operator">></span><span class="token punctuation">,</span>
-    <span class="token operator">...</span>
-<span class="token punctuation">}</span>
-</code></pre>
-</section>
 </section>
 <section id="sec-Callable-Types" secid="6.2">
 <h2><span class="spec-secid" title="link to this section"><a href="#sec-Callable-Types">6.2</a></span>Callable Types</h2>
@@ -1120,22 +1094,17 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <section id="sec-Callable-Parameters" secid="6.2.1">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Callable-Parameters">6.2.1</a></span>Callable Parameters</h3>
 <div class="spec-production" id="CallableParameter">
-<span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeGroups" data-name="AttributeGroups">AttributeGroups</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#CallableParameterBody" data-name="CallableParameterBody">CallableParameterBody</a></span><span class="spec-quantified"><span class="spec-t">=</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span><span class="spec-quantified"><span class="spec-t">&amp;</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-t">...</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-t">=</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
-<div class="spec-production" id="CallableParameterBody">
-<span class="spec-nt"><a href="#CallableParameterBody" data-name="CallableParameterBody">CallableParameterBody</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-t">...</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#ParameterModifiers" data-name="ParameterModifiers">ParameterModifiers</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-<div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#ParameterModifiers" data-name="ParameterModifiers">ParameterModifiers</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span></div>
-</div>
-<div class="spec-production" id="ParameterModifiers">
-<span class="spec-nt"><a href="#ParameterModifiers" data-name="ParameterModifiers">ParameterModifiers</a></span><div class="spec-rhs"><span class="spec-t">&amp;</span><span class="spec-quantified"><span class="spec-t">...</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-<div class="spec-rhs"><span class="spec-t">...</span><span class="spec-quantified"><span class="spec-t">&amp;</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-</div>
-<p>A parameter is described by its type, optionally followed by a name. A parameter MAY also be given by name alone, without a type.</p>
+<p>A parameter is described by its type, optionally followed by the reference and the variadic markers, by a name and by the default marker &mdash; in that order and in no other. The type is the only required part.</p>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span>Type<span class="token punctuation">)</span>
 </code></pre>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span>Type $name<span class="token punctuation">)</span>
 </code></pre>
-<pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span>$name<span class="token punctuation">)</span>
+<p><strong>Counter-example.</strong> A parameter given by name alone, without a type, is not permitted.</p>
+<pre id="example-1358e" class="spec-counter-example" data-language="typescript"><a href="#example-1358e">Counter Example № 17</a><code><span class="token function">callable</span><span class="token punctuation">(</span>$name<span class="token punctuation">)</span>
+</code></pre>
+<pre><code>ParseException: Syntax error, unexpected ")"
 </code></pre>
 <p><strong>Named Parameters.</strong> A name beginning with <code>$</code> MAY follow the parameter&rsquo;s type, <a href="https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments">permitting the argument to be passed by name</a>, exactly as in PHP.</p>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">A</span> $a<span class="token punctuation">,</span> <span class="token constant">B</span><span class="token punctuation">,</span> <span class="token constant">C</span><span class="token punctuation">)</span>
@@ -1146,83 +1115,31 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">&amp;</span>$name<span class="token punctuation">)</span>
 </code></pre>
 <p><strong>Counter-example.</strong> The ampersand must follow the type; it must not precede it.</p>
-<pre id="example-b89d4" class="spec-counter-example" data-language="typescript"><a href="#example-b89d4">Counter Example № 17</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">&amp;</span><span class="token constant">T</span><span class="token punctuation">)</span>
+<pre id="example-b89d4" class="spec-counter-example" data-language="typescript"><a href="#example-b89d4">Counter Example № 18</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">&amp;</span><span class="token constant">T</span><span class="token punctuation">)</span>
 </code></pre>
-<pre><code>ParseException: Syntax error, unexpected "T"
+<pre><code>ParseException: Syntax error, unexpected "&amp;"
 </code></pre>
 <p><strong>Optional Parameters.</strong> A trailing <code>=</code> marks a parameter as optional: the caller MAY omit the corresponding argument.</p>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span><span class="token operator">=</span><span class="token punctuation">)</span>
 </code></pre>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">&amp;</span>$name<span class="token operator">=</span><span class="token punctuation">)</span>
 </code></pre>
-<p><strong>Variadic Parameters.</strong> An ellipsis (<code>...</code>) marks a parameter as variadic. It MAY be written either before the type or after it, immediately before the name.</p>
-<pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">...</span><span class="token constant">T</span><span class="token punctuation">)</span>
-</code></pre>
+<p><strong>Variadic Parameters.</strong> An ellipsis (<code>...</code>) placed after the parameter type marks the parameter as variadic. Where a parameter carries both markers, the ampersand comes first.</p>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">...</span>$name<span class="token punctuation">)</span>
 </code></pre>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">&amp;</span><span class="token operator">...</span>$name<span class="token punctuation">)</span>
 </code></pre>
-<p><strong>Counter-example.</strong> The ellipsis may appear in only one position; a parameter that is variadic in both the prefix and suffix positions is an error.</p>
-<pre id="example-748ed" class="spec-counter-example" data-language="typescript"><a href="#example-748ed">Counter Example № 18</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">...</span><span class="token constant">T</span><span class="token operator">...</span><span class="token punctuation">)</span>
+<p><strong>Counter-example.</strong> The ellipsis must follow the type; it must not precede it.</p>
+<pre id="example-6bdd8" class="spec-counter-example" data-language="typescript"><a href="#example-6bdd8">Counter Example № 19</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">...</span><span class="token constant">T</span><span class="token punctuation">)</span>
 </code></pre>
-<pre><code>ParseException: Either prefix or postfix variadic syntax should be used, but not both
+<pre><code>ParseException: Syntax error, unexpected "..."
 </code></pre>
 <p><strong>Counter-example.</strong> A variadic parameter is already optional and therefore must not additionally carry a default marker.</p>
-<pre id="example-7a315" class="spec-counter-example" data-language="typescript"><a href="#example-7a315">Counter Example № 19</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">...</span>$name<span class="token operator">=</span><span class="token punctuation">)</span>
+<pre id="example-7a315" class="spec-counter-example" data-language="typescript"><a href="#example-7a315">Counter Example № 20</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">...</span>$name<span class="token operator">=</span><span class="token punctuation">)</span>
 </code></pre>
 <pre><code>ParseException: Cannot have variadic param with a default
 </code></pre>
 </section>
-<section id="sec-Callable-Parameter-Attributes" secid="6.2.2">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Callable-Parameter-Attributes">6.2.2</a></span>Callable Parameter Attributes</h3>
-<p>Each callable parameter MAY be prefixed with one or more <a href="#sec-Attributes">attribute groups</a>:</p>
-<pre data-language="typescript"><code>Example\<span class="token function">Functor</span><span class="token punctuation">(</span>#<span class="token punctuation">[</span>type<span class="token operator">&lt;</span>int8<span class="token operator">></span><span class="token punctuation">]</span> int $a<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
-</code></pre>
-</section>
-</section>
-<section id="sec-Attributes" secid="6.3">
-<h2><span class="spec-secid" title="link to this section"><a href="#sec-Attributes">6.3</a></span>Attributes</h2>
-<div class="spec-production" id="AttributeGroups">
-<span class="spec-nt"><a href="#AttributeGroups" data-name="AttributeGroups">AttributeGroups</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeGroup" data-name="AttributeGroup">AttributeGroup</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span></div>
-</div>
-<div class="spec-production" id="AttributeGroup">
-<span class="spec-nt"><a href="#AttributeGroup" data-name="AttributeGroup">AttributeGroup</a></span><div class="spec-rhs"><span class="spec-t">#[</span><span class="spec-nt"><a href="#AttributeList" data-name="AttributeList">AttributeList</a></span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">]</span></div>
-</div>
-<div class="spec-production" id="AttributeList">
-<span class="spec-nt"><a href="#AttributeList" data-name="AttributeList">AttributeList</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Attribute" data-name="Attribute">Attribute</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#Attribute" data-name="Attribute">Attribute</a></span><span class="spec-t">)*</span></div>
-</div>
-<div class="spec-production" id="Attribute">
-<span class="spec-nt"><a href="#Attribute" data-name="Attribute">Attribute</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeArguments" data-name="AttributeArguments">AttributeArguments</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-</div>
-<div class="spec-production" id="AttributeArguments">
-<span class="spec-nt"><a href="#AttributeArguments" data-name="AttributeArguments">AttributeArguments</a></span><div class="spec-rhs"><span class="spec-t">(</span><span class="spec-nt"><a href="#AttributeArgument" data-name="AttributeArgument">AttributeArgument</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#AttributeArgument" data-name="AttributeArgument">AttributeArgument</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">)</span></div>
-</div>
-<div class="spec-production" id="AttributeArgument">
-<span class="spec-nt"><a href="#AttributeArgument" data-name="AttributeArgument">AttributeArgument</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
-</div>
-<p>An <em>attribute</em> attaches arbitrary, implementation-defined metadata to the construct it precedes. The syntax mirrors <a href="https://www.php.net/manual/en/language.attributes.php">PHP attributes</a>: each attribute is a <a href="#sec-Names-and-Namespaces">name</a> optionally followed by a parenthesized list of arguments, and each argument is itself an arbitrary <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span> &mdash; including, recursively, a type that carries attributes of its own.</p>
-<p>Attributes are written in groups delimited by <code>#[</code> and <code>]</code>. A construct MAY carry several attributes within one group, separated by commas, and several groups in sequence. Attributes may be attached to a <a href="#sec-Template-Argument-Attributes">template argument</a>, a <a href="#sec-Shape-Field-Attributes">shape field</a>, or a <a href="#sec-Callable-Parameter-Attributes">callable parameter</a>.</p>
-<p>A single attribute with one argument:</p>
-<pre data-language="typescript"><code>Example\<span class="token function">Functor</span><span class="token punctuation">(</span>#<span class="token punctuation">[</span>type<span class="token operator">&lt;</span>int8<span class="token operator">></span><span class="token punctuation">]</span> int $a<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
-</code></pre>
-<p>Several attributes within one group:</p>
-<pre data-language="typescript"><code>HashMap<span class="token operator">&lt;</span>#<span class="token punctuation">[</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token string">"key"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> out<span class="token punctuation">]</span> <span class="token constant">T</span><span class="token operator">></span>
-</code></pre>
-<p>Several groups in sequence:</p>
-<pre data-language="typescript"><code>array<span class="token punctuation">{</span>
-    #<span class="token punctuation">[</span><span class="token function">serialize</span><span class="token punctuation">(</span><span class="token string">"onSerialize"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
-    #<span class="token punctuation">[</span><span class="token function">deserialize</span><span class="token punctuation">(</span><span class="token string">"onDeserialize"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
-    test<span class="token operator">?</span><span class="token operator">:</span> App\Domain\User<span class="token punctuation">,</span>
-<span class="token punctuation">}</span>
-</code></pre>
-<p><strong>Counter-example.</strong> An attribute name must be a valid <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span>; a literal is not permitted in that position.</p>
-<pre id="example-1bd67" class="spec-counter-example" data-language="typescript"><a href="#example-1bd67">Counter Example № 20</a><code>Collection<span class="token operator">&lt;</span>#<span class="token punctuation">[</span><span class="token number">42</span><span class="token punctuation">]</span> User<span class="token operator">></span>
-</code></pre>
-<pre><code>ParseException: Syntax error, unexpected "42"
-</code></pre>
-<div id="note-53021" class="spec-note">
-<a href="#note-53021">Note</a>
-Because the <code>#[</code> attribute marker is scanned as a single token by the <a href="#sec-Comments">lexical grammar</a>, it is never confused with the <code>#</code> line-comment marker. </div>
 </section>
 </section>
 <section id="sec-Appendix-Notation-Conventions" secid="A">
@@ -1394,7 +1311,7 @@ Because the <code>#[</code> attribute marker is scanned as a single token by the
 <tr>
 <td class="spec-rhs"><span class="spec-t">&lt;</span></td><td class="spec-rhs"><span class="spec-t">&gt;</span></td><td class="spec-rhs"><span class="spec-t">&lt;=</span></td><td class="spec-rhs"><span class="spec-t">&gt;=</span></td></tr>
 <tr>
-<td class="spec-rhs"><span class="spec-t">::</span></td><td class="spec-rhs"><span class="spec-t">\</span></td><td class="spec-rhs"><span class="spec-t">...</span></td><td class="spec-rhs"><span class="spec-t">#[</span></td></tr>
+<td class="spec-rhs"><span class="spec-t">::</span></td><td class="spec-rhs"><span class="spec-t">\</span></td><td class="spec-rhs"><span class="spec-t">...</span></td></tr>
 </table></div></div>
 </div>
 <div class="spec-production d2" id="NameToken">
@@ -1653,7 +1570,7 @@ Because the <code>#[</code> attribute marker is scanned as a single token by the
 <span class="spec-nt"><a href="#TemplateArguments" data-name="TemplateArguments">TemplateArguments</a></span><div class="spec-rhs"><span class="spec-t">&lt;</span><span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">&gt;</span></div>
 </div>
 <div class="spec-production" id="TemplateArgument">
-<span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeGroups" data-name="AttributeGroups">AttributeGroups</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">(TemplateArgumentHint</span><span class="spec-t">|</span><span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span><span class="spec-t">)</span></div>
+<span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span></div>
 </div>
 <div class="spec-production" id="TemplateArgumentHint">
 <span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
@@ -1695,7 +1612,7 @@ Because the <code>#[</code> attribute marker is scanned as a single token by the
 <span class="spec-nt"><a href="#ShapeFieldList" data-name="ShapeFieldList">ShapeFieldList</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ShapeField" data-name="ShapeField">ShapeField</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#ShapeField" data-name="ShapeField">ShapeField</a></span><span class="spec-t">)*</span></div>
 </div>
 <div class="spec-production" id="ShapeField">
-<span class="spec-nt"><a href="#ShapeField" data-name="ShapeField">ShapeField</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeGroups" data-name="AttributeGroups">AttributeGroups</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">(ExplicitField</span><span class="spec-t">|</span><span class="spec-nt"><a href="#ImplicitField" data-name="ImplicitField">ImplicitField</a></span><span class="spec-t">)</span></div>
+<span class="spec-nt"><a href="#ShapeField" data-name="ShapeField">ShapeField</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ExplicitField" data-name="ExplicitField">ExplicitField</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#ImplicitField" data-name="ImplicitField">ImplicitField</a></span></div>
 </div>
 <div class="spec-production" id="ExplicitField">
 <span class="spec-nt"><a href="#ExplicitField" data-name="ExplicitField">ExplicitField</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ShapeKey" data-name="ShapeKey">ShapeKey</a></span><span class="spec-quantified"><span class="spec-t">?</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">:</span><span class="spec-nt"><a href="#ShapeValue" data-name="ShapeValue">ShapeValue</a></span></div>
@@ -1729,36 +1646,7 @@ Because the <code>#[</code> attribute marker is scanned as a single token by the
 <span class="spec-nt"><a href="#CallableReturnType" data-name="CallableReturnType">CallableReturnType</a></span><div class="spec-rhs"><span class="spec-t">:</span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
 </div>
 <div class="spec-production" id="CallableParameter">
-<span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeGroups" data-name="AttributeGroups">AttributeGroups</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#CallableParameterBody" data-name="CallableParameterBody">CallableParameterBody</a></span><span class="spec-quantified"><span class="spec-t">=</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-</div>
-<div class="spec-production" id="CallableParameterBody">
-<span class="spec-nt"><a href="#CallableParameterBody" data-name="CallableParameterBody">CallableParameterBody</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-t">...</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#ParameterModifiers" data-name="ParameterModifiers">ParameterModifiers</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-<div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#ParameterModifiers" data-name="ParameterModifiers">ParameterModifiers</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span></div>
-</div>
-<div class="spec-production" id="ParameterModifiers">
-<span class="spec-nt"><a href="#ParameterModifiers" data-name="ParameterModifiers">ParameterModifiers</a></span><div class="spec-rhs"><span class="spec-t">&amp;</span><span class="spec-quantified"><span class="spec-t">...</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-<div class="spec-rhs"><span class="spec-t">...</span><span class="spec-quantified"><span class="spec-t">&amp;</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-</div>
-</section>
-<section id="sec-Appendix-Grammar-Summary.Attributes" class="subsec">
-<h6><a href="#sec-Appendix-Grammar-Summary.Attributes" title="link to this subsection">Attributes</a></h6>
-<div class="spec-production" id="AttributeGroups">
-<span class="spec-nt"><a href="#AttributeGroups" data-name="AttributeGroups">AttributeGroups</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeGroup" data-name="AttributeGroup">AttributeGroup</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span></div>
-</div>
-<div class="spec-production" id="AttributeGroup">
-<span class="spec-nt"><a href="#AttributeGroup" data-name="AttributeGroup">AttributeGroup</a></span><div class="spec-rhs"><span class="spec-t">#[</span><span class="spec-nt"><a href="#AttributeList" data-name="AttributeList">AttributeList</a></span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">]</span></div>
-</div>
-<div class="spec-production" id="AttributeList">
-<span class="spec-nt"><a href="#AttributeList" data-name="AttributeList">AttributeList</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Attribute" data-name="Attribute">Attribute</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#Attribute" data-name="Attribute">Attribute</a></span><span class="spec-t">)*</span></div>
-</div>
-<div class="spec-production" id="Attribute">
-<span class="spec-nt"><a href="#Attribute" data-name="Attribute">Attribute</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#AttributeArguments" data-name="AttributeArguments">AttributeArguments</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
-</div>
-<div class="spec-production" id="AttributeArguments">
-<span class="spec-nt"><a href="#AttributeArguments" data-name="AttributeArguments">AttributeArguments</a></span><div class="spec-rhs"><span class="spec-t">(</span><span class="spec-nt"><a href="#AttributeArgument" data-name="AttributeArgument">AttributeArgument</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#AttributeArgument" data-name="AttributeArgument">AttributeArgument</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">)</span></div>
-</div>
-<div class="spec-production" id="AttributeArgument">
-<span class="spec-nt"><a href="#AttributeArgument" data-name="AttributeArgument">AttributeArgument</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+<span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span><span class="spec-quantified"><span class="spec-t">&amp;</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-t">...</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-t">=</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
 </section>
 </section>
@@ -1766,12 +1654,6 @@ Because the <code>#[</code> attribute marker is scanned as a single token by the
 <h1>
 <span class="spec-secid" title="link to the index"><a href="#index">§</a></span>Index</h1>
 <ol>
-<li><a href="#Attribute">Attribute</a></li>
-<li><a href="#AttributeArgument">AttributeArgument</a></li>
-<li><a href="#AttributeArguments">AttributeArguments</a></li>
-<li><a href="#AttributeGroup">AttributeGroup</a></li>
-<li><a href="#AttributeGroups">AttributeGroups</a></li>
-<li><a href="#AttributeList">AttributeList</a></li>
 <li><a href="#BinaryDigit">BinaryDigit</a></li>
 <li><a href="#BinaryIndicator">BinaryIndicator</a></li>
 <li><a href="#BinaryIntLiteral">BinaryIntLiteral</a></li>
@@ -1779,7 +1661,6 @@ Because the <code>#[</code> attribute marker is scanned as a single token by the
 <li><a href="#BlockCommentChar">BlockCommentChar</a></li>
 <li><a href="#BoolLiteral">BoolLiteral</a></li>
 <li><a href="#CallableParameter">CallableParameter</a></li>
-<li><a href="#CallableParameterBody">CallableParameterBody</a></li>
 <li><a href="#CallableParameters">CallableParameters</a></li>
 <li><a href="#CallableReturnType">CallableReturnType</a></li>
 <li><a href="#CallableType">CallableType</a></li>
@@ -1834,7 +1715,6 @@ Because the <code>#[</code> attribute marker is scanned as a single token by the
 <li><a href="#OctalIndicator">OctalIndicator</a></li>
 <li><a href="#OctalIntLiteral">OctalIntLiteral</a></li>
 <li><a href="#OffsetSuffix">OffsetSuffix</a></li>
-<li><a href="#ParameterModifiers">ParameterModifiers</a></li>
 <li><a href="#PostfixType">PostfixType</a></li>
 <li><a href="#PrimaryType">PrimaryType</a></li>
 <li><a href="#Punctuator">Punctuator</a></li>
@@ -1947,7 +1827,6 @@ Written in <a href="https://spec-md.com" target="_blank">Spec Markdown</a>.</foo
 <input hidden class="toggle" type="checkbox" id="_toggle_5.8" /><label for="_toggle_5.8"></label>
 <ol>
 <li id="_sidebar_5.8.1"><a href="#sec-Template-Argument-Hints"><span class="spec-secid">5.8.1</span>Template Argument Hints</a></li>
-<li id="_sidebar_5.8.2"><a href="#sec-Template-Argument-Attributes"><span class="spec-secid">5.8.2</span>Template Argument Attributes</a></li>
 </ol>
 </li>
 <li id="_sidebar_5.9"><a href="#sec-Literal-Types"><span class="spec-secid">5.9</span>Literal Types</a></li>
@@ -1970,17 +1849,14 @@ Written in <a href="https://spec-md.com" target="_blank">Spec Markdown</a>.</foo
 <li id="_sidebar_6.1.1"><a href="#sec-Shape-Fields"><span class="spec-secid">6.1.1</span>Shape Fields</a></li>
 <li id="_sidebar_6.1.2"><a href="#sec-Optional-Fields"><span class="spec-secid">6.1.2</span>Optional Fields</a></li>
 <li id="_sidebar_6.1.3"><a href="#sec-Unsealed-Shapes"><span class="spec-secid">6.1.3</span>Unsealed Shapes</a></li>
-<li id="_sidebar_6.1.4"><a href="#sec-Shape-Field-Attributes"><span class="spec-secid">6.1.4</span>Shape Field Attributes</a></li>
 </ol>
 </li>
 <li id="_sidebar_6.2"><a href="#sec-Callable-Types"><span class="spec-secid">6.2</span>Callable Types</a>
 <input hidden class="toggle" type="checkbox" id="_toggle_6.2" /><label for="_toggle_6.2"></label>
 <ol>
 <li id="_sidebar_6.2.1"><a href="#sec-Callable-Parameters"><span class="spec-secid">6.2.1</span>Callable Parameters</a></li>
-<li id="_sidebar_6.2.2"><a href="#sec-Callable-Parameter-Attributes"><span class="spec-secid">6.2.2</span>Callable Parameter Attributes</a></li>
 </ol>
 </li>
-<li id="_sidebar_6.3"><a href="#sec-Attributes"><span class="spec-secid">6.3</span>Attributes</a></li>
 </ol>
 </li>
 <li id="_sidebar_A"><a href="#sec-Appendix-Notation-Conventions"><span class="spec-secid">A</span>Appendix: Notation Conventions</a>

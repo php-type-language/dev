@@ -116,11 +116,6 @@ comment_ begins with `/*` and continues up to and including the next `*/`.
 
 Comments are {Ignored} and have no bearing on the meaning of a document.
 
-Note: The `#` line comment marker and the `#[` attribute marker share a
-leading character. Because lexical analysis prefers the longest match, the
-sequence `#[` is always scanned as the start of an attribute (see
-[Attributes](#sec-Attributes)) rather than as the start of a comment.
-
 ## Lexical Tokens
 
 Token ::
@@ -146,12 +141,11 @@ Punctuator :: one of
 - `?` `|` `&` `*` `,` `:` `=`
 - `(` `)` `[` `]` `{` `}`
 - `<` `>` `<=` `>=`
-- `::` `\` `...` `#[`
+- `::` `\` `...`
 
 TypeLang documents use punctuation to describe structure. Several punctuators
 share a leading character (for example, `<` and `<=`; `:` and `::`; `.` in
-`...`; `#` in `#[`); in every such case, the longest matching punctuator is
-taken.
+`...`); in every such case, the longest matching punctuator is taken.
 
 ### Names
 
