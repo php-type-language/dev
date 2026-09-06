@@ -11,59 +11,43 @@ use TypeLang\Type\Tests\TestCase;
 final class VariableLiteralNodeTest extends TestCase
 {
     #[Test]
-    public function constructorStripsLeadingDollarSign(): void
+    public function constructorStoresNameWithoutDollarSign(): void
     {
-        $node = new VariableLiteralNode('$foo');
+        $node = new VariableLiteralNode('foo');
 
         self::assertSame('foo', $node->value);
+    }
+
+    #[Test]
+    public function rawValueIsPrefixedByDollarSign(): void
+    {
+        $node = new VariableLiteralNode('foo');
+
         self::assertSame('$foo', $node->raw);
     }
 
     #[Test]
     public function toStringReturnsRaw(): void
     {
-        $node = new VariableLiteralNode('$bar');
+        $node = new VariableLiteralNode('bar');
 
         self::assertSame('$bar', (string) $node);
     }
 
     #[Test]
-    public function parseWithoutDollarSignAddsDollar(): void
+    public function singleCharacterVariableIsAllowed(): void
     {
-        $node = VariableLiteralNode::parse('myVar');
+        $node = new VariableLiteralNode('a');
 
-        self::assertSame('myVar', $node->value);
-        self::assertSame('$myVar', $node->raw);
-    }
-
-    #[Test]
-    public function parseWithDollarSignKeepsValue(): void
-    {
-        $node = VariableLiteralNode::parse('$myVar');
-
-        self::assertSame('myVar', $node->value);
-        self::assertSame('$myVar', $node->raw);
+        self::assertSame('a', $node->value);
+        self::assertSame('$a', $node->raw);
     }
 
     #[Test]
     public function defaultOffsetIsZero(): void
     {
-        $node = new VariableLiteralNode('$x');
+        $node = new VariableLiteralNode('x');
 
         self::assertSame(0, $node->offset);
-    }
-
-    #[Test]
-    public function constructorThrowsWhenStringTooShort(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        new VariableLiteralNode('$');
-    }
-
-    #[Test]
-    public function constructorThrowsWhenMissingDollarSign(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        new VariableLiteralNode('foo');
     }
 }

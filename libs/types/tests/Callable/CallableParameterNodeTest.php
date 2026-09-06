@@ -30,7 +30,7 @@ final class CallableParameterNodeTest extends TestCase
     #[Test]
     public function constructorWithNameOnly(): void
     {
-        $name = VariableLiteralNode::parse('param');
+        $name = new VariableLiteralNode('param');
         $node = new CallableParameterNode(name: $name);
 
         self::assertNull($node->type);
@@ -41,7 +41,7 @@ final class CallableParameterNodeTest extends TestCase
     public function constructorWithTypeAndName(): void
     {
         $type = new NamedTypeNode(Name::createFromString('int'));
-        $name = VariableLiteralNode::parse('count');
+        $name = new VariableLiteralNode('count');
         $node = new CallableParameterNode($type, $name);
 
         self::assertSame($type, $node->type);

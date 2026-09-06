@@ -299,4 +299,341 @@ final class NameTest extends TestCase
 
         new Name([]);
     }
+
+    #[Test]
+    public function firstMethodIsAnAliasOfProperty(): void
+    {
+        $name = new Name([$this->id('Foo'), $this->id('Bar')]);
+
+        self::assertSame('Foo', $name->first()->value);
+        self::assertSame($name->first(), $name->first);
+    }
+
+    #[Test]
+    public function lastMethodIsAnAliasOfProperty(): void
+    {
+        $name = new Name([$this->id('Foo'), $this->id('Bar')]);
+
+        self::assertSame('Bar', $name->last()->value);
+        self::assertSame($name->last(), $name->last);
+    }
+
+    #[Test]
+    public function isSimpleMethodIsAnAliasOfProperty(): void
+    {
+        $name = new Name([$this->id('Foo')]);
+
+        self::assertTrue($name->isSimple());
+        self::assertSame($name->isSimple(), $name->isSimple);
+    }
+
+    #[Test]
+    public function isSpecialMethodIsAnAliasOfProperty(): void
+    {
+        $name = new Name([$this->id('self')]);
+
+        self::assertTrue($name->isSpecial());
+        self::assertSame($name->isSpecial(), $name->isSpecial);
+    }
+
+    #[Test]
+    public function isBuiltinMethodIsAnAliasOfProperty(): void
+    {
+        $name = new Name([$this->id('int')]);
+
+        self::assertTrue($name->isBuiltin());
+        self::assertSame($name->isBuiltin(), $name->isBuiltin);
+    }
+
+    #[Test]
+    public function virtualPropertiesReflectSegmentMutations(): void
+    {
+        $name = new Name([$this->id('Foo')]);
+
+        self::assertTrue($name->isSimple);
+
+        $name->segments[] = $this->id('Bar');
+
+        self::assertFalse($name->isSimple, 'Virtual properties must be recalculated on each access');
+        self::assertSame('Bar', $name->last->value);
+    }
+
+    #[Test]
+    public function issetReturnsTrueForVirtualProperties(): void
+    {
+        $name = new Name([$this->id('Foo')]);
+
+        self::assertTrue(isset($name->first));
+        self::assertTrue(isset($name->last));
+        self::assertTrue(isset($name->isSimple));
+        self::assertTrue(isset($name->isSpecial));
+        self::assertTrue(isset($name->isBuiltin));
+    }
+
+    #[Test]
+    public function issetReturnsFalseForUnknownProperty(): void
+    {
+        $name = new Name([$this->id('Foo')]);
+
+        self::assertFalse(isset($name->unknown));
+    }
+
+    #[Test]
+    public function readingUnknownPropertyThrows(): void
+    {
+        $name = new Name([$this->id('Foo')]);
+
+        $this->expectException(\OutOfRangeException::class);
+
+        /** @phpstan-ignore-next-line */
+        $name->unknown;
+    }
+
+    #[Test]
+    public function fullyQualifiedDefaultValueConstantIsFalse(): void
+    {
+        self::assertFalse(Name::IS_FULLY_QUALIFIED_DEFAULT_VALUE);
+    }
+
+    #[Test]
+    public function toUnqualifiedLowerStringLowercasesNameWithoutLeadingDelimiter(): void
+    {
+        $name = Name::createFromString('\Vendor\Package\SomeClass');
+
+        self::assertSame('vendor\package\someclass', $name->toUnqualifiedLowerString());
+    }
+
+    #[Test]
+    public function toFullQualifiedLowerStringKeepsLeadingDelimiter(): void
+    {
+        $name = Name::createFromString('\Vendor\Package\SomeClass');
+
+        self::assertSame('\vendor\package\someclass', $name->toFullQualifiedLowerString());
+    }
+
+    #[Test]
+    public function toFullQualifiedStringIsIndependentOfTheQualificationFlag(): void
+    {
+        $name = Name::createFromString('Vendor\SomeClass');
+
+        self::assertFalse($name->isFullyQualified);
+        self::assertSame('\Vendor\SomeClass', $name->toFullQualifiedString());
+        self::assertSame('\vendor\someclass', $name->toFullQualifiedLowerString());
+    }
+
+    #[Test]
+    public function toStringDependsOnTheQualificationFlag(): void
+    {
+        $unqualified = new Name([$this->id('Foo')], false);
+        $qualified = new Name([$this->id('Foo')], true);
+
+        self::assertSame('Foo', $unqualified->toString());
+        self::assertSame('\Foo', $qualified->toString());
+    }
+
+    #[Test]
+    public function createFromStringIgnoresRepeatedDelimiters(): void
+    {
+        $name = Name::createFromString('Foo\\\\Bar');
+
+        self::assertSame(['Foo', 'Bar'], $name->toStringArray());
+    }
+
+    #[Test]
+    public function createFromStringIgnoresTrailingDelimiter(): void
+    {
+        $name = Name::createFromString('Foo\Bar\\');
+
+        self::assertSame(['Foo', 'Bar'], $name->toStringArray());
+        self::assertFalse($name->isFullyQualified);
+    }
+
+    #[Test]
+    public function createFromStringAcceptsStringableObject(): void
+    {
+        $stringable = new class implements \Stringable {
+            public function __toString(): string
+            {
+                return 'Foo\Bar';
+            }
+        };
+
+        self::assertSame(['Foo', 'Bar'], Name::createFromString($stringable)->toStringArray());
+    }
+
+    #[Test]
+    public function createFromStringSegmentsAcceptsStrings(): void
+    {
+        $name = Name::createFromStringSegments(['Foo', 'Bar'], true);
+
+        self::assertSame(['Foo', 'Bar'], $name->toStringArray());
+        self::assertTrue($name->isFullyQualified);
+    }
+
+    #[Test]
+    public function createFromStringThrowsOnEmptyString(): void
+    {
+        self::skipWhenAssertsAreDisabled();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        Name::createFromString('');
+    }
+
+    #[Test]
+    public function createFromStringThrowsOnDelimiterOnlyString(): void
+    {
+        self::skipWhenAssertsAreDisabled();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        Name::createFromString('\\');
+    }
+
+    #[Test]
+    public function sliceKeepsQualificationFlag(): void
+    {
+        $name = Name::createFromString('\Foo\Bar\Baz');
+
+        $sliced = $name->slice(1);
+
+        self::assertSame(['Bar', 'Baz'], $sliced->toStringArray());
+        self::assertTrue($sliced->isFullyQualified);
+    }
+
+    #[Test]
+    public function sliceDoesNotModifyTheOriginalName(): void
+    {
+        $name = Name::createFromString('Foo\Bar\Baz');
+
+        $name->slice(1);
+
+        self::assertSame(['Foo', 'Bar', 'Baz'], $name->toStringArray());
+    }
+
+    #[Test]
+    public function withAddedKeepsQualificationFlagOfTheReceiver(): void
+    {
+        $name = Name::createFromString('\Some\Any');
+
+        $result = $name->withAdded(Name::createFromString('Test\Class'));
+
+        self::assertSame(['Some', 'Any', 'Test', 'Class'], $result->toStringArray());
+        self::assertTrue($result->isFullyQualified);
+    }
+
+    #[Test]
+    public function withAddedDoesNotModifyArguments(): void
+    {
+        $name = Name::createFromString('Some\Any');
+        $added = Name::createFromString('Test');
+
+        $name->withAdded($added);
+
+        self::assertSame(['Some', 'Any'], $name->toStringArray());
+        self::assertSame(['Test'], $added->toStringArray());
+    }
+
+    #[Test]
+    public function mergeWithReplacesTheAliasSegment(): void
+    {
+        $name = Name::createFromString('TypeLang\Parser\Exception');
+
+        $result = $name->mergeWith(Name::createFromString('Error\SemanticException'));
+
+        self::assertSame('TypeLang\Parser\Exception\SemanticException', $result->toString());
+    }
+
+    #[Test]
+    public function mergeWithSimpleNameReturnsTheReceiverSegments(): void
+    {
+        $name = Name::createFromString('TypeLang\Parser\Node');
+
+        $result = $name->mergeWith(Name::createFromString('Node'));
+
+        self::assertSame('TypeLang\Parser\Node', $result->toString());
+    }
+
+    #[Test]
+    public function toFullQualifiedKeepsSegments(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        $result = $name->toFullQualified();
+
+        self::assertTrue($result->isFullyQualified);
+        self::assertSame(['Foo', 'Bar'], $result->toStringArray());
+        self::assertFalse($name->isFullyQualified, 'The original name must not be modified');
+    }
+
+    #[Test]
+    public function toUnqualifiedKeepsSegments(): void
+    {
+        $name = Name::createFromString('\Foo\Bar');
+
+        $result = $name->toUnqualified();
+
+        self::assertFalse($result->isFullyQualified);
+        self::assertSame(['Foo', 'Bar'], $result->toStringArray());
+        self::assertTrue($name->isFullyQualified, 'The original name must not be modified');
+    }
+
+    #[Test]
+    public function toUnqualifiedOfUnqualifiedNameReturnsEqualName(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        $result = $name->toUnqualified();
+
+        self::assertFalse($result->isFullyQualified);
+        self::assertSame('Foo\Bar', $result->toString());
+    }
+
+    #[Test]
+    public function serializationRoundtripPreservesQualificationFlag(): void
+    {
+        $name = Name::createFromString('\Foo\Bar');
+
+        /** @var Name $restored */
+        $restored = \unserialize(\serialize($name));
+
+        self::assertTrue($restored->isFullyQualified);
+        self::assertSame('\Foo\Bar', $restored->toString());
+    }
+
+    #[Test]
+    public function serializePayloadContainsSegmentsOffsetAndFqnFlag(): void
+    {
+        $name = Name::createFromString('Foo');
+        $name->offset = 3;
+
+        self::assertSame([$name->segments, 3, false], $name->__serialize());
+    }
+
+    #[Test]
+    public function unserializeThrowsWhenSegmentsAreMissing(): void
+    {
+        $name = Name::createFromString('Foo');
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $name->__unserialize([]);
+    }
+
+    #[Test]
+    public function offsetMethodIsAnAliasOfProperty(): void
+    {
+        $name = Name::createFromString('Foo');
+        $name->offset = 9;
+
+        self::assertSame(9, $name->offset());
+    }
+
+    #[Test]
+    public function stringCastIsTheSameAsToStringMethod(): void
+    {
+        $name = Name::createFromString('\Foo\Bar');
+
+        self::assertSame($name->toString(), (string) $name);
+    }
 }

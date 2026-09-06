@@ -16,7 +16,7 @@ final class NumericFieldNodeTest extends TestCase
     #[Test]
     public function constructorStoresKeyAndType(): void
     {
-        $key = IntLiteralNode::parse('0');
+        $key = new IntLiteralNode(0);
         $type = new NamedTypeNode(Name::createFromString('string'));
         $node = new NumericFieldNode($key, $type);
 
@@ -27,7 +27,7 @@ final class NumericFieldNodeTest extends TestCase
     #[Test]
     public function indexReturnsStringifiedKeyValue(): void
     {
-        $key = IntLiteralNode::parse('42');
+        $key = new IntLiteralNode(42);
         $node = new NumericFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
         self::assertSame('42', $node->index);
@@ -36,7 +36,7 @@ final class NumericFieldNodeTest extends TestCase
     #[Test]
     public function indexForZeroKey(): void
     {
-        $key = IntLiteralNode::parse('0');
+        $key = new IntLiteralNode(0);
         $node = new NumericFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
         self::assertSame('0', $node->index);
@@ -46,7 +46,7 @@ final class NumericFieldNodeTest extends TestCase
     public function optionalDefaultsToFalse(): void
     {
         $node = new NumericFieldNode(
-            IntLiteralNode::parse('1'),
+            new IntLiteralNode(1),
             new NamedTypeNode(Name::createFromString('string')),
         );
 
@@ -57,7 +57,7 @@ final class NumericFieldNodeTest extends TestCase
     public function constructorStoresOptionalFlag(): void
     {
         $node = new NumericFieldNode(
-            IntLiteralNode::parse('1'),
+            new IntLiteralNode(1),
             new NamedTypeNode(Name::createFromString('string')),
             true,
         );
@@ -69,7 +69,7 @@ final class NumericFieldNodeTest extends TestCase
     public function defaultOffsetIsZero(): void
     {
         $node = new NumericFieldNode(
-            IntLiteralNode::parse('0'),
+            new IntLiteralNode(0),
             new NamedTypeNode(Name::createFromString('int')),
         );
 
