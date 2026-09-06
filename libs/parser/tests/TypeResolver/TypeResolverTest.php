@@ -142,14 +142,8 @@ final class TypeResolverTest extends TypeResolverTestCase
             UnionTypeNode
               NamedTypeNode
                 Name(TypeLang\Parser\Node)
-                  Identifier(TypeLang)
-                  Identifier(Parser)
-                  Identifier(Node)
               NamedTypeNode
                 Name(TypeLang\Parser\Exception)
-                  Identifier(TypeLang)
-                  Identifier(Parser)
-                  Identifier(Exception)
             AST, $this->print($resolver->resolve($this->parse('Node|Error'))));
     }
 
@@ -162,21 +156,13 @@ final class TypeResolverTest extends TypeResolverTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-                Identifier(array)
-              Shape\FieldsListNode(sealed)
-                Shape\ImplicitFieldNode(required)
+              Shape\FieldsListNode(isSealed=true)
+                Shape\ImplicitFieldNode(isOptional=false)
                   NamedTypeNode
                     Name(TypeLang\Parser\Node)
-                      Identifier(TypeLang)
-                      Identifier(Parser)
-                      Identifier(Node)
-                Shape\ImplicitFieldNode(required)
+                Shape\ImplicitFieldNode(isOptional=false)
                   NamedTypeNode
                     Name(TypeLang\Parser\Exception\SemanticException)
-                      Identifier(TypeLang)
-                      Identifier(Parser)
-                      Identifier(Exception)
-                      Identifier(SemanticException)
             AST, $this->print($resolver->resolve($this->parse('array{Node, Error\SemanticException}'))));
     }
 
@@ -189,14 +175,10 @@ final class TypeResolverTest extends TypeResolverTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Vendor\Collection)
-                Identifier(Vendor)
-                Identifier(Collection)
               Template\TemplateArgumentListNode
                 Template\TemplateArgumentNode
                   NamedTypeNode
                     Name(Vendor\Node)
-                      Identifier(Vendor)
-                      Identifier(Node)
             AST, $this->print($resolver->resolve($this->parse('Collection<Node>'))));
     }
 
@@ -277,18 +259,12 @@ final class TypeResolverTest extends TypeResolverTestCase
         self::assertSame(<<<'AST'
             CallableTypeNode
               Name(callable)
-                Identifier(callable)
               Callable\CallableParameterListNode
-                Callable\CallableParameterNode(simple)
+                Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
                   NamedTypeNode
                     Name(App\Node)
-                      Identifier(App)
-                      Identifier(Node)
               NamedTypeNode
                 Name(App\Err\Exception)
-                  Identifier(App)
-                  Identifier(Err)
-                  Identifier(Exception)
             AST, $this->print($resolver->resolve($this->parse('callable(Node): Error'))));
     }
 
@@ -300,8 +276,6 @@ final class TypeResolverTest extends TypeResolverTestCase
         self::assertSame(<<<'AST'
             ClassConstNode
               Name(App\Node)
-                Identifier(App)
-                Identifier(Node)
               Identifier(FOO)
             AST, $this->print($resolver->resolve($this->parse('Node::FOO'))));
     }
@@ -314,8 +288,6 @@ final class TypeResolverTest extends TypeResolverTestCase
         self::assertSame(<<<'AST'
             ClassConstMaskNode
               Name(App\Node)
-                Identifier(App)
-                Identifier(Node)
             AST, $this->print($resolver->resolve($this->parse('Node::*'))));
     }
 
@@ -329,13 +301,8 @@ final class TypeResolverTest extends TypeResolverTestCase
             IntersectionTypeNode
               NamedTypeNode
                 Name(App\Node)
-                  Identifier(App)
-                  Identifier(Node)
               NamedTypeNode
                 Name(App\Err\Exception)
-                  Identifier(App)
-                  Identifier(Err)
-                  Identifier(Exception)
             AST, $this->print($resolver->resolve($this->parse('Node&Error'))));
     }
 
@@ -350,13 +317,8 @@ final class TypeResolverTest extends TypeResolverTestCase
               Condition\EqualConditionNode
                 NamedTypeNode
                   Name(App\Node)
-                    Identifier(App)
-                    Identifier(Node)
                 NamedTypeNode
                   Name(App\Err\Exception)
-                    Identifier(App)
-                    Identifier(Err)
-                    Identifier(Exception)
               Literal\BoolLiteralNode(true)
               Literal\BoolLiteralNode(false)
             AST, $this->print($resolver->resolve($this->parse('Node is Error ? true : false'))));

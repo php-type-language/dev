@@ -17,7 +17,6 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(JSON_THROW_ON_ERROR)
-                Identifier(JSON_THROW_ON_ERROR)
             AST, $this->parseAndPrint('JSON_THROW_ON_ERROR'));
     }
 
@@ -26,8 +25,6 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(pcov\version)
-                Identifier(pcov)
-                Identifier(version)
             AST, $this->parseAndPrint('pcov\\version'));
     }
 
@@ -36,7 +33,6 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             ClassConstNode
               Name(ClassName)
-                Identifier(ClassName)
               Identifier(CONSTANT_NAME)
             AST, $this->parseAndPrint('ClassName::CONSTANT_NAME'));
     }
@@ -46,9 +42,6 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             ClassConstNode
               Name(Path\To\ClassName)
-                Identifier(Path)
-                Identifier(To)
-                Identifier(ClassName)
               Identifier(ANOTHER_CONSTANT_NAME)
             AST, $this->parseAndPrint('Path\\To\\ClassName::ANOTHER_CONSTANT_NAME'));
     }
@@ -56,9 +49,8 @@ final class ConstantTest extends SyntaxTestCase
     public function testGlobalConstantMask(): void
     {
         self::assertSame(<<<'AST'
-            ConstMaskNode(JSON_*)
+            ConstMaskNode
               Name(JSON_)
-                Identifier(JSON_)
             AST, $this->parseAndPrint('JSON_*'));
     }
 
@@ -67,9 +59,6 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             ClassConstMaskNode
               Name(Path\To\ClassName)
-                Identifier(Path)
-                Identifier(To)
-                Identifier(ClassName)
               Identifier(PREFIX_)
             AST, $this->parseAndPrint('Path\\To\\ClassName::PREFIX_*'));
     }
@@ -79,9 +68,6 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             ClassConstMaskNode
               Name(Path\To\ClassName)
-                Identifier(Path)
-                Identifier(To)
-                Identifier(ClassName)
             AST, $this->parseAndPrint('Path\\To\\ClassName::*'));
     }
 

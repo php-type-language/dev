@@ -16,10 +16,8 @@ final class OffsetAccessTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             TypeOffsetAccessNode
-              Literal\StringLiteralNode('offset')
               NamedTypeNode
                 Name(T)
-                  Identifier(T)
             AST, $this->parseAndPrint("T['offset']"));
     }
 
@@ -28,11 +26,7 @@ final class OffsetAccessTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             TypeOffsetAccessNode
               NamedTypeNode
-                Name(U)
-                  Identifier(U)
-              NamedTypeNode
                 Name(T)
-                  Identifier(T)
             AST, $this->parseAndPrint('T[U]'));
     }
 
@@ -40,19 +34,15 @@ final class OffsetAccessTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             TypeOffsetAccessNode
-              Literal\IntLiteralNode(0)
               NamedTypeNode
                 Name(array)
-                  Identifier(array)
-                Shape\FieldsListNode(sealed)
-                  Shape\ImplicitFieldNode(required)
+                Shape\FieldsListNode(isSealed=true)
+                  Shape\ImplicitFieldNode(isOptional=false)
                     NamedTypeNode
                       Name(int)
-                        Identifier(int)
-                  Shape\ImplicitFieldNode(required)
+                  Shape\ImplicitFieldNode(isOptional=false)
                     NamedTypeNode
                       Name(string)
-                        Identifier(string)
             AST, $this->parseAndPrint('array{int, string}[0]'));
     }
 
@@ -61,22 +51,11 @@ final class OffsetAccessTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             TypeOffsetAccessNode
               NamedTypeNode
-                Name(object)
-                  Identifier(object)
-                Shape\FieldsListNode(unsealed)
-                  Shape\NamedFieldNode(required)
-                    Identifier(key)
-                    NamedTypeNode
-                      Name(int)
-                        Identifier(int)
-              NamedTypeNode
                 Name(T)
-                  Identifier(T)
                 Template\TemplateArgumentListNode
                   Template\TemplateArgumentNode
                     NamedTypeNode
                       Name(U)
-                        Identifier(U)
             AST, $this->parseAndPrint('T<U>[object{key: int, ...}]'));
     }
 

@@ -47,8 +47,6 @@ final class NameTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Example\Name)
-                Identifier(Example)
-                Identifier(Name)
             AST, $this->parseAndPrint('Example\\Name'));
     }
 
@@ -57,9 +55,6 @@ final class NameTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(\Absolute\Type\Name)
-                Identifier(Absolute)
-                Identifier(Type)
-                Identifier(Name)
             AST, $this->parseAndPrint('\\Absolute\\Type\\Name'));
     }
 
@@ -82,7 +77,6 @@ final class NameTest extends SyntaxTestCase
         self::assertSame(<<<AST
             NamedTypeNode
               Name(\\{$keyword})
-                Identifier({$keyword})
             AST, $this->parseAndPrint('\\' . $keyword));
     }
 

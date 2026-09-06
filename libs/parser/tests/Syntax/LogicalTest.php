@@ -19,13 +19,10 @@ final class LogicalTest extends SyntaxTestCase
             UnionTypeNode
               NamedTypeNode
                 Name(A)
-                  Identifier(A)
               NamedTypeNode
                 Name(B)
-                  Identifier(B)
               NamedTypeNode
                 Name(C)
-                  Identifier(C)
             AST, $this->parseAndPrint('A | B | C'));
     }
 
@@ -35,13 +32,10 @@ final class LogicalTest extends SyntaxTestCase
             IntersectionTypeNode
               NamedTypeNode
                 Name(A)
-                  Identifier(A)
               NamedTypeNode
                 Name(B)
-                  Identifier(B)
               NamedTypeNode
                 Name(C)
-                  Identifier(C)
             AST, $this->parseAndPrint('A & B & C'));
     }
 
@@ -51,7 +45,6 @@ final class LogicalTest extends SyntaxTestCase
             NullableTypeNode
               NamedTypeNode
                 Name(Example)
-                  Identifier(Example)
             AST, $this->parseAndPrint('?Example'));
     }
 
@@ -62,13 +55,10 @@ final class LogicalTest extends SyntaxTestCase
               IntersectionTypeNode
                 NamedTypeNode
                   Name(A)
-                    Identifier(A)
                 NamedTypeNode
                   Name(B)
-                    Identifier(B)
               NamedTypeNode
                 Name(C)
-                  Identifier(C)
             AST, $this->parseAndPrint('(A & B) | C'));
     }
 
@@ -79,13 +69,10 @@ final class LogicalTest extends SyntaxTestCase
               UnionTypeNode
                 NamedTypeNode
                   Name(A)
-                    Identifier(A)
                 NamedTypeNode
                   Name(B)
-                    Identifier(B)
               NamedTypeNode
                 Name(C)
-                  Identifier(C)
             AST, $this->parseAndPrint('(A | B) & C'));
     }
 

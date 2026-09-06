@@ -34,16 +34,12 @@ final class ConditionalTest extends SyntaxTestCase
               Condition\\{$condition}
                 NamedTypeNode
                   Name(A)
-                    Identifier(A)
                 NamedTypeNode
                   Name(B)
-                    Identifier(B)
               NamedTypeNode
                 Name(C)
-                  Identifier(C)
               NamedTypeNode
                 Name(D)
-                  Identifier(D)
             AST, $this->parseAndPrint($type));
     }
 
@@ -55,13 +51,10 @@ final class ConditionalTest extends SyntaxTestCase
                 Literal\VariableLiteralNode($T)
                 NamedTypeNode
                   Name(B)
-                    Identifier(B)
               NamedTypeNode
                 Name(C)
-                  Identifier(C)
               NamedTypeNode
                 Name(D)
-                  Identifier(D)
             AST, $this->parseAndPrint('$T is B ? C : D'));
     }
 
