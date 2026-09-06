@@ -35,12 +35,54 @@ abstract class DumperVisitor extends Visitor
         $suffix = \str_replace($this->simplifyNodeNamespace, '', $node::class);
 
         if ($node instanceof \Stringable) {
-            $suffix .= \sprintf('(%s)', (string) $node);
+            $suffix .= $this->printStringableNodeSuffix($node);
+        } else {
+            $suffix .= $this->printNodePropertiesSuffix($node);
         }
 
         $this->write($prefix . $suffix . "\n");
 
         return null;
+    }
+
+    /**
+     * @param \Stringable $node
+     * @return non-empty-string
+     */
+    private function printStringableNodeSuffix(\Stringable $node): string
+    {
+        return \sprintf('(%s)', (string) $node);
+    }
+
+    /**
+     * Returns a "(prop=value, ...)" suffix built from the writable scalar
+     * properties of the node, or an empty string in case of there are none.
+     */
+    private function printNodePropertiesSuffix(Node $node): string
+    {
+        $result = [];
+
+        foreach ((new \ReflectionObject($node))->getProperties() as $property) {
+            // Skip readonly + static and builtin "offset" properties
+            if ($property->isStatic() || $property->isReadOnly() || $property->getName() === 'offset') {
+                continue;
+            }
+
+            $value = $property->getValue($node);
+
+            // Skip non-scalar properties
+            if (!\is_scalar($value)) {
+                continue;
+            }
+
+            $result[] = \sprintf('%s=%s', $property->getName(), \var_export($value, true));
+        }
+
+        if ($result === []) {
+            return '';
+        }
+
+        return \sprintf('(%s)', \implode(', ', $result));
     }
 
     public function leave(Node $node): void

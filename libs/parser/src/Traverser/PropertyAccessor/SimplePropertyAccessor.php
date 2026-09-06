@@ -11,7 +11,7 @@ final class SimplePropertyAccessor implements PropertyAccessorInterface
      */
     private function shouldSkip(\ReflectionProperty $property): bool
     {
-        if ($property->isStatic()) {
+        if ($property->isStatic() || $property->isReadOnly()) {
             return true;
         }
 

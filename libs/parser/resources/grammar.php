@@ -600,7 +600,7 @@ return [
                 : new Type\Shape\FieldsListNode();
 
             if ($children !== []) {
-                $fields->sealed = false;
+                $fields->isSealed = false;
             }
 
             return \array_filter([$parameters, $fields]);
