@@ -10,17 +10,17 @@ namespace TypeLang\Parser\Exception;
  */
 abstract class SemanticException extends \LogicException implements ParserExceptionInterface
 {
-    final public const int ERROR_CODE_SHAPE_KEY_DUPLICATION = 0x01;
+    final public const ERROR_CODE_SHAPE_KEY_DUPLICATION = 0x01;
 
-    final public const int ERROR_CODE_SHAPE_KEY_MIX = 0x02;
+    final public const ERROR_CODE_SHAPE_KEY_MIX = 0x02;
 
-    final public const int ERROR_CODE_VARIADIC_WITH_DEFAULT = 0x03;
+    final public const ERROR_CODE_VARIADIC_WITH_DEFAULT = 0x03;
 
-    final public const int ERROR_CODE_VARIADIC_ALREADY_VARIADIC = 0x04;
+    final public const ERROR_CODE_VARIADIC_ALREADY_VARIADIC = 0x04;
 
-    final public const int ERROR_CODE_INVALID_OPERATOR = 0x05;
+    final public const ERROR_CODE_INVALID_OPERATOR = 0x05;
 
-    protected const int CODE_LAST = self::ERROR_CODE_INVALID_OPERATOR;
+    protected const CODE_LAST = self::ERROR_CODE_INVALID_OPERATOR;
 
     /**
      * @param int<0, max> $offset

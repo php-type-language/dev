@@ -33,9 +33,7 @@ use TypeLang\Type\TypeNode;
 #[Group('unit'), Group('type-lang/parser')]
 abstract class TestCase extends BaseTestCase
 {
-    protected TypeParserInterface $parser {
-        get => $this->parser ??= new TypeParser();
-    }
+    private ?TypeParserInterface $parser = null;
 
     /**
      * @param ParserOptionsType $options
@@ -43,7 +41,7 @@ abstract class TestCase extends BaseTestCase
     protected function parser(array $options = []): TypeParserInterface
     {
         if ($options === []) {
-            return $this->parser;
+            return $this->parser ??= new TypeParser();
         }
 
         return new TypeParser(new TypeParserFeatures(...$options));

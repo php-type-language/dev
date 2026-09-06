@@ -9,13 +9,13 @@ use TypeLang\Parser\TypeResolver\PhpUseStatementsReader;
 use TypeLang\Parser\TypeResolver\PhpUseStatementsTransformer;
 use TypeLang\Type\TypeNode;
 
-final readonly class TypeResolver
+final class TypeResolver
 {
     public function __construct(
         /**
          * @var array<array-key, non-empty-string>
          */
-        private array $imports = [],
+        private readonly array $imports = [],
     ) {}
 
     /**

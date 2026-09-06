@@ -41,12 +41,12 @@ use TypeLang\Type\Name;
  * // > }
  * ```
  */
-final readonly class PhpUseStatementsTransformer
+final class PhpUseStatementsTransformer
 {
     /**
      * @var array<non-empty-lowercase-string, Name>
      */
-    private array $replacements;
+    private readonly array $replacements;
 
     /**
      * @param iterable<non-empty-string|array-key, non-empty-string|Name> $replacements

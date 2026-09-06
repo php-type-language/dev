@@ -6,15 +6,15 @@ namespace TypeLang\Parser;
 
 use TypeLang\Type\TypeNode;
 
-final readonly class ParsedResult
+final class ParsedResult
 {
     public function __construct(
-        public TypeNode $type,
+        public readonly TypeNode $type,
         /**
          * Last processed token offset.
          *
          * @var int<0, max>
          */
-        public int $offset,
+        public readonly int $offset,
     ) {}
 }

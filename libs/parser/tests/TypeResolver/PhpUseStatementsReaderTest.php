@@ -20,9 +20,7 @@ use TypeLang\Parser\TypeResolver\PhpUseStatementsReader;
 
 final class PhpUseStatementsReaderTest extends TypeResolverTestCase
 {
-    private PhpUseStatementsReader $reader {
-        get => $this->reader ??= new PhpUseStatementsReader();
-    }
+    private ?PhpUseStatementsReader $reader = null;
 
     /**
      * @param class-string $class
@@ -31,7 +29,7 @@ final class PhpUseStatementsReaderTest extends TypeResolverTestCase
      */
     private function read(string $class): array
     {
-        return $this->reader->getClassUseStatements(new \ReflectionClass($class));
+        return ($this->reader ??= new PhpUseStatementsReader())->getClassUseStatements(new \ReflectionClass($class));
     }
 
     public function testReadsPlainAndAliasedImports(): void

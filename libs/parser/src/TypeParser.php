@@ -24,13 +24,9 @@ use TypeLang\Type\TypeNode;
 
 final class TypeParser implements TypeParserInterface
 {
-    private ExecutionContext $strict {
-        get => $this->strict ??= new ExecutionContext($this->features, false);
-    }
+    private ?ExecutionContext $strict = null;
 
-    private ExecutionContext $tolerant {
-        get => $this->tolerant ??= new ExecutionContext($this->features, true);
-    }
+    private ?ExecutionContext $tolerant = null;
 
     public function __construct(
         public readonly TypeParserFeatures $features = new TypeParserFeatures(),
@@ -57,14 +53,14 @@ final class TypeParser implements TypeParserInterface
 
     public function parse(#[Language('PHP')] mixed $source): TypeNode
     {
-        $result = $this->execute($this->strict, $source);
+        $result = $this->execute($this->strictContext(), $source);
 
         return $result->type;
     }
 
     public function parseTolerant(#[Language('PHP')] mixed $source): ParsedResult
     {
-        return $this->execute($this->tolerant, $source);
+        return $this->execute($this->tolerantContext(), $source);
     }
 
     private function execute(ExecutionContext $context, mixed $source): ParsedResult
@@ -149,5 +145,21 @@ final class TypeParser implements TypeParserInterface
             statement: $source->getContents(),
             e: $e,
         );
+    }
+
+    /**
+     * Returns a lazily created execution context for the strict mode.
+     */
+    private function strictContext(): ExecutionContext
+    {
+        return $this->strict ??= new ExecutionContext($this->features, false);
+    }
+
+    /**
+     * Returns a lazily created execution context for the tolerant mode.
+     */
+    private function tolerantContext(): ExecutionContext
+    {
+        return $this->tolerant ??= new ExecutionContext($this->features, true);
     }
 }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use TypeLang\Parser\Exception;
+use TypeLang\Parser\Literal;
 use TypeLang\Type;
 
 /**
@@ -327,19 +328,19 @@ return [
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Type\Literal\FloatLiteralNode::parse($token->getValue());
+            return new Type\Literal\FloatLiteralNode((float) $token->getValue(), $token->getValue());
         },
         23 => function (Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return $this->integerPool[$token] ??= Type\Literal\IntLiteralNode::parse($token->getValue());
+            return $this->integerPool[$token] ??= Literal\IntLiteralParser::parse($token->getValue());
         },
         24 => static function (Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Type\Literal\BoolLiteralNode::parse($token->getValue());
+            return new Type\Literal\BoolLiteralNode(\strtolower($token->getValue()) === 'true', $token->getValue());
         },
         25 => static function (Phplrt\Parser\Context $ctx, $children) {
             return new Type\Literal\NullLiteralNode($children->getValue());
@@ -348,25 +349,25 @@ return [
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Type\Literal\VariableLiteralNode::parse($token->getValue());
+            return new Type\Literal\VariableLiteralNode(\substr($token->getValue(), 1));
         },
         29 => static function (Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Type\Literal\VariableLiteralNode::parse($token->getValue());
+            return new Type\Literal\VariableLiteralNode(\substr($token->getValue(), 1));
         },
         30 => static function (Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Type\Literal\StringLiteralNode::createFromDoubleQuotedString($token->getValue());
+            return Literal\StringLiteralParser::createFromDoubleQuotedString($token->getValue());
         },
         31 => static function (Phplrt\Parser\Context $ctx, $children) {
             // The "$token" variable is an auto-generated
             $token = $ctx->lastProcessedToken;
 
-            return Type\Literal\StringLiteralNode::createFromSingleQuotedString($token->getValue());
+            return Literal\StringLiteralParser::createFromSingleQuotedString($token->getValue());
         },
         45 => function (Phplrt\Parser\Context $ctx, $children) {
             // The "$offset" variable is an auto-generated

@@ -7,10 +7,10 @@ namespace TypeLang\Parser\TypeResolver;
 use TypeLang\Parser\TypeResolver\PhpUseStatementsReader\NamespaceFinder;
 use TypeLang\Parser\TypeResolver\PhpUseStatementsReader\ReflectionSourcePrefixReader;
 
-final readonly class PhpUseStatementsReader
+final class PhpUseStatementsReader
 {
-    private ReflectionSourcePrefixReader $reader;
-    private NamespaceFinder $namespace;
+    private readonly ReflectionSourcePrefixReader $reader;
+    private readonly NamespaceFinder $namespace;
 
     public function __construct()
     {

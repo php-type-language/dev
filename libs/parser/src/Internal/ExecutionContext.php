@@ -41,14 +41,14 @@ use TypeLang\Type\TypeNode;
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Parser
  */
-final readonly class ExecutionContext
+final class ExecutionContext
 {
     /**
      * @var ParserRuntime<TypeNode>
      */
-    private ParserRuntime $parser;
+    private readonly ParserRuntime $parser;
 
-    private LexerRuntime $lexer;
+    private readonly LexerRuntime $lexer;
 
     /**
      * In-memory string literal pool.
@@ -57,7 +57,7 @@ final readonly class ExecutionContext
      *
      * @var \WeakMap<TokenInterface, StringLiteralNode>
      */
-    protected \WeakMap $stringPool;
+    protected readonly \WeakMap $stringPool;
 
     /**
      * In-memory integer literal pool.
@@ -66,17 +66,17 @@ final readonly class ExecutionContext
      *
      * @var \WeakMap<TokenInterface, IntLiteralNode>
      */
-    protected \WeakMap $integerPool;
+    protected readonly \WeakMap $integerPool;
 
     public function __construct(
         /**
          * @api this property is accessible inside the grammar reducers
          */
-        protected TypeParserFeatures $features,
+        protected readonly TypeParserFeatures $features,
         /**
          * @api this property is accessible inside the grammar reducers
          */
-        protected bool $tolerant,
+        protected readonly bool $tolerant,
     ) {
         /** @phpstan-var GrammarConfigArrayType $grammar */
         $grammar = require __DIR__ . '/../../resources/grammar.php';

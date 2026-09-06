@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\TypeResolver\PhpUseStatementsReader;
 
-final readonly class NamespaceFinder
+final class NamespaceFinder
 {
     /**
      * @param \Iterator<array-key, \PhpToken> $tokens

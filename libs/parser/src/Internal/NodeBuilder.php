@@ -12,13 +12,13 @@ use TypeLang\Type\Node;
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Parser
  */
-final readonly class NodeBuilder implements BuilderInterface
+final class NodeBuilder implements BuilderInterface
 {
     /**
      * @param array<int<0, max>|non-empty-string, callable(Context, mixed):mixed> $reducers
      */
     public function __construct(
-        private array $reducers,
+        private readonly array $reducers,
     ) {}
 
     public function build(Context $context, mixed $result): mixed
