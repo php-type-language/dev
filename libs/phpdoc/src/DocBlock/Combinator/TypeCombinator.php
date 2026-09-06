@@ -18,17 +18,17 @@ use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
  *
  * @template-implements CombinatorInterface<TypeReference>
  */
-readonly class TypeCombinator implements CombinatorInterface
+class TypeCombinator implements CombinatorInterface
 {
-    public const string NAME = 'Type';
+    public const NAME = 'Type';
 
     public function __construct(
-        private TypeParserInterface $typeParser
+        private readonly TypeParserInterface $typeParser
     ) {}
 
     public function __invoke(Cursor $cursor): TypeReference
     {
-        $start = $cursor->position;
+        $start = $cursor->getPosition();
         $source = $cursor->readRemainder();
 
         if ($source === '') {
@@ -40,7 +40,7 @@ readonly class TypeCombinator implements CombinatorInterface
         // text (e.g. a description) rather than at the end of the buffer.
         $result = $this->typeParser->parseTolerant($source);
 
-        $cursor->position = $start + $result->offset;
+        $cursor->moveTo($start + $result->offset);
 
         // The tolerant offset also covers the whitespace up to the next token,
         // so the trailing run is trimmed off the preserved type text.

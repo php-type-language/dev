@@ -21,7 +21,7 @@ final class DescriptionGrammarRuleTest extends GrammarRuleTestCase
 {
     protected function rule(): DescriptionCombinator
     {
-        return new \ReflectionClass(DescriptionCombinator::class)
+        return (new \ReflectionClass(DescriptionCombinator::class))
             ->newLazyProxy(function (DescriptionCombinator $proxy) {
                 $registry = new TagRegistry(
                     definitions: [],
@@ -66,7 +66,7 @@ final class DescriptionGrammarRuleTest extends GrammarRuleTestCase
 
         self::assertInstanceOf(Description::class, $description);
         self::assertSame('a b c', (string) $description);
-        self::assertTrue($cursor->isEof);
+        self::assertTrue($cursor->isEof());
     }
 
     /**

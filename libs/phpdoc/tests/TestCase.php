@@ -43,12 +43,12 @@ abstract class TestCase extends BaseTestCase
 
         $tagFactory = null;
 
-        $baseRules[DescriptionCombinator::NAME] = new \ReflectionClass(DescriptionCombinator::class)
+        $baseRules[DescriptionCombinator::NAME] = (new \ReflectionClass(DescriptionCombinator::class))
             ->newLazyProxy(function () use (&$tagFactory): DescriptionCombinator {
                 if ($tagFactory === null) {
                     return new DescriptionCombinator(new BalancedBraceAwareParser(
                         new StringTagParser(new TagFactory(
-                            registry: new TagRegistryBuilder()
+                            registry: (new TagRegistryBuilder())
                                 ->build(),
                             combinators: [
                                 UriCombinator::NAME => new UriCombinator(),
@@ -65,7 +65,7 @@ abstract class TestCase extends BaseTestCase
                 );
             });
 
-        $tagFactory = new TagFactory(new TagRegistryBuilder()->build(), $baseRules);
+        $tagFactory = new TagFactory((new TagRegistryBuilder())->build(), $baseRules);
 
         return $tagFactory;
     }

@@ -24,7 +24,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
  */
 final class AssertIfTrueTagDefinition extends TagDefinition
 {
-    public const string NAME = 'assert-if-true';
+    public const NAME = 'assert-if-true';
 
     public function __construct()
     {

@@ -69,10 +69,11 @@ use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 final class StandardPlatform implements PlatformInterface
 {
     /**
-     * @var iterable<non-empty-lowercase-string, TagDefinitionInterface>
+     * @return iterable<non-empty-lowercase-string, TagDefinitionInterface>
      */
-    public iterable $tags {
-        get => [
+    public function getTags(): iterable
+    {
+        return [
             LinkTagDefinition::NAME => new LinkTagDefinition(),
             SeeTagDefinition::NAME => new SeeTagDefinition(),
             ReturnTagDefinition::NAME => new ReturnTagDefinition(),
@@ -115,10 +116,11 @@ final class StandardPlatform implements PlatformInterface
     }
 
     /**
-     * @var iterable<non-empty-lowercase-string, non-empty-lowercase-string>
+     * @return iterable<non-empty-lowercase-string, non-empty-lowercase-string>
      */
-    public iterable $aliases {
-        get => [
+    public function getAliases(): iterable
+    {
+        return [
             'inherits' => ExtendsTagDefinition::NAME,
             'template-extends' => ExtendsTagDefinition::NAME,
             'template-implements' => ImplementsTagDefinition::NAME,
@@ -131,10 +133,11 @@ final class StandardPlatform implements PlatformInterface
     }
 
     /**
-     * @var iterable<non-empty-string, CombinatorType>
+     * @return iterable<non-empty-string, CombinatorType>
      */
-    public iterable $combinators {
-        get => [
+    public function getCombinators(): iterable
+    {
+        return [
             UriCombinator::NAME => new UriCombinator(),
             UrlCombinator::NAME => new UrlCombinator(),
             ReferenceCombinator::NAME => new ReferenceCombinator(),
