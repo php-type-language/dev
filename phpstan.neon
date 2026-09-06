@@ -10,6 +10,10 @@ includes:
   - libs/types/phpstan.neon
 parameters:
   level: max
+  treatPhpDocTypesAsCertain: false
+  phpVersion:
+    min: 80100
+    max: 80599
   strictRules:
     allRules: true
   fileExtensions:
