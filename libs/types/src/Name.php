@@ -72,9 +72,17 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function getFirstPartAsString(): string
     {
-        $identifier = $this->getFirstPart();
+        return \reset($this->parts)->toString();
+    }
 
-        return $identifier->toString();
+    /**
+     * Gets the first segment of a name as a lowercase string
+     *
+     * @return non-empty-lowercase-string
+     */
+    public function getFirstPartAsLowerString(): string
+    {
+        return \reset($this->parts)->toLowerString();
     }
 
     /**
@@ -92,9 +100,17 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function getLastPartAsString(): string
     {
-        $identifier = $this->getLastPart();
+        return \end($this->parts)->toString();
+    }
 
-        return $identifier->toString();
+    /**
+     * Gets the last segment of a name as a lowercase string
+     *
+     * @return non-empty-lowercase-string
+     */
+    public function getLastPartAsLowerString(): string
+    {
+        return \end($this->parts)->toLowerString();
     }
 
     /**
