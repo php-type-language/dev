@@ -13,11 +13,13 @@ final class FieldsListNode extends NodeList
 {
     /**
      * @param list<FieldNode> $list
+     * @param int<0, max> $offset
      */
     public function __construct(
         array $list = [],
         public bool $isSealed = true,
+        int $offset = 0,
     ) {
-        parent::__construct($list);
+        parent::__construct($list, $offset);
     }
 }

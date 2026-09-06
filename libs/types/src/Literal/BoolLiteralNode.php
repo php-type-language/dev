@@ -11,10 +11,14 @@ namespace TypeLang\Type\Literal;
  */
 final class BoolLiteralNode extends LiteralNode
 {
+    /**
+     * @param int<0, max> $offset
+     */
     public function __construct(
         bool $value,
         ?string $raw = null,
+        int $offset = 0,
     ) {
-        parent::__construct($value, $raw ?? ($value ? 'true' : 'false'));
+        parent::__construct($value, $raw ?? ($value ? 'true' : 'false'), $offset);
     }
 }

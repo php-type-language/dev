@@ -13,9 +13,10 @@ final class VariableLiteralNode extends LiteralNode
 {
     /**
      * @param non-empty-string $value
+     * @param int<0, max> $offset
      */
-    public function __construct(string $value)
+    public function __construct(string $value, int $offset = 0)
     {
-        parent::__construct($value, '$' . $value);
+        parent::__construct($value, '$' . $value, $offset);
     }
 }

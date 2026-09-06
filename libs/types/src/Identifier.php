@@ -39,6 +39,7 @@ final class Identifier extends Node implements \Stringable
     ];
 
     /**
+     * @param int<0, max> $offset
      * @throws \InvalidArgumentException in case of an empty value
      */
     public function __construct(
@@ -46,13 +47,19 @@ final class Identifier extends Node implements \Stringable
          * @var non-empty-string
          */
         public readonly string $value,
+        int $offset = 0,
     ) {
         if ($value === '') {
             throw new \InvalidArgumentException('Name identifier cannot be empty');
         }
+
+        parent::__construct($offset);
     }
 
-    public static function createFromString(string|\Stringable $value): self
+    /**
+     * @param int<0, max> $offset
+     */
+    public static function createFromString(string|\Stringable $value, int $offset = 0): self
     {
         if ($value instanceof self) {
             return $value;
@@ -64,7 +71,7 @@ final class Identifier extends Node implements \Stringable
             throw new \InvalidArgumentException('Name identifier cannot be empty');
         }
 
-        return new self($normalized);
+        return new self($normalized, $offset);
     }
 
     /**

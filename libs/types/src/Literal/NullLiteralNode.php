@@ -9,8 +9,11 @@ namespace TypeLang\Type\Literal;
  */
 final class NullLiteralNode extends LiteralNode
 {
-    public function __construct(?string $raw = null)
+    /**
+     * @param int<0, max> $offset
+     */
+    public function __construct(?string $raw = null, int $offset = 0)
     {
-        parent::__construct(null, $raw ?? 'null');
+        parent::__construct(null, $raw ?? 'null', $offset);
     }
 }

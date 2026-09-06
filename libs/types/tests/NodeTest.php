@@ -6,11 +6,6 @@ namespace TypeLang\Type\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Attribute\AttributeArgumentListNode;
-use TypeLang\Type\Attribute\AttributeArgumentNode;
-use TypeLang\Type\Attribute\AttributeGroupListNode;
-use TypeLang\Type\Attribute\AttributeGroupNode;
-use TypeLang\Type\Attribute\AttributeNode;
 use TypeLang\Type\Callable\CallableParameterListNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\CallableTypeNode;
@@ -74,7 +69,7 @@ final class NodeTest extends TestCase
         ];
         yield ConstMaskNode::class => [new ConstMaskNode(Name::createFromString('CONST'))];
         yield Identifier::class => [new Identifier('Example')];
-        yield IntersectionTypeNode::class => [new IntersectionTypeNode(self::type('A'), self::type('B'))];
+        yield IntersectionTypeNode::class => [new IntersectionTypeNode([self::type('A'), self::type('B')])];
         yield Name::class => [Name::createFromString('Example')];
         yield NamedTypeNode::class => [self::type()];
         yield NullableTypeNode::class => [new NullableTypeNode(self::type())];
@@ -87,13 +82,7 @@ final class NodeTest extends TestCase
         ];
         yield TypeOffsetAccessNode::class => [new TypeOffsetAccessNode(self::type(), self::type('Offset'))];
         yield TypesListNode::class => [new TypesListNode(self::type())];
-        yield UnionTypeNode::class => [new UnionTypeNode(self::type('A'), self::type('B'))];
-
-        yield AttributeArgumentListNode::class => [new AttributeArgumentListNode()];
-        yield AttributeArgumentNode::class => [new AttributeArgumentNode(self::type())];
-        yield AttributeGroupListNode::class => [new AttributeGroupListNode()];
-        yield AttributeGroupNode::class => [new AttributeGroupNode()];
-        yield AttributeNode::class => [new AttributeNode(Name::createFromString('Deprecated'))];
+        yield UnionTypeNode::class => [new UnionTypeNode([self::type('A'), self::type('B')])];
 
         yield CallableParameterListNode::class => [new CallableParameterListNode()];
         yield CallableParameterNode::class => [new CallableParameterNode(self::type())];
@@ -263,5 +252,149 @@ final class NodeTest extends TestCase
         $node = new class extends Node {};
 
         self::assertSame(0, $node->getOffset());
+    }
+
+    /**
+     * Every node accepts the source code offset it has been read at as the
+     * last argument of its constructor.
+     *
+     * @return iterable<non-empty-string, array{Node}>
+     */
+    public static function provideNodesWithOffset(): iterable
+    {
+        yield CallableTypeNode::class => [
+            new CallableTypeNode(Name::createFromString('callable'), offset: 42),
+        ];
+        yield ClassConstMaskNode::class => [
+            new ClassConstMaskNode(Name::createFromString('Example'), offset: 42),
+        ];
+        yield ClassConstNode::class => [
+            new ClassConstNode(Name::createFromString('Example'), new Identifier('CONST'), 42),
+        ];
+        yield ConstMaskNode::class => [new ConstMaskNode(Name::createFromString('CONST'), 42)];
+        yield Identifier::class => [new Identifier('Example', 42)];
+        yield Name::class => [Name::createFromString('Example', 42)];
+        yield NamedTypeNode::class => [new NamedTypeNode(Name::createFromString('Example'), offset: 42)];
+        yield NullableTypeNode::class => [new NullableTypeNode(self::type(), 42)];
+        yield TernaryExpressionNode::class => [
+            new TernaryExpressionNode(
+                new EqualConditionNode(self::type('A'), self::type('B')),
+                self::type('C'),
+                self::type('D'),
+                42,
+            ),
+        ];
+        yield TypeOffsetAccessNode::class => [
+            new TypeOffsetAccessNode(self::type(), self::type('Offset'), 42),
+        ];
+        yield TypesListNode::class => [new TypesListNode(self::type(), 42)];
+
+        yield CallableParameterListNode::class => [new CallableParameterListNode([], 42)];
+        yield CallableParameterNode::class => [new CallableParameterNode(self::type(), offset: 42)];
+
+        yield EqualConditionNode::class => [new EqualConditionNode(self::type('A'), self::type('B'), 42)];
+        yield GreaterThanConditionNode::class => [
+            new GreaterThanConditionNode(self::type('A'), self::type('B'), 42),
+        ];
+        yield GreaterThanOrEqualConditionNode::class => [
+            new GreaterThanOrEqualConditionNode(self::type('A'), self::type('B'), 42),
+        ];
+        yield LessThanConditionNode::class => [
+            new LessThanConditionNode(self::type('A'), self::type('B'), 42),
+        ];
+        yield LessThanOrEqualConditionNode::class => [
+            new LessThanOrEqualConditionNode(self::type('A'), self::type('B'), 42),
+        ];
+        yield NotEqualConditionNode::class => [
+            new NotEqualConditionNode(self::type('A'), self::type('B'), 42),
+        ];
+
+        yield BoolLiteralNode::class => [new BoolLiteralNode(true, offset: 42)];
+        yield FloatLiteralNode::class => [new FloatLiteralNode(0.1, offset: 42)];
+        yield IntLiteralNode::class => [new IntLiteralNode(42, offset: 42)];
+        yield NullLiteralNode::class => [new NullLiteralNode(offset: 42)];
+        yield StringLiteralNode::class => [new StringLiteralNode('example', offset: 42)];
+        yield VariableLiteralNode::class => [new VariableLiteralNode('example', 42)];
+
+        yield ClassConstFieldNode::class => [
+            new ClassConstFieldNode(
+                new ClassConstNode(Name::createFromString('Example'), new Identifier('CONST')),
+                self::type(),
+                offset: 42,
+            ),
+        ];
+        yield ClassConstMaskFieldNode::class => [
+            new ClassConstMaskFieldNode(
+                new ClassConstMaskNode(Name::createFromString('Example')),
+                self::type(),
+                offset: 42,
+            ),
+        ];
+        yield ConstMaskFieldNode::class => [
+            new ConstMaskFieldNode(
+                new ConstMaskNode(Name::createFromString('CONST')),
+                self::type(),
+                offset: 42,
+            ),
+        ];
+        yield FieldsListNode::class => [new FieldsListNode(offset: 42)];
+        yield ImplicitFieldNode::class => [new ImplicitFieldNode(self::type(), offset: 42)];
+        yield NamedFieldNode::class => [
+            new NamedFieldNode(new Identifier('key'), self::type(), offset: 42),
+        ];
+        yield NumericFieldNode::class => [
+            new NumericFieldNode(new IntLiteralNode(0), self::type(), offset: 42),
+        ];
+        yield StringNamedFieldNode::class => [
+            new StringNamedFieldNode(new StringLiteralNode('key'), self::type(), offset: 42),
+        ];
+
+        yield TemplateArgumentListNode::class => [new TemplateArgumentListNode([], 42)];
+        yield TemplateArgumentNode::class => [new TemplateArgumentNode(self::type(), offset: 42)];
+
+        yield UnionTypeNode::class => [new UnionTypeNode([self::type('A'), self::type('B')], 42)];
+        yield IntersectionTypeNode::class => [
+            new IntersectionTypeNode([self::type('A'), self::type('B')], 42),
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideNodesWithOffset')]
+    public function everyNodeConstructorPassesTheOffsetThrough(Node $node): void
+    {
+        self::assertSame(42, $node->offset);
+        self::assertSame(42, $node->getOffset());
+    }
+
+    /**
+     * Guards the provider above from getting out of sync with the package:
+     * every node takes the offset as the last argument of its constructor and
+     * must be listed there.
+     */
+    #[Test]
+    public function everyNodeIsCoveredByTheOffsetProvider(): void
+    {
+        $expected = $actual = [];
+
+        foreach (self::provideNodes() as [$node]) {
+            $parameters = (new \ReflectionObject($node))
+                ->getConstructor()?->getParameters() ?? [];
+
+            $last = \end($parameters);
+
+            self::assertNotFalse($last, $node::class . ' must take an offset');
+            self::assertSame('offset', $last->getName(), $node::class . ' must take an offset last');
+
+            $expected[] = $node::class;
+        }
+
+        foreach (self::provideNodesWithOffset() as [$node]) {
+            $actual[] = $node::class;
+        }
+
+        \sort($expected);
+        \sort($actual);
+
+        self::assertSame($expected, $actual);
     }
 }

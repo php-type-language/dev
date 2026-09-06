@@ -25,7 +25,6 @@ final class CallableParameterNodeTest extends TestCase
         self::assertFalse($node->isOutput);
         self::assertFalse($node->isVariadic);
         self::assertFalse($node->isOptional);
-        self::assertNull($node->attributes);
     }
 
     #[Test]

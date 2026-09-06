@@ -9,9 +9,15 @@ use TypeLang\Type\Template\TemplateArgumentListNode;
 
 final class NamedTypeNode extends TypeNode
 {
+    /**
+     * @param int<0, max> $offset
+     */
     public function __construct(
         public Name $name,
         public ?TemplateArgumentListNode $arguments = null,
         public ?FieldsListNode $fields = null,
-    ) {}
+        int $offset = 0,
+    ) {
+        parent::__construct($offset);
+    }
 }

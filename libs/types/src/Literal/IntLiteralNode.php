@@ -18,14 +18,16 @@ final class IntLiteralNode extends LiteralNode
 
     /**
      * @param numeric-string|null $decimal
+     * @param int<0, max> $offset
      */
     public function __construct(
         int $value,
         ?string $raw = null,
         ?string $decimal = null,
+        int $offset = 0,
     ) {
         $this->decimal = $decimal ?? (string) $value;
 
-        parent::__construct($value, $raw ?? (string) $value);
+        parent::__construct($value, $raw ?? (string) $value, $offset);
     }
 }

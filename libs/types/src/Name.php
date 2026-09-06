@@ -28,12 +28,14 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
 
     /**
      * @param iterable<array-key, Identifier> $parts
+     * @param int<0, max> $offset
      * @throws \InvalidArgumentException in case of parts are empty or contain
      *         something else than an {@see Identifier}
      */
     public function __construct(
         iterable $parts,
         public readonly bool $isFullyQualified = self::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
+        int $offset = 0,
     ) {
         $parts = match (true) {
             $parts instanceof \Traversable => \iterator_to_array($parts, false),
@@ -59,9 +61,14 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
 
         $this->first = $first;
         $this->last = $last;
+
+        parent::__construct($offset);
     }
 
-    public static function createFromString(string|\Stringable $name): self
+    /**
+     * @param int<0, max> $offset
+     */
+    public static function createFromString(string|\Stringable $name, int $offset = 0): self
     {
         $name = (string) $name;
         $parts = [];
@@ -74,7 +81,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
             $parts[] = Identifier::createFromString($segment);
         }
 
-        return new self($parts, \str_starts_with($name, self::NAMESPACE_DELIMITER));
+        return new self($parts, \str_starts_with($name, self::NAMESPACE_DELIMITER), $offset);
     }
 
     /**

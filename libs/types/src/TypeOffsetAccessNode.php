@@ -13,11 +13,13 @@ final class TypeOffsetAccessNode extends WrappingTypeNode
 {
     /**
      * @param T $type
+     * @param int<0, max> $offset
      */
     public function __construct(
         TypeNode $type,
         public readonly TypeNode $access,
+        int $offset = 0,
     ) {
-        parent::__construct($type);
+        parent::__construct($type, $offset);
     }
 }

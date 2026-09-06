@@ -25,7 +25,7 @@ final class StringLiteralNodeTest extends TestCase
         $node = new StringLiteralNode('hello');
 
         self::assertSame('hello', $node->value);
-        self::assertSame('"hello"', $node->raw);
+        self::assertSame("'hello'", $node->raw);
     }
 
     #[Test]
@@ -47,9 +47,9 @@ final class StringLiteralNodeTest extends TestCase
     #[Test]
     public function constructorEscapesTheDerivedRawValue(): void
     {
-        $node = new StringLiteralNode('a"b');
+        $node = new StringLiteralNode("a'b");
 
-        self::assertSame('"a\"b"', $node->raw);
-        self::assertSame('a"b', $node->value);
+        self::assertSame("'a\'b'", $node->raw);
+        self::assertSame("a'b", $node->value);
     }
 }

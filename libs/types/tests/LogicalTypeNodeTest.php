@@ -30,9 +30,9 @@ final class LogicalTypeNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('provideLogicalTypes')]
-    public function constructorRequiresAtLeastTwoStatements(string $class): void
+    public function twoStatementsAreEnough(string $class): void
     {
-        $node = new $class($this->type('A'), $this->type('B'));
+        $node = new $class([$this->type('A'), $this->type('B')]);
 
         self::assertCount(2, $node);
         self::assertCount(2, $node->statements);
@@ -40,9 +40,14 @@ final class LogicalTypeNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('provideLogicalTypes')]
-    public function variadicStatementsAreStored(string $class): void
+    public function anArbitraryNumberOfStatementsIsStored(string $class): void
     {
-        $node = new $class($this->type('A'), $this->type('B'), $this->type('C'), $this->type('D'));
+        $node = new $class([
+            $this->type('A'),
+            $this->type('B'),
+            $this->type('C'),
+            $this->type('D'),
+        ]);
 
         self::assertCount(4, $node);
     }
@@ -55,9 +60,98 @@ final class LogicalTypeNodeTest extends TestCase
         $b = $this->type('B');
         $c = $this->type('C');
 
-        $node = new $class($a, $b, $c);
+        $node = new $class([$a, $b, $c]);
 
         self::assertSame([$a, $b, $c], $node->statements);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function statementsAreAcceptedFromAnyTraversable(string $class): void
+    {
+        $a = $this->type('A');
+        $b = $this->type('B');
+
+        $node = new $class(new \ArrayIterator([$a, $b]));
+
+        self::assertSame([$a, $b], $node->statements);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function statementsAreAcceptedFromAGenerator(string $class): void
+    {
+        $a = $this->type('A');
+        $b = $this->type('B');
+
+        $node = new $class((static function () use ($a, $b): \Generator {
+            yield $a;
+            yield $b;
+        })());
+
+        self::assertSame([$a, $b], $node->statements);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function statementsAreReindexedIntoAList(string $class): void
+    {
+        $a = $this->type('A');
+        $b = $this->type('B');
+
+        $node = new $class([7 => $a, 42 => $b]);
+
+        self::assertSame([$a, $b], $node->statements);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function aSingleStatementIsRejected(string $class): void
+    {
+        $this->expectException(\LogicException::class);
+
+        new $class([$this->type('A')]);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function noStatementsAreRejected(string $class): void
+    {
+        $this->expectException(\LogicException::class);
+
+        new $class([]);
+    }
+
+    /**
+     * A statement built out of a single statement of the same kind is the very
+     * same statement: the nested one is flattened into it.
+     */
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function aSingleNestedStatementIsUnwrapped(string $class): void
+    {
+        $a = $this->type('A');
+        $b = $this->type('B');
+
+        $node = new $class([new $class([$a, $b])]);
+
+        self::assertSame([$a, $b], $node->statements);
+    }
+
+    /**
+     * A nested statement is flattened before the number of statements is
+     * checked, so a single type wrapped into a statement is still too little.
+     */
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function aStatementFlattenedIntoASingleTypeIsRejected(string $class): void
+    {
+        $node = new $class([$this->type('A'), $this->type('B')]);
+        $node->statements = [$this->type('C')];
+
+        $this->expectException(\LogicException::class);
+
+        new $class([$node]);
     }
 
     #[Test]
@@ -68,7 +162,7 @@ final class LogicalTypeNodeTest extends TestCase
         $b = $this->type('B');
         $c = $this->type('C');
 
-        $node = new $class(new $class($a, $b), $c);
+        $node = new $class([new $class([$a, $b]), $c]);
 
         self::assertSame([$a, $b, $c], $node->statements);
     }
@@ -82,7 +176,7 @@ final class LogicalTypeNodeTest extends TestCase
         $c = $this->type('C');
         $d = $this->type('D');
 
-        $node = new $class(new $class(new $class($a, $b), $c), $d);
+        $node = new $class([new $class([new $class([$a, $b]), $c]), $d]);
 
         self::assertSame([$a, $b, $c, $d], $node->statements);
     }
@@ -95,7 +189,7 @@ final class LogicalTypeNodeTest extends TestCase
         $b = $this->type('B');
         $c = $this->type('C');
 
-        $node = new $class($a, new $class($b, $c));
+        $node = new $class([$a, new $class([$b, $c])]);
 
         self::assertSame([$a, $b, $c], $node->statements);
     }
@@ -103,9 +197,9 @@ final class LogicalTypeNodeTest extends TestCase
     #[Test]
     public function unionDoesNotFlattenIntersection(): void
     {
-        $intersection = new IntersectionTypeNode($this->type('A'), $this->type('B'));
+        $intersection = new IntersectionTypeNode([$this->type('A'), $this->type('B')]);
 
-        $node = new UnionTypeNode($intersection, $this->type('C'));
+        $node = new UnionTypeNode([$intersection, $this->type('C')]);
 
         self::assertCount(2, $node);
         self::assertSame($intersection, $node->statements[0]);
@@ -114,9 +208,9 @@ final class LogicalTypeNodeTest extends TestCase
     #[Test]
     public function intersectionDoesNotFlattenUnion(): void
     {
-        $union = new UnionTypeNode($this->type('A'), $this->type('B'));
+        $union = new UnionTypeNode([$this->type('A'), $this->type('B')]);
 
-        $node = new IntersectionTypeNode($union, $this->type('C'));
+        $node = new IntersectionTypeNode([$union, $this->type('C')]);
 
         self::assertCount(2, $node);
         self::assertSame($union, $node->statements[0]);
@@ -129,7 +223,7 @@ final class LogicalTypeNodeTest extends TestCase
         $a = $this->type('A');
         $b = $this->type('B');
 
-        $node = new $class($a, $b);
+        $node = new $class([$a, $b]);
 
         self::assertSame([$a, $b], \iterator_to_array($node->getIterator()));
     }
@@ -138,8 +232,7 @@ final class LogicalTypeNodeTest extends TestCase
     #[DataProvider('provideLogicalTypes')]
     public function serializationRoundtripPreservesStatementsAndOffset(string $class): void
     {
-        $node = new $class($this->type('A'), $this->type('B'));
-        $node->offset = 13;
+        $node = new $class([$this->type('A'), $this->type('B')], 13);
 
         /** @var LogicalTypeNode $restored */
         $restored = \unserialize(\serialize($node));
@@ -153,19 +246,18 @@ final class LogicalTypeNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('provideLogicalTypes')]
-    public function serializePayloadContainsOffsetAndStatements(string $class): void
+    public function serializePayloadContainsStatementsAndOffset(string $class): void
     {
-        $node = new $class($this->type('A'), $this->type('B'));
-        $node->offset = 7;
+        $node = new $class([$this->type('A'), $this->type('B')], 7);
 
-        self::assertSame([7, $node->statements], $node->__serialize());
+        self::assertSame([$node->statements, 7], $node->__serialize());
     }
 
     #[Test]
     #[DataProvider('provideLogicalTypes')]
-    public function unserializeThrowsWhenOffsetIsMissing(string $class): void
+    public function unserializeThrowsWhenStatementsAreMissing(string $class): void
     {
-        $node = new $class($this->type('A'), $this->type('B'));
+        $node = new $class([$this->type('A'), $this->type('B')]);
 
         $this->expectException(\UnexpectedValueException::class);
 
@@ -174,21 +266,51 @@ final class LogicalTypeNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('provideLogicalTypes')]
-    public function unserializeThrowsWhenStatementsAreMissing(string $class): void
+    public function unserializeDefaultsTheOffsetToZero(string $class): void
     {
-        $node = new $class($this->type('A'), $this->type('B'));
+        $node = new $class([$this->type('A'), $this->type('B')], 42);
 
-        $this->expectException(\UnexpectedValueException::class);
+        $node->__unserialize([$node->statements]);
 
-        $node->__unserialize([0]);
+        self::assertSame(0, $node->offset);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function theOffsetIsPassedThroughTheConstructor(string $class): void
+    {
+        $node = new $class([$this->type('A'), $this->type('B')], 42);
+
+        self::assertSame(42, $node->offset);
+        self::assertSame(42, $node->getOffset());
     }
 
     #[Test]
     #[DataProvider('provideLogicalTypes')]
     public function defaultOffsetIsZero(string $class): void
     {
-        $node = new $class($this->type('A'), $this->type('B'));
+        $node = new $class([$this->type('A'), $this->type('B')]);
 
         self::assertSame(0, $node->offset);
+    }
+
+    /**
+     * Building a statement out of an already built one must not cost more the
+     * longer it gets: the flattening is linear in the number of statements.
+     */
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function flatteningIsLinear(string $class): void
+    {
+        $statements = [];
+
+        for ($i = 0; $i < 1000; ++$i) {
+            $statements[] = $this->type('T' . $i);
+        }
+
+        $node = new $class($statements);
+
+        self::assertCount(1000, $node);
+        self::assertSame($statements, $node->statements);
     }
 }

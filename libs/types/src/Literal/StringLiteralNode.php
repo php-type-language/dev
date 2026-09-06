@@ -11,12 +11,16 @@ namespace TypeLang\Type\Literal;
  */
 final class StringLiteralNode extends LiteralNode
 {
+    /**
+     * @param int<0, max> $offset
+     */
     final public function __construct(
         string $value,
         ?string $raw = null,
+        int $offset = 0,
     ) {
-        $raw ??= \sprintf('"%s"', \addcslashes($value, '"'));
+        $raw ??= \sprintf("'%s'", \addcslashes($value, "'"));
 
-        parent::__construct($value, $raw);
+        parent::__construct($value, $raw, $offset);
     }
 }

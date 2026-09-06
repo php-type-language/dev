@@ -6,7 +6,6 @@ namespace TypeLang\Type\Tests\Shape;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\ClassConstMaskNode;
 use TypeLang\Type\ClassConstNode;
 use TypeLang\Type\ConstMaskNode;
@@ -105,11 +104,6 @@ final class ExplicitFieldNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('provideExplicitFields')]
-    public function explicitFieldHasNoAttributesByDefault(ExplicitFieldNode $field, string $index): void
-    {
-        self::assertNull($field->attributes);
-    }
-
     #[Test]
     #[DataProvider('provideExplicitFields')]
     public function explicitFieldIsAFieldNode(ExplicitFieldNode $field, string $index): void
@@ -127,14 +121,6 @@ final class ExplicitFieldNodeTest extends TestCase
     }
 
     #[Test]
-    public function attributesAreStored(): void
-    {
-        $attributes = new AttributeGroupListNode();
-        $field = new NamedFieldNode(new Identifier('key'), self::type(), false, $attributes);
-
-        self::assertSame($attributes, $field->attributes);
-    }
-
     #[Test]
     public function implicitFieldHasNoKey(): void
     {

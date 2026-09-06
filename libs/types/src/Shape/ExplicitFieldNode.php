@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Shape;
 
-use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -12,6 +11,9 @@ use TypeLang\Type\TypeNode;
  */
 abstract class ExplicitFieldNode extends FieldNode
 {
+    /**
+     * @param int<0, max> $offset
+     */
     public function __construct(
         /**
          * @var TKey
@@ -19,12 +21,12 @@ abstract class ExplicitFieldNode extends FieldNode
         public mixed $key,
         TypeNode $type,
         bool $isOptional = false,
-        ?AttributeGroupListNode $attributes = null,
+        int $offset = 0,
     ) {
         parent::__construct(
             type: $type,
             isOptional: $isOptional,
-            attributes: $attributes,
+            offset: $offset,
         );
     }
 

@@ -16,13 +16,19 @@ use TypeLang\Type\TypeNode;
  */
 abstract class LiteralNode extends TypeNode implements LiteralNodeInterface
 {
+    /**
+     * @param int<0, max> $offset
+     */
     public function __construct(
         /**
          * @var TValue
          */
         public readonly mixed $value,
         public readonly string $raw,
-    ) {}
+        int $offset = 0,
+    ) {
+        parent::__construct($offset);
+    }
 
     public function __toString(): string
     {

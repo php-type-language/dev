@@ -22,12 +22,19 @@ abstract class NodeList extends Node implements
 
     /**
      * @param iterable<mixed, TNode> $items
+     * @param int<0, max> $offset
      */
-    public function __construct(iterable $items = [])
+    public function __construct(iterable $items = [], int $offset = 0)
     {
-        $this->items = \is_array($items)
-            ? \array_values($items)
-            : \iterator_to_array($items, false);
+        $this->items = match (true) {
+            // A list is already shaped the way it is stored, so it is taken
+            // as it is rather than copied
+            \is_array($items) && \array_is_list($items) => $items,
+            \is_array($items) => \array_values($items),
+            default => \iterator_to_array($items, false),
+        };
+
+        parent::__construct($offset);
     }
 
     /**

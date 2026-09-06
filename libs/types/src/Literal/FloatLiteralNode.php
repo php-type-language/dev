@@ -11,10 +11,14 @@ namespace TypeLang\Type\Literal;
  */
 final class FloatLiteralNode extends LiteralNode
 {
+    /**
+     * @param int<0, max> $offset
+     */
     public function __construct(
         float $value,
         ?string $raw = null,
+        int $offset = 0,
     ) {
-        parent::__construct($value, $raw ?? (string) $value);
+        parent::__construct($value, $raw ?? (string) $value, $offset);
     }
 }

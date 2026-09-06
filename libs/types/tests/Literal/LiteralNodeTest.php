@@ -82,7 +82,7 @@ final class LiteralNodeTest extends TestCase
     #[Test]
     public function stringLiteralDerivesRawFromValue(): void
     {
-        self::assertSame('"example"', (new StringLiteralNode('example'))->raw);
+        self::assertSame("'example'", (new StringLiteralNode('example'))->raw);
     }
 
     #[Test]
