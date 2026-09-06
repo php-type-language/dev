@@ -57,29 +57,6 @@ final class NamedFieldNodeTest extends TestCase
     }
 
     #[Test]
-    public function toStringReturnsRequiredWhenNotOptional(): void
-    {
-        $node = new NamedFieldNode(
-            new Identifier('field'),
-            new NamedTypeNode(Name::createFromString('string')),
-        );
-
-        self::assertSame('required', (string) $node);
-    }
-
-    #[Test]
-    public function toStringReturnsOptionalWhenOptional(): void
-    {
-        $node = new NamedFieldNode(
-            new Identifier('field'),
-            new NamedTypeNode(Name::createFromString('string')),
-            true,
-        );
-
-        self::assertSame('optional', (string) $node);
-    }
-
-    #[Test]
     public function defaultOffsetIsZero(): void
     {
         $node = new NamedFieldNode(

@@ -16,7 +16,7 @@ final class FieldsListNode extends NodeList
      */
     public function __construct(
         array $list = [],
-        public bool $sealed = true,
+        public bool $isSealed = true,
     ) {
         parent::__construct($list);
     }

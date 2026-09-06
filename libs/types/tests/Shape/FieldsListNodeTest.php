@@ -33,7 +33,7 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode();
 
-        self::assertTrue($list->sealed);
+        self::assertTrue($list->isSealed);
     }
 
     #[Test]
@@ -41,7 +41,7 @@ final class FieldsListNodeTest extends TestCase
     {
         $list = new FieldsListNode([], false);
 
-        self::assertFalse($list->sealed);
+        self::assertFalse($list->isSealed);
     }
 
     #[Test]
@@ -54,22 +54,6 @@ final class FieldsListNodeTest extends TestCase
         self::assertCount(2, $list);
         self::assertSame($a, $list->first());
         self::assertSame($b, $list->last());
-    }
-
-    #[Test]
-    public function toStringReturnsSealedWhenSealed(): void
-    {
-        $list = new FieldsListNode([], true);
-
-        self::assertSame('sealed', (string) $list);
-    }
-
-    #[Test]
-    public function toStringReturnsUnsealedWhenNotSealed(): void
-    {
-        $list = new FieldsListNode([], false);
-
-        self::assertSame('unsealed', (string) $list);
     }
 
     #[Test]

@@ -101,7 +101,6 @@ final class ExplicitFieldNodeTest extends TestCase
     public function explicitFieldIsRequiredByDefault(ExplicitFieldNode $field, string $index): void
     {
         self::assertFalse($field->isOptional);
-        self::assertSame('required', (string) $field);
     }
 
     #[Test]
@@ -120,12 +119,11 @@ final class ExplicitFieldNodeTest extends TestCase
     }
 
     #[Test]
-    public function optionalFieldIsStringifiedAsOptional(): void
+    public function optionalFieldStoresTheFlag(): void
     {
         $field = new NamedFieldNode(new Identifier('key'), self::type(), true);
 
         self::assertTrue($field->isOptional);
-        self::assertSame('optional', (string) $field);
     }
 
     #[Test]
@@ -144,7 +142,6 @@ final class ExplicitFieldNodeTest extends TestCase
 
         self::assertInstanceOf(FieldNode::class, $field);
         self::assertNotInstanceOf(ExplicitFieldNode::class, $field);
-        self::assertSame('required', (string) $field);
     }
 
     #[Test]

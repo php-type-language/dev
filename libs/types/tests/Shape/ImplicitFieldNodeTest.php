@@ -41,25 +41,6 @@ final class ImplicitFieldNodeTest extends TestCase
     }
 
     #[Test]
-    public function toStringReturnsRequiredWhenNotOptional(): void
-    {
-        $node = new ImplicitFieldNode(new NamedTypeNode(Name::createFromString('int')));
-
-        self::assertSame('required', (string) $node);
-    }
-
-    #[Test]
-    public function toStringReturnsOptionalWhenOptional(): void
-    {
-        $node = new ImplicitFieldNode(
-            new NamedTypeNode(Name::createFromString('int')),
-            true,
-        );
-
-        self::assertSame('optional', (string) $node);
-    }
-
-    #[Test]
     public function attributesDefaultToNull(): void
     {
         $node = new ImplicitFieldNode(new NamedTypeNode(Name::createFromString('int')));

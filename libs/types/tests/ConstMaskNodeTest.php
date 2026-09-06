@@ -20,22 +20,6 @@ final class ConstMaskNodeTest extends TestCase
     }
 
     #[Test]
-    public function toStringAppendsAsterisk(): void
-    {
-        $node = new ConstMaskNode(Name::createFromString('SOME_CONST'));
-
-        self::assertSame('SOME_CONST*', (string) $node);
-    }
-
-    #[Test]
-    public function toStringWithQualifiedNameAppendsAsterisk(): void
-    {
-        $node = new ConstMaskNode(Name::createFromString('Vendor\Package\STATUS'));
-
-        self::assertSame('Vendor\Package\STATUS*', (string) $node);
-    }
-
-    #[Test]
     public function defaultOffsetIsZero(): void
     {
         $node = new ConstMaskNode(Name::createFromString('FOO'));

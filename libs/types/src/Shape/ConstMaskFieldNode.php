@@ -29,6 +29,6 @@ final class ConstMaskFieldNode extends ExplicitFieldNode
 
     public function getIndex(): string
     {
-        return (string) $this->key;
+        return $this->key->name . '*';
     }
 }
