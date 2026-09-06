@@ -13,13 +13,6 @@ use TypeLang\Type\TypeNode;
  */
 final class ClassConstFieldNode extends ExplicitFieldNode
 {
-    public string $index {
-        get => \vsprintf('%s::%s', [
-            $this->key->class->toString(),
-            $this->key->constant->toString(),
-        ]);
-    }
-
     public function __construct(
         ClassConstNode $key,
         TypeNode $type,
@@ -32,5 +25,13 @@ final class ClassConstFieldNode extends ExplicitFieldNode
             isOptional: $isOptional,
             attributes: $attributes,
         );
+    }
+
+    public function index(): string
+    {
+        return \vsprintf('%s::%s', [
+            $this->key->class->toString(),
+            $this->key->constant->toString(),
+        ]);
     }
 }

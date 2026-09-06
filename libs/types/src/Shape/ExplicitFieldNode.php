@@ -9,15 +9,17 @@ use TypeLang\Type\TypeNode;
 
 /**
  * @template TKey of mixed
+ *
+ * @property-read string $index An alias of {@see index()} method.
  */
 abstract class ExplicitFieldNode extends FieldNode
 {
     /**
-     * Gets a pretty-printed string representation of the key
+     * @var list<non-empty-string>
      */
-    abstract public string $index {
-        get;
-    }
+    private const VIRTUAL_PROPERTIES = [
+        'index',
+    ];
 
     public function __construct(
         /**
@@ -33,5 +35,25 @@ abstract class ExplicitFieldNode extends FieldNode
             isOptional: $isOptional,
             attributes: $attributes,
         );
+    }
+
+    /**
+     * Gets a pretty-printed string representation of the key
+     */
+    abstract public function index(): string;
+
+    public function __get(string $name): mixed
+    {
+        return match ($name) {
+            'index' => $this->index(),
+            default => throw new \OutOfRangeException(
+                message: \sprintf('Undefined property %s::$%s', static::class, $name),
+            ),
+        };
+    }
+
+    public function __isset(string $name): bool
+    {
+        return \in_array($name, self::VIRTUAL_PROPERTIES, true);
     }
 }

@@ -12,21 +12,17 @@ interface LiteralNodeInterface extends \Stringable
     /**
      * Gets a PHP representation of the literal value.
      *
-     * @var TValue
+     * @return TValue
      */
-    public mixed $value {
-        get;
-    }
+    public function value(): mixed;
 
     /**
      * Gets the original literal value specified in the token.
      */
-    public string $raw {
-        get;
-    }
+    public function raw(): string;
 
     /**
-     * Returns the processed ({@see $value}) literal value as a string.
+     * Returns the processed ({@see value()}) literal value as a string.
      */
     public function __toString(): string;
 }

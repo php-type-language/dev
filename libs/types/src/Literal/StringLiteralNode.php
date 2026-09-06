@@ -14,17 +14,17 @@ final class StringLiteralNode extends LiteralNode implements ParsableLiteralNode
     /**
      * @var non-empty-string
      */
-    private const string UTF_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\u\{([0-9a-fA-F]+)}/u';
+    private const UTF_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\u\{([0-9a-fA-F]+)}/u';
 
     /**
      * @var non-empty-string
      */
-    private const string HEX_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\x([0-9a-fA-F]{1,2})/iu';
+    private const HEX_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\x([0-9a-fA-F]{1,2})/iu';
 
     /**
      * @var non-empty-array<non-empty-string, non-empty-string>
      */
-    private const array ESCAPED_CHARS = [
+    private const ESCAPED_CHARS = [
         '\n' => "\n",
         '\r' => "\r",
         '\t' => "\t",

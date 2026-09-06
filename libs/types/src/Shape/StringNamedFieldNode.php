@@ -13,10 +13,6 @@ use TypeLang\Type\TypeNode;
  */
 final class StringNamedFieldNode extends ExplicitFieldNode
 {
-    public string $index {
-        get => $this->key->value;
-    }
-
     public function __construct(
         StringLiteralNode $key,
         TypeNode $type,
@@ -29,5 +25,10 @@ final class StringNamedFieldNode extends ExplicitFieldNode
             isOptional: $isOptional,
             attributes: $attributes,
         );
+    }
+
+    public function index(): string
+    {
+        return $this->key->value;
     }
 }

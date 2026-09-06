@@ -8,55 +8,37 @@ namespace TypeLang\Type;
  * @phpstan-consistent-constructor
  *
  * @template-implements \IteratorAggregate<array-key, Identifier>
+ *
+ * @property-read Identifier $first An alias of {@see first()} method.
+ * @property-read Identifier $last An alias of {@see last()} method.
+ * @property-read bool $isSimple An alias of {@see isSimple()} method.
+ * @property-read bool $isSpecial An alias of {@see isSpecial()} method.
+ * @property-read bool $isBuiltin An alias of {@see isBuiltin()} method.
  */
 final class Name extends Node implements \IteratorAggregate, \Countable, \Stringable
 {
     /**
+     * @var list<non-empty-string>
+     */
+    private const VIRTUAL_PROPERTIES = [
+        'first',
+        'last',
+        'isSimple',
+        'isSpecial',
+        'isBuiltin',
+    ];
+
+    /**
      * @var non-empty-string
      */
-    private const string NAMESPACE_DELIMITER = '\\';
+    private const NAMESPACE_DELIMITER = '\\';
 
-    public const bool IS_FULLY_QUALIFIED_DEFAULT_VALUE = false;
+    public const IS_FULLY_QUALIFIED_DEFAULT_VALUE = false;
 
     /**
      * @var non-empty-list<Identifier>
      */
     public array $segments;
-
-    /**
-     * Gets the first segment of a name
-     */
-    public Identifier $first {
-        get => $this->segments[0];
-    }
-
-    /**
-     * Gets the last segment of a name
-     */
-    public Identifier $last {
-        get => $this->segments[\count($this->segments) - 1];
-    }
-
-    /**
-     * Gets whether the name is simple.
-     */
-    public bool $isSimple {
-        get => \count($this->segments) === 1;
-    }
-
-    /**
-     * Gets {@see true} in case of name contains special class reference.
-     */
-    public bool $isSpecial {
-        get => $this->isSimple && $this->first->isSpecial;
-    }
-
-    /**
-     * Gets {@see true} in case of name contains builtin type name.
-     */
-    public bool $isBuiltin {
-        get => $this->isSimple && $this->first->isBuiltin;
-    }
 
     /**
      * @param iterable<array-key, Identifier> $segments
@@ -65,7 +47,11 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
         iterable $segments,
         public readonly bool $isFullyQualified = self::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
     ) {
-        $segments = \iterator_to_array($segments, false);
+        $segments = match (true) {
+            $segments instanceof \Traversable => \iterator_to_array($segments, false),
+            \array_is_list($segments) => $segments,
+            default => \array_values($segments),
+        };
 
         \assert($segments !== [], new \InvalidArgumentException('Name segments count can not be empty'));
 
@@ -319,6 +305,65 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     public function count(): int
     {
         return \count($this->segments);
+    }
+
+    /**
+     * Gets the first segment of a name
+     */
+    public function first(): Identifier
+    {
+        return $this->segments[0];
+    }
+
+    /**
+     * Gets the last segment of a name
+     */
+    public function last(): Identifier
+    {
+        return $this->segments[\count($this->segments) - 1];
+    }
+
+    /**
+     * Gets whether the name is simple.
+     */
+    public function isSimple(): bool
+    {
+        return \count($this->segments) === 1;
+    }
+
+    /**
+     * Gets {@see true} in case of name contains special class reference.
+     */
+    public function isSpecial(): bool
+    {
+        return $this->isSimple() && $this->first()->isSpecial();
+    }
+
+    /**
+     * Gets {@see true} in case of name contains builtin type name.
+     */
+    public function isBuiltin(): bool
+    {
+        return $this->isSimple() && $this->first()->isBuiltin();
+    }
+
+    public function __get(string $name): mixed
+    {
+        return match ($name) {
+            'first' => $this->first(),
+            'last' => $this->last(),
+            'isSimple' => $this->isSimple(),
+            'isSpecial' => $this->isSpecial(),
+            'isBuiltin' => $this->isBuiltin(),
+            default => throw new \OutOfRangeException(
+                message: \sprintf('Undefined property %s::$%s', self::class, $name),
+            ),
+        };
+    }
+
+    public function __isset(string $name): bool
+    {
+        return \in_array($name, self::VIRTUAL_PROPERTIES, true);
     }
 
     /**

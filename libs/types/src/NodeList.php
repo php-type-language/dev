@@ -9,6 +9,9 @@ namespace TypeLang\Type;
  *
  * @template-implements \IteratorAggregate<array-key, TNode>
  * @template-implements \ArrayAccess<int<0, max>, TNode>
+ *
+ * @property-read TNode|null $first An alias of {@see first()} method.
+ * @property-read TNode|null $last An alias of {@see last()} method.
  */
 abstract class NodeList extends Node implements
     \IteratorAggregate,
@@ -16,32 +19,26 @@ abstract class NodeList extends Node implements
     \Countable
 {
     /**
+     * @var list<non-empty-string>
+     */
+    private const VIRTUAL_PROPERTIES = [
+        'first',
+        'last',
+    ];
+
+    /**
      * @var list<TNode>
      */
     public array $items = [];
-
-    /**
-     * @var TNode|null
-     */
-    public ?Node $first {
-        get => $this->items[0] ?? null;
-    }
-
-    /**
-     * @var TNode|null
-     */
-    public ?Node $last {
-        get => ($lastKey = \array_key_last($this->items)) !== null
-            ? $this->items[$lastKey]
-            : null;
-    }
 
     /**
      * @param iterable<mixed, TNode> $items
      */
     public function __construct(iterable $items = [])
     {
-        $this->items = \iterator_to_array($items, false);
+        $this->items = \is_array($items)
+            ? \array_values($items)
+            : \iterator_to_array($items, false);
     }
 
     /**
@@ -117,5 +114,47 @@ abstract class NodeList extends Node implements
     public function count(): int
     {
         return \count($this->items);
+    }
+
+    /**
+     * Gets the first node of a list or {@see null} in case of the list is empty.
+     *
+     * @return TNode|null
+     */
+    public function first(): ?Node
+    {
+        return $this->items[0] ?? null;
+    }
+
+    /**
+     * Gets the last node of a list or {@see null} in case of the list is empty.
+     *
+     * @return TNode|null
+     */
+    public function last(): ?Node
+    {
+        $key = \array_key_last($this->items);
+
+        if ($key === null) {
+            return null;
+        }
+
+        return $this->items[$key];
+    }
+
+    public function __get(string $name): mixed
+    {
+        return match ($name) {
+            'first' => $this->first(),
+            'last' => $this->last(),
+            default => throw new \OutOfRangeException(
+                message: \sprintf('Undefined property %s::$%s', static::class, $name),
+            ),
+        };
+    }
+
+    public function __isset(string $name): bool
+    {
+        return \in_array($name, self::VIRTUAL_PROPERTIES, true);
     }
 }

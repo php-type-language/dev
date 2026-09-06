@@ -6,13 +6,26 @@ namespace TypeLang\Type;
 
 /**
  * @phpstan-consistent-constructor
+ *
+ * @property-read bool $isVirtual An alias of {@see isVirtual()} method.
+ * @property-read bool $isSpecial An alias of {@see isSpecial()} method.
+ * @property-read bool $isBuiltin An alias of {@see isBuiltin()} method.
  */
 final class Identifier extends Node implements \Stringable
 {
     /**
      * @var list<non-empty-string>
      */
-    protected const array SPECIAL_CLASS_NAME = [
+    private const VIRTUAL_PROPERTIES = [
+        'isVirtual',
+        'isSpecial',
+        'isBuiltin',
+    ];
+
+    /**
+     * @var list<non-empty-string>
+     */
+    protected const SPECIAL_CLASS_NAME = [
         'self',
         'parent',
         'static',
@@ -21,7 +34,7 @@ final class Identifier extends Node implements \Stringable
     /**
      * @var list<non-empty-string>
      */
-    protected const array BUILTIN_TYPE_NAME = [
+    protected const BUILTIN_TYPE_NAME = [
         'mixed',
         'string',
         'int',
@@ -37,33 +50,6 @@ final class Identifier extends Node implements \Stringable
         'true',
         'false',
     ];
-
-    /**
-     * Returns {@see true} if the identifier contains the name of
-     * a "virtual" type, i.e. invalid in the PHP namespace.
-     *
-     * - `SomeClass` - Non-virtual, can be a type in PHP.
-     * - `false` - Non-virtual, can be a type in PHP.
-     * - `non-empty-array` - Virtual, cannot be defined in PHP.
-     * - `empty-string` - Virtual, cannot be defined in PHP.
-     */
-    public bool $isVirtual {
-        get => \str_contains($this->value, '-');
-    }
-
-    /**
-     * Returns {@see true} in case of name contains special class reference.
-     */
-    public bool $isSpecial {
-        get => self::isLooksLikeSpecial($this->value);
-    }
-
-    /**
-     * Returns {@see true} in case of name contains builtin type name.
-     */
-    public bool $isBuiltin {
-        get => self::isLooksLikeBuiltin($this->value);
-    }
 
     public function __construct(
         /**
@@ -103,6 +89,53 @@ final class Identifier extends Node implements \Stringable
     public static function isLooksLikeBuiltin(string $value): bool
     {
         return \in_array(\strtolower($value), self::BUILTIN_TYPE_NAME, true);
+    }
+
+    /**
+     * Returns {@see true} if the identifier contains the name of a "virtual"
+     * type, i.e. invalid in the PHP namespace.
+     *
+     * - `SomeClass` - Non-virtual, can be a type in PHP.
+     * - `false` - Non-virtual, can be a type in PHP.
+     * - `non-empty-array` - Virtual, cannot be defined in PHP.
+     * - `empty-string` - Virtual, cannot be defined in PHP.
+     */
+    public function isVirtual(): bool
+    {
+        return \str_contains($this->value, '-');
+    }
+
+    /**
+     * Returns {@see true} in case of name contains special class reference.
+     */
+    public function isSpecial(): bool
+    {
+        return self::isLooksLikeSpecial($this->value);
+    }
+
+    /**
+     * Returns {@see true} in case of name contains builtin type name.
+     */
+    public function isBuiltin(): bool
+    {
+        return self::isLooksLikeBuiltin($this->value);
+    }
+
+    public function __get(string $name): mixed
+    {
+        return match ($name) {
+            'isVirtual' => $this->isVirtual(),
+            'isSpecial' => $this->isSpecial(),
+            'isBuiltin' => $this->isBuiltin(),
+            default => throw new \OutOfRangeException(
+                message: \sprintf('Undefined property %s::$%s', self::class, $name),
+            ),
+        };
+    }
+
+    public function __isset(string $name): bool
+    {
+        return \in_array($name, self::VIRTUAL_PROPERTIES, true);
     }
 
     /**

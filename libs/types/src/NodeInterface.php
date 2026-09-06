@@ -15,16 +15,14 @@ interface NodeInterface
      * ```php
      * $position = Phplrt\Position\Position::fromOffset(
      *     source: \file_get_contents($filename),
-     *     offset: $node->offset,
+     *     offset: $node->offset(),
      * );
      *
      * echo 'line: ' . $position->getLine() . "\n"
      *      'column: ' . $position->getColumn();
      * ```
      *
-     * @var int<0, max>
+     * @return int<0, max>
      */
-    public int $offset {
-        get;
-    }
+    public function offset(): int;
 }

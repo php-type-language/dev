@@ -13,10 +13,6 @@ use TypeLang\Type\TypeNode;
  */
 final class ConstMaskFieldNode extends ExplicitFieldNode
 {
-    public string $index {
-        get => (string) $this->key;
-    }
-
     public function __construct(
         ConstMaskNode $key,
         TypeNode $type,
@@ -29,5 +25,10 @@ final class ConstMaskFieldNode extends ExplicitFieldNode
             isOptional: $isOptional,
             attributes: $attributes,
         );
+    }
+
+    public function index(): string
+    {
+        return (string) $this->key;
     }
 }
