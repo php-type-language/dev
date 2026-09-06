@@ -203,7 +203,7 @@ class PrettyTypePrinter extends TypePrinter
             $fields[] = $current . $prefix . $this->printShapeFieldNode($field);
         }
 
-        if (!$shape->sealed || $node->arguments !== null) {
+        if (!$shape->isSealed || $node->arguments !== null) {
             $prefix .= '...';
 
             if ($node->arguments !== null) {
