@@ -27,7 +27,7 @@ final class ClassConstMaskFieldNode extends ExplicitFieldNode
         );
     }
 
-    public function index(): string
+    public function getIndex(): string
     {
         return \vsprintf('%s::%s*', [
             $this->key->class->toString(),

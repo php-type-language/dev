@@ -9,23 +9,12 @@ namespace TypeLang\Type;
  *
  * @template-implements \IteratorAggregate<array-key, TNode>
  * @template-implements \ArrayAccess<int<0, max>, TNode>
- *
- * @property-read TNode|null $first An alias of {@see first()} method.
- * @property-read TNode|null $last An alias of {@see last()} method.
  */
 abstract class NodeList extends Node implements
     \IteratorAggregate,
     \ArrayAccess,
     \Countable
 {
-    /**
-     * @var list<non-empty-string>
-     */
-    private const VIRTUAL_PROPERTIES = [
-        'first',
-        'last',
-    ];
-
     /**
      * @var list<TNode>
      */
@@ -110,6 +99,7 @@ abstract class NodeList extends Node implements
             throw new \InvalidArgumentException('A NodeList index must be an int<0, max>|null');
         }
 
+        // @phpstan-ignore-next-line
         unset($this->items[$offset]);
 
         if (!\array_is_list($this->items)) {
@@ -154,21 +144,5 @@ abstract class NodeList extends Node implements
         }
 
         return $this->items[$key];
-    }
-
-    public function __get(string $name): mixed
-    {
-        return match ($name) {
-            'first' => $this->first(),
-            'last' => $this->last(),
-            default => throw new \OutOfRangeException(
-                message: \sprintf('Undefined property %s::$%s', static::class, $name),
-            ),
-        };
-    }
-
-    public function __isset(string $name): bool
-    {
-        return \in_array($name, self::VIRTUAL_PROPERTIES, true);
     }
 }

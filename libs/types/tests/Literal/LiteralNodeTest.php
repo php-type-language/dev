@@ -38,7 +38,7 @@ final class LiteralNodeTest extends TestCase
     public function valueMethodIsAnAliasOfValueProperty(LiteralNode $node, mixed $value, string $raw): void
     {
         self::assertSame($value, $node->value);
-        self::assertSame($value, $node->value());
+        self::assertSame($value, $node->value);
     }
 
     #[Test]
@@ -46,7 +46,7 @@ final class LiteralNodeTest extends TestCase
     public function rawMethodIsAnAliasOfRawProperty(LiteralNode $node, mixed $value, string $raw): void
     {
         self::assertSame($raw, $node->raw);
-        self::assertSame($raw, $node->raw());
+        self::assertSame($raw, $node->raw);
     }
 
     #[Test]
@@ -68,21 +68,21 @@ final class LiteralNodeTest extends TestCase
     #[Test]
     public function boolLiteralDerivesRawFromValue(): void
     {
-        self::assertSame('true', (new BoolLiteralNode(true))->raw());
-        self::assertSame('false', (new BoolLiteralNode(false))->raw());
+        self::assertSame('true', (new BoolLiteralNode(true))->raw);
+        self::assertSame('false', (new BoolLiteralNode(false))->raw);
     }
 
     #[Test]
     public function nullLiteralDerivesRawFromValue(): void
     {
-        self::assertSame('null', (new NullLiteralNode())->raw());
-        self::assertNull((new NullLiteralNode())->value());
+        self::assertSame('null', (new NullLiteralNode())->raw);
+        self::assertNull((new NullLiteralNode())->value);
     }
 
     #[Test]
     public function stringLiteralDerivesRawFromValue(): void
     {
-        self::assertSame('"example"', (new StringLiteralNode('example'))->raw());
+        self::assertSame('"example"', (new StringLiteralNode('example'))->raw);
     }
 
     #[Test]
@@ -90,8 +90,8 @@ final class LiteralNodeTest extends TestCase
     {
         $node = new IntLiteralNode(42);
 
-        self::assertSame(42, $node->value());
-        self::assertSame('42', $node->raw());
+        self::assertSame(42, $node->value);
+        self::assertSame('42', $node->raw);
         self::assertSame('42', $node->decimal);
     }
 
@@ -100,7 +100,7 @@ final class LiteralNodeTest extends TestCase
     {
         $node = new IntLiteralNode(-42);
 
-        self::assertSame('-42', $node->raw());
+        self::assertSame('-42', $node->raw);
         self::assertSame('-42', $node->decimal);
     }
 
@@ -109,8 +109,8 @@ final class LiteralNodeTest extends TestCase
     {
         $node = new FloatLiteralNode(0.5);
 
-        self::assertSame(0.5, $node->value());
-        self::assertSame('0.5', $node->raw());
+        self::assertSame(0.5, $node->value);
+        self::assertSame('0.5', $node->raw);
     }
 
     #[Test]
@@ -118,8 +118,8 @@ final class LiteralNodeTest extends TestCase
     {
         $node = new VariableLiteralNode('example');
 
-        self::assertSame('example', $node->value());
-        self::assertSame('$example', $node->raw());
+        self::assertSame('example', $node->value);
+        self::assertSame('$example', $node->raw);
     }
 
     #[Test]
@@ -128,7 +128,7 @@ final class LiteralNodeTest extends TestCase
         $node = new StringLiteralNode('example');
         $node->offset = 5;
 
-        self::assertSame(5, $node->offset());
-        self::assertSame('example', $node->value());
+        self::assertSame(5, $node->offset);
+        self::assertSame('example', $node->value);
     }
 }

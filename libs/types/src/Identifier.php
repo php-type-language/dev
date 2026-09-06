@@ -6,22 +6,9 @@ namespace TypeLang\Type;
 
 /**
  * @phpstan-consistent-constructor
- *
- * @property-read bool $isVirtual An alias of {@see isVirtual()} method.
- * @property-read bool $isSpecial An alias of {@see isSpecial()} method.
- * @property-read bool $isBuiltin An alias of {@see isBuiltin()} method.
  */
 final class Identifier extends Node implements \Stringable
 {
-    /**
-     * @var list<non-empty-string>
-     */
-    private const VIRTUAL_PROPERTIES = [
-        'isVirtual',
-        'isSpecial',
-        'isBuiltin',
-    ];
-
     /**
      * @var list<non-empty-string>
      */
@@ -119,23 +106,6 @@ final class Identifier extends Node implements \Stringable
     public function isBuiltin(): bool
     {
         return self::isLooksLikeBuiltin($this->value);
-    }
-
-    public function __get(string $name): mixed
-    {
-        return match ($name) {
-            'isVirtual' => $this->isVirtual(),
-            'isSpecial' => $this->isSpecial(),
-            'isBuiltin' => $this->isBuiltin(),
-            default => throw new \OutOfRangeException(
-                message: \sprintf('Undefined property %s::$%s', self::class, $name),
-            ),
-        };
-    }
-
-    public function __isset(string $name): bool
-    {
-        return \in_array($name, self::VIRTUAL_PROPERTIES, true);
     }
 
     /**

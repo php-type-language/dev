@@ -27,7 +27,7 @@ final class NumericFieldNode extends ExplicitFieldNode
         );
     }
 
-    public function index(): string
+    public function getIndex(): string
     {
         return (string) $this->key->value;
     }

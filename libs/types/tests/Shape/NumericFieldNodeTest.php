@@ -30,7 +30,7 @@ final class NumericFieldNodeTest extends TestCase
         $key = new IntLiteralNode(42);
         $node = new NumericFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('42', $node->index);
+        self::assertSame('42', $node->getIndex());
     }
 
     #[Test]
@@ -39,7 +39,7 @@ final class NumericFieldNodeTest extends TestCase
         $key = new IntLiteralNode(0);
         $node = new NumericFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('0', $node->index);
+        self::assertSame('0', $node->getIndex());
     }
 
     #[Test]

@@ -23,8 +23,8 @@ final class AttributeGroupNodeTest extends TestCase
         $group = new AttributeGroupNode();
 
         self::assertCount(0, $group);
-        self::assertNull($group->first);
-        self::assertNull($group->last);
+        self::assertNull($group->first());
+        self::assertNull($group->last());
     }
 
     #[Test]
@@ -35,8 +35,8 @@ final class AttributeGroupNodeTest extends TestCase
         $group = new AttributeGroupNode([$a, $b]);
 
         self::assertCount(2, $group);
-        self::assertSame($a, $group->first);
-        self::assertSame($b, $group->last);
+        self::assertSame($a, $group->first());
+        self::assertSame($b, $group->last());
     }
 
     #[Test]

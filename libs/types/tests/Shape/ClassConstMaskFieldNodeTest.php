@@ -31,7 +31,7 @@ final class ClassConstMaskFieldNodeTest extends TestCase
         $key = new ClassConstMaskNode(Name::createFromString('MyEnum'), new Identifier('STATUS'));
         $node = new ClassConstMaskFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('MyEnum::STATUS*', $node->index);
+        self::assertSame('MyEnum::STATUS*', $node->getIndex());
     }
 
     #[Test]
@@ -40,7 +40,7 @@ final class ClassConstMaskFieldNodeTest extends TestCase
         $key = new ClassConstMaskNode(Name::createFromString('MyEnum'));
         $node = new ClassConstMaskFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('MyEnum::*', $node->index);
+        self::assertSame('MyEnum::*', $node->getIndex());
     }
 
     #[Test]

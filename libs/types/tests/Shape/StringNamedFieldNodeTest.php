@@ -30,7 +30,7 @@ final class StringNamedFieldNodeTest extends TestCase
         $key = new StringLiteralNode('field-name');
         $node = new StringNamedFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('field-name', $node->index);
+        self::assertSame('field-name', $node->getIndex());
     }
 
     #[Test]

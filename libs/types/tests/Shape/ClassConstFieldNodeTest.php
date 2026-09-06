@@ -36,7 +36,7 @@ final class ClassConstFieldNodeTest extends TestCase
         $key = $this->makeKey('MyEnum', 'ACTIVE');
         $node = new ClassConstFieldNode($key, new NamedTypeNode(Name::createFromString('string')));
 
-        self::assertSame('MyEnum::ACTIVE', $node->index);
+        self::assertSame('MyEnum::ACTIVE', $node->getIndex());
     }
 
     #[Test]
@@ -45,7 +45,7 @@ final class ClassConstFieldNodeTest extends TestCase
         $key = $this->makeKey('Vendor\Package\Status', 'OK');
         $node = new ClassConstFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('Vendor\Package\Status::OK', $node->index);
+        self::assertSame('Vendor\Package\Status::OK', $node->getIndex());
     }
 
     #[Test]

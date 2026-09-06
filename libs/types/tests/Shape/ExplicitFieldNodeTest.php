@@ -80,38 +80,7 @@ final class ExplicitFieldNodeTest extends TestCase
     #[DataProvider('provideExplicitFields')]
     public function indexMethodReturnsPrettyPrintedKey(ExplicitFieldNode $field, string $index): void
     {
-        self::assertSame($index, $field->index());
-    }
-
-    #[Test]
-    #[DataProvider('provideExplicitFields')]
-    public function indexPropertyIsAnAliasOfIndexMethod(ExplicitFieldNode $field, string $index): void
-    {
-        self::assertSame($field->index(), $field->index);
-    }
-
-    #[Test]
-    #[DataProvider('provideExplicitFields')]
-    public function issetReturnsTrueForIndexProperty(ExplicitFieldNode $field, string $index): void
-    {
-        self::assertTrue(isset($field->index));
-    }
-
-    #[Test]
-    #[DataProvider('provideExplicitFields')]
-    public function issetReturnsFalseForUnknownProperty(ExplicitFieldNode $field, string $index): void
-    {
-        self::assertFalse(isset($field->unknown));
-    }
-
-    #[Test]
-    #[DataProvider('provideExplicitFields')]
-    public function readingUnknownPropertyThrows(ExplicitFieldNode $field, string $index): void
-    {
-        $this->expectException(\OutOfRangeException::class);
-
-        /** @phpstan-ignore-next-line */
-        $field->unknown;
+        self::assertSame($index, $field->getIndex());
     }
 
     #[Test]
@@ -119,12 +88,12 @@ final class ExplicitFieldNodeTest extends TestCase
     {
         $field = new NamedFieldNode(new Identifier('key'), self::type());
 
-        self::assertSame('key', $field->index());
+        self::assertSame('key', $field->getIndex());
 
         $field->key = new Identifier('other');
 
-        self::assertSame('other', $field->index(), 'The index must be derived from the current key');
-        self::assertSame('other', $field->index);
+        self::assertSame('other', $field->getIndex(), 'The index must be derived from the current key');
+        self::assertSame('other', $field->getIndex());
     }
 
     #[Test]
@@ -186,7 +155,7 @@ final class ExplicitFieldNodeTest extends TestCase
             self::type(),
         );
 
-        self::assertSame('Vendor\Status::*', $field->index());
+        self::assertSame('Vendor\Status::*', $field->getIndex());
     }
 
     #[Test]
@@ -194,7 +163,7 @@ final class ExplicitFieldNodeTest extends TestCase
     {
         $field = new NumericFieldNode(new IntLiteralNode(0), self::type());
 
-        self::assertSame('0', $field->index());
+        self::assertSame('0', $field->getIndex());
     }
 
     #[Test]
@@ -202,7 +171,7 @@ final class ExplicitFieldNodeTest extends TestCase
     {
         $field = new NumericFieldNode(new IntLiteralNode(-1), self::type());
 
-        self::assertSame('-1', $field->index());
+        self::assertSame('-1', $field->getIndex());
     }
 
     #[Test]
@@ -210,7 +179,7 @@ final class ExplicitFieldNodeTest extends TestCase
     {
         $field = new StringNamedFieldNode(new StringLiteralNode("a\nb"), self::type());
 
-        self::assertSame("a\nb", $field->index());
+        self::assertSame("a\nb", $field->getIndex());
     }
 
     #[Test]

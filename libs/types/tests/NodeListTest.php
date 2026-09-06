@@ -69,8 +69,8 @@ final class NodeListTest extends TestCase
 
         self::assertNull($list->first());
         self::assertNull($list->last());
-        self::assertNull($list->first);
-        self::assertNull($list->last);
+        self::assertNull($list->first());
+        self::assertNull($list->last());
     }
 
     #[Test]
@@ -96,17 +96,6 @@ final class NodeListTest extends TestCase
     }
 
     #[Test]
-    public function virtualPropertiesAreAliasesOfMethods(): void
-    {
-        $a = $this->node('A');
-        $b = $this->node('B');
-        $list = $this->list([$a, $b]);
-
-        self::assertSame($list->first(), $list->first);
-        self::assertSame($list->last(), $list->last);
-    }
-
-    #[Test]
     public function virtualPropertiesReflectListMutations(): void
     {
         $a = $this->node('A');
@@ -115,35 +104,7 @@ final class NodeListTest extends TestCase
 
         $list->items[] = $b;
 
-        self::assertSame($b, $list->last, 'The $last property must be recalculated on each access');
-    }
-
-    #[Test]
-    public function issetReturnsTrueForVirtualProperties(): void
-    {
-        $list = $this->list();
-
-        self::assertTrue(isset($list->first));
-        self::assertTrue(isset($list->last));
-    }
-
-    #[Test]
-    public function issetReturnsFalseForUnknownProperty(): void
-    {
-        $list = $this->list();
-
-        self::assertFalse(isset($list->unknown));
-    }
-
-    #[Test]
-    public function readingUnknownPropertyThrows(): void
-    {
-        $list = $this->list();
-
-        $this->expectException(\OutOfRangeException::class);
-
-        /** @phpstan-ignore-next-line */
-        $list->unknown;
+        self::assertSame($b, $list->last(), 'The $last property must be recalculated on each access');
     }
 
     #[Test]
@@ -282,6 +243,6 @@ final class NodeListTest extends TestCase
     #[Test]
     public function defaultOffsetIsZero(): void
     {
-        self::assertSame(0, $this->list()->offset());
+        self::assertSame(0, $this->list()->offset);
     }
 }

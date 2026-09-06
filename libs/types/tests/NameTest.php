@@ -54,7 +54,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo'), $this->id('Bar')]);
 
-        self::assertSame('Foo', $name->first->value);
+        self::assertSame('Foo', $name->getFirstPart()->value);
     }
 
     #[Test]
@@ -62,7 +62,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo'), $this->id('Bar')]);
 
-        self::assertSame('Bar', $name->last->value);
+        self::assertSame('Bar', $name->getLastPart()->value);
     }
 
     #[Test]
@@ -70,7 +70,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo')]);
 
-        self::assertTrue($name->isSimple);
+        self::assertTrue($name->isSimple());
     }
 
     #[Test]
@@ -78,7 +78,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('Foo'), $this->id('Bar')]);
 
-        self::assertFalse($name->isSimple);
+        self::assertFalse($name->isSimple());
     }
 
     #[Test]
@@ -86,7 +86,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('self')]);
 
-        self::assertTrue($name->isSpecial);
+        self::assertTrue($name->isSpecial());
     }
 
     #[Test]
@@ -94,7 +94,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('self'), $this->id('Foo')]);
 
-        self::assertFalse($name->isSpecial);
+        self::assertFalse($name->isSpecial());
     }
 
     #[Test]
@@ -102,7 +102,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('int')]);
 
-        self::assertTrue($name->isBuiltin);
+        self::assertTrue($name->isBuiltin());
     }
 
     #[Test]
@@ -110,7 +110,7 @@ final class NameTest extends TestCase
     {
         $name = new Name([$this->id('int'), $this->id('Foo')]);
 
-        self::assertFalse($name->isBuiltin);
+        self::assertFalse($name->isBuiltin());
     }
 
     #[Test]
@@ -138,14 +138,6 @@ final class NameTest extends TestCase
 
         self::assertTrue($name->isFullyQualified);
         self::assertSame('\Foo\Bar', $name->toString());
-    }
-
-    #[Test]
-    public function createFromStringSegments(): void
-    {
-        $name = Name::createFromStringSegments(['Foo', 'Bar']);
-
-        self::assertSame('Foo\Bar', $name->toString());
     }
 
     #[Test]
@@ -222,7 +214,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('A\B\C');
 
-        self::assertSame(['A', 'B', 'C'], $name->toStringArray());
+        self::assertSame(['A', 'B', 'C'], $name->toArrayStrings());
     }
 
     #[Test]
@@ -230,7 +222,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('Foo\Bar');
 
-        self::assertSame(['foo', 'bar'], $name->toLowercaseStringArray());
+        self::assertSame(['foo', 'bar'], $name->toArrayLowercaseStrings());
     }
 
     #[Test]
@@ -286,7 +278,7 @@ final class NameTest extends TestCase
         $restored = \unserialize(\serialize($name));
 
         self::assertInstanceOf(Name::class, $restored);
-        self::assertSame(['Foo', 'Bar'], $restored->toStringArray());
+        self::assertSame(['Foo', 'Bar'], $restored->toArrayStrings());
         self::assertSame(10, $restored->offset);
     }
 
@@ -298,95 +290,6 @@ final class NameTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         new Name([]);
-    }
-
-    #[Test]
-    public function firstMethodIsAnAliasOfProperty(): void
-    {
-        $name = new Name([$this->id('Foo'), $this->id('Bar')]);
-
-        self::assertSame('Foo', $name->first()->value);
-        self::assertSame($name->first(), $name->first);
-    }
-
-    #[Test]
-    public function lastMethodIsAnAliasOfProperty(): void
-    {
-        $name = new Name([$this->id('Foo'), $this->id('Bar')]);
-
-        self::assertSame('Bar', $name->last()->value);
-        self::assertSame($name->last(), $name->last);
-    }
-
-    #[Test]
-    public function isSimpleMethodIsAnAliasOfProperty(): void
-    {
-        $name = new Name([$this->id('Foo')]);
-
-        self::assertTrue($name->isSimple());
-        self::assertSame($name->isSimple(), $name->isSimple);
-    }
-
-    #[Test]
-    public function isSpecialMethodIsAnAliasOfProperty(): void
-    {
-        $name = new Name([$this->id('self')]);
-
-        self::assertTrue($name->isSpecial());
-        self::assertSame($name->isSpecial(), $name->isSpecial);
-    }
-
-    #[Test]
-    public function isBuiltinMethodIsAnAliasOfProperty(): void
-    {
-        $name = new Name([$this->id('int')]);
-
-        self::assertTrue($name->isBuiltin());
-        self::assertSame($name->isBuiltin(), $name->isBuiltin);
-    }
-
-    #[Test]
-    public function virtualPropertiesReflectSegmentMutations(): void
-    {
-        $name = new Name([$this->id('Foo')]);
-
-        self::assertTrue($name->isSimple);
-
-        $name->segments[] = $this->id('Bar');
-
-        self::assertFalse($name->isSimple, 'Virtual properties must be recalculated on each access');
-        self::assertSame('Bar', $name->last->value);
-    }
-
-    #[Test]
-    public function issetReturnsTrueForVirtualProperties(): void
-    {
-        $name = new Name([$this->id('Foo')]);
-
-        self::assertTrue(isset($name->first));
-        self::assertTrue(isset($name->last));
-        self::assertTrue(isset($name->isSimple));
-        self::assertTrue(isset($name->isSpecial));
-        self::assertTrue(isset($name->isBuiltin));
-    }
-
-    #[Test]
-    public function issetReturnsFalseForUnknownProperty(): void
-    {
-        $name = new Name([$this->id('Foo')]);
-
-        self::assertFalse(isset($name->unknown));
-    }
-
-    #[Test]
-    public function readingUnknownPropertyThrows(): void
-    {
-        $name = new Name([$this->id('Foo')]);
-
-        $this->expectException(\OutOfRangeException::class);
-
-        /** @phpstan-ignore-next-line */
-        $name->unknown;
     }
 
     #[Test]
@@ -436,7 +339,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('Foo\\\\Bar');
 
-        self::assertSame(['Foo', 'Bar'], $name->toStringArray());
+        self::assertSame(['Foo', 'Bar'], $name->toArrayStrings());
     }
 
     #[Test]
@@ -444,7 +347,7 @@ final class NameTest extends TestCase
     {
         $name = Name::createFromString('Foo\Bar\\');
 
-        self::assertSame(['Foo', 'Bar'], $name->toStringArray());
+        self::assertSame(['Foo', 'Bar'], $name->toArrayStrings());
         self::assertFalse($name->isFullyQualified);
     }
 
@@ -458,16 +361,7 @@ final class NameTest extends TestCase
             }
         };
 
-        self::assertSame(['Foo', 'Bar'], Name::createFromString($stringable)->toStringArray());
-    }
-
-    #[Test]
-    public function createFromStringSegmentsAcceptsStrings(): void
-    {
-        $name = Name::createFromStringSegments(['Foo', 'Bar'], true);
-
-        self::assertSame(['Foo', 'Bar'], $name->toStringArray());
-        self::assertTrue($name->isFullyQualified);
+        self::assertSame(['Foo', 'Bar'], Name::createFromString($stringable)->toArrayStrings());
     }
 
     #[Test]
@@ -497,7 +391,7 @@ final class NameTest extends TestCase
 
         $sliced = $name->slice(1);
 
-        self::assertSame(['Bar', 'Baz'], $sliced->toStringArray());
+        self::assertSame(['Bar', 'Baz'], $sliced->toArrayStrings());
         self::assertTrue($sliced->isFullyQualified);
     }
 
@@ -508,7 +402,7 @@ final class NameTest extends TestCase
 
         $name->slice(1);
 
-        self::assertSame(['Foo', 'Bar', 'Baz'], $name->toStringArray());
+        self::assertSame(['Foo', 'Bar', 'Baz'], $name->toArrayStrings());
     }
 
     #[Test]
@@ -518,7 +412,7 @@ final class NameTest extends TestCase
 
         $result = $name->withAdded(Name::createFromString('Test\Class'));
 
-        self::assertSame(['Some', 'Any', 'Test', 'Class'], $result->toStringArray());
+        self::assertSame(['Some', 'Any', 'Test', 'Class'], $result->toArrayStrings());
         self::assertTrue($result->isFullyQualified);
     }
 
@@ -530,8 +424,8 @@ final class NameTest extends TestCase
 
         $name->withAdded($added);
 
-        self::assertSame(['Some', 'Any'], $name->toStringArray());
-        self::assertSame(['Test'], $added->toStringArray());
+        self::assertSame(['Some', 'Any'], $name->toArrayStrings());
+        self::assertSame(['Test'], $added->toArrayStrings());
     }
 
     #[Test]
@@ -562,7 +456,7 @@ final class NameTest extends TestCase
         $result = $name->toFullQualified();
 
         self::assertTrue($result->isFullyQualified);
-        self::assertSame(['Foo', 'Bar'], $result->toStringArray());
+        self::assertSame(['Foo', 'Bar'], $result->toArrayStrings());
         self::assertFalse($name->isFullyQualified, 'The original name must not be modified');
     }
 
@@ -574,7 +468,7 @@ final class NameTest extends TestCase
         $result = $name->toUnqualified();
 
         self::assertFalse($result->isFullyQualified);
-        self::assertSame(['Foo', 'Bar'], $result->toStringArray());
+        self::assertSame(['Foo', 'Bar'], $result->toArrayStrings());
         self::assertTrue($name->isFullyQualified, 'The original name must not be modified');
     }
 
@@ -607,7 +501,7 @@ final class NameTest extends TestCase
         $name = Name::createFromString('Foo');
         $name->offset = 3;
 
-        self::assertSame([$name->segments, 3, false], $name->__serialize());
+        self::assertSame([$name->parts, 3, false], $name->__serialize());
     }
 
     #[Test]
@@ -626,7 +520,7 @@ final class NameTest extends TestCase
         $name = Name::createFromString('Foo');
         $name->offset = 9;
 
-        self::assertSame(9, $name->offset());
+        self::assertSame(9, $name->offset);
     }
 
     #[Test]

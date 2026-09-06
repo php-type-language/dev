@@ -30,7 +30,7 @@ final class ConstMaskFieldNodeTest extends TestCase
         $key = new ConstMaskNode(Name::createFromString('MY_CONST'));
         $node = new ConstMaskFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('MY_CONST*', $node->index);
+        self::assertSame('MY_CONST*', $node->getIndex());
     }
 
     #[Test]
@@ -39,7 +39,7 @@ final class ConstMaskFieldNodeTest extends TestCase
         $key = new ConstMaskNode(Name::createFromString('Vendor\Pkg\STATUS'));
         $node = new ConstMaskFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('Vendor\Pkg\STATUS*', $node->index);
+        self::assertSame('Vendor\Pkg\STATUS*', $node->getIndex());
     }
 
     #[Test]

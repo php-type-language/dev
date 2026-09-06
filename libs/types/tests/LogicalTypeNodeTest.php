@@ -145,7 +145,7 @@ final class LogicalTypeNodeTest extends TestCase
         $restored = \unserialize(\serialize($node));
 
         self::assertInstanceOf($class, $restored);
-        self::assertSame(13, $restored->offset());
+        self::assertSame(13, $restored->offset);
         self::assertCount(2, $restored);
         self::assertSame('A', $restored->statements[0]->name->toString());
         self::assertSame('B', $restored->statements[1]->name->toString());
@@ -189,6 +189,6 @@ final class LogicalTypeNodeTest extends TestCase
     {
         $node = new $class($this->type('A'), $this->type('B'));
 
-        self::assertSame(0, $node->offset());
+        self::assertSame(0, $node->offset);
     }
 }

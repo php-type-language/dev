@@ -27,7 +27,7 @@ final class NamedFieldNode extends ExplicitFieldNode
         );
     }
 
-    public function index(): string
+    public function getIndex(): string
     {
         return $this->key->toString();
     }

@@ -30,7 +30,7 @@ final class NamedFieldNodeTest extends TestCase
         $key = new Identifier('myField');
         $node = new NamedFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('myField', $node->index);
+        self::assertSame('myField', $node->getIndex());
     }
 
     #[Test]

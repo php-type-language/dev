@@ -28,6 +28,17 @@ final class CallableParameterNode extends Node implements \Stringable
         ));
     }
 
+    /**
+     * Returns {@see true} in case of the parameter is an instance of the
+     * passed class.
+     *
+     * @param class-string $class
+     */
+    public function is(string $class): bool
+    {
+        return $this instanceof $class;
+    }
+
     public function __toString(): string
     {
         $result = [];

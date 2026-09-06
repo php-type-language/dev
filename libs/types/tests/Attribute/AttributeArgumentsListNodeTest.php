@@ -24,8 +24,8 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $list = new AttributeArgumentListNode();
 
         self::assertCount(0, $list);
-        self::assertNull($list->first);
-        self::assertNull($list->last);
+        self::assertNull($list->first());
+        self::assertNull($list->last());
     }
 
     #[Test]
@@ -45,8 +45,8 @@ final class AttributeArgumentsListNodeTest extends TestCase
         $b = $this->makeArg('int');
         $list = new AttributeArgumentListNode([$a, $b]);
 
-        self::assertSame($a, $list->first);
-        self::assertSame($b, $list->last);
+        self::assertSame($a, $list->first());
+        self::assertSame($b, $list->last());
     }
 
     #[Test]

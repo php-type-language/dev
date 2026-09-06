@@ -48,7 +48,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('non-empty-string');
 
-        self::assertTrue($id->isVirtual);
+        self::assertTrue($id->isVirtual());
     }
 
     #[Test]
@@ -56,7 +56,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('string');
 
-        self::assertFalse($id->isVirtual);
+        self::assertFalse($id->isVirtual());
     }
 
     #[Test]
@@ -65,7 +65,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier($name);
 
-        self::assertTrue($id->isSpecial);
+        self::assertTrue($id->isSpecial());
     }
 
     public static function provideSpecialNames(): iterable
@@ -78,7 +78,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('MyClass');
 
-        self::assertFalse($id->isSpecial);
+        self::assertFalse($id->isSpecial());
     }
 
     #[Test]
@@ -87,7 +87,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier($name);
 
-        self::assertTrue($id->isBuiltin);
+        self::assertTrue($id->isBuiltin());
     }
 
     public static function provideBuiltinNames(): iterable
@@ -105,7 +105,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('MyClass');
 
-        self::assertFalse($id->isBuiltin);
+        self::assertFalse($id->isBuiltin());
     }
 
     #[Test]
@@ -191,62 +191,6 @@ final class IdentifierTest extends TestCase
         self::assertInstanceOf(Identifier::class, $restored);
         self::assertSame('MyClass', $restored->value);
         self::assertSame(42, $restored->offset);
-    }
-
-    #[Test]
-    public function isVirtualMethodIsAnAliasOfProperty(): void
-    {
-        $id = new Identifier('non-empty-string');
-
-        self::assertTrue($id->isVirtual());
-        self::assertSame($id->isVirtual(), $id->isVirtual);
-    }
-
-    #[Test]
-    public function isSpecialMethodIsAnAliasOfProperty(): void
-    {
-        $id = new Identifier('self');
-
-        self::assertTrue($id->isSpecial());
-        self::assertSame($id->isSpecial(), $id->isSpecial);
-    }
-
-    #[Test]
-    public function isBuiltinMethodIsAnAliasOfProperty(): void
-    {
-        $id = new Identifier('int');
-
-        self::assertTrue($id->isBuiltin());
-        self::assertSame($id->isBuiltin(), $id->isBuiltin);
-    }
-
-    #[Test]
-    public function issetReturnsTrueForVirtualProperties(): void
-    {
-        $id = new Identifier('Example');
-
-        self::assertTrue(isset($id->isVirtual));
-        self::assertTrue(isset($id->isSpecial));
-        self::assertTrue(isset($id->isBuiltin));
-    }
-
-    #[Test]
-    public function issetReturnsFalseForUnknownProperty(): void
-    {
-        $id = new Identifier('Example');
-
-        self::assertFalse(isset($id->unknown));
-    }
-
-    #[Test]
-    public function readingUnknownPropertyThrows(): void
-    {
-        $id = new Identifier('Example');
-
-        $this->expectException(\OutOfRangeException::class);
-
-        /** @phpstan-ignore-next-line */
-        $id->unknown;
     }
 
     #[Test]
@@ -337,7 +281,7 @@ final class IdentifierTest extends TestCase
         $id = new Identifier('Example');
         $id->offset = 17;
 
-        self::assertSame(17, $id->offset());
+        self::assertSame(17, $id->offset);
     }
 
     #[Test]
@@ -358,7 +302,7 @@ final class IdentifierTest extends TestCase
         /** @var Identifier $restored */
         $restored = \unserialize(\serialize($id));
 
-        self::assertSame(5, $restored->offset());
+        self::assertSame(5, $restored->offset);
         self::assertSame('Example', $restored->value);
     }
 

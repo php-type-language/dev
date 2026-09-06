@@ -152,7 +152,7 @@ final class NodeTest extends TestCase
     public function everyNodeHasZeroOffsetByDefault(Node $node): void
     {
         self::assertSame(0, $node->offset);
-        self::assertSame(0, $node->offset());
+        self::assertSame(0, $node->offset);
     }
 
     #[Test]
@@ -162,7 +162,7 @@ final class NodeTest extends TestCase
         $node->offset = 42;
 
         self::assertSame(42, $node->offset);
-        self::assertSame(42, $node->offset(), 'The offset() method must be an alias of the $offset property');
+        self::assertSame(42, $node->offset, 'The offset() method must be an alias of the $offset property');
     }
 
     /**
@@ -216,7 +216,7 @@ final class NodeTest extends TestCase
     {
         $node = new class extends Node {};
 
-        self::assertSame(0, $node->offset());
+        self::assertSame(0, $node->offset);
     }
 
     #[Test]

@@ -16,6 +16,17 @@ abstract class FieldNode extends Node implements \Stringable
         public ?AttributeGroupListNode $attributes = null,
     ) {}
 
+    /**
+     * Returns {@see true} in case of the field is an instance of the
+     * passed class.
+     *
+     * @param class-string $class
+     */
+    public function is(string $class): bool
+    {
+        return $this instanceof $class;
+    }
+
     public function __toString(): string
     {
         return $this->isOptional ? 'optional' : 'required';
