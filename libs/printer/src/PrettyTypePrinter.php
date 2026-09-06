@@ -234,7 +234,7 @@ class PrettyTypePrinter extends TypePrinter
     {
         $result = '#[';
 
-        $last = $group->last;
+        $last = $group->last();
         foreach ($group as $attribute) {
             $result .= $attribute->name->toString();
 
