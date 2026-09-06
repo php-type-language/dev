@@ -559,7 +559,7 @@ return [
 
             foreach ($children as $field) {
                 if ($field instanceof Type\Shape\ExplicitFieldNode) {
-                    $key = $field->index;
+                    $key = $field->getIndex();
 
                     if (\in_array($key, $explicit, true)) {
                         throw Exception\ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated($key, $field->offset);
