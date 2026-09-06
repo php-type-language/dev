@@ -32,7 +32,6 @@ final class TypeParserFeatures
     public const LIST_FEATURES_DEFAULT_VALUE = true;
     public const OFFSETS_FEATURES_DEFAULT_VALUE = true;
     public const HINTS_FEATURES_DEFAULT_VALUE = true;
-    public const ATTRIBUTES_FEATURES_DEFAULT_VALUE = true;
 
     public function __construct(
         /**
@@ -75,10 +74,6 @@ final class TypeParserFeatures
          * Enables or disables support for generic variance hints such as `T<out U, in V>`
          */
         public readonly bool $hints = self::HINTS_FEATURES_DEFAULT_VALUE,
-        /**
-         * Enables or disables support for attributes such as `#[attr]`
-         */
-        public readonly bool $attributes = self::ATTRIBUTES_FEATURES_DEFAULT_VALUE,
     ) {}
 
     /**

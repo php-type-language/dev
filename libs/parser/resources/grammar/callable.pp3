@@ -1,0 +1,75 @@
+
+// The "(T, U): V" of a callable type
+CallableSuffix
+  : ::T_PARENTHESIS_OPEN::
+        CallableParameters()
+    ::T_PARENTHESIS_CLOSE::
+    CallableReturnType()?
+  ;
+
+CallableParameters -> {
+    return new Type\Callable\CallableParameterListNode($children, $offset);
+}
+  : ( CallableParameter()
+      ( ::T_COMMA:: CallableParameter() )*
+      ::T_COMMA::?
+    )?
+  ;
+
+/**
+ * A parameter is written as a type, optionally followed by the reference and
+ * the variadic markers, by a name and by the default marker - in that order
+ * and in no other:
+ *
+ * - "<type>"
+ * - "<type>&"
+ * - "<type>..."
+ * - "<type>&..."
+ * - "<type> $name"
+ * - "<type>&...$name="
+ *
+ */
+CallableParameter -> {
+    $parameter = new Type\Callable\CallableParameterNode($children[0], offset: $offset);
+
+    for ($i = 1, $count = \count($children); $i < $count; ++$i) {
+        $child = $children[$i];
+
+        if ($child instanceof Type\Literal\VariableLiteralNode) {
+            $parameter->name = $child;
+
+            continue;
+        }
+
+        switch ($child->id) {
+            case self::T_AMP:
+                $parameter->isOutput = true;
+                break;
+
+            case self::T_ELLIPSIS:
+                $parameter->isVariadic = true;
+                break;
+
+            // A variadic parameter is optional in itself, so a default marker
+            // beside one describes the same parameter in two different ways
+            default:
+                if ($parameter->isVariadic) {
+                    throw Exception\VariadicWithDefaultException::becauseVariadicHasDefault($offset);
+                }
+
+                $parameter->isOptional = true;
+        }
+    }
+
+    return $parameter;
+}
+  : Type()
+    <T_AMP>?
+    <T_ELLIPSIS>?
+    VariableLiteral()?
+    <T_ASSIGN>?
+  ;
+
+CallableReturnType
+  : ::T_COLON:: Type()
+  ;

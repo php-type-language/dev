@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Parser;
 
 use JetBrains\PhpStorm\Language;
-use Phplrt\Contracts\Source\SourceExceptionInterface;
+use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
+use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
@@ -13,6 +14,11 @@ use TypeLang\Type\TypeNode;
 
 final class InMemoryTypeParser implements TypeParserInterface
 {
+    /**
+     * @var non-empty-string
+     */
+    private const HASH_ALGORITHM = 'xxh128';
+
     /**
      * @var array<non-empty-string, TypeNode>
      */
@@ -23,10 +29,14 @@ final class InMemoryTypeParser implements TypeParserInterface
      */
     private array $sequences = [];
 
+    private readonly SourceFactoryInterface $sources;
+
     public function __construct(
         private readonly TypeParserInterface $parser = new TypeParser(),
-        private readonly SourceFactoryInterface $sources = new SourceFactory(),
-    ) {}
+        ?SourceFactoryInterface $sources = null,
+    ) {
+        $this->sources = $sources ?? SourceFactory::createDefault();
+    }
 
     /**
      * @throws ParserExceptionInterface
@@ -37,7 +47,7 @@ final class InMemoryTypeParser implements TypeParserInterface
     {
         $instance = $this->sources->create($source);
 
-        return $this->types[$instance->getHash()] ??= $this->parser->parse($source);
+        return $this->types[$this->hash($instance)] ??= $this->parser->parse($source);
     }
 
     /**
@@ -49,6 +59,15 @@ final class InMemoryTypeParser implements TypeParserInterface
     {
         $instance = $this->sources->create($source);
 
-        return $this->sequences[$instance->getHash()] ??= $this->parser->parseTolerant($source);
+        return $this->sequences[$this->hash($instance)] ??= $this->parser->parseTolerant($source);
+    }
+
+    /**
+     * @return non-empty-string
+     * @throws SourceExceptionInterface in case of source content reading error
+     */
+    private function hash(ReadableInterface $source): string
+    {
+        return \hash(self::HASH_ALGORITHM, $source->content);
     }
 }

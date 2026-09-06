@@ -96,7 +96,7 @@ final class NameTest extends SyntaxTestCase
 
     public function testNameCannotStartWithDash(): void
     {
-        $this->expectParsingException('unexpected "-"');
+        $this->expectParsingException('unrecognized "-foo"');
 
         $this->parse('-foo');
     }

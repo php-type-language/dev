@@ -6,10 +6,10 @@ namespace TypeLang\Parser\Tests\Internal;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Parser\Internal\PatternSequenceFetcher;
-use TypeLang\Parser\Internal\ScannerSequenceFetcher;
-use TypeLang\Parser\Internal\SequenceFetcherInterface;
-use TypeLang\Parser\Internal\StringParser;
+use TypeLang\Parser\Internal\StringDecoder;
+use TypeLang\Parser\Internal\StringDecoder\PatternSequenceFetcher;
+use TypeLang\Parser\Internal\StringDecoder\ScannerSequenceFetcher;
+use TypeLang\Parser\Internal\StringDecoder\SequenceFetcherInterface;
 use TypeLang\Parser\Tests\TestCase;
 
 final class SequenceFetcherTest extends TestCase
@@ -91,7 +91,7 @@ final class SequenceFetcherTest extends TestCase
         self::assertArrayNotHasKey('\x41', ScannerSequenceFetcher::fetch($body));
         self::assertArrayHasKey('\x41', PatternSequenceFetcher::fetch($body));
 
-        self::assertSame('a\x41b', StringParser::parse($body));
+        self::assertSame('a\x41b', StringDecoder::decode($body));
     }
 
     #[Test]
@@ -102,7 +102,7 @@ final class SequenceFetcherTest extends TestCase
         $pattern = \strtr($body, PatternSequenceFetcher::fetch($body));
 
         self::assertSame($scanner, $pattern);
-        self::assertSame($scanner, StringParser::parse($body));
+        self::assertSame($scanner, StringDecoder::decode($body));
     }
 
     #[Test]

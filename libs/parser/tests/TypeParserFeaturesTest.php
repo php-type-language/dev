@@ -78,12 +78,6 @@ final class TypeParserFeaturesTest extends TestCase
             static fn(TypeParserFeatures $features): bool => $features->hints,
             TypeParserFeatures::HINTS_FEATURES_DEFAULT_VALUE,
         ];
-
-        yield 'attributes' => [
-            'attributes',
-            static fn(TypeParserFeatures $features): bool => $features->attributes,
-            TypeParserFeatures::ATTRIBUTES_FEATURES_DEFAULT_VALUE,
-        ];
     }
 
     /**

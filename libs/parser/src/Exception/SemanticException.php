@@ -16,8 +16,6 @@ abstract class SemanticException extends \LogicException implements ParserExcept
 
     final public const ERROR_CODE_VARIADIC_WITH_DEFAULT = 0x03;
 
-    final public const ERROR_CODE_VARIADIC_ALREADY_VARIADIC = 0x04;
-
     final public const ERROR_CODE_INVALID_OPERATOR = 0x05;
 
     protected const CODE_LAST = self::ERROR_CODE_INVALID_OPERATOR;

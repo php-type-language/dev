@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal;
+namespace TypeLang\Parser\Internal\StringDecoder;
 
 final class UtfCharRenderer
 {
@@ -19,8 +19,8 @@ final class UtfCharRenderer
     /**
      * Method for encoding an utf-8 character by its code.
      *
-     * Codes above the last unicode code point are encoded as a replacement
-     * char, because such a sequence cannot be expressed in utf-8.
+     * Codes above the last Unicode code point are encoded as a replacement
+     * char because such a sequence cannot be expressed in utf-8.
      *
      * @param int<0, max> $code
      */

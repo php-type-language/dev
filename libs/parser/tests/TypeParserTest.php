@@ -94,7 +94,7 @@ final class TypeParserTest extends TestCase
     #[Test]
     public function theSourceFactoryCanBeOverridden(): void
     {
-        $parser = new TypeParser(sources: new SourceFactory());
+        $parser = new TypeParser(sources: SourceFactory::createDefault());
 
         self::assertInstanceOf(NamedTypeNode::class, $parser->parse('int'));
     }
@@ -102,7 +102,7 @@ final class TypeParserTest extends TestCase
     #[Test]
     public function theSourceFactoryIsInheritedByTheNewInstance(): void
     {
-        $parser = (new TypeParser(sources: new SourceFactory()))
+        $parser = (new TypeParser(sources: SourceFactory::createDefault()))
             ->withFeatures(shapes: false);
 
         self::assertInstanceOf(NamedTypeNode::class, $parser->parse('int'));

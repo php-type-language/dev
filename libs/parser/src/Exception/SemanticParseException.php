@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Exception;
 
+use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
-use Phplrt\Contracts\Source\SourceExceptionInterface;
 
 final class SemanticParseException extends ParseException
 {
@@ -19,8 +19,8 @@ final class SemanticParseException extends ParseException
     {
         $message = \vsprintf('%s in %s %s', [
             \ucfirst($e->getMessage()),
-            Formatter::source($source->getContents()),
-            Formatter::suffix($source->getContents(), $e->getOffset()),
+            Formatter::source($source->content),
+            Formatter::suffix($source->content, $e->getOffset()),
         ]);
 
         return new self($message, self::ERROR_CODE_SEMANTIC_ERROR_BASE + $e->getCode());

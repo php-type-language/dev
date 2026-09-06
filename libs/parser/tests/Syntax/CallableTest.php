@@ -134,19 +134,14 @@ final class CallableTest extends SyntaxTestCase
             AST, $this->parseAndPrint('foo(T=)'));
     }
 
-    public function testVariadicParameterPrefixSyntax(): void
+    public function testVariadicMarkerCannotPrecedeTheParameterType(): void
     {
-        self::assertSame(<<<'AST'
-            CallableTypeNode
-              Name(foo)
-              Callable\CallableParameterListNode
-                Callable\CallableParameterNode(isOutput=false, isVariadic=true, isOptional=false)
-                  NamedTypeNode
-                    Name(T)
-            AST, $this->parseAndPrint('foo(...T)'));
+        $this->expectParsingException('unexpected "..."');
+
+        $this->parse('foo(...T)');
     }
 
-    public function testVariadicParameterPostfixSyntax(): void
+    public function testVariadicParameter(): void
     {
         self::assertSame(<<<'AST'
             CallableTypeNode
@@ -158,20 +153,7 @@ final class CallableTest extends SyntaxTestCase
             AST, $this->parseAndPrint('foo(T...)'));
     }
 
-    public function testVariadicNamedOutputParameter(): void
-    {
-        self::assertSame(<<<'AST'
-            CallableTypeNode
-              Name(foo)
-              Callable\CallableParameterListNode
-                Callable\CallableParameterNode(isOutput=true, isVariadic=true, isOptional=false)
-                  NamedTypeNode
-                    Name(T)
-                  Literal\VariableLiteralNode($name)
-            AST, $this->parseAndPrint('foo(...T &$name)'));
-    }
-
-    public function testParameterWithoutTypeIsNotAllowed(): void
+    public function testNameCannotFollowTheDefaultMarker(): void
     {
         $this->expectParsingException('unexpected "$name"');
 
@@ -180,16 +162,16 @@ final class CallableTest extends SyntaxTestCase
 
     public function testAmpersandMustFollowParameterType(): void
     {
-        $this->expectParsingException('unexpected "T"');
+        $this->expectParsingException('unexpected "&"');
 
         $this->parse('foo(&T)');
     }
 
-    public function testVariadicCannotBeBothPrefixAndPostfix(): void
+    public function testParameterWithoutATypeIsNotAllowed(): void
     {
-        $this->expectParsingException('Either prefix or postfix variadic syntax should be used, but not both');
+        $this->expectParsingException('unexpected ")"');
 
-        $this->parse('foo(...T...)');
+        $this->parse('foo($name)');
     }
 
     public function testVariadicParameterCannotHaveDefault(): void
@@ -204,5 +186,48 @@ final class CallableTest extends SyntaxTestCase
         $this->expectParsingException('unexpected ","');
 
         $this->parse('foo(,T)');
+    }
+
+    /**
+     * A reference marker precedes the variadic one, the way PHP itself writes
+     * it: {@code &...$name} rather than {@code ...&$name}.
+     */
+    public function testReferenceAndVariadicMarkersOfATypedParameterAreOrdered(): void
+    {
+        self::assertSame(<<<'AST'
+            CallableTypeNode
+              Name(foo)
+              Callable\CallableParameterListNode
+                Callable\CallableParameterNode(isOutput=true, isVariadic=true, isOptional=false)
+                  NamedTypeNode
+                    Name(T)
+                  Literal\VariableLiteralNode($name)
+            AST, $this->parseAndPrint('foo(T &...$name)'));
+    }
+
+    public function testTypedParameterCannotPutTheReferenceAfterTheVariadic(): void
+    {
+        $this->expectParsingException('unexpected "&"');
+
+        $this->parse('foo(T ...&$name)');
+    }
+
+    public function testModifiersWithoutATypeAreNotAllowed(): void
+    {
+        $this->expectParsingException('unexpected "&"');
+
+        $this->parse('foo(&...$name)');
+    }
+
+    public function testTypedParameterAllowsBothMarkersWithoutAName(): void
+    {
+        self::assertSame(<<<'AST'
+            CallableTypeNode
+              Name(foo)
+              Callable\CallableParameterListNode
+                Callable\CallableParameterNode(isOutput=true, isVariadic=true, isOptional=false)
+                  NamedTypeNode
+                    Name(T)
+            AST, $this->parseAndPrint('foo(T &...)'));
     }
 }

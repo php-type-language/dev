@@ -105,10 +105,10 @@ final class TypeMapVisitorTest extends TestCase
     #[Test]
     public function theTransformationIsAppliedToEveryNestedType(): void
     {
-        $node = new UnionTypeNode(
+        $node = new UnionTypeNode([
             new NamedTypeNode(Name::createFromString('A')),
-            new NamedTypeNode(Name::createFromString('B')),
-        );
+            new NamedTypeNode(Name::createFromString('B'))
+        ]);
 
         Traverser::new([$this->alias()])->traverse([$node]);
 

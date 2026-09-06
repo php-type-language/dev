@@ -8,4 +8,9 @@ parameters:
     - php
   paths:
     - src
+  excludePaths:
+    analyse:
+      # The parser is generated out of the grammar by the phplrt compiler and
+      # is not written by hand.
+      - src/Internal/CompilerExecutor.php
   reportUnmatchedIgnoredErrors: false

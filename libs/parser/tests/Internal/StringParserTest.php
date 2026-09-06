@@ -6,7 +6,7 @@ namespace TypeLang\Parser\Tests\Internal;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Parser\Internal\StringParser;
+use TypeLang\Parser\Internal\StringDecoder;
 use TypeLang\Parser\Tests\TestCase;
 
 final class StringParserTest extends TestCase
@@ -56,27 +56,27 @@ final class StringParserTest extends TestCase
     #[DataProvider('provideBodies')]
     public function bodyIsDecoded(string $body, string $expected): void
     {
-        self::assertSame($expected, StringParser::parse($body));
+        self::assertSame($expected, StringDecoder::decode($body));
     }
 
     #[Test]
     public function rawNullByteIsNotTouched(): void
     {
-        self::assertSame("a\0b", StringParser::parse("a\0b"));
-        self::assertSame("a\0\\b", StringParser::parse("a\0" . '\\\\b'));
+        self::assertSame("a\0b", StringDecoder::decode("a\0b"));
+        self::assertSame("a\0\\b", StringDecoder::decode("a\0" . '\\\\b'));
     }
 
     #[Test]
     public function invalidUtf8IsNotTouched(): void
     {
-        self::assertSame("\xFF\xFE", StringParser::parse("\xFF\xFE"));
+        self::assertSame("\xFF\xFE", StringDecoder::decode("\xFF\xFE"));
     }
 
     #[Test]
     public function decodingIsIdempotentForStringsWithoutBackslashes(): void
     {
-        $decoded = StringParser::parse('a\nb');
+        $decoded = StringDecoder::decode('a\nb');
 
-        self::assertSame($decoded, StringParser::parse($decoded));
+        self::assertSame($decoded, StringDecoder::decode($decoded));
     }
 }

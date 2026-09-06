@@ -152,7 +152,7 @@ final class ParseExceptionTest extends TestCase
     public function theUnreadableSourceIsReportedUsingTheOriginalMessage(): void
     {
         $previous = new class ('source is unreadable') extends \RuntimeException implements
-            \Phplrt\Contracts\Source\SourceExceptionInterface {};
+            \Phplrt\Contracts\Source\Exception\SourceExceptionInterface {};
 
         $exception = InternalParseException::becauseSourceIsUnreadable($previous);
 
@@ -166,7 +166,7 @@ final class ParseExceptionTest extends TestCase
     {
         $exception = SemanticParseException::becauseSemanticErrorOccurs(
             e: ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated('a', 10),
-            source: (new SourceFactory())->create('array{a: int, a: int}'),
+            source: SourceFactory::createDefault()->create('array{a: int, a: int}'),
         );
 
         self::assertSame(
@@ -182,7 +182,7 @@ final class ParseExceptionTest extends TestCase
 
         $exception = SemanticParseException::becauseSemanticErrorOccurs(
             e: $semantic,
-            source: (new SourceFactory())->create('array{a: int, a: int}'),
+            source: SourceFactory::createDefault()->create('array{a: int, a: int}'),
         );
 
         self::assertSame(
@@ -196,7 +196,7 @@ final class ParseExceptionTest extends TestCase
     {
         $exception = SemanticParseException::becauseSemanticErrorOccurs(
             e: ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated('a'),
-            source: (new SourceFactory())->create('array{a: int, a: int}'),
+            source: SourceFactory::createDefault()->create('array{a: int, a: int}'),
         );
 
         self::assertStringStartsWith('Duplicate', $exception->getMessage());

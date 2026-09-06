@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal;
+namespace TypeLang\Parser\Internal\StringDecoder;
 
 interface SequenceFetcherInterface
 {
@@ -19,7 +19,7 @@ interface SequenceFetcherInterface
         '\e' => "\e",
         '\f' => "\f",
         '\$' => '$',
-        '\"' => '"',
+        '\\"' => '"',
         '\\\\' => '\\',
     ];
 

@@ -4,7 +4,7 @@ TemplateArguments -> {
         throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('template arguments', $offset);
     }
 
-    return new Type\Template\TemplateArgumentListNode($children);
+    return new Type\Template\TemplateArgumentListNode($children, $offset);
 }
   : ::T_ANGLE_BRACKET_OPEN::
       TemplateArgument() (
@@ -14,36 +14,26 @@ TemplateArguments -> {
   ;
 
 TemplateArgument -> {
-    $hint = $attributes = null;
+    $count = \count($children);
+    $hint = null;
 
-    if (\reset($children) instanceof Type\Attribute\AttributeGroupListNode) {
-        if ($this->features->attributes === false) {
-            throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('template argument attributes', $offset);
-        }
-
-        $attributes = \array_shift($children);
-    }
-
-    $type = \array_pop($children);
-
-    if (\reset($children) !== false) {
+    // An "in T" or an "out T" argument puts a hint in front of the type
+    if ($count === 2) {
         if ($this->features->hints === false) {
             throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('template argument hints', $offset);
         }
 
-        $hint = \reset($children);
+        $hint = $children[0];
     }
 
     return new Type\Template\TemplateArgumentNode(
-        $type,
+        $children[$count - 1],
         $hint,
-        $attributes,
+        $offset,
     );
 }
-  : AttributeGroupsList()? (
-      TemplateHintedArgument()
-      | TemplateSimpleArgument()
-    )
+  : TemplateHintedArgument()
+  | TemplateSimpleArgument()
   ;
 
 TemplateSimpleArgument

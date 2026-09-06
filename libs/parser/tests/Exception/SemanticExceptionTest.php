@@ -13,7 +13,6 @@ use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\Exception\SemanticException;
 use TypeLang\Parser\Exception\ShapeFieldDuplicationException;
 use TypeLang\Parser\Exception\ShapeKeysMixingException;
-use TypeLang\Parser\Exception\VariadicRedefinitionException;
 use TypeLang\Parser\Exception\VariadicWithDefaultException;
 use TypeLang\Parser\Tests\TestCase;
 
@@ -47,11 +46,6 @@ final class SemanticExceptionTest extends TestCase
         yield 'shape keys mixing' => [
             static fn(int $offset): SemanticException
                 => ShapeKeysMixingException::becauseShapeKeysAreMixed($offset),
-        ];
-
-        yield 'variadic redefinition' => [
-            static fn(int $offset): SemanticException
-                => VariadicRedefinitionException::becauseVariadicIsRedefined($offset),
         ];
 
         yield 'variadic with default' => [
@@ -149,18 +143,6 @@ final class SemanticExceptionTest extends TestCase
     }
 
     #[Test]
-    public function theRedefinedVariadicIsReported(): void
-    {
-        $exception = VariadicRedefinitionException::becauseVariadicIsRedefined();
-
-        self::assertSame(
-            'Either prefix or postfix variadic syntax should be used, but not both',
-            $exception->getMessage(),
-        );
-        self::assertSame(SemanticException::ERROR_CODE_VARIADIC_ALREADY_VARIADIC, $exception->getCode());
-    }
-
-    #[Test]
     public function theVariadicWithADefaultIsReported(): void
     {
         $exception = VariadicWithDefaultException::becauseVariadicHasDefault();
@@ -183,7 +165,6 @@ final class SemanticExceptionTest extends TestCase
             SemanticException::ERROR_CODE_SHAPE_KEY_DUPLICATION,
             SemanticException::ERROR_CODE_SHAPE_KEY_MIX,
             SemanticException::ERROR_CODE_VARIADIC_WITH_DEFAULT,
-            SemanticException::ERROR_CODE_VARIADIC_ALREADY_VARIADIC,
             SemanticException::ERROR_CODE_INVALID_OPERATOR,
         ];
 

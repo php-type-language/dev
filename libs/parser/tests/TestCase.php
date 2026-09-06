@@ -27,7 +27,6 @@ use TypeLang\Type\TypeNode;
  *     list?: bool,
  *     offsets?: bool,
  *     hints?: bool,
- *     attributes?: bool,
  * }
  */
 #[Group('unit'), Group('type-lang/parser')]

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal;
+namespace TypeLang\Parser\Internal\StringDecoder;
 
 /**
- * Fetches sequences by a hand written scanner: Each escaped char is visited
+ * Fetches sequences by a handwritten scanner: Each escaped char is visited
  * only once, so the string is not traversed as a whole.
  */
 final class ScannerSequenceFetcher implements SequenceFetcherInterface

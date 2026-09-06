@@ -343,7 +343,7 @@ final class TraverserTest extends TestCase
         $visitor = $this->recorder();
 
         Traverser::new([$visitor])->traverse([
-            new UnionTypeNode($this->type('A'), $this->type('B')),
+            new UnionTypeNode([$this->type('A'), $this->type('B')]),
         ]);
 
         self::assertSame([

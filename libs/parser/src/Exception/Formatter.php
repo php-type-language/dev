@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Exception;
 
-use Phplrt\Lexer\Token\Renderer;
+use Phplrt\Contracts\Lexer\Channel;
+use Phplrt\Lexer\Token\Printer\PrettyTokenPrinter;
 use Phplrt\Lexer\Token\Token;
-use Phplrt\Position\Position;
+use Phplrt\Position\PositionFactory;
+use Phplrt\Source\StringSource;
 
 /**
  * @internal this is an internal library class, please do not use it in your code
@@ -34,9 +36,14 @@ final class Formatter
             return '<empty statement>';
         }
 
-        $renderer = new Renderer();
+        $printer = new PrettyTokenPrinter();
 
-        return $renderer->value(new Token('<statement>', $statement, 0));
+        return $printer->printValue(new Token(
+            id: 0,
+            name: null,
+            channel: Channel::Default,
+            value: $statement,
+        ));
     }
 
     /**
@@ -46,9 +53,14 @@ final class Formatter
     public static function suffix(string $statement, int $offset): string
     {
         if (\str_contains($statement, "\n")) {
-            $pos = Position::fromOffset($statement, $offset);
+            $positions = new PositionFactory();
 
-            return \sprintf('on line %d at column %d', $pos->getLine(), $pos->getColumn());
+            $pos = $positions->createFromOffset(
+                source: StringSource::createFromString($statement),
+                offset: $offset,
+            );
+
+            return \sprintf('on line %d at column %d', $pos->line, $pos->column);
         }
 
         return \sprintf('at column %d', $offset + 1);

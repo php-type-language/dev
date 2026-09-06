@@ -6,12 +6,27 @@ namespace TypeLang\Parser\Tests\Literal;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Parser\Literal\IntLiteralParser;
 use TypeLang\Parser\Tests\TestCase;
 use TypeLang\Type\Literal\IntLiteralNode;
 
-final class IntLiteralParserTest extends TestCase
+/**
+ * Tests for the integer literals the parser builds out of their raw
+ * representation.
+ */
+final class IntLiteralTest extends TestCase
 {
+    /**
+     * @throws \Throwable
+     */
+    private function literal(string $code): IntLiteralNode
+    {
+        $node = $this->parse($code);
+
+        self::assertInstanceOf(IntLiteralNode::class, $node);
+
+        return $node;
+    }
+
     /**
      * @return iterable<non-empty-string, array{non-empty-string, int, non-empty-string}>
      */
@@ -32,44 +47,75 @@ final class IntLiteralParserTest extends TestCase
         yield 'underscored hexadecimal' => ['0xFF_FF', 65535, '65535'];
     }
 
+    /**
+     * @param non-empty-string $literal
+     * @param non-empty-string $decimal
+     * @throws \Throwable
+     */
     #[Test]
     #[DataProvider('provideIntegers')]
     public function integerIsParsedToItsDecimalValue(string $literal, int $value, string $decimal): void
     {
-        $node = IntLiteralParser::parse($literal);
+        $node = $this->literal($literal);
 
         self::assertSame($value, $node->value);
         self::assertSame($decimal, $node->decimal);
     }
 
+    /**
+     * @param non-empty-string $literal
+     * @param non-empty-string $decimal
+     * @throws \Throwable
+     */
     #[Test]
     #[DataProvider('provideIntegers')]
     public function integerParsingKeepsTheOriginalRepresentation(string $literal, int $value, string $decimal): void
     {
-        self::assertSame($literal, IntLiteralParser::parse($literal)->raw);
+        self::assertSame($literal, $this->literal($literal)->raw);
     }
 
+    /**
+     * @throws \Throwable
+     */
     #[Test]
     public function integerParsingSupportsPhpIntMin(): void
     {
-        $node = IntLiteralParser::parse((string) \PHP_INT_MIN);
-
-        self::assertSame(\PHP_INT_MIN, $node->value);
+        self::assertSame(\PHP_INT_MIN, $this->literal((string) \PHP_INT_MIN)->value);
     }
 
+    /**
+     * @throws \Throwable
+     */
     #[Test]
     public function integerParsingSupportsPhpIntMax(): void
     {
-        $node = IntLiteralParser::parse((string) \PHP_INT_MAX);
-
-        self::assertSame(\PHP_INT_MAX, $node->value);
+        self::assertSame(\PHP_INT_MAX, $this->literal((string) \PHP_INT_MAX)->value);
     }
 
+    /**
+     * @throws \Throwable
+     */
     #[Test]
     public function negativeZeroIsParsedAsZero(): void
     {
-        $node = IntLiteralParser::parse('-0');
+        self::assertSame(0, $this->literal('-0')->value);
+    }
 
-        self::assertSame(0, $node->value);
+    /**
+     * @throws \Throwable
+     */
+    #[Test]
+    public function theOffsetOfALiteralIsTheOneItIsWrittenAt(): void
+    {
+        $node = $this->parse('array{a: 42}');
+
+        self::assertInstanceOf(\TypeLang\Type\NamedTypeNode::class, $node);
+        self::assertNotNull($node->fields);
+
+        $field = $node->fields->items[0];
+
+        self::assertInstanceOf(\TypeLang\Type\Shape\NamedFieldNode::class, $field);
+        self::assertInstanceOf(IntLiteralNode::class, $field->type);
+        self::assertSame(9, $field->type->offset);
     }
 }

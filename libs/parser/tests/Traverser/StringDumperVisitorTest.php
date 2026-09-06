@@ -90,10 +90,10 @@ final class StringDumperVisitorTest extends TestCase
                 Name(string)
 
             OUTPUT, $this->dump([
-                new UnionTypeNode(
+                new UnionTypeNode([
                     new NamedTypeNode(Name::createFromString('int')),
-                    new NamedTypeNode(Name::createFromString('string')),
-                ),
+                    new NamedTypeNode(Name::createFromString('string'))
+                ]),
             ]));
     }
 
@@ -149,6 +149,8 @@ final class StringDumperVisitorTest extends TestCase
             public function __construct()
             {
                 $this->hidden = true;
+
+                parent::__construct();
             }
         };
 

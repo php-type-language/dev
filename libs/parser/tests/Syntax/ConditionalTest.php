@@ -67,7 +67,7 @@ final class ConditionalTest extends SyntaxTestCase
 
     public function testInequalityOperatorIsNotAllowed(): void
     {
-        $this->expectParsingException('unexpected "!"');
+        $this->expectParsingException('unrecognized "!="');
 
         $this->parse('A != B ? C : D');
     }

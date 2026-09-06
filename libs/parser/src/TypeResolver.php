@@ -116,7 +116,7 @@ final class TypeResolver
      */
     public function withTypeImportsFromClass(\ReflectionClass $class): self
     {
-        $statements = (new PhpUseStatementsReader())
+        $statements = new PhpUseStatementsReader()
             ->getClassUseStatements($class);
 
         return new self([...$this->imports, ...$statements]);
@@ -162,7 +162,7 @@ final class TypeResolver
             return $this->withTypeImportsFromClass($function->getDeclaringClass());
         }
 
-        $statements = (new PhpUseStatementsReader())
+        $statements = new PhpUseStatementsReader()
             ->getFunctionUseStatements($function);
 
         return new self([...$this->imports, ...$statements]);

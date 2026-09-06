@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Internal;
 
-final class StringParser
+use TypeLang\Parser\Internal\StringDecoder\PatternSequenceFetcher;
+use TypeLang\Parser\Internal\StringDecoder\ScannerSequenceFetcher;
+use TypeLang\Parser\Internal\StringDecoder\SequenceFetcherInterface;
+
+final class StringDecoder
 {
     /**
      * @var non-empty-string
@@ -19,6 +23,11 @@ final class StringParser
      */
     private const SCANNER_THRESHOLD = 4;
 
+    public static function unescape(string $value): string
+    {
+        return \strtr($value, ["\'" => "'", '\\\\' => '\\']);
+    }
+
     /**
      * Method for parsing and decode all escaped character sequences: Special
      * chars (like a "\n"), hexadecimal (like a "\xFF"), octal (like a "\101")
@@ -26,7 +35,7 @@ final class StringParser
      *
      * @link https://www.php.net/manual/en/language.types.string.php
      */
-    public static function parse(string $body): string
+    public static function decode(string $body): string
     {
         if (!\str_contains($body, '\\')) {
             return $body;

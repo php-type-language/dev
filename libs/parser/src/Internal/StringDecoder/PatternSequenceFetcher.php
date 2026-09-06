@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal;
+namespace TypeLang\Parser\Internal\StringDecoder;
 
 /**
  * Fetches sequences by a single regexp pass over the whole string.

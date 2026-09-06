@@ -46,7 +46,6 @@ abstract class DumperVisitor extends Visitor
     }
 
     /**
-     * @param \Stringable $node
      * @return non-empty-string
      */
     private function printStringableNodeSuffix(\Stringable $node): string
@@ -62,7 +61,7 @@ abstract class DumperVisitor extends Visitor
     {
         $result = [];
 
-        foreach ((new \ReflectionObject($node))->getProperties() as $property) {
+        foreach (new \ReflectionObject($node)->getProperties() as $property) {
             // Skip readonly + static and builtin "offset" properties
             if ($property->isStatic() || $property->isReadOnly() || $property->getName() === 'offset') {
                 continue;

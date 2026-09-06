@@ -122,7 +122,7 @@ final class MatcherVisitorTest extends TestCase
                 break: static fn(Node $node): bool => $node instanceof UnionTypeNode,
             ),
             [
-                new UnionTypeNode($this->type('A'), $this->type('B')),
+                new UnionTypeNode([$this->type('A'), $this->type('B')]),
                 new Identifier('Example'),
             ],
         );
@@ -184,7 +184,7 @@ final class MatcherVisitorTest extends TestCase
 
         $traverser = Traverser::new([$visitor]);
 
-        $traverser->traverse([new UnionTypeNode($this->type('A'), $this->type('B'))]);
+        $traverser->traverse([new UnionTypeNode([$this->type('A'), $this->type('B')])]);
         $traverser->traverse([$this->type('Foo\\Bar')]);
 
         self::assertTrue($visitor->hasMatches());
