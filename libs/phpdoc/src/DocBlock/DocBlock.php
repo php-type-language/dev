@@ -48,7 +48,7 @@ final class DocBlock implements
      * value is empty.
      *
      * ```
-     * foreach ($block->getTags() as $tag) {
+     * foreach ($block->tags as $tag) {
      *     printf('@%s => %s', $tag->name, $tag->description);
      * }
      * ```
@@ -158,7 +158,7 @@ final class DocBlock implements
             $result[] = (string) $this->description;
         }
 
-        foreach ($this->getTags() as $tag) {
+        foreach ($this->tags as $tag) {
             $result[] = (string) $tag;
         }
 
