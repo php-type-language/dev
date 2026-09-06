@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Parser\Traverser;
 use TypeLang\Printer\Exception\NonPrintableNodeException;
 use TypeLang\Type\Attribute\AttributeGroupListNode;
 use TypeLang\Type\Attribute\AttributeGroupNode;
@@ -44,16 +43,16 @@ use TypeLang\Type\UnionTypeNode;
 
 class PrettyTypePrinter extends TypePrinter
 {
-    public const bool DEFAULT_WRAP_INTERSECTION_TYPE = true;
+    public const DEFAULT_WRAP_INTERSECTION_TYPE = true;
 
-    public const bool DEFAULT_WRAP_UNION_TYPE = false;
+    public const DEFAULT_WRAP_UNION_TYPE = false;
 
-    public const bool DEFAULT_WRAP_CALLABLE_RETURN_TYPE = true;
+    public const DEFAULT_WRAP_CALLABLE_RETURN_TYPE = true;
 
     /**
      * @var int<0, max>
      */
-    public const int DEFAULT_MULTILINE_SHAPE = 1;
+    public const DEFAULT_MULTILINE_SHAPE = 1;
 
     public function __construct(
         string $newLine = self::DEFAULT_NEW_LINE_DELIMITER,
@@ -472,27 +471,84 @@ class PrettyTypePrinter extends TypePrinter
             return true;
         }
 
-        $visitor = Traverser::through(
-            visitor: new Traverser\ClassNameMatcherVisitor(
-                class: LogicalTypeNode::class,
-                break: static function (Node $node): bool {
-                    // Break on non-empty template parameters.
-                    $isInTemplate = $node instanceof NamedTypeNode
-                        && $node->arguments !== null
-                        && $node->arguments->items !== [];
+        return self::containsLogicalType($type);
+    }
 
-                    // Break on non-empty shape fields.
-                    $isInShape = $node instanceof NamedTypeNode
-                        && $node->fields !== null
-                        && $node->fields->items !== [];
+    /**
+     * Searches for a {@see LogicalTypeNode} in depth: The search is stopped
+     * as soon as a type nesting its children into template arguments or
+     * shape fields is reached.
+     */
+    private static function containsLogicalType(TypeNode $type): bool
+    {
+        $stack = [$type];
 
-                    return $isInTemplate || $isInShape;
-                },
-            ),
-            nodes: [$type],
-        );
+        while ($stack !== []) {
+            $node = \array_pop($stack);
 
-        return $visitor->isFound;
+            if ($node instanceof LogicalTypeNode) {
+                return true;
+            }
+
+            if (self::shouldStopSearch($node)) {
+                return false;
+            }
+
+            $children = self::fetchChildNodes($node);
+
+            for ($index = \count($children) - 1; $index >= 0; --$index) {
+                $stack[] = $children[$index];
+            }
+        }
+
+        return false;
+    }
+
+    private static function shouldStopSearch(Node $node): bool
+    {
+        if (!$node instanceof NamedTypeNode) {
+            return false;
+        }
+
+        // Stop on non-empty template parameters.
+        $isInTemplate = $node->arguments !== null
+            && $node->arguments->items !== [];
+
+        // Stop on non-empty shape fields.
+        $isInShape = $node->fields !== null
+            && $node->fields->items !== [];
+
+        return $isInTemplate || $isInShape;
+    }
+
+    /**
+     * @return list<Node>
+     */
+    private static function fetchChildNodes(Node $node): array
+    {
+        $result = [];
+
+        foreach (\get_object_vars($node) as $value) {
+            if ($value instanceof Node) {
+                $result[] = $value;
+
+                continue;
+            }
+
+            if (!\is_iterable($value)) {
+                continue;
+            }
+
+            foreach ($value as $child) {
+                if (!$child instanceof Node) {
+                    break;
+                }
+
+                $result[] = $child;
+            }
+        }
+
+        return $result;
     }
 
     /**
