@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace TypeLang\Printer;
 
 use TypeLang\Printer\Exception\NonPrintableNodeException;
-use TypeLang\Type\Attribute\AttributeGroupListNode;
-use TypeLang\Type\Attribute\AttributeGroupNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\CallableTypeNode;
 use TypeLang\Type\ClassConstMaskNode;
@@ -194,13 +192,7 @@ class PrettyTypePrinter extends TypePrinter
         $fields = [];
 
         foreach ($shape->items as $field) {
-            $current = '';
-
-            if ($field->attributes !== null) {
-                $current .= $this->printAttributeGroups($field->attributes, $multiline);
-            }
-
-            $fields[] = $current . $prefix . $this->printShapeFieldNode($field);
+            $fields[] = $prefix . $this->printShapeFieldNode($field);
         }
 
         if (!$shape->isSealed || $node->arguments !== null) {
@@ -215,35 +207,6 @@ class PrettyTypePrinter extends TypePrinter
 
         /** @var list<non-empty-string> */
         return $fields;
-    }
-
-    protected function printAttributeGroups(AttributeGroupListNode $groups, bool $multiline): string
-    {
-        $prefix = $this->prefix();
-        $result = '';
-
-        foreach ($groups as $group) {
-            $result .= $prefix . $this->printAttributeGroup($group);
-            $result .= $multiline ? $this->newLine : ' ';
-        }
-
-        return $result;
-    }
-
-    protected function printAttributeGroup(AttributeGroupNode $group): string
-    {
-        $result = '#[';
-
-        $last = $group->last();
-        foreach ($group as $attribute) {
-            $result .= $attribute->name->toString();
-
-            if ($attribute !== $last) {
-                $result .= ', ';
-            }
-        }
-
-        return $result . ']';
     }
 
     /**
@@ -333,13 +296,7 @@ class PrettyTypePrinter extends TypePrinter
         $result = [];
 
         foreach ($arguments as $argument) {
-            $current = '';
-
-            if ($argument->attributes !== null) {
-                $current .= $this->printAttributeGroups($argument->attributes, false);
-            }
-
-            $result[] = $current . $this->printTemplateArgumentNode($argument);
+            $result[] = $this->printTemplateArgumentNode($argument);
         }
 
         return \sprintf('<%s>', \implode(', ', $result));
@@ -434,11 +391,6 @@ class PrettyTypePrinter extends TypePrinter
         if ($node->type !== null) {
             /** @var non-empty-string $result */
             $result = $this->make($node->type);
-        }
-
-        if ($node->attributes !== null) {
-            $result = $this->printAttributeGroups($node->attributes, false)
-                . $result;
         }
 
         if ($node->name !== null) {

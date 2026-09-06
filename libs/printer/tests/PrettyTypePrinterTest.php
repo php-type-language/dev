@@ -113,12 +113,6 @@ final class PrettyTypePrinterTest extends TestCase
             ->print(self::parse('array<covariant int>')));
     }
 
-    public function testPrintTemplateArgumentAttribute(): void
-    {
-        self::assertSame('list<#[Foo] int>', $this->printer()
-            ->print(self::parse('list<#[Foo] int>')));
-    }
-
     public function testPrintInlineShape(): void
     {
         self::assertSame('array{foo: int}', $this->printer()
@@ -206,20 +200,6 @@ final class PrettyTypePrinterTest extends TestCase
             ->print(self::parse('array{FOO_*: int}')));
     }
 
-    public function testPrintShapeFieldAttribute(): void
-    {
-        self::assertSame('array{#[Foo] foo: int}', $this->printer()
-            ->print(self::parse('array{#[Foo] foo: int}')));
-    }
-
-    public function testPrintShapeFieldAttributeMultiline(): void
-    {
-        self::assertSame(
-            "array{\n    #[Foo]\n    foo: int,\n    bar: string\n}",
-            $this->printer()->print(self::parse('array{#[Foo] foo: int, bar: string}')),
-        );
-    }
-
     public function testPrintCallableType(): void
     {
         self::assertSame('callable(int, string): void', $this->printer()
@@ -254,18 +234,6 @@ final class PrettyTypePrinterTest extends TestCase
     {
         self::assertSame('callable(int=): void', $this->printer()
             ->print(self::parse('callable(int=): void')));
-    }
-
-    public function testPrintCallableParameterAttribute(): void
-    {
-        self::assertSame('callable(#[Foo] int): void', $this->printer()
-            ->print(self::parse('callable(#[Foo] int): void')));
-    }
-
-    public function testPrintCallableParameterMultipleAttributes(): void
-    {
-        self::assertSame('callable(#[Foo, Bar] int): void', $this->printer()
-            ->print(self::parse('callable(#[Foo, Bar] int): void')));
     }
 
     public function testPrintClassConstant(): void
