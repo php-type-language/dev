@@ -33,10 +33,10 @@ class ConstantReaderTest extends ReaderTestCase
             constant: new \ReflectionClassConstant(ConstantReaderStub::class, 'UNION'),
         );
 
-        self::assertSameType(new UnionTypeNode(
+        self::assertSameType(new UnionTypeNode([
             self::builtin('string'),
-            self::builtin('int'),
-        ), $type);
+            self::builtin('int')
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]
@@ -46,10 +46,10 @@ class ConstantReaderTest extends ReaderTestCase
             constant: new \ReflectionClassConstant(ConstantReaderStub::class, 'INTERSECTION'),
         );
 
-        self::assertSameType(new IntersectionTypeNode(
+        self::assertSameType(new IntersectionTypeNode([
             self::classType(__ConstantReaderEnum::class),
-            self::classType(\BackedEnum::class),
-        ), $type);
+            self::classType(\BackedEnum::class)
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]
@@ -59,13 +59,13 @@ class ConstantReaderTest extends ReaderTestCase
             constant: new \ReflectionClassConstant(ConstantReaderStub::class, 'COMPOSITE'),
         );
 
-        self::assertSameType(new UnionTypeNode(
-            new IntersectionTypeNode(
+        self::assertSameType(new UnionTypeNode([
+            new IntersectionTypeNode([
                 self::classType(__ConstantReaderEnum::class),
-                self::classType(\BackedEnum::class),
-            ),
-            self::builtin('array'),
-        ), $type);
+                self::classType(\BackedEnum::class)
+            ]),
+            self::builtin('array')
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]

@@ -31,10 +31,10 @@ class MethodReaderTest extends ReaderTestCase
             function: new \ReflectionMethod(MethodReaderStub::class, 'getUnionType'),
         );
 
-        self::assertSameType(new UnionTypeNode(
+        self::assertSameType(new UnionTypeNode([
             self::builtin('string'),
-            self::builtin('int'),
-        ), $type);
+            self::builtin('int')
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]
@@ -44,10 +44,10 @@ class MethodReaderTest extends ReaderTestCase
             function: new \ReflectionMethod(MethodReaderStub::class, 'getIntersectionType'),
         );
 
-        self::assertSameType(new IntersectionTypeNode(
+        self::assertSameType(new IntersectionTypeNode([
             self::classType(\ArrayAccess::class),
-            self::classType(\Traversable::class),
-        ), $type);
+            self::classType(\Traversable::class)
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]
@@ -57,12 +57,12 @@ class MethodReaderTest extends ReaderTestCase
             function: new \ReflectionMethod(MethodReaderStub::class, 'getCompositeType'),
         );
 
-        self::assertSameType(new UnionTypeNode(
-            new IntersectionTypeNode(
+        self::assertSameType(new UnionTypeNode([
+            new IntersectionTypeNode([
                 self::classType(\ArrayAccess::class),
-                self::classType(\Traversable::class),
-            ),
-            self::builtin('array'),
-        ), $type);
+                self::classType(\Traversable::class)
+            ]),
+            self::builtin('array')
+        ]), $type);
     }
 }

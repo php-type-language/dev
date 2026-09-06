@@ -179,7 +179,7 @@ final class ReflectionReader implements ReaderInterface
             $children[] = $this->getType($child);
         }
 
-        return new UnionTypeNode(...$children);
+        return new UnionTypeNode($children);
     }
 
     /**
@@ -194,6 +194,6 @@ final class ReflectionReader implements ReaderInterface
             $children[] = $this->getType($child);
         }
 
-        return new IntersectionTypeNode(...$children);
+        return new IntersectionTypeNode($children);
     }
 }

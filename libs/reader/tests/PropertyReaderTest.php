@@ -33,10 +33,10 @@ class PropertyReaderTest extends ReaderTestCase
             property: new \ReflectionProperty(PropertyReaderStub::class, 'unionType'),
         );
 
-        self::assertSameType(new UnionTypeNode(
+        self::assertSameType(new UnionTypeNode([
             self::builtin('string'),
-            self::builtin('int'),
-        ), $type);
+            self::builtin('int')
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]
@@ -46,10 +46,10 @@ class PropertyReaderTest extends ReaderTestCase
             property: new \ReflectionProperty(PropertyReaderStub::class, 'intersectionType'),
         );
 
-        self::assertSameType(new IntersectionTypeNode(
+        self::assertSameType(new IntersectionTypeNode([
             self::classType(\ArrayAccess::class),
-            self::classType(\Traversable::class),
-        ), $type);
+            self::classType(\Traversable::class)
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]
@@ -59,13 +59,13 @@ class PropertyReaderTest extends ReaderTestCase
             property: new \ReflectionProperty(PropertyReaderStub::class, 'compositeType'),
         );
 
-        self::assertSameType(new UnionTypeNode(
-            new IntersectionTypeNode(
+        self::assertSameType(new UnionTypeNode([
+            new IntersectionTypeNode([
                 self::classType(\ArrayAccess::class),
-                self::classType(\Traversable::class),
-            ),
-            self::builtin('array'),
-        ), $type);
+                self::classType(\Traversable::class)
+            ]),
+            self::builtin('array')
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]
@@ -108,10 +108,10 @@ class PropertyReaderTest extends ReaderTestCase
         );
 
         // The "set" hook widens the accepted type to "string|\Stringable".
-        self::assertSameType(new UnionTypeNode(
+        self::assertSameType(new UnionTypeNode([
             self::classType(\Stringable::class),
-            self::builtin('string'),
-        ), $type);
+            self::builtin('string')
+        ]), $type);
     }
 
     #[DataProvider('readersDataProvider')]
