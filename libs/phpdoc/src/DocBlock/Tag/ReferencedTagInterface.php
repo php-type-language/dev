@@ -13,6 +13,4 @@ use TypeLang\PhpDoc\DocBlock\Reference\ReferenceInterface;
  *
  * @property-read ReferenceInterface $reference The reference the tag points to.
  */
-interface ReferencedTagInterface extends TagInterface
-{
-}
+interface ReferencedTagInterface extends TagInterface {}

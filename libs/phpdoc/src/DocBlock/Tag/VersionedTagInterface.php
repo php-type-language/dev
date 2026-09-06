@@ -9,6 +9,4 @@ namespace TypeLang\PhpDoc\DocBlock\Tag;
  *
  * @property-read ?non-empty-string $version The version the tag refers to, if any.
  */
-interface VersionedTagInterface extends TagInterface
-{
-}
+interface VersionedTagInterface extends TagInterface {}

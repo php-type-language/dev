@@ -167,13 +167,12 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     /**
      * Gets {@see true} in case of name is fully qualified.
      *
-     * @deprecated Use the {@see $isFullyQualified} property instead.
+     * @deprecated use the {@see $isFullyQualified} property instead
      */
     public function isFullQualified(): bool
     {
         return $this->isFullyQualified;
     }
-
 
     /**
      * @param int<0, max> $offset
@@ -284,7 +283,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * @deprecated Use the {@see $parts} property instead.
+     * @deprecated use the {@see $parts} property instead
      *
      * @return non-empty-list<Identifier>
      */
@@ -308,7 +307,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * @deprecated Use the {@see toArrayStrings()} method instead.
+     * @deprecated use the {@see toArrayStrings()} method instead
      *
      * @return non-empty-list<non-empty-string>
      */

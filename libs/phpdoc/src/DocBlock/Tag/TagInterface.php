@@ -14,6 +14,4 @@ use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
  * @property-read ?DescriptionInterface $description Gets an optional description object or {@see null} in case of
  *                description is not defined in the entry.
  */
-interface TagInterface extends ComponentInterface
-{
-}
+interface TagInterface extends ComponentInterface {}

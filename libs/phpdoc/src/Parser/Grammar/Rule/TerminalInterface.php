@@ -9,6 +9,4 @@ namespace TypeLang\PhpDoc\Parser\Grammar\Rule;
  *
  * @property-read ?non-empty-string $alias The name the matched value is captured under, if any.
  */
-interface TerminalInterface extends RuleInterface
-{
-}
+interface TerminalInterface extends RuleInterface {}

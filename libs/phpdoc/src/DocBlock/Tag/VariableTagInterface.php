@@ -9,6 +9,4 @@ namespace TypeLang\PhpDoc\DocBlock\Tag;
  *
  * @property-read non-empty-string $variable The referenced variable name, without the leading "$".
  */
-interface VariableTagInterface extends TagInterface
-{
-}
+interface VariableTagInterface extends TagInterface {}

@@ -11,6 +11,4 @@ use TypeLang\Type\TypeNode;
  *
  * @property-read TypeNode $type The type declared by the tag.
  */
-interface TypedTagInterface extends TagInterface
-{
-}
+interface TypedTagInterface extends TagInterface {}

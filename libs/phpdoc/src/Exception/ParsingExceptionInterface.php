@@ -10,6 +10,4 @@ namespace TypeLang\PhpDoc\Exception;
  * @property-read string $source Gets the full docblock content in which the error occurred.
  * @property-read int<0, max> $offset Gets the offset at which the error occurred.
  */
-interface ParsingExceptionInterface extends PhpDocExceptionInterface
-{
-}
+interface ParsingExceptionInterface extends PhpDocExceptionInterface {}

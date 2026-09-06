@@ -19,7 +19,6 @@ use TypeLang\PhpDoc\Parser\Grammar\Rule\RuleInterface;
  */
 interface TagDefinitionInterface extends \Stringable
 {
-
     /**
      * Builds the tag from the values captured while matching {@see $spec}.
      *
