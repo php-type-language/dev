@@ -38,7 +38,7 @@ final class IntLiteralParserTest extends TestCase
     {
         $node = IntLiteralParser::parse($literal);
 
-        self::assertSame($value, $node->value());
+        self::assertSame($value, $node->value);
         self::assertSame($decimal, $node->decimal);
     }
 
@@ -46,7 +46,7 @@ final class IntLiteralParserTest extends TestCase
     #[DataProvider('provideIntegers')]
     public function integerParsingKeepsTheOriginalRepresentation(string $literal, int $value, string $decimal): void
     {
-        self::assertSame($literal, IntLiteralParser::parse($literal)->raw());
+        self::assertSame($literal, IntLiteralParser::parse($literal)->raw);
     }
 
     #[Test]
@@ -54,7 +54,7 @@ final class IntLiteralParserTest extends TestCase
     {
         $node = IntLiteralParser::parse((string) \PHP_INT_MIN);
 
-        self::assertSame(\PHP_INT_MIN, $node->value());
+        self::assertSame(\PHP_INT_MIN, $node->value);
     }
 
     #[Test]
@@ -62,7 +62,7 @@ final class IntLiteralParserTest extends TestCase
     {
         $node = IntLiteralParser::parse((string) \PHP_INT_MAX);
 
-        self::assertSame(\PHP_INT_MAX, $node->value());
+        self::assertSame(\PHP_INT_MAX, $node->value);
     }
 
     #[Test]
@@ -70,6 +70,6 @@ final class IntLiteralParserTest extends TestCase
     {
         $node = IntLiteralParser::parse('-0');
 
-        self::assertSame(0, $node->value());
+        self::assertSame(0, $node->value);
     }
 }

@@ -39,7 +39,7 @@ final class NameTest extends SyntaxTestCase
 
         self::assertInstanceOf(NamedTypeNode::class, $statement);
         self::assertSame($expected, $statement->name->toString());
-        self::assertTrue($statement->name->isSimple);
+        self::assertTrue($statement->name->isSimple());
     }
 
     public function testRelativeNamespacedName(): void

@@ -54,15 +54,15 @@ final class StringLiteralParserTest extends TestCase
     {
         $node = StringLiteralParser::parse($literal);
 
-        self::assertSame($value, $node->value());
-        self::assertSame($literal, $node->raw());
+        self::assertSame($value, $node->value);
+        self::assertSame($literal, $node->raw);
     }
 
     #[Test]
     #[DataProvider('provideDoubleQuotedStrings')]
     public function doubleQuotedFactoryIsTheSameAsParsing(string $literal, string $value): void
     {
-        self::assertSame($value, StringLiteralParser::createFromDoubleQuotedString($literal)->value());
+        self::assertSame($value, StringLiteralParser::createFromDoubleQuotedString($literal)->value);
     }
 
     /**
@@ -85,15 +85,15 @@ final class StringLiteralParserTest extends TestCase
     {
         $node = StringLiteralParser::parse($literal);
 
-        self::assertSame($value, $node->value());
-        self::assertSame($literal, $node->raw());
+        self::assertSame($value, $node->value);
+        self::assertSame($literal, $node->raw);
     }
 
     #[Test]
     #[DataProvider('provideSingleQuotedStrings')]
     public function singleQuotedFactoryIsTheSameAsParsing(string $literal, string $value): void
     {
-        self::assertSame($value, StringLiteralParser::createFromSingleQuotedString($literal)->value());
+        self::assertSame($value, StringLiteralParser::createFromSingleQuotedString($literal)->value);
     }
 
     #[Test]
@@ -101,7 +101,7 @@ final class StringLiteralParserTest extends TestCase
     {
         $node = new StringLiteralNode('a"b');
 
-        self::assertSame($node->value(), StringLiteralParser::parse($node->raw())->value());
+        self::assertSame($node->value, StringLiteralParser::parse($node->raw)->value);
     }
 
     #[Test]
