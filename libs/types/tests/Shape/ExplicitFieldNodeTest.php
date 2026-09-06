@@ -187,4 +187,30 @@ final class ExplicitFieldNodeTest extends TestCase
 
         self::assertSame('B', $field->type->name->toString());
     }
+
+    #[Test]
+    #[DataProvider('provideExplicitFields')]
+    public function isReturnsTrueForOwnClass(ExplicitFieldNode $field, string $index): void
+    {
+        self::assertTrue($field->is($field::class));
+        self::assertTrue($field->is(ExplicitFieldNode::class));
+        self::assertTrue($field->is(FieldNode::class));
+    }
+
+    #[Test]
+    #[DataProvider('provideExplicitFields')]
+    public function isReturnsFalseForAnotherClass(ExplicitFieldNode $field, string $index): void
+    {
+        self::assertFalse($field->is(ImplicitFieldNode::class));
+    }
+
+    #[Test]
+    public function implicitFieldIsNotAnExplicitOne(): void
+    {
+        $field = new ImplicitFieldNode(self::type());
+
+        self::assertTrue($field->is(ImplicitFieldNode::class));
+        self::assertTrue($field->is(FieldNode::class));
+        self::assertFalse($field->is(ExplicitFieldNode::class));
+    }
 }

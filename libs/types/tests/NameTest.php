@@ -530,4 +530,98 @@ final class NameTest extends TestCase
 
         self::assertSame($name->toString(), (string) $name);
     }
+
+    #[Test]
+    public function getFirstPartReturnsTheFirstSegment(): void
+    {
+        $name = Name::createFromString('Foo\Bar\Baz');
+
+        self::assertSame($name->first, $name->getFirstPart());
+        self::assertSame('Foo', $name->getFirstPart()->value);
+    }
+
+    #[Test]
+    public function getFirstPartAsStringReturnsTheFirstSegmentValue(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        self::assertSame('Foo', $name->getFirstPartAsString());
+    }
+
+    #[Test]
+    public function getFirstPartAsLowerStringLowercasesTheFirstSegment(): void
+    {
+        $name = Name::createFromString('FooBar\Baz');
+
+        self::assertSame('foobar', $name->getFirstPartAsLowerString());
+    }
+
+    #[Test]
+    public function getLastPartReturnsTheLastSegment(): void
+    {
+        $name = Name::createFromString('Foo\Bar\Baz');
+
+        self::assertSame($name->last, $name->getLastPart());
+        self::assertSame('Baz', $name->getLastPart()->value);
+    }
+
+    #[Test]
+    public function getLastPartAsStringReturnsTheLastSegmentValue(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        self::assertSame('Bar', $name->getLastPartAsString());
+    }
+
+    #[Test]
+    public function getLastPartAsLowerStringLowercasesTheLastSegment(): void
+    {
+        $name = Name::createFromString('Foo\BarBaz');
+
+        self::assertSame('barbaz', $name->getLastPartAsLowerString());
+    }
+
+    #[Test]
+    public function partsOfASimpleNameAreTheSameSegment(): void
+    {
+        $name = Name::createFromString('Foo');
+
+        self::assertSame($name->first, $name->last);
+    }
+
+    #[Test]
+    public function toArrayReturnsTheSegments(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        self::assertSame($name->parts, $name->toArray());
+        self::assertContainsOnlyInstancesOf(Identifier::class, $name->toArray());
+    }
+
+    #[Test]
+    public function isFullQualifiedIsAnAliasOfTheProperty(): void
+    {
+        $qualified = Name::createFromString('\Foo\Bar');
+        $unqualified = Name::createFromString('Foo\Bar');
+
+        self::assertTrue($qualified->isFullQualified());
+        self::assertFalse($unqualified->isFullQualified());
+    }
+
+    #[Test]
+    public function getPartsIsAnAliasOfTheProperty(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        self::assertSame($name->parts, $name->getParts());
+    }
+
+    #[Test]
+    public function getPartsAsStringIsAnAliasOfToArrayStrings(): void
+    {
+        $name = Name::createFromString('Foo\Bar');
+
+        self::assertSame(['Foo', 'Bar'], $name->getPartsAsString());
+        self::assertSame($name->toArrayStrings(), $name->getPartsAsString());
+    }
 }

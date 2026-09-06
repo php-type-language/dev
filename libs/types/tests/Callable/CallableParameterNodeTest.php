@@ -9,6 +9,7 @@ use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Literal\VariableLiteralNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Node;
 use TypeLang\Type\Tests\TestCase;
 
 final class CallableParameterNodeTest extends TestCase
@@ -111,5 +112,22 @@ final class CallableParameterNodeTest extends TestCase
         $node = new CallableParameterNode(type: new NamedTypeNode(Name::createFromString('int')));
 
         self::assertSame(0, $node->offset);
+    }
+
+    #[Test]
+    public function isReturnsTrueForOwnClass(): void
+    {
+        $parameter = new CallableParameterNode(new NamedTypeNode(Name::createFromString('int')));
+
+        self::assertTrue($parameter->is(CallableParameterNode::class));
+        self::assertTrue($parameter->is(Node::class));
+    }
+
+    #[Test]
+    public function isReturnsFalseForAnotherClass(): void
+    {
+        $parameter = new CallableParameterNode(new NamedTypeNode(Name::createFromString('int')));
+
+        self::assertFalse($parameter->is(NamedTypeNode::class));
     }
 }

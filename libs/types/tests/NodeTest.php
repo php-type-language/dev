@@ -245,4 +245,23 @@ final class NodeTest extends TestCase
 
         self::assertSame('B', $node->type->name->toString());
     }
+
+    #[Test]
+    #[DataProvider('provideNodes')]
+    public function everyNodeOffsetIsReadableByMethod(Node $node): void
+    {
+        self::assertSame(0, $node->getOffset());
+
+        $node->offset = 42;
+
+        self::assertSame(42, $node->getOffset());
+    }
+
+    #[Test]
+    public function abstractNodeOffsetIsReadableByMethod(): void
+    {
+        $node = new class extends Node {};
+
+        self::assertSame(0, $node->getOffset());
+    }
 }

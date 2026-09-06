@@ -245,4 +245,38 @@ final class NodeListTest extends TestCase
     {
         self::assertSame(0, $this->list()->offset);
     }
+
+    #[Test]
+    public function offsetGetIsAnAliasOfTheArrayAccess(): void
+    {
+        $a = $this->node('A');
+        $list = $this->list([$a]);
+
+        self::assertSame($a, $list->offsetGet(0));
+        self::assertNull($list->offsetGet(1));
+    }
+
+    #[Test]
+    public function offsetSetIsAnAliasOfTheArrayAccess(): void
+    {
+        $a = $this->node('A');
+        $b = $this->node('B');
+        $list = $this->list([$a]);
+
+        $list->offsetSet(0, $b);
+
+        self::assertSame([$b], $list->items);
+    }
+
+    #[Test]
+    public function offsetUnsetIsAnAliasOfTheArrayAccess(): void
+    {
+        $a = $this->node('A');
+        $b = $this->node('B');
+        $list = $this->list([$a, $b]);
+
+        $list->offsetUnset(0);
+
+        self::assertSame([$b], $list->items);
+    }
 }
