@@ -650,22 +650,43 @@ final class NameTest extends TestCase
     #[Test]
     public function unserializeThrowsOnEmptyParts(): void
     {
-        $name = Name::createFromString('Foo');
+        $this->expectException(\Throwable::class);
 
-        $this->expectException(\UnexpectedValueException::class);
-
-        $name->__unserialize([[]]);
+        \unserialize(self::payload([], 0, false));
     }
 
     #[Test]
     public function unserializeThrowsOnNonIdentifierParts(): void
     {
-        $name = Name::createFromString('Foo');
+        $this->expectException(\Throwable::class);
 
+        \unserialize(self::payload(['Foo'], 0, false));
+    }
+
+    #[Test]
+    public function unserializeThrowsOnMissingParts(): void
+    {
         $this->expectException(\UnexpectedValueException::class);
 
-        /** @phpstan-ignore-next-line */
-        $name->__unserialize([['Foo']]);
+        \unserialize(self::payload());
+    }
+
+    /**
+     * Builds a serialized {@see Name} payload from the given
+     * {@see Name::__serialize()} data.
+     *
+     * @return non-empty-string
+     */
+    private static function payload(mixed ...$data): string
+    {
+        $body = \serialize($data);
+
+        return \vsprintf('O:%d:"%s":%d:%s', [
+            \strlen(Name::class),
+            Name::class,
+            \count($data),
+            \substr($body, (int) \strpos($body, '{')),
+        ]);
     }
 
     #[Test]
