@@ -19,9 +19,9 @@ class ReflectionReaderTest extends ReaderTestCase
         $reader = new ReflectionReader();
 
         $type = $reader->getType(
-            new \ReflectionProperty(new class {
+            (new \ReflectionProperty(new class {
                 public int $value;
-            }, 'value')->getType(),
+            }, 'value'))->getType(),
         );
 
         self::assertSameType(self::builtin('int'), $type);
@@ -50,7 +50,7 @@ class ReflectionReaderTest extends ReaderTestCase
             self::fail('Expected an UnrecognizedTypeException to be thrown');
         } catch (UnrecognizedTypeException $e) {
             self::assertInstanceOf(UnrecognizedReflectionTypeException::class, $e);
-            self::assertTrue(new \ReflectionClass($e)->isFinal());
+            self::assertTrue((new \ReflectionClass($e))->isFinal());
         }
     }
 
@@ -67,9 +67,9 @@ class ReflectionReaderTest extends ReaderTestCase
         $reader = new ReflectionReader();
 
         $type = $reader->getType(
-            new \ReflectionProperty(new class {
+            (new \ReflectionProperty(new class {
                 public mixed $value;
-            }, 'value')->getType(),
+            }, 'value'))->getType(),
         );
 
         self::assertSameType(self::builtin('mixed'), $type);
@@ -89,7 +89,7 @@ class ReflectionReaderTest extends ReaderTestCase
         );
 
         self::assertInstanceOf(UnrecognizedReflectionTypeException::class, $exception);
-        self::assertTrue(new \ReflectionClass($exception)->isFinal());
+        self::assertTrue((new \ReflectionClass($exception))->isFinal());
         self::assertSame($previous, $exception->getPrevious());
         self::assertStringContainsString('SINGLE', $exception->getMessage());
     }

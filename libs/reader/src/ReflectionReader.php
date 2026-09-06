@@ -160,7 +160,7 @@ final class ReflectionReader implements ReaderInterface
 
         $name = Name::createFromString($literal);
 
-        if ($type->isBuiltin() || $name->isSpecial || $name->isBuiltin) {
+        if ($type->isBuiltin() || $name->isSpecial() || $name->isBuiltin()) {
             return new NamedTypeNode($name);
         }
 
