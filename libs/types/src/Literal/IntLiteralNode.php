@@ -9,7 +9,7 @@ namespace TypeLang\Type\Literal;
  *
  * @phpstan-consistent-constructor
  */
-final class IntLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
+final class IntLiteralNode extends LiteralNode
 {
     /**
      * @var numeric-string
@@ -24,56 +24,8 @@ final class IntLiteralNode extends LiteralNode implements ParsableLiteralNodeInt
         ?string $raw = null,
         ?string $decimal = null,
     ) {
-        $this->decimal = $decimal ?? (string) $this->value;
+        $this->decimal = $decimal ?? (string) $value;
 
-        parent::__construct($value, $raw ?? (string) $this->value);
-    }
-
-    public static function parse(string $value): self
-    {
-        [$negative, $decimal] = self::split($value);
-
-        $inverse = '-' . $decimal;
-
-        if ($negative) {
-            if ((string) \PHP_INT_MIN === $inverse) {
-                return new self(\PHP_INT_MIN, $value, $inverse);
-            }
-
-            /** @phpstan-ignore-next-line : An "$inverse" variable contain numeric-string */
-            return new self((int) $inverse, $value, $inverse);
-        }
-
-        return new self((int) $decimal, $value, $decimal);
-    }
-
-    /**
-     * @return array{bool, numeric-string}
-     */
-    private static function split(string $literal): array
-    {
-        $literal = \str_replace('_', '', $literal);
-
-        if ($negative = ($literal[0] === '-')) {
-            $literal = \substr($literal, 1);
-        }
-
-        // One of: [ 0123, 0o23, 0x00, 0b01 ]
-        if ($literal[0] === '0' && isset($literal[1])) {
-            /** @var array{bool, numeric-string} */
-            return [$negative, match ($literal[1]) {
-                // hexadecimal
-                'x', 'X' => \base_convert(\substr($literal, 2), 16, 10),
-                // binary
-                'b', 'B' => \base_convert(\substr($literal, 2), 2, 10),
-                // octal
-                'o', 'O' => \base_convert(\substr($literal, 2), 8, 10),
-                // octal (legacy)
-                default => \base_convert($literal, 8, 10),
-            }];
-        }
-
-        /** @var array{bool, numeric-string} */
-        return [$negative, $literal];
+        parent::__construct($value, $raw ?? (string) $value);
     }
 }

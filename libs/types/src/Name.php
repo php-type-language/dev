@@ -288,7 +288,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function toFullQualifiedLowerString(): string
     {
-        return \strtolower($this->toUnqualifiedString());
+        return \strtolower($this->toFullQualifiedString());
     }
 
     /**
@@ -375,25 +375,24 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * @return array{int<0, max>, non-empty-list<Identifier>}
+     * @return array{non-empty-list<Identifier>, int<0, max>, bool}
      */
     public function __serialize(): array
     {
-        return [$this->offset, $this->segments];
+        return [$this->segments, $this->offset, $this->isFullyQualified];
     }
 
     /**
-     * @param array{0?: int<0, max>, 1?: non-empty-list<Identifier>} $data
+     * @param array{0?: non-empty-list<Identifier>, 1?: int<0, max>, 2?: bool} $data
      * @throws \UnexpectedValueException
      */
     public function __unserialize(array $data): void
     {
-        $this->offset = $data[0] ?? throw new \UnexpectedValueException(
-            message: 'Unable to unserialize Name offset',
+        $this->segments = $data[0] ?? throw new \UnexpectedValueException(
+            message: 'Unable to unserialize Name segments',
         );
 
-        $this->segments = $data[1] ?? throw new \UnexpectedValueException(
-            message: 'Unable to unserialize Name identifier parts',
-        );
+        $this->offset = $data[1] ?? 0;
+        $this->isFullyQualified = $data[2] ?? self::IS_FULLY_QUALIFIED_DEFAULT_VALUE;
     }
 }

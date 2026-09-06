@@ -9,33 +9,13 @@ namespace TypeLang\Type\Literal;
  *
  * @phpstan-consistent-constructor
  */
-final class VariableLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
+final class VariableLiteralNode extends LiteralNode
 {
     /**
      * @param non-empty-string $value
      */
     public function __construct(string $value)
     {
-        if (\strlen($value) < 2) {
-            throw new \InvalidArgumentException('Variable name length must be greater than 1');
-        }
-
-        if (!\str_starts_with($value, '$')) {
-            throw new \InvalidArgumentException('Variable name must start with "$" character');
-        }
-
-        /** @var non-empty-string $normalized */
-        $normalized = \substr($value, 1);
-
-        parent::__construct($normalized, $value);
-    }
-
-    public static function parse(string $value): self
-    {
-        if (!\str_starts_with($value, '$')) {
-            $value = '$' . $value;
-        }
-
-        return new self($value);
+        parent::__construct($value, '$' . $value);
     }
 }

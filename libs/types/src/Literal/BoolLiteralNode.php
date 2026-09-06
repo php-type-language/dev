@@ -9,17 +9,12 @@ namespace TypeLang\Type\Literal;
  *
  * @phpstan-consistent-constructor
  */
-final class BoolLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
+final class BoolLiteralNode extends LiteralNode
 {
     public function __construct(
         bool $value,
         ?string $raw = null,
     ) {
         parent::__construct($value, $raw ?? ($value ? 'true' : 'false'));
-    }
-
-    public static function parse(string $value): self
-    {
-        return new self(\strtolower($value) === 'true', $value);
     }
 }
