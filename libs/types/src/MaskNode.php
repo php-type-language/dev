@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace TypeLang\Type;
 
 /**
- * The name of a constant written in part: An ordered list of the literal
- * segments it is made of, with a {@see WildcardNode} standing wherever the
- * name is left unsaid.
+ * The name of a constant written in part.
+ *
+ * The segments the name is made of are kept in the order they are written
+ * in, with a {@see WildcardNode} standing wherever the name is left unsaid.
  *
  * Note that an empty mask node list CANNOT be created, and this is
  * an undefined behavior.
@@ -19,7 +20,7 @@ namespace TypeLang\Type;
  *  //        the segments and the wildcards between them
  *
  *  Some\Any::*
- *  //        ^ a single wildcard and no segments at all
+ *  //        ^ a single wildcard
  * ```
  *
  * @template-extends NodeList<Identifier|WildcardNode, true>
@@ -77,8 +78,6 @@ final class MaskNode extends NodeList implements \Stringable
     }
 
     /**
-     * Gets the literal segments of a mask as strings.
-     *
      * @return list<non-empty-string>
      */
     public function getSegmentsAsStrings(): array
