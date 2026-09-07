@@ -74,7 +74,8 @@ final class CallableTest extends SyntaxTestCase
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
                   NamedTypeNode
                     Name(T)
-                  Literal\VariableLiteralNode($name)
+                  VariableNode
+                    Identifier(name)
             AST, $this->parseAndPrint('foo(T $name)'));
     }
 
@@ -87,7 +88,8 @@ final class CallableTest extends SyntaxTestCase
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
                   NamedTypeNode
                     Name(A)
-                  Literal\VariableLiteralNode($a)
+                  VariableNode
+                    Identifier(a)
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
                   NamedTypeNode
                     Name(B)
@@ -118,7 +120,8 @@ final class CallableTest extends SyntaxTestCase
                 Callable\CallableParameterNode(isOutput=true, isVariadic=false, isOptional=false)
                   NamedTypeNode
                     Name(T)
-                  Literal\VariableLiteralNode($name)
+                  VariableNode
+                    Identifier(name)
             AST, $this->parseAndPrint('foo(T &$name)'));
     }
 
@@ -201,7 +204,8 @@ final class CallableTest extends SyntaxTestCase
                 Callable\CallableParameterNode(isOutput=true, isVariadic=true, isOptional=false)
                   NamedTypeNode
                     Name(T)
-                  Literal\VariableLiteralNode($name)
+                  VariableNode
+                    Identifier(name)
             AST, $this->parseAndPrint('foo(T &...$name)'));
     }
 

@@ -89,9 +89,9 @@ final class GenericTest extends SyntaxTestCase
                   NamedTypeNode
                     Name(array-key)
                 Template\TemplateArgumentNode
-                  Identifier(covariant)
                   NamedTypeNode
                     Name(Request)
+                  Identifier(covariant)
             AST, $this->parseAndPrint('HashMap<array-key, covariant Request>'));
     }
 
@@ -124,9 +124,9 @@ final class GenericTest extends SyntaxTestCase
               Name(Type)
               Template\TemplateArgumentListNode
                 Template\TemplateArgumentNode
-                  Identifier(out)
                   NamedTypeNode
                     Name(\Some)
+                  Identifier(out)
             AST, $this->parseAndPrint('Type<out \\Some>'));
     }
 
@@ -157,9 +157,9 @@ final class GenericTest extends SyntaxTestCase
               Name(Type)
               Template\TemplateArgumentListNode
                 Template\TemplateArgumentNode
-                  Identifier(out)
                   NamedTypeNode
                     Name(Some)
+                  Identifier(out)
             AST, $this->parseAndPrint('Type<out Some>'));
     }
 
@@ -184,9 +184,14 @@ final class GenericTest extends SyntaxTestCase
         $this->parse('Collection<42 User>');
     }
 
+    /**
+     * A second hint reads as the bound of a template parameter, and a
+     * parameter list belongs to a callable, so the statement is refused
+     * where the parenthesis it would go on with is missing.
+     */
     public function testMultipleHintsAreNotAllowed(): void
     {
-        $this->expectParsingException('unexpected "Request"');
+        $this->expectParsingException('unexpected end of input');
 
         $this->parse('HashMap<array-key, some covariant Request>');
     }

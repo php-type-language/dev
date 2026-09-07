@@ -80,9 +80,66 @@ final class NameTest extends SyntaxTestCase
             AST, $this->parseAndPrint('\\' . $keyword));
     }
 
+    /**
+     * A source text is read as bytes, and every byte of a character outside
+     * of ASCII is a letter, so a name stands in whatever script it is
+     * written in.
+     *
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string}>
+     */
+    public static function nonAsciiNameDataProvider(): iterable
+    {
+        yield 'latin-1' => ['Über', 'Über'];
+        yield 'cyrillic' => ['Тип', 'Тип'];
+        yield 'cjk' => ['你好', '你好'];
+        yield 'a namespaced name' => ['Проект\Тип', 'Проект\Тип'];
+        yield 'beside an ascii part' => ['Проект\Type', 'Проект\Type'];
+        yield 'with a dash' => ['non-empty-Тип', 'non-empty-Тип'];
+        yield 'with a digit' => ['Тип42', 'Тип42'];
+    }
+
+    /**
+     * @param non-empty-string $type
+     * @param non-empty-string $expected
+     * @throws \Throwable
+     */
+    #[DataProvider('nonAsciiNameDataProvider')]
+    public function testANameStandsInAnyScript(string $type, string $expected): void
+    {
+        self::assertSame(
+            $expected,
+            (new \TypeLang\Printer\PrettyTypePrinter())->print($this->parse($type)),
+        );
+    }
+
+    public function testANonAsciiNameStandsAsAShapeKey(): void
+    {
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(array)
+              Shape\FieldsListNode(isSealed=true)
+                Shape\NamedFieldNode(isOptional=false)
+                  Identifier(ключ)
+                  NamedTypeNode
+                    Name(int)
+            AST, $this->parseAndPrint('array{ключ: int}'));
+    }
+
+    public function testANonAsciiNameStandsAsATemplateArgument(): void
+    {
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(list)
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  NamedTypeNode
+                    Name(Тип)
+            AST, $this->parseAndPrint('list<Тип>'));
+    }
     public function testNameCannotStartWithDigit(): void
     {
-        $this->expectParsingException('unexpected "invalid_name_0"');
+        // The underscore belongs to the name, not to the number
+        $this->expectParsingException('unexpected "_invalid_name_0"');
 
         $this->parse('0_invalid_name_0');
     }

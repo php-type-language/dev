@@ -16,6 +16,7 @@ final class OffsetAccessTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             TypeOffsetAccessNode
+              Literal\StringLiteralNode('offset')
               NamedTypeNode
                 Name(T)
             AST, $this->parseAndPrint("T['offset']"));
@@ -26,6 +27,8 @@ final class OffsetAccessTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             TypeOffsetAccessNode
               NamedTypeNode
+                Name(U)
+              NamedTypeNode
                 Name(T)
             AST, $this->parseAndPrint('T[U]'));
     }
@@ -34,6 +37,7 @@ final class OffsetAccessTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             TypeOffsetAccessNode
+              Literal\IntLiteralNode(0)
               NamedTypeNode
                 Name(array)
                 Shape\FieldsListNode(isSealed=true)
@@ -50,6 +54,13 @@ final class OffsetAccessTest extends SyntaxTestCase
     {
         self::assertSame(<<<'AST'
             TypeOffsetAccessNode
+              NamedTypeNode
+                Name(object)
+                Shape\FieldsListNode(isSealed=false)
+                  Shape\NamedFieldNode(isOptional=false)
+                    Identifier(key)
+                    NamedTypeNode
+                      Name(int)
               NamedTypeNode
                 Name(T)
                 Template\TemplateArgumentListNode

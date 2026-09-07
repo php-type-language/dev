@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Tests\Syntax;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -35,11 +36,11 @@ final class ShapeTest extends SyntaxTestCase
             NamedTypeNode
               Name(array)
               Shape\FieldsListNode(isSealed=true)
-                Shape\NumericFieldNode(isOptional=false)
+                Shape\ScalarFieldNode(isOptional=false)
                   Literal\IntLiteralNode(1)
                   NamedTypeNode
                     Name(first)
-                Shape\NumericFieldNode(isOptional=false)
+                Shape\ScalarFieldNode(isOptional=false)
                   Literal\IntLiteralNode(42)
                   NamedTypeNode
                     Name(second)
@@ -52,11 +53,11 @@ final class ShapeTest extends SyntaxTestCase
             NamedTypeNode
               Name(array)
               Shape\FieldsListNode(isSealed=true)
-                Shape\StringNamedFieldNode(isOptional=false)
+                Shape\ScalarFieldNode(isOptional=false)
                   Literal\StringLiteralNode("name-some")
                   NamedTypeNode
                     Name(first)
-                Shape\StringNamedFieldNode(isOptional=false)
+                Shape\ScalarFieldNode(isOptional=false)
                   Literal\StringLiteralNode("escape\nchars")
                   NamedTypeNode
                     Name(second)
@@ -178,5 +179,60 @@ final class ShapeTest extends SyntaxTestCase
         $this->expectParsingException('unexpected "?"');
 
         $this->parse('array{key: Type?}');
+    }
+
+    /**
+     * A "true" and a "null" name a field as the words they are written with,
+     * not as the values they name elsewhere.
+     *
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function keywordKeyDataProvider(): iterable
+    {
+        yield 'true' => ['array{true: int}'];
+        yield 'false' => ['array{false: int}'];
+        yield 'null' => ['array{null: int}'];
+    }
+
+    #[DataProvider('keywordKeyDataProvider')]
+    public function testKeywordKeyIsAName(string $type): void
+    {
+        self::assertSame($type, (new \TypeLang\Printer\PrettyTypePrinter())->print($this->parse($type)));
+    }
+
+    /**
+     * A key is a number or a string and nothing else, the way a key of an
+     * array is.
+     *
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function invalidKeyDataProvider(): iterable
+    {
+        yield 'boolean' => ['array{(true): int}'];
+        yield 'boolean of the other kind' => ['array{(false): int}'];
+        yield 'null' => ['array{(null): int}'];
+        yield 'float' => ['array{0.42: int}'];
+        yield 'float in parentheses' => ['array{(0.42): int}'];
+        yield 'variable' => ['array{$this: int}'];
+        yield 'union' => ['array{(A|B): int}'];
+    }
+
+    #[DataProvider('invalidKeyDataProvider')]
+    public function testKeyIsANumberAStringOrANameAlone(string $type): void
+    {
+        $this->expectParsingException('Shape key must be a name, a number, a string');
+
+        $this->parse($type);
+    }
+
+    /**
+     * A key ends in the ":" its value begins after, so a type that carries
+     * a colon of its own is no key.
+     */
+    public function testKeyDoesNotReachBeyondAPrimaryType(): void
+    {
+        $this->expectParsingException('unexpected ":"');
+
+        $this->parse('array{T is A ? B : C: int}');
     }
 }
