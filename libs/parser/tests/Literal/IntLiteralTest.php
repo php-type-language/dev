@@ -35,6 +35,8 @@ final class IntLiteralTest extends TestCase
         yield 'zero' => ['0', 0, '0'];
         yield 'decimal' => ['42', 42, '42'];
         yield 'negative decimal' => ['-42', -42, '-42'];
+        yield 'signed decimal' => ['+42', 42, '42'];
+        yield 'signed hexadecimal' => ['+0x1F', 31, '31'];
         yield 'hexadecimal' => ['0x1F', 31, '31'];
         yield 'uppercase hexadecimal prefix' => ['0X1F', 31, '31'];
         yield 'negative hexadecimal' => ['-0x10', -16, '-16'];

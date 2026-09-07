@@ -86,6 +86,8 @@ final class StringLiteralTest extends TestCase
         yield 'plain' => ["'example'", 'example'];
         yield 'escaped quote' => ["'a\'b'", "a'b"];
         yield 'escaped backslash' => ["'a\\\\b'", 'a\\b'];
+        yield 'two escaped backslashes' => ["'a\\\\\\\\b'", 'a\\\\b'];
+        yield 'escaped quote behind an escaped backslash' => ["'a\\\\\\'b'", "a\\'b"];
         yield 'escape sequences are not decoded' => ["'a\\nb'", 'a\\nb'];
         yield 'hexadecimal sequence is not decoded' => ["'a\\x41b'", 'a\\x41b'];
         yield 'dollar sign is not decoded' => ["'a\$b'", 'a$b'];
