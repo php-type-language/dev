@@ -5,14 +5,14 @@
  * -----------------------------------------------------------------------------
  */
 
-%include grammar/lexemes                // Lexeme/Token Definitions
-%include grammar/common                 // Common Utils
-%include grammar/literals               // Literal Definitions
+%include grammar/lexemes
+%include grammar/common
+%include grammar/literals
 %include grammar/template-arguments     // T<TArg, TArg2>
+%include grammar/template-parameters    // callable<TParam of Some>(): void
 %include grammar/callable               // callable(mixed): void
 %include grammar/shape-fields           // array { key: int, ...<TKey, TValue> }
 %include grammar/named-type             // Map<int<0, max>, non-empty-string>
-%include grammar/ternary                // T is A ? B : C
 
 %pragma root Type
 
@@ -20,10 +20,6 @@
  * -----------------------------------------------------------------------------
  *  Type Statement
  * -----------------------------------------------------------------------------
- *
- *  Constant references to external definitions or
- *  describe the type in some way.
- *
  */
 
 Type -> {
@@ -46,26 +42,6 @@ Type -> {
             $children[2],
             $offset,
         ),
-        self::T_GTE => new Type\Condition\GreaterThanOrEqualConditionNode(
-            $children[0],
-            $children[2],
-            $offset,
-        ),
-        self::T_ANGLE_BRACKET_CLOSE => new Type\Condition\GreaterThanConditionNode(
-            $children[0],
-            $children[2],
-            $offset,
-        ),
-        self::T_LTE => new Type\Condition\LessThanOrEqualConditionNode(
-            $children[0],
-            $children[2],
-            $offset,
-        ),
-        self::T_ANGLE_BRACKET_OPEN => new Type\Condition\LessThanConditionNode(
-            $children[0],
-            $children[2],
-            $offset,
-        ),
         default => throw Exception\InvalidConditionalOperatorException::becauseConditionalOperatorIsInvalid(
             $children[1]->value,
             $offset,
@@ -80,22 +56,24 @@ Type -> {
     );
 }
   : LogicalType() TernaryExpressionSuffix()?
-  | VariableLiteral() TernaryExpressionSuffix()
+  | Variable() TernaryExpressionSuffix()
+  ;
+
+TernaryExpressionSuffix
+  : TernaryExpressionOperator() (Type() | Variable())
+    ::T_QMARK:: Type()
+    ::T_COLON:: Type()
+  ;
+
+TernaryExpressionOperator
+  : <T_EQ>
+  | <T_NEQ>
   ;
 
 /**
  * -----------------------------------------------------------------------------
  *  Logical Statements
  * -----------------------------------------------------------------------------
- *
- *  Logical statements denote union or intersection types, like:
- *  - A | B | C - for union type references.
- *  - A & B & C - for intersection type references.
- *
- *  A repetition rather than a right recursion: every member of a statement is
- *  collected in a single list, so the node is built once instead of being
- *  rebuilt (and re-flattened) at each of its levels.
- *
  */
 
 LogicalType
@@ -111,8 +89,6 @@ UnionType -> {
         throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('union types', $offset);
     }
 
-    // A logical statement takes an arbitrary number of types, so its
-    // offset is assigned rather than passed to the constructor
     $statement = new Type\UnionTypeNode($children);
     $statement->offset = $offset;
 
@@ -130,8 +106,6 @@ IntersectionType -> {
         throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('intersection types', $offset);
     }
 
-    // A logical statement takes an arbitrary number of types, so its
-    // offset is assigned rather than passed to the constructor
     $statement = new Type\IntersectionTypeNode($children);
     $statement->offset = $offset;
 
@@ -144,28 +118,20 @@ IntersectionType -> {
  * -----------------------------------------------------------------------------
  *  Unary Statements
  * -----------------------------------------------------------------------------
- *
- *  Unary statements denote terminal types, like:
- *  - A - for type reference.
- *  - ?A - for nullable type reference.
- *  - 'some' - for string literal reference.
- *  - etc...
- *
  */
 
 UnaryType
   : NullableType()
-  | TypesList()
+  | ListOrOffsetType()
   ;
 
-// stmt = ?Type
 NullableType -> {
     return new Type\NullableTypeNode($children[0], $offset);
 }
-  : ::T_QMARK:: TypesList()
+  : ::T_QMARK:: ListOrOffsetType()
   ;
 
-TypesList -> {
+ListOrOffsetType -> {
     $statement = $children[0];
     $count = \count($children);
 
@@ -173,7 +139,6 @@ TypesList -> {
         $child = $children[$i];
 
         switch (true) {
-            // In case of list type
             case $child === true:
                 if ($this->features->lists === false) {
                     throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('square bracket list types', $offset);
@@ -181,7 +146,6 @@ TypesList -> {
 
                 $statement = new Type\TypesListNode($statement, $offset);
                 break;
-            // In case of offset access type
             case $child instanceof Type\TypeNode:
                 if ($this->features->offsets === false) {
                     throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('type offsets', $offset);
@@ -200,12 +164,10 @@ TypesList -> {
     return $statement;
 }
   : PrimaryType()
-    TypeListOrOffsetSuffix()*
+    ListOrOffsetSuffix()*
   ;
 
-// - Returns `true` in case of a list type (`T[]`).
-// - Returns `TypeNode` in case of an offset access type (`T[Y]`).
-TypeListOrOffsetSuffix -> {
+ListOrOffsetSuffix -> {
     return $children[0] ?? true;
 }
   : ::T_SQUARE_BRACKET_OPEN::
@@ -215,7 +177,7 @@ TypeListOrOffsetSuffix -> {
 
 PrimaryType
   : ::T_PARENTHESIS_OPEN:: Type() ::T_PARENTHESIS_CLOSE::
-  | ThisLiteral()
-  | Literal()
+  | ThisType()
+  | LiteralType()
   | NamedType()
   ;

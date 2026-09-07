@@ -4,64 +4,58 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Internal;
 
-use TypeLang\Parser\Internal\StringDecoder\PatternSequenceFetcher;
-use TypeLang\Parser\Internal\StringDecoder\ScannerSequenceFetcher;
-use TypeLang\Parser\Internal\StringDecoder\SequenceFetcherInterface;
+use TypeLang\Parser\Internal\StringDecoder\StringSequencesFetcher;
 
+/**
+ * @link https://www.php.net/manual/en/language.types.string.php
+ *
+ * @internal this is an internal library class, please do not use it in your code
+ * @psalm-internal TypeLang\Parser
+ */
 final class StringDecoder
 {
     /**
-     * @var non-empty-string
-     */
-    private const NUMERIC_PREFIX_PATTERN = '/\\\\[uxX0-7]/';
-
-    /**
-     * Scanning a string by hand is cheaper than a regexp while it contains
-     * only a few escaped chars, but loses on the escape dense ones.
+     * Strips the quotes and unescapes the ones inside: A `"\"a\""` gives
+     * the `"a"` and a `'\'a\''` gives the `'a'`.
      *
-     * @var int<0, max>
+     * Every other sequence is left to the {@see decode()}.
      */
-    private const SCANNER_THRESHOLD = 4;
-
-    public static function unescape(string $value): string
+    public static function unpack(string $value, bool $isDoubleQuoted): string
     {
-        return \strtr($value, ["\'" => "'", '\\\\' => '\\']);
+        if ($isDoubleQuoted) {
+            return \strtr(\substr($value, 1, -1), ['\\"' => '"']);
+        }
+
+        return \strtr(\substr($value, 1, -1), ["\'" => "'"]);
     }
 
     /**
-     * Method for parsing and decode all escaped character sequences: Special
-     * chars (like a "\n"), hexadecimal (like a "\xFF"), octal (like a "\101")
-     * and utf-8 (like a "\u{FFFF}") ones.
-     *
-     * @link https://www.php.net/manual/en/language.types.string.php
+     * Decodes the sequences of an unpacked body: A `\\` in a single-quoted
+     * one, and special chars (like a `\n`), hexadecimal (like a `\xFF`),
+     * octal (like a `\101`) and utf-8 (like a `\u{FFFF}`) ones in a
+     * double-quoted one.
      */
-    public static function decode(string $body): string
+    public static function decode(string $value, bool $isDoubleQuoted): string
     {
-        if (!\str_contains($body, '\\')) {
-            return $body;
+        if ($isDoubleQuoted === false) {
+            return \strtr($value, ['\\\\' => '\\']);
         }
 
-        return \strtr($body, self::fetchReplacements($body));
+        if (!\str_contains($value, '\\')) {
+            return $value;
+        }
+
+        return \strtr($value, StringSequencesFetcher::get($value));
     }
 
     /**
-     * Chooses a {@see SequenceFetcherInterface} implementation suitable for
-     * the passed string.
-     *
-     * @return non-empty-array<string, string>
+     * Both of the above, in the order a literal is read in.
      */
-    private static function fetchReplacements(string $body): array
+    public static function unpackAndDecode(string $value, bool $isDoubleQuoted): string
     {
-        // Numeric sequences require an additional pass, which can be skipped
-        // in case of the string does not contain any of their prefixes.
-        if (@\preg_match(self::NUMERIC_PREFIX_PATTERN, $body) !== 1) {
-            return SequenceFetcherInterface::ESCAPED_CHARS;
-        }
-
-        if (\substr_count($body, '\\') <= self::SCANNER_THRESHOLD) {
-            return ScannerSequenceFetcher::fetch($body);
-        }
-
-        return PatternSequenceFetcher::fetch($body);
+        return StringDecoder::decode(
+            StringDecoder::unpack($value, $isDoubleQuoted),
+            $isDoubleQuoted,
+        );
     }
 }

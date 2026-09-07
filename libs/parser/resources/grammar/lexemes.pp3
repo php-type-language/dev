@@ -3,54 +3,81 @@
  * -----------------------------------------------------------------------------
  *  Pattern Fragments
  * -----------------------------------------------------------------------------
- *
- *  The pieces the token definitions below are spelled out of. A fragment
- *  recognizes nothing on its own and reaches no token stream.
- *
  */
+
+//
+// Identifiers
+//
 
 %fragment IDENT_HEAD    [a-zA-Z_\x80-\xff]
 %fragment IDENT_TAIL    [a-zA-Z0-9\-_\x80-\xff]
-%fragment DIGIT         [0-9]
-%fragment EXPONENT      [eE]-?(?&DIGIT)++
 
-// A keyword ends where an identifier would go on, so that "isEmpty" is a name
-// rather than the "is" operator followed by one.
 %fragment KEYWORD_END   (?!(?&IDENT_TAIL))
+
+//
+// Numbers
+//
+
+// The "-" of a "-42"
+%fragment SIGN          [-+]
+
+// The "F" of a "0xFF"
+%fragment DIGIT_HEAD    [0-9]
+%fragment BIN_HEAD      [01]
+%fragment OCT_HEAD      [0-7]
+%fragment HEX_HEAD      [0-9a-fA-F]
+
+%fragment DEC_HEAD      [1-9]
+
+%fragment DIGIT_TAIL    _?(?&DIGIT_HEAD)
+%fragment DEC_TAIL      _?(?&DIGIT_HEAD)
+%fragment BIN_TAIL      _?(?&BIN_HEAD)
+%fragment OCT_TAIL      _?(?&OCT_HEAD)
+%fragment HEX_TAIL      _?(?&HEX_HEAD)
+
+// The "FE_DE" of a "0xFE_DE"
+%fragment DIGITS        (?&DIGIT_HEAD)(?&DIGIT_TAIL)*+
+%fragment DEC_DIGITS    (?&DEC_HEAD)(?&DEC_TAIL)*+
+%fragment BIN_DIGITS    (?&BIN_HEAD)(?&BIN_TAIL)*+
+%fragment OCT_DIGITS    (?&OCT_HEAD)(?&OCT_TAIL)*+
+%fragment HEX_DIGITS    (?&HEX_HEAD)(?&HEX_TAIL)*+
+
+// A "42.0", a "42." or a ".42"
+%fragment FRACTION      (?&DIGITS)\.(?:(?&DIGITS))?|\.(?&DIGITS)
+
+// An "e2", an "E-2" or an "e+2"
+%fragment EXPONENT      [eE](?&SIGN)?(?&DIGITS)
 
 /**
  * -----------------------------------------------------------------------------
  *  Lexeme/Token Definitions
  * -----------------------------------------------------------------------------
- *
- *  The lexer takes the first pattern that matches, so the order below is both
- *  a matter of meaning (a longer token above the shorter one it starts with)
- *  and a matter of speed (a token that occurs more often above one that does
- *  not).
- *
  */
 
-// Whitespace is the most frequent thing there is in a type statement
 %skip   T_WHITESPACE            \s++
 
-// Keywords, above the identifier they would otherwise be read as
+// An "is not" or an "IS NOT"
 %token  T_NEQ                   (?i:is\h++not)(?&KEYWORD_END)
+// An "is" or an "IS"
 %token  T_EQ                    (?i:is)(?&KEYWORD_END)
-%token  T_BOOL_LITERAL          (?i:true|false)(?&KEYWORD_END)
+// A "true" or a "TRUE"
+%token  T_TRUE_LITERAL          (?i:true)(?&KEYWORD_END)
+// A "false" or a "FALSE"
+%token  T_FALSE_LITERAL         (?i:false)(?&KEYWORD_END)
+// A "null" or a "NULL"
 %token  T_NULL_LITERAL          (?i:null)(?&KEYWORD_END)
 
 // Identifiers
+
 %token  T_NAME_WITH_SPACE       (?&IDENT_HEAD)(?&IDENT_TAIL)*+\s++
+// An "int", a "non-empty-string" or a "_42"
 %token  T_NAME                  (?&IDENT_HEAD)(?&IDENT_TAIL)*+
 
-// Punctuation, ordered by how often a type statement contains it
 %token  T_NS_DELIMITER          \\
 %token  T_OR                    \|
 %token  T_COMMA                 ,
 %token  T_DOUBLE_COLON          ::
 %token  T_COLON                 :
-%token  T_LTE                   <=
-%token  T_GTE                   >=
 %token  T_ANGLE_BRACKET_OPEN    <
 %token  T_ANGLE_BRACKET_CLOSE   >
 %token  T_QMARK                 \?
@@ -66,20 +93,31 @@
 %token  T_ASTERISK              \*
 
 // Variables
+
+// A "$this"
 %token  T_THIS                  \$this\b
+// A "$value" or a "$_"
 %token  T_VARIABLE              \$(?&IDENT_HEAD)(?&IDENT_TAIL)*+
 
 // Literals
+
+// A double quoted "text"
 %token  T_DQ_STRING_LITERAL     "[^"\\]*+(?:\\.[^"\\]*+)*+"
 %token  T_SQ_STRING_LITERAL     '[^'\\]*+(?:\\.[^'\\]*+)*+'
-%token  T_PFX_FLOAT_LITERAL     -?(?&DIGIT)++\.(?&DIGIT)*+(?:(?&EXPONENT))?
-%token  T_SFX_FLOAT_LITERAL     -?(?&DIGIT)*+\.(?&DIGIT)++(?:(?&EXPONENT))?
-%token  T_EXP_LITERAL           -?(?&DIGIT)++(?&EXPONENT)
-%token  T_BIN_INT_LITERAL       -?0[bB][01_]++
-%token  T_OCT_INT_LITERAL       -?0[oO][0-7_]++
-%token  T_HEX_INT_LITERAL       -?0[xX][0-9a-fA-F_]++
-%token  T_DEC_INT_LITERAL       -?(?&DIGIT)[0-9_]*+
+// A "42.0", a "42.", a ".42", a "42e2", a "-1.5e+3" or a "2_3.4_5e-6_7"
+%token  T_FLOAT_LITERAL         (?&SIGN)?(?:(?&FRACTION)(?:(?&EXPONENT))?|(?&DIGITS)(?&EXPONENT))
+// A "0b1010", a "0B0001_1000" or a "-0b10"
+%token  T_BIN_INT_LITERAL       (?&SIGN)?0[bB](?&BIN_DIGITS)
+// A "0o42", a "0O42", a "042" or an "04_23"
+%token  T_OCT_INT_LITERAL       (?&SIGN)?0(?:[oO](?&OCT_DIGITS)|(?&OCT_TAIL)++)
+// A "0xDEAD", a "0XDeaD" or a "0xFE_DE"
+%token  T_HEX_INT_LITERAL       (?&SIGN)?0[xX](?&HEX_DIGITS)
+// A "42", a "+42_04" or a "0"
+%token  T_DEC_INT_LITERAL       (?&SIGN)?(?:(?&DEC_DIGITS)|0)
 
 // Comments
+
+// A "// text" or a "# text"
 %skip   T_COMMENT               (?://|#)[^\r\n]*+
+// A "/* text */"
 %skip   T_DOC_COMMENT           /\*.*?\*/

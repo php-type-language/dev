@@ -12,9 +12,6 @@ use Phplrt\Parser\Analysis\Result\FailureResult;
 use Phplrt\Parser\Analysis\Result\SuccessfulResult;
 use Phplrt\Parser\Parser as ParserRuntime;
 use TypeLang\Parser\TypeParserFeatures;
-use TypeLang\Type\Literal\BoolLiteralNode;
-use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\Literal\StringLiteralNode;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -56,108 +53,5 @@ final class Executor extends CompilerExecutor
         }
 
         return $parser->analyze($source, $mode);
-    }
-
-    /**
-     * @param non-empty-string $value
-     * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of value parsing error occurs
-     */
-    protected function createDoubleQuotedString(string $value, int $offset = 0): StringLiteralNode
-    {
-        if (\strlen($value) < 2) {
-            throw new \InvalidArgumentException('Could not parse non-quoted string');
-        }
-
-        return new StringLiteralNode(
-            value: StringDecoder::decode(\substr($value, 1, -1)),
-            raw: $value,
-            offset: $offset,
-        );
-    }
-
-    /**
-     * @param non-empty-string $value
-     * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of value parsing error occurs
-     */
-    protected function createSingleQuotedString(string $value, int $offset = 0): StringLiteralNode
-    {
-        if (\strlen($value) < 2) {
-            throw new \InvalidArgumentException('Could not parse non-quoted string');
-        }
-
-        return new StringLiteralNode(
-            value: StringDecoder::unescape(\substr($value, 1, -1)),
-            raw: $value,
-            offset: $offset,
-        );
-    }
-
-    /**
-     * Parse raw integer literal string value: Decimal, hexadecimal
-     * (like a "0xFF"), octal (like a "0o17" or a "017") and binary
-     * (like a "0b1010") ones.
-     *
-     * @param int<0, max> $offset
-     */
-    protected function createInt(string $value, int $offset = 0): IntLiteralNode
-    {
-        [$negative, $decimal] = self::split($value);
-
-        $inverse = '-' . $decimal;
-
-        if ($negative) {
-            if ((string) \PHP_INT_MIN === $inverse) {
-                return new IntLiteralNode(\PHP_INT_MIN, $value, $inverse, $offset);
-            }
-
-            /** @phpstan-ignore-next-line : An "$inverse" variable contain numeric-string */
-            return new IntLiteralNode((int) $inverse, $value, $inverse, $offset);
-        }
-
-        return new IntLiteralNode((int) $decimal, $value, $decimal, $offset);
-    }
-
-    /**
-     * @return array{bool, numeric-string}
-     */
-    private static function split(string $literal): array
-    {
-        $literal = \str_replace('_', '', $literal);
-
-        if ($negative = ($literal[0] === '-')) {
-            $literal = \substr($literal, 1);
-        }
-
-        // One of: [ 0123, 0o23, 0x00, 0b01 ]
-        if ($literal[0] === '0' && isset($literal[1])) {
-            /** @var array{bool, numeric-string} */
-            return [$negative, match ($literal[1]) {
-                // hexadecimal
-                'x', 'X' => \base_convert(\substr($literal, 2), 16, 10),
-                // binary
-                'b', 'B' => \base_convert(\substr($literal, 2), 2, 10),
-                // octal
-                'o', 'O' => \base_convert(\substr($literal, 2), 8, 10),
-                // octal (legacy)
-                default => \base_convert($literal, 8, 10),
-            }];
-        }
-
-        /** @var array{bool, numeric-string} */
-        return [$negative, $literal];
-    }
-
-    /**
-     * @param int<0, max> $offset
-     */
-    protected function createBool(string $value, int $offset = 0): BoolLiteralNode
-    {
-        return new BoolLiteralNode(
-            \strtolower($value) === 'true',
-            $value,
-            $offset,
-        );
     }
 }

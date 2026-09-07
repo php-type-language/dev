@@ -2,9 +2,8 @@
 ShapeFields -> {
     $count = \count($children);
 
-    // An empty shape carries no fields and needs no support for them
     if ($count === 0) {
-        return [new Type\Shape\FieldsListNode(offset: $offset)];
+        return [new Type\Shape\FieldsListNode([], true, $offset)];
     }
 
     if ($this->features->shapes === false) {
@@ -13,7 +12,7 @@ ShapeFields -> {
 
     $parameters = null;
 
-    // The "...<K, V>" suffix, in case of the shape is unsealed by a typed rest
+    // The "...<K, V>" suffix
     if ($children[$count - 1] instanceof Type\Template\TemplateArgumentListNode) {
         $parameters = $children[$count - 1];
         --$count;
@@ -21,10 +20,9 @@ ShapeFields -> {
 
     if ($children[0] instanceof Type\Shape\FieldsListNode) {
         $fields = $children[0];
-        // Whatever is left beside the fields is the "..." of an unsealed shape
         $unsealed = $count > 1;
     } else {
-        $fields = new Type\Shape\FieldsListNode(offset: $offset);
+        $fields = new Type\Shape\FieldsListNode([], true, $offset);
         $unsealed = $count > 0;
     }
 
@@ -52,28 +50,37 @@ ShapeFieldsUnsealed
   ;
 
 ShapeFieldsList -> {
-    $explicit = [];
+    $explicit = false;
     $implicit = false;
+    $indexed = [];
 
     foreach ($children as $field) {
-        if ($field instanceof Type\Shape\ExplicitFieldNode) {
-            $key = $field->getIndex();
-
-            if (isset($explicit[$key])) {
-                throw Exception\ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated($key, $field->offset);
-            }
-
-            $explicit[$key] = true;
-        } else {
+        if (!$field instanceof Type\Shape\ExplicitFieldNode) {
             $implicit = true;
+
+            continue;
         }
+
+        $explicit = true;
+
+        if (!$field instanceof Type\Shape\SimpleFieldNodeInterface) {
+            continue;
+        }
+
+        $key = $field->getIndex();
+
+        if (isset($indexed[$key])) {
+            throw Exception\ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated($key, $field->offset);
+        }
+
+        $indexed[$key] = true;
     }
 
-    if ($explicit !== [] && $implicit) {
+    if ($explicit && $implicit) {
         throw Exception\ShapeKeysMixingException::becauseShapeKeysAreMixed($offset);
     }
 
-    return new Type\Shape\FieldsListNode($children, offset: $offset);
+    return new Type\Shape\FieldsListNode($children, true, $offset);
 }
   : ShapeField() (
       ::T_COMMA:: ShapeField()
@@ -90,78 +97,40 @@ ExplicitField -> {
     $name = $children[0];
     $value = $children[$count - 1];
 
-    // In case of "nullable" suffix defined
     $optional = $count === 3;
 
     return match (true) {
-        $name instanceof Type\Literal\IntLiteralNode
-            => new Type\Shape\NumericFieldNode($name, $value, $optional, offset: $offset),
+        // "a", "true" and "null"
+        $name instanceof Type\Identifier
+            => new Type\Shape\NamedFieldNode($name, $value, $optional, $offset),
+        $name instanceof Type\Literal\IntLiteralNode,
         $name instanceof Type\Literal\StringLiteralNode
-            => new Type\Shape\StringNamedFieldNode($name, $value, $optional, offset: $offset),
-        $name instanceof Type\ClassConstNode
-            => new Type\Shape\ClassConstFieldNode($name, $value, $optional, offset: $offset),
-        $name instanceof Type\ClassConstMaskNode
-            => new Type\Shape\ClassConstMaskFieldNode($name, $value, $optional, offset: $offset),
+            => new Type\Shape\ScalarFieldNode($name, $value, $optional, $offset),
+        // "Some::CONST", "Some::CONST_*" and "JSON_*"
+        $name instanceof Type\ClassConstNode,
+        $name instanceof Type\ClassConstMaskNode,
         $name instanceof Type\ConstMaskNode
-            => new Type\Shape\ConstMaskFieldNode($name, $value, $optional, offset: $offset),
-        default => new Type\Shape\NamedFieldNode($name, $value, $optional, offset: $offset),
+            => new Type\Shape\ComplexFieldNode($name, $value, $optional, $offset),
+        default => throw Exception\ShapeKeyException::becauseKeyIsNotAName($name->offset),
     };
 }
   : ShapeKey() (<T_QMARK>)? ::T_COLON:: ShapeValue()
   ;
 
 ImplicitField -> {
-    return new Type\Shape\ImplicitFieldNode($children[0], offset: $offset);
+    return new Type\Shape\ImplicitFieldNode($children[0], false, $offset);
 }
   : ShapeValue()
   ;
 
-/**
- * A key written as a bare name is by far the most common one, and telling it
- * apart from a constant reference costs a whole name to read.
- *
- * The predicate answers the same question by the token that follows the name
- * instead: a key ends where its value begins, while "SOME_*" and "Some::CONST"
- * go on.
- */
 ShapeKey
   : Identifier() &ShapeKeyEnd()
-  | ShapeConstantKey()
-  | IntLiteral()
-  | StringLiteral()
+  | PrimaryType()
   ;
 
 // The "?:" and ":" a shape key is followed by
 ShapeKeyEnd
   : ::T_QMARK::? ::T_COLON::
-  ;
-
-/**
- * A constant reference used as a shape key: the name is read once for every
- * form it may take rather than once per form.
- */
-ShapeConstantKey -> {
-    $suffix = $children[1];
-
-    switch (true) {
-        // Some\Any::CONST and Some\Any::CONST_*
-        case $suffix instanceof Type\Identifier:
-            if (isset($children[2])) {
-                return new Type\ClassConstMaskNode($children[0], $suffix, $offset);
-            }
-
-            return new Type\ClassConstNode($children[0], $suffix, $offset);
-
-        // Some\Any::*
-        case $suffix === true:
-            return new Type\ClassConstMaskNode($children[0], offset: $offset);
-
-        // SOME_ANY_*
-        default:
-            return new Type\ConstMaskNode($children[0], $offset);
-    }
-}
-  : Name() ( ConstMaskSuffix() | ClassConstSuffix() )
   ;
 
 ShapeValue

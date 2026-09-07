@@ -16,26 +16,20 @@ CallableParameters -> {
     )?
   ;
 
-/**
- * A parameter is written as a type, optionally followed by the reference and
- * the variadic markers, by a name and by the default marker - in that order
- * and in no other:
- *
- * - "<type>"
- * - "<type>&"
- * - "<type>..."
- * - "<type>&..."
- * - "<type> $name"
- * - "<type>&...$name="
- *
- */
 CallableParameter -> {
-    $parameter = new Type\Callable\CallableParameterNode($children[0], offset: $offset);
+    $parameter = new Type\Callable\CallableParameterNode(
+        $children[0],
+        null,
+        false,
+        false,
+        false,
+        $offset,
+    );
 
     for ($i = 1, $count = \count($children); $i < $count; ++$i) {
         $child = $children[$i];
 
-        if ($child instanceof Type\Literal\VariableLiteralNode) {
+        if ($child instanceof Type\VariableNode) {
             $parameter->name = $child;
 
             continue;
@@ -50,8 +44,6 @@ CallableParameter -> {
                 $parameter->isVariadic = true;
                 break;
 
-            // A variadic parameter is optional in itself, so a default marker
-            // beside one describes the same parameter in two different ways
             default:
                 if ($parameter->isVariadic) {
                     throw Exception\VariadicWithDefaultException::becauseVariadicHasDefault($offset);
@@ -66,7 +58,7 @@ CallableParameter -> {
   : Type()
     <T_AMP>?
     <T_ELLIPSIS>?
-    VariableLiteral()?
+    Variable()?
     <T_ASSIGN>?
   ;
 

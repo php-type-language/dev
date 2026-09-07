@@ -18,7 +18,13 @@ abstract class SemanticException extends \LogicException implements ParserExcept
 
     final public const ERROR_CODE_INVALID_OPERATOR = 0x05;
 
-    protected const CODE_LAST = self::ERROR_CODE_INVALID_OPERATOR;
+    final public const ERROR_CODE_TEMPLATE_BOUND = 0x06;
+
+    final public const ERROR_CODE_SHAPE_KEY = 0x07;
+
+    final public const ERROR_CODE_CONST_MASK = 0x08;
+
+    protected const CODE_LAST = self::ERROR_CODE_CONST_MASK;
 
     /**
      * @param int<0, max> $offset

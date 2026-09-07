@@ -46,5 +46,5 @@ if (!class_exists(Compiler::class)) {
         ->withTargetPhpVersion(TargetPhpVersion::Php81)
         ->withClassImport('TypeLang\\Type')
         ->withClassImport('TypeLang\\Parser\\Exception')
-        ->withClassImport('TypeLang\\Parser\\Literal')
+        ->withClassImport('TypeLang\\Parser\\Internal')
         ->save(__DIR__ . '/../src/Internal/CompilerExecutor.php');

@@ -3,20 +3,25 @@
  * -----------------------------------------------------------------------------
  *  Named Types
  * -----------------------------------------------------------------------------
- *
- *  Everything a name may open is read by a single rule, so that the name is
- *  recognized once instead of once per alternative that begins with it.
- *
- *  Each suffix begins with a token of its own ("*", "::", "(", "<" and "{"),
- *  so which one to read is decided by the token the reading is at rather than
- *  by trying them in turn.
- *
  */
 
 NamedType -> {
+    $head = $children[0];
     $suffix = $children[1] ?? null;
 
+    if ($head instanceof Type\ConstMaskNode) {
+        if ($suffix !== null) {
+            throw Exception\ConstMaskException::becauseNothingFollowsAMask($offset);
+        }
+
+        return $head;
+    }
+
     switch (true) {
+        // Some\Any
+        case $suffix === null:
+            return new Type\NamedTypeNode($children[0], null, null, $offset);
+
         // Some\Any<T, U>
         case $suffix instanceof Type\Template\TemplateArgumentListNode:
             return new Type\NamedTypeNode($children[0], $suffix, null, $offset);
@@ -31,58 +36,94 @@ NamedType -> {
                 throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $offset);
             }
 
-            return new Type\CallableTypeNode($children[0], $suffix, $children[2] ?? null, $offset);
+            return new Type\CallableTypeNode($children[0], $suffix, $children[2] ?? null, null, $offset);
 
-        // Some\Any::CONST and Some\Any::CONST_*
-        case $suffix instanceof Type\Identifier:
-            if (isset($children[2])) {
-                return new Type\ClassConstMaskNode($children[0], $suffix, $offset);
+        // Some\Any<T, U>(T): U
+        case $suffix instanceof Type\Template\TemplateParameterListNode:
+            if ($this->features->callables === false) {
+                throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $offset);
             }
 
-            return new Type\ClassConstNode($children[0], $suffix, $offset);
+            return new Type\CallableTypeNode($children[0], $children[2], $children[3] ?? null, $suffix, $offset);
 
-        // Some\Any::*
-        case $suffix === true:
-            return new Type\ClassConstMaskNode($children[0], offset: $offset);
-
-        // SOME_ANY_*
-        case $suffix === false:
-            return new Type\ConstMaskNode($children[0], $offset);
-
-        // Some\Any
+        // Some\Any::CONST, Some\Any::CONST_* and Some\Any::*
         default:
-            return new Type\NamedTypeNode($children[0], null, null, $offset);
+            if (\count($children) === 3 && $children[2] instanceof Type\Identifier) {
+                return new Type\ClassConstNode($children[0], $children[2], $offset);
+            }
+
+            return new Type\ClassConstMaskNode(
+                $children[0],
+                new Type\MaskNode(\array_slice($children, 2), $children[2]->offset),
+                $offset,
+            );
     }
 }
-  : Name() NamedTypeSuffix()?
+  : NameOrMask() NamedTypeSuffix()?
   ;
 
 NamedTypeSuffix
-  : ConstMaskSuffix()
-  | ClassConstSuffix()
+  : ClassConstSuffix()
   | CallableSuffix()
-  | TemplateArguments()
+  | TemplateArguments() !::T_PARENTHESIS_OPEN::
+  | TemplateParameters() CallableSuffix()
   | ShapeFields()
   ;
 
-// The "*" of a constant mask, like "SOME_*"
-ConstMaskSuffix -> {
-    return false;
+NameOrMask -> {
+    $head = $children[0];
+
+    // "*_SOME"
+    if (!$head instanceof Type\Name) {
+        return new Type\ConstMaskNode(new Type\MaskNode($children, $offset), false, $offset);
+    }
+
+    // "Some\Any"
+    if (!isset($children[1])) {
+        return $head;
+    }
+
+    $parts = $head->parts;
+
+    if ($children[1] instanceof Type\MaskNode) {
+        // "Some\Any\*"
+        $mask = $children[1];
+    } else {
+        // "Some\Any\SOME_*"
+        $segment = \array_pop($parts);
+        $mask = new Type\MaskNode([$segment, ...\array_slice($children, 1)], $segment->offset);
+    }
+
+    return new Type\ConstMaskNode(
+        $mask,
+        $parts === []
+            ? $head->isFullyQualified
+            : new Type\Name($parts, $head->isFullyQualified, $head->offset),
+        $offset,
+    );
 }
-  : <T_ASTERISK>
+  : Name() ( MaskTail() | NamespacedMask() )?
+  | LeadingMask()
   ;
 
-// The "::CONST", "::CONST_*" and "::*" of a class constant
+LeadingMask
+  : WildcardType() Identifier() MaskTail()?
+  ;
+
+MaskTail
+  : WildcardType() ( Identifier() WildcardType() )* Identifier()?
+  ;
+
+NamespacedMask -> {
+    return new Type\MaskNode($children, $offset);
+}
+  : ::T_NS_DELIMITER:: MaskTail()
+  ;
+
+// The "::CONST", "::CONST_*", "::*" and "::A*B" of a class constant
 ClassConstSuffix
-  : ::T_DOUBLE_COLON::
-    ( Identifier() ClassConstMaskSuffix()?
-    | ClassConstMaskSuffix()
+  : <T_DOUBLE_COLON>
+    ( Identifier() MaskTail()?
+    | MaskTail()
     )
-  ;
-
-// The "*" of a class constant mask, like "Some::CONST_*" or "Some::*"
-ClassConstMaskSuffix -> {
-    return true;
-}
-  : <T_ASTERISK>
   ;
