@@ -25,7 +25,8 @@ final class StringParserTest extends TestCase
         yield 'escape' => ['a\eb', "a\eb"];
         yield 'form feed' => ['a\fb', "a\fb"];
         yield 'dollar sign' => ['a\$b', 'a$b'];
-        yield 'double quote' => ['a\"b', 'a"b'];
+        yield 'double quote' => ['a"b', 'a"b'];
+        yield 'double quote behind an escaped backslash' => ['a\\\\"b', 'a\\"b'];
         yield 'backslash' => ['a\\\\b', 'a\\b'];
         yield 'backslash before escape sequence' => ['a\\\\nb', 'a\nb'];
         yield 'two backslashes' => ['a\\\\\\\\b', 'a\\\\b'];
@@ -56,27 +57,68 @@ final class StringParserTest extends TestCase
     #[DataProvider('provideBodies')]
     public function bodyIsDecoded(string $body, string $expected): void
     {
-        self::assertSame($expected, StringDecoder::decode($body));
+        self::assertSame($expected, StringDecoder::decode($body, true));
     }
 
     #[Test]
     public function rawNullByteIsNotTouched(): void
     {
-        self::assertSame("a\0b", StringDecoder::decode("a\0b"));
-        self::assertSame("a\0\\b", StringDecoder::decode("a\0" . '\\\\b'));
+        self::assertSame("a\0b", StringDecoder::decode("a\0b", true));
+        self::assertSame("a\0\\b", StringDecoder::decode("a\0" . '\\\\b', true));
     }
 
     #[Test]
     public function invalidUtf8IsNotTouched(): void
     {
-        self::assertSame("\xFF\xFE", StringDecoder::decode("\xFF\xFE"));
+        self::assertSame("\xFF\xFE", StringDecoder::decode("\xFF\xFE", true));
     }
 
     #[Test]
     public function decodingIsIdempotentForStringsWithoutBackslashes(): void
     {
-        $decoded = StringDecoder::decode('a\nb');
+        $decoded = StringDecoder::decode('a\nb', true);
 
-        self::assertSame($decoded, StringDecoder::decode($decoded));
+        self::assertSame($decoded, StringDecoder::decode($decoded, true));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, string}>
+     */
+    public static function provideDoubleQuotedStrings(): iterable
+    {
+        yield 'empty' => ['""', ''];
+        yield 'without sequences' => ['"example"', 'example'];
+        yield 'quote' => ['"a\"b"', 'a"b'];
+        yield 'sequence is left alone' => ['"a\nb"', 'a\nb'];
+        yield 'backslash is left alone' => ['"a\\\\b"', 'a\\\\b'];
+        yield 'quote behind an escaped backslash' => ['"a\\\\\"b"', 'a\\\\"b'];
+        yield 'quote beside a sequence' => ['"asd\"\nasd"', 'asd"\nasd'];
+    }
+
+    #[Test]
+    #[DataProvider('provideDoubleQuotedStrings')]
+    public function doubleQuotedStringIsUnpacked(string $value, string $expected): void
+    {
+        self::assertSame($expected, StringDecoder::unpack($value, true));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, string}>
+     */
+    public static function provideSingleQuotedStrings(): iterable
+    {
+        yield 'empty' => ["''", ''];
+        yield 'without sequences' => ["'example'", 'example'];
+        yield 'quote' => ["'a\\'b'", "a'b"];
+        yield 'backslash is left alone' => ["'a\\\\b'", 'a\\\\b'];
+        yield 'sequence is left alone' => ["'a\\nb'", 'a\nb'];
+        yield 'quote behind an escaped backslash' => ["'a\\\\\\'b'", "a\\\\'b"];
+    }
+
+    #[Test]
+    #[DataProvider('provideSingleQuotedStrings')]
+    public function singleQuotedStringIsUnpacked(string $value, string $expected): void
+    {
+        self::assertSame($expected, StringDecoder::unpack($value, false));
     }
 }
