@@ -36,7 +36,7 @@ final class NamedTypeNode extends TypeNode
          * Template arguments of a type, or {@see null} in case of the name is
          * followed by none.
          *
-         * The list is never empty: An `Some<>` is no type.
+         * The list is never empty, since an `Some<>` is no type.
          *
          * ```
          *  Some       // null
