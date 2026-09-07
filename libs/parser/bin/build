@@ -38,7 +38,7 @@ if (!class_exists(Compiler::class)) {
     ->load(FileSource::createFromPathname(__DIR__ . '/../resources/grammar.pp3'))
     ->generate()
         ->withNamespaceName('TypeLang\\Parser\\Internal')
-        ->withClassName('CompilerExecutor')
+        ->withClassName('CompiledExecutor')
         ->withClassModifier(ClassModifier::Abstract)
         // The parser carries the features it recognizes a source with, so it
         // is declared as a mutable class rather than a readonly one.
@@ -46,5 +46,4 @@ if (!class_exists(Compiler::class)) {
         ->withTargetPhpVersion(TargetPhpVersion::Php81)
         ->withClassImport('TypeLang\\Type')
         ->withClassImport('TypeLang\\Parser\\Exception')
-        ->withClassImport('TypeLang\\Parser\\Internal')
-        ->save(__DIR__ . '/../src/Internal/CompilerExecutor.php');
+        ->save(__DIR__ . '/../src/Internal/CompiledExecutor.php');

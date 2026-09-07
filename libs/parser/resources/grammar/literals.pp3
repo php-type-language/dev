@@ -24,7 +24,7 @@ StringLiteralType
 
 DoubleQuotedStringLiteralType -> {
     return new Type\Literal\StringLiteralNode(
-        Internal\StringDecoder::unpackAndDecode($children->value, true),
+        StringDecoder::unpackAndDecode($children->value, true),
         $children->value,
         $offset,
     );
@@ -34,7 +34,7 @@ DoubleQuotedStringLiteralType -> {
 
 SingleQuotedStringLiteralType -> {
     return new Type\Literal\StringLiteralNode(
-        Internal\StringDecoder::unpackAndDecode($children->value, false),
+        StringDecoder::unpackAndDecode($children->value, false),
         $children->value,
         $offset,
     );
@@ -44,7 +44,7 @@ SingleQuotedStringLiteralType -> {
 
 FloatLiteralType -> {
     return new Type\Literal\FloatLiteralNode(
-        Internal\FloatDecoder::decode($children->value),
+        FloatDecoder::decode($children->value),
         $children->value,
         $offset,
     );
@@ -53,7 +53,7 @@ FloatLiteralType -> {
   ;
 
 IntLiteralType -> {
-    $decoded = Internal\IntDecoder::decode($children->value);
+    $decoded = IntDecoder::decode($children->value);
 
     return new Type\Literal\IntLiteralNode(
         $decoded->value,
