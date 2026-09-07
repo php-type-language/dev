@@ -15,6 +15,9 @@ namespace TypeLang\Type;
  *  *_SOME
  *  ^^^^^^ a mask with no namespace at all
  * ```
+ *
+ * @property-read Name|null $namespace An optional namespace the constant belongs to
+ * @property-read bool $isFullyQualified
  */
 final class ConstMaskNode extends TypeNode
 {
@@ -37,6 +40,17 @@ final class ConstMaskNode extends TypeNode
         int $offset = 0,
     ) {
         parent::__construct($offset);
+    }
+
+    public function getNamespace(): ?Name
+    {
+        $context = $this->namespaceOrFullyQualified;
+
+        if ($context instanceof Name) {
+            return $context;
+        }
+
+        return null;
     }
 
     /**
@@ -70,5 +84,19 @@ final class ConstMaskNode extends TypeNode
         }
 
         $this->namespaceOrFullyQualified = $isFullyQualified;
+    }
+
+    public function __get(string $property): Name|bool|null
+    {
+        return match ($property) {
+            'namespace' => $this->getNamespace(),
+            'isFullyQualified' => $this->isFullyQualified(),
+            default => throw new \Error(\sprintf('Undefined property %s::$%s', self::class, $property)),
+        };
+    }
+
+    public function __isset(string $name): bool
+    {
+        return \in_array($name, ['namespace', 'isFullyQualified'], true);
     }
 }
