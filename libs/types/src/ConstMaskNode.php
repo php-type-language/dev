@@ -13,7 +13,7 @@ namespace TypeLang\Type;
  *           ^^^^^^ the mask its name is written as
  *
  *  *_SOME
- *  ^^^^^^ a mask alone: The name may be left unsaid from its very beginning
+ *  ^^^^^^ a mask with no namespace at all
  * ```
  */
 final class ConstMaskNode extends TypeNode
@@ -27,30 +27,48 @@ final class ConstMaskNode extends TypeNode
          */
         public MaskNode $mask,
         /**
-         * The namespace the constant belongs to, or {@see null} in case of it
-         * is written with none. Always a relative name: The leading separator
-         * a fully qualified reference begins in is the
-         * {@see $isFullyQualified} below.
+         * The namespace the constant belongs to, the leading separator of which
+         * says whether the reference is fully qualified.
          *
-         * ```
-         *  SOME_*             // null
-         *  Some\Any\SOME_*    // "Some\Any"
-         * ```
+         * A {@see bool} stands for that separator alone, in case of the
+         * constant is written with no namespace.
          */
-        public ?Name $namespace = null,
-        /**
-         * Whether the reference is written with the leading separator that
-         * says it is to be read from the root namespace.
-         *
-         * ```
-         *  Some\SOME_*   // false
-         *  \Some\SOME_*  // true
-         *  \SOME_*       // true, with no namespace at all
-         * ```
-         */
-        public bool $isFullyQualified = Name::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
+        public Name|bool $namespaceOrFullyQualified = Name::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
         int $offset = 0,
     ) {
         parent::__construct($offset);
+    }
+
+    /**
+     * Gets whether the reference is to be read from the root namespace.
+     */
+    public function isFullyQualified(): bool
+    {
+        $context = $this->namespaceOrFullyQualified;
+
+        if ($context instanceof Name) {
+            return $context->isFullyQualified;
+        }
+
+        return $context;
+    }
+
+    /**
+     * A helper method to set whether the reference is to be read from
+     * the root namespace.
+     */
+    public function setFullyQualified(bool $isFullyQualified = true): void
+    {
+        $context = $this->namespaceOrFullyQualified;
+
+        if ($context instanceof Name) {
+            $this->namespaceOrFullyQualified = $isFullyQualified
+                ? $context->toFullQualified()
+                : $context->toUnqualified();
+
+            return;
+        }
+
+        $this->namespaceOrFullyQualified = $isFullyQualified;
     }
 }
