@@ -6,6 +6,16 @@ namespace TypeLang\Type;
 
 use TypeLang\Type\Condition\Condition;
 
+/**
+ * A type chosen by a condition.
+ *
+ * ```
+ *  ($value is int ? string : bool)
+ *   ^^^^^^^^^^^^^                  the condition
+ *                   ^^^^^^         the type it holds for
+ *                            ^^^^  the type it does not
+ * ```
+ */
 final class TernaryExpressionNode extends TypeNode
 {
     /**
