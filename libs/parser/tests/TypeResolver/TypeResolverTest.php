@@ -288,6 +288,8 @@ final class TypeResolverTest extends TypeResolverTestCase
         self::assertSame(<<<'AST'
             ClassConstMaskNode
               Name(App\Node)
+              MaskNode(*)
+                WildcardNode(*)
             AST, $this->print($resolver->resolve($this->parse('Node::*'))));
     }
 
