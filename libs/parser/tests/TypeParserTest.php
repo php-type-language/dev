@@ -7,7 +7,9 @@ namespace TypeLang\Parser\Tests;
 use PHPUnit\Framework\Attributes\Test;
 use Phplrt\Source\SourceFactory;
 use TypeLang\Parser\Exception\ParseException;
-use TypeLang\Parser\ParsedResult;
+use TypeLang\Parser\Partial\FailureParsedResult;
+use TypeLang\Parser\Partial\PartialParsedResult;
+use TypeLang\Parser\Partial\SuccessfulParsedResult;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserFeatures;
 use TypeLang\Type\Name;
@@ -109,42 +111,39 @@ final class TypeParserTest extends TestCase
     }
 
     #[Test]
-    public function parseTolerantReturnsAResult(): void
+    public function aPartialReadingOfAWholeSourceIsASuccessfulOne(): void
     {
-        self::assertInstanceOf(ParsedResult::class, (new TypeParser())->parseTolerant('int'));
-    }
+        $result = (new TypeParser())->partial('int');
 
-    #[Test]
-    public function theOffsetOfACompletelyParsedSourceIsItsLength(): void
-    {
-        $result = (new TypeParser())->parseTolerant('int|string');
-
-        self::assertSame(10, $result->offset);
+        self::assertInstanceOf(SuccessfulParsedResult::class, $result);
+        self::assertNotInstanceOf(PartialParsedResult::class, $result);
+        self::assertInstanceOf(NamedTypeNode::class, $result->type);
+        self::assertSame('int', $result->type->name->toString());
     }
 
     #[Test]
     public function theOffsetPointsToTheUnparsedTail(): void
     {
         $source = 'array{ field: result } This is an example';
-        $result = (new TypeParser())->parseTolerant($source);
+        $result = (new TypeParser())->partial($source);
 
+        self::assertInstanceOf(PartialParsedResult::class, $result);
         self::assertSame('This is an example', \substr($source, $result->offset));
     }
 
     #[Test]
-    public function theResultContainsTheParsedType(): void
+    public function aPartialReadingOfNoTypeAtAllIsAFailure(): void
     {
-        $result = (new TypeParser())->parseTolerant('int');
+        $result = (new TypeParser())->partial('|int');
 
-        self::assertInstanceOf(NamedTypeNode::class, $result->type);
-        self::assertSame('int', $result->type->name->toString());
+        self::assertInstanceOf(FailureParsedResult::class, $result);
     }
 
     #[Test]
-    public function parsedResultCanBeCreatedManually(): void
+    public function aPartialResultCanBeCreatedManually(): void
     {
         $type = new NamedTypeNode(Name::createFromString('int'));
-        $result = new ParsedResult($type, 42);
+        $result = new PartialParsedResult($type, 42);
 
         self::assertSame($type, $result->type);
         self::assertSame(42, $result->offset);

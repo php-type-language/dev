@@ -21,7 +21,7 @@ final class ParseExceptionTest extends TestCase
     #[Test]
     public function everyParseExceptionIsAParserException(): void
     {
-        $exception = InternalParseException::becauseTypeStatementIsUnreadable();
+        $exception = InternalParseException::becauseInternalErrorOccurs('int', new \LogicException());
 
         self::assertInstanceOf(ParserExceptionInterface::class, $exception);
         self::assertInstanceOf(\LogicException::class, $exception);
@@ -136,16 +136,6 @@ final class ParseExceptionTest extends TestCase
         );
         self::assertSame($previous, $exception->getPrevious());
         self::assertSame(ParseException::ERROR_CODE_INTERNAL_ERROR, $exception->getCode());
-    }
-
-    #[Test]
-    public function theUnreadableStatementIsReported(): void
-    {
-        $exception = InternalParseException::becauseTypeStatementIsUnreadable();
-
-        self::assertSame('Could not read type statement', $exception->getMessage());
-        self::assertSame(ParseException::ERROR_CODE_INTERNAL_ERROR, $exception->getCode());
-        self::assertNull($exception->getPrevious());
     }
 
     #[Test]

@@ -54,7 +54,7 @@ final class FeatureToggleTest extends SyntaxTestCase
 
     public function testTrailingTextIsAllowedInTolerantMode(): void
     {
-        $result = $this->parseTolerant('int and more text');
+        $result = $this->partial('int and more text');
         $type = $result->type;
 
         self::assertInstanceOf(NamedTypeNode::class, $type);

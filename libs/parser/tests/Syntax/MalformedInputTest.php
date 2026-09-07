@@ -6,6 +6,13 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use TypeLang\Parser\Partial\FailureParsedResult;
+use TypeLang\Parser\Partial\PartialParsedResult;
+use TypeLang\Parser\Partial\SuccessfulParsedResult;
+use TypeLang\Parser\Validation\CheckResult;
+use TypeLang\Parser\Validation\FailureCheckResult;
+use TypeLang\Parser\Validation\PartialCheckResult;
+use TypeLang\Parser\Validation\SuccessfulCheckResult;
 
 /**
  * Tests for the input a type cannot be read out of, that is, the one that is
@@ -131,7 +138,7 @@ final class MalformedInputTest extends SyntaxTestCase
     }
 
     /**
-     * A tolerant reading keeps whatever type it has read and says where it
+     * A partial reading keeps whatever type it has read and says where it
      * stopped, rather than refusing the input whole.
      *
      * @return iterable<non-empty-string, array{non-empty-string, non-empty-string, int<0, max>}>
@@ -151,25 +158,80 @@ final class MalformedInputTest extends SyntaxTestCase
      * @throws \Throwable
      */
     #[DataProvider('tolerantInputDataProvider')]
-    public function testATolerantReadingStopsAtWhatItCannotRead(
+    public function testAPartialReadingStopsAtWhatItCannotRead(
         string $type,
         string $expected,
         int $offset,
     ): void {
-        $result = $this->parseTolerant($type);
+        $result = $this->partial($type);
 
+        self::assertInstanceOf(PartialParsedResult::class, $result);
         self::assertSame($expected, (new \TypeLang\Printer\PrettyTypePrinter())->print($result->type));
         self::assertSame($offset, $result->offset);
     }
 
     /**
-     * A tolerant reading is tolerant of a tail alone, so an input that opens
-     * no type at all is refused all the same.
+     * A source read in full is no partial one, so it carries no offset of
+     * its own.
      */
-    public function testATolerantReadingRefusesAnInputThatOpensNoType(): void
+    public function testAWholeTypeIsNoPartialReading(): void
     {
-        $this->expectParsingException();
+        $result = $this->partial('array{a: int}');
 
-        $this->parseTolerant('|int');
+        self::assertInstanceOf(SuccessfulParsedResult::class, $result);
+        self::assertNotInstanceOf(PartialParsedResult::class, $result);
+    }
+
+    /**
+     * A partial reading is tolerant of a tail alone, so an input that opens
+     * no type at all is a failure all the same.
+     */
+    public function testAPartialReadingRefusesAnInputThatOpensNoType(): void
+    {
+        $result = $this->partial('|int');
+
+        self::assertInstanceOf(FailureParsedResult::class, $result);
+        self::assertStringContainsString('unexpected "|"', $result->message);
+        self::assertSame(0, $result->offset);
+        self::assertSame(1, $result->position->line);
+        self::assertSame(1, $result->position->column);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, class-string<CheckResult>}>
+     */
+    public static function checkedInputDataProvider(): iterable
+    {
+        yield 'a whole type' => ['array{a: int}', SuccessfulCheckResult::class];
+        yield 'a type and a tail' => ['array{a: int} tail', PartialCheckResult::class];
+        yield 'no type at all' => ['|int', FailureCheckResult::class];
+        yield 'an empty source' => ['', FailureCheckResult::class];
+    }
+
+    /**
+     * A check builds nothing, so it says what stands in the way and nothing
+     * else.
+     *
+     * @param non-empty-string $type
+     * @param class-string<CheckResult> $expected
+     * @throws \Throwable
+     */
+    #[DataProvider('checkedInputDataProvider')]
+    public function testACheckTellsWhetherASourceIsAWholeType(string $type, string $expected): void
+    {
+        self::assertInstanceOf($expected, $this->validate($type));
+    }
+
+    /**
+     * A source read in part is a failure of a check, since a check asks
+     * about the source whole.
+     */
+    public function testAPartialCheckIsAFailure(): void
+    {
+        $result = $this->validate('array{a: int} tail');
+
+        self::assertInstanceOf(FailureCheckResult::class, $result);
+        self::assertSame(14, $result->offset);
+        self::assertStringContainsString('unexpected "tail"', $result->message);
     }
 }
