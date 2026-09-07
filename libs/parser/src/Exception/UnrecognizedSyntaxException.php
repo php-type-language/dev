@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Exception;
 
-use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
-
 final class UnrecognizedSyntaxException extends ParseException
 {
     /**
@@ -13,7 +11,6 @@ final class UnrecognizedSyntaxException extends ParseException
      * grammar rule.
      *
      * @param int<0, max> $offset
-     * @throws SourceExceptionInterface
      */
     public static function becauseSyntaxIsUnrecognized(string $statement, int $offset): self
     {

@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Exception;
 
-use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
-
 final class UnrecognizedTokenException extends ParseException
 {
     /**
      * Occurs when unable to recognize tokens in source code.
      *
      * @param int<0, max> $offset
-     * @throws SourceExceptionInterface
      */
     public static function becauseTokenIsUnrecognized(string $token, string $statement, int $offset): self
     {

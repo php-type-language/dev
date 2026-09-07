@@ -19,14 +19,6 @@ final class InternalParseException extends ParseException
     }
 
     /**
-     * Occurs when the parser produces no result for a readable statement.
-     */
-    public static function becauseTypeStatementIsUnreadable(): self
-    {
-        return new self('Could not read type statement', self::ERROR_CODE_INTERNAL_ERROR);
-    }
-
-    /**
      * Occurs when the source content cannot be read.
      */
     public static function becauseSourceIsUnreadable(SourceExceptionInterface $e): self

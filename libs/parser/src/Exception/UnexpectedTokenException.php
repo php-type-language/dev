@@ -12,7 +12,6 @@ final class UnexpectedTokenException extends ParseException
      * Occurs when a known token is found in an unexpected source location.
      *
      * @param int<0, max> $offset
-     * @throws SourceExceptionInterface
      */
     public static function becauseTokenIsUnexpected(string $token, string $statement, int $offset): self
     {
