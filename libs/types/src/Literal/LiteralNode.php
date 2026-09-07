@@ -10,7 +10,7 @@ use TypeLang\Type\TypeNode;
  * A value standing where a type is expected, kept both as PHP sees it
  * and as it is written.
  *
- * The two are not the same thing: A value is what PHP would compute, while
+ * The two are not the same thing. A value is what PHP would compute, while
  * a raw is the very text it was computed from, quotes, radix and all.
  *
  * ```
@@ -32,15 +32,9 @@ abstract class LiteralNode extends TypeNode implements LiteralNodeInterface
      */
     public function __construct(
         /**
-         * The value as PHP sees it.
-         *
          * @var TValue
          */
         public readonly mixed $value,
-        /**
-         * The very text the value was read from, so that a statement can be
-         * written back the way it came.
-         */
         public readonly string $raw,
         int $offset = 0,
     ) {
