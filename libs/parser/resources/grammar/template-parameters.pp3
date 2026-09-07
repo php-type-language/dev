@@ -36,7 +36,7 @@ TemplateParameter -> {
             throw Exception\TemplateBoundException::becauseDefaultIsNotWrittenLast($limit->operator->offset);
         }
 
-        switch ($limit->operator->toLowerString()) {
+        switch ($limit->operator->value) {
             case 'of':
             case 'as':
                 if ($upper !== null) {
