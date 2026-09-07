@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace TypeLang\Type;
 
 /**
+ * A single word a name is made of.
+ *
+ * ```
+ *  Some\Any
+ *  ^^^^ ^^^ // two identifiers
+ *
+ *  non-empty-string
+ *  ^^^^^^^^^^^^^^^^ // a single identifier: A dash belongs to a word
+ * ```
+ *
  * @phpstan-consistent-constructor
  */
 final class Identifier extends Node implements \Stringable

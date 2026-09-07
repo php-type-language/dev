@@ -5,6 +5,17 @@ declare(strict_types=1);
 namespace TypeLang\Type;
 
 /**
+ * A name, that is, the identifiers ({@see Identifier}) it is written of and the
+ * namespace separators between them.
+ *
+ * ```
+ *  Some\Any
+ *  ^^^^ ^^^ a relative name of two parts
+ *
+ *  \Some\Any
+ *  ^         a fully qualified name begins in a separator
+ * ```
+ *
  * @phpstan-consistent-constructor
  *
  * @template-implements \IteratorAggregate<array-key, Identifier>
@@ -19,11 +30,21 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     public const IS_FULLY_QUALIFIED_DEFAULT_VALUE = false;
 
     /**
+     * The identifiers a name is written of, in order. Never empty: A name of
+     * no parts is no name.
+     *
      * @var non-empty-list<Identifier>
      */
     public readonly array $parts;
 
+    /**
+     * The first of the {@see $parts}, which is the one an alias is resolved by.
+     */
     public readonly Identifier $first;
+
+    /**
+     * The last of the {@see $parts}, which is the short name of a class.
+     */
     public readonly Identifier $last;
 
     /**
@@ -34,9 +55,32 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
      */
     public function __construct(
         iterable $parts,
+        /**
+         * Whether a name is written with the leading separator that says it
+         * is to be read from the root and not from wherever it stands.
+         *
+         * ```
+         *  Some\Any   // false
+         *  \Some\Any  // true
+         * ```
+         */
         public readonly bool $isFullyQualified = self::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
         int $offset = 0,
     ) {
+        $this->parts = self::formatNameParts($parts);
+
+        $this->first = $this->parts[0];
+        $this->last = $this->parts[\count($this->parts) - 1];
+
+        parent::__construct($offset);
+    }
+
+    /**
+     * @param iterable<mixed, Identifier> $parts
+     * @return non-empty-list<Identifier>
+     */
+    private static function formatNameParts(iterable $parts): array
+    {
         $parts = match (true) {
             $parts instanceof \Traversable => \iterator_to_array($parts, false),
             \array_is_list($parts) => $parts,
@@ -47,22 +91,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
             throw new \InvalidArgumentException('Name parts count can not be empty');
         }
 
-        $first = \reset($parts);
-        $last = \end($parts);
-
-        if (!$first instanceof Identifier || !$last instanceof Identifier) {
-            throw new \InvalidArgumentException(\sprintf(
-                'Name parts must contain only %s instances',
-                Identifier::class,
-            ));
-        }
-
-        $this->parts = $parts;
-
-        $this->first = $first;
-        $this->last = $last;
-
-        parent::__construct($offset);
+        return $parts;
     }
 
     /**
