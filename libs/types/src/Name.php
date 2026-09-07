@@ -30,8 +30,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     public const IS_FULLY_QUALIFIED_DEFAULT_VALUE = false;
 
     /**
-     * The identifiers a name is written of, in order. Never empty: A name of
-     * no parts is no name.
+     * The identifiers a name is written of.
      *
      * @var non-empty-list<Identifier>
      */
