@@ -20,8 +20,6 @@ abstract class NodeList extends Node implements
     \Countable
 {
     /**
-     * The nodes of a list, in the order they are written in.
-     *
      * @var (TNonEmpty is true ? non-empty-list<TNode> : list<TNode>)
      */
     public array $items = [];
