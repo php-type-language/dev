@@ -12,7 +12,7 @@ namespace TypeLang\Type;
  *  ^^^^ ^^^ // two identifiers
  *
  *  non-empty-string
- *  ^^^^^^^^^^^^^^^^ // a single identifier: A dash belongs to a word
+ *  ^^^^^^^^^^^^^^^^ // a single identifier
  * ```
  *
  * @phpstan-consistent-constructor
