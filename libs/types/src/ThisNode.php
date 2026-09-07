@@ -11,8 +11,9 @@ namespace TypeLang\Type;
  *  callable(): $this
  * ```
  *
- * It is written the way a variable is, but it is a type: It names the object
- * itself rather than a place a value is kept in. Any other variable is
- * a {@see VariableNode} and no type at all.
+ * It is written the way a variable is, but it is a type. It names the object
+ * itself rather than a place a value is kept in.
+ *
+ * Any other variable is a {@see VariableNode} and no type at all.
  */
 final class ThisNode extends TypeNode {}

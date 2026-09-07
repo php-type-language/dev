@@ -26,11 +26,9 @@ final class TypeOffsetAccessNode extends WrappingTypeNode
     public function __construct(
         TypeNode $type,
         /**
-         * The offset itself, that is, whatever stands inside the brackets.
-         *
-         * Note: An `$access` name instead of `$offset` is used to avoid
-         *       conflicts with the physical byte offset of the type in the
-         *       source code.
+         * The property is named an `$access` rather than an `$offset` so that
+         * it is not taken for the place in the source text every node
+         * carries.
          */
         public readonly TypeNode $access,
         int $offset = 0,
