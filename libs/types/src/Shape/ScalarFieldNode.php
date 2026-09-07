@@ -20,8 +20,10 @@ use TypeLang\Type\TypeNode;
  * ```
  *
  * A key is a number or a string and nothing else, the way a key of an array
- * is. A `true` and a `null` are keys of a {@see NamedFieldNode} instead: In
- * the place of a key they are read as the words they are written with, not as
+ * is.
+ *
+ * A `true` and a `null` are keys of a {@see NamedFieldNode} instead. In the
+ * place of a key they are read as the words they are written with, not as
  * the values they name elsewhere.
  *
  * @template-extends ExplicitFieldNode<IntLiteralNode|StringLiteralNode>

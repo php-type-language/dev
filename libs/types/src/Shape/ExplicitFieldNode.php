@@ -9,13 +9,14 @@ use TypeLang\Type\TypeNode;
 /**
  * A field of a shape written with a key of its own.
  *
- * What the key may be is what tells the children of this class apart: A
- * {@see NamedFieldNode} carries a bare word, a {@see ScalarFieldNode} a scalar
- * value and a {@see ComplexFieldNode} a reference that has to be read.
+ * What the key may be is what tells the children of this class apart.
+ * A {@see NamedFieldNode} carries a bare word, a {@see ScalarFieldNode}
+ * a scalar value and a {@see ComplexFieldNode} a reference that has to
+ * be read.
  *
  * A key that comes down to a string of its own is marked by the
- * {@see SimpleFieldNodeInterface}, which is what a shape tells its keys
- * apart by.
+ * {@see SimpleFieldNodeInterface}. That string is what a shape tells its
+ * keys apart by.
  *
  * @template TKey of mixed
  */

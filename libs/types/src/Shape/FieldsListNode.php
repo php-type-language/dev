@@ -9,9 +9,11 @@ use TypeLang\Type\NodeList;
 /**
  * The fields of a shape, in the order they are written in.
  *
- * An empty list is a shape written with no fields at all, which is a thing of
- * its own: An `array` carries no list, while an `array{}` carries an empty one
- * (see {@see \TypeLang\Type\NamedTypeNode::$fields}).
+ * An empty list is a shape written with no fields at all, which is a thing
+ * of its own.
+ *
+ * An `array` carries no list, while an `array{}` carries an empty one.
+ * See the {@see \TypeLang\Type\NamedTypeNode::$fields}.
  *
  * @template-extends NodeList<FieldNode>
  */

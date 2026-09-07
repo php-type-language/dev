@@ -15,7 +15,7 @@ use TypeLang\Type\TypeNode;
  *  //    ^^^^ the key
  * ```
  *
- * A `true`, a `false` and a `null` are bare words as well: In the place of
+ * A `true`, a `false` and a `null` are bare words as well. In the place of
  * a key they name nothing but themselves.
  *
  * @template-extends ExplicitFieldNode<Identifier>
