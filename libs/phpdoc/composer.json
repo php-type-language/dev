@@ -18,7 +18,6 @@
         }
     },
     "require-dev": {
-        "phpstan/phpdoc-parser": "^2.3",
         "phpstan/phpstan": "^2.2",
         "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0"
     },
