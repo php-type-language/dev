@@ -5,16 +5,24 @@ declare(strict_types=1);
 namespace TypeLang\Type;
 
 /**
+ * Several types joined by an operator, like a union or an intersection.
+ *
+ * A statement of the same kind is flattened into its parent, so an
+ * `A|(B|C)` holds the three of them side by side rather than a nested
+ * statement.
+ *
  * @template T of TypeNode = TypeNode
  *
  * @template-implements \IteratorAggregate<array-key, T>
+ * @template-implements \ArrayAccess<int<0, max>, T>
  */
 abstract class LogicalTypeNode extends TypeNode implements
     \IteratorAggregate,
+    \ArrayAccess,
     \Countable
 {
     /**
-     * @var non-empty-list<T>
+     * @var list{T, T, ...<T>}
      */
     public array $statements;
 
@@ -22,7 +30,7 @@ abstract class LogicalTypeNode extends TypeNode implements
      * A logical statement accepts an arbitrary number of types, so there is no
      * place left for an offset argument: use the {@see $offset} property.
      *
-     * @param iterable<T> $statements
+     * @param iterable<mixed, T> $statements
      * @param int<0, max> $offset
      * @throws \LogicException in case of less than two statements are passed
      */
@@ -33,7 +41,7 @@ abstract class LogicalTypeNode extends TypeNode implements
         $statements = self::unwrap($statements);
 
         if (\count($statements) < 2) {
-            throw new \LogicException('A logical statement must contain at least 2 elements');
+            throw new \InvalidArgumentException('A logical statement must contain at least 2 elements');
         }
 
         // @phpstan-ignore-next-line : List of types contains at least 2 elements
@@ -68,6 +76,77 @@ abstract class LogicalTypeNode extends TypeNode implements
         return $result;
     }
 
+    public function offsetExists(mixed $offset): bool
+    {
+        if (!\is_int($offset) || $offset < 0) {
+            throw new \InvalidArgumentException(
+                \sprintf('A %s::offsetExists($offset) must be an int<0, max>', static::class),
+            );
+        }
+
+        return isset($this->statements[$offset]);
+    }
+
+    public function offsetGet(mixed $offset): ?Node
+    {
+        if (!\is_int($offset) || $offset < 0) {
+            throw new \InvalidArgumentException(
+                \sprintf('A %s::offsetGet($offset) must be an int<0, max>', static::class),
+            );
+        }
+
+        return $this->statements[$offset] ?? null;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        if (!$value instanceof Node) {
+            throw new \InvalidArgumentException(
+                \sprintf('A %s::offsetSet(..., $value) must be instance of %s', static::class, Node::class),
+            );
+        }
+
+        if ($offset === null) {
+            $this->statements[] = $value;
+
+            return;
+        }
+
+        if (!\is_int($offset) || $offset < 0) {
+            throw new \InvalidArgumentException(
+                \sprintf('A %s::offsetSet($offset, ...) must be an int<0, max>|null', static::class),
+            );
+        }
+
+        // @phpstan-ignore-next-line
+        $this->statements[$offset] = $value;
+
+        if (!\array_is_list($this->statements)) {
+            $this->statements = \array_values($this->statements);
+        }
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        if (!\is_int($offset) || $offset < 0) {
+            throw new \InvalidArgumentException(
+                \sprintf('A %s::offsetUnset($offset) must be an int<0, max>', static::class),
+            );
+        }
+
+        // @phpstan-ignore-next-line : Temporary allow stmt removing
+        unset($this->statements[$offset]);
+
+        if (\count($this->statements) < 2) {
+            throw new \InvalidArgumentException('A logical statement must contain at least 2 elements');
+        }
+
+        if (!\array_is_list($this->statements)) {
+            // @phpstan-ignore-next-line : An array size already has been checked above
+            $this->statements = \array_values($this->statements);
+        }
+    }
+
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->statements);
@@ -80,27 +159,5 @@ abstract class LogicalTypeNode extends TypeNode implements
     {
         /** @var int<2, max> */
         return \count($this->statements);
-    }
-
-    /**
-     * @return array{non-empty-list<T>, int<0, max>}
-     */
-    public function __serialize(): array
-    {
-        return [$this->statements, $this->offset];
-    }
-
-    /**
-     * @param array{0?: non-empty-list<T>, 1?: int<0, max>} $data
-     * @throws \UnexpectedValueException
-     */
-    public function __unserialize(array $data): void
-    {
-        $this->statements = $data[0] ?? throw new \UnexpectedValueException(\sprintf(
-            'Unable to unserialize %s statements',
-            static::class,
-        ));
-
-        $this->offset = $data[1] ?? 0;
     }
 }
