@@ -13,9 +13,11 @@ use TypeLang\Type\ClassConstMaskNode;
 use TypeLang\Type\ClassConstNode;
 use TypeLang\Type\ConstMaskNode;
 use TypeLang\Type\Identifier;
+use TypeLang\Type\MaskNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\UnionTypeNode;
+use TypeLang\Type\WildcardNode;
 
 final class TypeMapVisitorTest extends TestCase
 {
@@ -45,13 +47,27 @@ final class TypeMapVisitorTest extends TestCase
     }
 
     #[Test]
-    public function theNameOfAConstMaskIsTransformed(): void
+    public function theNamespaceOfAConstMaskIsTransformed(): void
     {
-        $node = new ConstMaskNode(Name::createFromString('SOME_*'));
+        $node = new ConstMaskNode(
+            new MaskNode([new Identifier('SOME_'), new WildcardNode()]),
+            Name::createFromString('Vendor'),
+        );
 
         Traverser::new([$this->alias()])->traverse([$node]);
 
-        self::assertSame('Aliased', $node->name->toString());
+        self::assertInstanceOf(Name::class, $node->namespaceOrFullyQualified);
+        self::assertSame('Aliased', $node->namespaceOrFullyQualified->toString());
+    }
+
+    #[Test]
+    public function aConstMaskWithoutANamespaceIsLeftAlone(): void
+    {
+        $node = new ConstMaskNode(new MaskNode([new WildcardNode(), new Identifier('_SOME')]));
+
+        Traverser::new([$this->alias()])->traverse([$node]);
+
+        self::assertFalse($node->namespaceOrFullyQualified);
     }
 
     #[Test]
