@@ -19,13 +19,22 @@ final class TemplateArgumentsListNodeTest extends TestCase
     }
 
     #[Test]
-    public function emptyListByDefault(): void
+    public function emptyListIsNotAllowed(): void
     {
-        $list = new TemplateArgumentListNode();
+        $this->expectException(\InvalidArgumentException::class);
 
-        self::assertCount(0, $list);
-        self::assertNull($list->first());
-        self::assertNull($list->last());
+        new TemplateArgumentListNode([]);
+    }
+
+    #[Test]
+    public function singleArgumentIsBothTheFirstAndTheLast(): void
+    {
+        $argument = $this->makeArg('string');
+        $list = new TemplateArgumentListNode([$argument]);
+
+        self::assertCount(1, $list);
+        self::assertSame($argument, $list->first());
+        self::assertSame($argument, $list->last());
     }
 
     #[Test]
@@ -103,7 +112,7 @@ final class TemplateArgumentsListNodeTest extends TestCase
     #[Test]
     public function defaultOffsetIsZero(): void
     {
-        $list = new TemplateArgumentListNode();
+        $list = new TemplateArgumentListNode([$this->makeArg('int')]);
 
         self::assertSame(0, $list->offset);
     }

@@ -12,19 +12,19 @@ use TypeLang\Type\ConstMaskNode;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\Literal\StringLiteralNode;
+use TypeLang\Type\MaskNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\Shape\ClassConstFieldNode;
-use TypeLang\Type\Shape\ClassConstMaskFieldNode;
-use TypeLang\Type\Shape\ConstMaskFieldNode;
+use TypeLang\Type\Shape\ComplexFieldNode;
 use TypeLang\Type\Shape\ExplicitFieldNode;
 use TypeLang\Type\Shape\FieldNode;
 use TypeLang\Type\Shape\ImplicitFieldNode;
 use TypeLang\Type\Shape\NamedFieldNode;
-use TypeLang\Type\Shape\NumericFieldNode;
-use TypeLang\Type\Shape\StringNamedFieldNode;
+use TypeLang\Type\Shape\ScalarFieldNode;
+use TypeLang\Type\Shape\SimpleFieldNodeInterface;
 use TypeLang\Type\Tests\TestCase;
 use TypeLang\Type\TypeNode;
+use TypeLang\Type\WildcardNode;
 
 final class ExplicitFieldNodeTest extends TestCase
 {
@@ -34,52 +34,113 @@ final class ExplicitFieldNodeTest extends TestCase
     }
 
     /**
-     * @return iterable<non-empty-string, array{ExplicitFieldNode, non-empty-string}>
+     * @return iterable<non-empty-string, array{ExplicitFieldNode}>
      */
     public static function provideExplicitFields(): iterable
+    {
+        yield 'named' => [new NamedFieldNode(new Identifier('key'), self::type())];
+        yield 'scalar' => [new ScalarFieldNode(new IntLiteralNode(42), self::type())];
+        yield 'complex' => [
+            new ComplexFieldNode(
+                new ClassConstNode(Name::createFromString('Vendor\Status'), new Identifier('OK')),
+                self::type(),
+            ),
+        ];
+    }
+
+    /**
+     * Only a key that comes down to a string of its own carries an index.
+     *
+     * @return iterable<non-empty-string, array{SimpleFieldNodeInterface, non-empty-string}>
+     */
+    public static function provideIndexedFields(): iterable
     {
         yield 'named' => [
             new NamedFieldNode(new Identifier('key'), self::type()),
             'key',
         ];
 
-        yield 'string named' => [
-            new StringNamedFieldNode(new StringLiteralNode('some key'), self::type()),
+        yield 'named by a keyword' => [
+            new NamedFieldNode(new Identifier('true'), self::type()),
+            'true',
+        ];
+
+        yield 'string' => [
+            new ScalarFieldNode(new StringLiteralNode('some key'), self::type()),
             'some key',
         ];
 
-        yield 'numeric' => [
-            new NumericFieldNode(new IntLiteralNode(42), self::type()),
+        yield 'string carrying a sequence' => [
+            new ScalarFieldNode(new StringLiteralNode("a\nb"), self::type()),
+            "a\nb",
+        ];
+
+        yield 'number' => [
+            new ScalarFieldNode(new IntLiteralNode(42), self::type()),
             '42',
         ];
 
+        yield 'zero' => [
+            new ScalarFieldNode(new IntLiteralNode(0), self::type()),
+            '0',
+        ];
+
+        yield 'negative number' => [
+            new ScalarFieldNode(new IntLiteralNode(-1), self::type()),
+            '-1',
+        ];
+    }
+
+
+    #[Test]
+    #[DataProvider('provideIndexedFields')]
+    public function indexMethodReturnsTheKeyAsAString(SimpleFieldNodeInterface $field, string $index): void
+    {
+        self::assertSame($index, $field->getIndex());
+    }
+
+    /**
+     * A key that has to be read to be understood offers no index: Whether two
+     * of them name the same constant is not written down.
+     *
+     * @return iterable<non-empty-string, array{ComplexFieldNode}>
+     */
+    public static function provideComplexFields(): iterable
+    {
         yield 'class const' => [
-            new ClassConstFieldNode(
+            new ComplexFieldNode(
                 new ClassConstNode(Name::createFromString('Vendor\Status'), new Identifier('OK')),
                 self::type(),
             ),
-            'Vendor\Status::OK',
         ];
 
         yield 'class const mask' => [
-            new ClassConstMaskFieldNode(
-                new ClassConstMaskNode(Name::createFromString('Vendor\Status'), new Identifier('IS_')),
+            new ComplexFieldNode(
+                new ClassConstMaskNode(
+                    Name::createFromString('Vendor\Status'),
+                    new MaskNode([new Identifier('IS_'), new WildcardNode()]),
+                ),
                 self::type(),
             ),
-            'Vendor\Status::IS_*',
         ];
 
         yield 'const mask' => [
-            new ConstMaskFieldNode(new ConstMaskNode(Name::createFromString('Vendor\STATUS_')), self::type()),
-            'Vendor\STATUS_*',
+            new ComplexFieldNode(
+                new ConstMaskNode(
+                    new MaskNode([new Identifier('STATUS_'), new WildcardNode()]),
+                    Name::createFromString('Vendor'),
+                ),
+                self::type(),
+            ),
         ];
     }
 
     #[Test]
-    #[DataProvider('provideExplicitFields')]
-    public function indexMethodReturnsPrettyPrintedKey(ExplicitFieldNode $field, string $index): void
+    #[DataProvider('provideComplexFields')]
+    public function complexFieldCarriesNoIndex(ComplexFieldNode $field): void
     {
-        self::assertSame($index, $field->getIndex());
+        self::assertNotInstanceOf(SimpleFieldNodeInterface::class, $field);
+        self::assertInstanceOf(TypeNode::class, $field->key);
     }
 
     #[Test]
@@ -92,21 +153,18 @@ final class ExplicitFieldNodeTest extends TestCase
         $field->key = new Identifier('other');
 
         self::assertSame('other', $field->getIndex(), 'The index must be derived from the current key');
-        self::assertSame('other', $field->getIndex());
     }
 
     #[Test]
     #[DataProvider('provideExplicitFields')]
-    public function explicitFieldIsRequiredByDefault(ExplicitFieldNode $field, string $index): void
+    public function explicitFieldIsRequiredByDefault(ExplicitFieldNode $field): void
     {
         self::assertFalse($field->isOptional);
     }
 
     #[Test]
     #[DataProvider('provideExplicitFields')]
-    #[Test]
-    #[DataProvider('provideExplicitFields')]
-    public function explicitFieldIsAFieldNode(ExplicitFieldNode $field, string $index): void
+    public function explicitFieldIsAFieldNode(ExplicitFieldNode $field): void
     {
         self::assertInstanceOf(FieldNode::class, $field);
         self::assertInstanceOf(TypeNode::class, $field->type);
@@ -121,7 +179,6 @@ final class ExplicitFieldNodeTest extends TestCase
     }
 
     #[Test]
-    #[Test]
     public function implicitFieldHasNoKey(): void
     {
         $field = new ImplicitFieldNode(self::type());
@@ -131,72 +188,11 @@ final class ExplicitFieldNodeTest extends TestCase
     }
 
     #[Test]
-    public function classConstMaskFieldWithoutConstantIsStringified(): void
-    {
-        $field = new ClassConstMaskFieldNode(
-            new ClassConstMaskNode(Name::createFromString('Vendor\Status')),
-            self::type(),
-        );
-
-        self::assertSame('Vendor\Status::*', $field->getIndex());
-    }
-
-    #[Test]
-    public function numericFieldIndexOfZero(): void
-    {
-        $field = new NumericFieldNode(new IntLiteralNode(0), self::type());
-
-        self::assertSame('0', $field->getIndex());
-    }
-
-    #[Test]
-    public function numericFieldIndexOfNegativeKey(): void
-    {
-        $field = new NumericFieldNode(new IntLiteralNode(-1), self::type());
-
-        self::assertSame('-1', $field->getIndex());
-    }
-
-    #[Test]
-    public function stringNamedFieldIndexIsTheDecodedValue(): void
-    {
-        $field = new StringNamedFieldNode(new StringLiteralNode("a\nb"), self::type());
-
-        self::assertSame("a\nb", $field->getIndex());
-    }
-
-    #[Test]
     public function fieldTypeIsMutable(): void
     {
         $field = new NamedFieldNode(new Identifier('key'), self::type('A'));
         $field->type = self::type('B');
 
         self::assertSame('B', $field->type->name->toString());
-    }
-
-    #[Test]
-    #[DataProvider('provideExplicitFields')]
-    public function isReturnsTrueForOwnClass(ExplicitFieldNode $field, string $index): void
-    {
-        self::assertTrue($field->is($field::class));
-        self::assertTrue($field->is(ExplicitFieldNode::class));
-        self::assertTrue($field->is(FieldNode::class));
-    }
-
-    #[Test]
-    #[DataProvider('provideExplicitFields')]
-    public function isReturnsFalseForAnotherClass(ExplicitFieldNode $field, string $index): void
-    {
-        self::assertFalse($field->is(ImplicitFieldNode::class));
-    }
-
-    #[Test]
-    public function implicitFieldIsNotAnExplicitOne(): void
-    {
-        $field = new ImplicitFieldNode(self::type());
-
-        self::assertTrue($field->is(ImplicitFieldNode::class));
-        self::assertTrue($field->is(FieldNode::class));
-        self::assertFalse($field->is(ExplicitFieldNode::class));
     }
 }

@@ -692,7 +692,7 @@ final class NameTest extends TestCase
     #[Test]
     public function constructorThrowsOnNonIdentifierParts(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
 
         /** @phpstan-ignore-next-line */
         new Name(['Foo']);

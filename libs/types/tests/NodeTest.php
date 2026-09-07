@@ -12,10 +12,6 @@ use TypeLang\Type\CallableTypeNode;
 use TypeLang\Type\ClassConstMaskNode;
 use TypeLang\Type\ClassConstNode;
 use TypeLang\Type\Condition\EqualConditionNode;
-use TypeLang\Type\Condition\GreaterThanConditionNode;
-use TypeLang\Type\Condition\GreaterThanOrEqualConditionNode;
-use TypeLang\Type\Condition\LessThanConditionNode;
-use TypeLang\Type\Condition\LessThanOrEqualConditionNode;
 use TypeLang\Type\Condition\NotEqualConditionNode;
 use TypeLang\Type\ConstMaskNode;
 use TypeLang\Type\Identifier;
@@ -25,27 +21,30 @@ use TypeLang\Type\Literal\FloatLiteralNode;
 use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\Literal\NullLiteralNode;
 use TypeLang\Type\Literal\StringLiteralNode;
-use TypeLang\Type\Literal\VariableLiteralNode;
+use TypeLang\Type\ThisNode;
+use TypeLang\Type\VariableNode;
+use TypeLang\Type\MaskNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\NodeInterface;
 use TypeLang\Type\NullableTypeNode;
-use TypeLang\Type\Shape\ClassConstFieldNode;
-use TypeLang\Type\Shape\ClassConstMaskFieldNode;
-use TypeLang\Type\Shape\ConstMaskFieldNode;
+use TypeLang\Type\Shape\ComplexFieldNode;
 use TypeLang\Type\Shape\FieldsListNode;
 use TypeLang\Type\Shape\ImplicitFieldNode;
 use TypeLang\Type\Shape\NamedFieldNode;
-use TypeLang\Type\Shape\NumericFieldNode;
-use TypeLang\Type\Shape\StringNamedFieldNode;
+use TypeLang\Type\Shape\ScalarFieldNode;
 use TypeLang\Type\Template\TemplateArgumentListNode;
 use TypeLang\Type\Template\TemplateArgumentNode;
+use TypeLang\Type\Template\TemplateBoundEdgeNode;
+use TypeLang\Type\Template\TemplateParameterListNode;
+use TypeLang\Type\Template\TemplateParameterNode;
 use TypeLang\Type\TernaryExpressionNode;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\TypeOffsetAccessNode;
 use TypeLang\Type\TypesListNode;
 use TypeLang\Type\UnionTypeNode;
+use TypeLang\Type\WildcardNode;
 
 final class NodeTest extends TestCase
 {
@@ -67,9 +66,10 @@ final class NodeTest extends TestCase
         yield ClassConstNode::class => [
             new ClassConstNode(Name::createFromString('Example'), new Identifier('CONST')),
         ];
-        yield ConstMaskNode::class => [new ConstMaskNode(Name::createFromString('CONST'))];
+        yield ConstMaskNode::class => [new ConstMaskNode(new MaskNode([new Identifier('CONST'), new WildcardNode()]))];
         yield Identifier::class => [new Identifier('Example')];
         yield IntersectionTypeNode::class => [new IntersectionTypeNode([self::type('A'), self::type('B')])];
+        yield MaskNode::class => [new MaskNode([new WildcardNode()])];
         yield Name::class => [Name::createFromString('Example')];
         yield NamedTypeNode::class => [self::type()];
         yield NullableTypeNode::class => [new NullableTypeNode(self::type())];
@@ -83,19 +83,12 @@ final class NodeTest extends TestCase
         yield TypeOffsetAccessNode::class => [new TypeOffsetAccessNode(self::type(), self::type('Offset'))];
         yield TypesListNode::class => [new TypesListNode(self::type())];
         yield UnionTypeNode::class => [new UnionTypeNode([self::type('A'), self::type('B')])];
+        yield WildcardNode::class => [new WildcardNode()];
 
         yield CallableParameterListNode::class => [new CallableParameterListNode()];
         yield CallableParameterNode::class => [new CallableParameterNode(self::type())];
 
         yield EqualConditionNode::class => [new EqualConditionNode(self::type('A'), self::type('B'))];
-        yield GreaterThanConditionNode::class => [new GreaterThanConditionNode(self::type('A'), self::type('B'))];
-        yield GreaterThanOrEqualConditionNode::class => [
-            new GreaterThanOrEqualConditionNode(self::type('A'), self::type('B')),
-        ];
-        yield LessThanConditionNode::class => [new LessThanConditionNode(self::type('A'), self::type('B'))];
-        yield LessThanOrEqualConditionNode::class => [
-            new LessThanOrEqualConditionNode(self::type('A'), self::type('B')),
-        ];
         yield NotEqualConditionNode::class => [new NotEqualConditionNode(self::type('A'), self::type('B'))];
 
         yield BoolLiteralNode::class => [new BoolLiteralNode(true)];
@@ -103,30 +96,27 @@ final class NodeTest extends TestCase
         yield IntLiteralNode::class => [new IntLiteralNode(42)];
         yield NullLiteralNode::class => [new NullLiteralNode()];
         yield StringLiteralNode::class => [new StringLiteralNode('example')];
-        yield VariableLiteralNode::class => [new VariableLiteralNode('example')];
+        yield ThisNode::class => [new ThisNode()];
+        yield VariableNode::class => [new VariableNode(new Identifier('example'))];
 
-        yield ClassConstFieldNode::class => [
-            new ClassConstFieldNode(
+        yield ComplexFieldNode::class => [
+            new ComplexFieldNode(
                 new ClassConstNode(Name::createFromString('Example'), new Identifier('CONST')),
                 self::type(),
             ),
         ];
-        yield ClassConstMaskFieldNode::class => [
-            new ClassConstMaskFieldNode(new ClassConstMaskNode(Name::createFromString('Example')), self::type()),
-        ];
-        yield ConstMaskFieldNode::class => [
-            new ConstMaskFieldNode(new ConstMaskNode(Name::createFromString('CONST')), self::type()),
-        ];
         yield FieldsListNode::class => [new FieldsListNode()];
         yield ImplicitFieldNode::class => [new ImplicitFieldNode(self::type())];
         yield NamedFieldNode::class => [new NamedFieldNode(new Identifier('key'), self::type())];
-        yield NumericFieldNode::class => [new NumericFieldNode(new IntLiteralNode(0), self::type())];
-        yield StringNamedFieldNode::class => [
-            new StringNamedFieldNode(new StringLiteralNode('key'), self::type()),
-        ];
+        yield ScalarFieldNode::class => [new ScalarFieldNode(new IntLiteralNode(0), self::type())];
 
-        yield TemplateArgumentListNode::class => [new TemplateArgumentListNode()];
+        yield TemplateArgumentListNode::class => [
+            new TemplateArgumentListNode([new TemplateArgumentNode(self::type())]),
+        ];
         yield TemplateArgumentNode::class => [new TemplateArgumentNode(self::type())];
+        yield TemplateBoundEdgeNode::class => [new TemplateBoundEdgeNode(new Identifier('of'), self::type())];
+        yield TemplateParameterListNode::class => [new TemplateParameterListNode()];
+        yield TemplateParameterNode::class => [new TemplateParameterNode(new Identifier('T'))];
     }
 
     #[Test]
@@ -271,8 +261,11 @@ final class NodeTest extends TestCase
         yield ClassConstNode::class => [
             new ClassConstNode(Name::createFromString('Example'), new Identifier('CONST'), 42),
         ];
-        yield ConstMaskNode::class => [new ConstMaskNode(Name::createFromString('CONST'), 42)];
+        yield ConstMaskNode::class => [
+            new ConstMaskNode(new MaskNode([new Identifier('CONST'), new WildcardNode()]), offset: 42),
+        ];
         yield Identifier::class => [new Identifier('Example', 42)];
+        yield MaskNode::class => [new MaskNode([new WildcardNode()], 42)];
         yield Name::class => [Name::createFromString('Example', 42)];
         yield NamedTypeNode::class => [new NamedTypeNode(Name::createFromString('Example'), offset: 42)];
         yield NullableTypeNode::class => [new NullableTypeNode(self::type(), 42)];
@@ -288,23 +281,12 @@ final class NodeTest extends TestCase
             new TypeOffsetAccessNode(self::type(), self::type('Offset'), 42),
         ];
         yield TypesListNode::class => [new TypesListNode(self::type(), 42)];
+        yield WildcardNode::class => [new WildcardNode(42)];
 
         yield CallableParameterListNode::class => [new CallableParameterListNode([], 42)];
         yield CallableParameterNode::class => [new CallableParameterNode(self::type(), offset: 42)];
 
         yield EqualConditionNode::class => [new EqualConditionNode(self::type('A'), self::type('B'), 42)];
-        yield GreaterThanConditionNode::class => [
-            new GreaterThanConditionNode(self::type('A'), self::type('B'), 42),
-        ];
-        yield GreaterThanOrEqualConditionNode::class => [
-            new GreaterThanOrEqualConditionNode(self::type('A'), self::type('B'), 42),
-        ];
-        yield LessThanConditionNode::class => [
-            new LessThanConditionNode(self::type('A'), self::type('B'), 42),
-        ];
-        yield LessThanOrEqualConditionNode::class => [
-            new LessThanOrEqualConditionNode(self::type('A'), self::type('B'), 42),
-        ];
         yield NotEqualConditionNode::class => [
             new NotEqualConditionNode(self::type('A'), self::type('B'), 42),
         ];
@@ -314,25 +296,12 @@ final class NodeTest extends TestCase
         yield IntLiteralNode::class => [new IntLiteralNode(42, offset: 42)];
         yield NullLiteralNode::class => [new NullLiteralNode(offset: 42)];
         yield StringLiteralNode::class => [new StringLiteralNode('example', offset: 42)];
-        yield VariableLiteralNode::class => [new VariableLiteralNode('example', 42)];
+        yield ThisNode::class => [new ThisNode(42)];
+        yield VariableNode::class => [new VariableNode(new Identifier('example'), 42)];
 
-        yield ClassConstFieldNode::class => [
-            new ClassConstFieldNode(
+        yield ComplexFieldNode::class => [
+            new ComplexFieldNode(
                 new ClassConstNode(Name::createFromString('Example'), new Identifier('CONST')),
-                self::type(),
-                offset: 42,
-            ),
-        ];
-        yield ClassConstMaskFieldNode::class => [
-            new ClassConstMaskFieldNode(
-                new ClassConstMaskNode(Name::createFromString('Example')),
-                self::type(),
-                offset: 42,
-            ),
-        ];
-        yield ConstMaskFieldNode::class => [
-            new ConstMaskFieldNode(
-                new ConstMaskNode(Name::createFromString('CONST')),
                 self::type(),
                 offset: 42,
             ),
@@ -342,15 +311,21 @@ final class NodeTest extends TestCase
         yield NamedFieldNode::class => [
             new NamedFieldNode(new Identifier('key'), self::type(), offset: 42),
         ];
-        yield NumericFieldNode::class => [
-            new NumericFieldNode(new IntLiteralNode(0), self::type(), offset: 42),
-        ];
-        yield StringNamedFieldNode::class => [
-            new StringNamedFieldNode(new StringLiteralNode('key'), self::type(), offset: 42),
+        yield ScalarFieldNode::class => [
+            new ScalarFieldNode(new IntLiteralNode(0), self::type(), offset: 42),
         ];
 
-        yield TemplateArgumentListNode::class => [new TemplateArgumentListNode([], 42)];
+        yield TemplateArgumentListNode::class => [
+            new TemplateArgumentListNode([new TemplateArgumentNode(self::type())], 42),
+        ];
         yield TemplateArgumentNode::class => [new TemplateArgumentNode(self::type(), offset: 42)];
+        yield TemplateBoundEdgeNode::class => [
+            new TemplateBoundEdgeNode(new Identifier('of'), self::type(), 42),
+        ];
+        yield TemplateParameterListNode::class => [new TemplateParameterListNode([], 42)];
+        yield TemplateParameterNode::class => [
+            new TemplateParameterNode(new Identifier('T'), offset: 42),
+        ];
 
         yield UnionTypeNode::class => [new UnionTypeNode([self::type('A'), self::type('B')], 42)];
         yield IntersectionTypeNode::class => [

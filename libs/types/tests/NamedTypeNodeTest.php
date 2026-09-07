@@ -9,6 +9,7 @@ use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\FieldsListNode;
 use TypeLang\Type\Template\TemplateArgumentListNode;
+use TypeLang\Type\Template\TemplateArgumentNode;
 
 final class NamedTypeNodeTest extends TestCase
 {
@@ -40,7 +41,9 @@ final class NamedTypeNodeTest extends TestCase
     #[Test]
     public function constructorStoresTemplateArguments(): void
     {
-        $args = new TemplateArgumentListNode();
+        $args = new TemplateArgumentListNode([
+            new TemplateArgumentNode(new NamedTypeNode(Name::createFromString('int'))),
+        ]);
         $node = new NamedTypeNode(Name::createFromString('array'), $args);
 
         self::assertSame($args, $node->arguments);

@@ -246,37 +246,6 @@ final class LogicalTypeNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('provideLogicalTypes')]
-    public function serializePayloadContainsStatementsAndOffset(string $class): void
-    {
-        $node = new $class([$this->type('A'), $this->type('B')], 7);
-
-        self::assertSame([$node->statements, 7], $node->__serialize());
-    }
-
-    #[Test]
-    #[DataProvider('provideLogicalTypes')]
-    public function unserializeThrowsWhenStatementsAreMissing(string $class): void
-    {
-        $node = new $class([$this->type('A'), $this->type('B')]);
-
-        $this->expectException(\UnexpectedValueException::class);
-
-        $node->__unserialize([]);
-    }
-
-    #[Test]
-    #[DataProvider('provideLogicalTypes')]
-    public function unserializeDefaultsTheOffsetToZero(string $class): void
-    {
-        $node = new $class([$this->type('A'), $this->type('B')], 42);
-
-        $node->__unserialize([$node->statements]);
-
-        self::assertSame(0, $node->offset);
-    }
-
-    #[Test]
-    #[DataProvider('provideLogicalTypes')]
     public function theOffsetIsPassedThroughTheConstructor(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')], 42);

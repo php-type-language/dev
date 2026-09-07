@@ -7,44 +7,42 @@ namespace TypeLang\Type\Tests;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\ClassConstMaskNode;
 use TypeLang\Type\Identifier;
+use TypeLang\Type\MaskNode;
 use TypeLang\Type\Name;
+use TypeLang\Type\WildcardNode;
 
 final class ClassConstMaskNodeTest extends TestCase
 {
     #[Test]
-    public function constructorStoresClassWithConstant(): void
+    public function constructorStoresClassWithMask(): void
     {
         $class = Name::createFromString('MyClass');
-        $const = new Identifier('STATUS_');
-        $node = new ClassConstMaskNode($class, $const);
+        $mask = new MaskNode([new Identifier('STATUS_'), new WildcardNode()]);
+        $node = new ClassConstMaskNode($class, $mask);
 
         self::assertSame($class, $node->class);
-        self::assertSame($const, $node->constant);
+        self::assertSame($mask, $node->mask);
     }
 
     #[Test]
-    public function constantDefaultsToNull(): void
+    public function aMaskOfNothingButAWildcardCarriesNoSegments(): void
     {
-        $class = Name::createFromString('MyClass');
-        $node = new ClassConstMaskNode($class);
+        $node = new ClassConstMaskNode(
+            Name::createFromString('MyEnum'),
+            new MaskNode([new WildcardNode()]),
+        );
 
-        self::assertNull($node->constant);
-    }
-
-    #[Test]
-    public function constructorAcceptsNullConstant(): void
-    {
-        $class = Name::createFromString('MyEnum');
-        $node = new ClassConstMaskNode($class, null);
-
-        self::assertSame($class, $node->class);
-        self::assertNull($node->constant);
+        self::assertSame([], $node->mask->getSegments());
+        self::assertSame('*', $node->mask->toString());
     }
 
     #[Test]
     public function defaultOffsetIsZero(): void
     {
-        $node = new ClassConstMaskNode(Name::createFromString('Foo'));
+        $node = new ClassConstMaskNode(
+            Name::createFromString('Foo'),
+            new MaskNode([new WildcardNode()]),
+        );
 
         self::assertSame(0, $node->offset);
     }

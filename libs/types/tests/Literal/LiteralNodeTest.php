@@ -13,7 +13,6 @@ use TypeLang\Type\Literal\LiteralNode;
 use TypeLang\Type\Literal\LiteralNodeInterface;
 use TypeLang\Type\Literal\NullLiteralNode;
 use TypeLang\Type\Literal\StringLiteralNode;
-use TypeLang\Type\Literal\VariableLiteralNode;
 use TypeLang\Type\Tests\TestCase;
 use TypeLang\Type\TypeNode;
 
@@ -30,7 +29,6 @@ final class LiteralNodeTest extends TestCase
         yield 'int' => [new IntLiteralNode(42, '42', '42'), 42, '42'];
         yield 'null' => [new NullLiteralNode(), null, 'null'];
         yield 'string' => [new StringLiteralNode('example', '"example"'), 'example', '"example"'];
-        yield 'variable' => [new VariableLiteralNode('example'), 'example', '$example'];
     }
 
     #[Test]
@@ -111,15 +109,6 @@ final class LiteralNodeTest extends TestCase
 
         self::assertSame(0.5, $node->value);
         self::assertSame('0.5', $node->raw);
-    }
-
-    #[Test]
-    public function variableLiteralValueDoesNotContainDollarSign(): void
-    {
-        $node = new VariableLiteralNode('example');
-
-        self::assertSame('example', $node->value);
-        self::assertSame('$example', $node->raw);
     }
 
     #[Test]

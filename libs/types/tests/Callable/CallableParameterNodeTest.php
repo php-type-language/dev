@@ -6,7 +6,8 @@ namespace TypeLang\Type\Tests\Callable;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Callable\CallableParameterNode;
-use TypeLang\Type\Literal\VariableLiteralNode;
+use TypeLang\Type\Identifier;
+use TypeLang\Type\VariableNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
@@ -30,7 +31,7 @@ final class CallableParameterNodeTest extends TestCase
     #[Test]
     public function constructorWithNameOnly(): void
     {
-        $name = new VariableLiteralNode('param');
+        $name = new VariableNode(new Identifier('param'));
         $node = new CallableParameterNode(name: $name);
 
         self::assertNull($node->type);
@@ -41,7 +42,7 @@ final class CallableParameterNodeTest extends TestCase
     public function constructorWithTypeAndName(): void
     {
         $type = new NamedTypeNode(Name::createFromString('int'));
-        $name = new VariableLiteralNode('count');
+        $name = new VariableNode(new Identifier('count'));
         $node = new CallableParameterNode($type, $name);
 
         self::assertSame($type, $node->type);
