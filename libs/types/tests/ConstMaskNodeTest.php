@@ -23,12 +23,12 @@ final class ConstMaskNodeTest extends TestCase
     }
 
     #[Test]
-    public function namespaceIsNullByDefault(): void
+    public function aMaskIsWrittenWithNoNamespaceByDefault(): void
     {
         $node = new ConstMaskNode(new MaskNode([new WildcardNode(), new Identifier('_SOME')]));
 
-        self::assertNull($node->namespace);
-        self::assertFalse($node->isFullyQualified);
+        self::assertFalse($node->namespaceOrFullyQualified);
+        self::assertFalse($node->isFullyQualified());
     }
 
     #[Test]
@@ -40,47 +40,80 @@ final class ConstMaskNodeTest extends TestCase
             $namespace,
         );
 
-        self::assertSame($namespace, $node->namespace);
+        self::assertSame($namespace, $node->namespaceOrFullyQualified);
+        self::assertFalse($node->isFullyQualified());
     }
 
     /**
-     * The leading separator belongs to the node, so a namespace written with
-     * one is kept as a relative name and lifted into the flag.
+     * The leading separator belongs to the namespace, so the namespace is the
+     * one that says whether the reference is a fully qualified one.
      */
     #[Test]
-    public function aFullyQualifiedNamespaceFillsTheFlag(): void
+    public function theNamespaceSaysTheReferenceIsFullyQualified(): void
     {
         $node = new ConstMaskNode(
             new MaskNode([new Identifier('SOME_'), new WildcardNode()]),
             Name::createFromString('\Some\Any'),
         );
 
-        self::assertTrue($node->isFullyQualified);
-        self::assertNotNull($node->namespace);
-        self::assertFalse($node->namespace->isFullyQualified);
-        self::assertSame('Some\Any', $node->namespace->toString());
+        self::assertTrue($node->isFullyQualified());
     }
 
+    /**
+     * A mask written with no namespace has nothing to carry that separator,
+     * so it is passed on its own.
+     */
     #[Test]
-    public function aRelativeNamespaceLeavesTheFlagUnset(): void
-    {
-        $node = new ConstMaskNode(
-            new MaskNode([new Identifier('SOME_'), new WildcardNode()]),
-            Name::createFromString('Some\Any'),
-        );
-
-        self::assertFalse($node->isFullyQualified);
-    }
-
-    #[Test]
-    public function constructorStoresTheFullyQualifiedFlag(): void
+    public function aMaskWithNoNamespaceIsFullyQualifiedOnItsOwn(): void
     {
         $node = new ConstMaskNode(
             new MaskNode([new Identifier('SOME_'), new WildcardNode()]),
             true,
         );
 
-        self::assertTrue($node->isFullyQualified);
+        self::assertTrue($node->namespaceOrFullyQualified);
+        self::assertTrue($node->isFullyQualified());
+    }
+
+    #[Test]
+    public function theSeparatorIsSetOnTheNamespaceItIsWrittenWith(): void
+    {
+        $node = new ConstMaskNode(
+            new MaskNode([new Identifier('SOME_'), new WildcardNode()]),
+            Name::createFromString('Some\Any'),
+        );
+
+        $node->setFullyQualified();
+
+        self::assertTrue($node->isFullyQualified());
+        self::assertInstanceOf(Name::class, $node->namespaceOrFullyQualified);
+        self::assertSame('\Some\Any', $node->namespaceOrFullyQualified->toString());
+    }
+
+    #[Test]
+    public function theSeparatorIsTakenOffTheNamespaceItIsWrittenWith(): void
+    {
+        $node = new ConstMaskNode(
+            new MaskNode([new Identifier('SOME_'), new WildcardNode()]),
+            Name::createFromString('\Some\Any'),
+        );
+
+        $node->setFullyQualified(false);
+
+        self::assertFalse($node->isFullyQualified());
+        self::assertInstanceOf(Name::class, $node->namespaceOrFullyQualified);
+        self::assertSame('Some\Any', $node->namespaceOrFullyQualified->toString());
+    }
+
+    #[Test]
+    public function theSeparatorIsSetOnAMaskWrittenWithNoNamespace(): void
+    {
+        $node = new ConstMaskNode(new MaskNode([new Identifier('SOME_'), new WildcardNode()]));
+
+        $node->setFullyQualified();
+
+        self::assertTrue($node->namespaceOrFullyQualified);
+        self::assertTrue($node->isFullyQualified());
     }
 
     #[Test]
