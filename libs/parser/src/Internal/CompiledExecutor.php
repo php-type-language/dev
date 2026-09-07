@@ -8,9 +8,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Internal;
 
-use TypeLang\Type;
 use TypeLang\Parser\Exception;
-use TypeLang\Parser\Internal;
+use TypeLang\Type;
 
 \interface_exists(\Phplrt\Contracts\Source\Exception\SourceExceptionInterface::class);
 \interface_exists(\Phplrt\Contracts\Source\ReadableInterface::class);
@@ -31,7 +30,7 @@ use TypeLang\Parser\Internal;
  *
  * @template-implements \Phplrt\Contracts\Parser\ParserInterface<TResult>
  */
-abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterface
+abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterface
 {
     /** @var int */
     public const T_WHITESPACE = 0;
@@ -2115,6 +2114,7 @@ abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         if ($this->features->literals === false) {
             throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('literal values', $offset);
         }
+
         return $children;
     }
 
@@ -2124,7 +2124,7 @@ abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $offset = $ctx->begin;
 
         return new Type\Literal\StringLiteralNode(
-            Internal\StringDecoder::unpackAndDecode($children->value, true),
+            StringDecoder::unpackAndDecode($children->value, true),
             $children->value,
             $offset,
         );
@@ -2136,7 +2136,7 @@ abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $offset = $ctx->begin;
 
         return new Type\Literal\StringLiteralNode(
-            Internal\StringDecoder::unpackAndDecode($children->value, false),
+            StringDecoder::unpackAndDecode($children->value, false),
             $children->value,
             $offset,
         );
@@ -2148,7 +2148,7 @@ abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $offset = $ctx->begin;
 
         return new Type\Literal\FloatLiteralNode(
-            Internal\FloatDecoder::decode($children->value),
+            FloatDecoder::decode($children->value),
             $children->value,
             $offset,
         );
@@ -2159,7 +2159,7 @@ abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         // The variables below are declared by the compiler
         $offset = $ctx->begin;
 
-        $decoded = Internal\IntDecoder::decode($children->value);
+        $decoded = IntDecoder::decode($children->value);
 
         return new Type\Literal\IntLiteralNode(
             $decoded->value,
@@ -2217,15 +2217,15 @@ abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             case $suffix === null:
                 return new Type\NamedTypeNode($children[0], null, null, $offset);
 
-            // Some\Any<T, U>
+                // Some\Any<T, U>
             case $suffix instanceof Type\Template\TemplateArgumentListNode:
                 return new Type\NamedTypeNode($children[0], $suffix, null, $offset);
 
-            // Some\Any{name: T, ...<K, V>}
+                // Some\Any{name: T, ...<K, V>}
             case $suffix instanceof Type\Shape\FieldsListNode:
                 return new Type\NamedTypeNode($children[0], $children[2] ?? null, $suffix, $offset);
 
-            // Some\Any(T, U): V
+                // Some\Any(T, U): V
             case $suffix instanceof Type\Callable\CallableParameterListNode:
                 if ($this->features->callables === false) {
                     throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $offset);
@@ -2233,7 +2233,7 @@ abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterf
 
                 return new Type\CallableTypeNode($children[0], $suffix, $children[2] ?? null, null, $offset);
 
-            // Some\Any<T, U>(T): U
+                // Some\Any<T, U>(T): U
             case $suffix instanceof Type\Template\TemplateParameterListNode:
                 if ($this->features->callables === false) {
                     throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $offset);
@@ -2241,7 +2241,7 @@ abstract class CompilerExecutor implements \Phplrt\Contracts\Parser\ParserInterf
 
                 return new Type\CallableTypeNode($children[0], $children[2], $children[3] ?? null, $suffix, $offset);
 
-            // Some\Any::CONST, Some\Any::CONST_* and Some\Any::*
+                // Some\Any::CONST, Some\Any::CONST_* and Some\Any::*
             default:
                 if (\count($children) === 3 && $children[2] instanceof Type\Identifier) {
                     return new Type\ClassConstNode($children[0], $children[2], $offset);

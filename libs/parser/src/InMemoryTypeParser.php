@@ -10,6 +10,8 @@ use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
+use TypeLang\Parser\Partial\ParsedResult;
+use TypeLang\Parser\Validation\CheckResult;
 use TypeLang\Type\TypeNode;
 
 final class InMemoryTypeParser implements TypeParserInterface
@@ -28,6 +30,11 @@ final class InMemoryTypeParser implements TypeParserInterface
      * @var array<non-empty-string, ParsedResult>
      */
     private array $sequences = [];
+
+    /**
+     * @var array<non-empty-string, CheckResult>
+     */
+    private array $checks = [];
 
     private readonly SourceFactoryInterface $sources;
 
@@ -55,11 +62,23 @@ final class InMemoryTypeParser implements TypeParserInterface
      * @throws SourceExceptionInterface
      * @throws \Throwable
      */
-    public function parseTolerant(#[Language('PHP')] mixed $source): ParsedResult
+    public function partial(#[Language('PHP')] mixed $source): ParsedResult
     {
         $instance = $this->sources->create($source);
 
-        return $this->sequences[$this->hash($instance)] ??= $this->parser->parseTolerant($source);
+        return $this->sequences[$this->hash($instance)] ??= $this->parser->partial($source);
+    }
+
+    /**
+     * @throws ParserExceptionInterface
+     * @throws SourceExceptionInterface
+     * @throws \Throwable
+     */
+    public function validate(#[Language('PHP')] mixed $source): CheckResult
+    {
+        $instance = $this->sources->create($source);
+
+        return $this->checks[$this->hash($instance)] ??= $this->parser->validate($source);
     }
 
     /**

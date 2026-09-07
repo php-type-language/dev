@@ -4,14 +4,33 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Internal;
 
-use Phplrt\Contracts\Parser\Exception\ParserExceptionInterface;
-use Phplrt\Contracts\Parser\Exception\RuntimeExceptionInterface;
+use Phplrt\Contracts\Lexer\Channel;
+use Phplrt\Contracts\Position\PositionInterface;
+use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Parser\Analysis\Mode;
 use Phplrt\Parser\Analysis\Result\FailureResult;
+use Phplrt\Parser\Analysis\Result\PartialResult;
 use Phplrt\Parser\Analysis\Result\SuccessfulResult;
+use Phplrt\Parser\Exception\UnexpectedTokenException as GrammarUnexpectedTokenException;
 use Phplrt\Parser\Parser as ParserRuntime;
+use Phplrt\Position\PositionFactory;
+use TypeLang\Parser\Exception\InternalParseException;
+use TypeLang\Parser\Exception\ParseException;
+use TypeLang\Parser\Exception\SemanticException;
+use TypeLang\Parser\Exception\SemanticParseException;
+use TypeLang\Parser\Exception\UnexpectedTokenException;
+use TypeLang\Parser\Exception\UnrecognizedSyntaxException;
+use TypeLang\Parser\Exception\UnrecognizedTokenException;
+use TypeLang\Parser\Partial\FailureParsedResult;
+use TypeLang\Parser\Partial\ParsedResult;
+use TypeLang\Parser\Partial\PartialParsedResult;
+use TypeLang\Parser\Partial\SuccessfulParsedResult;
 use TypeLang\Parser\TypeParserFeatures;
+use TypeLang\Parser\Validation\CheckResult;
+use TypeLang\Parser\Validation\FailureCheckResult;
+use TypeLang\Parser\Validation\PartialCheckResult;
+use TypeLang\Parser\Validation\SuccessfulCheckResult;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -21,37 +40,213 @@ use TypeLang\Type\TypeNode;
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Parser
  *
- * @template-extends CompilerExecutor<TypeNode>
+ * @template-extends CompiledExecutor<TypeNode>
+ *
+ * @property-read ParserRuntime<TypeNode> $parser
  */
-final class Executor extends CompilerExecutor
+final class Executor extends CompiledExecutor
 {
+    private readonly PositionFactory $positions;
+
     public function __construct(
         /**
          * @api this property is accessible inside the grammar reducers
          */
         protected readonly TypeParserFeatures $features,
     ) {
+        $this->positions = new PositionFactory();
+
         parent::__construct();
     }
 
     /**
-     * Reads as much of the given source as the grammar describes and reports
-     * what it has been made of.
+     * Reads the source whole and returns the type it is written of.
      *
-     * @throws ParserExceptionInterface in case of the parser cannot be built
-     * @throws RuntimeExceptionInterface in case of the source cannot be read
-     * @throws \Throwable in case of an internal error occurs
+     * @throws ParseException in case of the source is no type of its own
      */
-    public function analyze(
-        ReadableInterface $source,
-        Mode $mode = Mode::Tolerant,
-    ): SuccessfulResult|FailureResult {
-        $parser = $this->parser;
+    public function parse(ReadableInterface $source): TypeNode
+    {
+        $result = $this->build($source);
 
-        if (!$parser instanceof ParserRuntime) {
-            throw new \LogicException('The compiled grammar must be built on top of the phplrt parser');
+        if (!$result instanceof SuccessfulResult || $result instanceof PartialResult) {
+            throw $this->createError($result, $source);
         }
 
-        return $parser->analyze($source, $mode);
+        return $result->value;
+    }
+
+    /**
+     * Reads as much of the source as the grammar describes and returns the
+     * type that part is written of.
+     *
+     * @throws ParseException in case of an internal error occurs
+     */
+    public function partial(ReadableInterface $source): ParsedResult
+    {
+        $result = $this->build($source);
+
+        if ($result instanceof PartialResult) {
+            return new PartialParsedResult(
+                type: $result->value,
+                offset: $result->token->offset,
+            );
+        }
+
+        if ($result instanceof SuccessfulResult) {
+            return new SuccessfulParsedResult($result->value, $this->length($source));
+        }
+
+        return new FailureParsedResult(
+            message: $this->createError($result, $source)->getMessage(),
+            position: $this->createPosition($source, $result->token->offset),
+            offset: $result->token->offset,
+        );
+    }
+
+    /**
+     * Tells whether the source is a type the grammar describes, building
+     * nothing of it.
+     *
+     * @throws ParseException in case of an internal error occurs
+     */
+    public function validate(ReadableInterface $source): CheckResult
+    {
+        $result = $this->check($source);
+
+        if ($result instanceof SuccessfulResult && !$result instanceof PartialResult) {
+            return new SuccessfulCheckResult();
+        }
+
+        $error = $this->createError($result, $source);
+        $offset = $result->token->offset;
+        $position = $this->createPosition($source, $offset);
+
+        if ($result instanceof PartialResult) {
+            return new PartialCheckResult(
+                message: $error->getMessage(),
+                position: $position,
+                offset: $offset,
+            );
+        }
+
+        return new FailureCheckResult(
+            message: $error->getMessage(),
+            position: $position,
+            offset: $offset,
+        );
+    }
+
+    /**
+     * Reads the source into the type it describes.
+     *
+     * @return SuccessfulResult<TypeNode>|FailureResult
+     * @throws ParseException in case of the grammar cannot be run
+     */
+    private function build(ReadableInterface $source): SuccessfulResult|FailureResult
+    {
+        assert($this->parser instanceof ParserRuntime);
+
+        try {
+            return $this->parser->analyze($source, Mode::Tolerant);
+        } catch (\Throwable $e) {
+            throw $this->raised($e, $source);
+        }
+    }
+
+    /**
+     * Reads the source without building anything of it.
+     *
+     * @return SuccessfulResult<null>|FailureResult
+     * @throws ParseException in case of the grammar cannot be run
+     */
+    private function check(ReadableInterface $source): SuccessfulResult|FailureResult
+    {
+        assert($this->parser instanceof ParserRuntime);
+
+        try {
+            return $this->parser->analyze($source, Mode::SyntaxCheck);
+        } catch (\Throwable $e) {
+            throw $this->raised($e, $source);
+        }
+    }
+
+    /**
+     * Converts whatever the grammar raises while it reads into the error of
+     * this parser.
+     */
+    private function raised(\Throwable $e, ReadableInterface $source): ParseException
+    {
+        return match (true) {
+            $e instanceof ParseException => $e,
+            $e instanceof SemanticException
+                => SemanticParseException::becauseSemanticErrorOccurs($e, $source),
+            $e instanceof SourceExceptionInterface
+                => InternalParseException::becauseSourceIsUnreadable($e),
+            default => InternalParseException::becauseInternalErrorOccurs(
+                statement: $source->content,
+                e: $e,
+            ),
+        };
+    }
+
+    /**
+     * Returns the length of the source, which is the offset a reading that
+     * has stopped at nothing ends at.
+     *
+     * @return int<0, max>
+     * @throws ParseException in case of the source cannot be read
+     */
+    private function length(ReadableInterface $source): int
+    {
+        try {
+            return \strlen($source->content);
+        } catch (\Throwable $e) {
+            throw $this->raised($e, $source);
+        }
+    }
+
+    /**
+     * @param int<0, max> $offset
+     *
+     * @throws SourceExceptionInterface
+     */
+    private function createPosition(ReadableInterface $source, int $offset): PositionInterface
+    {
+        return $this->positions->createFromOffset($source, $offset);
+    }
+
+    /**
+     * Converts the error of the grammar into the error of this parser.
+     *
+     * @param FailureResult|PartialResult<mixed> $result
+     *
+     * @throws SourceExceptionInterface
+     */
+    private function createError(FailureResult|PartialResult $result, ReadableInterface $source): ParseException
+    {
+        $error = $result->error;
+
+        if (!$error instanceof GrammarUnexpectedTokenException) {
+            return UnrecognizedSyntaxException::becauseSyntaxIsUnrecognized(
+                statement: $source->content,
+                offset: $error->token->offset,
+            );
+        }
+
+        // An input the lexer says nothing about is reported as an unrecognized
+        // one rather than as a token in a wrong place.
+        if ($error->token->channel === Channel::Unknown) {
+            return UnrecognizedTokenException::becauseTokenIsUnrecognized(
+                token: $error->token->value,
+                statement: $source->content,
+                offset: $error->token->offset,
+            );
+        }
+
+        return UnexpectedTokenException::becauseTokenIsUnexpected(
+            token: $error->token->value,
+            statement: $source->content,
+            offset: $error->token->offset,
+        );
     }
 }
