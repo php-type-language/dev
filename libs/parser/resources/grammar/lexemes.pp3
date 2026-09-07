@@ -12,6 +12,9 @@
 %fragment IDENT_HEAD    [a-zA-Z_\x80-\xff]
 %fragment IDENT_TAIL    [a-zA-Z0-9\-_\x80-\xff]
 
+// The "foo_1" of a "$foo_1", which carries no dash
+%fragment VAR_TAIL      [a-zA-Z0-9_\x80-\xff]
+
 %fragment KEYWORD_END   (?!(?&IDENT_TAIL))
 
 //
@@ -56,10 +59,10 @@
 
 %skip   T_WHITESPACE            \s++
 
-// An "is not" or an "IS NOT"
-%token  T_NEQ                   (?i:is\h++not)(?&KEYWORD_END)
-// An "is" or an "IS"
-%token  T_EQ                    (?i:is)(?&KEYWORD_END)
+// An "is"
+%token  T_EQ                    is(?&KEYWORD_END)
+// A "not"
+%token  T_NOT                   not(?&KEYWORD_END)
 // A "true" or a "TRUE"
 %token  T_TRUE_LITERAL          (?i:true)(?&KEYWORD_END)
 // A "false" or a "FALSE"
@@ -95,9 +98,9 @@
 // Variables
 
 // A "$this"
-%token  T_THIS                  \$this\b
+%token  T_THIS                  \$this(?!(?&VAR_TAIL))
 // A "$value" or a "$_"
-%token  T_VARIABLE              \$(?&IDENT_HEAD)(?&IDENT_TAIL)*+
+%token  T_VARIABLE              \$(?&IDENT_HEAD)(?&VAR_TAIL)*+
 
 // Literals
 
