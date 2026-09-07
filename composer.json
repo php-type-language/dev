@@ -29,11 +29,12 @@
     },
     "autoload-dev": {
         "psr-4": {
-             "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
-             "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
-             "TypeLang\\PhpDoc\\Tests\\": "libs/phpdoc/tests",
-             "TypeLang\\Reader\\Tests\\": "libs/reader/tests",
-             "TypeLang\\Type\\Tests\\": "libs/types/tests"
+            "TypeLang\\Bench\\": "bench",
+            "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
+            "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
+            "TypeLang\\PhpDoc\\Tests\\": "libs/phpdoc/tests",
+            "TypeLang\\Reader\\Tests\\": "libs/reader/tests",
+            "TypeLang\\Type\\Tests\\": "libs/types/tests"
         }
     },
     "extra": {
@@ -56,7 +57,7 @@
         "phpcs:check": ["phpcs", "cs", "psr", "per"]
     },
     "scripts": {
-        "bench": "phpbench run libs/phpdoc/tests --report=default",
+        "bench": "phpbench run ./bench --report=compare",
         "test:unit": "phpunit --testdox",
         "linter:check": "phpstan analyse --configuration phpstan.neon --memory-limit 256M",
         "linter:baseline": "@linter:check --generate-baseline",

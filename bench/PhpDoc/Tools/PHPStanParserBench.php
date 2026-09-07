@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\PhpDoc\Tests\Bench;
+namespace TypeLang\Bench\PhpDoc\Tools;
 
 use PhpBench\Attributes\BeforeMethods;
+use PhpBench\Attributes\Groups;
 use PhpBench\Attributes\Iterations;
+use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\RetryThreshold;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
@@ -16,8 +18,8 @@ use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 use PHPStan\PhpDocParser\ParserConfig;
 
-#[Revs(20), Warmup(5), Iterations(15), BeforeMethods('prepare'), RetryThreshold(2)]
-final readonly class PHPStanParserBench extends DocBlockParserBench
+#[Groups(['phpstan']), Revs(500), Warmup(50), Iterations(15), BeforeMethods('prepare'), RetryThreshold(2)]
+final class PHPStanParserBench extends DocBlockParserBench
 {
     private Lexer $lexer;
     private PhpDocParser $parser;
@@ -37,9 +39,10 @@ final readonly class PHPStanParserBench extends DocBlockParserBench
         $this->parser = new PhpDocParser($config, $typeParser, $constExprParser);
     }
 
-    public function benchParseDocBlock(): void
+    #[ParamProviders('docBlocksDataProvider')]
+    public function benchParseDocBlock(array $params): void
     {
-        $iterator = new TokenIterator($this->lexer->tokenize(self::DOC_BLOCK_SAMPLE));
+        $iterator = new TokenIterator($this->lexer->tokenize($params['docblock']));
 
         $this->parser->parse($iterator);
     }
