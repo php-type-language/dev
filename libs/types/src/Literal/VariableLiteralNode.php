@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
+ * A variable, standing in a condition or naming a callable parameter.
+ *
+ * ```
+ *  $value  // value: "value", raw: "$value"
+ * ```
+ *
  * @template-extends LiteralNode<non-empty-string>
  *
  * @phpstan-consistent-constructor
