@@ -8,9 +8,19 @@ use TypeLang\Type\Identifier;
 use TypeLang\Type\TypeNode;
 
 /**
+ * A field of a shape keyed by a bare word.
+ *
+ * ```
+ *  array{name: string}
+ *  //    ^^^^ the key
+ * ```
+ *
+ * A `true`, a `false` and a `null` are bare words as well: In the place of
+ * a key they name nothing but themselves.
+ *
  * @template-extends ExplicitFieldNode<Identifier>
  */
-final class NamedFieldNode extends ExplicitFieldNode
+final class NamedFieldNode extends ExplicitFieldNode implements SimpleFieldNodeInterface
 {
     /**
      * @param int<0, max> $offset
