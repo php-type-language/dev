@@ -119,6 +119,11 @@ final class NativeTypePrinterTest extends TestCase
         self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('FOO_*')));
     }
 
+    public function testPrintWildcardAsMixed(): void
+    {
+        self::assertSame('mixed', (new NativeTypePrinter())->print(new \TypeLang\Type\WildcardNode()));
+    }
+
     public function testPrintTypeOffsetAccessAsMixed(): void
     {
         self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('Foo[Bar]')));

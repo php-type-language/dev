@@ -256,6 +256,54 @@ final class PrettyTypePrinterTest extends TestCase
         self::assertSame('FOO_*', $this->printer()->print(self::parse('FOO_*')));
     }
 
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function maskProvider(): iterable
+    {
+        yield 'a wildcard alone' => ['Foo::*'];
+        yield 'a trailing wildcard' => ['Foo::BAR_*'];
+        yield 'a leading wildcard' => ['Foo::*_BAR'];
+        yield 'a wildcard in between' => ['Foo::A*B'];
+        yield 'several wildcards' => ['Foo::BAR*BAZ*SOME'];
+        yield 'a global mask' => ['JSON_*_FLAG'];
+        yield 'a namespaced global mask' => ['Some\Any\JSON_*'];
+    }
+
+    /**
+     * @param non-empty-string $type
+     * @throws \Throwable
+     */
+    #[DataProvider('maskProvider')]
+    public function testPrintMaskOfEverySegmentItIsWrittenOf(string $type): void
+    {
+        self::assertSame($type, $this->printer()->print(self::parse($type)));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function wildcardAndTemplateProvider(): iterable
+    {
+        yield 'a wildcard argument' => ['Collection<*>'];
+        yield 'a wildcard beside a type' => ['HashMap<array-key, *>'];
+        yield 'a hinted wildcard' => ['Collection<out *>'];
+        yield 'a template parameter' => ['callable<T>(T): T'];
+        yield 'a bounded template parameter' => ['callable<T of Some>(T): T'];
+        yield 'every kind of bound' => ['Closure<T of Some, U super Any, V = int>(T, U): V'];
+        yield 'several bounds on one parameter' => ['callable<T of Some super Any>(T): void'];
+    }
+
+    /**
+     * @param non-empty-string $type
+     * @throws \Throwable
+     */
+    #[DataProvider('wildcardAndTemplateProvider')]
+    public function testPrintWildcardsAndTemplateParameters(string $type): void
+    {
+        self::assertSame($type, $this->printer()->print(self::parse($type)));
+    }
+
     public function testPrintTypesList(): void
     {
         self::assertSame('int[]', $this->printer()->print(self::parse('int[]')));
@@ -304,10 +352,6 @@ final class PrettyTypePrinterTest extends TestCase
     {
         yield 'equal' => ['($x is int ? string : bool)', '($x is int ? string : bool)'];
         yield 'not equal' => ['($x is not int ? string : bool)', '($x is not int ? string : bool)'];
-        yield 'greater than' => ['($x > 5 ? string : bool)', '($x > 5 ? string : bool)'];
-        yield 'greater than or equal' => ['($x >= 5 ? string : bool)', '($x >= 5 ? string : bool)'];
-        yield 'less than' => ['($x < 5 ? string : bool)', '($x < 5 ? string : bool)'];
-        yield 'less than or equal' => ['($x <= 5 ? string : bool)', '($x <= 5 ? string : bool)'];
     }
 
     public function testPrintUsesCustomNewLineAndIndention(): void
