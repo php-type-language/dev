@@ -30,7 +30,7 @@ final class TypeOffsetAccessNode extends WrappingTypeNode
          * it is not taken for the place in the source text every node
          * carries.
          */
-        public readonly TypeNode $access,
+        public TypeNode $access,
         int $offset = 0,
     ) {
         parent::__construct($type, $offset);
