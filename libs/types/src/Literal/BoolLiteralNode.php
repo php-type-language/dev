@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
- * @template-extends LiteralNode<bool>
+ * A `true` or a `false`, in any case they are written in.
+ *
+ * ```
+ *  TruE  // value: true, raw: "TruE"
+ * ```
+ *
+ * @template-extends ScalarNode<bool>
  *
  * @phpstan-consistent-constructor
  */
-final class BoolLiteralNode extends LiteralNode
+final class BoolLiteralNode extends ScalarNode
 {
     /**
      * @param int<0, max> $offset

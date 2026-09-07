@@ -5,11 +5,18 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
- * @template-extends LiteralNode<float>
+ * A floating point number.
+ *
+ * ```
+ *  -1.5e+3  // value: -1500.0, raw: "-1.5e+3"
+ *  .42      // value: 0.42,    raw: ".42"
+ * ```
+ *
+ * @template-extends ScalarNode<float>
  *
  * @phpstan-consistent-constructor
  */
-final class FloatLiteralNode extends LiteralNode
+final class FloatLiteralNode extends ScalarNode
 {
     /**
      * @param int<0, max> $offset

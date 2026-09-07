@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
+ * A `null`, in any case it is written in.
+ *
+ * ```
+ *  NulL  // value: null, raw: "NulL"
+ * ```
+ *
  * @template-extends LiteralNode<null>
  */
 final class NullLiteralNode extends LiteralNode

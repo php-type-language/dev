@@ -5,13 +5,23 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
- * @template-extends LiteralNode<int>
+ * A whole number, written in any of the four radixes.
+ *
+ * ```
+ *  0xFE_DE  // value: 65246, raw: "0xFE_DE", decimal: "65246"
+ *  042      // value: 34,    raw: "042",     decimal: "34"
+ * ```
+ *
+ * @template-extends ScalarNode<int>
  *
  * @phpstan-consistent-constructor
  */
-final class IntLiteralNode extends LiteralNode
+final class IntLiteralNode extends ScalarNode
 {
     /**
+     * The value written out in base 10, so that a number too large for the
+     * platform's `int` is still readable in full.
+     *
      * @var numeric-string
      */
     public readonly string $decimal;

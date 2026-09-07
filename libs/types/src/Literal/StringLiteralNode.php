@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
- * @template-extends LiteralNode<string>
+ * A string, kept both decoded and as it is written.
+ *
+ * ```
+ *  "\x41\x42"  // value: "AB", raw: "\"\x41\x42\""
+ * ```
+ *
+ * @template-extends ScalarNode<string>
  *
  * @phpstan-consistent-constructor
  */
-final class StringLiteralNode extends LiteralNode
+final class StringLiteralNode extends ScalarNode
 {
     /**
      * @param int<0, max> $offset

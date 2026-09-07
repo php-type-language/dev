@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
+ * A value standing where a type is expected.
+ *
  * @template-covariant TValue of mixed = mixed
  *
  * @property-read TValue $value Gets a PHP representation of the literal value.
