@@ -14,10 +14,6 @@ namespace TypeLang\Type;
  *  ($value is int ? string : bool)
  *  //^^^^^ stands as the subject of a condition
  * ```
- *
- * A variable is no type: It names a place a value is kept in, and the type
- * of what is kept there is what a statement is about. The one variable that
- * is a type of its own is the `$this`, and that one is a {@see ThisNode}.
  */
 final class VariableNode extends Node
 {
@@ -26,7 +22,7 @@ final class VariableNode extends Node
      */
     public function __construct(
         /**
-         * The name of the variable, written without the `$` it begins with.
+         * The name of the variable, written without the leading `$`.
          */
         public Identifier $name,
         int $offset = 0,
