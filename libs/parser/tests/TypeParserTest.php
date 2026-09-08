@@ -6,7 +6,7 @@ namespace TypeLang\Parser\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Phplrt\Source\SourceFactory;
-use TypeLang\Parser\Exception\ParseException;
+use TypeLang\Parser\Exception\ParserException;
 use TypeLang\Parser\Partial\FailureParsedResult;
 use TypeLang\Parser\Partial\PartialParsedResult;
 use TypeLang\Parser\Partial\SuccessfulParsedResult;
@@ -71,7 +71,7 @@ final class TypeParserTest extends TestCase
     {
         $parser = (new TypeParser())->withFeatures(shapes: false);
 
-        $this->expectException(ParseException::class);
+        $this->expectException(ParserException::class);
 
         $parser->parse('array{a: int}');
     }

@@ -233,7 +233,7 @@ final class TriviaTest extends SyntaxTestCase
 
     public function testAnUnterminatedBlockCommentIsRefused(): void
     {
-        $this->expectParsingException('unrecognized "/*"');
+        $this->expectParsingException('unexpected "/*"');
 
         $this->parse('/* the comment that never ends');
     }

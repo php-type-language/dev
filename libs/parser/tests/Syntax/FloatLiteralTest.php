@@ -73,7 +73,7 @@ final class FloatLiteralTest extends SyntaxTestCase
 
     public function testLeadingAndTrailingNumberCannotBothBeOmitted(): void
     {
-        $this->expectParsingException('unrecognized "."');
+        $this->expectParsingException('unexpected "."');
 
         $this->parse('.');
     }

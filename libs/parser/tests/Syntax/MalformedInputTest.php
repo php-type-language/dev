@@ -47,34 +47,68 @@ final class MalformedInputTest extends SyntaxTestCase
      * A type that is cut short ends where the input does, so the reading
      * stops at the end of it rather than at a token.
      *
-     * @return iterable<non-empty-string, array{non-empty-string}>
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string}>
      */
     public static function truncatedInputDataProvider(): iterable
     {
-        yield 'a dangling union' => ['int|'];
-        yield 'a dangling intersection' => ['int&'];
-        yield 'a question mark alone' => ['?'];
-        yield 'an unclosed shape' => ['array{'];
-        yield 'an unclosed field' => ['array{a:'];
-        yield 'an unclosed argument list' => ['Some<'];
-        yield 'an unclosed parameter list' => ['callable('];
-        yield 'an unclosed offset' => ['int['];
-        yield 'an unclosed group' => ['(int'];
-        yield 'a name that is a separator short' => ['Some\\'];
-        yield 'a class constant that is a name short' => ['Some::'];
-        yield 'a condition without its branches' => ['A is B ?'];
-        yield 'a condition of a single branch' => ['A is B ? C'];
-        yield 'a condition without its comparand' => ['A is'];
+        yield 'a condition without its comparand' => ['A is', 'unexpected end of input'];
+
+        // The grammar describes what is missing wherever it can, and the
+        // message it carries is reported instead of the token that is absent.
+        yield 'a dangling union' => [
+            'int|',
+            'a union type must carry a type after the vertical bar "|"',
+        ];
+        yield 'a dangling intersection' => [
+            'int&',
+            'an intersection type must carry a type after the ampersand "&"',
+        ];
+        yield 'a question mark alone' => [
+            '?',
+            'a nullable type must carry the type it makes nullable',
+        ];
+        yield 'a name that is a separator short' => [
+            'Some\\',
+            'a name must carry a segment after the separator',
+        ];
+        yield 'a class constant that is a name short' => [
+            'Some::',
+            'a class constant must carry a name after the double colon',
+        ];
+        yield 'an unclosed shape' => ['array{', 'a shape must be closed with a brace "}"'];
+        yield 'an unclosed field' => [
+            'array{a:',
+            'a shape field must carry a type after the colon ":"',
+        ];
+        yield 'an unclosed argument list' => [
+            'Some<',
+            'an argument list must carry at least one argument',
+        ];
+        yield 'an unclosed parameter list' => [
+            'callable(',
+            'a parameter list must be closed with a bracket ")"',
+        ];
+        yield 'an unclosed offset' => ['int[', 'an offset must be closed with a bracket "]"'];
+        yield 'an unclosed group' => ['(int', 'a group must be closed with a bracket ")"'];
+        yield 'a condition without its branches' => [
+            'A is B ?',
+            'a condition must carry the type it is true of',
+        ];
+        yield 'a condition of a single branch' => [
+            'A is B ? C',
+            'a condition must be parted with a colon ":"',
+        ];
     }
 
     /**
      * @param non-empty-string $type
+     * @param non-empty-string $message
      * @throws \Throwable
      */
     #[DataProvider('truncatedInputDataProvider')]
-    public function testATruncatedTypeIsRefused(string $type): void
+    public function testATruncatedTypeIsRefused(string $type, string $message): void
     {
-        $this->expectParsingException('unexpected end of input');
+        $this->expectParsingException($message);
 
         $this->parse($type);
     }
@@ -118,7 +152,7 @@ final class MalformedInputTest extends SyntaxTestCase
         yield 'an angle bracket too many' => ['Some<int>>', 'unexpected ">"'];
         yield 'a brace too many' => ['array{a: int}}', 'unexpected "}"'];
         yield 'a bracket too many' => ['int[]]', 'unexpected "]"'];
-        yield 'an empty argument list' => ['Some<>', 'unexpected ">"'];
+        yield 'an empty argument list' => ['Some<>', 'an argument list must carry at least one argument'];
         yield 'an empty group' => ['()', 'unexpected ")"'];
         yield 'a constant of a generic type' => ['Some<T>::CONST', 'unexpected "::"'];
         yield 'a second type' => ['int string', 'unexpected "string"'];

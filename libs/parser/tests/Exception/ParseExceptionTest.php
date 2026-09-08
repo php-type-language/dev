@@ -5,137 +5,201 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Exception;
 
 use PHPUnit\Framework\Attributes\Test;
+use Phplrt\Contracts\Lexer\Channel;
+use Phplrt\Contracts\Lexer\ChannelInterface;
+use Phplrt\Contracts\Lexer\TokenInterface;
+use Phplrt\Contracts\Source\ReadableInterface;
+use Phplrt\Lexer\Token\Token;
 use Phplrt\Source\SourceFactory;
 use TypeLang\Parser\Exception\InternalParseException;
-use TypeLang\Parser\Exception\ParseException;
-use TypeLang\Parser\Exception\ParserExceptionInterface;
-use TypeLang\Parser\Exception\SemanticParseException;
-use TypeLang\Parser\Exception\ShapeFieldDuplicationException;
+use TypeLang\Parser\Exception\ParserException;
 use TypeLang\Parser\Exception\UnexpectedTokenException;
+use TypeLang\Parser\Exception\UnreadableSourceException;
 use TypeLang\Parser\Exception\UnrecognizedSyntaxException;
 use TypeLang\Parser\Exception\UnrecognizedTokenException;
 use TypeLang\Parser\Tests\TestCase;
 
 final class ParseExceptionTest extends TestCase
 {
-    #[Test]
-    public function everyParseExceptionIsAParserException(): void
+    private static function source(string $statement): ReadableInterface
     {
-        $exception = InternalParseException::becauseInternalErrorOccurs('int', new \LogicException());
+        return SourceFactory::createDefault()->create($statement);
+    }
 
-        self::assertInstanceOf(ParserExceptionInterface::class, $exception);
+    /**
+     * @param int<0, max> $offset
+     * @param non-empty-string|null $name
+     */
+    private static function token(
+        string $value,
+        int $offset = 0,
+        ?string $name = 'T_NAME',
+        ChannelInterface $channel = Channel::Default,
+    ): TokenInterface {
+        return new Token(
+            id: 0,
+            name: $name,
+            channel: $channel,
+            value: $value,
+            offset: $offset,
+        );
+    }
+
+    private static function unexpected(string $statement, string $message = 'Syntax error'): UnexpectedTokenException
+    {
+        return UnexpectedTokenException::becauseTokenIsUnexpected(
+            message: $message,
+            source: self::source($statement),
+            token: self::token('foo', 4),
+        );
+    }
+
+    #[Test]
+    public function everyParseExceptionIsALogicError(): void
+    {
+        $exception = InternalParseException::becauseInternalErrorOccurs(
+            self::source('int'),
+            new \LogicException(),
+        );
+
+        self::assertInstanceOf(ParserException::class, $exception);
         self::assertInstanceOf(\LogicException::class, $exception);
     }
 
     #[Test]
-    public function theUnexpectedTokenIsReportedWithItsLocation(): void
+    public function theMessageCarriesTheSourceButNoPlace(): void
     {
-        $exception = UnexpectedTokenException::becauseTokenIsUnexpected('foo', 'int|foo', 4);
+        $source = self::source('int|foo');
+        $token = self::token('foo', 4);
+
+        $exception = UnexpectedTokenException::becauseTokenIsUnexpected(
+            message: 'Syntax error, unexpected "foo" (T_NAME)',
+            source: $source,
+            token: $token,
+        );
 
         self::assertSame(
-            'Syntax error, unexpected "foo" in "int|foo" at column 5',
+            'Syntax error, unexpected "foo" (T_NAME) in "int|foo"',
             $exception->getMessage(),
         );
-        self::assertSame(ParseException::ERROR_CODE_UNEXPECTED_TOKEN, $exception->getCode());
+        self::assertSame($source, $exception->source);
+        self::assertSame($token, $exception->token);
     }
 
     #[Test]
-    public function theStatementIsOmittedInCaseOfItEqualsTheToken(): void
+    public function theRenderedErrorCarriesTheLocation(): void
     {
-        $exception = UnexpectedTokenException::becauseTokenIsUnexpected('foo', 'foo', 0);
+        $exception = self::unexpected('int|foo');
 
-        self::assertSame('Syntax error, unexpected "foo" at column 1', $exception->getMessage());
-    }
-
-    #[Test]
-    public function theEndOfInputIsReportedInsteadOfANullToken(): void
-    {
-        $exception = UnexpectedTokenException::becauseTokenIsUnexpected("\0", 'int|', 4);
-
-        self::assertSame(
-            'Syntax error, unexpected end of input in "int|" at column 5',
-            $exception->getMessage(),
+        self::assertStringContainsString(
+            'Syntax error in "int|foo" on line 1 at column 5',
+            (string) $exception,
         );
     }
 
     #[Test]
-    public function theEndOfInputIsReportedInsteadOfAnEmptyToken(): void
+    public function thePrintedErrorIsTheOnePhpPrints(): void
     {
-        $exception = UnexpectedTokenException::becauseTokenIsUnexpected('', 'int|', 4);
+        $exception = self::unexpected('int|foo');
 
-        self::assertStringContainsString('unexpected end of input', $exception->getMessage());
+        $printed = (string) $exception;
+
+        self::assertStringStartsWith(UnexpectedTokenException::class, $printed);
+        self::assertStringContainsString('Syntax error in "int|foo"', $printed);
+        self::assertStringContainsString('Stack trace:', $printed);
+        self::assertStringContainsString($exception->getFile(), $printed);
     }
 
     #[Test]
-    public function theDoubleQuoteTokenIsReportedByItsName(): void
+    public function thePrintedErrorLeavesTheMessageAlone(): void
     {
-        $exception = UnexpectedTokenException::becauseTokenIsUnexpected('"', 'a"', 1);
+        $exception = self::unexpected('int|foo');
 
-        self::assertStringContainsString('unexpected double quote (")', $exception->getMessage());
+        $printed = (string) $exception;
+
+        self::assertSame('Syntax error in "int|foo"', $exception->getMessage());
+        self::assertSame($printed, (string) $exception);
     }
 
     #[Test]
     public function theMultilineStatementIsReportedUsingTheLineAndColumn(): void
     {
-        $exception = UnexpectedTokenException::becauseTokenIsUnexpected('x', "int|\nx", 5);
+        $exception = UnexpectedTokenException::becauseTokenIsUnexpected(
+            message: 'Syntax error',
+            source: self::source("int|\nx"),
+            token: self::token('x', 5),
+        );
 
-        self::assertStringEndsWith('on line 2 at column 1', $exception->getMessage());
+        self::assertStringContainsString('on line 2 at column 1', (string) $exception);
     }
 
     #[Test]
     public function theLongStatementIsTruncated(): void
     {
         $statement = \str_repeat('x', 100) . 'foo';
-        $exception = UnexpectedTokenException::becauseTokenIsUnexpected('foo', $statement, 100);
+        $exception = self::unexpected($statement);
 
-        self::assertStringContainsString('…', $exception->getMessage());
-        self::assertStringNotContainsString($statement, $exception->getMessage());
+        self::assertStringContainsString('…', (string) $exception);
+        self::assertStringNotContainsString($statement, (string) $exception);
     }
 
     #[Test]
-    public function theUnrecognizedTokenIsReportedWithItsLocation(): void
+    public function theUnrecognizedTokenIsReportedByItsValue(): void
     {
-        $exception = UnrecognizedTokenException::becauseTokenIsUnrecognized('%', 'int|%', 4);
+        $exception = UnrecognizedTokenException::becauseTokenIsUnrecognized(
+            self::source('int|%'),
+            self::token('%', 4, null, Channel::Unknown),
+        );
 
         self::assertSame(
-            'Syntax error, unrecognized "%" in "int|%" at column 5',
+            'Syntax error, unexpected "%" (unknown token) in "int|%"',
             $exception->getMessage(),
         );
-        self::assertSame(ParseException::ERROR_CODE_UNRECOGNIZED_TOKEN, $exception->getCode());
+        self::assertStringContainsString('on line 1 at column 5', (string) $exception);
+    }
+
+    #[Test]
+    public function theEndOfInputIsReportedInsteadOfAToken(): void
+    {
+        $exception = UnrecognizedTokenException::becauseTokenIsUnrecognized(
+            self::source('int|'),
+            self::token('', 4, null, Channel::EndOfInput),
+        );
+
+        self::assertStringStartsWith('Syntax error, unexpected end of input', $exception->getMessage());
     }
 
     #[Test]
     public function theUnrecognizedSyntaxIsReportedWithItsLocation(): void
     {
-        $exception = UnrecognizedSyntaxException::becauseSyntaxIsUnrecognized('int|', 4);
-
-        self::assertSame(
-            'Internal syntax error, in "int|" at column 5',
-            $exception->getMessage(),
+        $exception = UnrecognizedSyntaxException::becauseSyntaxIsUnrecognized(
+            self::source('int|'),
+            self::token('', 4, null, Channel::EndOfInput),
         );
-        self::assertSame(ParseException::ERROR_CODE_UNEXPECTED_SYNTAX_ERROR, $exception->getCode());
+
+        self::assertSame('Internal syntax error in "int|"', $exception->getMessage());
+        self::assertStringContainsString('on line 1 at column 5', (string) $exception);
     }
 
     #[Test]
     public function theBlankStatementIsReportedAsEmpty(): void
     {
-        $exception = UnrecognizedSyntaxException::becauseSyntaxIsUnrecognized('   ', 0);
+        $exception = UnrecognizedSyntaxException::becauseSyntaxIsUnrecognized(
+            self::source('   '),
+            self::token('', 0, null, Channel::EndOfInput),
+        );
 
-        self::assertStringContainsString('<empty statement>', $exception->getMessage());
+        self::assertStringContainsString('<empty statement>', (string) $exception);
     }
 
     #[Test]
     public function theInternalErrorKeepsThePreviousException(): void
     {
         $previous = new \LogicException('oops');
-        $exception = InternalParseException::becauseInternalErrorOccurs('int', $previous);
+        $exception = InternalParseException::becauseInternalErrorOccurs(self::source('int'), $previous);
 
-        self::assertSame(
-            'An internal error occurred while parsing "int"',
-            $exception->getMessage(),
-        );
+        self::assertSame('An internal error occurred while parsing "int"', $exception->getMessage());
         self::assertSame($previous, $exception->getPrevious());
-        self::assertSame(ParseException::ERROR_CODE_INTERNAL_ERROR, $exception->getCode());
     }
 
     #[Test]
@@ -144,65 +208,26 @@ final class ParseExceptionTest extends TestCase
         $previous = new class ('source is unreadable') extends \RuntimeException implements
             \Phplrt\Contracts\Source\Exception\SourceExceptionInterface {};
 
-        $exception = InternalParseException::becauseSourceIsUnreadable($previous);
+        $source = self::source('int');
+        $exception = UnreadableSourceException::becauseSourceIsUnreadable($source, $previous);
 
+        self::assertInstanceOf(ParserException::class, $exception);
         self::assertSame('source is unreadable', $exception->getMessage());
+        self::assertSame($source, $exception->source);
         self::assertSame($previous, $exception->getPrevious());
-        self::assertSame(ParseException::ERROR_CODE_INTERNAL_ERROR, $exception->getCode());
     }
 
+    /**
+     * Every error is told apart by the class it is of, so none of them carries
+     * a code.
+     */
     #[Test]
-    public function theSemanticErrorIsRebasedOntoTheWholeSource(): void
+    public function everyErrorIsToldApartByItsClassAlone(): void
     {
-        $exception = SemanticParseException::becauseSemanticErrorOccurs(
-            e: ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated('a', 10),
-            source: SourceFactory::createDefault()->create('array{a: int, a: int}'),
-        );
-
-        self::assertSame(
-            'Duplicate key "a" in "array{a: int, a: int}" at column 11',
-            $exception->getMessage(),
-        );
-    }
-
-    #[Test]
-    public function theSemanticErrorCodeIsShiftedByTheBaseValue(): void
-    {
-        $semantic = ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated('a', 10);
-
-        $exception = SemanticParseException::becauseSemanticErrorOccurs(
-            e: $semantic,
-            source: SourceFactory::createDefault()->create('array{a: int, a: int}'),
-        );
-
-        self::assertSame(
-            ParseException::ERROR_CODE_SEMANTIC_ERROR_BASE + $semantic->getCode(),
-            $exception->getCode(),
-        );
-    }
-
-    #[Test]
-    public function theSemanticErrorMessageIsCapitalized(): void
-    {
-        $exception = SemanticParseException::becauseSemanticErrorOccurs(
-            e: ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated('a'),
-            source: SourceFactory::createDefault()->create('array{a: int, a: int}'),
-        );
-
-        self::assertStringStartsWith('Duplicate', $exception->getMessage());
-    }
-
-    #[Test]
-    public function everyErrorCodeIsUnique(): void
-    {
-        $codes = [
-            ParseException::ERROR_CODE_UNEXPECTED_TOKEN,
-            ParseException::ERROR_CODE_UNRECOGNIZED_TOKEN,
-            ParseException::ERROR_CODE_UNEXPECTED_SYNTAX_ERROR,
-            ParseException::ERROR_CODE_INTERNAL_ERROR,
-            ParseException::ERROR_CODE_SEMANTIC_ERROR_BASE,
-        ];
-
-        self::assertSame($codes, \array_values(\array_unique($codes)));
+        self::assertSame(0, self::unexpected('int|foo')->getCode());
+        self::assertSame(0, InternalParseException::becauseInternalErrorOccurs(
+            self::source('int'),
+            new \LogicException(),
+        )->getCode());
     }
 }

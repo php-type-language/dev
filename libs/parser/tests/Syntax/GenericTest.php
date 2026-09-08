@@ -165,21 +165,21 @@ final class GenericTest extends SyntaxTestCase
 
     public function testMissingTemplateArgument(): void
     {
-        $this->expectParsingException('unexpected ">"');
+        $this->expectParsingException('an argument list must carry at least one argument');
 
         $this->parse('example<>');
     }
 
     public function testLeadingCommaIsNotAllowed(): void
     {
-        $this->expectParsingException('unexpected ","');
+        $this->expectParsingException('an argument list must carry at least one argument');
 
         $this->parse('example<,T>');
     }
 
     public function testHintAllowsOnlyIdentifiers(): void
     {
-        $this->expectParsingException('unexpected "User"');
+        $this->expectParsingException('an argument list must be closed with a bracket ">"');
 
         $this->parse('Collection<42 User>');
     }

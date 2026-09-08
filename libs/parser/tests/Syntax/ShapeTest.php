@@ -176,7 +176,7 @@ final class ShapeTest extends SyntaxTestCase
 
     public function testOptionalValueSyntaxIsNotAllowed(): void
     {
-        $this->expectParsingException('unexpected "?"');
+        $this->expectParsingException('a shape must be closed with a brace "}"');
 
         $this->parse('array{key: Type?}');
     }
@@ -231,7 +231,7 @@ final class ShapeTest extends SyntaxTestCase
      */
     public function testKeyDoesNotReachBeyondAPrimaryType(): void
     {
-        $this->expectParsingException('unexpected ":"');
+        $this->expectParsingException('a shape must be closed with a brace "}"');
 
         $this->parse('array{T is A ? B : C: int}');
     }

@@ -72,7 +72,7 @@ final class OffsetAccessTest extends SyntaxTestCase
 
     public function testOffsetCannotBeDoubleBracketed(): void
     {
-        $this->expectParsingException('unexpected "["');
+        $this->expectParsingException('an offset must be closed with a bracket "]"');
 
         $this->parse('Collection[[Some]]');
     }

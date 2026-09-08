@@ -308,7 +308,7 @@ final class GroupingTest extends SyntaxTestCase
 
     public function testAGroupIsClosedByTheParenthesisItIsOpenedWith(): void
     {
-        $this->expectParsingException('unexpected end of input');
+        $this->expectParsingException('a group must be closed with a bracket ")"');
 
         $this->parse('(int');
     }

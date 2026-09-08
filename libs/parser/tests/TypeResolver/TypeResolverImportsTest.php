@@ -177,17 +177,16 @@ final class TypeResolverImportsTest extends TypeResolverTestCase
     }
 
     #[Test]
-    /**
-     * A closure is not a namespaced symbol on its own, so no imports can be
-     * associated with it.
-     */
-    public function theClosureChangesNothing(): void
+    public function theClosureIsReadWithTheImportsOfItsFile(): void
     {
         $resolver = (new TypeResolver())
             ->withTypeImportsFromFunction(
                 new \ReflectionFunction(static fn(): int => 42),
             );
 
-        self::assertSame('TypeResolver', $this->resolveName($resolver, 'TypeResolver'));
+        self::assertSame(
+            'TypeLang\\Parser\\TypeResolver',
+            $this->resolveName($resolver, 'TypeResolver'),
+        );
     }
 }

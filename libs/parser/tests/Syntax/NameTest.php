@@ -153,14 +153,14 @@ final class NameTest extends SyntaxTestCase
 
     public function testNameCannotStartWithDash(): void
     {
-        $this->expectParsingException('unrecognized "-foo"');
+        $this->expectParsingException('unexpected "-foo"');
 
         $this->parse('-foo');
     }
 
     public function testNamespaceCannotEndWithDelimiter(): void
     {
-        $this->expectParsingException('unexpected end of input');
+        $this->expectParsingException('a name must carry a segment after the separator');
 
         $this->parse('example\\name\\');
     }

@@ -139,7 +139,7 @@ final class CallableTest extends SyntaxTestCase
 
     public function testVariadicMarkerCannotPrecedeTheParameterType(): void
     {
-        $this->expectParsingException('unexpected "..."');
+        $this->expectParsingException('a parameter list must be closed with a bracket ")"');
 
         $this->parse('foo(...T)');
     }
@@ -158,21 +158,21 @@ final class CallableTest extends SyntaxTestCase
 
     public function testNameCannotFollowTheDefaultMarker(): void
     {
-        $this->expectParsingException('unexpected "$name"');
+        $this->expectParsingException('a parameter list must be closed with a bracket ")"');
 
         $this->parse('foo(T= $name)');
     }
 
     public function testAmpersandMustFollowParameterType(): void
     {
-        $this->expectParsingException('unexpected "&"');
+        $this->expectParsingException('a parameter list must be closed with a bracket ")"');
 
         $this->parse('foo(&T)');
     }
 
     public function testParameterWithoutATypeIsNotAllowed(): void
     {
-        $this->expectParsingException('unexpected ")"');
+        $this->expectParsingException('a parameter list must be closed with a bracket ")"');
 
         $this->parse('foo($name)');
     }
@@ -186,7 +186,7 @@ final class CallableTest extends SyntaxTestCase
 
     public function testLeadingCommaIsNotAllowed(): void
     {
-        $this->expectParsingException('unexpected ","');
+        $this->expectParsingException('a parameter list must be closed with a bracket ")"');
 
         $this->parse('foo(,T)');
     }
@@ -211,14 +211,14 @@ final class CallableTest extends SyntaxTestCase
 
     public function testTypedParameterCannotPutTheReferenceAfterTheVariadic(): void
     {
-        $this->expectParsingException('unexpected "&"');
+        $this->expectParsingException('a parameter list must be closed with a bracket ")"');
 
         $this->parse('foo(T ...&$name)');
     }
 
     public function testModifiersWithoutATypeAreNotAllowed(): void
     {
-        $this->expectParsingException('unexpected "&"');
+        $this->expectParsingException('a parameter list must be closed with a bracket ")"');
 
         $this->parse('foo(&...$name)');
     }

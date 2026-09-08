@@ -85,7 +85,7 @@ final class LogicalTest extends SyntaxTestCase
 
     public function testDanglingUnionDelimiter(): void
     {
-        $this->expectParsingException('unexpected end of input');
+        $this->expectParsingException('a union type must carry a type after the vertical bar');
 
         $this->parse('int |');
     }
@@ -99,7 +99,7 @@ final class LogicalTest extends SyntaxTestCase
 
     public function testDanglingIntersectionDelimiter(): void
     {
-        $this->expectParsingException('unexpected end of input');
+        $this->expectParsingException('an intersection type must carry a type after the ampersand');
 
         $this->parse('string &');
     }
