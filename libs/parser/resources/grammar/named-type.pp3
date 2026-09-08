@@ -11,7 +11,7 @@ NamedType -> {
 
     if ($head instanceof Type\ConstMaskNode) {
         if ($suffix !== null) {
-            throw Exception\ConstMaskException::becauseNothingFollowsAMask($offset);
+            throw Exception\ConstMaskException::becauseNothingFollowsAMask($source, $offset);
         }
 
         return $head;
@@ -33,7 +33,7 @@ NamedType -> {
         // Some\Any(T, U): V
         case $suffix instanceof Type\Callable\CallableParameterListNode:
             if ($this->features->callables === false) {
-                throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $offset);
+                throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $source, $offset);
             }
 
             return new Type\CallableTypeNode($children[0], $suffix, $children[2] ?? null, null, $offset);
@@ -41,7 +41,7 @@ NamedType -> {
         // Some\Any<T, U>(T): U
         case $suffix instanceof Type\Template\TemplateParameterListNode:
             if ($this->features->callables === false) {
-                throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $offset);
+                throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $source, $offset);
             }
 
             return new Type\CallableTypeNode($children[0], $children[2], $children[3] ?? null, $suffix, $offset);
@@ -125,5 +125,5 @@ ClassConstSuffix
   : <T_DOUBLE_COLON>
     ( Identifier() MaskTail()?
     | MaskTail()
-    )
+    ) @error("Syntax error, unexpected {token}, a class constant must carry a name after the double colon, for example \"Some::CONST\"")
   ;

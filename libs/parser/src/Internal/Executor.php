@@ -16,10 +16,10 @@ use Phplrt\Parser\Exception\UnexpectedTokenException as GrammarUnexpectedTokenEx
 use Phplrt\Parser\Parser as ParserRuntime;
 use Phplrt\Position\PositionFactory;
 use TypeLang\Parser\Exception\InternalParseException;
-use TypeLang\Parser\Exception\ParseException;
-use TypeLang\Parser\Exception\SemanticException;
-use TypeLang\Parser\Exception\SemanticParseException;
+use TypeLang\Parser\Exception\ParserException;
+use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\Exception\UnexpectedTokenException;
+use TypeLang\Parser\Exception\UnreadableSourceException;
 use TypeLang\Parser\Exception\UnrecognizedSyntaxException;
 use TypeLang\Parser\Exception\UnrecognizedTokenException;
 use TypeLang\Parser\Partial\FailureParsedResult;
@@ -62,7 +62,7 @@ final class Executor extends CompiledExecutor
     /**
      * Reads the source whole and returns the type it is written of.
      *
-     * @throws ParseException in case of the source is no type of its own
+     * @throws ParserException in case of the source is no type of its own
      */
     public function parse(ReadableInterface $source): TypeNode
     {
@@ -79,7 +79,7 @@ final class Executor extends CompiledExecutor
      * Reads as much of the source as the grammar describes and returns the
      * type that part is written of.
      *
-     * @throws ParseException in case of an internal error occurs
+     * @throws ParserException in case of an internal error occurs
      */
     public function partial(ReadableInterface $source): ParsedResult
     {
@@ -107,7 +107,7 @@ final class Executor extends CompiledExecutor
      * Tells whether the source is a type the grammar describes, building
      * nothing of it.
      *
-     * @throws ParseException in case of an internal error occurs
+     * @throws ParserException in case of an internal error occurs
      */
     public function validate(ReadableInterface $source): CheckResult
     {
@@ -140,7 +140,7 @@ final class Executor extends CompiledExecutor
      * Reads the source into the type it describes.
      *
      * @return SuccessfulResult<TypeNode>|FailureResult
-     * @throws ParseException in case of the grammar cannot be run
+     * @throws ParserException in case of the grammar cannot be run
      */
     private function build(ReadableInterface $source): SuccessfulResult|FailureResult
     {
@@ -157,7 +157,7 @@ final class Executor extends CompiledExecutor
      * Reads the source without building anything of it.
      *
      * @return SuccessfulResult<null>|FailureResult
-     * @throws ParseException in case of the grammar cannot be run
+     * @throws ParserException in case of the grammar cannot be run
      */
     private function check(ReadableInterface $source): SuccessfulResult|FailureResult
     {
@@ -174,18 +174,13 @@ final class Executor extends CompiledExecutor
      * Converts whatever the grammar raises while it reads into the error of
      * this parser.
      */
-    private function raised(\Throwable $e, ReadableInterface $source): ParseException
+    private function raised(\Throwable $e, ReadableInterface $source): ParserException
     {
         return match (true) {
-            $e instanceof ParseException => $e,
-            $e instanceof SemanticException
-                => SemanticParseException::becauseSemanticErrorOccurs($e, $source),
+            $e instanceof ParserException => $e,
             $e instanceof SourceExceptionInterface
-                => InternalParseException::becauseSourceIsUnreadable($e),
-            default => InternalParseException::becauseInternalErrorOccurs(
-                statement: $source->content,
-                e: $e,
-            ),
+                => UnreadableSourceException::becauseSourceIsUnreadable($source, $e),
+            default => InternalParseException::becauseInternalErrorOccurs($source, $e),
         };
     }
 
@@ -194,7 +189,7 @@ final class Executor extends CompiledExecutor
      * has stopped at nothing ends at.
      *
      * @return int<0, max>
-     * @throws ParseException in case of the source cannot be read
+     * @throws ParserExceptionInterface in case of the source cannot be read
      */
     private function length(ReadableInterface $source): int
     {
@@ -207,7 +202,6 @@ final class Executor extends CompiledExecutor
 
     /**
      * @param int<0, max> $offset
-     *
      * @throws SourceExceptionInterface
      */
     private function createPosition(ReadableInterface $source, int $offset): PositionInterface
@@ -219,34 +213,25 @@ final class Executor extends CompiledExecutor
      * Converts the error of the grammar into the error of this parser.
      *
      * @param FailureResult|PartialResult<mixed> $result
-     *
-     * @throws SourceExceptionInterface
      */
-    private function createError(FailureResult|PartialResult $result, ReadableInterface $source): ParseException
+    private function createError(FailureResult|PartialResult $result, ReadableInterface $source): ParserException
     {
         $error = $result->error;
 
         if (!$error instanceof GrammarUnexpectedTokenException) {
-            return UnrecognizedSyntaxException::becauseSyntaxIsUnrecognized(
-                statement: $source->content,
-                offset: $error->token->offset,
-            );
+            return UnrecognizedSyntaxException::becauseSyntaxIsUnrecognized($source, $error->token);
         }
 
         // An input the lexer says nothing about is reported as an unrecognized
         // one rather than as a token in a wrong place.
         if ($error->token->channel === Channel::Unknown) {
-            return UnrecognizedTokenException::becauseTokenIsUnrecognized(
-                token: $error->token->value,
-                statement: $source->content,
-                offset: $error->token->offset,
-            );
+            return UnrecognizedTokenException::becauseTokenIsUnrecognized($source, $error->token);
         }
 
         return UnexpectedTokenException::becauseTokenIsUnexpected(
-            token: $error->token->value,
-            statement: $source->content,
-            offset: $error->token->offset,
+            message: $error->getMessage(),
+            source: $source,
+            token: $error->token,
         );
     }
 }

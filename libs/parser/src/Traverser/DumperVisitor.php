@@ -61,7 +61,9 @@ abstract class DumperVisitor extends Visitor
     {
         $result = [];
 
-        foreach (new \ReflectionObject($node)->getProperties() as $property) {
+        $reflection = new \ReflectionObject($node);
+
+        foreach ($reflection->getProperties() as $property) {
             // Skip readonly + static and builtin "offset" properties
             if ($property->isStatic() || $property->isReadOnly() || $property->getName() === 'offset') {
                 continue;

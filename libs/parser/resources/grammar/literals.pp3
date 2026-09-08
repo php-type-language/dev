@@ -1,7 +1,7 @@
 
 LiteralType -> {
     if ($this->features->literals === false) {
-        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('literal values', $offset);
+        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('literal values', $source, $offset);
     }
     return $children;
 }

@@ -48,7 +48,23 @@ final class PhpUseStatementsReader
             $header = '';
         }
 
-        return [...$this->parse($function->getNamespaceName(), $header)];
+        return [...$this->parse($this->getFunctionNamespace($function, $header), $header)];
+    }
+
+    /**
+     * Returns the namespace the given function is written in.
+     */
+    private function getFunctionNamespace(\ReflectionFunctionAbstract $function, string $header): string
+    {
+        if (\PHP_VERSION_ID < 80400) {
+            return $function->getNamespaceName();
+        }
+
+        if ($function->isClosure()) {
+            return $this->namespace->findLast($this->lex($header));
+        }
+
+        return $function->getNamespaceName();
     }
 
     /**

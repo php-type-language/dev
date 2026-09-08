@@ -3,7 +3,7 @@
 CallableSuffix
   : ::T_PARENTHESIS_OPEN::
         CallableParameters()
-    ::T_PARENTHESIS_CLOSE::
+    ::T_PARENTHESIS_CLOSE::     @error("Syntax error, unexpected {token}, a parameter list must be closed with a bracket \")\"")
     CallableReturnType()?
   ;
 
@@ -46,7 +46,7 @@ CallableParameter -> {
 
             default:
                 if ($parameter->isVariadic) {
-                    throw Exception\VariadicWithDefaultException::becauseVariadicHasDefault($offset);
+                    throw Exception\VariadicWithDefaultException::becauseVariadicHasDefault($source, $offset);
                 }
 
                 $parameter->isOptional = true;
@@ -63,5 +63,5 @@ CallableParameter -> {
   ;
 
 CallableReturnType
-  : ::T_COLON:: Type()
+  : ::T_COLON:: Type() @error("Syntax error, unexpected {token}, a callable must carry a type after the colon \":\"")
   ;

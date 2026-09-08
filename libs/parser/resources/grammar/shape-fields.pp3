@@ -7,7 +7,7 @@ ShapeFields -> {
     }
 
     if ($this->features->shapes === false) {
-        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('shape fields', $offset);
+        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('shape fields', $source, $offset);
     }
 
     $parameters = null;
@@ -42,7 +42,7 @@ ShapeFields -> {
         | ShapeFieldsUnsealed()?
       )
       ::T_COMMA::?
-    ::T_BRACE_CLOSE::
+    ::T_BRACE_CLOSE:: @error("Syntax error, unexpected {token}, a shape must be closed with a brace \"}\"")
   ;
 
 ShapeFieldsUnsealed
@@ -70,14 +70,14 @@ ShapeFieldsList -> {
         $key = $field->getIndex();
 
         if (isset($indexed[$key])) {
-            throw Exception\ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated($key, $field->offset);
+            throw Exception\ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated($key, $source, $field->offset);
         }
 
         $indexed[$key] = true;
     }
 
     if ($explicit && $implicit) {
-        throw Exception\ShapeKeysMixingException::becauseShapeKeysAreMixed($offset);
+        throw Exception\ShapeKeysMixingException::becauseShapeKeysAreMixed($source, $offset);
     }
 
     return new Type\Shape\FieldsListNode($children, true, $offset);
@@ -111,10 +111,10 @@ ExplicitField -> {
         $name instanceof Type\ClassConstMaskNode,
         $name instanceof Type\ConstMaskNode
             => new Type\Shape\ComplexFieldNode($name, $value, $optional, $offset),
-        default => throw Exception\ShapeKeyException::becauseKeyIsNotAName($name->offset),
+        default => throw Exception\ShapeKeyException::becauseKeyIsNotAName($source, $name->offset),
     };
 }
-  : ShapeKey() (<T_QMARK>)? ::T_COLON:: ShapeValue()
+  : ShapeKey() (<T_QMARK>)? ::T_COLON:: ShapeValue() @error("Syntax error, unexpected {token}, a shape field must carry a type after the colon \":\"")
   ;
 
 ImplicitField -> {

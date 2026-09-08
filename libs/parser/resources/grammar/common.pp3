@@ -9,14 +9,19 @@ Name
 FullQualifiedName -> {
     return new Type\Name($children, true, $offset);
 }
-  : ::T_NS_DELIMITER:: Identifier() (::T_NS_DELIMITER:: Identifier())*
+  : ::T_NS_DELIMITER:: Identifier() @error("Syntax error, unexpected {token}, a name must carry a segment after the separator, for example \"\Some\"")
+    NameTail()*
   ;
 
 // "Some\Any"
 RelativeName -> {
     return new Type\Name($children, false, $offset);
 }
-  : Identifier() (::T_NS_DELIMITER:: Identifier())*
+  : Identifier() NameTail()*
+  ;
+
+NameTail
+  : ::T_NS_DELIMITER:: Identifier() @error("Syntax error, unexpected {token}, a name must carry a segment after the separator, for example \"Some\Any\"")
   ;
 
 Identifier -> {

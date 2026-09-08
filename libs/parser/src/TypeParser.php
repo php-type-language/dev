@@ -9,8 +9,6 @@ use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
-use TypeLang\Parser\Exception\InternalParseException;
-use TypeLang\Parser\Exception\ParseException;
 use TypeLang\Parser\Internal\Executor;
 use TypeLang\Parser\Partial\ParsedResult;
 use TypeLang\Parser\Validation\CheckResult;
@@ -69,15 +67,12 @@ final class TypeParser implements TypeParserInterface
     }
 
     /**
-     * @throws ParseException in case of the source cannot be read
+     * @throws SourceExceptionInterface in case of no source can be created out
+     *         of the given value
      */
     private function source(mixed $source): ReadableInterface
     {
-        try {
-            return $this->sources->create($source);
-        } catch (SourceExceptionInterface $e) {
-            throw InternalParseException::becauseSourceIsUnreadable($e);
-        }
+        return $this->sources->create($source);
     }
 
     /**

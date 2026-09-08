@@ -31,7 +31,7 @@ Type -> {
     }
 
     if ($this->features->conditions === false) {
-        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('conditional expressions', $offset);
+        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('conditional expressions', $source, $offset);
     }
 
     $condition = $children[1]
@@ -51,8 +51,9 @@ Type -> {
 
 TernaryExpressionSuffix
   : TernaryExpressionOperator() (Type() | Variable())
-    ::T_QMARK:: Type()
-    ::T_COLON:: Type()
+    ::T_QMARK:: Type()  @error("Syntax error, unexpected {token}, a condition must carry the type it is true of")
+    ::T_COLON::         @error("Syntax error, unexpected {token}, a condition must be parted with a colon \":\"")
+    Type()              @error("Syntax error, unexpected {token}, a condition must carry the type it is false of")
   ;
 
 // An "is" or an "is not"
@@ -78,7 +79,7 @@ UnionType -> {
     }
 
     if ($this->features->unions === false) {
-        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('union types', $offset);
+        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('union types', $source, $offset);
     }
 
     $statement = new Type\UnionTypeNode($children);
@@ -86,7 +87,11 @@ UnionType -> {
 
     return $statement;
 }
-  : IntersectionType() (::T_OR:: IntersectionType())*
+  : IntersectionType() UnionTail()*
+  ;
+
+UnionTail
+  : ::T_OR:: IntersectionType() @error("Syntax error, unexpected {token}, a union type must carry a type after the vertical bar \"|\", for example \"T|U\"")
   ;
 
 IntersectionType -> {
@@ -95,7 +100,7 @@ IntersectionType -> {
     }
 
     if ($this->features->intersections === false) {
-        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('intersection types', $offset);
+        throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('intersection types', $source, $offset);
     }
 
     $statement = new Type\IntersectionTypeNode($children);
@@ -103,7 +108,11 @@ IntersectionType -> {
 
     return $statement;
 }
-  : UnaryType() (::T_AMP:: UnaryType())*
+  : UnaryType() IntersectionTail()*
+  ;
+
+IntersectionTail
+  : ::T_AMP:: UnaryType() @error("Syntax error, unexpected {token}, an intersection type must carry a type after the ampersand \"&\", for example \"T&U\"")
   ;
 
 /**
@@ -120,7 +129,7 @@ UnaryType
 NullableType -> {
     return new Type\NullableTypeNode($children[0], $offset);
 }
-  : ::T_QMARK:: ListOrOffsetType()
+  : ::T_QMARK:: ListOrOffsetType() @error("Syntax error, unexpected {token}, a nullable type must carry the type it makes nullable, for example \"?T\"")
   ;
 
 ListOrOffsetType -> {
@@ -133,14 +142,14 @@ ListOrOffsetType -> {
         switch (true) {
             case $child === true:
                 if ($this->features->lists === false) {
-                    throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('square bracket list types', $offset);
+                    throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('square bracket list types', $source, $offset);
                 }
 
                 $statement = new Type\TypesListNode($statement, $offset);
                 break;
             case $child instanceof Type\TypeNode:
                 if ($this->features->offsets === false) {
-                    throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('type offsets', $offset);
+                    throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('type offsets', $source, $offset);
                 }
 
                 $statement = new Type\TypeOffsetAccessNode($statement, $child, $offset);
@@ -148,6 +157,7 @@ ListOrOffsetType -> {
             default:
                 throw Exception\InternalSemanticException::becauseSubNodeIsUnexpected(
                     \get_debug_type($child),
+                    $source,
                     $offset,
                 );
         }
@@ -164,11 +174,11 @@ ListOrOffsetSuffix -> {
 }
   : ::T_SQUARE_BRACKET_OPEN::
       Type()?
-    ::T_SQUARE_BRACKET_CLOSE::
+    ::T_SQUARE_BRACKET_CLOSE:: @error("Syntax error, unexpected {token}, an offset must be closed with a bracket \"]\"")
   ;
 
 PrimaryType
-  : ::T_PARENTHESIS_OPEN:: Type() ::T_PARENTHESIS_CLOSE::
+  : ::T_PARENTHESIS_OPEN:: Type() ::T_PARENTHESIS_CLOSE:: @error("Syntax error, unexpected {token}, a group must be closed with a bracket \")\"")
   | ThisType()
   | LiteralType()
   | NamedType()

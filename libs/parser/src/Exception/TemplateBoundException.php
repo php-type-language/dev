@@ -4,50 +4,71 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Exception;
 
+use Phplrt\Contracts\Source\ReadableInterface;
+
 final class TemplateBoundException extends SemanticException
 {
     /**
-     * Occurs when a template parameter is bounded with a word that bounds
-     * nothing.
+     * Occurs when a template parameter is bounded with a word the grammar
+     * knows nothing of.
      *
-     * @param non-empty-string $operator
      * @param int<0, max> $offset
      */
-    public static function becauseOperatorIsUnknown(string $operator, int $offset = 0): self
-    {
-        $message = \sprintf(
-            'Template parameter cannot be bounded with "%s", expected one of "of", "as" or "super"',
-            $operator,
+    public static function becauseOperatorIsUnknown(
+        string $operator,
+        ReadableInterface $source,
+        int $offset = 0,
+    ): self {
+        return new self(
+            self::describe(
+                \sprintf(
+                    'Template parameter cannot be bounded with "%s", expected one of "of", "as" or "super"',
+                    $operator,
+                ),
+                $source,
+            ),
+            $source,
+            self::createToken($source, $offset),
         );
-
-        return new self($offset, $message, self::ERROR_CODE_TEMPLATE_BOUND);
     }
 
     /**
-     * Occurs when a template parameter is written with the same kind of
-     * limit more than once.
+     * Occurs when a template parameter carries the same limit twice.
      *
-     * @param non-empty-string $kind
      * @param int<0, max> $offset
      */
-    public static function becauseBoundIsDuplicated(string $kind, int $offset = 0): self
-    {
-        $message = \sprintf('Template parameter cannot have more than one %s', $kind);
-
-        return new self($offset, $message, self::ERROR_CODE_TEMPLATE_BOUND);
+    public static function becauseBoundIsDuplicated(
+        string $kind,
+        ReadableInterface $source,
+        int $offset = 0,
+    ): self {
+        return new self(
+            self::describe(
+                \sprintf('Template parameter cannot have more than one %s', $kind),
+                $source,
+            ),
+            $source,
+            self::createToken($source, $offset),
+        );
     }
 
     /**
-     * Occurs when a bound is written behind a default, where it reads as
-     * a bound of the default itself.
+     * Occurs when a template parameter carries a bound behind its default.
      *
      * @param int<0, max> $offset
      */
-    public static function becauseDefaultIsNotWrittenLast(int $offset = 0): self
-    {
-        $message = 'Template parameter default must be written last, since a bound '
-            . 'behind it reads as a bound of the default itself';
-
-        return new self($offset, $message, self::ERROR_CODE_TEMPLATE_BOUND);
+    public static function becauseDefaultIsNotWrittenLast(
+        ReadableInterface $source,
+        int $offset = 0,
+    ): self {
+        return new self(
+            self::describe(
+                'Template parameter default must be written last, since a bound '
+                    . 'behind it reads as a bound of the default itself',
+                $source,
+            ),
+            $source,
+            self::createToken($source, $offset),
+        );
     }
 }
