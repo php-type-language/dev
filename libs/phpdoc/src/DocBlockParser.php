@@ -124,8 +124,9 @@ final class DocBlockParser implements DocBlockParserInterface
             }
         }
 
-        return new TagRegistryBuilder($definitions, $aliases)
-            ->build();
+        $builder = new TagRegistryBuilder($definitions, $aliases);
+
+        return $builder->build();
     }
 
     /**
