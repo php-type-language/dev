@@ -24,7 +24,7 @@ $files = Finder::create()
         strict: true,
     ));
 
-return new Config()
+return (new Config())
     ->setUnsupportedPhpVersionAllowed(true)
     ->setParallelConfig(ParallelConfigFactory::detect())
     ->setRules([
