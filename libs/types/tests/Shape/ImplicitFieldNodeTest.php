@@ -41,7 +41,6 @@ final class ImplicitFieldNodeTest extends TestCase
     }
 
     #[Test]
-    #[Test]
     public function defaultOffsetIsZero(): void
     {
         $node = new ImplicitFieldNode(new NamedTypeNode(Name::createFromString('int')));

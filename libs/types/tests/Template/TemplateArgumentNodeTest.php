@@ -31,7 +31,6 @@ final class TemplateArgumentNodeTest extends TestCase
     }
 
     #[Test]
-    #[Test]
     public function constructorAcceptsIdentifierHint(): void
     {
         $hint = new Identifier('covariant');
