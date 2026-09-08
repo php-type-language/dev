@@ -6,8 +6,10 @@ namespace TypeLang\Reader\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use TypeLang\Reader\FunctionReaderInterface;
 use TypeLang\Reader\Tests\Stub\StaticMethodReaderStub;
+use TypeLang\Reader\Tests\Stub\StaticMethodReaderStub82;
 use TypeLang\Type\IntersectionTypeNode;
 use TypeLang\Type\UnionTypeNode;
 
@@ -51,10 +53,11 @@ class StaticMethodReaderTest extends ReaderTestCase
     }
 
     #[DataProvider('readersDataProvider')]
+    #[RequiresPhp('>= 8.2')]
     public function testCompositeType(FunctionReaderInterface $reader): void
     {
         $type = $reader->findFunctionType(
-            function: new \ReflectionMethod(StaticMethodReaderStub::class, 'getCompositeType'),
+            function: new \ReflectionMethod(StaticMethodReaderStub82::class, 'getCompositeType'),
         );
 
         self::assertSameType(new UnionTypeNode([

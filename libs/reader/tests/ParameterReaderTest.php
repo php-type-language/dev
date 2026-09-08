@@ -6,8 +6,10 @@ namespace TypeLang\Reader\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use TypeLang\Reader\ParameterReaderInterface;
 use TypeLang\Reader\Tests\Stub\ParameterReaderStub;
+use TypeLang\Reader\Tests\Stub\ParameterReaderStub82;
 use TypeLang\Type\IntersectionTypeNode;
 use TypeLang\Type\NullableTypeNode;
 use TypeLang\Type\UnionTypeNode;
@@ -52,10 +54,11 @@ class ParameterReaderTest extends ReaderTestCase
     }
 
     #[DataProvider('readersDataProvider')]
+    #[RequiresPhp('>= 8.2')]
     public function testCompositeType(ParameterReaderInterface $reader): void
     {
         $type = $reader->findParameterType(
-            parameter: new \ReflectionParameter(ParameterReaderStub::withCompositeType(...), 0),
+            parameter: new \ReflectionParameter(ParameterReaderStub82::withCompositeType(...), 0),
         );
 
         self::assertSameType(new UnionTypeNode([

@@ -6,9 +6,12 @@ namespace TypeLang\Reader\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use TypeLang\Reader\PropertyAccessDirection;
 use TypeLang\Reader\PropertyReaderInterface;
 use TypeLang\Reader\Tests\Stub\PropertyReaderStub;
+use TypeLang\Reader\Tests\Stub\PropertyReaderStub82;
+use TypeLang\Reader\Tests\Stub\PropertyReaderStub84;
 use TypeLang\Type\IntersectionTypeNode;
 use TypeLang\Type\NullableTypeNode;
 use TypeLang\Type\UnionTypeNode;
@@ -53,10 +56,11 @@ class PropertyReaderTest extends ReaderTestCase
     }
 
     #[DataProvider('readersDataProvider')]
+    #[RequiresPhp('>= 8.2')]
     public function testCompositeType(PropertyReaderInterface $reader): void
     {
         $type = $reader->findPropertyType(
-            property: new \ReflectionProperty(PropertyReaderStub::class, 'compositeType'),
+            property: new \ReflectionProperty(PropertyReaderStub82::class, 'compositeType'),
         );
 
         self::assertSameType(new UnionTypeNode([
@@ -89,10 +93,11 @@ class PropertyReaderTest extends ReaderTestCase
     }
 
     #[DataProvider('readersDataProvider')]
+    #[RequiresPhp('>= 8.4')]
     public function testHookedPropertyReadType(PropertyReaderInterface $reader): void
     {
         $type = $reader->findPropertyType(
-            property: new \ReflectionProperty(PropertyReaderStub::class, 'hookedType'),
+            property: new \ReflectionProperty(PropertyReaderStub84::class, 'hookedType'),
             access: PropertyAccessDirection::Read,
         );
 
@@ -100,10 +105,11 @@ class PropertyReaderTest extends ReaderTestCase
     }
 
     #[DataProvider('readersDataProvider')]
+    #[RequiresPhp('>= 8.4')]
     public function testHookedPropertyWriteType(PropertyReaderInterface $reader): void
     {
         $type = $reader->findPropertyType(
-            property: new \ReflectionProperty(PropertyReaderStub::class, 'hookedType'),
+            property: new \ReflectionProperty(PropertyReaderStub84::class, 'hookedType'),
             access: PropertyAccessDirection::Write,
         );
 
