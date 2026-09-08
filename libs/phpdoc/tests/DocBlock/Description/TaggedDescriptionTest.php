@@ -124,7 +124,7 @@ final class TaggedDescriptionTest extends TestCase
         $components = [new Description('a'), new Tag('see'), new Description('b')];
         $description = new TaggedDescription($components);
 
-        self::assertSame($components, \iterator_to_array($description, false));
+        self::assertSame($components, \iterator_to_array($description->getIterator(), false));
     }
 
     #[Test]

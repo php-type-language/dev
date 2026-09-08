@@ -111,6 +111,6 @@ final class DocBlockTest extends TestCase
         $tags = [new Tag('param'), new Tag('return')];
         $docblock = new DocBlock(null, $tags);
 
-        self::assertSame($tags, \iterator_to_array($docblock, false));
+        self::assertSame($tags, \iterator_to_array($docblock->getIterator(), false));
     }
 }
