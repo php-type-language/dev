@@ -5,16 +5,36 @@
  * -----------------------------------------------------------------------------
  */
 
+// A name is read by this very rule rather than by one of its own: a type is
+// named far more often than anything else is read, so every rule the reading
+// goes through on its way here is paid for by the whole grammar.
 NamedType -> {
     $head = $children[0];
     $suffix = $children[1] ?? null;
 
-    if ($head instanceof Type\ConstMaskNode) {
-        if ($suffix !== null) {
-            throw Exception\ConstMaskException::becauseNothingFollowsAMask($source, $offset);
+    // "Some\Any\*" and "Some\Any\SOME_*"
+    //
+    // A mask closes the type it is written at the end of, so it is read as a
+    // suffix of a name and never carries a suffix of its own.
+    if ($suffix instanceof Type\MaskNode || $suffix instanceof Type\WildcardNode) {
+        $parts = $head->parts;
+
+        if ($suffix instanceof Type\MaskNode) {
+            // "Some\Any\*"
+            $mask = $suffix;
+        } else {
+            // "Some\Any\SOME_*"
+            $segment = \array_pop($parts);
+            $mask = new Type\MaskNode([$segment, ...\array_slice($children, 1)], $segment->offset);
         }
 
-        return $head;
+        return new Type\ConstMaskNode(
+            $mask,
+            $parts === []
+                ? $head->isFullyQualified
+                : new Type\Name($parts, $head->isFullyQualified, $head->offset),
+            $offset,
+        );
     }
 
     switch (true) {
@@ -59,7 +79,7 @@ NamedType -> {
             );
     }
 }
-  : NameOrMask() NamedTypeSuffix()?
+  : Name() NamedTypeSuffix()?
   ;
 
 NamedTypeSuffix
@@ -68,45 +88,14 @@ NamedTypeSuffix
   | TemplateArguments() !::T_PARENTHESIS_OPEN::
   | TemplateParameters() CallableSuffix()
   | ShapeFields()
+  | MaskTail()
+  | NamespacedMask()
   ;
 
-NameOrMask -> {
-    $head = $children[0];
-
-    // "*_SOME"
-    if (!$head instanceof Type\Name) {
-        return new Type\ConstMaskNode(new Type\MaskNode($children, $offset), false, $offset);
-    }
-
-    // "Some\Any"
-    if (!isset($children[1])) {
-        return $head;
-    }
-
-    $parts = $head->parts;
-
-    if ($children[1] instanceof Type\MaskNode) {
-        // "Some\Any\*"
-        $mask = $children[1];
-    } else {
-        // "Some\Any\SOME_*"
-        $segment = \array_pop($parts);
-        $mask = new Type\MaskNode([$segment, ...\array_slice($children, 1)], $segment->offset);
-    }
-
-    return new Type\ConstMaskNode(
-        $mask,
-        $parts === []
-            ? $head->isFullyQualified
-            : new Type\Name($parts, $head->isFullyQualified, $head->offset),
-        $offset,
-    );
+// "*_SOME" — a mask that carries no name in front of it
+LeadingMaskType -> {
+    return new Type\ConstMaskNode(new Type\MaskNode($children, $offset), false, $offset);
 }
-  : Name() ( MaskTail() | NamespacedMask() )?
-  | LeadingMask()
-  ;
-
-LeadingMask
   : WildcardType() Identifier() MaskTail()?
   ;
 
