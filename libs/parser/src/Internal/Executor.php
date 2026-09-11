@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Internal;
 
 use Phplrt\Contracts\Lexer\Channel;
+use Phplrt\Contracts\Lexer\TokenInterface;
 use Phplrt\Contracts\Position\PositionInterface;
 use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
@@ -57,6 +58,14 @@ final class Executor extends CompiledExecutor
         $this->positions = new PositionFactory();
 
         parent::__construct();
+    }
+
+    /**
+     * @return iterable<array-key, TokenInterface>
+     */
+    public function lex(ReadableInterface $source): iterable
+    {
+        return $this->lexer->lex($source);
     }
 
     /**

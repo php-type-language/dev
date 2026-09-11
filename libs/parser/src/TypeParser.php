@@ -45,32 +45,39 @@ final class TypeParser implements TypeParserInterface
         );
     }
 
+    public function lex(#[Language('PHP')] mixed $source): iterable
+    {
+        $executor = $this->getExecutor();
+
+        return $executor->lex($this->toSource($source));
+    }
+
     public function parse(#[Language('PHP')] mixed $source): TypeNode
     {
         $executor = $this->getExecutor();
 
-        return $executor->parse($this->source($source));
+        return $executor->parse($this->toSource($source));
     }
 
     public function partial(#[Language('PHP')] mixed $source): ParsedResult
     {
         $executor = $this->getExecutor();
 
-        return $executor->partial($this->source($source));
+        return $executor->partial($this->toSource($source));
     }
 
     public function validate(#[Language('PHP')] mixed $source): CheckResult
     {
         $executor = $this->getExecutor();
 
-        return $executor->validate($this->source($source));
+        return $executor->validate($this->toSource($source));
     }
 
     /**
      * @throws SourceExceptionInterface in case of no source can be created out
      *         of the given value
      */
-    private function source(mixed $source): ReadableInterface
+    private function toSource(mixed $source): ReadableInterface
     {
         return $this->sources->create($source);
     }
