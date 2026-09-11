@@ -4,287 +4,272 @@ declare(strict_types=1);
 
 namespace TypeLang\Bench\PhpDoc\Tools;
 
+use FilesystemIterator;
+use PhpToken;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Symfony\Component\Process\ExecutableFinder;
+use Symfony\Component\Process\Process;
+
 abstract class DocBlockParserBench
 {
     /**
-     * @var int<1, max>
+     * A sandbox directory containing the third-party packages that are used
+     * as a real-world DocBlock corpus.
+     *
+     * The whole directory is disposable: It is created, filled and installed
+     * by the benchmark itself and can be removed at any time.
+     *
+     * @var non-empty-string
      */
-    private const REPEATS = 16;
+    protected const CORPUS_DIRECTORY = __DIR__ . '/../../var/corpus';
 
     /**
-     * @return iterable<non-empty-string, array{docblock: non-empty-string}>
+     * The packages to extract the DocBlocks from.
+     *
+     * Each package is a separate benchmark set, so the list should contain
+     * recognizable packages of a different size and documentation style.
+     *
+     * @var non-empty-array<non-empty-string, non-empty-string>
+     */
+    protected const CORPUS_PACKAGES = [
+        'doctrine/collections' => '*',
+        'guzzlehttp/guzzle' => '*',
+        'illuminate/support' => '*',
+        'monolog/monolog' => '*',
+        'nikic/php-parser' => '*',
+        'phpdocumentor/reflection-docblock' => '*',
+        'phpstan/phpdoc-parser' => '*',
+        'psr/log' => '*',
+        'symfony/console' => '*',
+        'symfony/http-foundation' => '*',
+        'twig/twig' => '*',
+        'webmozart/assert' => '*',
+    ];
+
+    /**
+     * Each set contains every DocBlock of a single package of the corpus.
+     *
+     * The corpus is installed by the provider itself, because it is executed
+     * in a separate process before any benchmark is launched.
+     *
+     * @return iterable<non-empty-string, array{docblocks: list<non-empty-string>}>
      */
     public static function docBlocksDataProvider(): iterable
     {
-        yield 'empty' => ['docblock' => '/** */'];
+        $metadata = self::getCorpusMetadata();
 
-        yield 'inline description' => ['docblock' => '/** An example of the inline description. */'];
+        foreach (\array_keys(self::CORPUS_PACKAGES) as $package) {
+            $directory = \realpath($metadata['versions'][$package]['install_path'] ?? '');
 
-        yield 'inline tag' => ['docblock' => '/** @return void */'];
+            if ($directory === false) {
+                throw new \RuntimeException(\sprintf(
+                    'The "%s" package of the benchmark corpus is not installed',
+                    $package,
+                ));
+            }
 
-        yield 'description' => ['docblock' => <<<'DOC'
-            /**
-             * The `@link` tag can be used to define a relation, or link, between
-             * the element, or part of the long description when used inline, to a URI.
-             */
-            DOC];
+            $docblocks = self::extractDocBlocks($directory);
 
-        yield 'description long' => ['docblock' => self::createDescription(self::REPEATS)];
+            if ($docblocks === []) {
+                continue;
+            }
 
-        yield 'scalar types' => ['docblock' => <<<'DOC'
-            /**
-             * @param int $offset
-             * @param string $name
-             * @param bool $strict
-             * @param float $ratio
-             * @param mixed $context
-             * @return void
-             */
-            DOC];
-
-        yield 'union types' => ['docblock' => <<<'DOC'
-            /**
-             * @param int|string $key
-             * @param string|null $name
-             * @param ?iterable $items
-             * @param bool|int|float|string|null $scalar
-             * @return array|false
-             */
-            DOC];
-
-        yield 'intersection types' => ['docblock' => <<<'DOC'
-            /**
-             * @param \Traversable&\Countable $items
-             * @param (\Stringable&\JsonSerializable)|null $value
-             * @param \IteratorAggregate&\ArrayAccess&\Countable $collection
-             * @return \Traversable&\Countable
-             */
-            DOC];
-
-        yield 'named types' => ['docblock' => <<<'DOC'
-            /**
-             * @param \TypeLang\PhpDoc\DocBlockParserInterface $parser
-             * @param DocBlock\Tag\TagInterface $tag
-             * @param self $self
-             * @param static $static
-             * @return $this
-             */
-            DOC];
-
-        yield 'generic types' => ['docblock' => <<<'DOC'
-            /**
-             * @param array<int, string> $list
-             * @param iterable<array-key, non-empty-string> $items
-             * @param \Traversable<int, array<string, list<int>>> $nested
-             * @param class-string<\Throwable> $exception
-             * @return \Generator<int, string, mixed, list<non-empty-string>>
-             */
-            DOC];
-
-        yield 'shape types' => ['docblock' => <<<'DOC'
-            /**
-             * @param array{int, string, bool} $tuple
-             * @param array{name: string, age?: int<0, max>} $struct
-             * @param array{
-             *     id: positive-int,
-             *     meta: array{
-             *         created: \DateTimeInterface,
-             *         tags: list<non-empty-string>,
-             *         ...
-             *     }
-             * } $nested
-             * @param object{name: string, value?: mixed} $object
-             * @return array{}
-             */
-            DOC];
-
-        yield 'callable types' => ['docblock' => <<<'DOC'
-            /**
-             * @param callable $any
-             * @param callable(): void $empty
-             * @param callable(int, string): bool $simple
-             * @param \Closure(non-empty-string, mixed...): (int|string) $variadic
-             * @param callable(callable(int): string): callable(string): int $nested
-             * @return \Closure(): \Generator<int, string>
-             */
-            DOC];
-
-        yield 'literal types' => ['docblock' => <<<'DOC'
-            /**
-             * @param 'read'|'write'|'append' $mode
-             * @param 1|2|3|42 $version
-             * @param 0.1|-0.5 $ratio
-             * @param true|false $flag
-             * @param "double \"quoted\" literal" $quoted
-             * @return 'ok'
-             */
-            DOC];
-
-        yield 'const types' => ['docblock' => <<<'DOC'
-            /**
-             * @param \PDO::FETCH_* $mode
-             * @param self::STATUS_ACTIVE|self::STATUS_INACTIVE $status
-             * @param \PHP_INT_MAX $max
-             * @param int<0, \PHP_INT_MAX> $range
-             * @return static::DEFAULT_VALUE
-             */
-            DOC];
-
-        yield 'conditional types' => ['docblock' => <<<'DOC'
-            /**
-             * @template T
-             * @param T $value
-             * @return (T is int ? string : (T is string ? int : bool))
-             */
-            DOC];
-
-        yield 'template tags' => ['docblock' => <<<'DOC'
-            /**
-             * @template TKey of array-key
-             * @template TValue of object
-             * @template-covariant TResult
-             * @extends \IteratorAggregate<TKey, TValue>
-             * @implements \ArrayAccess<TKey, TValue>
-             * @param TKey $key
-             * @param TValue $value
-             * @return static<TKey, TValue>
-             */
-            DOC];
-
-        yield 'inline tags' => ['docblock' => <<<'DOC'
-            /**
-             * {@inheritDoc}
-             *
-             * See the {@see \TypeLang\PhpDoc\DocBlockParser::parse()} method and
-             * the {@link https://www.ietf.org/rfc/rfc2396.txt RFC2396} document.
-             *
-             * @return void
-             */
-            DOC];
-
-        yield 'metadata tags' => ['docblock' => <<<'DOC'
-            /**
-             * @author Nesmeyanov Kirill <nesk@xakep.ru>
-             * @copyright 2024 TypeLang
-             * @license MIT
-             * @since 1.0
-             * @deprecated since 2.0, use something else instead
-             * @internal
-             * @api
-             * @final
-             * @todo Remove this method
-             */
-            DOC];
-
-        yield 'unknown tags' => ['docblock' => <<<'DOC'
-            /**
-             * @some-vendor-tag with an arbitrary payload
-             * @another_tag(with, parens)
-             * @x-custom {"json": "like", "payload": [1, 2, 3]}
-             * @return void
-             */
-            DOC];
-
-        yield 'real world' => ['docblock' => <<<'DOC'
-            /**
-             * The `@link` tag can be used to define a relation, or link, between
-             * the element, or part of the long description when used inline, to a URI.
-             *
-             * ```
-             * "@link" [<URI> | <reference>] [<description>]
-             * ```
-             *
-             * @link https://www.ietf.org/rfc/rfc2396.txt RFC2396
-             * @return iterable<string, array{
-             *     CommentParserInterface,
-             *     string,
-             *     list<array{ as: string, super: int<0, max> }>
-             * }>
-             */
-            DOC];
-
-        yield 'many params' => ['docblock' => self::createTags(self::REPEATS, [
-            '@param int<0, max> $offset%d',
-            '@param non-empty-string $name%d',
-            '@param list<array{id: int, name: string}> $items%d',
-        ])];
-
-        yield 'many throws' => ['docblock' => self::createTags(self::REPEATS, [
-            '@throws \RuntimeException in case of a %d error',
-            '@throws \InvalidArgumentException in case of an invalid #%d argument',
-        ])];
-
-        yield 'many mixed tags' => ['docblock' => self::createTags(self::REPEATS, [
-            '@param \Closure(int, string...): (bool|null) $callback%d',
-            '@param array{a: int, b: array{c: string, d?: list<float>}} $shape%d',
-            '@var iterable<array-key, \Traversable<int, non-empty-string>> $iterable%d',
-            '@throws \LogicException on the %d failure',
-            '@see \TypeLang\PhpDoc\DocBlockParser::parse() the #%d reference',
-            '@deprecated since %d.0',
-        ])];
-
-        yield 'huge' => ['docblock' => self::createHuge()];
+            yield $package => ['docblocks' => $docblocks];
+        }
     }
 
     /**
-     * @param int<1, max> $repeats
-     * @return non-empty-string
+     * Installs the corpus (if required) and returns the Composer metadata
+     * of the installed packages.
+     *
+     * @return array{versions: array<non-empty-string, array{install_path?: string}>}
      */
-    private static function createDescription(int $repeats): string
+    private static function getCorpusMetadata(): array
     {
-        $lines = ['/**'];
+        $installed = self::CORPUS_DIRECTORY . '/vendor/composer/installed.php';
 
-        for ($i = 0; $i < $repeats; ++$i) {
-            $lines[] = ' * Lorem ipsum dolor sit amet, consectetur adipiscing elit,';
-            $lines[] = ' * sed do eiusmod tempor incididunt ut labore et dolore magna.';
-            $lines[] = ' *';
+        // The manifest is generated from the {@see CORPUS_PACKAGES} list, so
+        // that an edit of the list is enough to update the corpus.
+        $outdated = self::updateCorpusManifest();
+
+        if ($outdated || !\is_file(self::CORPUS_DIRECTORY . '/composer.lock')) {
+            self::composer('update');
+        } elseif (!\is_file($installed)) {
+            self::composer('install');
         }
 
-        $lines[] = ' */';
-
-        return \implode("\n", $lines);
+        /** @var array{versions: array<non-empty-string, array{install_path?: string}>} */
+        return require $installed;
     }
 
     /**
-     * @param int<1, max> $repeats
-     * @param non-empty-list<non-empty-string> $templates sprintf templates of the tag lines
-     * @return non-empty-string
+     * Writes the "composer.json" of the corpus and returns {@see true} in
+     * case of the manifest has been changed (and therefore the installed
+     * packages are outdated).
      */
-    private static function createTags(int $repeats, array $templates): string
+    private static function updateCorpusManifest(): bool
     {
-        $lines = ['/**'];
+        $pathname = self::CORPUS_DIRECTORY . '/composer.json';
 
-        for ($i = 0; $i < $repeats; ++$i) {
-            foreach ($templates as $template) {
-                $lines[] = ' * ' . \sprintf($template, $i);
+        $expected = \json_encode([
+            'name' => 'type-lang/bench-corpus',
+            'description' => 'A disposable sandbox of the third-party packages that are '
+                . 'used as a real-world DocBlock corpus. The directory is generated by '
+                . 'the benchmarks and can be safely removed.',
+            'type' => 'project',
+            'license' => 'MIT',
+            'require' => self::CORPUS_PACKAGES,
+            'config' => [
+                'preferred-install' => ['*' => 'dist'],
+                'allow-plugins' => false,
+            ],
+            'minimum-stability' => 'stable',
+            'prefer-stable' => true,
+        ], \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_THROW_ON_ERROR);
+
+        if (@\file_get_contents($pathname) === $expected) {
+            return false;
+        }
+
+        if (!\is_dir(self::CORPUS_DIRECTORY) && !@\mkdir(self::CORPUS_DIRECTORY, recursive: true)) {
+            throw new \RuntimeException(\sprintf(
+                'Could not create the benchmark corpus directory "%s"',
+                self::CORPUS_DIRECTORY,
+            ));
+        }
+
+        if (\file_put_contents($pathname, $expected) === false) {
+            throw new \RuntimeException(\sprintf(
+                'Could not write the benchmark corpus manifest "%s"',
+                $pathname,
+            ));
+        }
+
+        return true;
+    }
+
+    /**
+     * @param non-empty-string $command
+     */
+    private static function composer(string $command): void
+    {
+        $process = new Process(
+            command: [
+                ...self::getComposerBinary(),
+                $command,
+                '--working-dir=' . self::CORPUS_DIRECTORY,
+                '--no-interaction',
+                '--no-progress',
+                '--no-audit',
+                '--no-plugins',
+                '--no-scripts',
+                '--prefer-dist',
+            ],
+            // The installation of the corpus may take a few minutes on the
+            // first run, so it should not be interrupted by a timeout.
+            timeout: null,
+        );
+
+        if ($process->run() !== 0) {
+            throw new \RuntimeException(\sprintf(
+                "Could not install the benchmark corpus:\n%s",
+                \trim($process->getErrorOutput() . "\n" . $process->getOutput()),
+            ));
+        }
+    }
+
+    /**
+     * @return non-empty-list<non-empty-string>
+     */
+    private static function getComposerBinary(): array
+    {
+        $finder = new ExecutableFinder();
+
+        foreach (['composer', 'composer.phar'] as $name) {
+            $pathname = $finder->find($name);
+
+            if ($pathname === null || $pathname === '') {
+                continue;
+            }
+
+            // A phar is not executable on all platforms, so it is passed
+            // to the PHP binary that runs the benchmarks.
+            return \str_ends_with($pathname, '.phar')
+                ? [\PHP_BINARY, $pathname]
+                : [$pathname];
+        }
+
+        throw new \RuntimeException(\sprintf(
+            'The "composer" executable is required to install the benchmark corpus, '
+                . 'but it could not be found. Please install the corpus manually '
+                . 'using the "composer install --working-dir=%s" command',
+            self::CORPUS_DIRECTORY,
+        ));
+    }
+
+    /**
+     * Extracts every DocBlock of every PHP file of the given directory.
+     *
+     * The PHP tokenizer is used instead of a full-blown parser (like the
+     * {@link https://github.com/nikic/PHP-Parser} package) because the
+     * benchmark requires the DocBlock texts only and not the elements
+     * they are attached to.
+     *
+     * A naive regular expression is not an option either: It also matches
+     * the DocBlocks that occur inside string literals and heredocs, which
+     * the test suites and fixtures of the corpus packages are full of.
+     *
+     * @param non-empty-string $directory
+     * @return list<non-empty-string>
+     */
+    private static function extractDocBlocks(string $directory): array
+    {
+        $result = [];
+
+        foreach (self::getSourceFiles($directory) as $pathname) {
+            $source = @\file_get_contents($pathname);
+
+            if ($source === false || $source === '') {
+                continue;
+            }
+
+            foreach (PhpToken::tokenize($source) as $token) {
+                if ($token->is(\T_DOC_COMMENT) && $token->text !== '') {
+                    $result[] = $token->text;
+                }
             }
         }
 
-        $lines[] = ' */';
-
-        return \implode("\n", $lines);
+        return $result;
     }
 
     /**
-     * @return non-empty-string
+     * @param non-empty-string $directory
+     * @return iterable<array-key, non-empty-string>
      */
-    private static function createHuge(): string
+    private static function getSourceFiles(string $directory): iterable
     {
-        // Removes the trailing " */" line terminator of the description block.
-        $description = \substr(self::createDescription(self::REPEATS), 0, -3);
+        $files = new RecursiveIteratorIterator(
+            iterator: new RecursiveDirectoryIterator(
+                directory: $directory,
+                flags: FilesystemIterator::SKIP_DOTS
+                    | FilesystemIterator::CURRENT_AS_FILEINFO,
+            ),
+        );
 
-        // Removes the leading "/**" line opener of the tags block.
-        $tags = \substr(self::createTags(self::REPEATS, [
-            '@param \Closure(int, string...): (bool|null) $callback%d',
-            '@param array{a: int, b: array{c: string, d?: list<float>}} $shape%d',
-            '@throws \LogicException on the %d failure',
-        ]), 4);
+        /** @var \SplFileInfo $file */
+        foreach ($files as $file) {
+            $pathname = $file->getPathname();
 
-        return $description . $tags;
+            if ($file->isFile() && $file->getExtension() === 'php' && $pathname !== '') {
+                yield $pathname;
+            }
+        }
     }
 
     /**
-     * @param array{docblock: non-empty-string} $params
+     * @param array{docblocks: list<non-empty-string>} $params
      */
     abstract public function benchParseDocBlock(array $params): void;
 }

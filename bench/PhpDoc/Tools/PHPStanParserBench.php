@@ -18,7 +18,8 @@ use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 use PHPStan\PhpDocParser\ParserConfig;
 
-#[Groups(['phpstan']), Revs(500), Warmup(50), Iterations(15), BeforeMethods('prepare'), RetryThreshold(2)]
+#[Groups(['phpstan']), Revs(1), Warmup(1), Iterations(10)]
+#[BeforeMethods('prepare'), RetryThreshold(5)]
 final class PHPStanParserBench extends DocBlockParserBench
 {
     private Lexer $lexer;
@@ -42,8 +43,14 @@ final class PHPStanParserBench extends DocBlockParserBench
     #[ParamProviders('docBlocksDataProvider')]
     public function benchParseDocBlock(array $params): void
     {
-        $iterator = new TokenIterator($this->lexer->tokenize($params['docblock']));
-
-        $this->parser->parse($iterator);
+        foreach ($params['docblocks'] as $docblock) {
+            try {
+                $this->parser->parse(new TokenIterator($this->lexer->tokenize($docblock)));
+            } catch (\Throwable) {
+                // A real-world corpus contains DocBlocks that some of the tools
+                // are not able to parse. They are skipped so that every tool
+                // is measured on the same corpus.
+            }
+        }
     }
 }

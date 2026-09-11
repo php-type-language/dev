@@ -14,7 +14,8 @@ use PhpBench\Attributes\Warmup;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\DocBlockFactoryInterface;
 
-#[Groups(['phpdocumentor']), Revs(500), Warmup(50), Iterations(15), BeforeMethods('prepare'), RetryThreshold(2)]
+#[Groups(['phpdocumentor']), Revs(1), Warmup(1), Iterations(10)]
+#[BeforeMethods('prepare'), RetryThreshold(5)]
 final class PhpDocumentorParserBench extends DocBlockParserBench
 {
     private DocBlockFactoryInterface $parser;
@@ -27,6 +28,14 @@ final class PhpDocumentorParserBench extends DocBlockParserBench
     #[ParamProviders('docBlocksDataProvider')]
     public function benchParseDocBlock(array $params): void
     {
-        $this->parser->create($params['docblock']);
+        foreach ($params['docblocks'] as $docblock) {
+            try {
+                $this->parser->create($docblock);
+            } catch (\Throwable) {
+                // A real-world corpus contains DocBlocks that some of the tools
+                // are not able to parse. They are skipped so that every tool
+                // is measured on the same corpus.
+            }
+        }
     }
 }

@@ -14,7 +14,8 @@ use PhpBench\Attributes\Warmup;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\DocBlockParserInterface;
 
-#[Groups(['typelang', 'baseline']), Revs(500), Warmup(50), Iterations(15), BeforeMethods('prepare'), RetryThreshold(2)]
+#[Groups(['typelang', 'baseline']), Revs(1), Warmup(1), Iterations(10)]
+#[BeforeMethods('prepare'), RetryThreshold(5)]
 final class TypeLangParserBench extends DocBlockParserBench
 {
     private DocBlockParserInterface $parser;
@@ -27,6 +28,14 @@ final class TypeLangParserBench extends DocBlockParserBench
     #[ParamProviders('docBlocksDataProvider')]
     public function benchParseDocBlock(array $params): void
     {
-        $this->parser->parse($params['docblock']);
+        foreach ($params['docblocks'] as $docblock) {
+            try {
+                $this->parser->parse($docblock);
+            } catch (\Throwable) {
+                // A real-world corpus contains DocBlocks that some of the tools
+                // are not able to parse. They are skipped so that every tool
+                // is measured on the same corpus.
+            }
+        }
     }
 }
