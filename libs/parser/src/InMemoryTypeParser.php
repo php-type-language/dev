@@ -45,6 +45,13 @@ final class InMemoryTypeParser implements TypeParserInterface
         $this->sources = $sources ?? SourceFactory::createDefault();
     }
 
+    public function reset(): void
+    {
+        $this->types = [];
+        $this->sequences = [];
+        $this->checks = [];
+    }
+
     /**
      * @throws ParserExceptionInterface
      * @throws SourceExceptionInterface
@@ -83,7 +90,6 @@ final class InMemoryTypeParser implements TypeParserInterface
 
     /**
      * @return non-empty-string
-     * @throws SourceExceptionInterface in case of source content reading error
      */
     private function hash(ReadableInterface $source): string
     {
