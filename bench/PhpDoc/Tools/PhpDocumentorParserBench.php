@@ -14,7 +14,7 @@ use PhpBench\Attributes\Warmup;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\DocBlockFactoryInterface;
 
-#[Groups(['phpdocumentor']), Revs(1), Warmup(1), Iterations(10)]
+#[Groups(['phpdocumentor']), Revs(3), Warmup(10), Iterations(5)]
 #[BeforeMethods('prepare'), RetryThreshold(5)]
 final class PhpDocumentorParserBench extends DocBlockParserBench
 {

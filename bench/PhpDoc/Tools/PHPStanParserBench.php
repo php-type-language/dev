@@ -18,7 +18,7 @@ use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 use PHPStan\PhpDocParser\ParserConfig;
 
-#[Groups(['phpstan']), Revs(1), Warmup(1), Iterations(10)]
+#[Groups(['phpstan']), Revs(3), Warmup(10), Iterations(5)]
 #[BeforeMethods('prepare'), RetryThreshold(5)]
 final class PHPStanParserBench extends DocBlockParserBench
 {

@@ -14,7 +14,7 @@ use PhpBench\Attributes\Warmup;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\PhpDoc\DocBlockParserInterface;
 
-#[Groups(['typelang', 'baseline']), Revs(1), Warmup(1), Iterations(10)]
+#[Groups(['typelang', 'baseline']), Revs(3), Warmup(10), Iterations(5)]
 #[BeforeMethods('prepare'), RetryThreshold(5)]
 final class TypeLangParserBench extends DocBlockParserBench
 {
