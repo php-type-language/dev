@@ -6,6 +6,7 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use TypeLang\Parser\Exception\UnexpectedTokenException;
 use TypeLang\Type\CallableTypeNode;
 use TypeLang\Type\TernaryExpressionNode;
 use TypeLang\Type\ThisNode;
@@ -160,6 +161,40 @@ final class VariableTest extends SyntaxTestCase
         $this->expectParsingException();
 
         $this->parse('Some<$value>');
+    }
+
+    /**
+     * A variable carries no type the rest of the reading could go on with,
+     * so it stands nowhere a type is wrapped, joined or indexed. The subject
+     * of a condition is the one place a variable is read.
+     *
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function variableBesideATypeDataProvider(): iterable
+    {
+        yield 'a nullable' => ['?$value is B ? C : D'];
+        yield 'a union' => ['int|$value is B ? C : D'];
+        yield 'an intersection' => ['int&$value is B ? C : D'];
+        yield 'a union it opens' => ['$value|int is B ? C : D'];
+        yield 'a list' => ['$value[] is B ? C : D'];
+        yield 'an offset' => ['$value[0] is B ? C : D'];
+        yield 'a group' => ['($value)'];
+        yield 'a shape value' => ['array{a: $value}'];
+        yield 'a return type' => ['callable(): $value'];
+    }
+
+    /**
+     * @param non-empty-string $type
+     * @throws \Throwable
+     */
+    #[DataProvider('variableBesideATypeDataProvider')]
+    public function testAVariableStandsInNoTypePosition(string $type): void
+    {
+        // The token is reported the way any other unexpected one is, rather
+        // than raised as an error of the parser itself.
+        $this->expectException(UnexpectedTokenException::class);
+
+        $this->parse($type);
     }
 
     public function testThisCarriesNoClassConstant(): void
