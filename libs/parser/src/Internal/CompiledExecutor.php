@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Internal;
 
-use TypeLang\Type;
 use TypeLang\Parser\Exception;
+use TypeLang\Type;
 
 \interface_exists(\Phplrt\Contracts\Source\Exception\SourceExceptionInterface::class);
 \interface_exists(\Phplrt\Contracts\Source\ReadableInterface::class);
@@ -2361,6 +2361,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         if ($this->features->literals === false) {
             throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('literal values', $source, $offset);
         }
+
         return $children;
     }
 
@@ -2481,15 +2482,15 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             case $suffix === null:
                 return new Type\NamedTypeNode($children[0], null, null, $offset);
 
-            // Some\Any<T, U>
+                // Some\Any<T, U>
             case $suffix instanceof Type\Template\TemplateArgumentListNode:
                 return new Type\NamedTypeNode($children[0], $suffix, null, $offset);
 
-            // Some\Any{name: T, ...<K, V>}
+                // Some\Any{name: T, ...<K, V>}
             case $suffix instanceof Type\Shape\FieldsListNode:
                 return new Type\NamedTypeNode($children[0], $children[2] ?? null, $suffix, $offset);
 
-            // Some\Any(T, U): V
+                // Some\Any(T, U): V
             case $suffix instanceof Type\Callable\CallableParameterListNode:
                 if ($this->features->callables === false) {
                     throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $source, $offset);
@@ -2497,7 +2498,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
 
                 return new Type\CallableTypeNode($children[0], $suffix, $children[2] ?? null, null, $offset);
 
-            // Some\Any<T, U>(T): U
+                // Some\Any<T, U>(T): U
             case $suffix instanceof Type\Template\TemplateParameterListNode:
                 if ($this->features->callables === false) {
                     throw Exception\FeatureNotAllowedException::becauseFeatureIsNotAllowed('callable types', $source, $offset);
@@ -2505,7 +2506,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
 
                 return new Type\CallableTypeNode($children[0], $children[2], $children[3] ?? null, $suffix, $offset);
 
-            // Some\Any::CONST, Some\Any::CONST_* and Some\Any::*
+                // Some\Any::CONST, Some\Any::CONST_* and Some\Any::*
             default:
                 if (\count($children) === 3 && $children[2] instanceof Type\Identifier) {
                     return new Type\ClassConstNode($children[0], $children[2], $offset);
