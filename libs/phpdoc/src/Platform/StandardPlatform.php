@@ -6,6 +6,7 @@ namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserInterface;
+use TypeLang\PhpDoc\DocBlock\Combinator\AssertSubjectCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\CallableTypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\IssueNameCombinator;
@@ -144,6 +145,7 @@ final class StandardPlatform implements PlatformInterface
             TypeCombinator::NAME => new TypeCombinator($this->typeParser),
             CallableTypeCombinator::NAME => new CallableTypeCombinator($this->typeParser),
             VariableCombinator::NAME => new VariableCombinator(),
+            AssertSubjectCombinator::NAME => new AssertSubjectCombinator(),
             IntegerCombinator::NAME => new IntegerCombinator(),
             IssueNameCombinator::NAME => new IssueNameCombinator(),
             VersionCombinator::NAME => new VersionCombinator(),
