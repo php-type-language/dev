@@ -5,15 +5,22 @@ declare(strict_types=1);
 namespace TypeLang\Parser;
 
 use JetBrains\PhpStorm\Language;
+use Phplrt\Contracts\Lexer\TokenInterface;
 use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
+use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\Internal\Executor;
 use TypeLang\Parser\Partial\ParsedResult;
 use TypeLang\Parser\Validation\CheckResult;
 use TypeLang\Type\TypeNode;
 
+/**
+ * @template-contravariant TSource of mixed = mixed
+ *
+ * @template-implements TypeParserInterface<TSource>
+ */
 final class TypeParser implements TypeParserInterface
 {
     private readonly SourceFactoryInterface $sources;
@@ -45,6 +52,29 @@ final class TypeParser implements TypeParserInterface
         );
     }
 
+    /**
+     * Reads the provided source code into the tokens it is written of,
+     * building nothing out of them.
+     *
+     * The tokens are what every other method of this parser reads the source
+     * through, so this is the source as the grammar sees it: what a token is
+     * called, what it carries, and where it stands.
+     *
+     * ```
+     * foreach ($parser->lex('array{ field: result }') as $token) {
+     *     echo $token->name . ' ' . $token->value . \PHP_EOL;
+     * }
+     *
+     * // => T_NAME array
+     * // => T_BRACE_OPEN {
+     * // => ...
+     * ```
+     *
+     * @param TSource $source source code to read
+     * @return iterable<array-key, TokenInterface> the tokens the source is
+     *         written of
+     * @throws \Throwable in case of internal error occurs
+     */
     public function lex(#[Language('PHP')] mixed $source): iterable
     {
         $executor = $this->getExecutor();
