@@ -210,3 +210,103 @@ a parameter carries both markers, the ampersand ("`&`") comes first.
 
 </tab>
 </tabs>
+
+## Template Parameters
+
+A callable MAY declare the template parameters it introduces, written as a
+`<...>` list between the name and the parameter list. Each parameter is a
+name, optionally followed by the bounds put on it.
+
+A parameter accepts three kinds of limit, each written at most once. The two
+bounds are written in either order, and the default is written last: a bound
+behind it would read as a bound of the default itself.
+
+* `of T` or `as T` — the **upper bound**: the argument is to be a subtype
+  of `T`. The two words mean the same and are kept as they are written.
+* `super T` — the **lower bound**: the argument is to be a supertype of `T`.
+* `= T` — the **default**: the type the parameter takes when no argument is
+  passed. It bounds nothing.
+
+The words are not case-sensitive, so an `OF` reads the same way an `of` does.
+
+> A `<...>` that no parenthesis follows is a list of
+> [template arguments](generic-types.md), not of template parameters, and
+> template arguments describe no bounds.
+> {style="note"}
+
+<tabs>
+<tab title="Examples">
+
+> Callable type declaring one template parameter.
+> ```typescript
+> callable<T>(T): T
+> ```
+
+> Callable type declaring a bounded template parameter.
+> ```typescript
+> callable<T of Some>(T): T
+> ```
+
+> Every kind of bound, and several parameters at once.
+> ```typescript
+> Closure<T of Some, U super Any, V = int>(T, U): V
+> ```
+
+> One parameter carrying every limit at once.
+> ```typescript
+> callable<T of Some super Any = int>(T): void
+> ```
+
+</tab>
+<tab title="Counterexamples">
+
+> Bounds belong to a callable alone, so a type used with template arguments
+> describes none.
+> ```typescript
+> Collection<T of Some>
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected end of input
+> ```
+> {style="warning"}
+
+> Only `of`, `as` and `super` bound a parameter.
+> ```typescript
+> callable<T whatever Some>(): void
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Template parameter cannot be bounded with "whatever",
+> expected one of "of", "as" or "super"
+> ```
+> {style="warning"}
+
+> Each kind of limit is written at most once.
+> ```typescript
+> callable<T of Some as Any>(): void
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Template parameter cannot have more than one upper bound
+> ```
+> {style="warning"}
+
+> A bound cannot stand behind the default, since it would read as a bound
+> of the default itself: the `of Some` below bounds the `int`, not the `T`.
+> ```typescript
+> callable<T = int of Some>(): void
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Template parameter default must be written last, since
+> a bound behind it reads as a bound of the default itself
+> ```
+> {style="warning"}
+
+</tab>
+</tabs>

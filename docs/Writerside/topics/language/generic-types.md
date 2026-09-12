@@ -114,7 +114,49 @@ used, for example, in static analyzers to indicate the
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "Request"
+> ParseException: Syntax error, unexpected end of input
+> ```
+> {style="warning"}
+
+</tab>
+</tabs>
+
+
+## Wildcard Arguments
+
+A template argument may be left unsaid, written as an asterisk (`*`) in the
+place of the type. A wildcard argument accepts a [hint](#call-site-hints)
+the same way any other argument does.
+
+<tabs>
+<tab title="Examples">
+
+> Any argument at all.
+> ```typescript
+> Collection<*>
+> ```
+
+> A wildcard beside a type.
+> ```typescript
+> HashMap<array-key, *>
+> ```
+
+> A wildcard carrying a hint.
+> ```typescript
+> Collection<out *>
+> ```
+
+</tab>
+<tab title="Counterexamples">
+
+> An asterisk is a template argument alone and is not a type of its own.
+> ```typescript
+> int|*
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected "*"
 > ```
 > {style="warning"}
 

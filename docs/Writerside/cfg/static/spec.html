@@ -93,7 +93,8 @@
 </ol>
 </li>
 <li><a href="#sec-Callable-Types"><span class="spec-secid">6.2</span>Callable Types</a><ol>
-<li><a href="#sec-Callable-Parameters"><span class="spec-secid">6.2.1</span>Callable Parameters</a></li>
+<li><a href="#sec-Template-Parameters"><span class="spec-secid">6.2.1</span>Template Parameters</a></li>
+<li><a href="#sec-Callable-Parameters"><span class="spec-secid">6.2.2</span>Callable Parameters</a></li>
 </ol>
 </li>
 </ol>
@@ -220,7 +221,7 @@ This specification describes the lexical grammar in terms of Unicode code points
 <tr>
 <td class="spec-rhs"><span class="spec-t">n</span></td><td class="spec-rhs"><span class="spec-t">o</span></td><td class="spec-rhs"><span class="spec-t">p</span></td><td class="spec-rhs"><span class="spec-t">q</span></td><td class="spec-rhs"><span class="spec-t">r</span></td><td class="spec-rhs"><span class="spec-t">s</span></td><td class="spec-rhs"><span class="spec-t">t</span></td><td class="spec-rhs"><span class="spec-t">u</span></td><td class="spec-rhs"><span class="spec-t">v</span></td><td class="spec-rhs"><span class="spec-t">w</span></td><td class="spec-rhs"><span class="spec-t">x</span></td><td class="spec-rhs"><span class="spec-t">y</span></td><td class="spec-rhs"><span class="spec-t">z</span></td></tr>
 <tr>
-<td class="spec-rhs"><span class="spec-prose">Any byte from U+0080 to U+00FF</span></td></tr>
+<td class="spec-rhs"><span class="spec-prose">Any byte from 0x80 to 0xFF</span></td></tr>
 </table></div></div>
 </div>
 <div class="spec-production d2" id="Digit">
@@ -237,15 +238,31 @@ This specification describes the lexical grammar in terms of Unicode code points
 <div class="spec-rhs"><span class="spec-nt"><a href="#Comment" data-name="Comment">Comment</a></span></div>
 </div>
 <p><span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a></span> tokens improve readability and separate lexical tokens, but are otherwise insignificant. Any amount of <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a></span> MAY appear before and after every lexical <span class="spec-nt"><a href="#Token" data-name="Token">Token</a></span>.</p>
-<div id="note-4e121" class="spec-note">
-<a href="#note-4e121">Note</a>
-Although <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a></span> between two tokens is never itself significant, the <em>presence</em> of separating whitespace is what distinguishes a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> that is immediately followed by another token from a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> that introduces a template argument hint (see <a href="#sec-Template-Argument-Hints">Template Argument Hints</a>). This is the only place in the grammar where the presence of separating whitespace is observable to the syntactic grammar.</div>
+<div id="note-10af5" class="spec-note">
+<a href="#note-10af5">Note</a>
+Although <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a></span> between two tokens is never itself significant, the <em>presence</em> of <span class="spec-nt"><a href="#Whitespace" data-name="Whitespace">Whitespace</a></span> standing directly behind a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> is what distinguishes a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> that is immediately followed by another token from a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> that introduces a template argument hint (see <a href="#sec-Template-Argument-Hints">Template Argument Hints</a>). This is the only place in the grammar where <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a></span> is observable to the syntactic grammar, and the one place a <span class="spec-nt"><a href="#Comment" data-name="Comment">Comment</a></span> does not stand for the whitespace it is written among: a comment MAY follow that whitespace, but MUST NOT stand in its stead.</div>
 <section id="sec-White-Space" secid="4.2.1">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-White-Space">4.2.1</a></span>White Space</h3>
 <div class="spec-production d2" id="Whitespace">
-<span class="spec-nt"><a href="#Whitespace" data-name="Whitespace">Whitespace</a></span><div class="spec-rhs"><span class="spec-prose">Any Unicode whitespace character</span></div>
+<span class="spec-nt"><a href="#Whitespace" data-name="Whitespace">Whitespace</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Horizontal Tab (U+0009)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Line Feed (U+000A)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Vertical Tab (U+000B)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Form Feed (U+000C)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Carriage Return (U+000D)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Space (U+0020)</span></td></tr>
+</table></div></div>
 </div>
-<p>Whitespace separates tokens and improves the legibility of the source text. It includes, at minimum, the space (U+0020), horizontal tab (U+0009), line feed (U+000A) and carriage return (U+000D) characters. TypeLang does not distinguish between horizontal whitespace and line terminators, except within the multi-word <code>is not</code> operator (see <a href="#sec-Conditional-Types">Conditional Types</a>).</p>
+<p>Whitespace separates tokens and improves the legibility of the source text. TypeLang does not distinguish between horizontal whitespace and line terminators, and a <span class="spec-nt"><a href="#Comment" data-name="Comment">Comment</a></span> stands wherever whitespace stands, save for the one place the presence of the whitespace itself is read (see <a href="#sec-Ignored-Tokens">Ignored Tokens</a>).</p>
+<div id="note-661c7" class="spec-note">
+<a href="#note-661c7">Note</a>
+The six characters above are the whole of it. A source text is read as a sequence of bytes (see <a href="#sec-Source-Text">Source Text</a>), so a character that parts words in a script of its own &mdash; a no-break space (U+00A0), say &mdash; is no whitespace here: every byte it is written of falls in the range a <span class="spec-nt"><a href="#Letter" data-name="Letter">Letter</a></span> covers, and it is read as a part of the name it stands in.</div>
 </section>
 <section id="sec-Comments" secid="4.2.2">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Comments">4.2.2</a></span>Comments</h3>
@@ -303,12 +320,12 @@ Although <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a
 <tr>
 <td class="spec-rhs"><span class="spec-t">(</span></td><td class="spec-rhs"><span class="spec-t">)</span></td><td class="spec-rhs"><span class="spec-t">[</span></td><td class="spec-rhs"><span class="spec-t">]</span></td><td class="spec-rhs"><span class="spec-t">{</span></td><td class="spec-rhs"><span class="spec-t">}</span></td></tr>
 <tr>
-<td class="spec-rhs"><span class="spec-t">&lt;</span></td><td class="spec-rhs"><span class="spec-t">&gt;</span></td><td class="spec-rhs"><span class="spec-t">&lt;=</span></td><td class="spec-rhs"><span class="spec-t">&gt;=</span></td></tr>
+<td class="spec-rhs"><span class="spec-t">&lt;</span></td><td class="spec-rhs"><span class="spec-t">&gt;</span></td></tr>
 <tr>
 <td class="spec-rhs"><span class="spec-t">::</span></td><td class="spec-rhs"><span class="spec-t">\</span></td><td class="spec-rhs"><span class="spec-t">...</span></td></tr>
 </table></div></div>
 </div>
-<p>TypeLang documents use punctuation to describe structure. Several punctuators share a leading character (for example, <code>&lt;</code> and <code>&lt;=</code>; <code>:</code> and <code>::</code>; <code>.</code> in <code>...</code>); in every such case, the longest matching punctuator is taken.</p>
+<p>TypeLang documents use punctuation to describe structure. Several punctuators share a leading character (for example, <code>:</code> and <code>::</code>; <code>.</code> in <code>...</code>); in every such case, the longest matching punctuator is taken.</p>
 </section>
 <section id="sec-Names" secid="4.3.2">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Names">4.3.2</a></span>Names</h3>
@@ -326,6 +343,9 @@ Although <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a
 <div class="spec-rhs"><span class="spec-t">-</span></div>
 </div>
 <p>A <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> is the raw lexical unit that is later assembled, together with the namespace separator, into the syntactic <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span> production (see <a href="#sec-Names-and-Namespaces">Names and Namespaces</a>); the two are distinct non-terminals of, respectively, the lexical and the syntactic grammar. A <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> MUST begin with a <span class="spec-nt"><a href="#Letter" data-name="Letter">Letter</a></span> or an underscore (<code>_</code>) and MAY continue with any <span class="spec-nt"><a href="#Letter" data-name="Letter">Letter</a></span>, <span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span>, underscore, or dash (<code>-</code>). The only difference from the <a href="https://www.php.net/manual/en/language.variables.basics.php">PHP identifier grammar</a> is that the dash character is additionally permitted in any non-leading position.</p>
+<p>A source text is read as a sequence of bytes rather than of codepoints, and every byte of a character outside of ASCII falls in the 0x80 to 0xFF range a <span class="spec-nt"><a href="#Letter" data-name="Letter">Letter</a></span> covers. A name MAY therefore be written in any script.</p>
+<pre data-language="typescript"><code>Проект\Тип
+</code></pre>
 <p>A <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> is always the longest possible valid sequence; it MUST NOT be followed by a <span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span> character.</p>
 <pre data-language="typescript"><code>ExampleTypeName
 </code></pre>
@@ -346,25 +366,33 @@ Although <span class="spec-nt"><a href="#Ignored" data-name="Ignored">Ignored</a
 <div class="spec-production d2" id="ReservedWord">
 <span class="spec-nt"><a href="#ReservedWord" data-name="ReservedWord">ReservedWord</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
-<td class="spec-rhs"><span class="spec-t">true</span></td><td class="spec-rhs"><span class="spec-t">false</span></td><td class="spec-rhs"><span class="spec-t">null</span></td><td class="spec-rhs"><span class="spec-t">is</span></td></tr>
+<td class="spec-rhs"><span class="spec-t">true</span></td><td class="spec-rhs"><span class="spec-t">false</span></td><td class="spec-rhs"><span class="spec-t">null</span></td><td class="spec-rhs"><span class="spec-t">is</span></td><td class="spec-rhs"><span class="spec-t">not</span></td></tr>
 </table></div></div>
 </div>
-<p>The words <code>true</code>, <code>false</code> and <code>null</code> are <em>literal</em> keywords (see <a href="#sec-Literal-Tokens">Literal Tokens</a>), and <code>is</code> is the conditional operator keyword (see <a href="#sec-Conditional-Types">Conditional Types</a>). All four are matched case-insensitively, and only when not immediately followed by a <span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span> character.</p>
-<p>When the source contains one of these words standing alone, in a position where a type is expected, it is scanned as the corresponding literal or operator token and MUST NOT be scanned as a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span>. Consequently, a bare reserved word cannot be used as a type name.</p>
-<p><strong>Counter-example.</strong> A bare reserved word is scanned as a literal, not a type name.</p>
-<pre id="example-d15c1" class="spec-counter-example" data-language="typescript"><a href="#example-d15c1">Counter Example № 2</a><code>TrUe
+<p>The words <code>true</code>, <code>false</code> and <code>null</code> are <em>literal</em> keywords (see <a href="#sec-Literal-Tokens">Literal Tokens</a>), and <code>is</code> and <code>not</code> are the conditional operator keywords (see <a href="#sec-Conditional-Types">Conditional Types</a>). Each is matched only when not immediately followed by a <span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span> character. The three literal keywords are matched case-insensitively, while <code>is</code> and <code>not</code> are matched the one way they are spelled.</p>
+<p>Wherever the source contains one of these words, it is scanned as the corresponding literal or operator token and MUST NOT be scanned as a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span>. It remains an <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span> all the same (see <a href="#sec-Names-and-Namespaces">Names and Namespaces</a>), so a reserved word is shadowed rather than forbidden: it stands as a name wherever the token it is scanned as denotes no type of its own.</p>
+<p>A literal keyword standing alone, in a position where a type is expected, is read as the <span class="spec-nt"><a href="#LiteralType" data-name="LiteralType">LiteralType</a></span> it denotes and not as the <span class="spec-nt"><a href="#NamedType" data-name="NamedType">NamedType</a></span> it would otherwise be (see <a href="#sec-Primary-Types">Primary Types</a>):</p>
+<pre data-language="typescript"><code>TrUe
 </code></pre>
-<p>A reserved word MAY, however, appear as an <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span> <em>inside</em> a qualified <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span> &mdash; that is, when it is preceded by a namespace separator or another identifier (see <a href="#sec-Names-and-Namespaces">Names and Namespaces</a>). For example, <code>\true</code> references a type literally named <code>true</code>, whereas the bare <code>true</code> is the boolean literal.</p>
+<p>Behind a namespace separator or another segment, where no literal is expected, the same word is a name segment. This makes <code>\true</code> a reference to a type literally named <code>true</code>, distinct from the <code>true</code> literal:</p>
+<pre data-language="typescript"><code>\<span class="token boolean">true</span>
+</code></pre>
+<p>The conditional operator keywords denote no type of their own, so nothing shadows them, and a bare <code>is</code> or <code>not</code> is an ordinary named type:</p>
+<pre data-language="typescript"><code>not
+</code></pre>
 </section>
 <section id="sec-Variable" secid="4.3.4">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Variable">4.3.4</a></span>Variable</h3>
 <div class="spec-production d2" id="Variable">
-<span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><div class="spec-rhs"><span class="spec-t">$</span><span class="spec-nt"><a href="#NameStart" data-name="NameStart">NameStart</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><div class="spec-rhs"><span class="spec-t">$</span><span class="spec-nt"><a href="#NameStart" data-name="NameStart">NameStart</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#VariableContinue" data-name="VariableContinue">VariableContinue</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span></div>
+</div>
+<div class="spec-production d2" id="VariableContinue">
+<span class="spec-nt"><a href="#VariableContinue" data-name="VariableContinue">VariableContinue</a></span><div class="spec-rhs"><span class="spec-constrained"><span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span><span class="spec-butnot"><span class="spec-t">-</span></span></span></div>
 </div>
 <div class="spec-production d2" id="ThisVariable">
-<span class="spec-nt"><a href="#ThisVariable" data-name="ThisVariable">ThisVariable</a></span><div class="spec-rhs"><span class="spec-t">$this</span><span class="spec-lookahead ntset not"><span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span></span></div>
+<span class="spec-nt"><a href="#ThisVariable" data-name="ThisVariable">ThisVariable</a></span><div class="spec-rhs"><span class="spec-t">$this</span><span class="spec-lookahead ntset not"><span class="spec-nt"><a href="#VariableContinue" data-name="VariableContinue">VariableContinue</a></span></span></div>
 </div>
-<p>A <span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span> token begins with a dollar sign (<code>$</code>) followed by a sequence matching the body of a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span>. Variables are used to name callable parameters (see <a href="#sec-Callable-Types">Callable Types</a>) and as operands in conditional types (see <a href="#sec-Conditional-Types">Conditional Types</a>).</p>
+<p>A <span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span> token begins with a dollar sign (<code>$</code>) followed by a sequence matching the body of a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span>, save for the dash a variable cannot carry. Variables are used to name callable parameters (see <a href="#sec-Callable-Types">Callable Types</a>) and as operands in conditional types (see <a href="#sec-Conditional-Types">Conditional Types</a>).</p>
 <p>The special variable <code>$this</code> is recognised as a distinct token and additionally denotes the current object type when used as a primary type (see <a href="#sec-Primary-Types">Primary Types</a>).</p>
 <div id="note-7d5f3" class="spec-note">
 <a href="#note-7d5f3">Note</a>
@@ -402,26 +430,44 @@ The leading <code>$</code> distinguishes variables from names at the lexical lev
 <div class="spec-production d2" id="NegativeSign">
 <span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><div class="spec-rhs"><span class="spec-t">-</span></div>
 </div>
+<div class="spec-production d2" id="Sign">
+<span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
+<tr>
+<td class="spec-rhs"><span class="spec-t">-</span></td><td class="spec-rhs"><span class="spec-t">+</span></td></tr>
+</table></div></div>
+</div>
 <div class="spec-production d2" id="DigitSeparator">
 <span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><div class="spec-rhs"><span class="spec-t">_</span></div>
 </div>
-<p>An integer literal denotes a value of the PHP <code>int</code> type. Binary, octal, decimal and hexadecimal radixes are supported, each optionally prefixed with a <span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span>. Within the digits of any integer literal, underscores (<span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span>) MAY appear freely as visual separators; they carry no meaning and do not affect the denoted value.</p>
-<section id="sec-Integer.Decimal-" class="subsec">
-<h6><a href="#sec-Integer.Decimal-" title="link to this subsection">Decimal.</a></h6>
+<p>An integer literal denotes a value of the PHP <code>int</code> type. Binary, octal, decimal and hexadecimal radixes are supported, each optionally prefixed with a <span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span>. A <span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span> makes the denoted value negative; a leading <code>+</code> denotes the same value the absence of a <span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span> does. Underscores (<span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span>) MAY appear as visual separators; they carry no meaning and do not affect the denoted value. A <span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span> MUST stand between two digits, and therefore may neither lead a run of digits, nor trail one, nor stand beside another <span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span>.</p>
+<div class="spec-production d2" id="Digits">
+<span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-t">)*</span></div>
+</div>
+<p><strong>Decimal.</strong> A decimal literal other than a lone <code>0</code> MUST NOT begin with a zero, which is the mark of an <span class="spec-nt"><a href="#OctalIntLiteral" data-name="OctalIntLiteral">OctalIntLiteral</a></span>.</p>
 <div class="spec-production d2" id="DecimalIntLiteral">
-<span class="spec-nt"><a href="#DecimalIntLiteral" data-name="DecimalIntLiteral">DecimalIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-t">(Digit</span><span class="spec-t">|</span><span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><span class="spec-t">)*</span></div>
+<span class="spec-nt"><a href="#DecimalIntLiteral" data-name="DecimalIntLiteral">DecimalIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#NonZeroDigit" data-name="NonZeroDigit">NonZeroDigit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-t">)*</span></div>
+<div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span></div>
+</div>
+<div class="spec-production d2" id="NonZeroDigit">
+<span class="spec-nt"><a href="#NonZeroDigit" data-name="NonZeroDigit">NonZeroDigit</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
+<tr>
+<td class="spec-rhs"><span class="spec-t">1</span></td><td class="spec-rhs"><span class="spec-t">2</span></td><td class="spec-rhs"><span class="spec-t">3</span></td><td class="spec-rhs"><span class="spec-t">4</span></td><td class="spec-rhs"><span class="spec-t">5</span></td><td class="spec-rhs"><span class="spec-t">6</span></td><td class="spec-rhs"><span class="spec-t">7</span></td><td class="spec-rhs"><span class="spec-t">8</span></td><td class="spec-rhs"><span class="spec-t">9</span></td></tr>
+</table></div></div>
 </div>
 <pre data-language="typescript"><code><span class="token number">1_000_000</span>
 </code></pre>
 <p><strong>Binary.</strong> Prefixed with <code>0b</code> or <code>0B</code>; digits are <code>0</code> and <code>1</code> only.</p>
 <div class="spec-production d2" id="BinaryIntLiteral">
-<span class="spec-nt"><a href="#BinaryIntLiteral" data-name="BinaryIntLiteral">BinaryIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#BinaryIndicator" data-name="BinaryIndicator">BinaryIndicator</a></span><span class="spec-nt"><a href="#BinaryDigit" data-name="BinaryDigit">BinaryDigit</a></span><span class="spec-t">(BinaryDigit</span><span class="spec-t">|</span><span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><span class="spec-t">)*</span></div>
+<span class="spec-nt"><a href="#BinaryIntLiteral" data-name="BinaryIntLiteral">BinaryIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#BinaryIndicator" data-name="BinaryIndicator">BinaryIndicator</a></span><span class="spec-nt"><a href="#BinaryDigits" data-name="BinaryDigits">BinaryDigits</a></span></div>
 </div>
 <div class="spec-production d2" id="BinaryIndicator">
 <span class="spec-nt"><a href="#BinaryIndicator" data-name="BinaryIndicator">BinaryIndicator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
 <td class="spec-rhs"><span class="spec-t">b</span></td><td class="spec-rhs"><span class="spec-t">B</span></td></tr>
 </table></div></div>
+</div>
+<div class="spec-production d2" id="BinaryDigits">
+<span class="spec-nt"><a href="#BinaryDigits" data-name="BinaryDigits">BinaryDigits</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#BinaryDigit" data-name="BinaryDigit">BinaryDigit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#BinaryDigit" data-name="BinaryDigit">BinaryDigit</a></span><span class="spec-t">)*</span></div>
 </div>
 <div class="spec-production d2" id="BinaryDigit">
 <span class="spec-nt"><a href="#BinaryDigit" data-name="BinaryDigit">BinaryDigit</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -431,15 +477,19 @@ The leading <code>$</code> distinguishes variables from names at the lexical lev
 </div>
 <pre data-language="typescript"><code><span class="token number">0b1010_1101</span>
 </code></pre>
-<p><strong>Octal.</strong> Prefixed with <code>0o</code> or <code>0O</code>; digits are <code>0</code> through <code>7</code> only.</p>
+<p><strong>Octal.</strong> Prefixed with <code>0o</code> or <code>0O</code> or, as octal has been written since long before that prefix, with a leading <code>0</code> alone; digits are <code>0</code> through <code>7</code> only. A <code>0123</code> denotes the same value a <code>0o123</code> does.</p>
 <div class="spec-production d2" id="OctalIntLiteral">
-<span class="spec-nt"><a href="#OctalIntLiteral" data-name="OctalIntLiteral">OctalIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#OctalIndicator" data-name="OctalIndicator">OctalIndicator</a></span><span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><span class="spec-t">(OctalDigit</span><span class="spec-t">|</span><span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><span class="spec-t">)*</span></div>
+<span class="spec-nt"><a href="#OctalIntLiteral" data-name="OctalIntLiteral">OctalIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#OctalIndicator" data-name="OctalIndicator">OctalIndicator</a></span><span class="spec-nt"><a href="#OctalDigits" data-name="OctalDigits">OctalDigits</a></span></div>
+<div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><span class="spec-t">)+</span></div>
 </div>
 <div class="spec-production d2" id="OctalIndicator">
 <span class="spec-nt"><a href="#OctalIndicator" data-name="OctalIndicator">OctalIndicator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
 <td class="spec-rhs"><span class="spec-t">o</span></td><td class="spec-rhs"><span class="spec-t">O</span></td></tr>
 </table></div></div>
+</div>
+<div class="spec-production d2" id="OctalDigits">
+<span class="spec-nt"><a href="#OctalDigits" data-name="OctalDigits">OctalDigits</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><span class="spec-t">)*</span></div>
 </div>
 <div class="spec-production d2" id="OctalDigit">
 <span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -449,15 +499,25 @@ The leading <code>$</code> distinguishes variables from names at the lexical lev
 </div>
 <pre data-language="typescript"><code><span class="token number">0o42</span>
 </code></pre>
+<pre data-language="typescript"><code><span class="token number">04_23</span>
+</code></pre>
+<p><strong>Counter-example.</strong> A leading zero makes a literal an octal, so a digit outside the octal radix may not follow one.</p>
+<pre id="example-bdb51" class="spec-counter-example" data-language="typescript"><a href="#example-bdb51">Counter Example № 2</a><code><span class="token number">08</span>
+</code></pre>
+<pre><code>ParseException: Syntax error, unexpected "8"
+</code></pre>
 <p><strong>Hexadecimal.</strong> Prefixed with <code>0x</code> or <code>0X</code>; digits are <code>0</code> through <code>9</code> and <code>a</code> through <code>f</code>, in either case.</p>
 <div class="spec-production d2" id="HexIntLiteral">
-<span class="spec-nt"><a href="#HexIntLiteral" data-name="HexIntLiteral">HexIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#HexIndicator" data-name="HexIndicator">HexIndicator</a></span><span class="spec-nt"><a href="#HexDigit" data-name="HexDigit">HexDigit</a></span><span class="spec-t">(HexDigit</span><span class="spec-t">|</span><span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><span class="spec-t">)*</span></div>
+<span class="spec-nt"><a href="#HexIntLiteral" data-name="HexIntLiteral">HexIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#HexIndicator" data-name="HexIndicator">HexIndicator</a></span><span class="spec-nt"><a href="#HexDigits" data-name="HexDigits">HexDigits</a></span></div>
 </div>
 <div class="spec-production d2" id="HexIndicator">
 <span class="spec-nt"><a href="#HexIndicator" data-name="HexIndicator">HexIndicator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
 <td class="spec-rhs"><span class="spec-t">x</span></td><td class="spec-rhs"><span class="spec-t">X</span></td></tr>
 </table></div></div>
+</div>
+<div class="spec-production d2" id="HexDigits">
+<span class="spec-nt"><a href="#HexDigits" data-name="HexDigits">HexDigits</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#HexDigit" data-name="HexDigit">HexDigit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#HexDigit" data-name="HexDigit">HexDigit</a></span><span class="spec-t">)*</span></div>
 </div>
 <div class="spec-production d2" id="HexDigit">
 <span class="spec-nt"><a href="#HexDigit" data-name="HexDigit">HexDigit</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -476,10 +536,9 @@ The leading <code>$</code> distinguishes variables from names at the lexical lev
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected "42"
 </code></pre>
-</section>
 <section id="sec-Integer.Static-Semantics-" class="subsec">
 <h6><a href="#sec-Integer.Static-Semantics-" title="link to this subsection">Static Semantics.</a></h6>
-<p>A <span class="spec-nt"><a href="#DecimalIntLiteral" data-name="DecimalIntLiteral">DecimalIntLiteral</a></span> whose first digit is <code>0</code> and which is longer than a single character is interpreted in the <em>legacy octal</em> radix (base 8), for compatibility with historical PHP source. Thus, <code>042</code> denotes the value 34.</p>
+<p>An <span class="spec-nt"><a href="#OctalIntLiteral" data-name="OctalIntLiteral">OctalIntLiteral</a></span> written without an <span class="spec-nt"><a href="#OctalIndicator" data-name="OctalIndicator">OctalIndicator</a></span> is the <em>legacy octal</em> spelling kept for compatibility with historical PHP source. It is read in the same radix (base 8) the prefixed spelling is, so <code>042</code> denotes the value 34.</p>
 <p>A conforming implementation MUST retain the original (raw) lexeme of every integer literal. When the denoted value exceeds the range representable by the implementation&rsquo;s platform integer type, the numeric value MUST be clamped to the nearest representable bound (the platform&rsquo;s <code>PHP_INT_MAX</code> or <code>PHP_INT_MIN</code>) while the raw lexeme MUST be preserved unchanged.</p>
 </section>
 </section>
@@ -491,16 +550,16 @@ The leading <code>$</code> distinguishes variables from names at the lexical lev
 <div class="spec-rhs"><span class="spec-nt"><a href="#ExponentFloatLiteral" data-name="ExponentFloatLiteral">ExponentFloatLiteral</a></span></div>
 </div>
 <div class="spec-production d2" id="LeadingFloatLiteral">
-<span class="spec-nt"><a href="#LeadingFloatLiteral" data-name="LeadingFloatLiteral">LeadingFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span><span class="spec-t">.</span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#LeadingFloatLiteral" data-name="LeadingFloatLiteral">LeadingFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><span class="spec-t">.</span><span class="spec-quantified"><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
 <div class="spec-production d2" id="TrailingFloatLiteral">
-<span class="spec-nt"><a href="#TrailingFloatLiteral" data-name="TrailingFloatLiteral">TrailingFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">.</span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#TrailingFloatLiteral" data-name="TrailingFloatLiteral">TrailingFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">.</span><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
 <div class="spec-production d2" id="ExponentFloatLiteral">
-<span class="spec-nt"><a href="#ExponentFloatLiteral" data-name="ExponentFloatLiteral">ExponentFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span></div>
+<span class="spec-nt"><a href="#ExponentFloatLiteral" data-name="ExponentFloatLiteral">ExponentFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span></div>
 </div>
 <div class="spec-production d2" id="ExponentPart">
-<span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ExponentIndicator" data-name="ExponentIndicator">ExponentIndicator</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span></div>
+<span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ExponentIndicator" data-name="ExponentIndicator">ExponentIndicator</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span></div>
 </div>
 <div class="spec-production d2" id="ExponentIndicator">
 <span class="spec-nt"><a href="#ExponentIndicator" data-name="ExponentIndicator">ExponentIndicator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -508,7 +567,7 @@ The leading <code>$</code> distinguishes variables from names at the lexical lev
 <td class="spec-rhs"><span class="spec-t">e</span></td><td class="spec-rhs"><span class="spec-t">E</span></td></tr>
 </table></div></div>
 </div>
-<p>A floating-point literal denotes a value of the PHP <code>float</code> type. It MUST contain either a decimal point or an exponent, or both, and MAY be prefixed with a <span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span>.</p>
+<p>A floating-point literal denotes a value of the PHP <code>float</code> type. It MUST contain either a decimal point or an exponent, or both, and MAY be prefixed with a <span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span>.</p>
 <p>Either the leading run of digits (before the decimal point) or the trailing run (after it) MAY be omitted, but not both:</p>
 <pre data-language="typescript"><code><span class="token number">0.9</span>
 </code></pre>
@@ -516,8 +575,13 @@ The leading <code>$</code> distinguishes variables from names at the lexical lev
 </code></pre>
 <pre data-language="typescript"><code><span class="token number">1.</span>
 </code></pre>
-<p>Scientific notation uses the case-insensitive <code>e</code> indicator followed by an optionally negative decimal exponent:</p>
+<p>Scientific notation uses the case-insensitive <code>e</code> indicator followed by a decimal exponent, which takes a <span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span> of its own:</p>
 <pre data-language="typescript"><code><span class="token number">10e-2</span>
+</code></pre>
+<pre data-language="typescript"><code><span class="token number">10e+2</span>
+</code></pre>
+<p>Every run of digits a float is written of accepts the <span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span> under the same rule an integer does, and, unlike a <span class="spec-nt"><a href="#DecimalIntLiteral" data-name="DecimalIntLiteral">DecimalIntLiteral</a></span>, MAY begin with a zero:</p>
+<pre data-language="typescript"><code><span class="token number">2_3.4_5e-6_7</span>
 </code></pre>
 <p><strong>Counter-example.</strong> A lone decimal point is not a valid float.</p>
 <pre id="example-cb4cb" class="spec-counter-example" data-language="typescript"><a href="#example-cb4cb">Counter Example № 4</a><code><span class="token punctuation">.</span>
@@ -671,13 +735,13 @@ The nullable prefix binds more loosely than the postfix suffixes, so <code>?A[]<
 <div class="spec-production" id="ConditionalOperator">
 <span class="spec-nt"><a href="#ConditionalOperator" data-name="ConditionalOperator">ConditionalOperator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
-<td class="spec-rhs"><span class="spec-t">is</span></td><td class="spec-rhs"><span class="spec-t">is not</span></td><td class="spec-rhs"><span class="spec-t">&gt;=</span></td><td class="spec-rhs"><span class="spec-t">&lt;=</span></td><td class="spec-rhs"><span class="spec-t">&lt;</span></td><td class="spec-rhs"><span class="spec-t">&gt;</span></td></tr>
+<td class="spec-rhs"><span class="spec-t">is</span></td><td class="spec-rhs"><span class="spec-t">is not</span></td></tr>
 </table></div></div>
 </div>
 <p>A <em>conditional type</em> (also called a ternary type) selects between two types based on a comparison between a <em>subject</em> and a <em>comparand</em>. It is written as the subject, an operator, the comparand, a <code>?</code>, the type chosen when the condition holds, a <code>:</code>, and the type chosen otherwise.</p>
 <pre data-language="typescript"><code><span class="token constant">T</span> <span class="token keyword">is</span> <span class="token builtin">string</span> <span class="token operator">?</span> int <span class="token operator">:</span> bool
 </code></pre>
-<p>The negative-equality operator is spelled <code>is not</code>. At the lexical level, the two words MUST be separated only by horizontal whitespace and are scanned as a single token; no line terminator may appear between them.</p>
+<p>The negative-equality operator is spelled <code>is not</code>. The two words are separate tokens, so whitespace and comments MAY stand between them the way they MAY stand between any other two tokens.</p>
 <pre data-language="typescript"><code><span class="token constant">T</span> <span class="token keyword">is</span> not <span class="token builtin">string</span> <span class="token operator">?</span> int <span class="token operator">:</span> bool
 </code></pre>
 <p>Either the subject or the comparand MAY be a <span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span> instead of a <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span>, including in &ldquo;Yoda&rdquo; order, where the variable appears on the right:</p>
@@ -685,7 +749,6 @@ The nullable prefix binds more loosely than the postfix suffixes, so <code>?A[]<
 </code></pre>
 <pre data-language="typescript"><code>array <span class="token keyword">is</span> $value <span class="token operator">?</span> non<span class="token operator">-</span>empty<span class="token operator">-</span>array <span class="token operator">:</span> <span class="token keyword">null</span>
 </code></pre>
-<p>In addition to <code>is</code> and <code>is not</code>, the relational operators <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code> and <code>&gt;=</code> MAY be used as the condition operator. This is an extension beyond what PHPStan and Psalm accept; see <a href="#sec-Relationship-to-Other-Tools">Relationship to Other Tools</a>.</p>
 <div id="note-e79f4" class="spec-note">
 <a href="#note-e79f4">Note</a>
 A bare <span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span> is only a valid type when it carries a <span class="spec-nt"><a href="#ConditionalSuffix" data-name="ConditionalSuffix">ConditionalSuffix</a></span>. A <span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span> MUST NOT otherwise stand alone as a type; the only variable-like token that may appear as a primary type on its own is <code>$this</code> (see <a href="#sec-Primary-Types">Primary Types</a>).</div>
@@ -763,10 +826,9 @@ A <span class="spec-nt"><a href="#UnionType" data-name="UnionType">UnionType</a>
 </code></pre>
 <pre data-language="typescript"><code>User<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">]</span>
 </code></pre>
-<p><strong>Counter-example.</strong> The legacy list syntax does not accept a key type between the brackets; for that, use <a href="#sec-Offset-Access">offset access</a> or the modern <code>array&lt;…&gt;</code> generic.</p>
-<pre id="example-48596" class="spec-counter-example" data-language="typescript"><a href="#example-48596">Counter Example № 6</a><code>User<span class="token punctuation">[</span>int<span class="token punctuation">]</span>
+<p>The legacy list syntax accepts no key type between the brackets; for that, use <a href="#sec-Offset-Access">offset access</a> or the modern <code>array&lt;…&gt;</code> generic. A <code>User[int]</code> is a well-formed document all the same &mdash; an <em>offset access</em> type (see below) rather than a list, since <code>int</code> is a valid <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span>. It is the absence of a type between the brackets that selects the list reading:</p>
+<pre data-language="typescript"><code>User<span class="token punctuation">[</span>int<span class="token punctuation">]</span>
 </code></pre>
-<p>This document, however, parses <code>User[int]</code> successfully &mdash; as an <em>offset access</em> type (see below) rather than a list &mdash; because <code>int</code> is a valid <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span>. It is the absence of a type between the brackets that selects the list interpretation.</p>
 </section>
 <section id="sec-Offset-Access" secid="5.4.2">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Offset-Access">5.4.2</a></span>Offset Access</h3>
@@ -781,7 +843,7 @@ A <span class="spec-nt"><a href="#UnionType" data-name="UnionType">UnionType</a>
 <pre data-language="typescript"><code><span class="token constant">T</span><span class="token operator">&lt;</span><span class="token constant">U</span><span class="token operator">></span><span class="token punctuation">[</span>object<span class="token punctuation">{</span>key<span class="token operator">:</span> int<span class="token punctuation">,</span> <span class="token operator">...</span><span class="token punctuation">}</span><span class="token punctuation">]</span>
 </code></pre>
 <p><strong>Counter-example.</strong> Each offset is enclosed in a single pair of brackets.</p>
-<pre id="example-f126a" class="spec-counter-example" data-language="typescript"><a href="#example-f126a">Counter Example № 7</a><code>Collection<span class="token punctuation">[</span><span class="token punctuation">[</span>Some<span class="token punctuation">]</span><span class="token punctuation">]</span>
+<pre id="example-f126a" class="spec-counter-example" data-language="typescript"><a href="#example-f126a">Counter Example № 6</a><code>Collection<span class="token punctuation">[</span><span class="token punctuation">[</span>Some<span class="token punctuation">]</span><span class="token punctuation">]</span>
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected "["
 </code></pre>
@@ -806,6 +868,9 @@ A <span class="spec-nt"><a href="#UnionType" data-name="UnionType">UnionType</a>
 <div id="note-678fe" class="spec-note">
 <a href="#note-678fe">Note</a>
 Each of <span class="spec-nt"><a href="#CallableType" data-name="CallableType">CallableType</a></span>, <span class="spec-nt"><a href="#NamedType" data-name="NamedType">NamedType</a></span>, and the <span class="spec-nt"><a href="#ClassConstant" data-name="ClassConstant">ClassConstant</a></span> and <span class="spec-nt"><a href="#ConstantMask" data-name="ConstantMask">ConstantMask</a></span> forms of <span class="spec-nt"><a href="#LiteralType" data-name="LiteralType">LiteralType</a></span> begins with a <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span>. Once a complete <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span> has been recognized, these four are distinguished by the single token that immediately follows it: <code>*</code> selects a <a href="#sec-Constant-Masks">constant mask</a>; <code>::</code> selects a <a href="#sec-Class-Constants">class constant</a>; <code>(</code> selects a <a href="#sec-Callable-Types">callable type</a>; <code>&lt;</code> or <code>{</code> selects a <a href="#sec-Generic-Types">generic or shape</a> named type; any other following token (or the end of the document) leaves a plain named type.</div>
+<div id="note-2db33" class="spec-note">
+<a href="#note-2db33">Note</a>
+A bare <span class="spec-nt"><a href="#ReservedWord" data-name="ReservedWord">ReservedWord</a></span> is likewise both a <span class="spec-nt"><a href="#LiteralType" data-name="LiteralType">LiteralType</a></span> and, through <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span>, a <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span> of a single segment (see <a href="#sec-Reserved-Words">Reserved Words</a>). Where one source could be read as either, the <span class="spec-nt"><a href="#LiteralType" data-name="LiteralType">LiteralType</a></span> is the one taken, so a <code>true</code> denotes the boolean literal and never a type named <code>true</code>. An <code>is</code> and a <code>not</code> denote no literal of their own, and nothing is therefore left to shadow the named type each of them is.</div>
 </section>
 <section id="sec-Names-and-Namespaces" secid="5.6">
 <h2><span class="spec-secid" title="link to this section"><a href="#sec-Names-and-Namespaces">5.6</a></span>Names and Namespaces</h2>
@@ -829,9 +894,9 @@ Each of <span class="spec-nt"><a href="#CallableType" data-name="CallableType">C
 <pre data-language="typescript"><code>\Absolute\Type\Name
 </code></pre>
 <p>A separator MAY appear at the start of a name or between two segments, but MUST NOT appear at the end.</p>
-<p><strong>Reserved words within names.</strong> The reserved words <code>true</code>, <code>false</code>, <code>null</code> and <code>is</code> (see <a href="#sec-Reserved-Words">Reserved Words</a>) MAY appear as an <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span> segment of a <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span>. In isolation, such a word is scanned as a literal or operator and so cannot stand as a bare type name; but in a qualified position &mdash; following a separator or another segment &mdash; it denotes a name segment. This makes <code>\null</code> a reference to a type named <code>null</code>, distinct from the <code>null</code> literal.</p>
+<p><strong>Reserved words within names.</strong> Every reserved word &mdash; <code>true</code>, <code>false</code>, <code>null</code>, <code>is</code> and <code>not</code> (see <a href="#sec-Reserved-Words">Reserved Words</a>) &mdash; MAY appear as an <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span> segment of a <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span>. In a qualified position &mdash; following a separator or another segment &mdash; such a word is a name segment and nothing besides. This makes <code>\null</code> a reference to a type named <code>null</code>, distinct from the <code>null</code> literal.</p>
 <p><strong>Counter-example.</strong> A name cannot end with a separator.</p>
-<pre id="example-6458d" class="spec-counter-example" data-language="typescript"><a href="#example-6458d">Counter Example № 8</a><code>Example\Name\
+<pre id="example-6458d" class="spec-counter-example" data-language="typescript"><a href="#example-6458d">Counter Example № 7</a><code>Example\Name\
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected end of input
 </code></pre>
@@ -852,12 +917,15 @@ Each of <span class="spec-nt"><a href="#CallableType" data-name="CallableType">C
 <span class="spec-nt"><a href="#TemplateArguments" data-name="TemplateArguments">TemplateArguments</a></span><div class="spec-rhs"><span class="spec-t">&lt;</span><span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">&gt;</span></div>
 </div>
 <div class="spec-production" id="TemplateArgument">
-<span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span></div>
+<span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#TemplateArgumentValue" data-name="TemplateArgumentValue">TemplateArgumentValue</a></span></div>
 </div>
-<div class="spec-production" id="TemplateArgumentType">
-<span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+<div class="spec-production" id="TemplateArgumentValue">
+<span class="spec-nt"><a href="#TemplateArgumentValue" data-name="TemplateArgumentValue">TemplateArgumentValue</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
 </div>
-<p>A <em>generic type</em> supplies a named type with one or more <em>template arguments</em>, each of which is itself a <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span>. Arguments are enclosed in angle brackets (<code>&lt;</code> and <code>&gt;</code>) and separated by commas. A trailing comma is permitted.</p>
+<div class="spec-production" id="Wildcard">
+<span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><div class="spec-rhs"><span class="spec-t">*</span></div>
+</div>
+<p>A <em>generic type</em> supplies a named type with one or more <em>template arguments</em>, each of which is itself a <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span> or a <span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span>. Arguments are enclosed in angle brackets (<code>&lt;</code> and <code>&gt;</code>) and separated by commas. A trailing comma is permitted.</p>
 <p>Validating the number of arguments, their bounds, and their nesting is the responsibility of the implementation, not of this grammar, which imposes no such limits.</p>
 <pre data-language="typescript"><code>Path\To\ExampleClass<span class="token operator">&lt;</span><span class="token constant">T</span><span class="token punctuation">,</span> <span class="token constant">U</span><span class="token operator">></span>
 </code></pre>
@@ -866,7 +934,7 @@ Each of <span class="spec-nt"><a href="#CallableType" data-name="CallableType">C
 <pre data-language="typescript"><code>HashMap<span class="token operator">&lt;</span>Request<span class="token punctuation">,</span> User<span class="token punctuation">,</span><span class="token operator">></span>
 </code></pre>
 <p><strong>Counter-example.</strong> At least one argument is required, and a leading comma is not permitted.</p>
-<pre id="example-cf8f9" class="spec-counter-example" data-language="typescript"><a href="#example-cf8f9">Counter Example № 9</a><code>example<span class="token operator">&lt;</span><span class="token operator">></span>
+<pre id="example-cf8f9" class="spec-counter-example" data-language="typescript"><a href="#example-cf8f9">Counter Example № 8</a><code>example<span class="token operator">&lt;</span><span class="token operator">></span>
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected "&gt;"
 </code></pre>
@@ -876,21 +944,21 @@ Throughout this document, the term <em>template argument</em> refers to a value 
 <section id="sec-Template-Argument-Hints" secid="5.8.1">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Template-Argument-Hints">5.8.1</a></span>Template Argument Hints</h3>
 <div class="spec-production" id="TemplateArgumentHint">
-<span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+<span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span><span class="spec-nt"><a href="#TemplateArgumentValue" data-name="TemplateArgumentValue">TemplateArgumentValue</a></span></div>
 </div>
-<p>A template argument MAY carry a single leading <em>hint</em>: an <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span> placed before the argument&rsquo;s type. Hints are used by tooling &mdash; for example, to express <a href="https://phpstan.org/blog/guide-to-call-site-generic-variance#call-site-variance">call-site variance</a> with identifiers such as <code>in</code>, <code>out</code>, <code>covariant</code>, or <code>contravariant</code>.</p>
+<p>A template argument MAY carry a single leading <em>hint</em>: a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span> placed before the argument&rsquo;s type. Hints are used by tooling &mdash; for example, to express <a href="https://phpstan.org/blog/guide-to-call-site-generic-variance#call-site-variance">call-site variance</a> with identifiers such as <code>in</code>, <code>out</code>, <code>covariant</code>, or <code>contravariant</code>.</p>
 <pre data-language="typescript"><code>HashMap<span class="token operator">&lt;</span>array<span class="token operator">-</span>key<span class="token punctuation">,</span> covariant Request<span class="token operator">></span>
 </code></pre>
-<p>At the lexical level, the hint and the type it modifies MUST be separated by whitespace; this separation is what distinguishes a hint from the start of the argument&rsquo;s own type (see <a href="#sec-Ignored-Tokens">Ignored Tokens</a>). Each argument may carry at most one hint.</p>
-<p><strong>Counter-example.</strong> A hint must be a single valid identifier.</p>
-<pre id="example-8406b" class="spec-counter-example" data-language="typescript"><a href="#example-8406b">Counter Example № 10</a><code>HashMap<span class="token operator">&lt;</span>array<span class="token operator">-</span>key<span class="token punctuation">,</span> some covariant Request<span class="token operator">></span>
+<p>At the lexical level, <span class="spec-nt"><a href="#Whitespace" data-name="Whitespace">Whitespace</a></span> MUST stand directly behind the hint; this separation is what distinguishes a hint from the start of the argument&rsquo;s own type, and a <span class="spec-nt"><a href="#Comment" data-name="Comment">Comment</a></span> does not stand in its place (see <a href="#sec-Ignored-Tokens">Ignored Tokens</a>). Each argument may carry at most one hint.</p>
+<p><strong>Counter-example.</strong> A hint is a single <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span>. A second one reads as the bound of a <a href="#sec-Callable-Types">template parameter</a>, and a parameter list belongs to a callable, so the statement is refused where the <code>(</code> it would go on with is missing.</p>
+<pre id="example-8406b" class="spec-counter-example" data-language="typescript"><a href="#example-8406b">Counter Example № 9</a><code>HashMap<span class="token operator">&lt;</span>array<span class="token operator">-</span>key<span class="token punctuation">,</span> some covariant Request<span class="token operator">></span>
 </code></pre>
-<pre><code>ParseException: Syntax error, unexpected "Request"
+<pre><code>ParseException: Syntax error, unexpected end of input
 </code></pre>
-<p><strong>Counter-example.</strong> A hint cannot be a reserved word: <code>is</code>, <code>true</code>, <code>false</code> and <code>null</code> are always scanned as the corresponding operator or literal token (see <a href="#sec-Reserved-Words">Reserved Words</a>) and never as a hint <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span>.</p>
-<pre id="example-54add" class="spec-counter-example" data-language="typescript"><a href="#example-54add">Counter Example № 11</a><code>HashMap<span class="token operator">&lt;</span><span class="token keyword">is</span> Request<span class="token operator">></span>
+<p><strong>Counter-example.</strong> A hint cannot be a reserved word: <code>true</code>, <code>false</code>, <code>null</code>, <code>is</code> and <code>not</code> are always scanned as the corresponding literal or operator token (see <a href="#sec-Reserved-Words">Reserved Words</a>) and never as a <span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span>.</p>
+<pre id="example-54add" class="spec-counter-example" data-language="typescript"><a href="#example-54add">Counter Example № 10</a><code>HashMap<span class="token operator">&lt;</span><span class="token keyword">is</span> Request<span class="token operator">></span>
 </code></pre>
-<pre><code>ParseException: Syntax error, unexpected "Request"
+<pre><code>ParseException: Syntax error, unexpected "&gt;"
 </code></pre>
 </section>
 </section>
@@ -940,7 +1008,7 @@ Because the grammar of a class or global constant name is identical to that of a
 <pre data-language="typescript"><code>Path\To\ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token constant">ANOTHER_CONSTANT_NAME</span>
 </code></pre>
 <p><strong>Counter-example.</strong> The constant part may not contain a namespace separator.</p>
-<pre id="example-12180" class="spec-counter-example" data-language="typescript"><a href="#example-12180">Counter Example № 12</a><code>ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token constant">SOME</span>\<span class="token constant">ANY</span>
+<pre id="example-12180" class="spec-counter-example" data-language="typescript"><a href="#example-12180">Counter Example № 11</a><code>ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token constant">SOME</span>\<span class="token constant">ANY</span>
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected "\"
 </code></pre>
@@ -948,28 +1016,53 @@ Because the grammar of a class or global constant name is identical to that of a
 <section id="sec-Constant-Masks" secid="5.10.3">
 <h3><span class="spec-secid" title="link to this section"><a href="#sec-Constant-Masks">5.10.3</a></span>Constant Masks</h3>
 <div class="spec-production" id="ConstantMask">
-<span class="spec-nt"><a href="#ConstantMask" data-name="ConstantMask">ConstantMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">*</span></div>
-<div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-t">*</span></div>
-<div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-t">*</span></div>
+<span class="spec-nt"><a href="#ConstantMask" data-name="ConstantMask">ConstantMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#GlobalConstantMask" data-name="GlobalConstantMask">GlobalConstantMask</a></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#ClassConstantMask" data-name="ClassConstantMask">ClassConstantMask</a></span></div>
 </div>
-<p>A <em>constant mask</em> denotes a family of constants whose names share a common prefix. A mask MUST terminate with an asterisk (<code>*</code>).</p>
-<p>A global constant mask matches every global constant beginning with the prefix:</p>
+<div class="spec-production" id="GlobalConstantMask">
+<span class="spec-nt"><a href="#GlobalConstantMask" data-name="GlobalConstantMask">GlobalConstantMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">\</span><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#LeadingMask" data-name="LeadingMask">LeadingMask</a></span></div>
+</div>
+<div class="spec-production" id="ClassConstantMask">
+<span class="spec-nt"><a href="#ClassConstantMask" data-name="ClassConstantMask">ClassConstantMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span></div>
+</div>
+<div class="spec-production" id="MaskTail">
+<span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><span class="spec-t">(Identifier</span><span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+</div>
+<div class="spec-production" id="LeadingMask">
+<span class="spec-nt"><a href="#LeadingMask" data-name="LeadingMask">LeadingMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+</div>
+<p>A <em>constant mask</em> denotes a family of constants whose names are written of the same segments, in the same order, with a <span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span> standing wherever the name is left unsaid. A mask MUST contain at least one <span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span>, and its segments and wildcards alternate, so two wildcards in a row denote nothing a single one does not.</p>
+<p>A global constant mask matches every global constant the segments describe:</p>
 <pre data-language="typescript"><code><span class="token constant">JSON_</span><span class="token operator">*</span>
 </code></pre>
-<p>A class constant mask matches every constant of a class whose name begins with the prefix; the prefix MAY be omitted entirely, in which case the mask matches every constant of the class:</p>
+<p>The name of a global constant MAY be left unsaid from its very beginning, and the namespace it belongs to MAY be written in front of it. A <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span> standing in front of a <span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span> carries the namespace and, in its last segment, the leading segment of the mask; a <span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span> separated from the mask by a <code>\</code> is a namespace whole, and the mask then matches every constant that namespace holds:</p>
+<pre data-language="typescript"><code><span class="token operator">*</span>_SUFFIX
+</code></pre>
+<pre data-language="typescript"><code>Path\To\<span class="token constant">JSON_</span><span class="token operator">*</span>
+</code></pre>
+<pre data-language="typescript"><code>Path\To\<span class="token operator">*</span>
+</code></pre>
+<p>A class constant mask matches every constant of a class the segments describe; the leading segment MAY be omitted entirely, in which case the mask matches every constant of the class:</p>
 <pre data-language="typescript"><code>Path\To\ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token constant">PREFIX_</span><span class="token operator">*</span>
+</code></pre>
+<pre data-language="typescript"><code>Path\To\ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token operator">*</span>_SUFFIX
+</code></pre>
+<pre data-language="typescript"><code>Path\To\ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token constant">PREFIX_</span><span class="token operator">*</span>_SUFFIX
 </code></pre>
 <pre data-language="typescript"><code>Path\To\ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token operator">*</span>
 </code></pre>
-<p><strong>Counter-example.</strong> A global mask must have a prefix; a lone asterisk is not a type.</p>
-<pre id="example-dc8bc" class="spec-counter-example" data-language="typescript"><a href="#example-dc8bc">Counter Example № 13</a><code><span class="token operator">*</span>
+<p><strong>Counter-example.</strong> A global mask must have at least one segment of a name, whether it stands in front of a wildcard or behind it; a lone asterisk, which would match every constant there is, is not a type.</p>
+<pre id="example-dc8bc" class="spec-counter-example" data-language="typescript"><a href="#example-dc8bc">Counter Example № 12</a><code><span class="token operator">*</span>
+</code></pre>
+<pre><code>ParseException: Syntax error, unexpected end of input
+</code></pre>
+<p><strong>Counter-example.</strong> Two wildcards in a row are not a mask.</p>
+<pre id="example-e1e8d" class="spec-counter-example" data-language="typescript"><a href="#example-e1e8d">Counter Example № 13</a><code>Path\To\ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token constant">PREFIX_</span><span class="token operator">**</span>
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected "*"
-</code></pre>
-<p><strong>Counter-example.</strong> The asterisk must be the final character of the mask.</p>
-<pre id="example-607e6" class="spec-counter-example" data-language="typescript"><a href="#example-607e6">Counter Example № 14</a><code>Path\To\ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token constant">PREFIX_</span><span class="token operator">*</span>_SUFFIX
-</code></pre>
-<pre><code>ParseException: Syntax error, unexpected "_SUFFIX"
 </code></pre>
 </section>
 </section>
@@ -1039,12 +1132,12 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <pre data-language="typescript"><code>array<span class="token punctuation">{</span> Path\To\ClassName<span class="token operator">:</span><span class="token operator">:</span><span class="token constant">CONSTANT_NAME</span><span class="token operator">:</span> First<span class="token punctuation">,</span> <span class="token constant">JSON_</span><span class="token operator">*</span><span class="token operator">:</span> Second <span class="token punctuation">}</span>
 </code></pre>
 <p><strong>Mixed keys are not permitted.</strong> A single shape MUST use either explicit keys throughout or implicit keys throughout.</p>
-<pre id="example-ec8e0" class="spec-counter-example" data-language="typescript"><a href="#example-ec8e0">Counter Example № 15</a><code>array<span class="token punctuation">{</span> named<span class="token operator">:</span> First<span class="token punctuation">,</span> Second <span class="token punctuation">}</span>
+<pre id="example-ec8e0" class="spec-counter-example" data-language="typescript"><a href="#example-ec8e0">Counter Example № 14</a><code>array<span class="token punctuation">{</span> named<span class="token operator">:</span> First<span class="token punctuation">,</span> Second <span class="token punctuation">}</span>
 </code></pre>
 <pre><code>ParseException: Cannot mix explicit and implicit shape keys
 </code></pre>
 <p><strong>Duplicate explicit keys are not permitted.</strong> No two explicit fields of the same shape may denote the same key, regardless of which of the five key forms each uses.</p>
-<pre id="example-8877a" class="spec-counter-example" data-language="typescript"><a href="#example-8877a">Counter Example № 16</a><code>array<span class="token punctuation">{</span> <span class="token number">1</span><span class="token operator">:</span> int<span class="token punctuation">,</span> <span class="token number">2</span><span class="token operator">:</span> int<span class="token punctuation">,</span> <span class="token number">1</span><span class="token operator">:</span> <span class="token builtin">string</span> <span class="token punctuation">}</span>
+<pre id="example-8877a" class="spec-counter-example" data-language="typescript"><a href="#example-8877a">Counter Example № 15</a><code>array<span class="token punctuation">{</span> <span class="token number">1</span><span class="token operator">:</span> int<span class="token punctuation">,</span> <span class="token number">2</span><span class="token operator">:</span> int<span class="token punctuation">,</span> <span class="token number">1</span><span class="token operator">:</span> <span class="token builtin">string</span> <span class="token punctuation">}</span>
 </code></pre>
 <pre><code>ParseException: Duplicate key "1"
 </code></pre>
@@ -1076,7 +1169,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <section id="sec-Callable-Types" secid="6.2">
 <h2><span class="spec-secid" title="link to this section"><a href="#sec-Callable-Types">6.2</a></span>Callable Types</h2>
 <div class="spec-production" id="CallableType">
-<span class="spec-nt"><a href="#CallableType" data-name="CallableType">CallableType</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">(</span><span class="spec-quantified"><span class="spec-nt"><a href="#CallableParameters" data-name="CallableParameters">CallableParameters</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">)</span><span class="spec-quantified"><span class="spec-nt"><a href="#CallableReturnType" data-name="CallableReturnType">CallableReturnType</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#CallableType" data-name="CallableType">CallableType</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#TemplateParameters" data-name="TemplateParameters">TemplateParameters</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">(</span><span class="spec-quantified"><span class="spec-nt"><a href="#CallableParameters" data-name="CallableParameters">CallableParameters</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">)</span><span class="spec-quantified"><span class="spec-nt"><a href="#CallableReturnType" data-name="CallableReturnType">CallableReturnType</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
 <div class="spec-production" id="CallableParameters">
 <span class="spec-nt"><a href="#CallableParameters" data-name="CallableParameters">CallableParameters</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
@@ -1084,15 +1177,85 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <div class="spec-production" id="CallableReturnType">
 <span class="spec-nt"><a href="#CallableReturnType" data-name="CallableReturnType">CallableReturnType</a></span><div class="spec-rhs"><span class="spec-t">:</span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
 </div>
-<p>A <em>callable type</em> describes a function-like value. It is a <a href="#sec-Names-and-Namespaces">name</a> &mdash; commonly <code>callable</code> or <code>Closure</code>, but any name is accepted &mdash; followed by a parenthesized, possibly empty, parameter list, and an optional return type introduced by a colon.</p>
+<p>A <em>callable type</em> describes a function-like value. It is a <a href="#sec-Names-and-Namespaces">name</a> &mdash; commonly <code>callable</code> or <code>Closure</code>, but any name is accepted &mdash; optionally followed by the <a href="#sec-Template-Parameters">template parameters</a> it declares, then by a parenthesized, possibly empty, parameter list, and an optional return type introduced by a colon.</p>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 </code></pre>
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
 </code></pre>
 <pre data-language="typescript"><code><span class="token function">Closure</span><span class="token punctuation">(</span>int<span class="token operator">&lt;</span><span class="token number">0</span><span class="token punctuation">,</span> max<span class="token operator">></span><span class="token punctuation">,</span> <span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">?</span><span class="token constant">C</span><span class="token punctuation">)</span><span class="token operator">:</span> mixed<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
 </code></pre>
-<section id="sec-Callable-Parameters" secid="6.2.1">
-<h3><span class="spec-secid" title="link to this section"><a href="#sec-Callable-Parameters">6.2.1</a></span>Callable Parameters</h3>
+<section id="sec-Template-Parameters" secid="6.2.1">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Template-Parameters">6.2.1</a></span>Template Parameters</h3>
+<div class="spec-production" id="TemplateParameters">
+<span class="spec-nt"><a href="#TemplateParameters" data-name="TemplateParameters">TemplateParameters</a></span><div class="spec-rhs"><span class="spec-t">&lt;</span><span class="spec-nt"><a href="#TemplateParameter" data-name="TemplateParameter">TemplateParameter</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#TemplateParameter" data-name="TemplateParameter">TemplateParameter</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">&gt;</span></div>
+</div>
+<div class="spec-production" id="TemplateParameter">
+<span class="spec-nt"><a href="#TemplateParameter" data-name="TemplateParameter">TemplateParameter</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#TemplateBound" data-name="TemplateBound">TemplateBound</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#TemplateDefault" data-name="TemplateDefault">TemplateDefault</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+</div>
+<div class="spec-production" id="TemplateBound">
+<span class="spec-nt"><a href="#TemplateBound" data-name="TemplateBound">TemplateBound</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#UpperBound" data-name="UpperBound">UpperBound</a></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#LowerBound" data-name="LowerBound">LowerBound</a></span></div>
+</div>
+<div class="spec-production" id="UpperBound">
+<span class="spec-nt"><a href="#UpperBound" data-name="UpperBound">UpperBound</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#UpperBoundOperator" data-name="UpperBoundOperator">UpperBoundOperator</a></span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+</div>
+<div class="spec-production" id="UpperBoundOperator">
+<span class="spec-nt"><a href="#UpperBoundOperator" data-name="UpperBoundOperator">UpperBoundOperator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
+<tr>
+<td class="spec-rhs"><span class="spec-t">of</span></td><td class="spec-rhs"><span class="spec-t">as</span></td></tr>
+</table></div></div>
+</div>
+<div class="spec-production" id="LowerBound">
+<span class="spec-nt"><a href="#LowerBound" data-name="LowerBound">LowerBound</a></span><div class="spec-rhs"><span class="spec-t">super</span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+</div>
+<div class="spec-production" id="TemplateDefault">
+<span class="spec-nt"><a href="#TemplateDefault" data-name="TemplateDefault">TemplateDefault</a></span><div class="spec-rhs"><span class="spec-t">=</span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+</div>
+<p>A callable type MAY declare the <em>template parameters</em> it introduces, written as a <code>&lt;...&gt;</code> list between the name and the parameter list. Each parameter is an <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span> followed by as many <em>bounds</em> as are put on it.</p>
+<p>A parameter accepts three kinds of limit, each of which MUST be written at most once. The two bounds MAY be written in either order, while a <span class="spec-nt"><a href="#TemplateDefault" data-name="TemplateDefault">TemplateDefault</a></span> MUST be written last: a bound standing behind it belongs to the <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span> of the default rather than to the parameter.</p>
+<ul>
+<li>An <span class="spec-nt"><a href="#UpperBound" data-name="UpperBound">UpperBound</a></span> narrows the parameter from above: the argument is to be a subtype of the given <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span>. Its two operators denote the same thing, and a conforming implementation MUST retain the one that was written.</li>
+<li>A <span class="spec-nt"><a href="#LowerBound" data-name="LowerBound">LowerBound</a></span> bounds the parameter from below: the argument is to be a supertype of the given <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span>.</li>
+<li>A <span class="spec-nt"><a href="#TemplateDefault" data-name="TemplateDefault">TemplateDefault</a></span> is the <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span> the parameter takes when no argument is supplied. It bounds nothing.</li>
+</ul>
+<p>Each operator is matched the one way it is spelled, so an <code>OF</code> bounds nothing an <code>of</code> does.</p>
+<pre data-language="typescript"><code><span class="token generic-function"><span class="token function">callable</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token constant">T</span><span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token constant">T</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token constant">T</span>
+</code></pre>
+<pre data-language="typescript"><code><span class="token generic-function"><span class="token function">callable</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token constant">T</span> <span class="token keyword">of</span> Some<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token constant">T</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token constant">T</span>
+</code></pre>
+<pre data-language="typescript"><code><span class="token generic-function"><span class="token function">Closure</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token constant">T</span> <span class="token keyword">of</span> Some<span class="token punctuation">,</span> <span class="token constant">U</span> <span class="token keyword">super</span> Any<span class="token punctuation">,</span> <span class="token constant">V</span> <span class="token operator">=</span> int<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token constant">T</span><span class="token punctuation">,</span> <span class="token constant">U</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token constant">V</span>
+</code></pre>
+<pre data-language="typescript"><code><span class="token generic-function"><span class="token function">callable</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token constant">T</span> <span class="token keyword">of</span> Some <span class="token keyword">super</span> Any <span class="token operator">=</span> int<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token constant">T</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
+</code></pre>
+<p><strong>Counter-example.</strong> A word that bounds nothing is not an operator.</p>
+<pre id="example-8f27e" class="spec-counter-example" data-language="typescript"><a href="#example-8f27e">Counter Example № 16</a><code><span class="token generic-function"><span class="token function">callable</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token constant">T</span> whatever Some<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
+</code></pre>
+<pre><code>ParseException: Template parameter cannot be bounded with "whatever", expected one of "of", "as" or "super"
+</code></pre>
+<p><strong>Counter-example.</strong> Neither is a word that is spelled the way an operator is spelled, but written in a case of its own.</p>
+<pre id="example-7b79b" class="spec-counter-example" data-language="typescript"><a href="#example-7b79b">Counter Example № 17</a><code><span class="token generic-function"><span class="token function">callable</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token constant">T</span> <span class="token constant">OF</span> Some<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
+</code></pre>
+<pre><code>ParseException: Template parameter cannot be bounded with "OF", expected one of "of", "as" or "super"
+</code></pre>
+<p><strong>Counter-example.</strong> Each kind of limit is written at most once.</p>
+<pre id="example-4ad48" class="spec-counter-example" data-language="typescript"><a href="#example-4ad48">Counter Example № 18</a><code><span class="token generic-function"><span class="token function">callable</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token constant">T</span> <span class="token keyword">of</span> Some <span class="token keyword">as</span> Any<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
+</code></pre>
+<pre><code>ParseException: Template parameter cannot have more than one upper bound
+</code></pre>
+<p><strong>Counter-example.</strong> A bound does not stand behind a default.</p>
+<pre id="example-67d80" class="spec-counter-example" data-language="typescript"><a href="#example-67d80">Counter Example № 19</a><code><span class="token generic-function"><span class="token function">callable</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token constant">T</span> <span class="token operator">=</span> int <span class="token keyword">of</span> Some<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span>
+</code></pre>
+<pre><code>ParseException: Template parameter default must be written last, since a bound behind it reads as a bound of the default itself
+</code></pre>
+<p>A <code>&lt;...&gt;</code> list is written the same way whether it declares template parameters or supplies <a href="#sec-Generic-Types">template arguments</a>, and only the <code>(</code> that follows a parameter list tells them apart. A list that no <code>(</code> follows is therefore a list of template arguments, which describes no bounds.</p>
+<p><strong>Counter-example.</strong> Bounds belong to a callable alone.</p>
+<pre id="example-a3d5a" class="spec-counter-example" data-language="typescript"><a href="#example-a3d5a">Counter Example № 20</a><code>Collection<span class="token operator">&lt;</span><span class="token constant">T</span> <span class="token keyword">of</span> Some<span class="token operator">></span>
+</code></pre>
+<pre><code>ParseException: Syntax error, unexpected end of input
+</code></pre>
+</section>
+<section id="sec-Callable-Parameters" secid="6.2.2">
+<h3><span class="spec-secid" title="link to this section"><a href="#sec-Callable-Parameters">6.2.2</a></span>Callable Parameters</h3>
 <div class="spec-production" id="CallableParameter">
 <span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span><span class="spec-quantified"><span class="spec-t">&amp;</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-t">...</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-t">=</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
@@ -1102,7 +1265,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span>Type $name<span class="token punctuation">)</span>
 </code></pre>
 <p><strong>Counter-example.</strong> A parameter given by name alone, without a type, is not permitted.</p>
-<pre id="example-1358e" class="spec-counter-example" data-language="typescript"><a href="#example-1358e">Counter Example № 17</a><code><span class="token function">callable</span><span class="token punctuation">(</span>$name<span class="token punctuation">)</span>
+<pre id="example-1358e" class="spec-counter-example" data-language="typescript"><a href="#example-1358e">Counter Example № 21</a><code><span class="token function">callable</span><span class="token punctuation">(</span>$name<span class="token punctuation">)</span>
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected ")"
 </code></pre>
@@ -1115,7 +1278,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">&amp;</span>$name<span class="token punctuation">)</span>
 </code></pre>
 <p><strong>Counter-example.</strong> The ampersand must follow the type; it must not precede it.</p>
-<pre id="example-b89d4" class="spec-counter-example" data-language="typescript"><a href="#example-b89d4">Counter Example № 18</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">&amp;</span><span class="token constant">T</span><span class="token punctuation">)</span>
+<pre id="example-b89d4" class="spec-counter-example" data-language="typescript"><a href="#example-b89d4">Counter Example № 22</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">&amp;</span><span class="token constant">T</span><span class="token punctuation">)</span>
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected "&amp;"
 </code></pre>
@@ -1130,12 +1293,12 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <pre data-language="typescript"><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">&amp;</span><span class="token operator">...</span>$name<span class="token punctuation">)</span>
 </code></pre>
 <p><strong>Counter-example.</strong> The ellipsis must follow the type; it must not precede it.</p>
-<pre id="example-6bdd8" class="spec-counter-example" data-language="typescript"><a href="#example-6bdd8">Counter Example № 19</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">...</span><span class="token constant">T</span><span class="token punctuation">)</span>
+<pre id="example-6bdd8" class="spec-counter-example" data-language="typescript"><a href="#example-6bdd8">Counter Example № 23</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token operator">...</span><span class="token constant">T</span><span class="token punctuation">)</span>
 </code></pre>
 <pre><code>ParseException: Syntax error, unexpected "..."
 </code></pre>
 <p><strong>Counter-example.</strong> A variadic parameter is already optional and therefore must not additionally carry a default marker.</p>
-<pre id="example-7a315" class="spec-counter-example" data-language="typescript"><a href="#example-7a315">Counter Example № 20</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">...</span>$name<span class="token operator">=</span><span class="token punctuation">)</span>
+<pre id="example-7a315" class="spec-counter-example" data-language="typescript"><a href="#example-7a315">Counter Example № 24</a><code><span class="token function">callable</span><span class="token punctuation">(</span><span class="token constant">T</span> <span class="token operator">...</span>$name<span class="token operator">=</span><span class="token punctuation">)</span>
 </code></pre>
 <pre><code>ParseException: Cannot have variadic param with a default
 </code></pre>
@@ -1242,7 +1405,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <tr>
 <td class="spec-rhs"><span class="spec-t">n</span></td><td class="spec-rhs"><span class="spec-t">o</span></td><td class="spec-rhs"><span class="spec-t">p</span></td><td class="spec-rhs"><span class="spec-t">q</span></td><td class="spec-rhs"><span class="spec-t">r</span></td><td class="spec-rhs"><span class="spec-t">s</span></td><td class="spec-rhs"><span class="spec-t">t</span></td><td class="spec-rhs"><span class="spec-t">u</span></td><td class="spec-rhs"><span class="spec-t">v</span></td><td class="spec-rhs"><span class="spec-t">w</span></td><td class="spec-rhs"><span class="spec-t">x</span></td><td class="spec-rhs"><span class="spec-t">y</span></td><td class="spec-rhs"><span class="spec-t">z</span></td></tr>
 <tr>
-<td class="spec-rhs"><span class="spec-prose">Any byte from U+0080 to U+00FF</span></td></tr>
+<td class="spec-rhs"><span class="spec-prose">Any byte from 0x80 to 0xFF</span></td></tr>
 </table></div></div>
 </div>
 <div class="spec-production d2" id="Digit">
@@ -1259,7 +1422,20 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <div class="spec-rhs"><span class="spec-nt"><a href="#Comment" data-name="Comment">Comment</a></span></div>
 </div>
 <div class="spec-production d2" id="Whitespace">
-<span class="spec-nt"><a href="#Whitespace" data-name="Whitespace">Whitespace</a></span><div class="spec-rhs"><span class="spec-prose">Any Unicode whitespace character</span></div>
+<span class="spec-nt"><a href="#Whitespace" data-name="Whitespace">Whitespace</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Horizontal Tab (U+0009)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Line Feed (U+000A)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Vertical Tab (U+000B)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Form Feed (U+000C)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Carriage Return (U+000D)</span></td></tr>
+<tr>
+<td class="spec-rhs"><span class="spec-prose">Space (U+0020)</span></td></tr>
+</table></div></div>
 </div>
 <div class="spec-production d2" id="LineTerminator">
 <span class="spec-nt"><a href="#LineTerminator" data-name="LineTerminator">LineTerminator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -1309,7 +1485,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <tr>
 <td class="spec-rhs"><span class="spec-t">(</span></td><td class="spec-rhs"><span class="spec-t">)</span></td><td class="spec-rhs"><span class="spec-t">[</span></td><td class="spec-rhs"><span class="spec-t">]</span></td><td class="spec-rhs"><span class="spec-t">{</span></td><td class="spec-rhs"><span class="spec-t">}</span></td></tr>
 <tr>
-<td class="spec-rhs"><span class="spec-t">&lt;</span></td><td class="spec-rhs"><span class="spec-t">&gt;</span></td><td class="spec-rhs"><span class="spec-t">&lt;=</span></td><td class="spec-rhs"><span class="spec-t">&gt;=</span></td></tr>
+<td class="spec-rhs"><span class="spec-t">&lt;</span></td><td class="spec-rhs"><span class="spec-t">&gt;</span></td></tr>
 <tr>
 <td class="spec-rhs"><span class="spec-t">::</span></td><td class="spec-rhs"><span class="spec-t">\</span></td><td class="spec-rhs"><span class="spec-t">...</span></td></tr>
 </table></div></div>
@@ -1330,14 +1506,17 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <div class="spec-production d2" id="ReservedWord">
 <span class="spec-nt"><a href="#ReservedWord" data-name="ReservedWord">ReservedWord</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
-<td class="spec-rhs"><span class="spec-t">true</span></td><td class="spec-rhs"><span class="spec-t">false</span></td><td class="spec-rhs"><span class="spec-t">null</span></td><td class="spec-rhs"><span class="spec-t">is</span></td></tr>
+<td class="spec-rhs"><span class="spec-t">true</span></td><td class="spec-rhs"><span class="spec-t">false</span></td><td class="spec-rhs"><span class="spec-t">null</span></td><td class="spec-rhs"><span class="spec-t">is</span></td><td class="spec-rhs"><span class="spec-t">not</span></td></tr>
 </table></div></div>
 </div>
 <div class="spec-production d2" id="Variable">
-<span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><div class="spec-rhs"><span class="spec-t">$</span><span class="spec-nt"><a href="#NameStart" data-name="NameStart">NameStart</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#Variable" data-name="Variable">Variable</a></span><div class="spec-rhs"><span class="spec-t">$</span><span class="spec-nt"><a href="#NameStart" data-name="NameStart">NameStart</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#VariableContinue" data-name="VariableContinue">VariableContinue</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span></div>
+</div>
+<div class="spec-production d2" id="VariableContinue">
+<span class="spec-nt"><a href="#VariableContinue" data-name="VariableContinue">VariableContinue</a></span><div class="spec-rhs"><span class="spec-constrained"><span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span><span class="spec-butnot"><span class="spec-t">-</span></span></span></div>
 </div>
 <div class="spec-production d2" id="ThisVariable">
-<span class="spec-nt"><a href="#ThisVariable" data-name="ThisVariable">ThisVariable</a></span><div class="spec-rhs"><span class="spec-t">$this</span><span class="spec-lookahead ntset not"><span class="spec-nt"><a href="#NameContinue" data-name="NameContinue">NameContinue</a></span></span></div>
+<span class="spec-nt"><a href="#ThisVariable" data-name="ThisVariable">ThisVariable</a></span><div class="spec-rhs"><span class="spec-t">$this</span><span class="spec-lookahead ntset not"><span class="spec-nt"><a href="#VariableContinue" data-name="VariableContinue">VariableContinue</a></span></span></div>
 </div>
 </section>
 <section id="sec-Appendix-Grammar-Summary.Literal-Tokens" class="subsec">
@@ -1354,8 +1533,17 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <div class="spec-production d2" id="NegativeSign">
 <span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><div class="spec-rhs"><span class="spec-t">-</span></div>
 </div>
+<div class="spec-production d2" id="Sign">
+<span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
+<tr>
+<td class="spec-rhs"><span class="spec-t">-</span></td><td class="spec-rhs"><span class="spec-t">+</span></td></tr>
+</table></div></div>
+</div>
 <div class="spec-production d2" id="DigitSeparator">
 <span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><div class="spec-rhs"><span class="spec-t">_</span></div>
+</div>
+<div class="spec-production d2" id="Digits">
+<span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-t">)*</span></div>
 </div>
 <div class="spec-production d2" id="IntLiteral">
 <span class="spec-nt"><a href="#IntLiteral" data-name="IntLiteral">IntLiteral</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#BinaryIntLiteral" data-name="BinaryIntLiteral">BinaryIntLiteral</a></span></div>
@@ -1364,16 +1552,26 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <div class="spec-rhs"><span class="spec-nt"><a href="#DecimalIntLiteral" data-name="DecimalIntLiteral">DecimalIntLiteral</a></span></div>
 </div>
 <div class="spec-production d2" id="DecimalIntLiteral">
-<span class="spec-nt"><a href="#DecimalIntLiteral" data-name="DecimalIntLiteral">DecimalIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-t">(Digit</span><span class="spec-t">|</span><span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><span class="spec-t">)*</span></div>
+<span class="spec-nt"><a href="#DecimalIntLiteral" data-name="DecimalIntLiteral">DecimalIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#NonZeroDigit" data-name="NonZeroDigit">NonZeroDigit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-t">)*</span></div>
+<div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span></div>
+</div>
+<div class="spec-production d2" id="NonZeroDigit">
+<span class="spec-nt"><a href="#NonZeroDigit" data-name="NonZeroDigit">NonZeroDigit</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
+<tr>
+<td class="spec-rhs"><span class="spec-t">1</span></td><td class="spec-rhs"><span class="spec-t">2</span></td><td class="spec-rhs"><span class="spec-t">3</span></td><td class="spec-rhs"><span class="spec-t">4</span></td><td class="spec-rhs"><span class="spec-t">5</span></td><td class="spec-rhs"><span class="spec-t">6</span></td><td class="spec-rhs"><span class="spec-t">7</span></td><td class="spec-rhs"><span class="spec-t">8</span></td><td class="spec-rhs"><span class="spec-t">9</span></td></tr>
+</table></div></div>
 </div>
 <div class="spec-production d2" id="BinaryIntLiteral">
-<span class="spec-nt"><a href="#BinaryIntLiteral" data-name="BinaryIntLiteral">BinaryIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#BinaryIndicator" data-name="BinaryIndicator">BinaryIndicator</a></span><span class="spec-nt"><a href="#BinaryDigit" data-name="BinaryDigit">BinaryDigit</a></span><span class="spec-t">(BinaryDigit</span><span class="spec-t">|</span><span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><span class="spec-t">)*</span></div>
+<span class="spec-nt"><a href="#BinaryIntLiteral" data-name="BinaryIntLiteral">BinaryIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#BinaryIndicator" data-name="BinaryIndicator">BinaryIndicator</a></span><span class="spec-nt"><a href="#BinaryDigits" data-name="BinaryDigits">BinaryDigits</a></span></div>
 </div>
 <div class="spec-production d2" id="BinaryIndicator">
 <span class="spec-nt"><a href="#BinaryIndicator" data-name="BinaryIndicator">BinaryIndicator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
 <td class="spec-rhs"><span class="spec-t">b</span></td><td class="spec-rhs"><span class="spec-t">B</span></td></tr>
 </table></div></div>
+</div>
+<div class="spec-production d2" id="BinaryDigits">
+<span class="spec-nt"><a href="#BinaryDigits" data-name="BinaryDigits">BinaryDigits</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#BinaryDigit" data-name="BinaryDigit">BinaryDigit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#BinaryDigit" data-name="BinaryDigit">BinaryDigit</a></span><span class="spec-t">)*</span></div>
 </div>
 <div class="spec-production d2" id="BinaryDigit">
 <span class="spec-nt"><a href="#BinaryDigit" data-name="BinaryDigit">BinaryDigit</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -1382,13 +1580,17 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 </table></div></div>
 </div>
 <div class="spec-production d2" id="OctalIntLiteral">
-<span class="spec-nt"><a href="#OctalIntLiteral" data-name="OctalIntLiteral">OctalIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#OctalIndicator" data-name="OctalIndicator">OctalIndicator</a></span><span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><span class="spec-t">(OctalDigit</span><span class="spec-t">|</span><span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><span class="spec-t">)*</span></div>
+<span class="spec-nt"><a href="#OctalIntLiteral" data-name="OctalIntLiteral">OctalIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#OctalIndicator" data-name="OctalIndicator">OctalIndicator</a></span><span class="spec-nt"><a href="#OctalDigits" data-name="OctalDigits">OctalDigits</a></span></div>
+<div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><span class="spec-t">)+</span></div>
 </div>
 <div class="spec-production d2" id="OctalIndicator">
 <span class="spec-nt"><a href="#OctalIndicator" data-name="OctalIndicator">OctalIndicator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
 <td class="spec-rhs"><span class="spec-t">o</span></td><td class="spec-rhs"><span class="spec-t">O</span></td></tr>
 </table></div></div>
+</div>
+<div class="spec-production d2" id="OctalDigits">
+<span class="spec-nt"><a href="#OctalDigits" data-name="OctalDigits">OctalDigits</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><span class="spec-t">)*</span></div>
 </div>
 <div class="spec-production d2" id="OctalDigit">
 <span class="spec-nt"><a href="#OctalDigit" data-name="OctalDigit">OctalDigit</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -1397,13 +1599,16 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 </table></div></div>
 </div>
 <div class="spec-production d2" id="HexIntLiteral">
-<span class="spec-nt"><a href="#HexIntLiteral" data-name="HexIntLiteral">HexIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#HexIndicator" data-name="HexIndicator">HexIndicator</a></span><span class="spec-nt"><a href="#HexDigit" data-name="HexDigit">HexDigit</a></span><span class="spec-t">(HexDigit</span><span class="spec-t">|</span><span class="spec-nt"><a href="#DigitSeparator" data-name="DigitSeparator">DigitSeparator</a></span><span class="spec-t">)*</span></div>
+<span class="spec-nt"><a href="#HexIntLiteral" data-name="HexIntLiteral">HexIntLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">0</span><span class="spec-nt"><a href="#HexIndicator" data-name="HexIndicator">HexIndicator</a></span><span class="spec-nt"><a href="#HexDigits" data-name="HexDigits">HexDigits</a></span></div>
 </div>
 <div class="spec-production d2" id="HexIndicator">
 <span class="spec-nt"><a href="#HexIndicator" data-name="HexIndicator">HexIndicator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
 <td class="spec-rhs"><span class="spec-t">x</span></td><td class="spec-rhs"><span class="spec-t">X</span></td></tr>
 </table></div></div>
+</div>
+<div class="spec-production d2" id="HexDigits">
+<span class="spec-nt"><a href="#HexDigits" data-name="HexDigits">HexDigits</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#HexDigit" data-name="HexDigit">HexDigit</a></span><span class="spec-t">(DigitSeparator?</span><span class="spec-nt"><a href="#HexDigit" data-name="HexDigit">HexDigit</a></span><span class="spec-t">)*</span></div>
 </div>
 <div class="spec-production d2" id="HexDigit">
 <span class="spec-nt"><a href="#HexDigit" data-name="HexDigit">HexDigit</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -1421,16 +1626,16 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <div class="spec-rhs"><span class="spec-nt"><a href="#ExponentFloatLiteral" data-name="ExponentFloatLiteral">ExponentFloatLiteral</a></span></div>
 </div>
 <div class="spec-production d2" id="LeadingFloatLiteral">
-<span class="spec-nt"><a href="#LeadingFloatLiteral" data-name="LeadingFloatLiteral">LeadingFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span><span class="spec-t">.</span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#LeadingFloatLiteral" data-name="LeadingFloatLiteral">LeadingFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><span class="spec-t">.</span><span class="spec-quantified"><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
 <div class="spec-production d2" id="TrailingFloatLiteral">
-<span class="spec-nt"><a href="#TrailingFloatLiteral" data-name="TrailingFloatLiteral">TrailingFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">.</span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#TrailingFloatLiteral" data-name="TrailingFloatLiteral">TrailingFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">.</span><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
 <div class="spec-production d2" id="ExponentFloatLiteral">
-<span class="spec-nt"><a href="#ExponentFloatLiteral" data-name="ExponentFloatLiteral">ExponentFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span></div>
+<span class="spec-nt"><a href="#ExponentFloatLiteral" data-name="ExponentFloatLiteral">ExponentFloatLiteral</a></span><div class="spec-rhs"><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span><span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span></div>
 </div>
 <div class="spec-production d2" id="ExponentPart">
-<span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ExponentIndicator" data-name="ExponentIndicator">ExponentIndicator</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#NegativeSign" data-name="NegativeSign">NegativeSign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#Digit" data-name="Digit">Digit</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span></span></span></div>
+<span class="spec-nt"><a href="#ExponentPart" data-name="ExponentPart">ExponentPart</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#ExponentIndicator" data-name="ExponentIndicator">ExponentIndicator</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#Sign" data-name="Sign">Sign</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-nt"><a href="#Digits" data-name="Digits">Digits</a></span></div>
 </div>
 <div class="spec-production d2" id="ExponentIndicator">
 <span class="spec-nt"><a href="#ExponentIndicator" data-name="ExponentIndicator">ExponentIndicator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
@@ -1476,6 +1681,9 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 </section>
 <section id="sec-Appendix-Grammar-Summary.Types" class="subsec">
 <h6><a href="#sec-Appendix-Grammar-Summary.Types" title="link to this subsection">Types</a></h6>
+<div class="spec-production" id="Document">
+<span class="spec-nt"><a href="#Document" data-name="Document">Document</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+</div>
 <div class="spec-production" id="Type">
 <span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Expression" data-name="Expression">Expression</a></span></div>
 </div>
@@ -1496,7 +1704,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <div class="spec-production" id="ConditionalOperator">
 <span class="spec-nt"><a href="#ConditionalOperator" data-name="ConditionalOperator">ConditionalOperator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
 <tr>
-<td class="spec-rhs"><span class="spec-t">is</span></td><td class="spec-rhs"><span class="spec-t">is not</span></td><td class="spec-rhs"><span class="spec-t">&gt;=</span></td><td class="spec-rhs"><span class="spec-t">&lt;=</span></td><td class="spec-rhs"><span class="spec-t">&lt;</span></td><td class="spec-rhs"><span class="spec-t">&gt;</span></td></tr>
+<td class="spec-rhs"><span class="spec-t">is</span></td><td class="spec-rhs"><span class="spec-t">is not</span></td></tr>
 </table></div></div>
 </div>
 </section>
@@ -1570,13 +1778,16 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <span class="spec-nt"><a href="#TemplateArguments" data-name="TemplateArguments">TemplateArguments</a></span><div class="spec-rhs"><span class="spec-t">&lt;</span><span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">&gt;</span></div>
 </div>
 <div class="spec-production" id="TemplateArgument">
-<span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span></div>
+<span class="spec-nt"><a href="#TemplateArgument" data-name="TemplateArgument">TemplateArgument</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#TemplateArgumentValue" data-name="TemplateArgumentValue">TemplateArgumentValue</a></span></div>
 </div>
 <div class="spec-production" id="TemplateArgumentHint">
-<span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+<span class="spec-nt"><a href="#TemplateArgumentHint" data-name="TemplateArgumentHint">TemplateArgumentHint</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#NameToken" data-name="NameToken">NameToken</a></span><span class="spec-nt"><a href="#TemplateArgumentValue" data-name="TemplateArgumentValue">TemplateArgumentValue</a></span></div>
 </div>
-<div class="spec-production" id="TemplateArgumentType">
-<span class="spec-nt"><a href="#TemplateArgumentType" data-name="TemplateArgumentType">TemplateArgumentType</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+<div class="spec-production" id="TemplateArgumentValue">
+<span class="spec-nt"><a href="#TemplateArgumentValue" data-name="TemplateArgumentValue">TemplateArgumentValue</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><span class="spec-t">|</span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+</div>
+<div class="spec-production" id="Wildcard">
+<span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><div class="spec-rhs"><span class="spec-t">*</span></div>
 </div>
 </section>
 <section id="sec-Appendix-Grammar-Summary.Literal-and-Constant-Types" class="subsec">
@@ -1594,9 +1805,23 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <span class="spec-nt"><a href="#ClassConstant" data-name="ClassConstant">ClassConstant</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span></div>
 </div>
 <div class="spec-production" id="ConstantMask">
-<span class="spec-nt"><a href="#ConstantMask" data-name="ConstantMask">ConstantMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">*</span></div>
-<div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-t">*</span></div>
-<div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-t">*</span></div>
+<span class="spec-nt"><a href="#ConstantMask" data-name="ConstantMask">ConstantMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#GlobalConstantMask" data-name="GlobalConstantMask">GlobalConstantMask</a></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#ClassConstantMask" data-name="ClassConstantMask">ClassConstantMask</a></span></div>
+</div>
+<div class="spec-production" id="GlobalConstantMask">
+<span class="spec-nt"><a href="#GlobalConstantMask" data-name="GlobalConstantMask">GlobalConstantMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">\</span><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#LeadingMask" data-name="LeadingMask">LeadingMask</a></span></div>
+</div>
+<div class="spec-production" id="ClassConstantMask">
+<span class="spec-nt"><a href="#ClassConstantMask" data-name="ClassConstantMask">ClassConstantMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">::</span><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span></div>
+</div>
+<div class="spec-production" id="MaskTail">
+<span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><span class="spec-t">(Identifier</span><span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+</div>
+<div class="spec-production" id="LeadingMask">
+<span class="spec-nt"><a href="#LeadingMask" data-name="LeadingMask">LeadingMask</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Wildcard" data-name="Wildcard">Wildcard</a></span><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#MaskTail" data-name="MaskTail">MaskTail</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
 </div>
 </section>
 <section id="sec-Appendix-Grammar-Summary.Shape-Types" class="subsec">
@@ -1637,7 +1862,32 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <section id="sec-Appendix-Grammar-Summary.Callable-Types" class="subsec">
 <h6><a href="#sec-Appendix-Grammar-Summary.Callable-Types" title="link to this subsection">Callable Types</a></h6>
 <div class="spec-production" id="CallableType">
-<span class="spec-nt"><a href="#CallableType" data-name="CallableType">CallableType</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-t">(</span><span class="spec-quantified"><span class="spec-nt"><a href="#CallableParameters" data-name="CallableParameters">CallableParameters</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">)</span><span class="spec-quantified"><span class="spec-nt"><a href="#CallableReturnType" data-name="CallableReturnType">CallableReturnType</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+<span class="spec-nt"><a href="#CallableType" data-name="CallableType">CallableType</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Name" data-name="Name">Name</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#TemplateParameters" data-name="TemplateParameters">TemplateParameters</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">(</span><span class="spec-quantified"><span class="spec-nt"><a href="#CallableParameters" data-name="CallableParameters">CallableParameters</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">)</span><span class="spec-quantified"><span class="spec-nt"><a href="#CallableReturnType" data-name="CallableReturnType">CallableReturnType</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+</div>
+<div class="spec-production" id="TemplateParameters">
+<span class="spec-nt"><a href="#TemplateParameters" data-name="TemplateParameters">TemplateParameters</a></span><div class="spec-rhs"><span class="spec-t">&lt;</span><span class="spec-nt"><a href="#TemplateParameter" data-name="TemplateParameter">TemplateParameter</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#TemplateParameter" data-name="TemplateParameter">TemplateParameter</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span><span class="spec-t">&gt;</span></div>
+</div>
+<div class="spec-production" id="TemplateParameter">
+<span class="spec-nt"><a href="#TemplateParameter" data-name="TemplateParameter">TemplateParameter</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier</a></span><span class="spec-quantified"><span class="spec-nt"><a href="#TemplateBound" data-name="TemplateBound">TemplateBound</a></span><span class="spec-quantifiers"><span class="spec-quantifier list">list</span><span class="spec-quantifier optional">opt</span></span></span><span class="spec-quantified"><span class="spec-nt"><a href="#TemplateDefault" data-name="TemplateDefault">TemplateDefault</a></span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
+</div>
+<div class="spec-production" id="TemplateBound">
+<span class="spec-nt"><a href="#TemplateBound" data-name="TemplateBound">TemplateBound</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#UpperBound" data-name="UpperBound">UpperBound</a></span></div>
+<div class="spec-rhs"><span class="spec-nt"><a href="#LowerBound" data-name="LowerBound">LowerBound</a></span></div>
+</div>
+<div class="spec-production" id="UpperBound">
+<span class="spec-nt"><a href="#UpperBound" data-name="UpperBound">UpperBound</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#UpperBoundOperator" data-name="UpperBoundOperator">UpperBoundOperator</a></span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+</div>
+<div class="spec-production" id="UpperBoundOperator">
+<span class="spec-nt"><a href="#UpperBoundOperator" data-name="UpperBoundOperator">UpperBoundOperator</a></span><div class="spec-oneof"><div class="spec-oneof-grid"><table>
+<tr>
+<td class="spec-rhs"><span class="spec-t">of</span></td><td class="spec-rhs"><span class="spec-t">as</span></td></tr>
+</table></div></div>
+</div>
+<div class="spec-production" id="LowerBound">
+<span class="spec-nt"><a href="#LowerBound" data-name="LowerBound">LowerBound</a></span><div class="spec-rhs"><span class="spec-t">super</span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
+</div>
+<div class="spec-production" id="TemplateDefault">
+<span class="spec-nt"><a href="#TemplateDefault" data-name="TemplateDefault">TemplateDefault</a></span><div class="spec-rhs"><span class="spec-t">=</span><span class="spec-nt"><a href="#Type" data-name="Type">Type</a></span></div>
 </div>
 <div class="spec-production" id="CallableParameters">
 <span class="spec-nt"><a href="#CallableParameters" data-name="CallableParameters">CallableParameters</a></span><div class="spec-rhs"><span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><span class="spec-t">(</span><span class="spec-t">,</span><span class="spec-nt"><a href="#CallableParameter" data-name="CallableParameter">CallableParameter</a></span><span class="spec-t">)*</span><span class="spec-quantified"><span class="spec-t">,</span><span class="spec-quantifiers"><span class="spec-quantifier optional">opt</span></span></span></div>
@@ -1655,6 +1905,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <span class="spec-secid" title="link to the index"><a href="#index">§</a></span>Index</h1>
 <ol>
 <li><a href="#BinaryDigit">BinaryDigit</a></li>
+<li><a href="#BinaryDigits">BinaryDigits</a></li>
 <li><a href="#BinaryIndicator">BinaryIndicator</a></li>
 <li><a href="#BinaryIntLiteral">BinaryIntLiteral</a></li>
 <li><a href="#BlockComment">BlockComment</a></li>
@@ -1665,6 +1916,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <li><a href="#CallableReturnType">CallableReturnType</a></li>
 <li><a href="#CallableType">CallableType</a></li>
 <li><a href="#ClassConstant">ClassConstant</a></li>
+<li><a href="#ClassConstantMask">ClassConstantMask</a></li>
 <li><a href="#Comment">Comment</a></li>
 <li><a href="#CommentChar">CommentChar</a></li>
 <li><a href="#ConditionalOperand">ConditionalOperand</a></li>
@@ -1674,6 +1926,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <li><a href="#ConstantMask">ConstantMask</a></li>
 <li><a href="#DecimalIntLiteral">DecimalIntLiteral</a></li>
 <li><a href="#Digit">Digit</a></li>
+<li><a href="#Digits">Digits</a></li>
 <li><a href="#DigitSeparator">DigitSeparator</a></li>
 <li><a href="#Document">Document</a></li>
 <li><a href="#DoubleQuotedString">DoubleQuotedString</a></li>
@@ -1686,7 +1939,9 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <li><a href="#Expression">Expression</a></li>
 <li><a href="#FloatLiteral">FloatLiteral</a></li>
 <li><a href="#FullyQualifiedName">FullyQualifiedName</a></li>
+<li><a href="#GlobalConstantMask">GlobalConstantMask</a></li>
 <li><a href="#HexDigit">HexDigit</a></li>
+<li><a href="#HexDigits">HexDigits</a></li>
 <li><a href="#HexEscape">HexEscape</a></li>
 <li><a href="#HexIndicator">HexIndicator</a></li>
 <li><a href="#HexIntLiteral">HexIntLiteral</a></li>
@@ -1696,6 +1951,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <li><a href="#IntersectionType">IntersectionType</a></li>
 <li><a href="#IntLiteral">IntLiteral</a></li>
 <li><a href="#LeadingFloatLiteral">LeadingFloatLiteral</a></li>
+<li><a href="#LeadingMask">LeadingMask</a></li>
 <li><a href="#Letter">Letter</a></li>
 <li><a href="#LineComment">LineComment</a></li>
 <li><a href="#LineCommentStart">LineCommentStart</a></li>
@@ -1703,15 +1959,19 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <li><a href="#ListSuffix">ListSuffix</a></li>
 <li><a href="#LiteralType">LiteralType</a></li>
 <li><a href="#LogicalType">LogicalType</a></li>
+<li><a href="#LowerBound">LowerBound</a></li>
+<li><a href="#MaskTail">MaskTail</a></li>
 <li><a href="#Name">Name</a></li>
 <li><a href="#NameContinue">NameContinue</a></li>
 <li><a href="#NamedType">NamedType</a></li>
 <li><a href="#NameStart">NameStart</a></li>
 <li><a href="#NameToken">NameToken</a></li>
 <li><a href="#NegativeSign">NegativeSign</a></li>
+<li><a href="#NonZeroDigit">NonZeroDigit</a></li>
 <li><a href="#NullableType">NullableType</a></li>
 <li><a href="#NullLiteral">NullLiteral</a></li>
 <li><a href="#OctalDigit">OctalDigit</a></li>
+<li><a href="#OctalDigits">OctalDigits</a></li>
 <li><a href="#OctalIndicator">OctalIndicator</a></li>
 <li><a href="#OctalIntLiteral">OctalIntLiteral</a></li>
 <li><a href="#OffsetSuffix">OffsetSuffix</a></li>
@@ -1726,6 +1986,7 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <li><a href="#ShapeFields">ShapeFields</a></li>
 <li><a href="#ShapeKey">ShapeKey</a></li>
 <li><a href="#ShapeValue">ShapeValue</a></li>
+<li><a href="#Sign">Sign</a></li>
 <li><a href="#SimpleEscape">SimpleEscape</a></li>
 <li><a href="#SingleQuotedString">SingleQuotedString</a></li>
 <li><a href="#SingleStringChar">SingleStringChar</a></li>
@@ -1734,7 +1995,11 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <li><a href="#TemplateArgument">TemplateArgument</a></li>
 <li><a href="#TemplateArgumentHint">TemplateArgumentHint</a></li>
 <li><a href="#TemplateArguments">TemplateArguments</a></li>
-<li><a href="#TemplateArgumentType">TemplateArgumentType</a></li>
+<li><a href="#TemplateArgumentValue">TemplateArgumentValue</a></li>
+<li><a href="#TemplateBound">TemplateBound</a></li>
+<li><a href="#TemplateDefault">TemplateDefault</a></li>
+<li><a href="#TemplateParameter">TemplateParameter</a></li>
+<li><a href="#TemplateParameters">TemplateParameters</a></li>
 <li><a href="#ThisVariable">ThisVariable</a></li>
 <li><a href="#Token">Token</a></li>
 <li><a href="#TrailingFloatLiteral">TrailingFloatLiteral</a></li>
@@ -1744,8 +2009,12 @@ An <span class="spec-nt"><a href="#Identifier" data-name="Identifier">Identifier
 <li><a href="#UnicodeEscape">UnicodeEscape</a></li>
 <li><a href="#UnionType">UnionType</a></li>
 <li><a href="#UnsealedShape">UnsealedShape</a></li>
+<li><a href="#UpperBound">UpperBound</a></li>
+<li><a href="#UpperBoundOperator">UpperBoundOperator</a></li>
 <li><a href="#Variable">Variable</a></li>
+<li><a href="#VariableContinue">VariableContinue</a></li>
 <li><a href="#Whitespace">Whitespace</a></li>
+<li><a href="#Wildcard">Wildcard</a></li>
 </ol>
 </section>
 </article>
@@ -1854,7 +2123,8 @@ Written in <a href="https://spec-md.com" target="_blank">Spec Markdown</a>.</foo
 <li id="_sidebar_6.2"><a href="#sec-Callable-Types"><span class="spec-secid">6.2</span>Callable Types</a>
 <input hidden class="toggle" type="checkbox" id="_toggle_6.2" /><label for="_toggle_6.2"></label>
 <ol>
-<li id="_sidebar_6.2.1"><a href="#sec-Callable-Parameters"><span class="spec-secid">6.2.1</span>Callable Parameters</a></li>
+<li id="_sidebar_6.2.1"><a href="#sec-Template-Parameters"><span class="spec-secid">6.2.1</span>Template Parameters</a></li>
+<li id="_sidebar_6.2.2"><a href="#sec-Callable-Parameters"><span class="spec-secid">6.2.2</span>Callable Parameters</a></li>
 </ol>
 </li>
 </ol>

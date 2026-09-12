@@ -125,13 +125,58 @@ representation. The braces are required in the sequence. E.g. `"\u{41}" === "A"`
 The syntax of integer numbers is similar to the PHP language. Binary, octal,
 decimal and hexadecimal number systems are supported.
 
-> Please note that in addition to numbers, underscores (`_`) are allowed.
+> Please note that in addition to numbers, underscores (`_`) are allowed as a
+> separator. A separator stands between two digits and nowhere else, so it
+> may neither lead a number, nor trail it, nor stand beside another separator.
 > {style="note"}
 
 Decimal numbers can contain any digits from `0` to `9` (leading `0` not allowed)
 and must match the regular expression `[1-9][0-9]*`. For any other numbers,
-a special prefixed format is used, described below. Negative values are prefixed
-with a minus (`-`).
+a special prefixed format is used, described below. A value may be prefixed by
+a sign: a minus (`-`) makes it negative, and a plus (`+`) says what the absence
+of a sign already says.
+
+> A number is kept whole, however large it is. The node carries both the
+> native `$value`, which a platform limit applies to, and the `$decimal`
+> beside it — the value written out in base 10 as a string, so a number too
+> large for an `int` is still readable in full.
+> {style="note"}
+
+<tabs>
+<tab title="Examples">
+
+> A long number written with separators.
+> ```typescript
+> 42_04
+> ```
+
+</tab>
+<tab title="Counterexamples">
+
+> A separator cannot trail a number.
+> ```typescript
+> 42_
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected "_"
+> ```
+> {style="warning"}
+
+> Two separators in a row are not allowed.
+> ```typescript
+> 4__2
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected "__2"
+> ```
+> {style="warning"}
+
+</tab>
+</tabs>
 
 ### Binary
 
@@ -212,6 +257,11 @@ numbers between `0` and `7` and must match the regular expression
 > 0o42_23
 > ```
 
+> Number `275` in "legacy" octal format with `_` delimiters.
+> ```typescript
+> 04_23
+> ```
+
 </tab>
 <tab title="Counterexamples">
 
@@ -223,6 +273,18 @@ numbers between `0` and `7` and must match the regular expression
 > An error similar to the one below should occur
 > ```
 > ParseException: Syntax error, unexpected "81"
+> ```
+> {style="warning"}
+
+> A leading `0` makes a number octal, so a digit outside the octal range
+> cannot follow one.
+> ```typescript
+> 08
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected "8"
 > ```
 > {style="warning"}
 
@@ -273,7 +335,18 @@ The syntax of float numbers is similar to the PHP language. Basic floating point
 syntax and scientific notation are supported.
 
 Every floating point number accepts the format `[0-9]+\.[0-9]+`. The leading or
-trailing number may be omitted. Negative values are prefixed with a minus (`-`.
+trailing number may be omitted. A value may be prefixed by a sign: a minus (`-`)
+makes it negative, and a plus (`+`) says what the absence of a sign already says.
+
+> A number is kept whole, however large it is. The node carries both the
+> native `$value`, which a platform limit applies to, and the `$decimal`
+> beside it — the value written out in base 10 as a string, so a number too
+> large for an `int` is still readable in full.
+> {style="note"}
+
+Every run of digits a float is written of — the one before the dot, the one
+after it and the exponent alike — accepts the underscore (`_`) separator under
+the same rule an integer does.
 
 <tabs>
 <tab title="Examples">
@@ -296,6 +369,17 @@ trailing number may be omitted. Negative values are prefixed with a minus (`-`.
 > Negative floating point literal value.
 > ```typescript
 > -0.9
+> ```
+
+> Signed floating point literal value (equivalent of `0.9`).
+> ```typescript
+> +0.9
+> ```
+
+> Floating point literal value written with separators in every part
+> (equivalent of `23.45e-67`).
+> ```typescript
+> 2_3.4_5e-6_7
 > ```
 
 </tab>
@@ -350,6 +434,18 @@ writing out an inconveniently long string of digits.
 > Number `0.1` in scientific notation (negative exponent).
 > ```typescript
 > 10e-2
+> ```
+
+> Also number `1000.0` in scientific notation: The exponent takes a sign of
+> its own, and a plus says what the absence of a sign already says.
+
+> A number is kept whole, however large it is. The node carries both the
+> native `$value`, which a platform limit applies to, and the `$decimal`
+> beside it — the value written out in base 10 as a string, so a number too
+> large for an `int` is still readable in full.
+> {style="note"}
+> ```typescript
+> 10e+2
 > ```
 
 </tab>

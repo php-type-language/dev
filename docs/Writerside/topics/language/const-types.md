@@ -85,24 +85,57 @@ a double colon (`::`) character, and then the constant name.
 
 ## Constant Masks
 
-A reference to a certain set of constants can be defined using a mask. The
-use of masks is identical to regular constants, but must be terminated with
-an asterisk (`*`).
+A reference to a certain set of constants can be defined using a mask: A
+sequence of name segments with an asterisk (`*`) standing wherever the name
+is left unsaid.
+
+A mask is made of at least one asterisk, and its segments and asterisks
+alternate, so two asterisks in a row describe nothing a single one does not.
 
 Prefixes on class constants can be omitted, so type will mean any class constant.
 
+A global constant may be left unsaid from its very beginning as well, and the
+namespace it belongs to may be written in front of the mask. A name separated
+from the mask by a backslash is a namespace whole, so the mask then means any
+constant that namespace holds.
 
 <tabs>
 <tab title="Examples">
 
-> Reference to any constant with the `JSON_*` prefix.
+> Reference to any constant with the `JSON_` prefix.
 > ```typescript
 > JSON_*
+> ```
+
+> Reference to any constant with the `_SUFFIX` suffix.
+> ```typescript
+> *_SUFFIX
+> ```
+
+> Reference to any constant with the `JSON_` prefix in the `Path\To` namespace.
+> ```typescript
+> Path\To\JSON_*
+> ```
+
+> Reference to any constant of the `Path\To` namespace.
+> ```typescript
+> Path\To\*
 > ```
 
 > Reference to any class constant with the `PREFIX_` prefix.
 > ```typescript
 > Path\To\ClassName::PREFIX_*
+> ```
+
+> Reference to any class constant with the `_SUFFIX` suffix.
+> ```typescript
+> Path\To\ClassName::*_SUFFIX
+> ```
+
+> Reference to any class constant written of the `PREFIX_` and `_SUFFIX`
+> segments, in that order.
+> ```typescript
+> Path\To\ClassName::PREFIX_*_SUFFIX
 > ```
 
 > Reference to any class constant
@@ -113,25 +146,27 @@ Prefixes on class constants can be omitted, so type will mean any class constant
 </tab>
 <tab title="Counterexamples">
 
-> It is not allowed to omit prefixes from global constants.
+> A global mask needs at least one segment of a name, whether it stands in
+> front of the asterisk or behind it. A lone asterisk would mean any constant
+> there is, and that is not a type.
 > ```typescript
 > *
 > ```
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "*"
+> ParseException: Syntax error, unexpected end of input
 > ```
 > {style="warning"}
 
-> The asterisk (`*`) must be the final character.
+> Two asterisks in a row are not a mask.
 > ```typescript
-> Path\To\ClassName::PREFIX_*_SUFFIX
+> Path\To\ClassName::PREFIX_**
 > ```
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "_SUFFIX"
+> ParseException: Syntax error, unexpected "*"
 > ```
 > {style="warning"}
 

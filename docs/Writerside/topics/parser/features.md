@@ -31,7 +31,7 @@ $parser->parse('42');
 
 ```
 TypeLang\Parser\Exception\SemanticParseException:
-Literal values not allowed in "42" at column 1
+Literal values not allowed in "42"
 ```
 
 To override one or more flags on an *existing* parser, use `TypeParser::withFeatures()`
@@ -59,7 +59,7 @@ $features = new TypeParserFeatures()
 | Flag             | Enables syntax                     | Error message fragment                   |
 |------------------|------------------------------------|------------------------------------------|
 | `literals`       | `42`, `"foo"`, `true`, `null`, ... | `Literal values not allowed`             |
-| `generics`       | `Example<T>`                       | `Template arguments not allowed`         |
+| `generics`       | `Example<T>`, `callable<T>(T): T`  | `Template arguments not allowed`         |
 | `hints`          | `Example<out T, in U>`             | `Template argument hints not allowed`    |
 | `lists`          | `Example[]`                        | `Square bracket list types not allowed`  |
 | `offsets`        | `Example[Type]`                    | `Type offsets not allowed`               |
@@ -83,7 +83,7 @@ $parser->parse('42');
 ```
 
 ```
-Literal values not allowed in "42" at column 1
+Literal values not allowed in "42"
 ```
 
 ### Generics
@@ -100,7 +100,19 @@ $parser->parse('Example<T>');
 ```
 
 ```
-Template arguments not allowed in "Example<T>" at column 8
+Template arguments not allowed in "Example<T>"
+```
+
+The same flag closes the other side of the angle brackets: the
+[template parameters](callable-types.md#template-parameters) a callable
+declares.
+
+```php
+$parser->parse('callable<T>(T): T');
+```
+
+```
+Template parameters not allowed in "callable<T>(T): T"
 ```
 
 ### Hints
@@ -116,7 +128,7 @@ $parser->parse('Example<out T, U>');
 ```
 
 ```
-Template argument hints not allowed in "Example<out T, U>" at column 9
+Template argument hints not allowed in "Example<out T, U>"
 ```
 
 ### Lists
@@ -132,7 +144,7 @@ $parser->parse('Example[]');
 ```
 
 ```
-Square bracket list types not allowed in "Example[]" at column 1
+Square bracket list types not allowed in "Example[]"
 ```
 
 ### Offsets
@@ -150,7 +162,7 @@ $parser->parse('Example[Type]');
 ```
 
 ```
-Type offsets not allowed in "Example[Type]" at column 1
+Type offsets not allowed in "Example[Type]"
 ```
 
 ### Callables
@@ -166,7 +178,7 @@ $parser->parse('fn(): void');
 ```
 
 ```
-Callable types not allowed in "fn(): void" at column 1
+Callable types not allowed in "fn(): void"
 ```
 
 ### Shapes
@@ -184,7 +196,7 @@ $parser->parse(<<<'PHP'
 ```
 
 ```
-Shape fields not allowed in "array{foo: T}" on line 1 at column 6
+Shape fields not allowed in "array{foo: T}"
 ```
 
 ### Unions
@@ -198,7 +210,7 @@ $parser->parse('T|U');
 ```
 
 ```
-Union types not allowed in "T|U" at column 1
+Union types not allowed in "T|U"
 ```
 
 ### Intersections
@@ -212,7 +224,7 @@ $parser->parse('T&U');
 ```
 
 ```
-Intersection types not allowed in "T&U" at column 1
+Intersection types not allowed in "T&U"
 ```
 
 ### Conditions
@@ -229,5 +241,5 @@ $parser->parse('T is U ? 23 : 42');
 ```
 
 ```
-Conditional expressions not allowed in "T is U ? 23 : 42" at column 1
+Conditional expressions not allowed in "T is U ? 23 : 42"
 ```
