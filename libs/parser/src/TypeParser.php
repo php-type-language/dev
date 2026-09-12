@@ -10,7 +10,6 @@ use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Source\SourceFactory;
-use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\Internal\Executor;
 use TypeLang\Parser\Partial\ParsedResult;
 use TypeLang\Parser\Validation\CheckResult;
