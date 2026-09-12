@@ -32,7 +32,25 @@ abstract class DocBlockParserBench
         'monolog/monolog' => '*',
         'nikic/php-parser' => '*',
         'phpdocumentor/reflection-docblock' => '*',
+        'phpstan/extension-installer' => '*',
+        'phpstan/php-8-stubs' => '*',
         'phpstan/phpdoc-parser' => '*',
+        'phpstan/phpstan' => '*',
+        'phpstan/phpstan-beberlei-assert' => '*',
+        'phpstan/phpstan-deprecation-rules' => '*',
+        'phpstan/phpstan-dibi' => '*',
+        'phpstan/phpstan-doctrine' => '*',
+        'phpstan/phpstan-mockery' => '*',
+        'phpstan/phpstan-nette' => '*',
+        'phpstan/phpstan-php-parser' => '*',
+        'phpstan/phpstan-phpunit' => '*',
+        'phpstan/phpstan-strict-rules' => '*',
+        'phpstan/phpstan-symfony' => '*',
+        'phpstan/phpstan-webmozart-assert' => '*',
+        'psalm/attributes' => '*',
+        'psalm/plugin-mockery' => '*',
+        'psalm/plugin-phpunit' => '*',
+        'psalm/plugin-symfony' => '*',
         'phpunit/php-code-coverage' => '*',
         'phpunit/php-file-iterator' => '*',
         'phpunit/php-text-template' => '*',
@@ -57,8 +75,21 @@ abstract class DocBlockParserBench
         'symfony/service-contracts' => '*',
         'symfony/var-dumper' => '*',
         'twig/twig' => '*',
+        'vimeo/psalm' => '*',
         'webmozart/assert' => '*',
     ];
+
+    /**
+     * The PHP version the corpus is resolved for.
+     *
+     * The corpus is read and never run, so the version it is installed for is
+     * not the one the benchmark runs on: it is pinned so that the corpus is
+     * the same everywhere, and so that a package supporting no version as new
+     * as the one at hand is installed all the same.
+     *
+     * @var non-empty-string
+     */
+    protected const CORPUS_PHP_VERSION = '8.3.0';
 
     /**
      * Each set contains every DocBlock of a single package of the corpus.
@@ -138,6 +169,7 @@ abstract class DocBlockParserBench
             'config' => [
                 'preferred-install' => ['*' => 'dist'],
                 'allow-plugins' => false,
+                'platform' => ['php' => self::CORPUS_PHP_VERSION],
             ],
             'minimum-stability' => 'stable',
             'prefer-stable' => true,
