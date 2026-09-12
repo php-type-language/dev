@@ -16,7 +16,7 @@ Letter :: one of
 - `N` `O` `P` `Q` `R` `S` `T` `U` `V` `W` `X` `Y` `Z`
 - `a` `b` `c` `d` `e` `f` `g` `h` `i` `j` `k` `l` `m`
 - `n` `o` `p` `q` `r` `s` `t` `u` `v` `w` `x` `y` `z`
-- "Any byte from U+0080 to U+00FF"
+- "Any byte from 0x80 to 0xFF"
 
 Digit :: one of `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
@@ -27,7 +27,14 @@ Ignored ::
 - Whitespace
 - Comment
 
-Whitespace :: "Any Unicode whitespace character"
+Whitespace :: one of
+
+- "Horizontal Tab (U+0009)"
+- "Line Feed (U+000A)"
+- "Vertical Tab (U+000B)"
+- "Form Feed (U+000C)"
+- "Carriage Return (U+000D)"
+- "Space (U+0020)"
 
 LineTerminator :: one of "New Line (U+000A)" "Carriage Return (U+000D)"
 
@@ -63,7 +70,7 @@ Punctuator :: one of
 
 - `?` `|` `&` `*` `,` `:` `=`
 - `(` `)` `[` `]` `{` `}`
-- `<` `>` `<=` `>=`
+- `<` `>`
 - `::` `\` `...`
 
 NameToken :: NameStart NameContinue\* [lookahead != NameContinue]
@@ -80,11 +87,13 @@ NameContinue ::
 - `_`
 - `-`
 
-ReservedWord :: one of `true` `false` `null` `is`
+ReservedWord :: one of `true` `false` `null` `is` `not`
 
-Variable :: `$` NameStart NameContinue\*
+Variable :: `$` NameStart VariableContinue\*
 
-ThisVariable :: `$this` [lookahead != NameContinue]
+VariableContinue :: NameContinue but not `-`
+
+ThisVariable :: `$this` [lookahead != VariableContinue]
 
 **Literal Tokens**
 
@@ -94,7 +103,11 @@ NullLiteral :: `null` [lookahead != NameContinue]
 
 NegativeSign :: `-`
 
+Sign :: one of `-` `+`
+
 DigitSeparator :: `_`
+
+Digits :: Digit (DigitSeparator? Digit)\*
 
 IntLiteral ::
 
@@ -103,23 +116,37 @@ IntLiteral ::
 - HexIntLiteral
 - DecimalIntLiteral
 
-DecimalIntLiteral :: NegativeSign? Digit (Digit | DigitSeparator)\*
+DecimalIntLiteral ::
 
-BinaryIntLiteral :: NegativeSign? `0` BinaryIndicator BinaryDigit (BinaryDigit | DigitSeparator)\*
+- Sign? NonZeroDigit (DigitSeparator? Digit)\*
+- Sign? `0`
+
+NonZeroDigit :: one of `1` `2` `3` `4` `5` `6` `7` `8` `9`
+
+BinaryIntLiteral :: Sign? `0` BinaryIndicator BinaryDigits
 
 BinaryIndicator :: one of `b` `B`
 
+BinaryDigits :: BinaryDigit (DigitSeparator? BinaryDigit)\*
+
 BinaryDigit :: one of `0` `1`
 
-OctalIntLiteral :: NegativeSign? `0` OctalIndicator OctalDigit (OctalDigit | DigitSeparator)\*
+OctalIntLiteral ::
+
+- Sign? `0` OctalIndicator OctalDigits
+- Sign? `0` (DigitSeparator? OctalDigit)+
 
 OctalIndicator :: one of `o` `O`
 
+OctalDigits :: OctalDigit (DigitSeparator? OctalDigit)\*
+
 OctalDigit :: one of `0` `1` `2` `3` `4` `5` `6` `7`
 
-HexIntLiteral :: NegativeSign? `0` HexIndicator HexDigit (HexDigit | DigitSeparator)\*
+HexIntLiteral :: Sign? `0` HexIndicator HexDigits
 
 HexIndicator :: one of `x` `X`
+
+HexDigits :: HexDigit (DigitSeparator? HexDigit)\*
 
 HexDigit :: one of
 
@@ -133,13 +160,13 @@ FloatLiteral ::
 - TrailingFloatLiteral
 - ExponentFloatLiteral
 
-LeadingFloatLiteral :: NegativeSign? Digit+ `.` Digit\* ExponentPart?
+LeadingFloatLiteral :: Sign? Digits `.` Digits? ExponentPart?
 
-TrailingFloatLiteral :: NegativeSign? Digit\* `.` Digit+ ExponentPart?
+TrailingFloatLiteral :: Sign? `.` Digits ExponentPart?
 
-ExponentFloatLiteral :: NegativeSign? Digit+ ExponentPart
+ExponentFloatLiteral :: Sign? Digits ExponentPart
 
-ExponentPart :: ExponentIndicator NegativeSign? Digit+
+ExponentPart :: ExponentIndicator Sign? Digits
 
 ExponentIndicator :: one of `e` `E`
 
@@ -176,6 +203,8 @@ UnicodeEscape :: `u` `{` HexDigit+ `}`
 
 **Types**
 
+Document : Type
+
 Type : Expression
 
 Expression : ConditionalType
@@ -192,7 +221,7 @@ ConditionalOperand :
 - Type
 - Variable
 
-ConditionalOperator : one of `is` `is not` `>=` `<=` `<` `>`
+ConditionalOperator : one of `is` `is not`
 
 **Logical Types**
 
@@ -251,11 +280,13 @@ NamedType : Name (TemplateArguments | ShapeFields)?
 
 TemplateArguments : `<` TemplateArgument (`,` TemplateArgument)\* `,`? `>`
 
-TemplateArgument : TemplateArgumentHint | TemplateArgumentType
+TemplateArgument : TemplateArgumentHint | TemplateArgumentValue
 
-TemplateArgumentHint : Identifier Type
+TemplateArgumentHint : NameToken TemplateArgumentValue
 
-TemplateArgumentType : Type
+TemplateArgumentValue : Wildcard | Type
+
+Wildcard : `*`
 
 **Literal and Constant Types**
 
@@ -273,9 +304,23 @@ ClassConstant : Name `::` Identifier
 
 ConstantMask :
 
-- Name `*`
-- Name `::` Identifier `*`
-- Name `::` `*`
+- GlobalConstantMask
+- ClassConstantMask
+
+GlobalConstantMask :
+
+- Name MaskTail
+- Name `\` MaskTail
+- LeadingMask
+
+ClassConstantMask :
+
+- Name `::` Identifier MaskTail?
+- Name `::` MaskTail
+
+MaskTail : Wildcard (Identifier Wildcard)\* Identifier?
+
+LeadingMask : Wildcard Identifier MaskTail?
 
 **Shape Types**
 
@@ -308,7 +353,24 @@ UnsealedShape : `...` TemplateArguments?
 
 **Callable Types**
 
-CallableType : Name `(` CallableParameters? `)` CallableReturnType?
+CallableType : Name TemplateParameters? `(` CallableParameters? `)` CallableReturnType?
+
+TemplateParameters : `<` TemplateParameter (`,` TemplateParameter)\* `,`? `>`
+
+TemplateParameter : Identifier TemplateBound\* TemplateDefault?
+
+TemplateBound :
+
+- UpperBound
+- LowerBound
+
+UpperBound : UpperBoundOperator Type
+
+UpperBoundOperator : one of `of` `as`
+
+LowerBound : `super` Type
+
+TemplateDefault : `=` Type
 
 CallableParameters : CallableParameter (`,` CallableParameter)\* `,`?
 
