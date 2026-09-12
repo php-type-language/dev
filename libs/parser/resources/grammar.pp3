@@ -110,6 +110,7 @@ Type -> {
     );
 }
   : UnaryType() LogicalTail()* TernaryExpressionSuffix()?
+  | Variable() TernaryExpressionSuffix()
   ;
 
 TernaryExpressionSuffix
@@ -205,5 +206,4 @@ PrimaryType
   | LiteralType()
   | NamedType()
   | LeadingMaskType()
-  | Variable() &::T_EQ::
   ;
