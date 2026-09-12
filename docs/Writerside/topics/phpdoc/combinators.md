@@ -43,7 +43,7 @@ whatever is left entirely.
 
 ## Built-in Combinators
 
-Fourteen combinators cover every built-in tag's grammar between them:
+Fifteen combinators cover every built-in tag's grammar between them:
 
 <table style="both">
     <tr>
@@ -55,6 +55,13 @@ Fourteen combinators cover every built-in tag's grammar between them:
         <td><code>Visibility</code></td>
         <td><code>Visibility</code></td>
         <td>Method or property visibility.</td>
+    </tr>
+    <tr>
+        <td><code>AssertSubject</code></td>
+        <td><code>CodeReference</code></td>
+        <td>What an assertion is written of: <code>$value</code>,
+            <code>$this-&gt;items</code>, <code>$this-&gt;getItems()</code>
+            or <code>self::$instances</code>.</td>
     </tr>
     <tr>
         <td><code>AuthorName</code></td>

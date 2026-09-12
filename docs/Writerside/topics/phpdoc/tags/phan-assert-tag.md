@@ -10,15 +10,16 @@ siblings — see [@phan-assert-if-true](phan-assert-if-true-tag.md) and
 same assertion family.
 
 ```
-"@phan-assert" <Type> <Variable> [ <Description> ]
+"@phan-assert" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
 ```
 
 Parsing a `@phan-assert` tag produces an `AssertTag` instance, carrying the
-asserted `$type` and `$variable` alongside the `$name` and optional
-`$description` every [Tag](phpdoc.md#tag) already provides.
+asserted `$type`, the `$subject` it is asserted of and the `$operator`
+relating them, alongside the `$name` and optional `$description` every
+[Tag](phpdoc.md#tag) already provides.
 
 ```php
-final class AssertTag extends TypedVariableTag {}
+final class AssertTag extends AssertionTag {}
 ```
 
 The same `AssertTag` is produced by [@psalm-assert](psalm-assert-tag.md) and [@phpstan-assert](phpstan-assert-tag.md), which restate the same
