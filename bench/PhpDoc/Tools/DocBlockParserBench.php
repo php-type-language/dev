@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Bench\PhpDoc\Tools;
 
-use FilesystemIterator;
-use PhpToken;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -17,9 +13,6 @@ abstract class DocBlockParserBench
      * A sandbox directory containing the third-party packages that are used
      * as a real-world DocBlock corpus.
      *
-     * The whole directory is disposable: It is created, filled and installed
-     * by the benchmark itself and can be removed at any time.
-     *
      * @var non-empty-string
      */
     protected const CORPUS_DIRECTORY = __DIR__ . '/../../var/corpus';
@@ -27,22 +20,42 @@ abstract class DocBlockParserBench
     /**
      * The packages to extract the DocBlocks from.
      *
-     * Each package is a separate benchmark set, so the list should contain
-     * recognizable packages of a different size and documentation style.
-     *
      * @var non-empty-array<non-empty-string, non-empty-string>
      */
     protected const CORPUS_PACKAGES = [
         'doctrine/collections' => '*',
+        'doctrine/lexer' => '*',
         'guzzlehttp/guzzle' => '*',
+        'guzzlehttp/promises' => '*',
+        'guzzlehttp/psr7' => '*',
         'illuminate/support' => '*',
         'monolog/monolog' => '*',
         'nikic/php-parser' => '*',
         'phpdocumentor/reflection-docblock' => '*',
         'phpstan/phpdoc-parser' => '*',
+        'phpunit/php-code-coverage' => '*',
+        'phpunit/php-file-iterator' => '*',
+        'phpunit/php-text-template' => '*',
+        'phpunit/php-timer' => '*',
+        'phpunit/phpunit' => '*',
+        'psr/container' => '*',
+        'psr/http-message' => '*',
         'psr/log' => '*',
+        'ralouphie/getallheaders' => '*',
+        'sebastian/comparator' => '*',
+        'sebastian/diff' => '*',
+        'sebastian/environment' => '*',
+        'sebastian/exporter' => '*',
+        'sebastian/recursion-context' => '*',
         'symfony/console' => '*',
+        'symfony/event-dispatcher' => '*',
+        'symfony/finder' => '*',
         'symfony/http-foundation' => '*',
+        'symfony/polyfill-ctype' => '*',
+        'symfony/polyfill-mbstring' => '*',
+        'symfony/process' => '*',
+        'symfony/service-contracts' => '*',
+        'symfony/var-dumper' => '*',
         'twig/twig' => '*',
         'webmozart/assert' => '*',
     ];
@@ -54,6 +67,7 @@ abstract class DocBlockParserBench
      * in a separate process before any benchmark is launched.
      *
      * @return iterable<non-empty-string, array{docblocks: list<non-empty-string>}>
+     * @throws \JsonException
      */
     public static function docBlocksDataProvider(): iterable
     {
@@ -84,6 +98,7 @@ abstract class DocBlockParserBench
      * of the installed packages.
      *
      * @return array{versions: array<non-empty-string, array{install_path?: string}>}
+     * @throws \JsonException
      */
     private static function getCorpusMetadata(): array
     {
@@ -211,15 +226,6 @@ abstract class DocBlockParserBench
     /**
      * Extracts every DocBlock of every PHP file of the given directory.
      *
-     * The PHP tokenizer is used instead of a full-blown parser (like the
-     * {@link https://github.com/nikic/PHP-Parser} package) because the
-     * benchmark requires the DocBlock texts only and not the elements
-     * they are attached to.
-     *
-     * A naive regular expression is not an option either: It also matches
-     * the DocBlocks that occur inside string literals and heredocs, which
-     * the test suites and fixtures of the corpus packages are full of.
-     *
      * @param non-empty-string $directory
      * @return list<non-empty-string>
      */
@@ -234,7 +240,7 @@ abstract class DocBlockParserBench
                 continue;
             }
 
-            foreach (PhpToken::tokenize($source) as $token) {
+            foreach (\PhpToken::tokenize($source) as $token) {
                 if ($token->is(\T_DOC_COMMENT) && $token->text !== '') {
                     $result[] = $token->text;
                 }
@@ -250,11 +256,11 @@ abstract class DocBlockParserBench
      */
     private static function getSourceFiles(string $directory): iterable
     {
-        $files = new RecursiveIteratorIterator(
-            iterator: new RecursiveDirectoryIterator(
+        $files = new \RecursiveIteratorIterator(
+            iterator: new \RecursiveDirectoryIterator(
                 directory: $directory,
-                flags: FilesystemIterator::SKIP_DOTS
-                    | FilesystemIterator::CURRENT_AS_FILEINFO,
+                flags: \FilesystemIterator::SKIP_DOTS
+                    | \FilesystemIterator::CURRENT_AS_FILEINFO,
             ),
         );
 
