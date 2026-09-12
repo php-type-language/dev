@@ -103,8 +103,6 @@ others:
 - Escape, hexadecimal and Unicode sequences inside double-quoted string
   literals.
 - Global constant masks such as `JSON_*`.
-- Attributes (`#[...]`) on template arguments, shape fields and callable
-  parameters.
 - A uniform conditional (ternary) type syntax that also permits comparison
   operators and Yoda-style operands.
 

@@ -15,125 +15,130 @@ final class NativeTypePrinterTest extends TestCase
 {
     public function testPrintTypesListAsIterable(): void
     {
-        self::assertSame('iterable', new NativeTypePrinter()->print(self::parse('int[]')));
+        self::assertSame('iterable', (new NativeTypePrinter())->print(self::parse('int[]')));
     }
 
     public function testPrintShapeAsPlainName(): void
     {
-        self::assertSame('array', new NativeTypePrinter()->print(self::parse('array{foo: int}')));
+        self::assertSame('array', (new NativeTypePrinter())->print(self::parse('array{foo: int}')));
     }
 
     public function testPrintTemplateTypeUsesNameOnly(): void
     {
-        self::assertSame('array', new NativeTypePrinter()->print(self::parse('array<string, int>')));
+        self::assertSame('array', (new NativeTypePrinter())->print(self::parse('array<string, int>')));
     }
 
     public function testPrintUnionTypeWithoutWhitespaces(): void
     {
-        self::assertSame('int|string', new NativeTypePrinter()->print(self::parse('int|string')));
+        self::assertSame('int|string', (new NativeTypePrinter())->print(self::parse('int|string')));
     }
 
     public function testPrintUnionCollapsesMixed(): void
     {
-        self::assertSame('mixed', new NativeTypePrinter()->print(self::parse('int|mixed')));
+        self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('int|mixed')));
     }
 
     public function testPrintUnionCollapsesTrueAndFalseToBool(): void
     {
-        self::assertSame('bool', new NativeTypePrinter()->print(self::parse('true|false')));
+        self::assertSame('bool', (new NativeTypePrinter())->print(self::parse('true|false')));
     }
 
     public function testPrintUnionCollapsesBoolPairKeepingOtherMembers(): void
     {
-        self::assertSame('bool|int', new NativeTypePrinter()->print(self::parse('true|false|int')));
+        self::assertSame('bool|int', (new NativeTypePrinter())->print(self::parse('true|false|int')));
     }
 
     public function testPrintUnionCollapsesNamedTrueAndFalseToBool(): void
     {
-        self::assertSame('bool', new NativeTypePrinter()->print(self::parse('\true|\false')));
+        self::assertSame('bool', (new NativeTypePrinter())->print(self::parse('\true|\false')));
     }
 
     public function testPrintUnionCollapsesNamedBoolPairKeepingOtherMembers(): void
     {
-        self::assertSame('int|bool', new NativeTypePrinter()->print(self::parse('\true|\false|int')));
+        self::assertSame('int|bool', (new NativeTypePrinter())->print(self::parse('\true|\false|int')));
     }
 
     public function testPrintUnionDeduplicatesMembers(): void
     {
-        self::assertSame('int', new NativeTypePrinter()->print(self::parse('int|int')));
+        self::assertSame('int', (new NativeTypePrinter())->print(self::parse('int|int')));
     }
 
     public function testPrintNestedLogicalTypeIsParenthesized(): void
     {
-        self::assertSame('int|(string&Foo)', new NativeTypePrinter()
+        self::assertSame('int|(string&Foo)', (new NativeTypePrinter())
             ->print(self::parse('int|(string&Foo)')));
     }
 
     public function testPrintDeeplyNestedUnionIsFlattened(): void
     {
-        self::assertSame('A|B|C|D', new NativeTypePrinter()
+        self::assertSame('A|B|C|D', (new NativeTypePrinter())
             ->print(self::parse('((A | B) | C) | D')));
     }
 
     public function testPrintDeeplyNestedIntersectionIsFlattened(): void
     {
-        self::assertSame('A&B&C&D', new NativeTypePrinter()
+        self::assertSame('A&B&C&D', (new NativeTypePrinter())
             ->print(self::parse('((A & B) & C) & D')));
     }
 
     public function testPrintDeeplyNestedMixedLogicalTypeKeepsParentheses(): void
     {
-        self::assertSame('((A|B)&C)|D', new NativeTypePrinter()
+        self::assertSame('((A|B)&C)|D', (new NativeTypePrinter())
             ->print(self::parse('((A | B) & C) | D')));
     }
 
     public function testPrintIntersectionTypeWithoutWhitespaces(): void
     {
-        self::assertSame('int&string', new NativeTypePrinter()->print(self::parse('int&string')));
+        self::assertSame('int&string', (new NativeTypePrinter())->print(self::parse('int&string')));
     }
 
     public function testPrintCallableTypeAsName(): void
     {
-        self::assertSame('callable', new NativeTypePrinter()
+        self::assertSame('callable', (new NativeTypePrinter())
             ->print(self::parse('callable(int, string): void')));
     }
 
     public function testPrintTernaryAsUnionOfBranches(): void
     {
-        self::assertSame('string|bool', new NativeTypePrinter()
+        self::assertSame('string|bool', (new NativeTypePrinter())
             ->print(self::parse('($x is int ? string : bool)')));
     }
 
     public function testPrintClassConstantAsMixed(): void
     {
-        self::assertSame('mixed', new NativeTypePrinter()->print(self::parse('Foo::BAR')));
+        self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('Foo::BAR')));
     }
 
     public function testPrintClassConstantMaskAsMixed(): void
     {
-        self::assertSame('mixed', new NativeTypePrinter()->print(self::parse('Foo::*')));
+        self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('Foo::*')));
     }
 
     public function testPrintConstantMaskAsMixed(): void
     {
-        self::assertSame('mixed', new NativeTypePrinter()->print(self::parse('FOO_*')));
+        self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('FOO_*')));
+    }
+
+    public function testPrintWildcardAsMixed(): void
+    {
+        self::assertSame('mixed', (new NativeTypePrinter())->print(new \TypeLang\Type\WildcardNode()));
     }
 
     public function testPrintTypeOffsetAccessAsMixed(): void
     {
-        self::assertSame('mixed', new NativeTypePrinter()->print(self::parse('Foo[Bar]')));
+        self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('Foo[Bar]')));
     }
 
     public function testPrintThisVariableAsSelf(): void
     {
-        self::assertSame('self', new NativeTypePrinter()
+        self::assertSame('self', (new NativeTypePrinter())
             ->print(self::parse('($this is int ? $this : $this)')));
     }
 
     #[DataProvider('literalProvider')]
     public function testPrintLiteralAsNativeType(string $type, string $expected): void
     {
-        self::assertSame($expected, new NativeTypePrinter()->print(self::parse($type)));
+        self::assertSame($expected, (new NativeTypePrinter())->print(self::parse($type)));
     }
 
     /**
@@ -151,7 +156,7 @@ final class NativeTypePrinterTest extends TestCase
 
     public function testPrintUsesPreloadedAlias(): void
     {
-        self::assertSame('int', new NativeTypePrinter()->print(self::parse('positive-int')));
+        self::assertSame('int', (new NativeTypePrinter())->print(self::parse('positive-int')));
     }
 
     public function testAddTypeAlias(): void
@@ -199,6 +204,6 @@ final class NativeTypePrinterTest extends TestCase
 
         $this->expectException(NonPrintableNodeException::class);
 
-        new NativeTypePrinter()->print($node);
+        (new NativeTypePrinter())->print($node);
     }
 }

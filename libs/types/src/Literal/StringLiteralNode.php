@@ -5,183 +5,28 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
- * @template-extends LiteralNode<string>
+ * A string, kept both decoded and as it is written.
+ *
+ * ```
+ *  "\x41\x42"  // value: "AB", raw: "\"\x41\x42\""
+ * ```
+ *
+ * @template-extends ScalarNode<string>
  *
  * @phpstan-consistent-constructor
  */
-final class StringLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
+final class StringLiteralNode extends ScalarNode
 {
     /**
-     * @var non-empty-string
+     * @param int<0, max> $offset
      */
-    private const string UTF_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\u\{([0-9a-fA-F]+)}/u';
-
-    /**
-     * @var non-empty-string
-     */
-    private const string HEX_SEQUENCE_PATTERN = '/(?<!\\\\)\\\\x([0-9a-fA-F]{1,2})/iu';
-
-    /**
-     * @var non-empty-array<non-empty-string, non-empty-string>
-     */
-    private const array ESCAPED_CHARS = [
-        '\n' => "\n",
-        '\r' => "\r",
-        '\t' => "\t",
-        '\v' => "\v",
-        '\e' => "\e",
-        '\f' => "\f",
-        '\$' => '$',
-    ];
-
     final public function __construct(
         string $value,
         ?string $raw = null,
+        int $offset = 0,
     ) {
-        $raw ??= \sprintf('"%s"', \addcslashes($value, '"'));
+        $raw ??= \sprintf("'%s'", \addcslashes($value, "'"));
 
-        parent::__construct($value, $raw);
-    }
-
-    public static function parse(string $value): self
-    {
-        if (\strlen($value) < 2) {
-            throw new \InvalidArgumentException('Could not parse non-quoted string');
-        }
-
-        if ($value[0] === '"') {
-            return self::createFromDoubleQuotedString($value);
-        }
-
-        return self::createFromSingleQuotedString($value);
-    }
-
-    /**
-     * @param non-empty-string $value
-     */
-    public static function createFromDoubleQuotedString(string $value): self
-    {
-        if (\strlen($value) < 2) {
-            throw new \InvalidArgumentException('Could not parse non-quoted string');
-        }
-
-        $body = \substr($value, 1, -1);
-
-        return self::parseEncodedValue(
-            string: \str_replace('\"', '"', $body),
-            raw: $value,
-        );
-    }
-
-    /**
-     * @param non-empty-string $value
-     */
-    public static function createFromSingleQuotedString(string $value): self
-    {
-        if (\strlen($value) < 2) {
-            throw new \InvalidArgumentException('Could not parse non-quoted string');
-        }
-
-        $body = \substr($value, 1, -1);
-
-        return new self(
-            value: \str_replace("\'", "'", $body),
-            raw: $value,
-        );
-    }
-
-    private static function parseEncodedValue(string $string, ?string $raw = null): self
-    {
-        $raw ??= $string;
-
-        if (\str_contains($string, '\\')) {
-            // Replace double backslash to "\0"
-            $string = \str_replace('\\\\', "\0", $string);
-
-            // Replace escaped chars (like a "\n") to real bytes
-            $string = self::renderEscapeSequences($string);
-
-            // Replace hex sequences (like a "\xFF") to real bytes
-            $string = self::renderHexadecimalSequences($string);
-
-            // Replace unicode sequences (like a "\u{FFFF}") to real bytes
-            $string = self::renderUtfSequences($string);
-
-            // Rollback double backslash escaping
-            $string = \str_replace("\0", '\\\\', $string);
-        }
-
-        return new self($string, $raw);
-    }
-
-    /**
-     * Method for parsing and decode special escaped character sequences
-     * like a "\n", "\r" etc...
-     *
-     * @link https://www.php.net/manual/en/language.types.string.php
-     */
-    private static function renderEscapeSequences(string $body): string
-    {
-        return \str_replace(
-            \array_keys(self::ESCAPED_CHARS),
-            \array_values(self::ESCAPED_CHARS),
-            $body,
-        );
-    }
-
-    /**
-     * Method for parsing and decode hexadecimal character sequences
-     * like a "\xFF" type.
-     *
-     * @link https://www.php.net/manual/en/language.types.string.php
-     */
-    private static function renderHexadecimalSequences(string $body): string
-    {
-        $callback = static fn(array $matches): string
-            // @phpstan-ignore-next-line : A hexdec returns int<0, 255>
-            => \chr((int) \hexdec($matches[1]));
-
-        return @\preg_replace_callback(self::HEX_SEQUENCE_PATTERN, $callback, $body)
-            ?? $body;
-    }
-
-    /**
-     * Method for parsing and decode utf-8 character sequences
-     * like a "\u{FFFF}" type.
-     *
-     * @link https://www.php.net/manual/en/language.types.string.php
-     */
-    private static function renderUtfSequences(string $body): string
-    {
-        return @\preg_replace_callback(self::UTF_SEQUENCE_PATTERN, static function (array $matches): string {
-            /** @var int<0, 1114112> $code */
-            $code = (int) \hexdec($matches[1]);
-
-            // @phpstan-ignore-next-line : PHPStan false-positive mb_chr evaluation
-            if (\function_exists('\\mb_chr') && ($result = \mb_chr($code)) !== false) {
-                return $result;
-            }
-
-            if (0x80 > $code %= 0x200000) {
-                // @phpstan-ignore-next-line : Code is valid
-                return \chr($code);
-            }
-
-            if (0x800 > $code) {
-                return \chr(0xC0 | $code >> 6)
-                     . \chr(0x80 | $code & 0x3F);
-            }
-
-            if (0x10000 > $code) {
-                return \chr(0xE0 | $code >> 12)
-                     . \chr(0x80 | $code >> 6 & 0x3F)
-                     . \chr(0x80 | $code & 0x3F);
-            }
-
-            return \chr(0xF0 | $code >> 18)
-                 . \chr(0x80 | $code >> 12 & 0x3F)
-                 . \chr(0x80 | $code >> 6 & 0x3F)
-                 . \chr(0x80 | $code & 0x3F);
-        }, $body) ?? $body;
+        parent::__construct($value, $raw, $offset);
     }
 }

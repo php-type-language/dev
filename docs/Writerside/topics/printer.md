@@ -38,7 +38,7 @@ It ships with two printers that render the very same AST differently:
 </tldr>
 
 **Requirements:**
-* `PHP >= 8.4`
+* `PHP >= 8.1`
 * `ext-mbstring` <sup>optional</sup>
 
 ## Quick Start

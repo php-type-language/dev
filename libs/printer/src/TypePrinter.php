@@ -12,12 +12,12 @@ abstract class TypePrinter implements TypePrinterInterface
     /**
      * @var non-empty-string
      */
-    protected const string DEFAULT_NEW_LINE_DELIMITER = "\n";
+    protected const DEFAULT_NEW_LINE_DELIMITER = "\n";
 
     /**
      * @var non-empty-string
      */
-    protected const string DEFAULT_INDENTION = '    ';
+    protected const DEFAULT_INDENTION = '    ';
 
     /**
      * @var int<0, max>

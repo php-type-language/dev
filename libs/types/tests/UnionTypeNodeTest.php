@@ -22,7 +22,7 @@ final class UnionTypeNodeTest extends TestCase
     {
         $a = $this->named('int');
         $b = $this->named('string');
-        $node = new UnionTypeNode($a, $b);
+        $node = new UnionTypeNode([$a, $b]);
 
         self::assertCount(2, $node);
         self::assertSame([$a, $b], $node->statements);
@@ -34,7 +34,7 @@ final class UnionTypeNodeTest extends TestCase
         $a = $this->named('int');
         $b = $this->named('string');
         $c = $this->named('null');
-        $node = new UnionTypeNode($a, $b, $c);
+        $node = new UnionTypeNode([$a, $b, $c]);
 
         self::assertCount(3, $node);
     }
@@ -46,8 +46,8 @@ final class UnionTypeNodeTest extends TestCase
         $b = $this->named('string');
         $c = $this->named('null');
 
-        $inner = new UnionTypeNode($a, $b);
-        $outer = new UnionTypeNode($inner, $c);
+        $inner = new UnionTypeNode([$a, $b]);
+        $outer = new UnionTypeNode([$inner, $c]);
 
         self::assertCount(3, $outer);
         self::assertSame([$a, $b, $c], $outer->statements);
@@ -58,7 +58,7 @@ final class UnionTypeNodeTest extends TestCase
     {
         $a = $this->named('int');
         $b = $this->named('string');
-        $node = new UnionTypeNode($a, $b);
+        $node = new UnionTypeNode([$a, $b]);
 
         self::assertSame([$a, $b], \iterator_to_array($node));
     }
@@ -66,7 +66,7 @@ final class UnionTypeNodeTest extends TestCase
     #[Test]
     public function countReturnsNumberOfStatements(): void
     {
-        $node = new UnionTypeNode($this->named('int'), $this->named('string'), $this->named('bool'));
+        $node = new UnionTypeNode([$this->named('int'), $this->named('string'), $this->named('bool')]);
 
         self::assertSame(3, $node->count());
     }
@@ -78,8 +78,8 @@ final class UnionTypeNodeTest extends TestCase
         $b = $this->named('B');
         $c = $this->named('C');
 
-        $inner = new IntersectionTypeNode($a, $b);
-        $outer = new UnionTypeNode($inner, $c);
+        $inner = new IntersectionTypeNode([$a, $b]);
+        $outer = new UnionTypeNode([$inner, $c]);
 
         self::assertCount(2, $outer);
         self::assertSame($inner, $outer->statements[0]);
@@ -90,7 +90,7 @@ final class UnionTypeNodeTest extends TestCase
     {
         $a = $this->named('int');
         $b = $this->named('string');
-        $node = new UnionTypeNode($a, $b);
+        $node = new UnionTypeNode([$a, $b]);
         $node->offset = 5;
 
         /** @var UnionTypeNode $restored */

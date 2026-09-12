@@ -9,15 +9,16 @@ and its counterpart
 [@phan-assert-if-false](phan-assert-if-false-tag.md).
 
 ```
-"@phan-assert-if-true" <Type> <Variable> [ <Description> ]
+"@phan-assert-if-true" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
 ```
 
 Parsing a `@phan-assert-if-true` tag produces an `AssertIfTrueTag` instance, carrying the
-asserted `$type` and `$variable` alongside the `$name` and optional
-`$description` every [Tag](phpdoc.md#tag) already provides.
+asserted `$type`, the `$subject` it is asserted of and the `$operator`
+relating them, alongside the `$name` and optional `$description` every
+[Tag](phpdoc.md#tag) already provides.
 
 ```php
-final class AssertIfTrueTag extends TypedVariableTag {}
+final class AssertIfTrueTag extends AssertionTag {}
 ```
 
 The same `AssertIfTrueTag` is produced by [@psalm-assert-if-true](psalm-assert-if-true-tag.md) and [@phpstan-assert-if-true](phpstan-assert-if-true-tag.md), which restate the same

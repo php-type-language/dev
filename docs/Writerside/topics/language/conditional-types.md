@@ -101,42 +101,6 @@ The `is` keyword checks whether the subject **is** of the compared type, and
 </tab>
 </tabs>
 
-## Comparison Operators
-
-In addition to the `is` / `is not` equality checks, TypeLang also allows
-comparing the subject using the `<`, `>`, `<=` and `>=` operators.
-
-<tabs>
-<tab title="Examples">
-
-> Less than.
-> ```typescript
-> T < int<0, 100> ? A : B
-> ```
-
-> Greater than.
-> ```typescript
-> T > 0 ? A : B
-> ```
-
-> Less than or equal.
-> ```typescript
-> T <= 100 ? A : B
-> ```
-
-> Greater than or equal.
-> ```typescript
-> T >= 0 ? A : B
-> ```
-
-</tab>
-</tabs>
-
-> This is a TypeLang-specific extension: neither PHPStan nor Psalm support
-> comparison operators in conditional types, only `is` and `is not`. See the
-> [syntax comparison](comparison.md) page for details.
-> {style="note"}
-
 ## Yoda-Style Conditions
 
 Since the subject and the compared type can both be arbitrary type

@@ -15,12 +15,13 @@ use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\Literal\LiteralNode;
 use TypeLang\Type\Literal\NullLiteralNode;
 use TypeLang\Type\Literal\StringLiteralNode;
-use TypeLang\Type\Literal\VariableLiteralNode;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\TernaryExpressionNode;
+use TypeLang\Type\ThisNode;
 use TypeLang\Type\TypeOffsetAccessNode;
 use TypeLang\Type\TypesListNode;
 use TypeLang\Type\UnionTypeNode;
+use TypeLang\Type\WildcardNode;
 
 class NativeTypePrinter extends PrettyTypePrinter
 {
@@ -106,7 +107,7 @@ class NativeTypePrinter extends PrettyTypePrinter
     protected function printTernaryType(TernaryExpressionNode $node): string
     {
         /** @var non-empty-string */
-        return $this->make(new UnionTypeNode($node->then, $node->else));
+        return $this->make(new UnionTypeNode([$node->then, $node->else]));
     }
 
     #[\Override]
@@ -119,6 +120,18 @@ class NativeTypePrinter extends PrettyTypePrinter
     protected function printConstMaskNode(ConstMaskNode $node): string
     {
         return 'mixed';
+    }
+
+    #[\Override]
+    protected function printWildcardNode(WildcardNode $node): string
+    {
+        return 'mixed';
+    }
+
+    #[\Override]
+    protected function printThisNode(ThisNode $node): string
+    {
+        return 'self';
     }
 
     #[\Override]
@@ -222,7 +235,6 @@ class NativeTypePrinter extends PrettyTypePrinter
             $node instanceof IntLiteralNode => 'int',
             $node instanceof NullLiteralNode => 'null',
             $node instanceof StringLiteralNode => 'string',
-            $node instanceof VariableLiteralNode => $node->value === 'this' ? 'self' : 'mixed',
             default => \get_debug_type($node->value),
         };
     }

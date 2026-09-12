@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Tests\Literal;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\Tests\TestCase;
@@ -40,85 +39,9 @@ final class IntLiteralNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideDecimalIntegers')]
-    public function parseDecimalInteger(string $input, int $expected): void
-    {
-        $node = IntLiteralNode::parse($input);
-
-        self::assertSame($expected, $node->value);
-        self::assertSame($input, $node->raw);
-    }
-
-    public static function provideDecimalIntegers(): iterable
-    {
-        return [
-            ['0', 0],
-            ['1', 1],
-            ['42', 42],
-            ['100', 100],
-        ];
-    }
-
-    #[Test]
-    public function parseNegativeInteger(): void
-    {
-        $node = IntLiteralNode::parse('-42');
-
-        self::assertSame(-42, $node->value);
-    }
-
-    #[Test]
-    public function parseHexadecimalInteger(): void
-    {
-        $node = IntLiteralNode::parse('0xFF');
-
-        self::assertSame(255, $node->value);
-    }
-
-    #[Test]
-    public function parseBinaryInteger(): void
-    {
-        $node = IntLiteralNode::parse('0b1010');
-
-        self::assertSame(10, $node->value);
-    }
-
-    #[Test]
-    public function parseOctalInteger(): void
-    {
-        $node = IntLiteralNode::parse('0o17');
-
-        self::assertSame(15, $node->value);
-    }
-
-    #[Test]
-    public function parseLegacyOctalInteger(): void
-    {
-        $node = IntLiteralNode::parse('017');
-
-        self::assertSame(15, $node->value);
-    }
-
-    #[Test]
-    public function parseIntegerWithUnderscores(): void
-    {
-        $node = IntLiteralNode::parse('1_000_000');
-
-        self::assertSame(1000000, $node->value);
-    }
-
-    #[Test]
-    public function parsePhpIntMin(): void
-    {
-        $node = IntLiteralNode::parse((string) \PHP_INT_MIN);
-
-        self::assertSame(\PHP_INT_MIN, $node->value);
-    }
-
-    #[Test]
     public function defaultOffsetIsZero(): void
     {
-        $node = IntLiteralNode::parse('0');
+        $node = new IntLiteralNode(0);
 
         self::assertSame(0, $node->offset);
     }

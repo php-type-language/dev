@@ -148,32 +148,14 @@ parameter description.
 
 ### Variadic Parameters
 
-Variadic parameters are indicated by the "`...`" and can be placed either
-_before the type_ or _before the parameter name._
+Variadic parameters are indicated by the "`...`" placed after the type. Where
+a parameter carries both markers, the ampersand ("`&`") comes first.
 
 > Variadic parameter cannot be optional since they are already optional.
 {style="warning"}
 
 <tabs>
 <tab title="Examples">
-
-> Callable type with one variadic parameter.
-> ```typescript
-> foo(...T)
-> ```
-
-> Callable type with one variadic named parameter.
-> ```typescript
-> foo(...T $name)
-> ```
-
-> Callable type with one variadic output named parameter.
-> ```typescript
-> foo(...T &$name)
-> ```
-
-</tab>
-<tab title="Alternative Syntax">
 
 > Callable type with one variadic parameter.
 > ```typescript
@@ -193,14 +175,25 @@ _before the type_ or _before the parameter name._
 </tab>
 <tab title="Counterexamples">
 
-> The ellipses (`...`) must come before or after the type.
+> The ellipsis (`...`) must be placed after the parameter's type.
 > ```typescript
-> foo(...T...)
+> foo(...T)
 > ```
 >
 > An error similar to the one below should occur
 > ```
 > ParseException: Syntax error, unexpected "..."
+> ```
+> {style="warning"}
+
+> The ampersand (`&`) must be placed before the ellipsis (`...`).
+> ```typescript
+> foo(T ...&$name)
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected "&"
 > ```
 > {style="warning"}
 
@@ -218,47 +211,100 @@ _before the type_ or _before the parameter name._
 </tab>
 </tabs>
 
+## Template Parameters
 
-## Attributes
+A callable MAY declare the template parameters it introduces, written as a
+`<...>` list between the name and the parameter list. Each parameter is a
+name, optionally followed by the bounds put on it.
 
-<secondary-label ref="tl1.2"/>
+A parameter accepts three kinds of limit, each written at most once. The two
+bounds are written in either order, and the default is written last: a bound
+behind it would read as a bound of the default itself.
 
-Each callable parameter allows you to define list of additional attributes.
-An attribute is additional metadata for a parameter.
+* `of T` or `as T` — the **upper bound**: the argument is to be a subtype
+  of `T`. The two words mean the same and are kept as they are written.
+* `super T` — the **lower bound**: the argument is to be a supertype of `T`.
+* `= T` — the **default**: the type the parameter takes when no argument is
+  passed. It bounds nothing.
+
+The words are not case-sensitive, so an `OF` reads the same way an `of` does.
+
+> A `<...>` that no parenthesis follows is a list of
+> [template arguments](generic-types.md), not of template parameters, and
+> template arguments describe no bounds.
+> {style="note"}
 
 <tabs>
 <tab title="Examples">
 
-> Simple attribute with one argument for each callable parameter.
+> Callable type declaring one template parameter.
 > ```typescript
-> Example\Functor(#[type(int8)] int $a): void
+> callable<T>(T): T
 > ```
 
-> Multiple attributes in one group.
+> Callable type declaring a bounded template parameter.
 > ```typescript
-> Example\Functor(#[type(int8), const] int&): void
+> callable<T of Some>(T): T
 > ```
 
-> Multiple attribute groups.
+> Every kind of bound, and several parameters at once.
 > ```typescript
-> Example\OnCreate(
->     #[deprecated]
->     #[inline]
->     (callback(T): void) $callback=,
-> ): void
+> Closure<T of Some, U super Any, V = int>(T, U): V
+> ```
+
+> One parameter carrying every limit at once.
+> ```typescript
+> callable<T of Some super Any = int>(T): void
 > ```
 
 </tab>
 <tab title="Counterexamples">
 
-> Only valid identifiers are allowed.
+> Bounds belong to a callable alone, so a type used with template arguments
+> describes none.
 > ```typescript
-> Example\Functor(#[42] int $a): void
+> Collection<T of Some>
 > ```
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "42"
+> ParseException: Syntax error, unexpected end of input
+> ```
+> {style="warning"}
+
+> Only `of`, `as` and `super` bound a parameter.
+> ```typescript
+> callable<T whatever Some>(): void
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Template parameter cannot be bounded with "whatever",
+> expected one of "of", "as" or "super"
+> ```
+> {style="warning"}
+
+> Each kind of limit is written at most once.
+> ```typescript
+> callable<T of Some as Any>(): void
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Template parameter cannot have more than one upper bound
+> ```
+> {style="warning"}
+
+> A bound cannot stand behind the default, since it would read as a bound
+> of the default itself: the `of Some` below bounds the `int`, not the `T`.
+> ```typescript
+> callable<T = int of Some>(): void
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Template parameter default must be written last, since
+> a bound behind it reads as a bound of the default itself
 > ```
 > {style="warning"}
 

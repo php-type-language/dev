@@ -5,12 +5,21 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
+ * A `null`, in any case it is written in.
+ *
+ * ```
+ *  NulL  // value: null, raw: "NulL"
+ * ```
+ *
  * @template-extends LiteralNode<null>
  */
 final class NullLiteralNode extends LiteralNode
 {
-    public function __construct(?string $raw = null)
+    /**
+     * @param int<0, max> $offset
+     */
+    public function __construct(?string $raw = null, int $offset = 0)
     {
-        parent::__construct(null, $raw ?? 'null');
+        parent::__construct(null, $raw ?? 'null', $offset);
     }
 }

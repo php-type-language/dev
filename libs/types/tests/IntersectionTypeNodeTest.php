@@ -21,7 +21,7 @@ final class IntersectionTypeNodeTest extends TestCase
     {
         $a = $this->named('Countable');
         $b = $this->named('Stringable');
-        $node = new IntersectionTypeNode($a, $b);
+        $node = new IntersectionTypeNode([$a, $b]);
 
         self::assertCount(2, $node);
         self::assertSame([$a, $b], $node->statements);
@@ -33,7 +33,7 @@ final class IntersectionTypeNodeTest extends TestCase
         $a = $this->named('A');
         $b = $this->named('B');
         $c = $this->named('C');
-        $node = new IntersectionTypeNode($a, $b, $c);
+        $node = new IntersectionTypeNode([$a, $b, $c]);
 
         self::assertCount(3, $node);
     }
@@ -45,8 +45,8 @@ final class IntersectionTypeNodeTest extends TestCase
         $b = $this->named('B');
         $c = $this->named('C');
 
-        $inner = new IntersectionTypeNode($a, $b);
-        $outer = new IntersectionTypeNode($inner, $c);
+        $inner = new IntersectionTypeNode([$a, $b]);
+        $outer = new IntersectionTypeNode([$inner, $c]);
 
         self::assertCount(3, $outer);
         self::assertSame([$a, $b, $c], $outer->statements);
@@ -57,7 +57,7 @@ final class IntersectionTypeNodeTest extends TestCase
     {
         $a = $this->named('Countable');
         $b = $this->named('Stringable');
-        $node = new IntersectionTypeNode($a, $b);
+        $node = new IntersectionTypeNode([$a, $b]);
 
         self::assertSame([$a, $b], \iterator_to_array($node));
     }
@@ -65,7 +65,7 @@ final class IntersectionTypeNodeTest extends TestCase
     #[Test]
     public function defaultOffsetIsZero(): void
     {
-        $node = new IntersectionTypeNode($this->named('A'), $this->named('B'));
+        $node = new IntersectionTypeNode([$this->named('A'), $this->named('B')]);
 
         self::assertSame(0, $node->offset);
     }

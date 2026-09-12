@@ -7,7 +7,7 @@
         {"type": "path", "url": "libs/*"}
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.1",
         "type-lang/parser": "^2.0",
         "type-lang/phpdoc": "^2.0",
         "type-lang/printer": "^2.0",
@@ -15,25 +15,26 @@
         "type-lang/types": "^2.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.95.13",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "jetbrains/phpstorm-attributes": "^1.2",
-        "phpbench/phpbench": "^1.7.0",
-        "phpdocumentor/reflection-docblock": "^6.0.3",
-        "phplrt/compiler": "^3.7.5",
-        "phpstan/phpdoc-parser": "^2.3.3",
-        "phpstan/phpstan": "^2.2.5",
-        "phpstan/phpstan-deprecation-rules": "^2.0.4",
-        "phpstan/phpstan-strict-rules": "^2.0.11",
-        "phpunit/phpunit": "^13.2.4",
-        "symfony/var-dumper": "^7.4|^8.0"
+        "phpbench/phpbench": "^1.2",
+        "phpdocumentor/reflection-docblock": "^6.0",
+        "phplrt/compiler": "^4.1",
+        "phpstan/phpdoc-parser": "^2.3",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0",
+        "symfony/var-dumper": "^6.4|^7.0|^8.0"
     },
     "autoload-dev": {
         "psr-4": {
-             "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
-             "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
-             "TypeLang\\PhpDoc\\Tests\\": "libs/phpdoc/tests",
-             "TypeLang\\Reader\\Tests\\": "libs/reader/tests",
-             "TypeLang\\Type\\Tests\\": "libs/types/tests"
+            "TypeLang\\Bench\\": "bench",
+            "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
+            "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
+            "TypeLang\\PhpDoc\\Tests\\": "libs/phpdoc/tests",
+            "TypeLang\\Reader\\Tests\\": "libs/reader/tests",
+            "TypeLang\\Type\\Tests\\": "libs/types/tests"
         }
     },
     "extra": {
@@ -56,7 +57,8 @@
         "phpcs:check": ["phpcs", "cs", "psr", "per"]
     },
     "scripts": {
-        "bench": "phpbench run libs/phpdoc/tests --report=default",
+        "bench": "phpbench run ./bench --report=compare",
+        "bench:census": "php bench/PhpDoc/bin/census",
         "test:unit": "phpunit --testdox",
         "linter:check": "phpstan analyse --configuration phpstan.neon --memory-limit 256M",
         "linter:baseline": "@linter:check --generate-baseline",

@@ -35,7 +35,7 @@ phpdoc is the job of the <a href="phpdoc.md">PHPDoc parser</a>.
 </tldr>
 
 **Requirements:**
-* `PHP >= 8.4`
+* `PHP >= 8.1`
 * `ext-mbstring` <sup>optional</sup>
 
 ## Quick Start

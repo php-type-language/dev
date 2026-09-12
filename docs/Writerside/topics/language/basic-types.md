@@ -115,3 +115,96 @@ The namespace delimiter can be used in conjunction with keywords such as `true`,
 
 </tab>
 </tabs>
+
+## The $this Type {id="this-type"}
+
+The `$this` variable denotes the type of the object the type is written on. It
+is a type of its own, so it stands wherever a type stands: inside a union,
+behind a question mark, or as the type a
+[callable](callable-types.md) returns.
+
+> `$this` is the one variable that is a type. Any other variable names a
+> [callable parameter](callable-types.md#named-parameters) or an operand of a
+> [conditional type](conditional-types.md), and is not a type on its own.
+> {style="note"}
+
+<tabs>
+<tab title="Examples">
+
+> The type of the current object.
+> ```typescript
+> $this
+> ```
+
+> The current object type, or nothing at all.
+> ```typescript
+> ?$this
+> ```
+
+> A callable returning the object it was called on.
+> ```typescript
+> callable(): $this
+> ```
+
+</tab>
+<tab title="Counterexamples">
+
+> Any other variable is not a type.
+> ```typescript
+> $var
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected end of input, T_EQ expected
+> ```
+> {style="warning"}
+
+</tab>
+</tabs>
+
+## Comments
+
+A type MAY carry comments, and they are read the way whitespace is: they part
+tokens and mean nothing of their own.
+
+A **line comment** begins with either a `//` or a `#` marker and runs up to the
+end of the line. A **block comment** begins with a `/*` and runs up to and
+including the next `*/`.
+
+<tabs>
+<tab title="Examples">
+
+> Block comment standing between two tokens.
+> ```typescript
+> int /* comment */ | string
+> ```
+
+> Line comment ending a line of a type written across several.
+> ```typescript
+> int | // comment
+>     string
+> ```
+
+> A `#` marker begins a line comment as well.
+> ```typescript
+> # comment
+> int
+> ```
+
+</tab>
+<tab title="Counterexamples">
+
+> A comment is not a type, so a source made of one alone describes nothing.
+> ```typescript
+> // comment
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected end of input
+> ```
+> {style="warning"}
+
+</tab>
+</tabs>

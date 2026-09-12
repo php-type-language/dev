@@ -6,8 +6,17 @@ namespace TypeLang\Type;
 
 abstract class Node implements NodeInterface
 {
-    /**
-     * @var int<0, max>
-     */
-    public int $offset = 0;
+    public function __construct(
+        /**
+         * Token offset defined in the source code.
+         *
+         * @var int<0, max>
+         */
+        public int $offset = 0,
+    ) {}
+
+    public function getOffset(): int
+    {
+        return $this->offset;
+    }
 }

@@ -30,7 +30,7 @@ final class NamedFieldNodeTest extends TestCase
         $key = new Identifier('myField');
         $node = new NamedFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertSame('myField', $node->index);
+        self::assertSame('myField', $node->getIndex());
     }
 
     #[Test]
@@ -54,29 +54,6 @@ final class NamedFieldNodeTest extends TestCase
         );
 
         self::assertTrue($node->isOptional);
-    }
-
-    #[Test]
-    public function toStringReturnsRequiredWhenNotOptional(): void
-    {
-        $node = new NamedFieldNode(
-            new Identifier('field'),
-            new NamedTypeNode(Name::createFromString('string')),
-        );
-
-        self::assertSame('required', (string) $node);
-    }
-
-    #[Test]
-    public function toStringReturnsOptionalWhenOptional(): void
-    {
-        $node = new NamedFieldNode(
-            new Identifier('field'),
-            new NamedTypeNode(Name::createFromString('string')),
-            true,
-        );
-
-        self::assertSame('optional', (string) $node);
     }
 
     #[Test]

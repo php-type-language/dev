@@ -35,7 +35,7 @@ composer require type-lang/types
 ```
 
 **Requirements:** 
-- PHP 8.4+
+- PHP 8.1+
 
 ## Usage
 
@@ -108,6 +108,6 @@ foreach ($list as $item) { /* ... */ }
 ```
 
 The package covers the full type grammar — unions and intersections, callables,
-conditional (ternary) expressions, class-constant masks, literals, shape fields
-and attributes. See the [documentation](https://typelang.dev) for the complete
+conditional (ternary) expressions, class-constant masks, literals and shape
+fields. See the [documentation](https://typelang.dev) for the complete
 node reference.

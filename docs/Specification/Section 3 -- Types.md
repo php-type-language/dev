@@ -47,7 +47,7 @@ ConditionalOperand :
 - Type
 - Variable
 
-ConditionalOperator : one of `is` `is not` `>=` `<=` `<` `>`
+ConditionalOperator : one of `is` `is not`
 
 A _conditional type_ (also called a ternary type) selects between two types
 based on a comparison between a _subject_ and a _comparand_. It is written as
@@ -58,9 +58,9 @@ condition holds, a `:`, and the type chosen otherwise.
 T is string ? int : bool
 ```
 
-The negative-equality operator is spelled `is not`. At the lexical level, the
-two words MUST be separated only by horizontal whitespace and are scanned as a
-single token; no line terminator may appear between them.
+The negative-equality operator is spelled `is not`. The two words are separate
+tokens, so whitespace and comments MAY stand between them the way they MAY
+stand between any other two tokens.
 
 ```typescript
 T is not string ? int : bool
@@ -76,11 +76,6 @@ $value is array ? non-empty-array : null
 ```typescript
 array is $value ? non-empty-array : null
 ```
-
-In addition to `is` and `is not`, the relational operators `<`, `>`, `<=` and
-`>=` MAY be used as the condition operator. This is an extension beyond what
-PHPStan and Psalm accept; see
-[Relationship to Other Tools](#sec-Relationship-to-Other-Tools).
 
 Note: A bare {Variable} is only a valid type when it carries a
 {ConditionalSuffix}. A {Variable} MUST NOT otherwise stand alone as a type;
@@ -189,18 +184,15 @@ User[]
 User[][]
 ```
 
-**Counter-example.** The legacy list syntax does not accept a key type between
-the brackets; for that, use [offset access](#sec-Offset-Access) or the modern
-`array<…>` generic.
+The legacy list syntax accepts no key type between the brackets; for that,
+use [offset access](#sec-Offset-Access) or the modern `array<…>` generic. A
+`User[int]` is a well-formed document all the same — an _offset access_ type
+(see below) rather than a list, since `int` is a valid {Type}. It is the
+absence of a type between the brackets that selects the list reading:
 
-```typescript counter-example
+```typescript
 User[int]
 ```
-
-This document, however, parses `User[int]` successfully — as an
-_offset access_ type (see below) rather than a list — because `int` is a
-valid {Type}. It is the absence of a type between the brackets that selects
-the list interpretation.
 
 ### Offset Access
 
@@ -275,6 +267,14 @@ that immediately follows it: `*` selects a
 [generic or shape](#sec-Generic-Types) named type; any other following token
 (or the end of the document) leaves a plain named type.
 
+Note: A bare {ReservedWord} is likewise both a {LiteralType} and, through
+{Identifier}, a {Name} of a single segment (see
+[Reserved Words](#sec-Reserved-Words)). Where one source could be read as
+either, the {LiteralType} is the one taken, so a `true` denotes the boolean
+literal and never a type named `true`. An `is` and a `not` denote no literal
+of their own, and nothing is therefore left to shadow the named type each of
+them is.
+
 ## Names and Namespaces
 
 Name :
@@ -307,13 +307,12 @@ Example\Name
 A separator MAY appear at the start of a name or between two segments, but
 MUST NOT appear at the end.
 
-**Reserved words within names.** The reserved words `true`, `false`, `null`
-and `is` (see [Reserved Words](#sec-Reserved-Words)) MAY appear as an
-{Identifier} segment of a {Name}. In isolation, such a word is scanned as a
-literal or operator and so cannot stand as a bare type name; but in a
-qualified position — following a separator or another segment — it denotes a
-name segment. This makes `\null` a reference to a type named `null`, distinct
-from the `null` literal.
+**Reserved words within names.** Every reserved word — `true`, `false`,
+`null`, `is` and `not` (see [Reserved Words](#sec-Reserved-Words)) — MAY
+appear as an {Identifier} segment of a {Name}. In a qualified position —
+following a separator or another segment — such a word is a name segment and
+nothing besides. This makes `\null` a reference to a type named `null`,
+distinct from the `null` literal.
 
 **Counter-example.** A name cannot end with a separator.
 
@@ -348,13 +347,16 @@ implementation and is outside the scope of this specification.
 
 TemplateArguments : `<` TemplateArgument (`,` TemplateArgument)\* `,`? `>`
 
-TemplateArgument : AttributeGroups? (TemplateArgumentHint | TemplateArgumentType)
+TemplateArgument : TemplateArgumentHint | TemplateArgumentValue
 
-TemplateArgumentType : Type
+TemplateArgumentValue : Wildcard | Type
+
+Wildcard : `*`
 
 A _generic type_ supplies a named type with one or more _template arguments_,
-each of which is itself a {Type}. Arguments are enclosed in angle brackets
-(`<` and `>`) and separated by commas. A trailing comma is permitted.
+each of which is itself a {Type} or a {Wildcard}. Arguments are enclosed in
+angle brackets (`<` and `>`) and separated by commas. A trailing comma is
+permitted.
 
 Validating the number of arguments, their bounds, and their nesting is the
 responsibility of the implementation, not of this grammar, which imposes no
@@ -391,9 +393,9 @@ describes only use sites, and therefore only template arguments.
 
 ### Template Argument Hints
 
-TemplateArgumentHint : Identifier Type
+TemplateArgumentHint : NameToken TemplateArgumentValue
 
-A template argument MAY carry a single leading _hint_: an {Identifier} placed
+A template argument MAY carry a single leading _hint_: a {NameToken} placed
 before the argument's type. Hints are used by tooling — for example, to
 express [call-site variance](https://phpstan.org/blog/guide-to-call-site-generic-variance#call-site-variance)
 with identifiers such as `in`, `out`, `covariant`, or `contravariant`.
@@ -402,40 +404,36 @@ with identifiers such as `in`, `out`, `covariant`, or `contravariant`.
 HashMap<array-key, covariant Request>
 ```
 
-At the lexical level, the hint and the type it modifies MUST be separated by
-whitespace; this separation is what distinguishes a hint from the start of
-the argument's own type (see [Ignored Tokens](#sec-Ignored-Tokens)). Each
-argument may carry at most one hint.
+At the lexical level, {Whitespace} MUST stand directly behind the hint; this
+separation is what distinguishes a hint from the start of the argument's own
+type, and a {Comment} does not stand in its place (see
+[Ignored Tokens](#sec-Ignored-Tokens)). Each argument may carry at most one
+hint.
 
-**Counter-example.** A hint must be a single valid identifier.
+**Counter-example.** A hint is a single {NameToken}. A second one reads as
+the bound of a [template parameter](#sec-Callable-Types), and a parameter
+list belongs to a callable, so the statement is refused where the `(` it
+would go on with is missing.
 
 ```typescript counter-example
 HashMap<array-key, some covariant Request>
 ```
 
 ```
-ParseException: Syntax error, unexpected "Request"
+ParseException: Syntax error, unexpected end of input
 ```
 
-**Counter-example.** A hint cannot be a reserved word: `is`, `true`, `false`
-and `null` are always scanned as the corresponding operator or literal token
-(see [Reserved Words](#sec-Reserved-Words)) and never as a hint {Identifier}.
+**Counter-example.** A hint cannot be a reserved word: `true`, `false`,
+`null`, `is` and `not` are always scanned as the corresponding literal or
+operator token (see [Reserved Words](#sec-Reserved-Words)) and never as a
+{NameToken}.
 
 ```typescript counter-example
 HashMap<is Request>
 ```
 
 ```
-ParseException: Syntax error, unexpected "Request"
-```
-
-### Template Argument Attributes
-
-Each template argument MAY additionally be prefixed with one or more
-[attribute groups](#sec-Attributes), providing metadata for the argument.
-
-```typescript
-HashMap<#[name("key")] T, #[name("value")] U>
+ParseException: Syntax error, unexpected ">"
 ```
 
 ## Literal Types
@@ -536,49 +534,92 @@ ParseException: Syntax error, unexpected "\"
 
 ConstantMask :
 
-- Name `*`
-- Name `::` Identifier `*`
-- Name `::` `*`
+- GlobalConstantMask
+- ClassConstantMask
 
-A _constant mask_ denotes a family of constants whose names share a common
-prefix. A mask MUST terminate with an asterisk (`*`).
+GlobalConstantMask :
 
-A global constant mask matches every global constant beginning with the
-prefix:
+- Name MaskTail
+- Name `\` MaskTail
+- LeadingMask
+
+ClassConstantMask :
+
+- Name `::` Identifier MaskTail?
+- Name `::` MaskTail
+
+MaskTail : Wildcard (Identifier Wildcard)\* Identifier?
+
+LeadingMask : Wildcard Identifier MaskTail?
+
+A _constant mask_ denotes a family of constants whose names are written of the
+same segments, in the same order, with a {Wildcard} standing wherever the name
+is left unsaid. A mask MUST contain at least one {Wildcard}, and its segments
+and wildcards alternate, so two wildcards in a row denote nothing a single one
+does not.
+
+A global constant mask matches every global constant the segments describe:
 
 ```typescript
 JSON_*
 ```
 
-A class constant mask matches every constant of a class whose name begins
-with the prefix; the prefix MAY be omitted entirely, in which case the mask
-matches every constant of the class:
+The name of a global constant MAY be left unsaid from its very beginning, and
+the namespace it belongs to MAY be written in front of it. A {Name} standing in
+front of a {MaskTail} carries the namespace and, in its last segment, the
+leading segment of the mask; a {Name} separated from the mask by a `\` is a
+namespace whole, and the mask then matches every constant that namespace holds:
+
+```typescript
+*_SUFFIX
+```
+
+```typescript
+Path\To\JSON_*
+```
+
+```typescript
+Path\To\*
+```
+
+A class constant mask matches every constant of a class the segments describe;
+the leading segment MAY be omitted entirely, in which case the mask matches
+every constant of the class:
 
 ```typescript
 Path\To\ClassName::PREFIX_*
 ```
 
 ```typescript
+Path\To\ClassName::*_SUFFIX
+```
+
+```typescript
+Path\To\ClassName::PREFIX_*_SUFFIX
+```
+
+```typescript
 Path\To\ClassName::*
 ```
 
-**Counter-example.** A global mask must have a prefix; a lone asterisk is not
-a type.
+**Counter-example.** A global mask must have at least one segment of a name,
+whether it stands in front of a wildcard or behind it; a lone asterisk, which
+would match every constant there is, is not a type.
 
 ```typescript counter-example
 *
 ```
 
 ```
-ParseException: Syntax error, unexpected "*"
+ParseException: Syntax error, unexpected end of input
 ```
 
-**Counter-example.** The asterisk must be the final character of the mask.
+**Counter-example.** Two wildcards in a row are not a mask.
 
 ```typescript counter-example
-Path\To\ClassName::PREFIX_*_SUFFIX
+Path\To\ClassName::PREFIX_**
 ```
 
 ```
-ParseException: Syntax error, unexpected "_SUFFIX"
+ParseException: Syntax error, unexpected "*"
 ```

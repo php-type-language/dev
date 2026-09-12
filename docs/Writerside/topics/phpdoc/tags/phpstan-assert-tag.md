@@ -8,15 +8,16 @@ narrowed to a given type after the call, defined by PHPStan. It has
 boolean-returning function returns a particular value.
 
 ```
-"@phpstan-assert" <Type> <Variable> [ <Description> ]
+"@phpstan-assert" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
 ```
 
 Parsing a `@phpstan-assert` tag produces an `AssertTag` instance, carrying the
-asserted `$type` and `$variable` alongside the `$name` and optional
-`$description` every [Tag](phpdoc.md#tag) already provides.
+asserted `$type`, the `$subject` it is asserted of and the `$operator`
+relating them, alongside the `$name` and optional `$description` every
+[Tag](phpdoc.md#tag) already provides.
 
 ```php
-final class AssertTag extends TypedVariableTag {}
+final class AssertTag extends AssertionTag {}
 ```
 
 The same `AssertTag` is produced by [@psalm-assert](psalm-assert-tag.md) and [@phan-assert](phan-assert-tag.md), which restate the same

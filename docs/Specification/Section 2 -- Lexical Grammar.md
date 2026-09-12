@@ -56,7 +56,7 @@ Letter :: one of
 - `N` `O` `P` `Q` `R` `S` `T` `U` `V` `W` `X` `Y` `Z`
 - `a` `b` `c` `d` `e` `f` `g` `h` `i` `j` `k` `l` `m`
 - `n` `o` `p` `q` `r` `s` `t` `u` `v` `w` `x` `y` `z`
-- "Any byte from U+0080 to U+00FF"
+- "Any byte from 0x80 to 0xFF"
 
 Digit :: one of `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
@@ -72,23 +72,36 @@ otherwise insignificant. Any amount of {Ignored} MAY appear before and after
 every lexical {Token}.
 
 Note: Although {Ignored} between two tokens is never itself significant, the
-_presence_ of separating whitespace is what distinguishes a {NameToken} that
-is immediately followed by another token from a {NameToken} that introduces a
-template argument hint (see
+_presence_ of {Whitespace} standing directly behind a {NameToken} is what
+distinguishes a {NameToken} that is immediately followed by another token
+from a {NameToken} that introduces a template argument hint (see
 [Template Argument Hints](#sec-Template-Argument-Hints)). This is the only
-place in the grammar where the presence of separating whitespace is
-observable to the syntactic grammar.
+place in the grammar where {Ignored} is observable to the syntactic grammar,
+and the one place a {Comment} does not stand for the whitespace it is written
+among: a comment MAY follow that whitespace, but MUST NOT stand in its stead.
 
 ### White Space
 
-Whitespace :: "Any Unicode whitespace character"
+Whitespace :: one of
 
-Whitespace separates tokens and improves the legibility of the source text. It
-includes, at minimum, the space (U+0020), horizontal tab (U+0009), line feed
-(U+000A) and carriage return (U+000D) characters. TypeLang does not
-distinguish between horizontal whitespace and line terminators, except within
-the multi-word `is not` operator (see
-[Conditional Types](#sec-Conditional-Types)).
+- "Horizontal Tab (U+0009)"
+- "Line Feed (U+000A)"
+- "Vertical Tab (U+000B)"
+- "Form Feed (U+000C)"
+- "Carriage Return (U+000D)"
+- "Space (U+0020)"
+
+Whitespace separates tokens and improves the legibility of the source text.
+TypeLang does not distinguish between horizontal whitespace and line
+terminators, and a {Comment} stands wherever whitespace stands, save for the
+one place the presence of the whitespace itself is read (see
+[Ignored Tokens](#sec-Ignored-Tokens)).
+
+Note: The six characters above are the whole of it. A source text is read as
+a sequence of bytes (see [Source Text](#sec-Source-Text)), so a character that
+parts words in a script of its own — a no-break space (U+00A0), say — is no
+whitespace here: every byte it is written of falls in the range a {Letter}
+covers, and it is read as a part of the name it stands in.
 
 ### Comments
 
@@ -116,11 +129,6 @@ comment_ begins with `/*` and continues up to and including the next `*/`.
 
 Comments are {Ignored} and have no bearing on the meaning of a document.
 
-Note: The `#` line comment marker and the `#[` attribute marker share a
-leading character. Because lexical analysis prefers the longest match, the
-sequence `#[` is always scanned as the start of an attribute (see
-[Attributes](#sec-Attributes)) rather than as the start of a comment.
-
 ## Lexical Tokens
 
 Token ::
@@ -145,13 +153,12 @@ Punctuator :: one of
 
 - `?` `|` `&` `*` `,` `:` `=`
 - `(` `)` `[` `]` `{` `}`
-- `<` `>` `<=` `>=`
-- `::` `\` `...` `#[`
+- `<` `>`
+- `::` `\` `...`
 
 TypeLang documents use punctuation to describe structure. Several punctuators
-share a leading character (for example, `<` and `<=`; `:` and `::`; `.` in
-`...`; `#` in `#[`); in every such case, the longest matching punctuator is
-taken.
+share a leading character (for example, `:` and `::`; `.` in `...`); in every
+such case, the longest matching punctuator is taken.
 
 ### Names
 
@@ -178,6 +185,14 @@ with any {Letter}, {Digit}, underscore, or dash (`-`). The only difference from
 the [PHP identifier grammar](https://www.php.net/manual/en/language.variables.basics.php)
 is that the dash character is additionally permitted in any non-leading
 position.
+
+A source text is read as a sequence of bytes rather than of codepoints, and
+every byte of a character outside of ASCII falls in the 0x80 to 0xFF range a
+{Letter} covers. A name MAY therefore be written in any script.
+
+```typescript
+Проект\Тип
+```
 
 A {NameToken} is always the longest possible valid sequence; it MUST NOT be
 followed by a {NameContinue} character.
@@ -213,41 +228,57 @@ ParseException: Syntax error, unexpected "type"
 
 ### Reserved Words
 
-ReservedWord :: one of `true` `false` `null` `is`
+ReservedWord :: one of `true` `false` `null` `is` `not`
 
 The words `true`, `false` and `null` are _literal_ keywords (see
-[Literal Tokens](#sec-Literal-Tokens)), and `is` is the conditional operator
-keyword (see [Conditional Types](#sec-Conditional-Types)). All four are
-matched case-insensitively, and only when not immediately followed by a
-{NameContinue} character.
+[Literal Tokens](#sec-Literal-Tokens)), and `is` and `not` are the
+conditional operator keywords (see
+[Conditional Types](#sec-Conditional-Types)). Each is matched only when not
+immediately followed by a {NameContinue} character. The three literal
+keywords are matched case-insensitively, while `is` and `not` are matched
+the one way they are spelled.
 
-When the source contains one of these words standing alone, in a position
-where a type is expected, it is scanned as the corresponding literal or
-operator token and MUST NOT be scanned as a {NameToken}. Consequently, a bare
-reserved word cannot be used as a type name.
+Wherever the source contains one of these words, it is scanned as the
+corresponding literal or operator token and MUST NOT be scanned as a
+{NameToken}. It remains an {Identifier} all the same (see
+[Names and Namespaces](#sec-Names-and-Namespaces)), so a reserved word is
+shadowed rather than forbidden: it stands as a name wherever the token it is
+scanned as denotes no type of its own.
 
-**Counter-example.** A bare reserved word is scanned as a literal, not a type
-name.
+A literal keyword standing alone, in a position where a type is expected, is
+read as the {LiteralType} it denotes and not as the {NamedType} it would
+otherwise be (see [Primary Types](#sec-Primary-Types)):
 
-```typescript counter-example
+```typescript
 TrUe
 ```
 
-A reserved word MAY, however, appear as an {Identifier} _inside_ a qualified
-{Name} — that is, when it is preceded by a namespace separator or another
-identifier (see [Names and Namespaces](#sec-Names-and-Namespaces)). For
-example, `\true` references a type literally named `true`, whereas the bare
-`true` is the boolean literal.
+Behind a namespace separator or another segment, where no literal is
+expected, the same word is a name segment. This makes `\true` a reference to
+a type literally named `true`, distinct from the `true` literal:
+
+```typescript
+\true
+```
+
+The conditional operator keywords denote no type of their own, so nothing
+shadows them, and a bare `is` or `not` is an ordinary named type:
+
+```typescript
+not
+```
 
 ### Variable
 
-Variable :: `$` NameStart NameContinue\*
+Variable :: `$` NameStart VariableContinue\*
 
-ThisVariable :: `$this` [lookahead != NameContinue]
+VariableContinue :: NameContinue but not `-`
+
+ThisVariable :: `$this` [lookahead != VariableContinue]
 
 A {Variable} token begins with a dollar sign (`$`) followed by a sequence
-matching the body of a {NameToken}. Variables are used to name callable
-parameters (see [Callable Types](#sec-Callable-Types)) and as operands in
+matching the body of a {NameToken}, save for the dash a variable cannot
+carry. Variables are used to name callable parameters (see [Callable Types](#sec-Callable-Types)) and as operands in
 conditional types (see [Conditional Types](#sec-Conditional-Types)).
 
 The special variable `$this` is recognised as a distinct token and
@@ -289,17 +320,30 @@ IntLiteral ::
 
 NegativeSign :: `-`
 
+Sign :: one of `-` `+`
+
 DigitSeparator :: `_`
 
 An integer literal denotes a value of the PHP `int` type. Binary, octal,
 decimal and hexadecimal radixes are supported, each optionally prefixed with a
-{NegativeSign}. Within the digits of any integer literal, underscores
-({DigitSeparator}) MAY appear freely as visual separators; they carry no
-meaning and do not affect the denoted value.
+{Sign}. A {NegativeSign} makes the denoted value negative; a leading `+` denotes
+the same value the absence of a {Sign} does. Underscores ({DigitSeparator}) MAY
+appear as visual separators; they carry no meaning and do not affect the denoted
+value. A {DigitSeparator} MUST stand between two digits, and therefore may
+neither lead a run of digits, nor trail one, nor stand beside another
+{DigitSeparator}.
 
-**Decimal.**
+Digits :: Digit (DigitSeparator? Digit)\*
 
-DecimalIntLiteral :: NegativeSign? Digit (Digit | DigitSeparator)\*
+**Decimal.** A decimal literal other than a lone `0` MUST NOT begin with a
+zero, which is the mark of an {OctalIntLiteral}.
+
+DecimalIntLiteral ::
+
+- Sign? NonZeroDigit (DigitSeparator? Digit)\*
+- Sign? `0`
+
+NonZeroDigit :: one of `1` `2` `3` `4` `5` `6` `7` `8` `9`
 
 ```typescript
 1_000_000
@@ -307,9 +351,11 @@ DecimalIntLiteral :: NegativeSign? Digit (Digit | DigitSeparator)\*
 
 **Binary.** Prefixed with `0b` or `0B`; digits are `0` and `1` only.
 
-BinaryIntLiteral :: NegativeSign? `0` BinaryIndicator BinaryDigit (BinaryDigit | DigitSeparator)\*
+BinaryIntLiteral :: Sign? `0` BinaryIndicator BinaryDigits
 
 BinaryIndicator :: one of `b` `B`
+
+BinaryDigits :: BinaryDigit (DigitSeparator? BinaryDigit)\*
 
 BinaryDigit :: one of `0` `1`
 
@@ -317,11 +363,18 @@ BinaryDigit :: one of `0` `1`
 0b1010_1101
 ```
 
-**Octal.** Prefixed with `0o` or `0O`; digits are `0` through `7` only.
+**Octal.** Prefixed with `0o` or `0O` or, as octal has been written since long
+before that prefix, with a leading `0` alone; digits are `0` through `7` only.
+A `0123` denotes the same value a `0o123` does.
 
-OctalIntLiteral :: NegativeSign? `0` OctalIndicator OctalDigit (OctalDigit | DigitSeparator)\*
+OctalIntLiteral ::
+
+- Sign? `0` OctalIndicator OctalDigits
+- Sign? `0` (DigitSeparator? OctalDigit)+
 
 OctalIndicator :: one of `o` `O`
+
+OctalDigits :: OctalDigit (DigitSeparator? OctalDigit)\*
 
 OctalDigit :: one of `0` `1` `2` `3` `4` `5` `6` `7`
 
@@ -329,12 +382,29 @@ OctalDigit :: one of `0` `1` `2` `3` `4` `5` `6` `7`
 0o42
 ```
 
+```typescript
+04_23
+```
+
+**Counter-example.** A leading zero makes a literal an octal, so a digit
+outside the octal radix may not follow one.
+
+```typescript counter-example
+08
+```
+
+```
+ParseException: Syntax error, unexpected "8"
+```
+
 **Hexadecimal.** Prefixed with `0x` or `0X`; digits are `0` through `9` and `a`
 through `f`, in either case.
 
-HexIntLiteral :: NegativeSign? `0` HexIndicator HexDigit (HexDigit | DigitSeparator)\*
+HexIntLiteral :: Sign? `0` HexIndicator HexDigits
 
 HexIndicator :: one of `x` `X`
+
+HexDigits :: HexDigit (DigitSeparator? HexDigit)\*
 
 HexDigit :: one of
 
@@ -358,9 +428,9 @@ ParseException: Syntax error, unexpected "42"
 
 **Static Semantics.**
 
-A {DecimalIntLiteral} whose first digit is `0` and which is longer than a
-single character is interpreted in the _legacy octal_ radix (base 8), for
-compatibility with historical PHP source. Thus, `042` denotes the value 34.
+An {OctalIntLiteral} written without an {OctalIndicator} is the _legacy octal_
+spelling kept for compatibility with historical PHP source. It is read in the
+same radix (base 8) the prefixed spelling is, so `042` denotes the value 34.
 
 A conforming implementation MUST retain the original (raw) lexeme of every
 integer literal. When the denoted value exceeds the range representable by the
@@ -376,19 +446,19 @@ FloatLiteral ::
 - TrailingFloatLiteral
 - ExponentFloatLiteral
 
-LeadingFloatLiteral :: NegativeSign? Digit+ `.` Digit\* ExponentPart?
+LeadingFloatLiteral :: Sign? Digits `.` Digits? ExponentPart?
 
-TrailingFloatLiteral :: NegativeSign? Digit\* `.` Digit+ ExponentPart?
+TrailingFloatLiteral :: Sign? `.` Digits ExponentPart?
 
-ExponentFloatLiteral :: NegativeSign? Digit+ ExponentPart
+ExponentFloatLiteral :: Sign? Digits ExponentPart
 
-ExponentPart :: ExponentIndicator NegativeSign? Digit+
+ExponentPart :: ExponentIndicator Sign? Digits
 
 ExponentIndicator :: one of `e` `E`
 
 A floating-point literal denotes a value of the PHP `float` type. It MUST
 contain either a decimal point or an exponent, or both, and MAY be prefixed
-with a {NegativeSign}.
+with a {Sign}.
 
 Either the leading run of digits (before the decimal point) or the trailing
 run (after it) MAY be omitted, but not both:
@@ -405,11 +475,23 @@ run (after it) MAY be omitted, but not both:
 1.
 ```
 
-Scientific notation uses the case-insensitive `e` indicator followed by an
-optionally negative decimal exponent:
+Scientific notation uses the case-insensitive `e` indicator followed by a
+decimal exponent, which takes a {Sign} of its own:
 
 ```typescript
 10e-2
+```
+
+```typescript
+10e+2
+```
+
+Every run of digits a float is written of accepts the {DigitSeparator} under
+the same rule an integer does, and, unlike a {DecimalIntLiteral}, MAY begin
+with a zero:
+
+```typescript
+2_3.4_5e-6_7
 ```
 
 **Counter-example.** A lone decimal point is not a valid float.

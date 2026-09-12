@@ -6,9 +6,11 @@ namespace TypeLang\Type\Tests\Callable;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Callable\CallableParameterNode;
-use TypeLang\Type\Literal\VariableLiteralNode;
+use TypeLang\Type\Identifier;
+use TypeLang\Type\VariableNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Node;
 use TypeLang\Type\Tests\TestCase;
 
 final class CallableParameterNodeTest extends TestCase
@@ -24,13 +26,12 @@ final class CallableParameterNodeTest extends TestCase
         self::assertFalse($node->isOutput);
         self::assertFalse($node->isVariadic);
         self::assertFalse($node->isOptional);
-        self::assertNull($node->attributes);
     }
 
     #[Test]
     public function constructorWithNameOnly(): void
     {
-        $name = VariableLiteralNode::parse('param');
+        $name = new VariableNode(new Identifier('param'));
         $node = new CallableParameterNode(name: $name);
 
         self::assertNull($node->type);
@@ -41,7 +42,7 @@ final class CallableParameterNodeTest extends TestCase
     public function constructorWithTypeAndName(): void
     {
         $type = new NamedTypeNode(Name::createFromString('int'));
-        $name = VariableLiteralNode::parse('count');
+        $name = new VariableNode(new Identifier('count'));
         $node = new CallableParameterNode($type, $name);
 
         self::assertSame($type, $node->type);
@@ -82,59 +83,6 @@ final class CallableParameterNodeTest extends TestCase
     }
 
     #[Test]
-    public function toStringReturnsSimpleWhenNoFlags(): void
-    {
-        $node = new CallableParameterNode(type: new NamedTypeNode(Name::createFromString('int')));
-
-        self::assertSame('simple', (string) $node);
-    }
-
-    #[Test]
-    public function toStringReturnsOutputWhenOutputIsSet(): void
-    {
-        $node = new CallableParameterNode(
-            type: new NamedTypeNode(Name::createFromString('int')),
-            isOutput: true,
-        );
-
-        self::assertSame('output', (string) $node);
-    }
-
-    #[Test]
-    public function toStringReturnsVariadicWhenVariadicIsSet(): void
-    {
-        $node = new CallableParameterNode(
-            type: new NamedTypeNode(Name::createFromString('int')),
-            isVariadic: true,
-        );
-
-        self::assertSame('variadic', (string) $node);
-    }
-
-    #[Test]
-    public function toStringReturnsOptionalWhenOptionalIsSet(): void
-    {
-        $node = new CallableParameterNode(
-            type: new NamedTypeNode(Name::createFromString('int')),
-            isOptional: true,
-        );
-
-        self::assertSame('optional', (string) $node);
-    }
-
-    #[Test]
-    public function toStringCombinesMultipleFlags(): void
-    {
-        $node = new CallableParameterNode(
-            type: new NamedTypeNode(Name::createFromString('int')),
-            isOutput: true,
-            isOptional: true,
-        );
-
-        self::assertSame('output, optional', (string) $node);
-    }
-
-    #[Test]
     public function throwsWhenBothTypeAndNameAreNull(): void
     {
         self::skipWhenAssertsAreDisabled();
@@ -164,5 +112,22 @@ final class CallableParameterNodeTest extends TestCase
         $node = new CallableParameterNode(type: new NamedTypeNode(Name::createFromString('int')));
 
         self::assertSame(0, $node->offset);
+    }
+
+    #[Test]
+    public function isReturnsTrueForOwnClass(): void
+    {
+        $parameter = new CallableParameterNode(new NamedTypeNode(Name::createFromString('int')));
+
+        self::assertTrue($parameter->is(CallableParameterNode::class));
+        self::assertTrue($parameter->is(Node::class));
+    }
+
+    #[Test]
+    public function isReturnsFalseForAnotherClass(): void
+    {
+        $parameter = new CallableParameterNode(new NamedTypeNode(Name::createFromString('int')));
+
+        self::assertFalse($parameter->is(NamedTypeNode::class));
     }
 }

@@ -5,75 +5,39 @@ declare(strict_types=1);
 namespace TypeLang\Type\Literal;
 
 /**
- * @template-extends LiteralNode<int>
+ * A whole number, written in any of the four radixes.
+ *
+ * ```
+ *  0xFE_DE  // value: 65246, raw: "0xFE_DE", decimal: "65246"
+ *  042      // value: 34,    raw: "042",     decimal: "34"
+ * ```
+ *
+ * @template-extends ScalarNode<int>
  *
  * @phpstan-consistent-constructor
  */
-final class IntLiteralNode extends LiteralNode implements ParsableLiteralNodeInterface
+final class IntLiteralNode extends ScalarNode
 {
     /**
+     * The value written out in base 10, so that a number too large for the
+     * platform's `int` is still readable in full.
+     *
      * @var numeric-string
      */
     public readonly string $decimal;
 
     /**
      * @param numeric-string|null $decimal
+     * @param int<0, max> $offset
      */
     public function __construct(
         int $value,
         ?string $raw = null,
         ?string $decimal = null,
+        int $offset = 0,
     ) {
-        $this->decimal = $decimal ?? (string) $this->value;
+        $this->decimal = $decimal ?? (string) $value;
 
-        parent::__construct($value, $raw ?? (string) $this->value);
-    }
-
-    public static function parse(string $value): self
-    {
-        [$negative, $decimal] = self::split($value);
-
-        $inverse = '-' . $decimal;
-
-        if ($negative) {
-            if ((string) \PHP_INT_MIN === $inverse) {
-                return new self(\PHP_INT_MIN, $value, $inverse);
-            }
-
-            /** @phpstan-ignore-next-line : An "$inverse" variable contain numeric-string */
-            return new self((int) $inverse, $value, $inverse);
-        }
-
-        return new self((int) $decimal, $value, $decimal);
-    }
-
-    /**
-     * @return array{bool, numeric-string}
-     */
-    private static function split(string $literal): array
-    {
-        $literal = \str_replace('_', '', $literal);
-
-        if ($negative = ($literal[0] === '-')) {
-            $literal = \substr($literal, 1);
-        }
-
-        // One of: [ 0123, 0o23, 0x00, 0b01 ]
-        if ($literal[0] === '0' && isset($literal[1])) {
-            /** @var array{bool, numeric-string} */
-            return [$negative, match ($literal[1]) {
-                // hexadecimal
-                'x', 'X' => \base_convert(\substr($literal, 2), 16, 10),
-                // binary
-                'b', 'B' => \base_convert(\substr($literal, 2), 2, 10),
-                // octal
-                'o', 'O' => \base_convert(\substr($literal, 2), 8, 10),
-                // octal (legacy)
-                default => \base_convert($literal, 8, 10),
-            }];
-        }
-
-        /** @var array{bool, numeric-string} */
-        return [$negative, $literal];
+        parent::__construct($value, $raw ?? (string) $value, $offset);
     }
 }

@@ -48,7 +48,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('non-empty-string');
 
-        self::assertTrue($id->isVirtual);
+        self::assertTrue($id->isVirtual());
     }
 
     #[Test]
@@ -56,7 +56,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('string');
 
-        self::assertFalse($id->isVirtual);
+        self::assertFalse($id->isVirtual());
     }
 
     #[Test]
@@ -65,7 +65,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier($name);
 
-        self::assertTrue($id->isSpecial);
+        self::assertTrue($id->isSpecial());
     }
 
     public static function provideSpecialNames(): iterable
@@ -78,7 +78,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('MyClass');
 
-        self::assertFalse($id->isSpecial);
+        self::assertFalse($id->isSpecial());
     }
 
     #[Test]
@@ -87,7 +87,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier($name);
 
-        self::assertTrue($id->isBuiltin);
+        self::assertTrue($id->isBuiltin());
     }
 
     public static function provideBuiltinNames(): iterable
@@ -105,7 +105,7 @@ final class IdentifierTest extends TestCase
     {
         $id = new Identifier('MyClass');
 
-        self::assertFalse($id->isBuiltin);
+        self::assertFalse($id->isBuiltin());
     }
 
     #[Test]
@@ -191,5 +191,171 @@ final class IdentifierTest extends TestCase
         self::assertInstanceOf(Identifier::class, $restored);
         self::assertSame('MyClass', $restored->value);
         self::assertSame(42, $restored->offset);
+    }
+
+    #[Test]
+    public function specialNamesAreCaseInsensitive(): void
+    {
+        self::assertTrue((new Identifier('SELF'))->isSpecial());
+        self::assertTrue((new Identifier('Parent'))->isSpecial());
+        self::assertTrue(Identifier::isLooksLikeSpecial('StAtIc'));
+    }
+
+    #[Test]
+    public function builtinNamesAreCaseInsensitive(): void
+    {
+        self::assertTrue((new Identifier('INT'))->isBuiltin());
+        self::assertTrue((new Identifier('Iterable'))->isBuiltin());
+        self::assertTrue(Identifier::isLooksLikeBuiltin('NuLl'));
+    }
+
+    #[Test]
+    public function specialNameIsNotBuiltin(): void
+    {
+        $id = new Identifier('self');
+
+        self::assertTrue($id->isSpecial());
+        self::assertFalse($id->isBuiltin());
+    }
+
+    #[Test]
+    public function builtinNameIsNotSpecial(): void
+    {
+        $id = new Identifier('string');
+
+        self::assertTrue($id->isBuiltin());
+        self::assertFalse($id->isSpecial());
+    }
+
+    #[Test]
+    public function virtualNameIsDetectedInAnyPosition(): void
+    {
+        self::assertTrue((new Identifier('-leading'))->isVirtual());
+        self::assertTrue((new Identifier('trailing-'))->isVirtual());
+        self::assertTrue((new Identifier('a-b-c'))->isVirtual());
+    }
+
+    #[Test]
+    public function underscoredNameIsNotVirtual(): void
+    {
+        self::assertFalse((new Identifier('non_empty_string'))->isVirtual());
+    }
+
+    #[Test]
+    public function createFromStringAcceptsStringableObject(): void
+    {
+        $stringable = new class implements \Stringable {
+            public function __toString(): string
+            {
+                return 'Example';
+            }
+        };
+
+        self::assertSame('Example', Identifier::createFromString($stringable)->value);
+    }
+
+    #[Test]
+    public function createFromStringTrimsAllSurroundingWhitespaceKinds(): void
+    {
+        self::assertSame('Example', Identifier::createFromString("\n\t Example \r\n")->value);
+    }
+
+    #[Test]
+    public function createFromStringThrowsOnStringableReturningEmptyString(): void
+    {
+        $stringable = new class implements \Stringable {
+            public function __toString(): string
+            {
+                return '   ';
+            }
+        };
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        Identifier::createFromString($stringable);
+    }
+
+    #[Test]
+    public function offsetMethodIsAnAliasOfProperty(): void
+    {
+        $id = new Identifier('Example');
+        $id->offset = 17;
+
+        self::assertSame(17, $id->offset);
+    }
+
+    #[Test]
+    public function serializePayloadContainsOffsetAndValue(): void
+    {
+        $id = new Identifier('Example');
+        $id->offset = 5;
+
+        self::assertSame([5, 'Example'], $id->__serialize());
+    }
+
+    #[Test]
+    public function serializationRoundtripPreservesOffset(): void
+    {
+        $id = new Identifier('Example');
+        $id->offset = 5;
+
+        /** @var Identifier $restored */
+        $restored = \unserialize(\serialize($id));
+
+        self::assertSame(5, $restored->offset);
+        self::assertSame('Example', $restored->value);
+    }
+
+    #[Test]
+    public function unserializeThrowsWhenOffsetIsMissing(): void
+    {
+        $id = new Identifier('Example');
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $id->__unserialize([]);
+    }
+
+    #[Test]
+    public function unserializeThrowsWhenValueIsMissing(): void
+    {
+        $id = new Identifier('Example');
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $id->__unserialize([0]);
+    }
+
+    #[Test]
+    public function stringCastIsTheSameAsToStringMethod(): void
+    {
+        $id = new Identifier('Example');
+
+        self::assertSame($id->toString(), (string) $id);
+    }
+
+    #[Test]
+    public function toLowerStringDoesNotModifyTheValue(): void
+    {
+        $id = new Identifier('SomeClass');
+
+        self::assertSame('someclass', $id->toLowerString());
+        self::assertSame('SomeClass', $id->value);
+    }
+
+    #[Test]
+    public function constructorThrowsOnEmptyValue(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new Identifier('');
+    }
+
+    #[Test]
+    public function constructorKeepsSurroundingWhitespace(): void
+    {
+        $id = new Identifier(' A ');
+
+        self::assertSame(' A ', $id->value);
     }
 }

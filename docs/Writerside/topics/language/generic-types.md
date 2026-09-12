@@ -114,7 +114,49 @@ used, for example, in static analyzers to indicate the
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "Request"
+> ParseException: Syntax error, unexpected end of input
+> ```
+> {style="warning"}
+
+</tab>
+</tabs>
+
+
+## Wildcard Arguments
+
+A template argument may be left unsaid, written as an asterisk (`*`) in the
+place of the type. A wildcard argument accepts a [hint](#call-site-hints)
+the same way any other argument does.
+
+<tabs>
+<tab title="Examples">
+
+> Any argument at all.
+> ```typescript
+> Collection<*>
+> ```
+
+> A wildcard beside a type.
+> ```typescript
+> HashMap<array-key, *>
+> ```
+
+> A wildcard carrying a hint.
+> ```typescript
+> Collection<out *>
+> ```
+
+</tab>
+<tab title="Counterexamples">
+
+> An asterisk is a template argument alone and is not a type of its own.
+> ```typescript
+> int|*
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> ParseException: Syntax error, unexpected "*"
 > ```
 > {style="warning"}
 
@@ -151,49 +193,6 @@ In addition to modern list declarations such as `list<int>` or
 > An error similar to the one below should occur
 > ```
 > ParseException: Syntax error, unexpected "int"
-> ```
-> {style="warning"}
-
-</tab>
-</tabs>
-
-
-## Attributes
-
-<secondary-label ref="tl1.1"/>
-
-Each template argument allows you to define list of additional attributes. 
-An attribute is additional metadata for an argument.
-
-<tabs>
-<tab title="Examples">
-
-> Simple attribute with one argument for each template argument.
-> ```typescript
-> HashMap<#[name("key")] T, #[name("value")] U>
-> ```
-
-> Multiple attributes in one group.
-> ```typescript
-> HashMap<#[name("key"), out] T>
-> ```
-
-> Multiple attribute groups.
-> ```typescript
-> HashMap<#[name("key")] #[out] T>
-> ```
-
-</tab>
-<tab title="Counterexamples">
-
-> Only valid identifiers are allowed.
-> ```typescript
-> Collection<#[42] User>
-> ```
->
-> An error similar to the one below should occur
-> ```
-> ParseException: Syntax error, unexpected "42"
 > ```
 > {style="warning"}
 

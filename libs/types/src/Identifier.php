@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace TypeLang\Type;
 
 /**
+ * A single word a name is made of.
+ *
+ * ```
+ *  Some\Any
+ *  ^^^^ ^^^ // two identifiers
+ *
+ *  non-empty-string
+ *  ^^^^^^^^^^^^^^^^ // a single identifier
+ * ```
+ *
  * @phpstan-consistent-constructor
  */
 final class Identifier extends Node implements \Stringable
@@ -12,7 +22,7 @@ final class Identifier extends Node implements \Stringable
     /**
      * @var list<non-empty-string>
      */
-    protected const array SPECIAL_CLASS_NAME = [
+    protected const SPECIAL_CLASS_NAME = [
         'self',
         'parent',
         'static',
@@ -21,7 +31,7 @@ final class Identifier extends Node implements \Stringable
     /**
      * @var list<non-empty-string>
      */
-    protected const array BUILTIN_TYPE_NAME = [
+    protected const BUILTIN_TYPE_NAME = [
         'mixed',
         'string',
         'int',
@@ -39,40 +49,27 @@ final class Identifier extends Node implements \Stringable
     ];
 
     /**
-     * Returns {@see true} if the identifier contains the name of
-     * a "virtual" type, i.e. invalid in the PHP namespace.
-     *
-     * - `SomeClass` - Non-virtual, can be a type in PHP.
-     * - `false` - Non-virtual, can be a type in PHP.
-     * - `non-empty-array` - Virtual, cannot be defined in PHP.
-     * - `empty-string` - Virtual, cannot be defined in PHP.
+     * @param int<0, max> $offset
+     * @throws \InvalidArgumentException in case of an empty value
      */
-    public bool $isVirtual {
-        get => \str_contains($this->value, '-');
-    }
-
-    /**
-     * Returns {@see true} in case of name contains special class reference.
-     */
-    public bool $isSpecial {
-        get => self::isLooksLikeSpecial($this->value);
-    }
-
-    /**
-     * Returns {@see true} in case of name contains builtin type name.
-     */
-    public bool $isBuiltin {
-        get => self::isLooksLikeBuiltin($this->value);
-    }
-
     public function __construct(
         /**
          * @var non-empty-string
          */
         public readonly string $value,
-    ) {}
+        int $offset = 0,
+    ) {
+        if ($value === '') {
+            throw new \InvalidArgumentException('Name identifier cannot be empty');
+        }
 
-    public static function createFromString(string|\Stringable $value): self
+        parent::__construct($offset);
+    }
+
+    /**
+     * @param int<0, max> $offset
+     */
+    public static function createFromString(string|\Stringable $value, int $offset = 0): self
     {
         if ($value instanceof self) {
             return $value;
@@ -84,7 +81,7 @@ final class Identifier extends Node implements \Stringable
             throw new \InvalidArgumentException('Name identifier cannot be empty');
         }
 
-        return new self($normalized);
+        return new self($normalized, $offset);
     }
 
     /**
@@ -103,6 +100,36 @@ final class Identifier extends Node implements \Stringable
     public static function isLooksLikeBuiltin(string $value): bool
     {
         return \in_array(\strtolower($value), self::BUILTIN_TYPE_NAME, true);
+    }
+
+    /**
+     * Returns {@see true} if the identifier contains the name of a "virtual"
+     * type, i.e. invalid in the PHP namespace.
+     *
+     * - `SomeClass` - Non-virtual, can be a type in PHP.
+     * - `false` - Non-virtual, can be a type in PHP.
+     * - `non-empty-array` - Virtual, cannot be defined in PHP.
+     * - `empty-string` - Virtual, cannot be defined in PHP.
+     */
+    public function isVirtual(): bool
+    {
+        return \str_contains($this->value, '-');
+    }
+
+    /**
+     * Returns {@see true} in case of name contains special class reference.
+     */
+    public function isSpecial(): bool
+    {
+        return self::isLooksLikeSpecial($this->value);
+    }
+
+    /**
+     * Returns {@see true} in case of name contains builtin type name.
+     */
+    public function isBuiltin(): bool
+    {
+        return self::isLooksLikeBuiltin($this->value);
     }
 
     /**

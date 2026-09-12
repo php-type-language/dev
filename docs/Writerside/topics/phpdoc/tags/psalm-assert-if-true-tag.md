@@ -8,15 +8,16 @@ defined by the static analyzer Psalm, alongside
 [@psalm-assert](psalm-assert-tag.md).
 
 ```
-"@psalm-assert-if-true" <Type> <Variable> [ <Description> ]
+"@psalm-assert-if-true" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
 ```
 
 Parsing a `@psalm-assert-if-true` tag produces an `AssertIfTrueTag` instance, carrying the
-asserted `$type` and `$variable` alongside the `$name` and optional
-`$description` every [Tag](phpdoc.md#tag) already provides.
+asserted `$type`, the `$subject` it is asserted of and the `$operator`
+relating them, alongside the `$name` and optional `$description` every
+[Tag](phpdoc.md#tag) already provides.
 
 ```php
-final class AssertIfTrueTag extends TypedVariableTag {}
+final class AssertIfTrueTag extends AssertionTag {}
 ```
 
 The same `AssertIfTrueTag` is produced by [@phpstan-assert-if-true](phpstan-assert-if-true-tag.md) and [@phan-assert-if-true](phan-assert-if-true-tag.md), which restate the same

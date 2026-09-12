@@ -28,7 +28,7 @@ comment.
 </tldr>
 
 **Requirements:**
-* `PHP >= 8.4`
+* `PHP >= 8.1`
 * `ext-mbstring` <sup>optional</sup>
 
 <note>

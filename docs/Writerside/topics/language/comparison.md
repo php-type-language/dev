@@ -7,21 +7,8 @@ static code analysis tools: [PHPStan](https://phpstan.org/) and [Psalm](https://
 
 - PHPStan: [https://phpstan.org](https://phpstan.org/writing-php-code/phpdoc-types)
 - Psalm: [https://psalm.dev](https://psalm.dev/docs/annotating_code/type_syntax/atomic_types/)
-
-<tip>
-There are others that are not currently tested for compatibility. 
-For example:
-<list>
-    <li>PHAN: <a href="https://github.com/phan/phan/wiki">https://github.com/phan</a></li>
-    <li>phpDocumentor: <a href="https://docs.phpdoc.org/guide/guides/types.html">https://docs.phpdoc.org</a></li>
-</list>
-
-If you wish, you can add information about this software using a
-<a href="https://github.com/php-type-language/docs/blob/master/Writerside/topics/language.md">
-    pull request to the documentation
-</a>.
-</tip>
-
+- Phan: [https://github.com/phan](https://github.com/phan/phan/wiki/About-Union-Types)
+- phpDocumentor: [https://docs.phpdoc.org](https://docs.phpdoc.org/guide/guides/types.html)
 
 > Below is a comparison list of all syntactic structures (grammar).
 > The logical component (the physical existence of the type) is **NOT**
@@ -40,25 +27,102 @@ General table across all type parsing capabilities
         <td>
             <icon src="phpstan.png" height="20"/>&nbsp;<a href="https://github.com/phpstan">PHPStan</a>
         </td>
+        <td>
+            <icon src="phan.png" height="20"/>&nbsp;<a href="https://github.com/phan/phan">Phan</a>
+        </td>
+        <td>
+            <icon src="phpdocumentor.png" height="20"/>&nbsp;<a href="https://github.com/phpDocumentor/TypeResolver">phpDocumentor</a>
+        </td>
     </tr>
     <tr>
         <td>
-            <note>
-                <format style="bold" color="DarkSeaGreen">69/69</format>
-            </note>
-        </td>
-        <td>
             <warning>
-                <format style="bold" color="RosyBrown">43/69</format>
+                <format style="bold" color="RosyBrown">82/83</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">47/69</format>
+                <format style="bold" color="RosyBrown">40/83</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">69/83</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">31/83</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">62/83</format>
             </warning>
         </td>
     </tr>
 </table>
+
+## Methodology
+
+Each verdict below is the answer of the tool's own parser, asked directly, so
+the table says what the tools do rather than what they are said to do.
+
+<table style="header-row">
+    <tr>
+        <td>Tool</td>
+        <td>Version</td>
+        <td>A type is supported when</td>
+    </tr>
+    <tr>
+        <td>
+            <icon src="typelang.svg" height="20"/>&nbsp;TypeLang
+        </td>
+        <td><code>type-lang/parser</code> 2.x</td>
+        <td><code>TypeParser::parse()</code> returns a node</td>
+    </tr>
+    <tr>
+        <td>
+            <icon src="psalm.png" height="20"/>&nbsp;Psalm
+        </td>
+        <td><code>vimeo/psalm</code> 6.5</td>
+        <td><code>Psalm\Type::parseString()</code> returns a type carrying what was written</td>
+    </tr>
+    <tr>
+        <td>
+            <icon src="phpstan.png" height="20"/>&nbsp;PHPStan
+        </td>
+        <td><code>phpstan/phpdoc-parser</code> 2.3</td>
+        <td><code>TypeParser::parse()</code> reads the source whole, leaving no trailing input</td>
+    </tr>
+    <tr>
+        <td>
+            <icon src="phan.png" height="20"/>&nbsp;Phan
+        </td>
+        <td><code>phan/phan</code> 5.5</td>
+        <td>
+            <code>UnionType::fromStringInContext()</code> returns something other than
+            a class name made of the whole source
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <icon src="phpdocumentor.png" height="20"/>&nbsp;phpDocumentor
+        </td>
+        <td><code>phpdocumentor/type-resolver</code> 2.0</td>
+        <td><code>TypeResolver::resolve()</code> returns a type, the source read whole</td>
+    </tr>
+</table>
+
+> Two of these tools answer even where they did not understand the question, and
+> the rules above are what tells the two apart.
+>
+> Phan reads whatever it cannot parse as a class name, so a `0b1010` comes back
+> as a class called `\0b1010` rather than as an error. phpDocumentor builds on
+> `phpstan/phpdoc-parser` and keeps what it managed to read, so a `JSON_*` comes
+> back as the `JSON_` in front of it, the mask silently dropped. A verdict here
+> counts neither.
+> {style="note"}
 
 ## Basic Types
 
@@ -76,27 +140,43 @@ Below is a list of simple, logical and other common types.
         <td>
             <icon src="phpstan.png" height="20"/>&nbsp;<a href="https://github.com/phpstan">PHPStan</a>
         </td>
+        <td>
+            <icon src="phan.png" height="20"/>&nbsp;<a href="https://github.com/phan/phan">Phan</a>
+        </td>
+        <td>
+            <icon src="phpdocumentor.png" height="20"/>&nbsp;<a href="https://github.com/phpDocumentor/TypeResolver">phpDocumentor</a>
+        </td>
     </tr>
     <tr>
         <td></td>
         <td>
             <note>
-                <format style="bold" color="DarkSeaGreen">12/12</format>
+                <format style="bold" color="DarkSeaGreen">20/20</format>
             </note>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">9/12</format>
+                <format style="bold" color="RosyBrown">10/20</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">10/12</format>
+                <format style="bold" color="RosyBrown">14/20</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">8/20</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">14/20</format>
             </warning>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="basic-types.md" anchor="namespace">
                 Class or type name (including <tooltip term="FQN">FQN</tooltip>)
             </a>
@@ -110,9 +190,11 @@ Below is a list of simple, logical and other common types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="logical-types.md" anchor="union-types">
                 Logical union types
             </a>
@@ -126,14 +208,16 @@ Below is a list of simple, logical and other common types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="logical-types.md" anchor="intersection-types">
                 Logical intersection types
             </a>
             <code-block lang="typescript">
-            T & U & V
+            T &amp; U &amp; V
             </code-block>
         </td>
     </tr>
@@ -142,9 +226,11 @@ Below is a list of simple, logical and other common types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="logical-types.md" anchor="nullable-types">
                 Logical nullable types
             </a>
@@ -158,14 +244,34 @@ Below is a list of simple, logical and other common types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
+            <a href="logical-types.md" anchor="parentheses">
+                Grouping parentheses
+            </a>
+            <code-block lang="typescript">
+            (T | U)[]
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
             <a href="generic-types.md" anchor="list-syntax">
                 Legacy list types syntax
             </a>
             <code-block lang="typescript">
-                User[]
+            User[]
             </code-block>
         </td>
     </tr>
@@ -174,33 +280,51 @@ Below is a list of simple, logical and other common types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
+            <a href="offset-access.md">
+                Type offsets (offset access)
+            </a>
+            <code-block lang="typescript">
+            ExampleShape['key']
+            ClassName::CONSTANT[0]
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
             <a href="generic-types.md">
                 Template arguments (Generics)
             </a>
             <code-block lang="typescript">
-                ExampleCollection&lt;array-key, User>
+            ExampleCollection&lt;array-key, User>
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="warning.svg"/>
-            <a anchor="ref-1-1">
-                Trailing comma not supported <sup>1</sup>
-            </a>
-        </td>
+        <td><icon src="warning.svg"/> <a anchor="ref-1-8-1">Trailing comma not supported <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. Psalm does NOT support arguments ending with a comma" id="ref-1-1">
+                <def title="1. Psalm does NOT support arguments ending with a comma" id="ref-1-8-1">
                     <code-block lang="typescript">
                     ExampleCollection&lt;array-key, User,>
                     </code-block>
@@ -210,12 +334,12 @@ Below is a list of simple, logical and other common types.
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="generic-types.md" anchor="call-site-hints">
                 Template argument hints
             </a>
             <code-block lang="typescript">
-                ExampleCollection&lt;in array-key, out User>
+            ExampleCollection&lt;in array-key, out User>
             </code-block>
         </td>
     </tr>
@@ -228,18 +352,20 @@ Below is a list of simple, logical and other common types.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ok.svg"/>
-            <a anchor="ref-1-2">
-                Call-site variance <sup>1</sup>
-            </a>
-        </td>
+        <td><icon src="warning.svg"/> <a anchor="ref-1-9-1">Other keywords <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-1-9-1">Other keywords <sup>1</sup></a></td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. PHPStan supports call-site variance" id="ref-1-2">
+                <def title="1. PHPStan spells call-site variance out in words" id="ref-1-9-1">
+                    <p>
+                        The <code>in</code> and <code>out</code> hints are not read, but the
+                        same thing is said with <code>contravariant</code> and
+                        <code>covariant</code>.
+                    </p>
                     <code-block lang="typescript">
                     Collection&lt;covariant Animal>
                     </code-block>
@@ -249,34 +375,70 @@ Below is a list of simple, logical and other common types.
         </td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="generic-types.md" anchor="attributes">
-                Template argument attributes
+        <td colspan="6">
+            <a href="generic-types.md" anchor="wildcard-arguments">
+                Wildcard template arguments
             </a>
             <code-block lang="typescript">
-                ExampleCollection&lt;#[assert(not&lt;"0">)] array-key>
+            ExampleCollection&lt;*>
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-1-10-1">Read as a bivariant mixed <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-1-10-1">Read as a bivariant mixed <sup>1</sup></a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. PHPStan keeps no wildcard of its own" id="ref-1-10-1">
+                    <p>
+                        An asterisk is read as a <code>mixed</code> carrying a
+                        <code>bivariant</code> hint, so the argument parses, but nothing
+                        of the wildcard itself is left in the tree.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    ExampleCollection&lt;*>
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Read
+                    ExampleCollection&lt;bivariant mixed>
+                    </code-block>
+                </def>
+            </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
+            <a href="basic-types.md" anchor="this-type">
+                The <code>$this</code> type
+            </a>
+            <code-block lang="typescript">
+            $this
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
             <a href="const-types.md" anchor="class-constants">
                 Class constant types
             </a>
             <code-block lang="typescript">
-                ClassName::CONSTANT_NAME
+            ClassName::CONSTANT_NAME
             </code-block>
         </td>
     </tr>
@@ -285,14 +447,16 @@ Below is a list of simple, logical and other common types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="const-types.md" anchor="constant-masks">
                 Prefixed class constant mask types
             </a>
             <code-block lang="typescript">
-                ClassName::CONSTANT_*
+            ClassName::CONSTANT_*
             </code-block>
         </td>
     </tr>
@@ -301,14 +465,16 @@ Below is a list of simple, logical and other common types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="const-types.md" anchor="constant-masks">
                 Non-prefixed class constant mask types
             </a>
             <code-block lang="typescript">
-                ClassName::*
+            ClassName::*
             </code-block>
         </td>
     </tr>
@@ -317,14 +483,52 @@ Below is a list of simple, logical and other common types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
+            <a href="const-types.md" anchor="constant-masks">
+                Suffixed class constant mask types
+            </a>
+            <code-block lang="typescript">
+            ClassName::*_SUFFIX
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="const-types.md" anchor="constant-masks">
+                Class constant mask types carrying both ends
+            </a>
+            <code-block lang="typescript">
+            ClassName::PREFIX_*_SUFFIX
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
             <a href="const-types.md" anchor="constant-masks">
                 Global constant mask types
             </a>
             <code-block lang="typescript">
-                JSON_*
+            JSON_*
             </code-block>
         </td>
     </tr>
@@ -343,6 +547,63 @@ Below is a list of simple, logical and other common types.
                 Not Supported
             </a>
         </td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="const-types.md" anchor="constant-masks">
+                Suffixed global constant mask types
+            </a>
+            <code-block lang="typescript">
+            *_SUFFIX
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="const-types.md" anchor="constant-masks">
+                Namespaced constant mask types
+            </a>
+            <code-block lang="typescript">
+            Path\To\JSON_*
+            Path\To\*
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="basic-types.md" anchor="comments">
+                Comments inside a type
+            </a>
+            <code-block lang="typescript">
+            int /* comment */ | string
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
     </tr>
 </table>
 
@@ -362,28 +623,44 @@ Below is a list of conditional types.
         <td>
             <icon src="phpstan.png" height="20"/>&nbsp;<a href="https://github.com/phpstan">PHPStan</a>
         </td>
+        <td>
+            <icon src="phan.png" height="20"/>&nbsp;<a href="https://github.com/phan/phan">Phan</a>
+        </td>
+        <td>
+            <icon src="phpdocumentor.png" height="20"/>&nbsp;<a href="https://github.com/phpDocumentor/TypeResolver">phpDocumentor</a>
+        </td>
     </tr>
     <tr>
         <td></td>
         <td>
             <note>
-                <format style="bold" color="DarkSeaGreen">10/10</format>
+                <format style="bold" color="DarkSeaGreen">6/6</format>
             </note>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">4/10</format>
+                <format style="bold" color="RosyBrown">4/6</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">4/10</format>
+                <format style="bold" color="RosyBrown">3/6</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">0/6</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">3/6</format>
             </warning>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="conditional-types.md">
+        <td colspan="6">
+            <a href="conditional-types.md" anchor="equality-operators">
                 Conditional positive equality types
             </a>
             <code-block lang="typescript">
@@ -394,12 +671,30 @@ Below is a list of conditional types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ok.svg"/></td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-1-1">Brackets required <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-1-1">Brackets required <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-1-1">Brackets required <sup>1</sup></a></td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="conditional-types.md">
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. Psalm and PHPStan require the condition to be parenthesised" id="ref-2-1-1">
+                    <p>
+                        A condition is written inside brackets and is only read there, so
+                        the bare form below is read as the type <code>T</code> alone.
+                    </p>
+                    <code-block lang="typescript">
+                    (T is A ? B : C)
+                    </code-block>
+                </def>
+            </deflist>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="conditional-types.md" anchor="equality-operators">
                 Conditional negative equality types
             </a>
             <code-block lang="typescript">
@@ -410,12 +705,30 @@ Below is a list of conditional types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ok.svg"/></td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-2-1">Brackets required <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-2-1">Brackets required <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-2-1">Brackets required <sup>1</sup></a></td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="conditional-types.md">
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. Psalm and PHPStan require the condition to be parenthesised" id="ref-2-2-1">
+                    <p>
+                        A condition is written inside brackets and is only read there, so
+                        the bare form below is read as the type <code>T</code> alone.
+                    </p>
+                    <code-block lang="typescript">
+                    (T is A ? B : C)
+                    </code-block>
+                </def>
+            </deflist>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="conditional-types.md" anchor="equality-operators">
                 Conditional referenced types
             </a>
             <code-block lang="typescript">
@@ -427,17 +740,33 @@ Below is a list of conditional types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ok.svg"/></td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-3-1">Brackets required <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-3-1">Brackets required <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-3-1">Brackets required <sup>1</sup></a></td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="conditional-types.md">
-                Conditional referenced types 
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. Psalm and PHPStan require the condition to be parenthesised" id="ref-2-3-1">
+                    <p>
+                        A condition is written inside brackets and is only read there, so
+                        the bare form below is read as the type <code>T</code> alone.
+                    </p>
+                    <code-block lang="typescript">
+                    (T is A ? B : C)
+                    </code-block>
+                </def>
+            </deflist>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="conditional-types.md" anchor="yoda-style-conditions">
+                Conditional referenced types
             </a>
-            <a href="https://en.wikipedia.org/wiki/Yoda_conditions">
-                in Yoda-style
-            </a>
+            <a href="https://en.wikipedia.org/wiki/Yoda_conditions">in Yoda-style</a>
             <code-block lang="typescript">
             A is $var ? B : C
             A is not $var ? B : C
@@ -459,10 +788,12 @@ Below is a list of conditional types.
                 Not Supported
             </a>
         </td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="conditional-types.md">
+        <td colspan="6">
+            <a href="conditional-types.md" anchor="equality-operators">
                 Functions in conditional types
             </a>
             <code-block lang="typescript">
@@ -474,14 +805,16 @@ Below is a list of conditional types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ok.svg"/> <a anchor="ref-2-1">List of supported functions <sup>1</sup></a></td>
-        <td><icon src="ok.svg"/> <a anchor="ref-2-2">List of supported functions <sup>2</sup></a></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-2-5-1">List of supported functions <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/> <a anchor="ref-2-5-2">No call syntax <sup>2</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/> <a anchor="ref-2-5-2">No call syntax <sup>2</sup></a></td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. Psalm supports the following functions" id="ref-2-1">
+                <def title="1. Psalm supports the following functions" id="ref-2-5-1">
                     <list>
                         <li><code>define()</code></li>
                         <li><code>array_map()</code></li>
@@ -494,24 +827,26 @@ Below is a list of conditional types.
                         <li><code>class_alias()</code></li>
                     </list>
                 </def>
-                <def title="2. PHPStan supports the following functions" id="ref-2-2">
-                    <list>
-                        <li><code>func_get_arg()</code></li>
-                        <li><code>func_get_args()</code></li>
-                        <li><code>func_num_args()</code></li>
-                    </list>
+                <def title="2. The PHPStan grammar carries no call of any kind" id="ref-2-5-2">
+                    <p>
+                        A parenthesis behind a name ends the type, whatever the name is,
+                        so the functions PHPStan reads in a condition are read by rules
+                        of its own rather than by the type language.
+                    </p>
+                    <code-block lang="typescript">
+                    (func_num_args() is 1 ? A : B)
+                    // Unexpected token "(", expected ')' at offset 14
+                    </code-block>
                 </def>
             </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="conditional-types.md">
+        <td colspan="6">
+            <a href="conditional-types.md" anchor="yoda-style-conditions">
                 Functions in conditional types
             </a>
-            <a href="https://en.wikipedia.org/wiki/Yoda_conditions">
-                in Yoda-style
-            </a>
+            <a href="https://en.wikipedia.org/wiki/Yoda_conditions">in Yoda-style</a>
             <code-block lang="typescript">
             A is foo() ? B : C
             A is not foo() ? B : C
@@ -533,94 +868,8 @@ Below is a list of conditional types.
                 Not Supported
             </a>
         </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="conditional-types.md" anchor="comparison-operators">
-                Less-than conditional types
-            </a>
-            <code-block lang="typescript">
-            T &lt; A ? B : C
-            </code-block>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="conditional-types.md" anchor="comparison-operators">
-                Greater-than conditional types
-            </a>
-            <code-block lang="typescript">
-            T &gt; A ? B : C
-            </code-block>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="conditional-types.md" anchor="comparison-operators">
-                Less-than-or-equal conditional types
-            </a>
-            <code-block lang="typescript">
-            T &lt;= A ? B : C
-            </code-block>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="conditional-types.md" anchor="comparison-operators">
-                Greater-than-or-equal conditional types
-            </a>
-            <code-block lang="typescript">
-            T &gt;= A ? B : C
-            </code-block>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
-        <td>
-            <icon src="ko.svg"/>
-            Not Supported
-        </td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
     </tr>
 </table>
 
@@ -640,27 +889,43 @@ Below is a list of literal types/lexemes.
         <td>
             <icon src="phpstan.png" height="20"/>&nbsp;<a href="https://github.com/phpstan">PHPStan</a>
         </td>
+        <td>
+            <icon src="phan.png" height="20"/>&nbsp;<a href="https://github.com/phan/phan">Phan</a>
+        </td>
+        <td>
+            <icon src="phpdocumentor.png" height="20"/>&nbsp;<a href="https://github.com/phpDocumentor/TypeResolver">phpDocumentor</a>
+        </td>
     </tr>
     <tr>
         <td></td>
         <td>
             <note>
-                <format style="bold" color="DarkSeaGreen">19/19</format>
+                <format style="bold" color="DarkSeaGreen">21/21</format>
             </note>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">7/19</format>
+                <format style="bold" color="RosyBrown">7/21</format>
+            </warning>
+        </td>
+        <td>
+            <note>
+                <format style="bold" color="DarkSeaGreen">21/21</format>
+            </note>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">5/21</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">11/19</format>
+                <format style="bold" color="RosyBrown">15/21</format>
             </warning>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="boolean-and-null">
                 Boolean <code>true</code> and <code>false</code> literals
             </a>
@@ -675,9 +940,11 @@ Below is a list of literal types/lexemes.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="boolean-and-null">
                 The <code>null</code> literals
             </a>
@@ -691,9 +958,11 @@ Below is a list of literal types/lexemes.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="strings">
                 Single-quoted string literals
             </a>
@@ -707,9 +976,11 @@ Below is a list of literal types/lexemes.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="strings">
                 Double-quoted string literals
             </a>
@@ -723,9 +994,11 @@ Below is a list of literal types/lexemes.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="escape-sequences">
                 Escape sequences in a double-quoted string literals
             </a>
@@ -743,15 +1016,12 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ko.svg"/>
-            <a href="https://phpstan.org/r/ef392d41-f4e5-474c-8426-4ecdc583080a">
-                Not Supported
-            </a>
-        </td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="hexadecimal-sequences">
                 Hexadecimal sequences in a double-quoted string literals
             </a>
@@ -769,15 +1039,12 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ko.svg"/>
-            <a href="https://phpstan.org/r/06c7f670-4db4-433b-b181-d3c8b7219980">
-                Not Supported
-            </a>
-        </td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="unicode-sequences">
                 Unicode sequences in a double-quoted string literals
             </a>
@@ -795,15 +1062,12 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ko.svg"/>
-            <a href="https://phpstan.org/r/ebfdf3b6-e8e2-413d-adc5-a56ddd564bab">
-                Not Supported
-            </a>
-        </td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="integer">
                 Integer literals
             </a>
@@ -817,42 +1081,53 @@ Below is a list of literal types/lexemes.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="integer">
                 BigInteger (<code>PHP_INT_MAX + 1</code> or <code>PHP_INT_MIN - 1</code>) literals
             </a>
             <code-block lang="typescript">
-            42
+            9999999999999999999
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-3-1">Works with restrictions <sup>1</sup></a></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-3-2">Works with restrictions <sup>2</sup></a></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-3-3">Works with restrictions <sup>3</sup></a></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-3-9-1">Kept in full <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-9-2">Works with restrictions <sup>2</sup></a></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-3-9-3">Kept in full <sup>3</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-9-4">Works with restrictions <sup>4</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-9-5">Works with restrictions <sup>5</sup></a></td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. TypeLang limits value to min/max int and store literal value as string" id="ref-3-1">
+                <def title="1. TypeLang keeps the number whole, however large it is" id="ref-3-9-1">
+                    <p>
+                        The <code>$decimal</code> carries the value written out in base
+                        10, so a number too large for the platform's <code>int</code> is
+                        still readable in full. The <code>$value</code> beside it is the
+                        native one, and that is the only one a platform limit applies to.
+                    </p>
                     <code-block lang="typescript">
                     // Input
                     9999999999999999999
                     </code-block>
                     <code-block lang="typescript">
                     // Stored
-                    TypeLang\Parser\Node\Literal\IntLiteralNode {
+                    TypeLang\Type\Literal\IntLiteralNode {
                       +offset: 0
-                      +raw: "9999999999999999999"
                       +value: 9223372036854775807
+                      +raw: "9999999999999999999"
+                      +decimal: "9999999999999999999"
                     }
                     </code-block>
                 </def>
-                <def title="2. Psalm limits value to min/max int" id="ref-3-2">
+                <def title="2. Psalm limits value to min/max int" id="ref-3-9-2">
                     <code-block lang="typescript">
                     // Input
                     9999999999999999999
@@ -863,7 +1138,41 @@ Below is a list of literal types/lexemes.
                     </code-block>
                     <a href="https://psalm.dev/r/6136de9980">Open in psalm.dev</a>
                 </def>
-                <def title="3. PHPStan limits value to min/max int" id="ref-3-3">
+                <def title="3. PHPStan reads the number whole, and loses it afterwards" id="ref-3-9-3">
+                    <p>
+                        The literal is kept as it was written, so nothing is lost while
+                        the type is read. The number does not survive the analysis that
+                        follows, though: what comes out of it is the nearest
+                        <code>int</code> the platform carries.
+                    </p>
+                    <code-block lang="typescript">
+                    // Input
+                    9999999999999999999
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Stored
+                    PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprIntegerNode {
+                      value: "9999999999999999999"
+                    }
+                    </code-block>
+                    <code-block lang="php">
+                    // Analysed
+                    \PHPStan\dumpType($value);
+                    // Dumped type: 9223372036854775807
+                    </code-block>
+                    <a href="https://phpstan.org/r/e8f6fef0-7726-412a-9c99-9eef04c53c17">Open in phpstan.org</a>
+                </def>
+                <def title="4. Phan turns the number into a float" id="ref-3-9-4">
+                    <code-block lang="typescript">
+                    // Input
+                    9999999999999999999
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Stored
+                    1.0E+19
+                    </code-block>
+                </def>
+                <def title="5. phpDocumentor limits value to min/max int" id="ref-3-9-5">
                     <code-block lang="typescript">
                     // Input
                     9999999999999999999
@@ -872,13 +1181,12 @@ Below is a list of literal types/lexemes.
                     // Stored
                     9223372036854775807
                     </code-block>
-                    <a href="https://phpstan.org/r/e8f6fef0-7726-412a-9c99-9eef04c53c17">Open in phpstan.org</a>
                 </def>
             </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="binary">
                 Integer literals in binary format
             </a>
@@ -896,15 +1204,33 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ko.svg"/>
-            <a href="https://phpstan.org/r/79283030-f55e-4eb1-8b6b-2bdbc4083d30">
-                Not Supported
-            </a>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-10-1">Value read as 0 <sup>1</sup></a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. phpDocumentor reads the number as 0" id="ref-3-10-1">
+                    <p>
+                        The number parses, but the value behind it is built with a plain
+                        cast, so nothing of the base survives.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    0b10101010
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Read
+                    0
+                    </code-block>
+                </def>
+            </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="octal">
                 Integer literals in octal format
             </a>
@@ -922,15 +1248,33 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ko.svg"/>
-            <a href="https://phpstan.org/r/362869d4-5b65-441c-8708-f9f32993b560">
-                Not Supported
-            </a>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-11-1">Value read as 0 <sup>1</sup></a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. phpDocumentor reads the number as 0" id="ref-3-11-1">
+                    <p>
+                        The number parses, but the value behind it is built with a plain
+                        cast, so nothing of the base survives.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    0o42
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Read
+                    0
+                    </code-block>
+                </def>
+            </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="octal">
                 Integer literals in legacy octal format
             </a>
@@ -948,15 +1292,33 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ko.svg"/>
-            <a href="https://phpstan.org/r/20f18b17-94c8-403c-8ad7-14058eb8a0ef">
-                Not Supported
-            </a>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-12-1">Value read as decimal <sup>1</sup></a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. phpDocumentor reads the number as 42" id="ref-3-12-1">
+                    <p>
+                        The number parses, but the value behind it is built with a plain
+                        cast, so nothing of the base survives.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    042
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Read
+                    42
+                    </code-block>
+                </def>
+            </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="hexadecimal">
                 Integer literals in hexadecimal format
             </a>
@@ -974,15 +1336,69 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ko.svg"/>
-            <a href="https://phpstan.org/r/f9fcaaa6-384e-4d58-b38c-8a51f091abf8">
-                Not Supported
-            </a>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-13-1">Value read as 0 <sup>1</sup></a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. phpDocumentor reads the number as 0" id="ref-3-13-1">
+                    <p>
+                        The number parses, but the value behind it is built with a plain
+                        cast, so nothing of the base survives.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    0xDEAD_BEEF
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Read
+                    0
+                    </code-block>
+                </def>
+            </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
+            <a href="literal-types.md" anchor="integer">
+                Underscore (<code>_</code>) separators in integer literals
+            </a>
+            <code-block lang="typescript">
+            42_04
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="literal-types.md" anchor="integer">
+                Explicitly signed number literals
+            </a>
+            <code-block lang="typescript">
+            +42
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
             <a href="literal-types.md" anchor="float">
                 Float literals
             </a>
@@ -996,9 +1412,11 @@ Below is a list of literal types/lexemes.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="float">
                 Float literals without leading zero
             </a>
@@ -1017,9 +1435,11 @@ Below is a list of literal types/lexemes.
             </a>
         </td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="float">
                 Float literals without trailing zero
             </a>
@@ -1038,9 +1458,11 @@ Below is a list of literal types/lexemes.
             </a>
         </td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="scientific-notation">
                 Float literals in scientific notation
             </a>
@@ -1059,14 +1481,16 @@ Below is a list of literal types/lexemes.
             </a>
         </td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="literal-types.md" anchor="scientific-notation">
-                Float literals in scientific notation
+                Float literals in scientific notation carrying a signed exponent
             </a>
             <code-block lang="typescript">
-            2e2
+            -1.5e+3
             </code-block>
         </td>
     </tr>
@@ -1080,11 +1504,13 @@ Below is a list of literal types/lexemes.
             </a>
         </td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="literal-types.md" anchor="scientific-notation">
-                Float hexadecimal literals in scientific notation
+        <td colspan="6">
+            <a href="literal-types.md" anchor="hexadecimal">
+                Hexadecimal integer literals carrying an <code>e</code>
             </a>
             <code-block lang="typescript">
             0x42e2
@@ -1100,11 +1526,29 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td>
-            <icon src="ko.svg"/>
-            <a href="https://phpstan.org/r/bc5bc798-7ef0-4afa-b3f6-813b52ba4a5f">
-                Not Supported
-            </a>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-21-1">Value read as 0 <sup>1</sup></a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. phpDocumentor reads the number as 0" id="ref-3-21-1">
+                    <p>
+                        The number parses, but the value behind it is built with a plain
+                        cast, so nothing of the base survives.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    0x42e2
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Read
+                    0
+                    </code-block>
+                </def>
+            </deflist>
         </td>
     </tr>
 </table>
@@ -1112,7 +1556,6 @@ Below is a list of literal types/lexemes.
 ## Shape Types
 
 Below is a list of grammar of shaped types.
-
 
 <table style="both">
     <tr>
@@ -1126,32 +1569,48 @@ Below is a list of grammar of shaped types.
         <td>
             <icon src="phpstan.png" height="20"/>&nbsp;<a href="https://github.com/phpstan">PHPStan</a>
         </td>
+        <td>
+            <icon src="phan.png" height="20"/>&nbsp;<a href="https://github.com/phan/phan">Phan</a>
+        </td>
+        <td>
+            <icon src="phpdocumentor.png" height="20"/>&nbsp;<a href="https://github.com/phpDocumentor/TypeResolver">phpDocumentor</a>
+        </td>
     </tr>
     <tr>
         <td></td>
         <td>
             <note>
-                <format style="bold" color="DarkSeaGreen">13/13</format>
+                <format style="bold" color="DarkSeaGreen">15/15</format>
             </note>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">10/13</format>
+                <format style="bold" color="RosyBrown">9/15</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">10/13</format>
+                <format style="bold" color="RosyBrown">13/15</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">5/15</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">13/15</format>
             </warning>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="shape-types.md">
+        <td colspan="6">
+            <a href="shape-types.md" anchor="explicit-keys">
                 Explicit shape types
             </a>
             <code-block lang="typescript">
-            object {
+            array {
                 key: ValueType
             }
             </code-block>
@@ -1160,38 +1619,18 @@ Below is a list of grammar of shaped types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-4-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td></td>
-        <td colspan="3">
-            <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-4-1">
-                    <code-block lang="typescript">
-                    // OK
-                    object {
-                        key: ValueType
-                    }
-                    </code-block>
-                    <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType {
-                        key: ValueType
-                    }
-                    </code-block>
-                    <a href="https://psalm.dev/r/4ec6feecc1">Open in psalm.dev</a>
-                </def>
-            </deflist>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="shape-types.md">
+        <td colspan="6">
+            <a href="shape-types.md" anchor="explicit-keys">
                 Trailing comma in explicit shape types
             </a>
             <code-block lang="typescript">
-            object {
+            array {
                 key: ValueType,
             }
             </code-block>
@@ -1200,38 +1639,18 @@ Below is a list of grammar of shaped types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-5-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td></td>
-        <td colspan="3">
-            <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-5-1">
-                    <code-block lang="typescript">
-                    // OK
-                    object {
-                        key: ValueType,
-                    }
-                    </code-block>
-                    <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType {
-                        key: ValueType,
-                    }
-                    </code-block>
-                    <a href="https://psalm.dev/r/ba0ff971fe">Open in psalm.dev</a>
-                </def>
-            </deflist>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="shape-types.md">
+        <td colspan="6">
+            <a href="shape-types.md" anchor="implicit-keys">
                 Implicit shape types
             </a>
             <code-block lang="typescript">
-            object {
+            array {
                 ValueType
             }
             </code-block>
@@ -1240,38 +1659,36 @@ Below is a list of grammar of shaped types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-6-1">Works with restrictions <sup>1</sup></a></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-4-3-1">Arrays and lists only <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-4-3-1">Arrays and lists only <sup>1</sup></a></td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-6-1">
+                <def title="1. PHPStan reads a key-less field in an array or a list alone" id="ref-4-3-1">
                     <code-block lang="typescript">
                     // OK
-                    object {
-                        ValueType
-                    }
+                    array { ValueType }
+                    list { ValueType }
                     </code-block>
                     <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType {
-                        ValueType
-                    }
+                    // Syntax Error
+                    object { ValueType }
                     </code-block>
-                    <a href="https://psalm.dev/r/932713f109">Open in psalm.dev</a>
                 </def>
             </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="shape-types.md">
+        <td colspan="6">
+            <a href="shape-types.md" anchor="implicit-keys">
                 Trailing comma in implicit shape types
             </a>
             <code-block lang="typescript">
-            object {
+            array {
                 ValueType,
             }
             </code-block>
@@ -1287,14 +1704,16 @@ Below is a list of grammar of shaped types.
             </a>
         </td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="shape-types.md">
+        <td colspan="6">
+            <a href="shape-types.md" anchor="optional-fields">
                 Optional keys in explicit shape types
             </a>
             <code-block lang="typescript">
-            object {
+            array {
                 key?: ValueType
             }
             </code-block>
@@ -1303,106 +1722,75 @@ Below is a list of grammar of shaped types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-7-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td></td>
-        <td colspan="3">
-            <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-7-1">
-                    <code-block lang="typescript">
-                    // OK
-                    object {
-                        key?: ValueType
-                    }
-                    </code-block>
-                    <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType {
-                        key?: ValueType
-                    }
-                    </code-block>
-                    <a href="https://psalm.dev/r/d1f685e70d">Open in psalm.dev</a>
-                </def>
-            </deflist>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="shape-types.md">
                 Empty (closed) shape types
             </a>
             <code-block lang="typescript">
-            object {}
+            array {}
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-8-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td></td>
-        <td colspan="3">
-            <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-8-1">
-                    <code-block lang="typescript">
-                    // OK
-                    object {}
-                    </code-block>
-                    <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType {}
-                    </code-block>
-                    <a href="https://psalm.dev/r/4581b137f2">Open in psalm.dev</a>
-                </def>
-            </deflist>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="shape-types.md" anchor="unsealed-shapes">
                 Unsealed shape types
             </a>
             <code-block lang="typescript">
-            object { ... }
+            array { ... }
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-9-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-4-7-1">Read as an empty array <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-9-1">
+                <def title="1. Psalm loses the unsealed part where no field stands in front of it" id="ref-4-7-1">
+                    <p>
+                        A shape carrying fields keeps what follows them, but one made of
+                        the ellipsis alone comes back sealed and empty.
+                    </p>
                     <code-block lang="typescript">
-                    // OK
-                    object { ... }
+                    // Written
+                    array { ... }
                     </code-block>
                     <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType { ... }
+                    // Read
+                    array&lt;never, never>
                     </code-block>
-                    <a href="https://psalm.dev/r/afad7f4c66">Open in psalm.dev</a>
                 </def>
             </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="shape-types.md" anchor="unsealed-shapes">
                 Explicit unsealed shape types
             </a>
             <code-block lang="typescript">
-            object {
+            array {
                 key: ValueType,
                 ...
             }
@@ -1412,40 +1800,18 @@ Below is a list of grammar of shaped types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-10-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td></td>
-        <td colspan="3">
-            <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-10-1">
-                    <code-block lang="typescript">
-                    // OK
-                    object {
-                        key: ValueType,
-                        ...
-                    }
-                    </code-block>
-                    <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType {
-                        key: ValueType,
-                        ...
-                    }
-                    </code-block>
-                    <a href="https://psalm.dev/r/65fdb88c08">Open in psalm.dev</a>
-                </def>
-            </deflist>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="shape-types.md" anchor="unsealed-shapes">
                 Implicit unsealed shape types
             </a>
             <code-block lang="typescript">
-            object {
+            array {
                 ValueType,
                 ...
             }
@@ -1455,41 +1821,19 @@ Below is a list of grammar of shaped types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-11-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td></td>
-        <td colspan="3">
-            <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-11-1">
-                    <code-block lang="typescript">
-                    // OK
-                    object {
-                        ValueType,
-                        ...
-                    }
-                    </code-block>
-                    <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType {
-                        ValueType,
-                        ...
-                    }
-                    </code-block>
-                    <a href="https://psalm.dev/r/65fdb88c08">Open in psalm.dev</a>
-                </def>
-            </deflist>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="shape-types.md" anchor="typed-shapes">
                 Typed unsealed shape types
             </a>
             <code-block lang="typescript">
-            object {
-                ...&lt;array-key, Type>
+            array {
+                ...&lt;array-key, ValueType>
             }
             </code-block>
         </td>
@@ -1497,78 +1841,18 @@ Below is a list of grammar of shaped types.
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-12-1">Works with restrictions <sup>1</sup></a></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-12-2">Works with restrictions <sup>2</sup></a></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td colspan="3">
-            <deflist collapsible="true">
-                <def title="1. Psalm does not support custom (class instances) objects" id="ref-12-1">
-                    <code-block lang="typescript">
-                    // OK
-                    object {
-                        ...&lt;array-key, Type>
-                    }
-                    </code-block>
-                    <code-block lang="typescript">
-                    // Error
-                    Custom\ObjectType {
-                        ...&lt;array-key, Type>
-                    }
-                    </code-block>
-                    <a href="https://psalm.dev/r/487c82502c">Open in psalm.dev</a>
-                </def>
-                <def title="2. PHPStan does not support some built-in types such as list (hardcoded in the parser)" id="ref-12-2">
-                    <code-block lang="typescript">
-                    // OK
-                    array {
-                        ...&lt;array-key, Type>
-                    }
-                    </code-block>
-                    <code-block lang="typescript">
-                    // Syntax Error
-                    list {
-                        array-key, 
-                        ...&lt;Type>
-                    }
-                    </code-block>
-                    <a href="https://phpstan.org/r/d89fdfaf-cee8-4737-b5fd-c9145458da6a">Open in phpstan.org</a>
-                </def>
-            </deflist>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="shape-types.md" anchor="attributes">
-                Shape field attributes
-            </a>
-            <code-block lang="typescript">
-            object {
-                #[inline, assert(not&lt;"">)]
-                name: string
-            }
-            </code-block>
-        </td>
-    </tr>
-    <tr>
-        <td></td>
         <td><icon src="ok.svg"/></td>
-        <td>
-            <icon src="warning.svg"/>
-            <a href="https://github.com/phpstan/phpdoc-parser/releases/tag/2.3.0">
-                PHPStan parser only (since 2.3)
-            </a>
-        </td>
+        <td><icon src="ok.svg"/></td>
         <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="shape-types.md" anchor="constant-keys">
                 Class constant shape keys
             </a>
             <code-block lang="typescript">
-            array{
+            array {
                 Path\To\ClassName::CONSTANT_NAME: string,
             }
             </code-block>
@@ -1578,15 +1862,17 @@ Below is a list of grammar of shaped types.
         <td></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
         <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="shape-types.md" anchor="constant-mask-keys">
                 Constant mask shape keys
             </a>
             <code-block lang="typescript">
-            array{
+            array {
                 Path\To\ClassName::PREFIX_*: string,
                 JSON_*: string,
             }
@@ -1598,10 +1884,93 @@ Below is a list of grammar of shaped types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ko.svg"/></td>
         <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="shape-types.md" anchor="string-keys">
+                String literal shape keys
+            </a>
+            <code-block lang="typescript">
+            array {
+                'some key': ValueType,
+            }
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="shape-types.md" anchor="numeric-keys">
+                Numeric shape keys
+            </a>
+            <code-block lang="typescript">
+            array {
+                0: ValueType,
+            }
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="shape-types.md">
+                Shapes of an arbitrary type name
+            </a>
+            <code-block lang="typescript">
+            Custom\ObjectType {
+                key: ValueType
+            }
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/> <a anchor="ref-4-15-1">Fixed set of names <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/> <a anchor="ref-4-15-2">Fixed set of names <sup>2</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/> <a anchor="ref-4-15-2">Fixed set of names <sup>2</sup></a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. Psalm names the types a shape may be written of" id="ref-4-15-1">
+                    <p>
+                        A shape follows an <code>array</code>, a <code>list</code>, an
+                        <code>object</code> or a <code>callable-array</code>, and no other
+                        name.
+                    </p>
+                    <a href="https://psalm.dev/r/4ec6feecc1">Open in psalm.dev</a>
+                </def>
+                <def title="2. PHPStan names the types a shape may be written of" id="ref-4-15-2">
+                    <p>
+                        A shape follows an <code>array</code>, a <code>list</code> or an
+                        <code>object</code>, and no other name.
+                    </p>
+                </def>
+            </deflist>
+        </td>
     </tr>
 </table>
 
-## Callables Types
+## Callable Types
 
 Below is a list of grammar of callable (function) types.
 
@@ -1617,27 +1986,43 @@ Below is a list of grammar of callable (function) types.
         <td>
             <icon src="phpstan.png" height="20"/>&nbsp;<a href="https://github.com/phpstan">PHPStan</a>
         </td>
+        <td>
+            <icon src="phan.png" height="20"/>&nbsp;<a href="https://github.com/phan/phan">Phan</a>
+        </td>
+        <td>
+            <icon src="phpdocumentor.png" height="20"/>&nbsp;<a href="https://github.com/phpDocumentor/TypeResolver">phpDocumentor</a>
+        </td>
     </tr>
     <tr>
         <td></td>
         <td>
-            <note>
-                <format style="bold" color="DarkSeaGreen">15/15</format>
-            </note>
-        </td>
-        <td>
             <warning>
-                <format style="bold" color="RosyBrown">13/15</format>
+                <format style="bold" color="RosyBrown">20/21</format>
             </warning>
         </td>
         <td>
             <warning>
-                <format style="bold" color="RosyBrown">12/15</format>
+                <format style="bold" color="RosyBrown">10/21</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">18/21</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">13/21</format>
+            </warning>
+        </td>
+        <td>
+            <warning>
+                <format style="bold" color="RosyBrown">17/21</format>
             </warning>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="callable-types.md">
                 Non-typed callable types
             </a>
@@ -1656,9 +2041,11 @@ Below is a list of grammar of callable (function) types.
                 Not Supported
             </a>
         </td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="callable-types.md">
                 Typed callable types
             </a>
@@ -1672,9 +2059,11 @@ Below is a list of grammar of callable (function) types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="callable-types.md">
                 Callable with typed parameters
             </a>
@@ -1688,9 +2077,29 @@ Below is a list of grammar of callable (function) types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
+            <a href="callable-types.md">
+                Trailing comma in the parameter list
+            </a>
+            <code-block lang="typescript">
+            callable(Type,): T
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
             <a href="callable-types.md" anchor="optional-parameters">
                 Callable with optional parameters
             </a>
@@ -1704,9 +2113,11 @@ Below is a list of grammar of callable (function) types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="callable-types.md" anchor="named-parameters">
                 Callable with named parameters
             </a>
@@ -1720,10 +2131,12 @@ Below is a list of grammar of callable (function) types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="callable-types.md">
+        <td colspan="6">
+            <a href="callable-types.md" anchor="optional-parameters">
                 Callable with optional named parameters
             </a>
             <code-block lang="typescript">
@@ -1741,36 +2154,40 @@ Below is a list of grammar of callable (function) types.
             </a>
         </td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="callable-types.md" anchor="output-parameters">
                 Callable with output parameters
             </a>
             <code-block lang="typescript">
-            callable(T&): T
+            callable(T&amp;): T
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-13-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-5-8-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. Psalm does NOT support literal types" id="ref-13-1">
+                <def title="1. Psalm reads an output parameter as an intersection" id="ref-5-8-1">
                     <code-block lang="typescript">
                     // OK
-                    callable(T&): U
+                    callable(T&amp;): U
                     </code-block>
                     <code-block lang="typescript">
                     // Bug: Intersection types must be all objects,
                     // Psalm\Type\Atomic\TInt provided in docblock
-                    callable(int&): U
+                    callable(int&amp;): U
                     </code-block>
                     <a href="https://psalm.dev/r/9a5a81443f">Open in psalm.dev</a>
                 </def>
@@ -1778,47 +2195,49 @@ Below is a list of grammar of callable (function) types.
         </td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="callable-types.md">
+        <td colspan="6">
+            <a href="callable-types.md" anchor="output-parameters">
                 Callable with output optional parameters
             </a>
             <code-block lang="typescript">
-            callable(T&=): T
+            callable(T&amp;=): T
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-14-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-5-9-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. Psalm does NOT support literal types" id="ref-14-1">
+                <def title="1. Psalm reads an output parameter as an intersection" id="ref-5-9-1">
                     <code-block lang="typescript">
                     // OK
-                    callable(T&=): U
+                    callable(T&amp;): U
                     </code-block>
                     <code-block lang="typescript">
                     // Bug: Intersection types must be all objects,
                     // Psalm\Type\Atomic\TInt provided in docblock
-                    callable(int&=): U
+                    callable(int&amp;): U
                     </code-block>
-                    <a href="https://psalm.dev/r/33dde88598">Open in psalm.dev</a>
+                    <a href="https://psalm.dev/r/9a5a81443f">Open in psalm.dev</a>
                 </def>
             </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="callable-types.md">
+        <td colspan="6">
+            <a href="callable-types.md" anchor="output-parameters">
                 Callable with output optional named parameters
             </a>
             <code-block lang="typescript">
-            callable(T &$name=): T
+            callable(T &amp;$name=): T
             </code-block>
         </td>
     </tr>
@@ -1832,9 +2251,11 @@ Below is a list of grammar of callable (function) types.
             </a>
         </td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="callable-types.md" anchor="variadic-parameters">
                 Callable with suffixed variadic parameters
             </a>
@@ -1848,9 +2269,47 @@ Below is a list of grammar of callable (function) types.
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
+            <a href="callable-types.md" anchor="variadic-parameters">
+                Callable with named variadic parameters
+            </a>
+            <code-block lang="typescript">
+            callable(Type ...$name): T
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="callable-types.md" anchor="variadic-parameters">
+                Callable with output named variadic parameters
+            </a>
+            <code-block lang="typescript">
+            callable(Type &amp;...$name): T
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
             <a href="callable-types.md" anchor="variadic-parameters">
                 Callable with prefixed variadic parameters
             </a>
@@ -1861,7 +2320,7 @@ Below is a list of grammar of callable (function) types.
     </tr>
     <tr>
         <td></td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/> <a anchor="ref-5-14-1">Suffix form only <sup>1</sup></a></td>
         <td><icon src="ok.svg"/></td>
         <td>
             <icon src="ko.svg"/>
@@ -1869,84 +2328,70 @@ Below is a list of grammar of callable (function) types.
                 Not Supported
             </a>
         </td>
-    </tr>
-    <tr>
-        <td colspan="4">
-            <a href="callable-types.md" anchor="variadic-parameters">
-                Callable with prefixed and suffixed variadic parameters
-            </a>
-            <code-block lang="typescript">
-            callable(...Type ...$name): T
-            </code-block>
-        </td>
+        <td><icon src="ko.svg"/> <a anchor="ref-5-14-2">Parameter dropped <sup>2</sup></a></td>
+        <td><icon src="ko.svg"/></td>
     </tr>
     <tr>
         <td></td>
-        <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-15-1">Works with restrictions <sup>1</sup></a></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-15-2">Works with restrictions <sup>2</sup></a></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td colspan="3">
-            <tip>
-                This expression is incorrect because the "variadic" 
-                lexeme <code>...</code> must be present in the parameter 
-                in a single copy. The parser must throw a syntax or 
-                semantic error.
-            </tip>
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. Psalm throws an internal error instead of a valid error message" id="ref-15-1">
+                <def title="1. TypeLang carries one spelling of a variadic, and it is the suffix" id="ref-5-14-1">
+                    <p>
+                        The ellipsis stands behind the type, the way PHP itself writes it.
+                        The prefix form was read by earlier versions of the parser and is
+                        a syntax error now.
+                    </p>
                     <code-block lang="typescript">
-                    callable(...int ...$name)
-                    // Internal Psalm error on line ...: 
-                    // Unrecognised parse tree type Psalm\Internal\Type\ParseTree\CallableParamTree
+                    callable(Type...): T
                     </code-block>
-                    <a href="https://psalm.dev/r/d802f62027">Open in psalm.dev</a>
                 </def>
-                <def title="2. PHPStan does not support prefixed variadic parameters" id="ref-15-2">
+                <def title="2. Phan drops the parameter rather than reporting it" id="ref-5-14-2">
                     <code-block lang="typescript">
-                    callable(...int ...$name)
-                    // PHPDoc tag @return has invalid value (callable(...int ...$name): T): 
-                    // Unexpected token "(", expected TOKEN_HORIZONTAL_WS at ...
+                    // Written
+                    callable(...Type): T
                     </code-block>
-                    <a href="https://phpstan.org/r/f1f73f78-cebe-4cf6-887c-e6516d684230">Open in phpstan.org</a>
+                    <code-block lang="typescript">
+                    // Read
+                    callable(): T
+                    </code-block>
                 </def>
             </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="callable-types.md" anchor="variadic-parameters">
                 Callable with optional variadic parameters
             </a>
             <code-block lang="typescript">
             callable(Type...=): T
-            callable(...Type=): T
+            callable(Type ...$name=): T
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-16-1">Works with restrictions <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-5-15-1">Error depends on the spelling <sup>1</sup></a></td>
         <td>
-            <icon src="ko.svg" />
+            <icon src="ko.svg"/>
             <a href="https://phpstan.org/r/0a7c61e9-691d-414c-983c-b5c32f472214">
                 No Error
             </a>
         </td>
+        <td><icon src="ko.svg"/> No Error</td>
+        <td><icon src="ko.svg"/> No Error</td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
             <tip>
-                This expression is incorrect because any variadic 
-                parameter is already optional. The parser must 
-                throw a syntax or semantic error.
+                This expression is incorrect because any variadic parameter is
+                already optional. The parser must throw a syntax or semantic
+                error.
             </tip>
             <deflist collapsible="true">
-                <def title="1. Psalm error depends on parameter definition syntax" id="ref-16-1">
+                <def title="1. Psalm error depends on parameter definition syntax" id="ref-5-15-1">
                     <code-block lang="typescript">
                     // OK: Cannot have variadic param with a default in docblock
                     callable(...T=): T
@@ -1961,87 +2406,153 @@ Below is a list of grammar of callable (function) types.
         </td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="6">
             <a href="callable-types.md" anchor="variadic-parameters">
-                Callable with named variadic parameters
+                Callable carrying the variadic marker twice
             </a>
             <code-block lang="typescript">
-            callable(Type ...$name): T
-            callable(...Type $name): T
+            callable(...Type ...$name): T
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-17-1">Works with restrictions <sup>1</sup></a></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-17-2">Works with restrictions <sup>2</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-5-16-1">Internal error <sup>1</sup></a></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/> No Error</td>
+        <td><icon src="ko.svg"/> No Error</td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td colspan="5">
+            <tip>
+                This expression is incorrect because the "variadic" lexeme
+                <code>...</code> must be present in the parameter in a single
+                copy. The parser must throw a syntax or semantic error.
+            </tip>
             <deflist collapsible="true">
-                <def title="1. Psalm throws an internal error if using prefix syntax" id="ref-17-1">
+                <def title="1. Psalm throws an internal error instead of a valid error message" id="ref-5-16-1">
                     <code-block lang="typescript">
-                    callable(...Type $name): T
-                    // Internal Psalm error on line ...: 
+                    callable(...int ...$name)
+                    // Internal Psalm error on line ...:
                     // Unrecognised parse tree type Psalm\Internal\Type\ParseTree\CallableParamTree
                     </code-block>
-                    <a href="https://psalm.dev/r/2cf0778b29">Open in psalm.dev</a>
-                </def>
-                <def title="2. PHPStan does not support prefixed variadic parameters" id="ref-17-2">
-                   <code-block lang="typescript">
-                    callable(...Type $name): T
-                    // PHPDoc tag @return has invalid value (callable(...Type $name): T): 
-                    // Unexpected token "(", expected TOKEN_HORIZONTAL_WS at ...
-                    </code-block>
-                    <a href="https://phpstan.org/r/13de8276-eeac-4a0f-8344-06025ca3c781">Open in phpstan.org</a>
+                    <a href="https://psalm.dev/r/d802f62027">Open in psalm.dev</a>
                 </def>
             </deflist>
         </td>
     </tr>
     <tr>
-        <td colspan="4">
-            <a href="callable-types.md" anchor="variadic-parameters">
-                Callable with output named variadic parameters
+        <td colspan="6">
+            <a href="callable-types.md">
+                The <code>$this</code> return type
             </a>
             <code-block lang="typescript">
-            callable(Type &...$name): T
-            callable(...Type &$name): T
+            callable(): $this
             </code-block>
         </td>
     </tr>
     <tr>
         <td></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-18-1">Works with restrictions <sup>1</sup></a></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-18-2">Works with restrictions <sup>2</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="callable-types.md" anchor="template-parameters">
+                Callable declaring template parameters
+            </a>
+            <code-block lang="typescript">
+            callable&lt;T>(T): T
+            </code-block>
+        </td>
     </tr>
     <tr>
         <td></td>
-        <td colspan="3">
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="callable-types.md" anchor="template-parameters">
+                Upper bound of a template parameter
+            </a>
+            <code-block lang="typescript">
+            callable&lt;T of Some>(T): T
+            callable&lt;T as Some>(T): T
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-5-19-1">Both words read as one <sup>1</sup></a></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-5-19-1">Both words read as one <sup>1</sup></a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. Psalm does NOT support literal types" id="ref-18-1">
+                <def title="1. PHPStan keeps no record of which word was written" id="ref-5-19-1">
+                    <p>
+                        An <code>as</code> comes back as an <code>of</code>, where TypeLang
+                        keeps the bound as it was written.
+                    </p>
                     <code-block lang="typescript">
-                    // OK
-                    callable(T &...$name): U
+                    // Written
+                    callable&lt;T as Some>(T): T
                     </code-block>
                     <code-block lang="typescript">
-                    // Bug: Intersection types must be all objects,
-                    // Psalm\Type\Atomic\TInt provided in docblock
-                    callable(int &...$name): U
+                    // Read
+                    callable&lt;T of Some>(T): T
                     </code-block>
-                    <a href="https://psalm.dev/r/33dde88598">Open in psalm.dev</a>
-                </def>
-                <def title="2. PHPStan does not support prefixed variadic parameters" id="ref-18-2">
-                   <code-block lang="typescript">
-                    callable(...Type &$name): T
-                    // PHPDoc tag @return has invalid value (callable(...Type &$name): T): 
-                    // Unexpected token "(", expected TOKEN_HORIZONTAL_WS at ...
-                    </code-block>
-                    <a href="https://phpstan.org/r/c5eba3e1-8c59-4066-a96a-070b82632495">Open in phpstan.org</a>
                 </def>
             </deflist>
         </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="callable-types.md" anchor="template-parameters">
+                Lower bound of a template parameter
+            </a>
+            <code-block lang="typescript">
+            callable&lt;T super Some>(T): T
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <a href="callable-types.md" anchor="template-parameters">
+                Default of a template parameter
+            </a>
+            <code-block lang="typescript">
+            callable&lt;T = int>(T): T
+            </code-block>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
+        <td><icon src="ko.svg"/></td>
+        <td><icon src="ok.svg"/></td>
     </tr>
 </table>

@@ -113,12 +113,6 @@ final class PrettyTypePrinterTest extends TestCase
             ->print(self::parse('array<covariant int>')));
     }
 
-    public function testPrintTemplateArgumentAttribute(): void
-    {
-        self::assertSame('list<#[Foo] int>', $this->printer()
-            ->print(self::parse('list<#[Foo] int>')));
-    }
-
     public function testPrintInlineShape(): void
     {
         self::assertSame('array{foo: int}', $this->printer()
@@ -206,20 +200,6 @@ final class PrettyTypePrinterTest extends TestCase
             ->print(self::parse('array{FOO_*: int}')));
     }
 
-    public function testPrintShapeFieldAttribute(): void
-    {
-        self::assertSame('array{#[Foo] foo: int}', $this->printer()
-            ->print(self::parse('array{#[Foo] foo: int}')));
-    }
-
-    public function testPrintShapeFieldAttributeMultiline(): void
-    {
-        self::assertSame(
-            "array{\n    #[Foo]\n    foo: int,\n    bar: string\n}",
-            $this->printer()->print(self::parse('array{#[Foo] foo: int, bar: string}')),
-        );
-    }
-
     public function testPrintCallableType(): void
     {
         self::assertSame('callable(int, string): void', $this->printer()
@@ -256,18 +236,6 @@ final class PrettyTypePrinterTest extends TestCase
             ->print(self::parse('callable(int=): void')));
     }
 
-    public function testPrintCallableParameterAttribute(): void
-    {
-        self::assertSame('callable(#[Foo] int): void', $this->printer()
-            ->print(self::parse('callable(#[Foo] int): void')));
-    }
-
-    public function testPrintCallableParameterMultipleAttributes(): void
-    {
-        self::assertSame('callable(#[Foo, Bar] int): void', $this->printer()
-            ->print(self::parse('callable(#[Foo, Bar] int): void')));
-    }
-
     public function testPrintClassConstant(): void
     {
         self::assertSame('Foo::BAR', $this->printer()->print(self::parse('Foo::BAR')));
@@ -286,6 +254,54 @@ final class PrettyTypePrinterTest extends TestCase
     public function testPrintConstantMask(): void
     {
         self::assertSame('FOO_*', $this->printer()->print(self::parse('FOO_*')));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function maskProvider(): iterable
+    {
+        yield 'a wildcard alone' => ['Foo::*'];
+        yield 'a trailing wildcard' => ['Foo::BAR_*'];
+        yield 'a leading wildcard' => ['Foo::*_BAR'];
+        yield 'a wildcard in between' => ['Foo::A*B'];
+        yield 'several wildcards' => ['Foo::BAR*BAZ*SOME'];
+        yield 'a global mask' => ['JSON_*_FLAG'];
+        yield 'a namespaced global mask' => ['Some\Any\JSON_*'];
+    }
+
+    /**
+     * @param non-empty-string $type
+     * @throws \Throwable
+     */
+    #[DataProvider('maskProvider')]
+    public function testPrintMaskOfEverySegmentItIsWrittenOf(string $type): void
+    {
+        self::assertSame($type, $this->printer()->print(self::parse($type)));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function wildcardAndTemplateProvider(): iterable
+    {
+        yield 'a wildcard argument' => ['Collection<*>'];
+        yield 'a wildcard beside a type' => ['HashMap<array-key, *>'];
+        yield 'a hinted wildcard' => ['Collection<out *>'];
+        yield 'a template parameter' => ['callable<T>(T): T'];
+        yield 'a bounded template parameter' => ['callable<T of Some>(T): T'];
+        yield 'every kind of bound' => ['Closure<T of Some, U super Any, V = int>(T, U): V'];
+        yield 'several bounds on one parameter' => ['callable<T of Some super Any>(T): void'];
+    }
+
+    /**
+     * @param non-empty-string $type
+     * @throws \Throwable
+     */
+    #[DataProvider('wildcardAndTemplateProvider')]
+    public function testPrintWildcardsAndTemplateParameters(string $type): void
+    {
+        self::assertSame($type, $this->printer()->print(self::parse($type)));
     }
 
     public function testPrintTypesList(): void
@@ -336,10 +352,6 @@ final class PrettyTypePrinterTest extends TestCase
     {
         yield 'equal' => ['($x is int ? string : bool)', '($x is int ? string : bool)'];
         yield 'not equal' => ['($x is not int ? string : bool)', '($x is not int ? string : bool)'];
-        yield 'greater than' => ['($x > 5 ? string : bool)', '($x > 5 ? string : bool)'];
-        yield 'greater than or equal' => ['($x >= 5 ? string : bool)', '($x >= 5 ? string : bool)'];
-        yield 'less than' => ['($x < 5 ? string : bool)', '($x < 5 ? string : bool)'];
-        yield 'less than or equal' => ['($x <= 5 ? string : bool)', '($x <= 5 ? string : bool)'];
     }
 
     public function testPrintUsesCustomNewLineAndIndention(): void

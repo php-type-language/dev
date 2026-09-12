@@ -2,8 +2,8 @@
 
 <primary-label ref="parser-component"/>
 <link-summary>
-Parses TypeLang syntax into an AST of `TypeLang\Type\*` nodes, with strict and
-tolerant parsing modes, feature toggling, and grammar checking.
+Parses TypeLang syntax into an AST of `TypeLang\Type\*` nodes, with strict,
+partial and validating reading modes, feature toggling, and grammar checking.
 </link-summary>
 <show-structure for="chapter" depth="2"/>
 
@@ -21,7 +21,7 @@ out of it, checking the grammar along the way.
 </tldr>
 
 **Requirements:**
-* `PHP >= 8.4`
+* `PHP >= 8.1`
 
 ## Quick Start
 
@@ -40,23 +40,25 @@ var_dump($type);
 ```php
 object(TypeLang\Type\NamedTypeNode)#1 (4) {
   ["offset"]=> int(0)
-  ["name"]=> object(TypeLang\Type\Name)#2 (3) {
+  ["name"]=> object(TypeLang\Type\Name)#2 (5) {
     ["offset"]=> int(0)
-    ["segments"]=> array(1) {
+    ["parts"]=> array(1) {
       [0]=> object(TypeLang\Type\Identifier)#3 (2) {
         ["offset"]=> int(0)
         ["value"]=> string(5) "array"
       }
     }
+    ["first"]=> object(TypeLang\Type\Identifier)#3 { ... }
+    ["last"]=> object(TypeLang\Type\Identifier)#3 { ... }
     ["isFullyQualified"]=> bool(false)
   }
   ["arguments"]=> NULL
   ["fields"]=> object(TypeLang\Type\Shape\FieldsListNode)#4 (3) {
     ["offset"]=> int(7)
     ["items"]=> array(1) {
-      [0]=> object(TypeLang\Type\Shape\NamedFieldNode)#5 (5) { ... }
+      [0]=> object(TypeLang\Type\Shape\NamedFieldNode)#5 (4) { ... }
     }
-    ["sealed"]=> bool(true)
+    ["isSealed"]=> bool(true)
   }
 }
 ```
@@ -68,30 +70,32 @@ node classes themselves (`TypeLang\Type\*`) belong to the separate
 `type-lang/types` package — plain AST Nodes.
 
 > If a statement cannot be parsed, `parse()` throws an exception implementing
-> `TypeLang\Parser\Exception\ParserExceptionInterface`. See the [tolerant
-> mode](tolerant-mode.md) page for a way to parse partially valid input
+> `TypeLang\Parser\Exception\ParserExceptionInterface`. See the [partial
+> parsing](tolerant-mode.md) page for a way to read partially valid input
 > instead of failing outright.
 > {style="note"}
 
-## Strict vs. Tolerant Parsing
+## Three Ways of Reading a Source
 
-`TypeParser` implements two parsing strategies, both declared on
-`TypeParserInterface`:
+`TypeParser` asks the grammar three different questions, all three declared
+on `TypeParserInterface`:
 
 * `parse(): TypeNode` — strict mode. Requires the whole input to be a
   syntactically valid type statement; throws a `ParserExceptionInterface` on
   the first error.
-* `parseTolerant(): ParsedResult` — tolerant mode. Parses as much of the
-  input as it can and returns a `TypeLang\Parser\ParsedResult` object
-  containing the (possibly partial) type and the offset up to which the
-  source was actually consumed — regardless of what follows. Useful for
-  phpdoc/docblock parsing where a type declaration is followed by a
-  free-text description. See [Tolerant mode](tolerant-mode.md).
+* `partial(): ParsedResult` — reads as much of the input as the grammar
+  describes and returns a `TypeLang\Parser\Partial\ParsedResult` carrying the
+  type built out of the read part and the offset the reading stopped at,
+  whatever follows it. Useful for phpdoc/docblock parsing, where a type
+  declaration is followed by a free-text description. See
+  [](tolerant-mode.md).
+* `validate(): CheckResult` — tells whether the source is a type, building
+  nothing of it. This is the cheapest of the three whenever the type itself
+  is of no use. See [](tolerant-mode.md#validation).
 
 ## Parser Arguments
 
-The `parse()`/`parseTolerant()` methods accept the source code in
-any of the following forms:
+All three methods accept the source code in any of the following forms:
 
 <tabs>
   <tab title="string">
@@ -137,10 +141,11 @@ Enable or disable individual language constructs (generics, shapes,
 unions, ...) — see [](features.md).
 
 </def>
-<def title="Tolerant mode">
+<def title="Partial parsing and validation">
 
-Parse a type declaration embedded in free-form text, such as a phpdoc
-annotation — see [](tolerant-mode.md).
+Read a type declaration embedded in free-form text, such as a phpdoc
+annotation, or ask whether a source is a type at all — see
+[](tolerant-mode.md).
 
 </def>
 <def title="Visitors">
