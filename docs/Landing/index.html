@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TypeLang — the type syntax of PHPDoc, parsed</title>
+  <meta name="description" content="TypeLang is a declarative type language for PHP inspired by PHPStan and Psalm. Parser, printer, reader and PHPDoc components with a formal specification.">
+  <meta property="og:title" content="TypeLang">
+  <meta property="og:description" content="A declarative type language for PHP. Type a type — watch it parse.">
+  <meta name="theme-color" content="#f2eee6">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%2317161a' d='M17.41.21A.5.5,0,0,0,17,0H12a.5.5,0,0,0-.47.34l-8,23A.5.5,0,0,0,4,24H9a.5.5,0,0,0,.47-.34l8-23A.5.5,0,0,0,17.41.21Z'/%3E%3Ccircle fill='%2317161a' cx='17.5' cy='21' r='3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.41.21A.5.5,0,0,0,17,0H12a.5.5,0,0,0-.47.34l-8,23A.5.5,0,0,0,4,24H9a.5.5,0,0,0,.47-.34l8-23A.5.5,0,0,0,17.41.21Z"/><circle cx="17.5" cy="21" r="3"/></svg>
+    <span>TypeLang</span>
+  </a>
+  <nav class="nav">
+    <a href="#grown">Language</a>
+    <a href="#vocabulary">Vocabulary</a>
+    <a href="#features">Parser</a>
+    <a href="#coverage">Coverage</a>
+    <a href="#packages">Packages</a>
+    <a class="ext" href="overview.html">Docs</a>
+    <a class="ext" href="https://typelang.dev/static/spec.html" target="_blank" rel="noopener">Spec</a>
+    <a class="ext" href="https://github.com/php-type-language" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+</header>
+
+<!-- ─────────────────────────── § 00 Hero ─────────────────────────── -->
+<section class="hero" id="top">
+  <div class="hero-head">
+    <p class="kicker"><span>Specimen sheet</span><span>Type language for PHP</span><span>PHP 8.1+</span></p>
+    <h1>The type syntax of PHPDoc,<br>parsed.</h1>
+    <p class="lede">
+      TypeLang is a declarative type language inspired by PHPStan and Psalm. It describes the types you already
+      write in doc-comments — <code>int[]</code>, <code>array&lt;string, T&gt;</code>, <code>Foo::CONST_*</code>,
+      <code>T is U ? A : B</code> — and ships the parts to work with them: a parser, a printer, a reflection reader
+      and a PHPDoc parser. The tree below is drawn by a JavaScript port of the reference parser. Type a type.
+    </p>
+  </div>
+
+  <div class="stage stage-hero" id="hero-stage" data-editable>
+    <div class="stage-scroll">
+      <div class="line">
+        <pre class="mirror" aria-hidden="true"></pre>
+        <input class="src" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-label="Type declaration" value="">
+        <div class="hl" hidden></div>
+      </div>
+      <div class="tree"></div>
+    </div>
+    <div class="status">
+      <p class="msg" aria-live="polite"></p>
+      <p class="meta"><span class="tokens">0 tokens</span><span class="nodes">0 nodes</span><span class="depth">depth 0</span></p>
+    </div>
+  </div>
+
+  <div class="hero-foot">
+    <div class="chips" id="hero-chips" aria-label="Examples"></div>
+    <div class="printed">
+      <p class="label">PrettyTypePrinter</p>
+      <pre id="hero-printed"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── § 01 Grown ─────────────────────────── -->
+<section class="grown" id="grown">
+  <div class="section-head">
+    <p class="num">§ 01</p>
+    <h2>One type, grown.</h2>
+    <p class="sub">Every construct in the language composes with every other. Start from a name and keep wrapping.</p>
+  </div>
+
+  <div class="grown-body">
+    <div class="grown-stage-wrap">
+      <div class="stage stage-grown" id="grown-stage">
+        <div class="stage-scroll">
+          <div class="line"><pre class="mirror"></pre><div class="hl" hidden></div></div>
+          <div class="tree"></div>
+        </div>
+        <div class="status"><p class="msg"></p><p class="meta"><span class="tokens"></span><span class="nodes"></span><span class="depth"></span></p></div>
+      </div>
+    </div>
+
+    <ol class="steps" id="steps">
+      <li class="step" data-type="int">
+        <h3>A name</h3>
+        <p>Any identifier is a type: a built-in, a class, an alias. TypeLang checks that a type is well-formed, not that it exists — resolution is a separate concern.</p>
+        <a href="https://typelang.dev/basic-types.html" target="_blank" rel="noopener">Basic types ↗</a>
+      </li>
+      <li class="step" data-type="?int">
+        <h3>Nullable</h3>
+        <p>A leading question mark wraps the type in a <code>NullableTypeNode</code>. It binds tighter than <code>|</code>, so <code>?A|B</code> is <code>(?A)|B</code>.</p>
+        <a href="https://typelang.dev/logical-types.html" target="_blank" rel="noopener">Logical types ↗</a>
+      </li>
+      <li class="step" data-type="list<?int>">
+        <h3>Template arguments</h3>
+        <p>Angle brackets carry generics. Any type goes inside, trailing commas are fine, and <code>*</code> stands for “whatever”.</p>
+        <a href="https://typelang.dev/generic-types.html" target="_blank" rel="noopener">Generic types ↗</a>
+      </li>
+      <li class="step" data-type="list<User|null>">
+        <h3>Union</h3>
+        <p>Unions are flat: <code>A|B|C</code> is one node with three children, not two nested pairs. Intersections use <code>&amp;</code> and bind tighter.</p>
+        <a href="https://typelang.dev/logical-types.html" target="_blank" rel="noopener">Logical types ↗</a>
+      </li>
+      <li class="step" data-type="array<string, User|null>">
+        <h3>Keys</h3>
+        <p>A second argument describes the key. <code>array-key</code>, <code>int</code>, literal strings — the parser doesn't care which; your tool decides what they mean.</p>
+        <a href="https://typelang.dev/generic-types.html" target="_blank" rel="noopener">Generic types ↗</a>
+      </li>
+      <li class="step" data-type="array{id: int, user: User|null}">
+        <h3>Shape</h3>
+        <p>Braces turn a name into a shape: named fields, each with its own type. Keys can be identifiers, numbers, quoted strings or class constants.</p>
+        <a href="https://typelang.dev/shape-types.html" target="_blank" rel="noopener">Shape types ↗</a>
+      </li>
+      <li class="step" data-type="array{id: int<1, max>, user: User|null, ...}">
+        <h3>Ranges and unsealed shapes</h3>
+        <p><code>int&lt;1, max&gt;</code> is just a generic with two literal-ish arguments. The trailing <code>...</code> says “more keys may follow”.</p>
+        <a href="https://typelang.dev/shape-types.html" target="_blank" rel="noopener">Shape types ↗</a>
+      </li>
+      <li class="step" data-type="array{id: int<1, max>, user?: User|null, ...}">
+        <h3>Optional fields</h3>
+        <p>A question mark after the key marks the field optional. Notice how little of the tree has to move.</p>
+        <a href="https://typelang.dev/shape-types.html" target="_blank" rel="noopener">Shape types ↗</a>
+      </li>
+      <li class="step" data-type="callable(array{id: int<1, max>, user?: User|null, ...}): bool">
+        <h3>Callable</h3>
+        <p>Any name followed by parentheses is a callable type. Parameters may be named, variadic, by-reference or optional; the return type follows a colon.</p>
+        <a href="https://typelang.dev/callable-types.html" target="_blank" rel="noopener">Callable types ↗</a>
+      </li>
+      <li class="step" data-type="Closure<T of Order>(T): T is Paid ? Receipt : null">
+        <h3>Generic callables and conditions</h3>
+        <p>Callables can declare template parameters with <code>of</code>, <code>super</code> and defaults. The return type here is conditional: <code>T is Paid ? Receipt : null</code>.</p>
+        <a href="https://typelang.dev/conditional-types.html" target="_blank" rel="noopener">Conditional types ↗</a>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ─────────────────────────── § 02 Vocabulary ─────────────────────────── -->
+<section class="vocab" id="vocabulary">
+  <div class="section-head">
+    <p class="num">§ 02</p>
+    <h2>Vocabulary.</h2>
+    <p class="sub">Every construct the grammar knows, set as a specimen. Hover a bracket to see the node behind it.</p>
+  </div>
+  <div class="cards" id="cards">
+    <article class="card" data-type="Fully\Qualified\Name" data-href="basic-types.html"><h3>Names</h3></article>
+    <article class="card" data-type="?T" data-href="logical-types.html"><h3>Nullable</h3></article>
+    <article class="card" data-type="T|U|V" data-href="logical-types.html"><h3>Union</h3></article>
+    <article class="card" data-type="T&U" data-href="logical-types.html"><h3>Intersection</h3></article>
+    <article class="card" data-type="Collection<array-key, User>" data-href="generic-types.html"><h3>Generics</h3></article>
+    <article class="card" data-type="Collection<in K, out V>" data-href="generic-types.html"><h3>Variance hints</h3></article>
+    <article class="card" data-type="Collection<*>" data-href="generic-types.html"><h3>Wildcard argument</h3></article>
+    <article class="card" data-type="User[]" data-href="generic-types.html"><h3>Legacy list</h3></article>
+    <article class="card" data-type="Shape['key']" data-href="offset-access.html"><h3>Offset access</h3></article>
+    <article class="card" data-type="0x1F|'str'|1.5e3|true" data-href="literal-types.html"><h3>Literals</h3></article>
+    <article class="card wide" data-type="Foo::BAR|Foo::PREFIX_*|*_SUFFIX" data-href="const-types.html"><h3>Constants and masks</h3></article>
+    <article class="card wide" data-type="array{id: int, name?: string, ...}" data-href="shape-types.html"><h3>Shapes</h3></article>
+    <article class="card wide" data-type="callable(int $x, string ...$rest): void" data-href="callable-types.html"><h3>Callables</h3></article>
+    <article class="card wide" data-type="Closure<T of Some, U super Any, V = int>(T, U): V" data-href="callable-types.html"><h3>Generic callables</h3></article>
+    <article class="card" data-type="T is not U ? A : B" data-href="conditional-types.html"><h3>Conditional</h3></article>
+    <article class="card" data-type="callable(): $this" data-href="basic-types.html"><h3>$this</h3></article>
+  </div>
+</section>
+
+<!-- ─────────────────────────── § 03 Features ─────────────────────────── -->
+<section class="features" id="features">
+  <div class="section-head">
+    <p class="num">§ 03</p>
+    <h2>Strict subsets.</h2>
+    <p class="sub">
+      Every grammar construct is a flag on <code>TypeParserFeatures</code>. Switch some off and the parser
+      rejects the syntax with a message that says why. Native PHP types only? Turn everything off but names.
+    </p>
+  </div>
+
+  <div class="features-body">
+    <div class="switches" id="switches"></div>
+    <div class="features-right">
+      <div class="stage stage-features" id="features-stage" data-editable>
+        <div class="stage-scroll">
+          <div class="line">
+            <pre class="mirror" aria-hidden="true"></pre>
+            <input class="src" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Type declaration" value="callable(Foo<in T>|array{id: int[]}, $this): 42 is int ? T&U : Foo['k']">
+            <div class="hl" hidden></div>
+          </div>
+          <div class="tree"></div>
+        </div>
+        <div class="status"><p class="msg"></p><p class="meta"><span class="tokens"></span><span class="nodes"></span><span class="depth"></span></p></div>
+      </div>
+      <pre class="php" id="features-php"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── § 04 Coverage ─────────────────────────── -->
+<section class="coverage" id="coverage">
+  <div class="section-head">
+    <p class="num">§ 04</p>
+    <h2>Coverage.</h2>
+    <p class="sub">
+      83 syntactic constructs, each fed to every tool's own parser. A construct counts when the parser
+      returns a node carrying what was written — not a silently truncated one.
+    </p>
+  </div>
+  <div class="rulers" id="rulers">
+    <div class="ruler" data-value="82"><span class="who">TypeLang <small>type-lang/parser 2.x</small></span><span class="bar"><i></i></span><span class="val">82<small>/83</small></span></div>
+    <div class="ruler" data-value="69"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.3</small></span><span class="bar"><i></i></span><span class="val">69<small>/83</small></span></div>
+    <div class="ruler" data-value="62"><span class="who">phpDocumentor <small>type-resolver 2.0</small></span><span class="bar"><i></i></span><span class="val">62<small>/83</small></span></div>
+    <div class="ruler" data-value="40"><span class="who">Psalm <small>vimeo/psalm 6.5</small></span><span class="bar"><i></i></span><span class="val">40<small>/83</small></span></div>
+    <div class="ruler" data-value="31"><span class="who">Phan <small>phan/phan 5.5</small></span><span class="bar"><i></i></span><span class="val">31<small>/83</small></span></div>
+  </div>
+  <p class="foot-note">
+    Full table with the verdict for every construct, per tool, in the
+    <a href="https://typelang.dev/comparison.html" target="_blank" rel="noopener">syntax comparison ↗</a>.
+    Two tools answer even where they did not understand the question; the comparison explains how those are told apart.
+  </p>
+</section>
+
+<!-- ─────────────────────────── § 05 Packages ─────────────────────────── -->
+<section class="packages" id="packages">
+  <div class="section-head">
+    <p class="num">§ 05</p>
+    <h2>Parts.</h2>
+    <p class="sub">Five packages, one shared vocabulary. Each is published standalone and split from a single development monorepo.</p>
+  </div>
+
+  <figure class="pipeline">
+    <svg viewBox="0 0 900 300" role="img" aria-label="Data flow between TypeLang packages">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <g class="edges" fill="none" stroke="currentColor" stroke-width="1.25" marker-end="url(#arr)">
+        <path d="M150,70 H240"/>
+        <path d="M150,150 H240"/>
+        <path d="M150,230 H240"/>
+        <path d="M350,70 H420 Q450,70 450,100 V125"/>
+        <path d="M350,150 H395"/>
+        <path d="M350,230 H400 Q450,230 450,200 V175"/>
+        <path d="M505,150 H590"/>
+        <path d="M700,150 H770"/>
+      </g>
+      <g class="inputs">
+        <rect x="30" y="50" width="120" height="40"/><text x="90" y="75">Reflection</text>
+        <rect x="30" y="130" width="120" height="40"/><text x="90" y="155">"array&lt;K, V&gt;"</text>
+        <rect x="30" y="210" width="120" height="40"/><text x="90" y="235">/** @param */</text>
+      </g>
+      <g class="pkgs">
+        <rect x="240" y="50" width="110" height="40"/><text x="295" y="75">reader</text>
+        <rect x="240" y="130" width="110" height="40"/><text x="295" y="155">parser</text>
+        <rect x="240" y="210" width="110" height="40"/><text x="295" y="235">phpdoc</text>
+        <rect class="core" x="395" y="125" width="110" height="50"/><text x="450" y="146">types</text><text class="tiny" x="450" y="163">TypeLang\Type\*</text>
+        <rect x="590" y="130" width="110" height="40"/><text x="645" y="155">printer</text>
+      </g>
+      <g class="inputs">
+        <rect x="770" y="130" width="100" height="40"/><text x="820" y="155">"array"</text>
+      </g>
+    </svg>
+    <figcaption>Everything speaks the same AST. Parse a string, read a reflection, print back — or walk the nodes with a visitor.</figcaption>
+  </figure>
+
+  <div class="pkg-list">
+    <a class="pkg" href="https://packagist.org/packages/type-lang/types" target="_blank" rel="noopener">
+      <h3>type-lang/types</h3>
+      <p>AST node classes — the shared vocabulary of the ecosystem.</p>
+      <code>composer require type-lang/types</code>
+    </a>
+    <a class="pkg" href="https://packagist.org/packages/type-lang/parser" target="_blank" rel="noopener">
+      <h3>type-lang/parser</h3>
+      <p>Parses TypeLang syntax into an AST, validating the grammar. Strict or partial mode, feature toggles, readable errors.</p>
+      <code>composer require type-lang/parser</code>
+    </a>
+    <a class="pkg" href="https://packagist.org/packages/type-lang/printer" target="_blank" rel="noopener">
+      <h3>type-lang/printer</h3>
+      <p>Renders nodes back to strings: the full pretty form, or a native PHP type declaration.</p>
+      <code>composer require type-lang/printer</code>
+    </a>
+    <a class="pkg" href="https://packagist.org/packages/type-lang/reader" target="_blank" rel="noopener">
+      <h3>type-lang/reader</h3>
+      <p>Builds nodes from the types exposed by PHP Reflection objects.</p>
+      <code>composer require type-lang/reader</code>
+    </a>
+    <a class="pkg" href="https://packagist.org/packages/type-lang/phpdoc" target="_blank" rel="noopener">
+      <h3>type-lang/phpdoc</h3>
+      <p>Parses <code>/** ... */</code> comments into a graph of description and tags.</p>
+      <code>composer require type-lang/phpdoc</code>
+    </a>
+  </div>
+
+  <div class="usage">
+    <pre><code><span class="c">// A string in, a tree out.</span>
+<span class="v">$parser</span> = <span class="k">new</span> TypeLang\Parser\TypeParser();
+<span class="v">$type</span>   = <span class="v">$parser</span>-&gt;parse(<span class="s">'array{ key: int }'</span>);
+
+<span class="c">// A tree in, a string out.</span>
+<span class="k">echo</span> <span class="k">new</span> TypeLang\Printer\NativeTypePrinter()-&gt;print(<span class="v">$type</span>);  <span class="c">// array</span>
+<span class="k">echo</span> <span class="k">new</span> TypeLang\Printer\PrettyTypePrinter()-&gt;print(<span class="v">$type</span>);  <span class="c">// array{ key: int }</span></code></pre>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-grid">
+    <div>
+      <p class="brand-foot"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.41.21A.5.5,0,0,0,17,0H12a.5.5,0,0,0-.47.34l-8,23A.5.5,0,0,0,4,24H9a.5.5,0,0,0,.47-.34l8-23A.5.5,0,0,0,17.41.21Z"/><circle cx="17.5" cy="21" r="3"/></svg> TypeLang</p>
+      <p>A declarative type language for PHP. MIT licensed.</p>
+    </div>
+    <ul>
+      <li><a href="overview.html">Documentation</a></li>
+      <li><a href="https://typelang.dev/static/spec.html" target="_blank" rel="noopener">Language specification</a></li>
+      <li><a href="https://typelang.dev/comparison.html" target="_blank" rel="noopener">Syntax comparison</a></li>
+    </ul>
+    <ul>
+      <li><a href="https://github.com/php-type-language" target="_blank" rel="noopener">GitHub organisation</a></li>
+      <li><a href="https://github.com/php-type-language/dev" target="_blank" rel="noopener">Development monorepo</a></li>
+      <li><a href="https://packagist.org/packages/type-lang/" target="_blank" rel="noopener">Packagist</a></li>
+    </ul>
+  </div>
+  <p class="colophon">Set in Roboto Condensed and IBM Plex Mono. The trees on this page are drawn by a JavaScript port of <code>type-lang/parser</code>; the PHP one is the reference.</p>
+</footer>
+
+<div class="tip" id="tip" hidden></div>
+
+<script src="js/typelang.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
