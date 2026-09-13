@@ -146,11 +146,12 @@ section { max-width: var(--max); margin: 0 auto; padding-block: clamp(64px, 10vw
 .br:hover, .br.on { color: var(--accent); }
 .br:hover b, .br.on b { font-weight: 700; }
 
-.status { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 8px 28px 12px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12.5px; }
-.msg { margin: 0; color: var(--muted); min-height: 1.6em; flex: 1; }
+.status { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 8px 28px 12px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12.5px; line-height: 1.6; }
+.msg { margin: 0; color: var(--muted); min-height: 1.6em; line-height: 1.6; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg:empty::before { content: "\00a0"; visibility: hidden; }
 .msg.err { color: var(--rust); }
 .msg .cls { color: var(--ink); }
-.meta { margin: 0; display: flex; gap: 18px; color: var(--muted); white-space: nowrap; }
+.meta { margin: 0; display: flex; gap: 18px; color: var(--muted); white-space: nowrap; line-height: 1.6; }
 
 .stage-hero { --fs: clamp(20px, 2.6vw, 34px); --rh: 26px; margin-top: 32px; }
 .stage-hero .stage-scroll { padding-top: 44px; min-height: 260px; }
