@@ -1,31 +1,187 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,200;1,200&display=swap');
+/* ────────────────── 1. Google Fonts ────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Roboto+Condensed:wght@300;400;700&display=swap');
 
-:root {
-    --wh-color-accent-substrate-bg: #222330 !important;
-    --wh-color-border-hover: #4f57a7 !important;
+/* ────────────────── 2. Variables & Theming ────────────────── */
+:root,
+html.theme-light {
+    --paper: #f2eee6;
+    --paper-2: #ebe6dc;
+    --ink: #17161a;
+    --ink-2: #3a383f;
+    --muted: #6f6a62;
+    --line: #d3cdc0;
+    --line-2: #bdb6a7;
+    --accent: #3f47a0;
+    --accent-tint: rgba(63, 71, 160, 0.08);
+
+    /* Writerside Theme Tokens (Light) */
+    --wh-color-background: var(--paper) !important;
+    --wh-color-content-bg: var(--paper) !important;
+    --wh-color-sidebar-bg: var(--paper-2) !important;
+    --wh-color-header-bg: var(--paper) !important;
+    --wh-color-footer-bg: var(--paper-2) !important;
+    --wh-color-text-main: var(--ink) !important;
+    --wh-color-text-secondary: var(--muted) !important;
+    --wh-color-border: var(--line) !important;
+    --wh-color-border-hover: var(--accent) !important;
+    --wh-color-primary-light-theme: var(--accent) !important;
+    --wh-color-link-light-theme: var(--accent) !important;
+    --wh-color-backlight-main: rgba(23, 22, 26, 0.04) !important;
+    --wh-color-accent-substrate-bg: var(--paper-2) !important;
     --wh-color-backlight-pale: none;
     --wh-color-backlight-pale-dark: none;
-    --app-link-color-dark: #848CD5 !important;
+    --app-link-color-light: var(--accent) !important;
 }
 
-h1, h2 {
-    font-family: "Roboto Condensed", "JetBrains Sans Bundled", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Droid Sans", "Helvetica Neue", Arial, sans-serif !important;
-    font-optical-sizing: auto !important;
-    font-weight: 200 !important;
-    font-style: normal !important;
+html.theme-dark {
+    --paper: #17161a;
+    --paper-2: #1f1e24;
+    --ink: #f2eee6;
+    --ink-2: #d3cdc0;
+    --muted: #9e988f;
+    --line: #33313a;
+    --line-2: #42404b;
+    --accent: #848cd5;
+    --accent-tint: rgba(132, 140, 213, 0.15);
+
+    /* Writerside Theme Tokens (Dark) */
+    --wh-color-background: var(--paper) !important;
+    --wh-color-content-bg: var(--paper) !important;
+    --wh-color-sidebar-bg: var(--paper-2) !important;
+    --wh-color-header-bg: var(--paper) !important;
+    --wh-color-footer-bg: var(--paper-2) !important;
+    --wh-color-text-main: var(--ink) !important;
+    --wh-color-text-secondary: var(--muted) !important;
+    --wh-color-border: var(--line) !important;
+    --wh-color-border-hover: var(--accent) !important;
+    --wh-color-primary-dark-theme: var(--accent) !important;
+    --wh-color-link-dark-theme: var(--accent) !important;
+    --wh-color-accent-substrate-bg: #222330 !important;
+    --wh-color-backlight-secondary-dark: #25242d !important;
+    --wh-color-white-t10: rgba(255, 255, 255, 0.08) !important;
+    --app-link-color-dark: var(--accent) !important;
 }
 
-h1 {
-    font-size: 48px !important;
+/* ────────────────── 3. Typography ────────────────── */
+body, .article, .wh-content, .app__nav {
+    font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, .article__title {
+    font-family: "Roboto Condensed", "Arial Narrow", system-ui, sans-serif !important;
+    letter-spacing: -0.01em !important;
+}
+
+h1, .article__title {
+    font-weight: 300 !important;
+    font-size: 42px !important;
+    line-height: 1.05 !important;
+}
+
+h2 {
+    font-weight: 400 !important;
+    font-size: 26px !important;
+    margin-top: 36px !important;
+}
+
+h3 {
+    font-weight: 400 !important;
+    font-size: 20px !important;
+}
+
+code, pre, .code-block, .code-collapse, .code-comparer__code-line {
+    font-family: "IBM Plex Mono", "JetBrains Mono", "SFMono-Regular", Consolas, monospace !important;
+}
+
+/* Selection */
+::selection {
+    background: var(--accent) !important;
+    color: var(--paper) !important;
+}
+
+/* ────────────────── 4. Layout & Header ────────────────── */
+.wh-header, .app__header {
+    border-bottom: 1px solid var(--line) !important;
 }
 
 .wh-header__product-logo {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
+}
+
+.app__sidebar {
+    border-right: 1px solid var(--line) !important;
+}
+
+.app__nav {
+    padding: 0 10px;
+}
+
+.app__footer, .wh-footer {
+    border-top: 1px solid var(--line) !important;
+}
+
+/* ────────────────── 5. Navigation & TOC ────────────────── */
+.app__toc li {
+    margin: 4px 0;
+}
+
+.toc-item {
+    border-radius: 3px !important;
+    font-size: 13.5px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.toc-item--highlighted {
+    background: none !important;
+}
+
+.toc-item--theme-light:hover {
+    background: var(--paper-2) !important;
+}
+
+.toc-item--theme-dark:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.toc-item--selected.toc-item--theme-dark {
+    cursor: default;
+    background-color: var(--wh-color-accent-substrate-bg) !important;
+    color: var(--accent) !important;
+}
+
+.toc-item--selected.toc-item--theme-light {
+    cursor: default;
+    background-color: var(--accent) !important;
+    color: #ffffff !important;
+}
+
+.toc--theme-dark {
+    background: none;
+}
+
+/* ────────────────── 6. Breadcrumbs & Prompts ────────────────── */
+.app__breadcrumbs {
+    width: auto;
+    max-width: 100%;
+    background: var(--paper-2) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 3px !important;
+    padding: 8px 14px !important;
+    font-family: "IBM Plex Mono", monospace !important;
+    font-size: 13px !important;
+}
+
+html.theme-dark .app__breadcrumbs {
+    background: var(--paper-2) !important;
+    border-color: var(--line) !important;
 }
 
 .article > .prompt {
-    max-width: auto !important;
+    max-width: none !important;
+    border-radius: 3px !important;
+    border: 1px solid var(--line) !important;
 }
 
 .prompt__wrapper {
@@ -40,117 +196,79 @@ h1 {
     flex: 1;
 }
 
-.app__nav {
-    padding: 0 10px;
-}
-
-.app__sidebar {
-    border: none;
-}
-
-.app__toc li {
-    margin: 6px 0;
-}
-
-.toc-item {
-    border-radius: 5px;
-}
-
-.toc-item--highlighted {
-    background: none !important;
-}
-
-.toc-item--theme-light:hover {
-    background: rgba(25, 25, 28, .05) !important;
-    background: var(--wh-color-backlight-main) !important;
-}
-
-.toc-item--theme-dark:hover {
-    background: hsla(0, 0%, 100%, .1) !important;
-    background: var(--wh-color-white-t10) !important;
-}
-
-.toc-item--selected.toc-item--theme-dark {
-    cursor: default;
-    background-color: #252528 !important;
-    background-color: var(--wh-color-backlight-secondary-dark) !important;
-}
-
-.toc-item--selected.toc-item--theme-light {
-    cursor: default;
-    background-color: #6b57ff !important;
-    background-color: var(--wh-color-primary-light-theme) !important;
-}
-
-.toc--theme-dark {
-    background: none;
-}
-
+/* ────────────────── 7. Code Blocks & Cards ────────────────── */
 .article__list + .code-block__wrapper,
 .article__list + .code-collapse__wrapper,
 p + .code-block__wrapper,
 p + .code-collapse__wrapper,
 .code-block__wrapper + .code-collapse__wrapper,
 .code-block__wrapper + .code-block__wrapper {
-    margin-top: 12px !important;
+    margin-top: 14px !important;
+}
+
+.code-block__wrapper,
+.code-collapse__wrapper {
+    border: 1px solid var(--line) !important;
+    border-radius: 3px !important;
+}
+
+.code-comparer__code-line {
+    border-radius: 2px !important;
 }
 
 .starting-page-card {
-    border-radius: 7px;
+    border-radius: 3px !important;
+    border: 1px solid var(--line) !important;
+    background: var(--paper) !important;
+    transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
-.app__breadcrumbs {
-    width: 706px;
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 7px;
-    padding: 10px 0 10px 16px;
-}
-
-html.theme-dark .app__breadcrumbs {
-    background: rgba(255, 255, 255, 0.05);
+.starting-page-card:hover {
+    border-color: var(--accent) !important;
 }
 
 .theme-dark .starting-page-card {
-    background: #1c2329 !important;
+    background: var(--paper-2) !important;
+    border-color: var(--line) !important;
 }
 
 .theme-dark .starting-page-card:hover {
-    background: #252f37 !important;
+    background: #25242d !important;
+    border-color: var(--accent) !important;
 }
 
 .article img {
-    border-radius: 7px;
+    border-radius: 3px !important;
+    border: 1px solid var(--line);
 }
 
+/* ────────────────── 8. Mermaid Diagrams ────────────────── */
 #mermaid .flowchart-link {
-    stroke: #4f57a7 !important;
+    stroke: var(--accent) !important;
 }
 
 #mermaid .node polygon,
 #mermaid .node rect {
-    fill: rgba(0, 0, 0, .05) !important;
-    stroke: transparent !important;
-    rx: 7px !important;
+    fill: var(--paper-2) !important;
+    stroke: var(--line) !important;
+    rx: 3px !important;
 }
 
 #mermaid .divider {
-    stroke: rgba(0, 0, 0, .1) !important;
+    stroke: var(--line) !important;
 }
 
 html.theme-dark #mermaid .node polygon,
 html.theme-dark #mermaid .node rect {
-    fill: rgba(255, 255, 255, .05) !important;
+    fill: var(--paper-2) !important;
+    stroke: var(--line) !important;
 }
 
 html.theme-dark #mermaid .node span {
-    color: #a9b7c6 !important;
+    color: var(--ink) !important;
     font-size: 95%;
 }
 
 html.theme-dark #mermaid .divider {
-    stroke: #1c2329 !important;
-}
-
-.code-comparer__code-line {
-    border-radius: 3px;
+    stroke: var(--line) !important;
 }
