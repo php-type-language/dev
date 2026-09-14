@@ -38,10 +38,9 @@ ShapeFields -> {
 }
   : ::T_BRACE_OPEN::
       (
-        (ShapeFieldsList() (::T_COMMA:: ShapeFieldsUnsealed())?)
-        | ShapeFieldsUnsealed()?
-      )
-      ::T_COMMA::?
+        (ShapeFieldsList() (::T_COMMA:: ShapeFieldsUnsealed())? ::T_COMMA::?)
+        | (ShapeFieldsUnsealed() ::T_COMMA::?)
+      )?
     ::T_BRACE_CLOSE:: @error("Syntax error, unexpected {token}, a shape must be closed with a brace \"}\"")
   ;
 
@@ -49,9 +48,6 @@ ShapeFieldsUnsealed
   : <T_ELLIPSIS> TemplateArguments()?
   ;
 
-// The fields are read the way they are written, the way PHPStan and Psalm read
-// them: explicit and implicit ones may stand together, and a key may be written
-// more than once. What a shape of that kind means is left to whoever reads it.
 ShapeFieldsList -> {
     return new Type\Shape\FieldsListNode($children, true, $offset);
 }

@@ -163,6 +163,26 @@ final class GenericTest extends SyntaxTestCase
             AST, $this->parseAndPrint('Type<out Some>'));
     }
 
+    public function testConditionSubjectIsNoHint(): void
+    {
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(Type)
+              Template\TemplateArgumentListNode
+                Template\TemplateArgumentNode
+                  TernaryExpressionNode
+                    Condition\EqualConditionNode
+                      NamedTypeNode
+                        Name(Some)
+                      NamedTypeNode
+                        Name(Any)
+                    NamedTypeNode
+                      Name(A)
+                    NamedTypeNode
+                      Name(B)
+            AST, $this->parseAndPrint('Type<Some is Any ? A : B>'));
+    }
+
     public function testMissingTemplateArgument(): void
     {
         $this->expectParsingException('an argument list must carry at least one argument');

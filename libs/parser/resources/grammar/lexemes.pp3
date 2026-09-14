@@ -17,6 +17,8 @@
 
 %fragment KEYWORD_END   (?!(?&IDENT_TAIL))
 
+%fragment LITERAL_END   (?!(?&IDENT_TAIL)|\\)
+
 //
 // Numbers
 //
@@ -64,11 +66,11 @@
 // A "not"
 %token  T_NOT                   not(?&KEYWORD_END)
 // A "true" or a "TRUE"
-%token  T_TRUE_LITERAL          (?i:true)(?&KEYWORD_END)
+%token  T_TRUE_LITERAL          (?i:true)(?&LITERAL_END)
 // A "false" or a "FALSE"
-%token  T_FALSE_LITERAL         (?i:false)(?&KEYWORD_END)
+%token  T_FALSE_LITERAL         (?i:false)(?&LITERAL_END)
 // A "null" or a "NULL"
-%token  T_NULL_LITERAL          (?i:null)(?&KEYWORD_END)
+%token  T_NULL_LITERAL          (?i:null)(?&LITERAL_END)
 
 // Identifiers
 

@@ -101,6 +101,17 @@ final class ShapeTest extends SyntaxTestCase
             AST, $this->parseAndPrint('array{a: int,}'));
     }
 
+    /**
+     * A trailing comma follows a field or an ellipsis, and an empty shape
+     * carries neither.
+     */
+    public function testTrailingCommaOfEmptyShapeIsNotAllowed(): void
+    {
+        $this->expectParsingException('a shape must be closed with a brace "}"');
+
+        $this->parse('array{,}');
+    }
+
     public function testOptionalKey(): void
     {
         self::assertSame(<<<'AST'

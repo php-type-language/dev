@@ -29,8 +29,13 @@ TemplateArgument -> {
 
     return new Type\Template\TemplateArgumentNode($children, null, $offset);
 }
-  : TemplateHintedArgument()
+  : TemplateHintedArgument() &TemplateArgumentEnd()
   | TemplateSimpleArgument()
+  ;
+
+TemplateArgumentEnd
+  : ::T_COMMA::
+  | ::T_ANGLE_BRACKET_CLOSE::
   ;
 
 TemplateSimpleArgument

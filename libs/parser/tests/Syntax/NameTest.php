@@ -165,10 +165,15 @@ final class NameTest extends SyntaxTestCase
         $this->parse('example\\name\\');
     }
 
-    public function testNamespaceCannotContainStandaloneKeyword(): void
+    /**
+     * A literal never goes on with a separator, so a reserved word in front
+     * of one opens a namespace, the way PHP lets a namespace begin with it.
+     */
+    public function testNamespaceMayBeginWithLiteralKeyword(): void
     {
-        $this->expectParsingException('unexpected "\\"');
-
-        $this->parse('true\\null');
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(true\null)
+            AST, $this->parseAndPrint('true\\null'));
     }
 }
