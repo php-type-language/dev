@@ -310,9 +310,14 @@ MUST NOT appear at the end.
 **Reserved words within names.** Every reserved word — `true`, `false`,
 `null`, `is` and `not` (see [Reserved Words](#sec-Reserved-Words)) — MAY
 appear as an {Identifier} segment of a {Name}. In a qualified position —
-following a separator or another segment — such a word is a name segment and
-nothing besides. This makes `\null` a reference to a type named `null`,
-distinct from the `null` literal.
+following a separator or another segment, or followed by a separator — such
+a word is a name segment and nothing besides. This makes `\null` a reference
+to a type named `null`, distinct from the `null` literal, and `null\Some` a
+name in a namespace that begins with the word, the way PHP lets one begin.
+
+```typescript
+null\Some
+```
 
 **Counter-example.** A name cannot end with a separator.
 
@@ -409,6 +414,15 @@ separation is what distinguishes a hint from the start of the argument's own
 type, and a {Comment} does not stand in its place (see
 [Ignored Tokens](#sec-Ignored-Tokens)). Each argument may carry at most one
 hint.
+
+A hint is read only where the argument ends right after the type it hints,
+at a `,` or at the closing `>`. Anywhere else the {NameToken} opens the
+argument's own type, so the `T` below is the subject of a
+[condition](#sec-Conditional-Types) rather than the hint of an `is`:
+
+```typescript
+Some<T is U ? A : B>
+```
 
 **Counter-example.** A hint is a single {NameToken}. A second one reads as
 the bound of a [template parameter](#sec-Callable-Types), and a parameter

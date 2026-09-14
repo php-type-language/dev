@@ -6,7 +6,7 @@ introduced in the previous section.
 
 ## Shape Types
 
-ShapeFields : `{` ShapeBody? `,`? `}`
+ShapeFields : `{` (ShapeBody `,`?)? `}`
 
 ShapeBody :
 
@@ -40,6 +40,19 @@ An empty shape body describes a container with no elements:
 
 ```typescript
 array{}
+```
+
+A trailing comma MAY follow the last field or the unsealed marker.
+
+**Counter-example.** An empty shape body carries nothing a trailing comma
+could follow.
+
+```typescript counter-example
+array{,}
+```
+
+```
+ParseException: Syntax error, unexpected ","
 ```
 
 ### Shape Fields

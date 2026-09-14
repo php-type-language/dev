@@ -234,9 +234,10 @@ The words `true`, `false` and `null` are _literal_ keywords (see
 [Literal Tokens](#sec-Literal-Tokens)), and `is` and `not` are the
 conditional operator keywords (see
 [Conditional Types](#sec-Conditional-Types)). Each is matched only when not
-immediately followed by a {NameContinue} character. The three literal
-keywords are matched case-insensitively, while `is` and `not` are matched
-the one way they are spelled.
+immediately followed by a {NameContinue} character, and a literal keyword
+only when not immediately followed by a namespace separator (`\`) either.
+The three literal keywords are matched case-insensitively, while `is` and
+`not` are matched the one way they are spelled.
 
 Wherever the source contains one of these words, it is scanned as the
 corresponding literal or operator token and MUST NOT be scanned as a
@@ -259,6 +260,14 @@ a type literally named `true`, distinct from the `true` literal:
 
 ```typescript
 \true
+```
+
+A literal never goes on with a separator, so a literal keyword standing
+directly in front of one is scanned as a {NameToken}, and the name it opens
+is a namespace beginning with that word, the way PHP lets one begin:
+
+```typescript
+null\Some
 ```
 
 The conditional operator keywords denote no type of their own, so nothing
@@ -296,7 +305,7 @@ recognises boolean, null, integer, floating-point and string literals.
 
 ### Boolean
 
-BoolLiteral :: one of `true` `false` [lookahead != NameContinue]
+BoolLiteral :: one of `true` `false` [lookahead != NameContinue] [lookahead != `\`]
 
 The case-insensitive words `true` and `false` denote the two values of the PHP
 `bool` type. Case is not significant: `true`, `TRUE` and `TruE` all denote the
@@ -304,7 +313,7 @@ same value.
 
 ### Null
 
-NullLiteral :: `null` [lookahead != NameContinue]
+NullLiteral :: `null` [lookahead != NameContinue] [lookahead != `\`]
 
 The case-insensitive word `null` denotes the PHP `null` value. As with
 booleans, case is not significant.
