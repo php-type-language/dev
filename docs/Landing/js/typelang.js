@@ -505,7 +505,6 @@
       const open = this.expect('T_BRACE_OPEN');
       const fields = [];
       let unsealed = null;
-      const seen = new Map();
       this.accept('T_COMMA'); // ShapeFields : `{` ShapeBody? `,`? `}`
 
       while (!this.is('T_BRACE_CLOSE')) {
@@ -522,12 +521,8 @@
           break;
         }
         const field = this.parseShapeField();
-        // Explicit and implicit fields may be written together: "array{int, key: string}"
-        if (field.kind === 'field') {
-          const key = field.keyText;
-          if (seen.has(key)) throw this.semantic(`Duplicate key ${quote(field.keyName)}`, field, 'ShapeFieldDuplicationException');
-          seen.set(key, true);
-        }
+        // Fields are read as written: explicit and implicit ones may stand
+        // together, and a key may repeat — "array{int, a: string, a: bool}"
         fields.push(field);
         if (!this.accept('T_COMMA')) {
           if (!this.is('T_BRACE_CLOSE')) throw this.unexpected('a shape must be closed with a brace "}"');

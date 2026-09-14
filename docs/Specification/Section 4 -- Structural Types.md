@@ -99,18 +99,6 @@ matter of the syntax and is left to whoever interprets the shape.
 array{ First, named: Second }
 ```
 
-**Duplicate explicit keys are not permitted.** No two explicit fields of the
-same shape may denote the same key, regardless of which of the five key forms
-each uses.
-
-```typescript counter-example
-array{ 1: int, 2: int, 1: string }
-```
-
-```
-ParseException: Duplicate key "1"
-```
-
 ### Optional Fields
 
 An explicit field MAY be marked _optional_ by placing a question mark before
