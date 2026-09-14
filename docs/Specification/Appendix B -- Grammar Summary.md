@@ -374,6 +374,6 @@ TemplateDefault : `=` Type
 
 CallableParameters : CallableParameter (`,` CallableParameter)\* `,`?
 
-CallableReturnType : `:` Type
+CallableReturnType : `:` UnaryType
 
 CallableParameter : Type `&`? `...`? Variable? `=`?

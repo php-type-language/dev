@@ -162,7 +162,7 @@ CallableType : Name TemplateParameters? `(` CallableParameters? `)` CallableRetu
 
 CallableParameters : CallableParameter (`,` CallableParameter)\* `,`?
 
-CallableReturnType : `:` Type
+CallableReturnType : `:` UnaryType
 
 A _callable type_ describes a function-like value. It is a
 [name](#sec-Names-and-Namespaces) — commonly `callable` or `Closure`, but any
@@ -181,6 +181,16 @@ callable(): void
 
 ```typescript
 Closure(int<0, max>, callable(?C): mixed): void
+```
+
+The return type is a {UnaryType}. A union, an intersection or a condition
+written behind it is not a part of the return type, but of the type the
+callable itself is an operand of, so `callable(): A|B` denotes a union of
+`callable(): A` and `B`. A return type of that kind MUST be grouped with
+parentheses.
+
+```typescript
+callable(): (A|B)
 ```
 
 ### Template Parameters

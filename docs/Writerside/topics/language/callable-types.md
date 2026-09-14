@@ -21,6 +21,35 @@ Each callable MAY have a list of parameters and/or a return type definition.
 > a(int<0, max>, c(?C): mixed): void
 > ```
 
+### Return Type
+
+The return type is written after a colon ("`:`"). A union ("`|`"), an
+intersection ("`&`") or a condition written behind it is not a part of the
+return type, but of the type the callable itself belongs to — the same way
+PHPStan, Psalm and Phan read it. To return such a type, group it with
+parentheses.
+
+<tabs>
+<tab title="Examples">
+
+> Callable type returning a union.
+> ```typescript
+> foo(): (A|B)
+> ```
+
+> A union of a callable type returning `A` and the `B` type.
+> ```typescript
+> foo(): A|B
+> ```
+> 
+> Which is the same as
+> ```typescript
+> (foo(): A)|B
+> ```
+
+</tab>
+</tabs>
+
 
 ### Named Parameters
 

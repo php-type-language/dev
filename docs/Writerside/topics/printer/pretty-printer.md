@@ -225,7 +225,7 @@ meaning, so the output stays readable while parsing back into the same tree.
   so it is not mistaken for a continuation of the outer type:
 
   ```php
-  echo $printer->print($parser->parse('callable(): A|B'));
+  echo $printer->print($parser->parse('callable(): (A|B)'));
   // callable(): (A | B)
   ```
 
