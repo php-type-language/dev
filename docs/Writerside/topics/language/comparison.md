@@ -601,9 +601,34 @@ Below is a list of simple, logical and other common types.
         <td></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/> <a anchor="ref-1-20-1">Line comments only <sup>1</sup></a></td>
         <td><icon src="ko.svg"/></td>
         <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="5">
+            <deflist collapsible="true">
+                <def title="1. PHPStan reads a line comment, and no other" id="ref-1-20-1">
+                    <p>
+                        A <code>//</code> comment is read inside a type written across
+                        several lines, where the end of the line closes it. A block
+                        comment, a <code>#</code> comment, or a <code>//</code> comment
+                        that no line break follows is a syntax error.
+                    </p>
+                    <code-block lang="typescript">
+                    // OK
+                    array{
+                        key: ValueType // comment
+                    }
+                    </code-block>
+                    <code-block lang="typescript">
+                    // Syntax Error
+                    int /* comment */ | string
+                    </code-block>
+                </def>
+            </deflist>
+        </td>
     </tr>
 </table>
 
@@ -1204,15 +1229,31 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-3-10-1">Analysed as 0 <sup>1</sup></a></td>
         <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-3-10-1">Value read as 0 <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-10-2">Value read as 0 <sup>2</sup></a></td>
     </tr>
     <tr>
         <td></td>
         <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. phpDocumentor reads the number as 0" id="ref-3-10-1">
+                <def title="1. PHPStan reads the number whole, and loses its base afterwards" id="ref-3-10-1">
+                    <p>
+                        The literal is kept as it was written, so nothing is lost while
+                        the type is read. The analysis that follows builds the value with
+                        a plain cast, though, and nothing of the base survives it.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    0b10101010
+                    </code-block>
+                    <code-block lang="php">
+                    // Analysed
+                    \PHPStan\dumpType($value);
+                    // Dumped type: 0
+                    </code-block>
+                </def>
+                <def title="2. phpDocumentor reads the number as 0" id="ref-3-10-2">
                     <p>
                         The number parses, but the value behind it is built with a plain
                         cast, so nothing of the base survives.
@@ -1248,15 +1289,31 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-3-11-1">Analysed as 0 <sup>1</sup></a></td>
         <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-3-11-1">Value read as 0 <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-11-2">Value read as 0 <sup>2</sup></a></td>
     </tr>
     <tr>
         <td></td>
         <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. phpDocumentor reads the number as 0" id="ref-3-11-1">
+                <def title="1. PHPStan reads the number whole, and loses its base afterwards" id="ref-3-11-1">
+                    <p>
+                        The literal is kept as it was written, so nothing is lost while
+                        the type is read. The analysis that follows builds the value with
+                        a plain cast, though, and nothing of the base survives it.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    0o42
+                    </code-block>
+                    <code-block lang="php">
+                    // Analysed
+                    \PHPStan\dumpType($value);
+                    // Dumped type: 0
+                    </code-block>
+                </def>
+                <def title="2. phpDocumentor reads the number as 0" id="ref-3-11-2">
                     <p>
                         The number parses, but the value behind it is built with a plain
                         cast, so nothing of the base survives.
@@ -1292,15 +1349,32 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-3-12-1">Analysed as decimal <sup>1</sup></a></td>
         <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-3-12-1">Value read as decimal <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-12-2">Value read as decimal <sup>2</sup></a></td>
     </tr>
     <tr>
         <td></td>
         <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. phpDocumentor reads the number as 42" id="ref-3-12-1">
+                <def title="1. PHPStan reads the number whole, and loses its base afterwards" id="ref-3-12-1">
+                    <p>
+                        The literal is kept as it was written, so nothing is lost while
+                        the type is read. The analysis that follows builds the value with
+                        a plain cast, though, and the leading zero is read as no base at
+                        all.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    042
+                    </code-block>
+                    <code-block lang="php">
+                    // Analysed
+                    \PHPStan\dumpType($value);
+                    // Dumped type: 42
+                    </code-block>
+                </def>
+                <def title="2. phpDocumentor reads the number as 42" id="ref-3-12-2">
                     <p>
                         The number parses, but the value behind it is built with a plain
                         cast, so nothing of the base survives.
@@ -1336,15 +1410,31 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-3-13-1">Analysed as 0 <sup>1</sup></a></td>
         <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-3-13-1">Value read as 0 <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-13-2">Value read as 0 <sup>2</sup></a></td>
     </tr>
     <tr>
         <td></td>
         <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. phpDocumentor reads the number as 0" id="ref-3-13-1">
+                <def title="1. PHPStan reads the number whole, and loses its base afterwards" id="ref-3-13-1">
+                    <p>
+                        The literal is kept as it was written, so nothing is lost while
+                        the type is read. The analysis that follows builds the value with
+                        a plain cast, though, and nothing of the base survives it.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    0xDEAD_BEEF
+                    </code-block>
+                    <code-block lang="php">
+                    // Analysed
+                    \PHPStan\dumpType($value);
+                    // Dumped type: 0
+                    </code-block>
+                </def>
+                <def title="2. phpDocumentor reads the number as 0" id="ref-3-13-2">
                     <p>
                         The number parses, but the value behind it is built with a plain
                         cast, so nothing of the base survives.
@@ -1526,15 +1616,31 @@ Below is a list of literal types/lexemes.
                 Not Supported
             </a>
         </td>
-        <td><icon src="ok.svg"/></td>
+        <td><icon src="ok.svg"/> <a anchor="ref-3-21-1">Analysed as 0 <sup>1</sup></a></td>
         <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/> <a anchor="ref-3-21-1">Value read as 0 <sup>1</sup></a></td>
+        <td><icon src="warning.svg"/> <a anchor="ref-3-21-2">Value read as 0 <sup>2</sup></a></td>
     </tr>
     <tr>
         <td></td>
         <td colspan="5">
             <deflist collapsible="true">
-                <def title="1. phpDocumentor reads the number as 0" id="ref-3-21-1">
+                <def title="1. PHPStan reads the number whole, and loses its base afterwards" id="ref-3-21-1">
+                    <p>
+                        The literal is kept as it was written, so nothing is lost while
+                        the type is read. The analysis that follows builds the value with
+                        a plain cast, though, and nothing of the base survives it.
+                    </p>
+                    <code-block lang="typescript">
+                    // Written
+                    0x42e2
+                    </code-block>
+                    <code-block lang="php">
+                    // Analysed
+                    \PHPStan\dumpType($value);
+                    // Dumped type: 0
+                    </code-block>
+                </def>
+                <def title="2. phpDocumentor reads the number as 0" id="ref-3-21-2">
                     <p>
                         The number parses, but the value behind it is built with a plain
                         cast, so nothing of the base survives.
@@ -1556,6 +1662,19 @@ Below is a list of literal types/lexemes.
 ## Shape Types
 
 Below is a list of grammar of shaped types.
+
+> The examples are written with the brace standing right behind the name,
+> since that is the one place PHPStan and phpDocumentor read a shape at. A
+> space in front of the brace is a syntax error to PHPStan, while
+> phpDocumentor reads the name alone and drops the fields after it. TypeLang
+> reads both spellings.
+>
+> ```typescript
+> // PHPStan: Unexpected token "{", expected TOKEN_END
+> // phpDocumentor: array
+> array {key: ValueType}
+> ```
+> {style="note"}
 
 <table style="both">
     <tr>
@@ -1610,7 +1729,7 @@ Below is a list of grammar of shaped types.
                 Explicit shape types
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 key: ValueType
             }
             </code-block>
@@ -1630,7 +1749,7 @@ Below is a list of grammar of shaped types.
                 Trailing comma in explicit shape types
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 key: ValueType,
             }
             </code-block>
@@ -1650,7 +1769,7 @@ Below is a list of grammar of shaped types.
                 Implicit shape types
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 ValueType
             }
             </code-block>
@@ -1671,12 +1790,12 @@ Below is a list of grammar of shaped types.
                 <def title="1. PHPStan reads a key-less field in an array or a list alone" id="ref-4-3-1">
                     <code-block lang="typescript">
                     // OK
-                    array { ValueType }
-                    list { ValueType }
+                    array{ ValueType }
+                    list{ ValueType }
                     </code-block>
                     <code-block lang="typescript">
                     // Syntax Error
-                    object { ValueType }
+                    object{ ValueType }
                     </code-block>
                 </def>
             </deflist>
@@ -1688,7 +1807,7 @@ Below is a list of grammar of shaped types.
                 Trailing comma in implicit shape types
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 ValueType,
             }
             </code-block>
@@ -1713,7 +1832,7 @@ Below is a list of grammar of shaped types.
                 Optional keys in explicit shape types
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 key?: ValueType
             }
             </code-block>
@@ -1733,7 +1852,7 @@ Below is a list of grammar of shaped types.
                 Empty (closed) shape types
             </a>
             <code-block lang="typescript">
-            array {}
+            array{}
             </code-block>
         </td>
     </tr>
@@ -1751,7 +1870,7 @@ Below is a list of grammar of shaped types.
                 Unsealed shape types
             </a>
             <code-block lang="typescript">
-            array { ... }
+            array{ ... }
             </code-block>
         </td>
     </tr>
@@ -1774,7 +1893,7 @@ Below is a list of grammar of shaped types.
                     </p>
                     <code-block lang="typescript">
                     // Written
-                    array { ... }
+                    array{ ... }
                     </code-block>
                     <code-block lang="typescript">
                     // Read
@@ -1790,7 +1909,7 @@ Below is a list of grammar of shaped types.
                 Explicit unsealed shape types
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 key: ValueType,
                 ...
             }
@@ -1811,7 +1930,7 @@ Below is a list of grammar of shaped types.
                 Implicit unsealed shape types
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 ValueType,
                 ...
             }
@@ -1832,7 +1951,7 @@ Below is a list of grammar of shaped types.
                 Typed unsealed shape types
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 ...&lt;array-key, ValueType>
             }
             </code-block>
@@ -1852,7 +1971,7 @@ Below is a list of grammar of shaped types.
                 Class constant shape keys
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 Path\To\ClassName::CONSTANT_NAME: string,
             }
             </code-block>
@@ -1872,7 +1991,7 @@ Below is a list of grammar of shaped types.
                 Constant mask shape keys
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 Path\To\ClassName::PREFIX_*: string,
                 JSON_*: string,
             }
@@ -1893,7 +2012,7 @@ Below is a list of grammar of shaped types.
                 String literal shape keys
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 'some key': ValueType,
             }
             </code-block>
@@ -1913,7 +2032,7 @@ Below is a list of grammar of shaped types.
                 Numeric shape keys
             </a>
             <code-block lang="typescript">
-            array {
+            array{
                 0: ValueType,
             }
             </code-block>
@@ -1933,7 +2052,7 @@ Below is a list of grammar of shaped types.
                 Shapes of an arbitrary type name
             </a>
             <code-block lang="typescript">
-            Custom\ObjectType {
+            Custom\ObjectType{
                 key: ValueType
             }
             </code-block>
