@@ -65,6 +65,65 @@ final class CallableTest extends SyntaxTestCase
             AST, $this->parseAndPrint('a(int<0, max>, c(?C): mixed): void'));
     }
 
+    /**
+     * A union behind the return type is not a part of it: {@code foo(): A|B}
+     * is a {@code (foo(): A)|B}, the way PHPStan, Psalm and Phan read it.
+     */
+    public function testUnionBehindReturnTypeIsAUnionOfTheCallable(): void
+    {
+        self::assertSame(<<<'AST'
+            UnionTypeNode
+              CallableTypeNode
+                Name(foo)
+                Callable\CallableParameterListNode
+                NamedTypeNode
+                  Name(A)
+              NamedTypeNode
+                Name(B)
+            AST, $this->parseAndPrint('foo(): A|B'));
+    }
+
+    public function testIntersectionBehindReturnTypeIsAnIntersectionOfTheCallable(): void
+    {
+        self::assertSame(<<<'AST'
+            IntersectionTypeNode
+              CallableTypeNode
+                Name(foo)
+                Callable\CallableParameterListNode
+                NamedTypeNode
+                  Name(A)
+              NamedTypeNode
+                Name(B)
+            AST, $this->parseAndPrint('foo(): A&B'));
+    }
+
+    public function testGroupedLogicalReturnType(): void
+    {
+        self::assertSame(<<<'AST'
+            CallableTypeNode
+              Name(foo)
+              Callable\CallableParameterListNode
+              UnionTypeNode
+                NamedTypeNode
+                  Name(A)
+                NamedTypeNode
+                  Name(B)
+            AST, $this->parseAndPrint('foo(): (A|B)'));
+    }
+
+    public function testNullableListReturnType(): void
+    {
+        self::assertSame(<<<'AST'
+            CallableTypeNode
+              Name(foo)
+              Callable\CallableParameterListNode
+              NullableTypeNode
+                TypesListNode
+                  NamedTypeNode
+                    Name(A)
+            AST, $this->parseAndPrint('foo(): ?A[]'));
+    }
+
     public function testNamedParameter(): void
     {
         self::assertSame(<<<'AST'

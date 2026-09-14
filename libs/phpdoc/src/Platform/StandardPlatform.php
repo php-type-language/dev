@@ -154,6 +154,6 @@ final class StandardPlatform implements PlatformInterface
     }
 
     public function __construct(
-        private readonly TypeParserInterface $typeParser = new TypeParser(),
+        private readonly TypeParser $typeParser = new TypeParser(),
     ) {}
 }

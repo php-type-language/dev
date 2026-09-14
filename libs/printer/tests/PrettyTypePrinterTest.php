@@ -209,6 +209,12 @@ final class PrettyTypePrinterTest extends TestCase
     public function testPrintCallableWrapsLogicalReturnType(): void
     {
         self::assertSame('callable(int): (int | string)', $this->printer()
+            ->print(self::parse('callable(int): (int|string)')));
+    }
+
+    public function testPrintUnionOfCallableKeepsReturnTypeUnwrapped(): void
+    {
+        self::assertSame('callable(int): int | string', $this->printer()
             ->print(self::parse('callable(int): int|string')));
     }
 
@@ -366,7 +372,7 @@ final class PrettyTypePrinterTest extends TestCase
     public function testPrintResetsStateBetweenCalls(): void
     {
         $printer = $this->printer();
-        $type = self::parse('callable(int): int|string');
+        $type = self::parse('callable(int): (int|string)');
 
         $first = $printer->print($type);
         $second = $printer->print($type);

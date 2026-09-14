@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Internal;
 
 use Phplrt\Contracts\Lexer\Channel;
+use Phplrt\Contracts\Lexer\Exception\LexerExceptionInterface;
+use Phplrt\Contracts\Lexer\Exception\RuntimeExceptionInterface;
 use Phplrt\Contracts\Lexer\TokenInterface;
 use Phplrt\Contracts\Position\PositionInterface;
 use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
@@ -14,7 +16,6 @@ use Phplrt\Parser\Analysis\Result\FailureResult;
 use Phplrt\Parser\Analysis\Result\PartialResult;
 use Phplrt\Parser\Analysis\Result\SuccessfulResult;
 use Phplrt\Parser\Exception\UnexpectedTokenException as GrammarUnexpectedTokenException;
-use Phplrt\Parser\Parser as ParserRuntime;
 use Phplrt\Position\PositionFactory;
 use TypeLang\Parser\Exception\InternalParseException;
 use TypeLang\Parser\Exception\ParserException;
@@ -24,15 +25,13 @@ use TypeLang\Parser\Exception\UnreadableSourceException;
 use TypeLang\Parser\Exception\UnrecognizedSyntaxException;
 use TypeLang\Parser\Exception\UnrecognizedTokenException;
 use TypeLang\Parser\Partial\FailureParsedResult;
-use TypeLang\Parser\Partial\ParsedResult;
 use TypeLang\Parser\Partial\PartialParsedResult;
 use TypeLang\Parser\Partial\SuccessfulParsedResult;
 use TypeLang\Parser\TypeParserFeatures;
-use TypeLang\Parser\Validation\CheckResult;
 use TypeLang\Parser\Validation\FailureCheckResult;
 use TypeLang\Parser\Validation\PartialCheckResult;
 use TypeLang\Parser\Validation\SuccessfulCheckResult;
-use TypeLang\Type\TypeNode;
+use TypeLang\Type\Node;
 
 /**
  * The compiled TypeLang grammar, bound to the set of features the source is
@@ -41,9 +40,9 @@ use TypeLang\Type\TypeNode;
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Parser
  *
- * @template-extends CompiledExecutor<TypeNode>
+ * @template T of Node = \TypeLang\Type\TypeNode
  *
- * @property-read ParserRuntime<TypeNode> $parser
+ * @template-extends CompiledExecutor<T>
  */
 final class Executor extends CompiledExecutor
 {
@@ -61,7 +60,21 @@ final class Executor extends CompiledExecutor
     }
 
     /**
+     * @param int<0, max> $rule
+     * @return self<Node>
+     */
+    public function for(int $rule): self
+    {
+        $self = clone $this;
+        $self->parser = $self->parser->withInitial($rule);
+
+        return $self;
+    }
+
+    /**
      * @return iterable<array-key, TokenInterface>
+     * @throws LexerExceptionInterface
+     * @throws RuntimeExceptionInterface
      */
     public function lex(ReadableInterface $source): iterable
     {
@@ -73,7 +86,7 @@ final class Executor extends CompiledExecutor
      *
      * @throws ParserException in case of the source is no type of its own
      */
-    public function parse(ReadableInterface $source): TypeNode
+    public function parse(ReadableInterface $source): Node
     {
         $result = $this->build($source);
 
@@ -81,6 +94,7 @@ final class Executor extends CompiledExecutor
             throw $this->createError($result, $source);
         }
 
+        /** @var T */
         return $result->value;
     }
 
@@ -88,27 +102,38 @@ final class Executor extends CompiledExecutor
      * Reads as much of the source as the grammar describes and returns the
      * type that part is written of.
      *
+     * @return SuccessfulParsedResult<T>|FailureParsedResult
      * @throws ParserException in case of an internal error occurs
+     * @throws SourceExceptionInterface
+     * @throws ParserExceptionInterface
      */
-    public function partial(ReadableInterface $source): ParsedResult
+    public function partial(ReadableInterface $source): SuccessfulParsedResult|FailureParsedResult
     {
+        /** @var FailureResult|PartialResult<T>|SuccessfulResult<T> $result */
         $result = $this->build($source);
 
-        if ($result instanceof PartialResult) {
-            return new PartialParsedResult(
-                type: $result->value,
+        if ($result instanceof FailureResult) {
+            return new FailureParsedResult(
+                message: $this->createError($result, $source)
+                    ->getMessage(),
+                position: $this->createPosition($source, $result->token->offset),
                 offset: $result->token->offset,
             );
         }
 
-        if ($result instanceof SuccessfulResult) {
-            return new SuccessfulParsedResult($result->value, $this->length($source));
+        /** @var T $value */
+        $value = $result->value;
+
+        if ($result instanceof PartialResult) {
+            return new PartialParsedResult(
+                type: $value,
+                offset: $result->token->offset,
+            );
         }
 
-        return new FailureParsedResult(
-            message: $this->createError($result, $source)->getMessage(),
-            position: $this->createPosition($source, $result->token->offset),
-            offset: $result->token->offset,
+        return new SuccessfulParsedResult(
+            type: $value,
+            offset: $this->length($source),
         );
     }
 
@@ -117,8 +142,9 @@ final class Executor extends CompiledExecutor
      * nothing of it.
      *
      * @throws ParserException in case of an internal error occurs
+     * @throws SourceExceptionInterface
      */
-    public function validate(ReadableInterface $source): CheckResult
+    public function validate(ReadableInterface $source): SuccessfulCheckResult|FailureCheckResult
     {
         $result = $this->check($source);
 
@@ -148,13 +174,11 @@ final class Executor extends CompiledExecutor
     /**
      * Reads the source into the type it describes.
      *
-     * @return SuccessfulResult<TypeNode>|FailureResult
+     * @return SuccessfulResult<T>|FailureResult
      * @throws ParserException in case of the grammar cannot be run
      */
     private function build(ReadableInterface $source): SuccessfulResult|FailureResult
     {
-        assert($this->parser instanceof ParserRuntime);
-
         try {
             return $this->parser->analyze($source, Mode::Tolerant);
         } catch (\Throwable $e) {
@@ -170,8 +194,6 @@ final class Executor extends CompiledExecutor
      */
     private function check(ReadableInterface $source): SuccessfulResult|FailureResult
     {
-        assert($this->parser instanceof ParserRuntime);
-
         try {
             return $this->parser->analyze($source, Mode::SyntaxCheck);
         } catch (\Throwable $e) {

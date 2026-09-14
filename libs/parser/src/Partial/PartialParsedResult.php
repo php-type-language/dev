@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Partial;
 
+use TypeLang\Type\Node;
+
 /**
  * A source the grammar has read only the beginning of.
  *
@@ -17,5 +19,9 @@ namespace TypeLang\Parser\Partial;
  *  echo \substr($source, $result->offset);
  *  // => " and more"
  * ```
+ *
+ * @template-covariant TResult of Node
+ *
+ * @template-extends SuccessfulParsedResult<TResult>
  */
 final class PartialParsedResult extends SuccessfulParsedResult {}
