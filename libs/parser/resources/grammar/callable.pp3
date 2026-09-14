@@ -63,5 +63,6 @@ CallableParameter -> {
   ;
 
 CallableReturnType
-  : ::T_COLON:: Type() @error("Syntax error, unexpected {token}, a callable must carry a type after the colon \":\"")
+  : ::T_COLON:: UnaryType()
+        @error("Syntax error, unexpected {token}, a callable must carry a type after the colon \":\"")
   ;

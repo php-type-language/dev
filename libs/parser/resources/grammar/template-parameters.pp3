@@ -18,7 +18,7 @@ TemplateParameters -> {
     ::T_ANGLE_BRACKET_CLOSE:: @error("Syntax error, unexpected {token}, a parameter list must be closed with a bracket \">\"")
   ;
 
-TemplateParameter -> {
+#TemplateParameter -> {
     $upper = $lower = $default = null;
 
     foreach (\array_slice($children, 1) as $limit) {

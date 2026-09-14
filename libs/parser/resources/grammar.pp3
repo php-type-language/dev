@@ -29,7 +29,7 @@
 // than by a level of their own: every type the reading goes through is read
 // through each of those levels, while an operator stands in only a few of
 // them.
-Type -> {
+#Type -> {
     if (\count($children) === 1) {
         return $children[0];
     }
