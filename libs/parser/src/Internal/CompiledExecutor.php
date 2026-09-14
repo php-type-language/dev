@@ -2782,24 +2782,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
     private static function reduceShapeFieldsList(\Phplrt\Parser\Context $ctx, mixed $children): mixed
     {
         // The variables below are declared by the compiler
-        $source = $ctx->source;
         $offset = $ctx->begin;
-
-        $indexed = [];
-
-        foreach ($children as $field) {
-            if (!$field instanceof Type\Shape\SimpleFieldNodeInterface) {
-                continue;
-            }
-
-            $key = $field->getIndex();
-
-            if (isset($indexed[$key])) {
-                throw Exception\ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated($key, $source, $field->offset);
-            }
-
-            $indexed[$key] = true;
-        }
 
         return new Type\Shape\FieldsListNode($children, true, $offset);
     }

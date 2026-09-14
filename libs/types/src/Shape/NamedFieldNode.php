@@ -20,7 +20,7 @@ use TypeLang\Type\TypeNode;
  *
  * @template-extends ExplicitFieldNode<Identifier>
  */
-final class NamedFieldNode extends ExplicitFieldNode implements SimpleFieldNodeInterface
+final class NamedFieldNode extends ExplicitFieldNode
 {
     /**
      * @param int<0, max> $offset
@@ -37,10 +37,5 @@ final class NamedFieldNode extends ExplicitFieldNode implements SimpleFieldNodeI
             isOptional: $isOptional,
             offset: $offset,
         );
-    }
-
-    public function getIndex(): string
-    {
-        return $this->key->toString();
     }
 }

@@ -196,11 +196,45 @@ final class ShapeTest extends SyntaxTestCase
             AST, $this->parseAndPrint('array{int, a: string}'));
     }
 
-    public function testDuplicateKeyIsNotAllowed(): void
+    /**
+     * A key may be written more than once, the way PHPStan and Psalm read
+     * such a shape: every field stays in the tree as it is written.
+     */
+    public function testDuplicateKeyIsAllowed(): void
     {
-        $this->expectParsingException('Duplicate key "a"');
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(array)
+              Shape\FieldsListNode(isSealed=true)
+                Shape\NamedFieldNode(isOptional=false)
+                  Identifier(a)
+                  NamedTypeNode
+                    Name(int)
+                Shape\NamedFieldNode(isOptional=false)
+                  Identifier(a)
+                  NamedTypeNode
+                    Name(string)
+            AST, $this->parseAndPrint('array{a: int, a: string}'));
+    }
 
-        $this->parse('array{a: int, a: string}');
+    /**
+     * Keys of different forms denoting the same key are written apart as well.
+     */
+    public function testDuplicateKeyOfDifferentFormsIsAllowed(): void
+    {
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(array)
+              Shape\FieldsListNode(isSealed=true)
+                Shape\ScalarFieldNode(isOptional=false)
+                  Literal\IntLiteralNode(1)
+                  NamedTypeNode
+                    Name(int)
+                Shape\ScalarFieldNode(isOptional=false)
+                  Literal\StringLiteralNode("1")
+                  NamedTypeNode
+                    Name(string)
+            AST, $this->parseAndPrint('array{1: int, "1": string}'));
     }
 
     public function testOptionalValueSyntaxIsNotAllowed(): void

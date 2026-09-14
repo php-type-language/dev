@@ -28,7 +28,7 @@ use TypeLang\Type\TypeNode;
  *
  * @template-extends ExplicitFieldNode<IntLiteralNode|StringLiteralNode>
  */
-final class ScalarFieldNode extends ExplicitFieldNode implements SimpleFieldNodeInterface
+final class ScalarFieldNode extends ExplicitFieldNode
 {
     /**
      * @param int<0, max> $offset
@@ -45,11 +45,5 @@ final class ScalarFieldNode extends ExplicitFieldNode implements SimpleFieldNode
             isOptional: $isOptional,
             offset: $offset,
         );
-    }
-
-    public function getIndex(): string
-    {
-        /** @var non-empty-string */
-        return (string) $this->key->value;
     }
 }

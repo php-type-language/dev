@@ -21,12 +21,6 @@ use TypeLang\Type\TypeNode;
  *  //    ^^^^^^          the mask of a global constant
  * ```
  *
- * Unlike a {@see SimpleFieldNodeInterface}, such a key comes down to no
- * string of its own.
- *
- * Whether two references name the same constant depends on what the names
- * are resolved against, and a written statement does not say that.
- *
  * @template-extends ExplicitFieldNode<TypeNode>
  */
 final class ComplexFieldNode extends ExplicitFieldNode

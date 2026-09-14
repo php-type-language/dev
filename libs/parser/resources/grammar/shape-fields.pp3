@@ -49,26 +49,10 @@ ShapeFieldsUnsealed
   : <T_ELLIPSIS> TemplateArguments()?
   ;
 
-// Explicit and implicit fields may be written together, the way PHPStan and
-// Psalm read an "array{int, key: string}": what the keys of the implicit ones
-// are is left to whoever reads the shape
+// The fields are read the way they are written, the way PHPStan and Psalm read
+// them: explicit and implicit ones may stand together, and a key may be written
+// more than once. What a shape of that kind means is left to whoever reads it.
 ShapeFieldsList -> {
-    $indexed = [];
-
-    foreach ($children as $field) {
-        if (!$field instanceof Type\Shape\SimpleFieldNodeInterface) {
-            continue;
-        }
-
-        $key = $field->getIndex();
-
-        if (isset($indexed[$key])) {
-            throw Exception\ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated($key, $source, $field->offset);
-        }
-
-        $indexed[$key] = true;
-    }
-
     return new Type\Shape\FieldsListNode($children, true, $offset);
 }
   : ShapeField() (

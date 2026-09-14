@@ -11,7 +11,6 @@ use TypeLang\Type\ClassConstNode;
 use TypeLang\Type\ConstMaskNode;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\Literal\StringLiteralNode;
 use TypeLang\Type\MaskNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
@@ -21,7 +20,6 @@ use TypeLang\Type\Shape\FieldNode;
 use TypeLang\Type\Shape\ImplicitFieldNode;
 use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Shape\ScalarFieldNode;
-use TypeLang\Type\Shape\SimpleFieldNodeInterface;
 use TypeLang\Type\Tests\TestCase;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\WildcardNode;
@@ -49,60 +47,6 @@ final class ExplicitFieldNodeTest extends TestCase
     }
 
     /**
-     * Only a key that comes down to a string of its own carries an index.
-     *
-     * @return iterable<non-empty-string, array{SimpleFieldNodeInterface, non-empty-string}>
-     */
-    public static function provideIndexedFields(): iterable
-    {
-        yield 'named' => [
-            new NamedFieldNode(new Identifier('key'), self::type()),
-            'key',
-        ];
-
-        yield 'named by a keyword' => [
-            new NamedFieldNode(new Identifier('true'), self::type()),
-            'true',
-        ];
-
-        yield 'string' => [
-            new ScalarFieldNode(new StringLiteralNode('some key'), self::type()),
-            'some key',
-        ];
-
-        yield 'string carrying a sequence' => [
-            new ScalarFieldNode(new StringLiteralNode("a\nb"), self::type()),
-            "a\nb",
-        ];
-
-        yield 'number' => [
-            new ScalarFieldNode(new IntLiteralNode(42), self::type()),
-            '42',
-        ];
-
-        yield 'zero' => [
-            new ScalarFieldNode(new IntLiteralNode(0), self::type()),
-            '0',
-        ];
-
-        yield 'negative number' => [
-            new ScalarFieldNode(new IntLiteralNode(-1), self::type()),
-            '-1',
-        ];
-    }
-
-
-    #[Test]
-    #[DataProvider('provideIndexedFields')]
-    public function indexMethodReturnsTheKeyAsAString(SimpleFieldNodeInterface $field, string $index): void
-    {
-        self::assertSame($index, $field->getIndex());
-    }
-
-    /**
-     * A key that has to be read to be understood offers no index: Whether two
-     * of them name the same constant is not written down.
-     *
      * @return iterable<non-empty-string, array{ComplexFieldNode}>
      */
     public static function provideComplexFields(): iterable
@@ -137,22 +81,9 @@ final class ExplicitFieldNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('provideComplexFields')]
-    public function complexFieldCarriesNoIndex(ComplexFieldNode $field): void
+    public function complexFieldIsKeyedByAType(ComplexFieldNode $field): void
     {
-        self::assertNotInstanceOf(SimpleFieldNodeInterface::class, $field);
         self::assertInstanceOf(TypeNode::class, $field->key);
-    }
-
-    #[Test]
-    public function indexIsRecalculatedAfterKeyMutation(): void
-    {
-        $field = new NamedFieldNode(new Identifier('key'), self::type());
-
-        self::assertSame('key', $field->getIndex());
-
-        $field->key = new Identifier('other');
-
-        self::assertSame('other', $field->getIndex(), 'The index must be derived from the current key');
     }
 
     #[Test]

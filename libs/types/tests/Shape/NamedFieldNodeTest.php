@@ -25,15 +25,6 @@ final class NamedFieldNodeTest extends TestCase
     }
 
     #[Test]
-    public function indexReturnsKeyValue(): void
-    {
-        $key = new Identifier('myField');
-        $node = new NamedFieldNode($key, new NamedTypeNode(Name::createFromString('int')));
-
-        self::assertSame('myField', $node->getIndex());
-    }
-
-    #[Test]
     public function optionalDefaultsToFalse(): void
     {
         $node = new NamedFieldNode(

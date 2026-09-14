@@ -14,10 +14,6 @@ use TypeLang\Type\TypeNode;
  * a scalar value and a {@see ComplexFieldNode} a reference that has to
  * be read.
  *
- * A key that comes down to a string of its own is marked by the
- * {@see SimpleFieldNodeInterface}. That string is what a shape tells its
- * keys apart by.
- *
  * @template TKey of mixed
  */
 abstract class ExplicitFieldNode extends FieldNode
