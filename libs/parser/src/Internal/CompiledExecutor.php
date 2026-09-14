@@ -2785,19 +2785,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $source = $ctx->source;
         $offset = $ctx->begin;
 
-        $explicit = false;
-        $implicit = false;
         $indexed = [];
 
         foreach ($children as $field) {
-            if (!$field instanceof Type\Shape\ExplicitFieldNode) {
-                $implicit = true;
-
-                continue;
-            }
-
-            $explicit = true;
-
             if (!$field instanceof Type\Shape\SimpleFieldNodeInterface) {
                 continue;
             }
@@ -2809,10 +2799,6 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             }
 
             $indexed[$key] = true;
-        }
-
-        if ($explicit && $implicit) {
-            throw Exception\ShapeKeysMixingException::becauseShapeKeysAreMixed($source, $offset);
         }
 
         return new Type\Shape\FieldsListNode($children, true, $offset);

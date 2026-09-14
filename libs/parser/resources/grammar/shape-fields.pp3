@@ -49,20 +49,13 @@ ShapeFieldsUnsealed
   : <T_ELLIPSIS> TemplateArguments()?
   ;
 
+// Explicit and implicit fields may be written together, the way PHPStan and
+// Psalm read an "array{int, key: string}": what the keys of the implicit ones
+// are is left to whoever reads the shape
 ShapeFieldsList -> {
-    $explicit = false;
-    $implicit = false;
     $indexed = [];
 
     foreach ($children as $field) {
-        if (!$field instanceof Type\Shape\ExplicitFieldNode) {
-            $implicit = true;
-
-            continue;
-        }
-
-        $explicit = true;
-
         if (!$field instanceof Type\Shape\SimpleFieldNodeInterface) {
             continue;
         }
@@ -74,10 +67,6 @@ ShapeFieldsList -> {
         }
 
         $indexed[$key] = true;
-    }
-
-    if ($explicit && $implicit) {
-        throw Exception\ShapeKeysMixingException::becauseShapeKeysAreMixed($source, $offset);
     }
 
     return new Type\Shape\FieldsListNode($children, true, $offset);

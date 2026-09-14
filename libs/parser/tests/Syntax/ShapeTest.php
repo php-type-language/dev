@@ -160,11 +160,40 @@ final class ShapeTest extends SyntaxTestCase
             AST, $this->parseAndPrint('App\\Domain\\User{userName: non-empty-string}'));
     }
 
-    public function testCannotMixExplicitAndImplicitKeys(): void
+    /**
+     * Explicit and implicit fields may be written together, the way PHPStan
+     * and Psalm read such a shape.
+     */
+    public function testExplicitAndImplicitKeysMayBeMixed(): void
     {
-        $this->expectParsingException('Cannot mix explicit and implicit shape keys');
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(array)
+              Shape\FieldsListNode(isSealed=true)
+                Shape\NamedFieldNode(isOptional=false)
+                  Identifier(named)
+                  NamedTypeNode
+                    Name(first)
+                Shape\ImplicitFieldNode(isOptional=false)
+                  NamedTypeNode
+                    Name(second)
+            AST, $this->parseAndPrint('array{named: first, second}'));
+    }
 
-        $this->parse('array{named: first, second}');
+    public function testImplicitKeyMayPrecedeExplicitOne(): void
+    {
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(array)
+              Shape\FieldsListNode(isSealed=true)
+                Shape\ImplicitFieldNode(isOptional=false)
+                  NamedTypeNode
+                    Name(int)
+                Shape\NamedFieldNode(isOptional=false)
+                  Identifier(a)
+                  NamedTypeNode
+                    Name(string)
+            AST, $this->parseAndPrint('array{int, a: string}'));
     }
 
     public function testDuplicateKeyIsNotAllowed(): void

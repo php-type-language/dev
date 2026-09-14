@@ -15,7 +15,6 @@ use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\Exception\ParsingException;
 use TypeLang\Parser\Exception\SemanticException;
 use TypeLang\Parser\Exception\ShapeFieldDuplicationException;
-use TypeLang\Parser\Exception\ShapeKeysMixingException;
 use TypeLang\Parser\Exception\VariadicWithDefaultException;
 use TypeLang\Parser\Tests\TestCase;
 
@@ -49,11 +48,6 @@ final class SemanticExceptionTest extends TestCase
         yield 'shape field duplication' => [
             static fn(ReadableInterface $source, int $offset): SemanticException
                 => ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated('key', $source, $offset),
-        ];
-
-        yield 'shape keys mixing' => [
-            static fn(ReadableInterface $source, int $offset): SemanticException
-                => ShapeKeysMixingException::becauseShapeKeysAreMixed($source, $offset),
         ];
 
         yield 'variadic with default' => [
@@ -147,14 +141,6 @@ final class SemanticExceptionTest extends TestCase
         $exception = ShapeFieldDuplicationException::becauseShapeFieldIsDuplicated('key', self::source());
 
         self::assertStringStartsWith('Duplicate key "key"', $exception->getMessage());
-    }
-
-    #[Test]
-    public function theMixedShapeKeysAreReported(): void
-    {
-        $exception = ShapeKeysMixingException::becauseShapeKeysAreMixed(self::source());
-
-        self::assertStringStartsWith('Cannot mix explicit and implicit shape keys', $exception->getMessage());
     }
 
     #[Test]
