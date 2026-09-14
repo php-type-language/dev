@@ -91,15 +91,12 @@ array{ First, Second }
 array{ Path\To\ClassName::CONSTANT_NAME: First, JSON_*: Second }
 ```
 
-**Mixed keys are not permitted.** A single shape MUST use either explicit
-keys throughout or implicit keys throughout.
+**Mixed keys are permitted.** A single shape MAY contain both explicit and
+implicit fields, in any order. What keys the implicit fields denote is not a
+matter of the syntax and is left to whoever interprets the shape.
 
-```typescript counter-example
-array{ named: First, Second }
-```
-
-```
-ParseException: Cannot mix explicit and implicit shape keys
+```typescript
+array{ First, named: Second }
 ```
 
 **Duplicate explicit keys are not permitted.** No two explicit fields of the

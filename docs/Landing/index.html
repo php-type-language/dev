@@ -135,7 +135,7 @@
         <p>Any name followed by parentheses is a callable type. Parameters may be named, variadic, by-reference or optional; the return type follows a colon.</p>
         <a href="https://typelang.dev/callable-types.html" target="_blank" rel="noopener">Callable types ↗</a>
       </li>
-      <li class="step" data-type="Closure<T of Order>(T): T is Paid ? Receipt : null">
+      <li class="step" data-type="Closure<T of Order>(T): (T is Paid ? Receipt : null)">
         <h3>Generic callables and conditions</h3>
         <p>Callables can declare template parameters with <code>of</code>, <code>super</code> and defaults. The return type here is conditional: <code>T is Paid ? Receipt : null</code>.</p>
         <a href="https://typelang.dev/conditional-types.html" target="_blank" rel="noopener">Conditional types ↗</a>
@@ -189,7 +189,7 @@
         <div class="stage-scroll">
           <div class="line">
             <pre class="mirror" aria-hidden="true"></pre>
-            <input class="src" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Type declaration" value="callable(Foo<in T>|array{id: int[]}, $this): 42 is int ? T&U : Foo['k']">
+            <input class="src" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Type declaration" value="callable(Foo<in T>|array{id: int[]}, $this): (42 is int ? T&U : Foo['k'])">
             <div class="hl" hidden></div>
           </div>
           <div class="tree"></div>

@@ -8,7 +8,7 @@ Each composite type can be rigidly described by a structural type called a
 ## Shape Keys
 
 A shape within the PHP language can be applied to any array or object
-and contain either **implicit** or **explicit** keys.
+and contain **implicit** keys, **explicit** keys, or both.
 
 <compare first-title="Explicit Keys" second-title="Implicit Keys">
 
@@ -29,8 +29,16 @@ array{
 ```
 </compare>
 
-> The use of **explicit** and **implicit** keys in one shape is **not allowed**
-{style="warning"}
+> **Explicit** and **implicit** keys may be used together in one shape, the
+> way PHPStan and Psalm allow it. What keys the implicit fields denote is left
+> to whoever reads the shape.
+> ```php
+> array{
+>     First,
+>     name: Second,
+> }
+> ```
+{style="note"}
 
 
 ### Implicit Keys
