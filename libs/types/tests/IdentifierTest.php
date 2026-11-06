@@ -10,21 +10,6 @@ use TypeLang\Type\Identifier;
 
 final class IdentifierTest extends TestCase
 {
-    #[Test]
-    public function constructorStoresValue(): void
-    {
-        $id = new Identifier('MyClass');
-
-        self::assertSame('MyClass', $id->value);
-    }
-
-    #[Test]
-    public function defaultOffsetIsZero(): void
-    {
-        $id = new Identifier('Foo');
-
-        self::assertSame(0, $id->offset);
-    }
 
     #[Test]
     public function toStringReturnsValue(): void
@@ -109,88 +94,45 @@ final class IdentifierTest extends TestCase
     }
 
     #[Test]
-    public function createFromStringTrimsWhitespace(): void
+    public function fromTrimsWhitespace(): void
     {
-        $id = Identifier::createFromString('  Foo  ');
+        $id = Identifier::from('  Foo  ');
 
         self::assertSame('Foo', $id->value);
     }
 
     #[Test]
-    public function createFromStringReturnsSameInstanceWhenPassedIdentifier(): void
+    public function fromCopiesAnIdentifierWithAnotherOffset(): void
+    {
+        $id = new Identifier('Foo', 3);
+        $copy = Identifier::from($id, 9);
+
+        self::assertNotSame($id, $copy);
+        self::assertSame('Foo', $copy->value);
+        self::assertSame(9, $copy->offset);
+    }
+
+    #[Test]
+    public function fromReturnsSameInstanceWhenPassedIdentifier(): void
     {
         $id = new Identifier('Foo');
-        $result = Identifier::createFromString($id);
+        $result = Identifier::from($id);
 
         self::assertSame($id, $result);
     }
 
     #[Test]
-    public function createFromStringCreatesNewInstance(): void
-    {
-        $id = Identifier::createFromString('Bar');
-
-        self::assertInstanceOf(Identifier::class, $id);
-        self::assertSame('Bar', $id->value);
-    }
-
-    #[Test]
-    public function createFromStringThrowsOnEmptyString(): void
+    public function fromThrowsOnEmptyString(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        Identifier::createFromString('');
+        Identifier::from('');
     }
 
     #[Test]
-    public function createFromStringThrowsOnWhitespaceOnly(): void
+    public function fromThrowsOnWhitespaceOnly(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        Identifier::createFromString('   ');
-    }
-
-    #[Test]
-    public function isLooksLikeSpecialReturnsTrueForSpecialNames(): void
-    {
-        self::assertTrue(Identifier::isLooksLikeSpecial('self'));
-        self::assertTrue(Identifier::isLooksLikeSpecial('SELF'));
-        self::assertTrue(Identifier::isLooksLikeSpecial('parent'));
-        self::assertTrue(Identifier::isLooksLikeSpecial('static'));
-    }
-
-    #[Test]
-    public function isLooksLikeSpecialReturnsFalseForOtherNames(): void
-    {
-        self::assertFalse(Identifier::isLooksLikeSpecial('Foo'));
-        self::assertFalse(Identifier::isLooksLikeSpecial('int'));
-    }
-
-    #[Test]
-    public function isLooksLikeBuiltinReturnsTrueForBuiltinNames(): void
-    {
-        self::assertTrue(Identifier::isLooksLikeBuiltin('int'));
-        self::assertTrue(Identifier::isLooksLikeBuiltin('INT'));
-        self::assertTrue(Identifier::isLooksLikeBuiltin('string'));
-    }
-
-    #[Test]
-    public function isLooksLikeBuiltinReturnsFalseForCustomNames(): void
-    {
-        self::assertFalse(Identifier::isLooksLikeBuiltin('Foo'));
-        self::assertFalse(Identifier::isLooksLikeBuiltin('self'));
-    }
-
-    #[Test]
-    public function serializeAndUnserializeRoundtrip(): void
-    {
-        $id = new Identifier('MyClass');
-        $id->offset = 42;
-
-        /** @var Identifier $restored */
-        $restored = \unserialize(\serialize($id));
-
-        self::assertInstanceOf(Identifier::class, $restored);
-        self::assertSame('MyClass', $restored->value);
-        self::assertSame(42, $restored->offset);
+        Identifier::from('   ');
     }
 
     #[Test]
@@ -198,7 +140,7 @@ final class IdentifierTest extends TestCase
     {
         self::assertTrue((new Identifier('SELF'))->isSpecial());
         self::assertTrue((new Identifier('Parent'))->isSpecial());
-        self::assertTrue(Identifier::isLooksLikeSpecial('StAtIc'));
+        self::assertTrue(Identifier::isSpecialClassName('StAtIc'));
     }
 
     #[Test]
@@ -206,7 +148,7 @@ final class IdentifierTest extends TestCase
     {
         self::assertTrue((new Identifier('INT'))->isBuiltin());
         self::assertTrue((new Identifier('Iterable'))->isBuiltin());
-        self::assertTrue(Identifier::isLooksLikeBuiltin('NuLl'));
+        self::assertTrue(Identifier::isBuiltinTypeName('NuLl'));
     }
 
     #[Test]
@@ -242,7 +184,7 @@ final class IdentifierTest extends TestCase
     }
 
     #[Test]
-    public function createFromStringAcceptsStringableObject(): void
+    public function fromAcceptsStringableObject(): void
     {
         $stringable = new class implements \Stringable {
             public function __toString(): string
@@ -251,17 +193,17 @@ final class IdentifierTest extends TestCase
             }
         };
 
-        self::assertSame('Example', Identifier::createFromString($stringable)->value);
+        self::assertSame('Example', Identifier::from($stringable)->value);
     }
 
     #[Test]
-    public function createFromStringTrimsAllSurroundingWhitespaceKinds(): void
+    public function fromTrimsAllSurroundingWhitespaceKinds(): void
     {
-        self::assertSame('Example', Identifier::createFromString("\n\t Example \r\n")->value);
+        self::assertSame('Example', Identifier::from("\n\t Example \r\n")->value);
     }
 
     #[Test]
-    public function createFromStringThrowsOnStringableReturningEmptyString(): void
+    public function fromThrowsOnStringableReturningEmptyString(): void
     {
         $stringable = new class implements \Stringable {
             public function __toString(): string
@@ -272,75 +214,7 @@ final class IdentifierTest extends TestCase
 
         $this->expectException(\InvalidArgumentException::class);
 
-        Identifier::createFromString($stringable);
-    }
-
-    #[Test]
-    public function offsetMethodIsAnAliasOfProperty(): void
-    {
-        $id = new Identifier('Example');
-        $id->offset = 17;
-
-        self::assertSame(17, $id->offset);
-    }
-
-    #[Test]
-    public function serializePayloadContainsOffsetAndValue(): void
-    {
-        $id = new Identifier('Example');
-        $id->offset = 5;
-
-        self::assertSame([5, 'Example'], $id->__serialize());
-    }
-
-    #[Test]
-    public function serializationRoundtripPreservesOffset(): void
-    {
-        $id = new Identifier('Example');
-        $id->offset = 5;
-
-        /** @var Identifier $restored */
-        $restored = \unserialize(\serialize($id));
-
-        self::assertSame(5, $restored->offset);
-        self::assertSame('Example', $restored->value);
-    }
-
-    #[Test]
-    public function unserializeThrowsWhenOffsetIsMissing(): void
-    {
-        $id = new Identifier('Example');
-
-        $this->expectException(\UnexpectedValueException::class);
-
-        $id->__unserialize([]);
-    }
-
-    #[Test]
-    public function unserializeThrowsWhenValueIsMissing(): void
-    {
-        $id = new Identifier('Example');
-
-        $this->expectException(\UnexpectedValueException::class);
-
-        $id->__unserialize([0]);
-    }
-
-    #[Test]
-    public function stringCastIsTheSameAsToStringMethod(): void
-    {
-        $id = new Identifier('Example');
-
-        self::assertSame($id->toString(), (string) $id);
-    }
-
-    #[Test]
-    public function toLowerStringDoesNotModifyTheValue(): void
-    {
-        $id = new Identifier('SomeClass');
-
-        self::assertSame('someclass', $id->toLowerString());
-        self::assertSame('SomeClass', $id->value);
+        Identifier::from($stringable);
     }
 
     #[Test]

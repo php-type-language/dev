@@ -10,11 +10,14 @@ use TypeLang\Type\TypeNode;
 /**
  * A single field of a shape.
  *
- * A shape is written either way throughout, never both at once.
+ * A field is written either with a key or with none, and a shape may mix
+ * the two. The keyless ones are numbered from zero in the order they are
+ * written in.
  *
  * ```
  *  array{name: string, id: int}  // fields written with a key
  *  array{string, int}            // fields written with none
+ *  array{string, id: int}        // both in one shape
  * ```
  */
 abstract class FieldNode extends Node

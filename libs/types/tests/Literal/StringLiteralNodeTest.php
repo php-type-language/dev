@@ -4,52 +4,40 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Tests\Literal;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Literal\StringLiteralNode;
 use TypeLang\Type\Tests\TestCase;
 
 final class StringLiteralNodeTest extends TestCase
 {
-    #[Test]
-    public function constructorStoresValueAndRaw(): void
+    /**
+     * @return iterable<non-empty-string, array{string, non-empty-string}>
+     */
+    public static function provideDerivedRawValues(): iterable
     {
-        $node = new StringLiteralNode('hello', '"hello"');
-
-        self::assertSame('hello', $node->value);
-        self::assertSame('"hello"', $node->raw);
+        yield 'plain' => ['example', '"example"'];
+        yield 'double quote' => ['a"b', '"a\"b"'];
+        yield 'single quote' => ["a'b", '"a\'b"'];
+        yield 'backslash' => ['a\\b', '"a\\\\b"'];
+        yield 'backslash before quote' => ['\\"', '"\\\\\\""'];
+        yield 'line break' => ["a\nb", '"a\nb"'];
+        yield 'empty' => ['', '""'];
     }
 
     #[Test]
-    public function constructorDerivesRawWhenOmitted(): void
+    #[DataProvider('provideDerivedRawValues')]
+    public function constructorEscapesTheDerivedRawValue(string $value, string $raw): void
     {
-        $node = new StringLiteralNode('hello');
+        $node = new StringLiteralNode($value);
 
-        self::assertSame('hello', $node->value);
-        self::assertSame("'hello'", $node->raw);
+        self::assertSame($raw, $node->raw);
+        self::assertSame($value, $node->value);
     }
 
     #[Test]
-    public function toStringReturnsRaw(): void
+    public function explicitRawValueIsKept(): void
     {
-        $node = new StringLiteralNode('hello', '"hello"');
-
-        self::assertSame('"hello"', (string) $node);
-    }
-
-    #[Test]
-    public function defaultOffsetIsZero(): void
-    {
-        $node = new StringLiteralNode('test');
-
-        self::assertSame(0, $node->offset);
-    }
-
-    #[Test]
-    public function constructorEscapesTheDerivedRawValue(): void
-    {
-        $node = new StringLiteralNode("a'b");
-
-        self::assertSame("'a\'b'", $node->raw);
-        self::assertSame("a'b", $node->value);
+        self::assertSame("'a'", (new StringLiteralNode('a', "'a'"))->raw);
     }
 }

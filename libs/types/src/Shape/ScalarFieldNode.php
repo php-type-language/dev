@@ -46,4 +46,22 @@ final class ScalarFieldNode extends ExplicitFieldNode
             offset: $offset,
         );
     }
+
+    /**
+     * Creates a field out of a number or a string key.
+     *
+     * @param int<0, max> $offset
+     */
+    public static function from(
+        int|string $key,
+        TypeNode $type,
+        bool $isOptional = false,
+        int $offset = 0,
+    ): self {
+        $key = \is_int($key)
+            ? new IntLiteralNode($key, offset: $offset)
+            : new StringLiteralNode($key, offset: $offset);
+
+        return new self($key, $type, $isOptional, $offset);
+    }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TypeLang\Type\Template;
 
 use TypeLang\Type\Identifier;
-use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -22,7 +21,7 @@ use TypeLang\Type\TypeNode;
  *  //                              ^^^^^   the default
  * ```
  */
-final class TemplateParameterNode extends Node
+final class TemplateParameterNode extends TemplateNode
 {
     /**
      * @param int<0, max> $offset
@@ -35,14 +34,14 @@ final class TemplateParameterNode extends Node
          *
          * The argument is to be a subtype of it.
          */
-        public ?TemplateBoundEdgeNode $upper = null,
+        public ?TemplateBoundNode $upper = null,
         /**
          * The end the parameter is bounded at from below, written with
          * a `super`.
          *
          * The argument is to be a supertype of it.
          */
-        public ?TemplateBoundEdgeNode $lower = null,
+        public ?TemplateBoundNode $lower = null,
         /**
          * The type the parameter takes when no argument is passed, written
          * with an `=`.
@@ -51,6 +50,14 @@ final class TemplateParameterNode extends Node
          * a default says what it becomes when left unsaid.
          */
         public ?TypeNode $default = null,
+        /**
+         * Declaration-site variance of the parameter, or {@see null} in case of
+         * it carries none, which makes the parameter invariant.
+         *
+         * What the word means is left to whoever reads the tree. A `covariant`
+         * or an `out` is an ordinary identifier as far as the tree goes.
+         */
+        public ?Identifier $variance = null,
         int $offset = 0,
     ) {
         parent::__construct($offset);

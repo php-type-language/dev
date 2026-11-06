@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Shape;
 
+use TypeLang\Type\Identifier;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -14,7 +15,7 @@ use TypeLang\Type\TypeNode;
  * a scalar value and a {@see ComplexFieldNode} a reference that has to
  * be read.
  *
- * @template TKey of mixed
+ * @template TKey of Identifier|TypeNode
  */
 abstract class ExplicitFieldNode extends FieldNode
 {
@@ -23,13 +24,11 @@ abstract class ExplicitFieldNode extends FieldNode
      */
     public function __construct(
         /**
-         * The key a field is written with. Its kind is what the children of
-         * this class differ in, so a child narrows it down to a node of its
-         * own.
+         * The key a field is written with.
          *
          * @var TKey
          */
-        public mixed $key,
+        public Identifier|TypeNode $key,
         TypeNode $type,
         bool $isOptional = false,
         int $offset = 0,

@@ -7,9 +7,12 @@ namespace TypeLang\Type;
 /**
  * Several types joined by an operator, like a union or an intersection.
  *
- * A statement of the same kind is flattened into its parent, so an
- * `A|(B|C)` holds the three of them side by side rather than a nested
- * statement.
+ * A type of the same kind is flattened into its parent: an `A|(B|C)`
+ * holds the three types side by side.
+ *
+ * The flattening and the minimum of two types are checked on creation
+ * only. Since PHP 8.4, property hooks make it possible to keep the checks
+ * permanent.
  *
  * @template T of TypeNode = TypeNode
  *
@@ -24,53 +27,49 @@ abstract class LogicalTypeNode extends TypeNode implements
     /**
      * @var list{T, T, ...<T>}
      */
-    public array $statements;
+    public array $types;
 
     /**
-     * A logical statement accepts an arbitrary number of types, so there is no
-     * place left for an offset argument: use the {@see $offset} property.
-     *
-     * @param iterable<mixed, T> $statements
+     * @param iterable<mixed, T> $types
      * @param int<0, max> $offset
-     * @throws \LogicException in case of less than two statements are passed
+     * @throws \InvalidArgumentException in case of less than two types are passed
      */
     public function __construct(
-        iterable $statements,
+        iterable $types,
         int $offset = 0,
     ) {
-        $statements = self::unwrap($statements);
+        $types = self::unwrap($types);
 
-        if (\count($statements) < 2) {
-            throw new \InvalidArgumentException('A logical statement must contain at least 2 elements');
+        if (\count($types) < 2) {
+            throw new \InvalidArgumentException('A logical type must contain at least 2 types');
         }
 
-        // @phpstan-ignore-next-line : List of types contains at least 2 elements
-        $this->statements = $statements;
+        // @phpstan-ignore-next-line : The list contains at least 2 types, checked above
+        $this->types = $types;
 
         parent::__construct($offset);
     }
 
     /**
-     * Flattens the statements of the same kind into a single list, so that
-     * a logical statement never contains a statement of its own kind.
+     * Flattens the types of the same kind into a single list.
      *
-     * @param iterable<TypeNode> $statements
+     * @param iterable<TypeNode> $types
      * @return list<TypeNode>
      */
-    private static function unwrap(iterable $statements): array
+    private static function unwrap(iterable $types): array
     {
         $result = [];
 
-        foreach ($statements as $statement) {
-            if ($statement instanceof static) {
-                foreach (self::unwrap($statement->statements) as $child) {
+        foreach ($types as $type) {
+            if ($type instanceof static) {
+                foreach (self::unwrap($type->types) as $child) {
                     $result[] = $child;
                 }
 
                 continue;
             }
 
-            $result[] = $statement;
+            $result[] = $type;
         }
 
         return $result;
@@ -84,7 +83,7 @@ abstract class LogicalTypeNode extends TypeNode implements
             );
         }
 
-        return isset($this->statements[$offset]);
+        return isset($this->types[$offset]);
     }
 
     public function offsetGet(mixed $offset): ?Node
@@ -95,7 +94,7 @@ abstract class LogicalTypeNode extends TypeNode implements
             );
         }
 
-        return $this->statements[$offset] ?? null;
+        return $this->types[$offset] ?? null;
     }
 
     public function offsetSet(mixed $offset, mixed $value): void
@@ -107,7 +106,7 @@ abstract class LogicalTypeNode extends TypeNode implements
         }
 
         if ($offset === null) {
-            $this->statements[] = $value;
+            $this->types[] = $value;
 
             return;
         }
@@ -118,11 +117,11 @@ abstract class LogicalTypeNode extends TypeNode implements
             );
         }
 
-        // @phpstan-ignore-next-line
-        $this->statements[$offset] = $value;
+        // @phpstan-ignore-next-line : An offset beyond the end leaves a gap, the list is renumbered below
+        $this->types[$offset] = $value;
 
-        if (!\array_is_list($this->statements)) {
-            $this->statements = \array_values($this->statements);
+        if (!\array_is_list($this->types)) {
+            $this->types = \array_values($this->types);
         }
     }
 
@@ -134,30 +133,30 @@ abstract class LogicalTypeNode extends TypeNode implements
             );
         }
 
-        // @phpstan-ignore-next-line : Temporary allow stmt removing
-        unset($this->statements[$offset]);
+        // @phpstan-ignore-next-line : Unset leaves a gap, the list is renumbered below
+        unset($this->types[$offset]);
 
-        if (\count($this->statements) < 2) {
-            throw new \InvalidArgumentException('A logical statement must contain at least 2 elements');
+        if (\count($this->types) < 2) {
+            throw new \InvalidArgumentException('A logical type must contain at least 2 types');
         }
 
-        if (!\array_is_list($this->statements)) {
-            // @phpstan-ignore-next-line : An array size already has been checked above
-            $this->statements = \array_values($this->statements);
+        if (!\array_is_list($this->types)) {
+            // @phpstan-ignore-next-line : The size is checked above, renumbering keeps it
+            $this->types = \array_values($this->types);
         }
     }
 
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->statements);
+        return new \ArrayIterator($this->types);
     }
 
     /**
-     * @return int<2, max> a logical statement must contain at least 2 elements
+     * @return int<2, max> a logical type must contain at least 2 types
      */
     public function count(): int
     {
         /** @var int<2, max> */
-        return \count($this->statements);
+        return \count($this->types);
     }
 }

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests\Shape;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Tests\TestCase;
@@ -14,47 +12,14 @@ use TypeLang\Type\Tests\TestCase;
 final class NamedFieldNodeTest extends TestCase
 {
     #[Test]
-    public function constructorStoresKeyAndType(): void
+    public function fromBuildsTheKeyFromAString(): void
     {
-        $key = new Identifier('name');
-        $type = new NamedTypeNode(Name::createFromString('string'));
-        $node = new NamedFieldNode($key, $type);
+        $type = NamedTypeNode::from('int');
+        $field = NamedFieldNode::from('name', $type, true, 3);
 
-        self::assertSame($key, $node->key);
-        self::assertSame($type, $node->type);
-    }
-
-    #[Test]
-    public function optionalDefaultsToFalse(): void
-    {
-        $node = new NamedFieldNode(
-            new Identifier('field'),
-            new NamedTypeNode(Name::createFromString('string')),
-        );
-
-        self::assertFalse($node->isOptional);
-    }
-
-    #[Test]
-    public function constructorStoresOptionalFlag(): void
-    {
-        $node = new NamedFieldNode(
-            new Identifier('field'),
-            new NamedTypeNode(Name::createFromString('string')),
-            true,
-        );
-
-        self::assertTrue($node->isOptional);
-    }
-
-    #[Test]
-    public function defaultOffsetIsZero(): void
-    {
-        $node = new NamedFieldNode(
-            new Identifier('f'),
-            new NamedTypeNode(Name::createFromString('int')),
-        );
-
-        self::assertSame(0, $node->offset);
+        self::assertSame('name', $field->key->value);
+        self::assertSame($type, $field->type);
+        self::assertTrue($field->isOptional);
+        self::assertSame(3, $field->offset);
     }
 }

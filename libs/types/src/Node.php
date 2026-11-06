@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type;
 
-abstract class Node implements NodeInterface
+abstract class Node
 {
     public function __construct(
         /**
@@ -12,11 +12,6 @@ abstract class Node implements NodeInterface
          *
          * @var int<0, max>
          */
-        public int $offset = 0,
+        public readonly int $offset = 0,
     ) {}
-
-    public function getOffset(): int
-    {
-        return $this->offset;
-    }
 }

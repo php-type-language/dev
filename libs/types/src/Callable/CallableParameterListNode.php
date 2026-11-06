@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Callable;
 
-use TypeLang\Type\NodeList;
+use TypeLang\Type\NodesListNode;
 
 /**
  * Parameters of a callable, in the order they are written in.
@@ -15,6 +15,6 @@ use TypeLang\Type\NodeList;
  *  //       two parameters
  * ```
  *
- * @template-extends NodeList<CallableParameterNode>
+ * @template-extends NodesListNode<CallableParameterNode>
  */
-final class CallableParameterListNode extends NodeList {}
+final class CallableParameterListNode extends NodesListNode {}

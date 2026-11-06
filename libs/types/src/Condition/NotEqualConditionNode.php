@@ -11,4 +11,4 @@ namespace TypeLang\Type\Condition;
  *  ($value is not int ? string : bool)
  * ```
  */
-final class NotEqualConditionNode extends Condition {}
+final class NotEqualConditionNode extends ConditionNode {}

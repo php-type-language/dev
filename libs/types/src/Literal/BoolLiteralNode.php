@@ -11,11 +11,9 @@ namespace TypeLang\Type\Literal;
  *  TruE  // value: true, raw: "TruE"
  * ```
  *
- * @template-extends ScalarNode<bool>
- *
- * @phpstan-consistent-constructor
+ * @template-extends ScalarLiteralNode<bool>
  */
-final class BoolLiteralNode extends ScalarNode
+final class BoolLiteralNode extends ScalarLiteralNode
 {
     /**
      * @param int<0, max> $offset

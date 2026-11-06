@@ -10,11 +10,9 @@ use TypeLang\Type\Literal\BoolLiteralNode;
 use TypeLang\Type\Literal\FloatLiteralNode;
 use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\Literal\LiteralNode;
-use TypeLang\Type\Literal\LiteralNodeInterface;
 use TypeLang\Type\Literal\NullLiteralNode;
 use TypeLang\Type\Literal\StringLiteralNode;
 use TypeLang\Type\Tests\TestCase;
-use TypeLang\Type\TypeNode;
 
 final class LiteralNodeTest extends TestCase
 {
@@ -33,34 +31,9 @@ final class LiteralNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('provideLiterals')]
-    public function valueMethodIsAnAliasOfValueProperty(LiteralNode $node, mixed $value, string $raw): void
-    {
-        self::assertSame($value, $node->value);
-        self::assertSame($value, $node->value);
-    }
-
-    #[Test]
-    #[DataProvider('provideLiterals')]
-    public function rawMethodIsAnAliasOfRawProperty(LiteralNode $node, mixed $value, string $raw): void
-    {
-        self::assertSame($raw, $node->raw);
-        self::assertSame($raw, $node->raw);
-    }
-
-    #[Test]
-    #[DataProvider('provideLiterals')]
     public function stringRepresentationIsTheRawValue(LiteralNode $node, mixed $value, string $raw): void
     {
         self::assertSame($raw, (string) $node);
-    }
-
-    #[Test]
-    #[DataProvider('provideLiterals')]
-    public function everyLiteralImplementsItsContracts(LiteralNode $node, mixed $value, string $raw): void
-    {
-        self::assertInstanceOf(LiteralNodeInterface::class, $node);
-        self::assertInstanceOf(TypeNode::class, $node);
-        self::assertInstanceOf(\Stringable::class, $node);
     }
 
     #[Test]
@@ -80,7 +53,7 @@ final class LiteralNodeTest extends TestCase
     #[Test]
     public function stringLiteralDerivesRawFromValue(): void
     {
-        self::assertSame("'example'", (new StringLiteralNode('example'))->raw);
+        self::assertSame('"example"', (new StringLiteralNode('example'))->raw);
     }
 
     #[Test]
@@ -109,15 +82,5 @@ final class LiteralNodeTest extends TestCase
 
         self::assertSame(0.5, $node->value);
         self::assertSame('0.5', $node->raw);
-    }
-
-    #[Test]
-    public function literalValueAndRawArePartOfTheNodeState(): void
-    {
-        $node = new StringLiteralNode('example');
-        $node->offset = 5;
-
-        self::assertSame(5, $node->offset);
-        self::assertSame('example', $node->value);
     }
 }

@@ -12,15 +12,12 @@ namespace TypeLang\Type\Literal;
  *  042      // value: 34,    raw: "042",     decimal: "34"
  * ```
  *
- * @template-extends ScalarNode<int>
- *
- * @phpstan-consistent-constructor
+ * @template-extends ScalarLiteralNode<int>
  */
-final class IntLiteralNode extends ScalarNode
+final class IntLiteralNode extends ScalarLiteralNode
 {
     /**
-     * The value written out in base 10, so that a number too large for the
-     * platform's `int` is still readable in full.
+     * The value written out in base 10.
      *
      * @var numeric-string
      */

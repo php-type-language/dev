@@ -4,34 +4,53 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Tests\Literal;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Literal\FloatLiteralNode;
 use TypeLang\Type\Tests\TestCase;
 
 final class FloatLiteralNodeTest extends TestCase
 {
-    #[Test]
-    public function constructorStoresValueAndRaw(): void
+    /**
+     * @return iterable<non-empty-string, array{float, non-empty-string}>
+     */
+    public static function provideDerivedRawValues(): iterable
     {
-        $node = new FloatLiteralNode(3.14, '3.14');
-
-        self::assertSame(3.14, $node->value);
-        self::assertSame('3.14', $node->raw);
+        yield 'whole number' => [1.0, '1.0'];
+        yield 'fraction' => [0.5, '0.5'];
+        yield 'negative' => [-1.5, '-1.5'];
+        yield 'exponent' => [1.0E+25, '1.0E+25'];
     }
 
     #[Test]
-    public function toStringReturnsRaw(): void
+    #[DataProvider('provideDerivedRawValues')]
+    public function derivedRawValueIsAFloatLiteral(float $value, string $raw): void
     {
-        $node = new FloatLiteralNode(3.14, '3.14');
+        self::assertSame($raw, (new FloatLiteralNode($value))->raw);
+    }
 
-        self::assertSame('3.14', (string) $node);
+    /**
+     * @return iterable<non-empty-string, array{float}>
+     */
+    public static function provideNonFiniteValues(): iterable
+    {
+        yield 'infinity' => [\INF];
+        yield 'negative infinity' => [-\INF];
+        yield 'not a number' => [\NAN];
     }
 
     #[Test]
-    public function defaultOffsetIsZero(): void
+    #[DataProvider('provideNonFiniteValues')]
+    public function nonFiniteValueRequiresRawText(float $value): void
     {
-        $node = new FloatLiteralNode(0.0);
+        $this->expectException(\InvalidArgumentException::class);
 
-        self::assertSame(0, $node->offset);
+        new FloatLiteralNode($value);
+    }
+
+    #[Test]
+    public function nonFiniteValueIsAllowedWithRawText(): void
+    {
+        self::assertSame('1e999', (new FloatLiteralNode(\INF, '1e999'))->raw);
     }
 }

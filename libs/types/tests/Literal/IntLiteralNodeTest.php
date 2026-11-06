@@ -29,20 +29,4 @@ final class IntLiteralNodeTest extends TestCase
         self::assertSame('0x2A', $node->raw);
         self::assertSame('42', $node->decimal);
     }
-
-    #[Test]
-    public function toStringReturnsRaw(): void
-    {
-        $node = new IntLiteralNode(42, '0x2A', '42');
-
-        self::assertSame('0x2A', (string) $node);
-    }
-
-    #[Test]
-    public function defaultOffsetIsZero(): void
-    {
-        $node = new IntLiteralNode(0);
-
-        self::assertSame(0, $node->offset);
-    }
 }

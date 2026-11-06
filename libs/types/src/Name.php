@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Type;
 
+use TypeLang\Type\Name\NamespaceName;
+
 /**
  * A name, that is, the identifiers ({@see Identifier}) it is written of and the
  * namespace separators between them.
@@ -16,41 +18,29 @@ namespace TypeLang\Type;
  *  ^         a fully qualified name begins in a separator
  * ```
  *
- * @phpstan-consistent-constructor
+ * @template TNonEmpty of bool
  *
  * @template-implements \IteratorAggregate<array-key, Identifier>
+ *
+ * @phpstan-consistent-constructor
  */
-final class Name extends Node implements \IteratorAggregate, \Countable, \Stringable
+abstract class Name extends Node implements \IteratorAggregate, \Countable, \Stringable
 {
     /**
      * @var non-empty-string
      */
     private const NAMESPACE_DELIMITER = '\\';
 
-    public const IS_FULLY_QUALIFIED_DEFAULT_VALUE = false;
-
     /**
      * The identifiers a name is written of.
      *
-     * @var non-empty-list<Identifier>
+     * @var (TNonEmpty is true ? non-empty-list<Identifier> : list<Identifier>)
      */
     public readonly array $parts;
 
     /**
-     * The first of the {@see $parts}, which is the one an alias is resolved by.
-     */
-    public readonly Identifier $first;
-
-    /**
-     * The last of the {@see $parts}, which is the short name of a class.
-     */
-    public readonly Identifier $last;
-
-    /**
      * @param iterable<array-key, Identifier> $parts
      * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of parts are empty or contain
-     *         something else than an {@see Identifier}
      */
     public function __construct(
         iterable $parts,
@@ -63,42 +53,36 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
          *  \Some\Any  // true
          * ```
          */
-        public readonly bool $isFullyQualified = self::IS_FULLY_QUALIFIED_DEFAULT_VALUE,
+        public readonly bool $isFullyQualified = false,
         int $offset = 0,
     ) {
-        $this->parts = self::formatNameParts($parts);
-
-        $this->first = $this->parts[0];
-        $this->last = $this->parts[\count($this->parts) - 1];
+        // @phpstan-ignore-next-line : A subclass decides whether the parts may be empty
+        $this->parts = self::normalizeParts($parts);
 
         parent::__construct($offset);
     }
 
     /**
-     * @param iterable<mixed, Identifier> $parts
-     * @return non-empty-list<Identifier>
+     * @param iterable<array-key, Identifier> $parts
+     * @return (TNonEmpty is true ? non-empty-list<Identifier> : list<Identifier>)
      */
-    private static function formatNameParts(iterable $parts): array
+    protected static function normalizeParts(iterable $parts): array
     {
-        $parts = match (true) {
+        /** @var (TNonEmpty is true ? non-empty-list<Identifier> : list<Identifier>) */
+        return match (true) {
             $parts instanceof \Traversable => \iterator_to_array($parts, false),
             \array_is_list($parts) => $parts,
             default => \array_values($parts),
         };
-
-        if ($parts === []) {
-            throw new \InvalidArgumentException('Name parts count can not be empty');
-        }
-
-        return $parts;
     }
 
     /**
-     * @param int<0, max> $offset
+     * Splits a name written as a string into its identifiers.
+     *
+     * @return list<Identifier>
      */
-    public static function createFromString(string|\Stringable $name, int $offset = 0): self
+    protected static function parseParts(string $name): array
     {
-        $name = (string) $name;
         $parts = [];
 
         foreach (\explode(self::NAMESPACE_DELIMITER, $name) as $segment) {
@@ -106,70 +90,22 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
                 continue;
             }
 
-            $parts[] = Identifier::createFromString($segment);
+            $parts[] = Identifier::from($segment);
         }
 
-        return new self($parts, \str_starts_with($name, self::NAMESPACE_DELIMITER), $offset);
+        return $parts;
     }
 
     /**
-     * Gets the first segment of a name
+     * Whether a name written as a string begins with the namespace separator.
      */
-    public function getFirstPart(): Identifier
+    protected static function parseFullyQualified(string $name): bool
     {
-        return $this->first;
+        return \str_starts_with($name, self::NAMESPACE_DELIMITER);
     }
 
     /**
-     * Gets the first segment of a name as a string
-     *
-     * @return non-empty-string
-     */
-    public function getFirstPartAsString(): string
-    {
-        return $this->first->toString();
-    }
-
-    /**
-     * Gets the first segment of a name as a lowercase string
-     *
-     * @return non-empty-lowercase-string
-     */
-    public function getFirstPartAsLowerString(): string
-    {
-        return $this->first->toLowerString();
-    }
-
-    /**
-     * Gets the last segment of a name
-     */
-    public function getLastPart(): Identifier
-    {
-        return $this->last;
-    }
-
-    /**
-     * Gets the last segment of a name as a string
-     *
-     * @return non-empty-string
-     */
-    public function getLastPartAsString(): string
-    {
-        return $this->last->toString();
-    }
-
-    /**
-     * Gets the last segment of a name as a lowercase string
-     *
-     * @return non-empty-lowercase-string
-     */
-    public function getLastPartAsLowerString(): string
-    {
-        return $this->last->toLowerString();
-    }
-
-    /**
-     * Gets whether the name is simple.
+     * Whether the name is made of a single identifier.
      */
     public function isSimple(): bool
     {
@@ -177,133 +113,104 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * Gets {@see true} in case of name contains special class reference.
+     * Whether the name is one of `self`, `parent` and `static`.
      */
     public function isSpecial(): bool
     {
-        return $this->isSimple() && $this->getFirstPart()->isSpecial();
+        return $this->isSimple() && $this->parts[0]->isSpecial();
     }
 
     /**
-     * Gets {@see true} in case of name contains builtin type name.
+     * Whether the name is the name of a builtin type.
      */
     public function isBuiltin(): bool
     {
-        return $this->isSimple() && $this->getFirstPart()->isBuiltin();
+        return $this->isSimple() && $this->parts[0]->isBuiltin();
     }
 
     /**
-     * Gets {@see true} in case of name is fully qualified.
+     * Gets a part of the name, which may be empty.
      *
-     * @deprecated use the {@see $isFullyQualified} property instead
-     */
-    public function isFullQualified(): bool
-    {
-        return $this->isFullyQualified;
-    }
-
-    /**
      * @param int<0, max> $offset
      * @param int<0, max>|null $length
      */
-    public function slice(int $offset = 0, ?int $length = null): self
+    public function slice(int $offset = 0, ?int $length = null): NamespaceName
     {
-        return new self(
+        return new NamespaceName(
             parts: \array_slice($this->parts, $offset, $length),
             isFullyQualified: $this->isFullyQualified,
+            offset: $this->offset,
         );
     }
 
     /**
-     * Appends the passed {@see Name} to the existing one at the end.
+     * Appends the passed name to the existing one at the end.
      *
-     * ```php
-     *  $name = new Name('Some\Any');
-     *
-     *  echo $name->withAdded(new Name('Test\Class'));
-     *  > "Some\Any\Test\Class"
-     *
-     *  echo $name->withAdded(new Name('Any\Class'));
-     *  > "Some\Any\Any\Class"
      * ```
+     *  Some\Any + Test\Class  // Some\Any\Test\Class
+     * ```
+     *
+     * @param Name<bool> $name
      */
-    public function withAdded(self $name): self
+    public function withAdded(self $name): static
     {
-        return new self([
+        // @phpstan-ignore-next-line : PHPStan does not infer the template of a new static
+        return new static([
             ...$this->parts,
             ...$name->parts,
-        ], $this->isFullyQualified);
+        ], $this->isFullyQualified, $this->offset);
     }
 
     /**
-     * Combines two names into one (in case the last one is an alias).
+     * Replaces the first part of the passed name with this one. It is the
+     * way a name written through an imported alias is expanded.
      *
-     * ```php
-     *   $name = new Name('Some\Any');
-     *
-     *   echo $name->mergeWith(new Name('Test\Class'));
-     *   > "Some\Any\Class"
-     *
-     *   echo $name->mergeWith(new Name('Any\Class'));
-     *   > "Some\Any\Class"
      * ```
-     *
-     * Real world use case:
-     * ```php
-     *  // use TypeLang\Parser\Node;
-     *  // echo Node::class;
-     *
-     *  $name = new Name('TypeLang\Parser\Node');
-     *  echo $name->mergeWith(new Name('Node'));
-     *
-     *  // > TypeLang\Parser\Node
-     * ```
-     *
-     * Or aliased:
-     * ```php
      *  // use TypeLang\Parser\Exception as Error;
-     *  // echo Error\SemanticException::class;
      *
-     *  $name = new Name('TypeLang\Parser\Exception');
-     *  echo $name->mergeWith(new Name('Error\SemanticException'));
-     *
-     *  // > TypeLang\Parser\Exception\SemanticException
+     *  TypeLang\Parser\Exception + Error\SemanticException
+     *  // TypeLang\Parser\Exception\SemanticException
      * ```
+     *
+     * @param Name<bool> $name
      */
-    public function mergeWith(self $name): self
+    public function expandAlias(self $name): static
     {
-        return new self([
+        // @phpstan-ignore-next-line : PHPStan does not infer the template of a new static
+        return new static([
             ...$this->parts,
             ...\array_slice($name->parts, 1),
-        ], $this->isFullyQualified);
+        ], $this->isFullyQualified, $this->offset);
     }
 
     /**
-     * Convert a name to a full qualified name instance.
+     * Gets the same name with the leading separator.
      */
-    public function toFullQualified(): self
+    public function toFullyQualified(): static
     {
         if ($this->isFullyQualified) {
             return clone $this;
         }
 
-        return new self($this->parts, true);
+        // @phpstan-ignore-next-line : PHPStan does not infer the template of a new static
+        return new static($this->parts, true, $this->offset);
     }
 
     /**
-     * Convert name to unqualified name instance.
+     * Gets the same name without the leading separator.
      */
-    public function toUnqualified(): self
+    public function toUnqualified(): static
     {
         if ($this->isFullyQualified) {
-            return new self($this->parts, false);
+            // @phpstan-ignore-next-line : PHPStan does not infer the template of a new static
+            return new static($this->parts, false, $this->offset);
         }
 
         return clone $this;
     }
 
     /**
-     * @return non-empty-list<Identifier>
+     * @return (TNonEmpty is true ? non-empty-list<Identifier> : list<Identifier>)
      */
     public function toArray(): array
     {
@@ -311,17 +218,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * @deprecated use the {@see $parts} property instead
-     *
-     * @return non-empty-list<Identifier>
-     */
-    public function getParts(): array
-    {
-        return $this->parts;
-    }
-
-    /**
-     * @return non-empty-list<non-empty-string>
+     * @return (TNonEmpty is true ? non-empty-list<non-empty-string> : list<non-empty-string>)
      */
     public function toArrayStrings(): array
     {
@@ -331,21 +228,12 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
             $result[] = $identifier->toString();
         }
 
+        /** @var (TNonEmpty is true ? non-empty-list<non-empty-string> : list<non-empty-string>) */
         return $result;
     }
 
     /**
-     * @deprecated use the {@see toArrayStrings()} method instead
-     *
-     * @return non-empty-list<non-empty-string>
-     */
-    public function getPartsAsString(): array
-    {
-        return $this->toArrayStrings();
-    }
-
-    /**
-     * @return non-empty-list<non-empty-string>
+     * @return (TNonEmpty is true ? non-empty-list<non-empty-lowercase-string> : list<non-empty-lowercase-string>)
      */
     public function toArrayLowercaseStrings(): array
     {
@@ -355,27 +243,28 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
             $result[] = $identifier->toLowerString();
         }
 
+        /** @var (TNonEmpty is true ? non-empty-list<non-empty-lowercase-string> : list<non-empty-lowercase-string>) */
         return $result;
     }
 
     /**
-     * Returns a name as a string.
+     * Returns a name as it is written, with the leading separator if it has one.
      *
-     * @return non-empty-string
+     * @return (TNonEmpty is true ? non-empty-string : string)
      */
     public function toString(): string
     {
         if ($this->isFullyQualified) {
-            return $this->toFullQualifiedString();
+            return $this->toFullyQualifiedString();
         }
 
         return $this->toUnqualifiedString();
     }
 
     /**
-     * Returns a name as an unqualified (without the initial `\\`) string.
+     * Returns a name without the leading separator.
      *
-     * @return non-empty-string
+     * @return (TNonEmpty is true ? non-empty-string : string)
      */
     public function toUnqualifiedString(): string
     {
@@ -383,20 +272,17 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * Returns a name as full qualified (with the initial `\\`) string.
+     * Returns a name with the leading separator.
      *
      * @return non-empty-string
      */
-    public function toFullQualifiedString(): string
+    public function toFullyQualifiedString(): string
     {
-        return self::NAMESPACE_DELIMITER
-            . \implode(self::NAMESPACE_DELIMITER, $this->toArrayStrings());
+        return self::NAMESPACE_DELIMITER . $this->toUnqualifiedString();
     }
 
     /**
-     * Returns lowercased name as string.
-     *
-     * @return non-empty-lowercase-string
+     * @return (TNonEmpty is true ? non-empty-lowercase-string : lowercase-string)
      */
     public function toLowerString(): string
     {
@@ -404,9 +290,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * Returns a lowercased name as unqualified (without the initial `\\`) string.
-     *
-     * @return non-empty-string
+     * @return (TNonEmpty is true ? non-empty-lowercase-string : lowercase-string)
      */
     public function toUnqualifiedLowerString(): string
     {
@@ -414,13 +298,11 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * Returns a lowercased name as full qualified (with the initial `\\`) string.
-     *
-     * @return non-empty-string
+     * @return non-empty-lowercase-string
      */
-    public function toFullQualifiedLowerString(): string
+    public function toFullyQualifiedLowerString(): string
     {
-        return \strtolower($this->toFullQualifiedString());
+        return \strtolower($this->toFullyQualifiedString());
     }
 
     /**
@@ -432,7 +314,7 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * @return int<1, max>
+     * @return (TNonEmpty is true ? int<1, max> : int<0, max>)
      */
     public function count(): int
     {
@@ -440,35 +322,10 @@ final class Name extends Node implements \IteratorAggregate, \Countable, \String
     }
 
     /**
-     * @return non-empty-string
+     * @return (TNonEmpty is true ? non-empty-string : string)
      */
     public function __toString(): string
     {
         return $this->toString();
-    }
-
-    /**
-     * @return array{non-empty-list<Identifier>, int<0, max>, bool}
-     */
-    public function __serialize(): array
-    {
-        return [$this->parts, $this->offset, $this->isFullyQualified];
-    }
-
-    /**
-     * @param array{0?: non-empty-list<Identifier>, 1?: int<0, max>, 2?: bool} $data
-     * @throws \UnexpectedValueException
-     */
-    public function __unserialize(array $data): void
-    {
-        $this->parts = $parts = $data[0] ?? throw new \UnexpectedValueException(
-            message: 'Unable to unserialize Name segments',
-        );
-
-        $this->first = \reset($parts);
-        $this->last = \end($parts);
-
-        $this->offset = $data[1] ?? 0;
-        $this->isFullyQualified = $data[2] ?? self::IS_FULLY_QUALIFIED_DEFAULT_VALUE;
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type;
 
 /**
- * A type (monad) built around another one.
+ * A type built around another one.
  *
  * ```
  *  ?Some\Any

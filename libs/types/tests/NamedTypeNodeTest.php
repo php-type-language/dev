@@ -5,64 +5,36 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Name;
+use TypeLang\Type\Name\TypeName;
 use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\Shape\FieldsListNode;
-use TypeLang\Type\Template\TemplateArgumentListNode;
-use TypeLang\Type\Template\TemplateArgumentNode;
 
 final class NamedTypeNodeTest extends TestCase
 {
     #[Test]
-    public function constructorStoresName(): void
+    public function fromBuildsTheNameFromAString(): void
     {
-        $name = Name::createFromString('int');
-        $node = new NamedTypeNode($name);
+        $node = NamedTypeNode::from('\Type\Name', 7);
 
-        self::assertSame($name, $node->name);
-    }
-
-    #[Test]
-    public function templateArgumentsDefaultToNull(): void
-    {
-        $node = new NamedTypeNode(Name::createFromString('array'));
-
+        self::assertSame('\Type\Name', $node->name->toString());
+        self::assertSame(7, $node->offset);
+        self::assertSame(7, $node->name->offset);
         self::assertNull($node->arguments);
-    }
-
-    #[Test]
-    public function fieldsDefaultToNull(): void
-    {
-        $node = new NamedTypeNode(Name::createFromString('array'));
-
         self::assertNull($node->fields);
     }
 
     #[Test]
-    public function constructorStoresTemplateArguments(): void
+    public function fromKeepsAnExistingName(): void
     {
-        $args = new TemplateArgumentListNode([
-            new TemplateArgumentNode(new NamedTypeNode(Name::createFromString('int'))),
-        ]);
-        $node = new NamedTypeNode(Name::createFromString('array'), $args);
+        $name = TypeName::from('Example');
 
-        self::assertSame($args, $node->arguments);
+        self::assertSame($name, NamedTypeNode::from($name)->name);
     }
 
     #[Test]
-    public function constructorStoresFields(): void
+    public function fromRejectsAnEmptyName(): void
     {
-        $fields = new FieldsListNode();
-        $node = new NamedTypeNode(Name::createFromString('array'), null, $fields);
+        $this->expectException(\InvalidArgumentException::class);
 
-        self::assertSame($fields, $node->fields);
-    }
-
-    #[Test]
-    public function defaultOffsetIsZero(): void
-    {
-        $node = new NamedTypeNode(Name::createFromString('string'));
-
-        self::assertSame(0, $node->offset);
+        NamedTypeNode::from('');
     }
 }

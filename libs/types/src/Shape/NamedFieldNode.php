@@ -38,4 +38,18 @@ final class NamedFieldNode extends ExplicitFieldNode
             offset: $offset,
         );
     }
+
+    /**
+     * Creates a field out of a key written as a bare word.
+     *
+     * @param int<0, max> $offset
+     */
+    public static function from(
+        string|\Stringable $key,
+        TypeNode $type,
+        bool $isOptional = false,
+        int $offset = 0,
+    ): self {
+        return new self(Identifier::from($key, $offset), $type, $isOptional, $offset);
+    }
 }
