@@ -46,9 +46,13 @@ final class MaskNode extends NodesListNode implements \Stringable
     #[\Override]
     public function offsetUnset(mixed $offset): void
     {
+        $previous = $this->items;
+
         parent::offsetUnset($offset);
 
         if (\count($this->items) < 1) {
+            $this->items = $previous;
+
             throw new \UnderflowException('A mask must have at least one item');
         }
     }

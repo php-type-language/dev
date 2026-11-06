@@ -263,4 +263,127 @@ final class LogicalTypeNodeTest extends TestCase
         self::assertCount(1000, $node);
         self::assertSame($types, $node->types);
     }
+
+    /**
+     * @return iterable<non-empty-string, array{mixed}>
+     */
+    public static function provideInvalidOffsets(): iterable
+    {
+        yield 'negative int' => [-1];
+        yield 'numeric string' => ['0'];
+        yield 'float' => [1.5];
+        yield 'null' => [null];
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function arrayAccessReadsTypes(string $class): void
+    {
+        $a = $this->type('A');
+        $node = new $class([$a, $this->type('B')]);
+
+        self::assertTrue(isset($node[0]));
+        self::assertFalse(isset($node[2]));
+        self::assertSame($a, $node[0]);
+        self::assertNull($node[2]);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function arrayAccessReplacesAndAppendsTypes(string $class): void
+    {
+        $a = $this->type('A');
+        $b = $this->type('B');
+        $c = $this->type('C');
+        $d = $this->type('D');
+        $node = new $class([$a, $b]);
+
+        $node[0] = $c;
+        $node[] = $d;
+
+        self::assertSame([$c, $b, $d], $node->types);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function arrayAccessSetBeyondTheEndKeepsTheListSequential(string $class): void
+    {
+        $a = $this->type('A');
+        $b = $this->type('B');
+        $c = $this->type('C');
+        $node = new $class([$a, $b]);
+
+        $node[7] = $c;
+
+        self::assertSame([$a, $b, $c], $node->types);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function arrayAccessUnsetReindexesTheTypes(string $class): void
+    {
+        $a = $this->type('A');
+        $c = $this->type('C');
+        $node = new $class([$a, $this->type('B'), $c]);
+
+        unset($node[1]);
+
+        self::assertSame([$a, $c], $node->types);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function arrayAccessUnsetBelowTwoTypesIsRejected(string $class): void
+    {
+        $node = new $class([$this->type('A'), $this->type('B')]);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        unset($node[0]);
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function arrayAccessRejectsNonNodeValue(string $class): void
+    {
+        $node = new $class([$this->type('A'), $this->type('B')]);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $node->offsetSet(null, 'not a node');
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function arrayAccessRejectsInvalidOffsets(string $class): void
+    {
+        $node = new $class([$this->type('A'), $this->type('B')]);
+
+        foreach (self::provideInvalidOffsets() as [$offset]) {
+            foreach (['offsetExists', 'offsetGet', 'offsetUnset'] as $method) {
+                try {
+                    $node->$method($offset);
+                } catch (\InvalidArgumentException) {
+                    continue;
+                }
+
+                self::fail(\sprintf('%s() accepted %s', $method, \var_export($offset, true)));
+            }
+        }
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $node->offsetSet(-1, $this->type('C'));
+    }
+
+    #[Test]
+    #[DataProvider('provideLogicalTypes')]
+    public function iteratorYieldsTheTypesInOrder(string $class): void
+    {
+        $a = $this->type('A');
+        $b = $this->type('B');
+        $node = new $class([$a, $b]);
+
+        self::assertSame([$a, $b], \iterator_to_array($node));
+    }
 }

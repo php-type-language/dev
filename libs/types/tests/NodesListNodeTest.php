@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\Node;
@@ -238,5 +239,71 @@ final class NodesListNodeTest extends TestCase
         self::assertCount(0, $this->list());
         self::assertCount(1, $this->list([$this->node('A')]));
         self::assertCount(2, $this->list([$this->node('A'), $this->node('B')]));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{mixed}>
+     */
+    public static function provideInvalidOffsets(): iterable
+    {
+        yield 'negative int' => [-1];
+        yield 'numeric string' => ['0'];
+        yield 'float' => [1.5];
+        yield 'null' => [null];
+    }
+
+    #[Test]
+    #[DataProvider('provideInvalidOffsets')]
+    public function offsetExistsRejectsInvalidOffset(mixed $offset): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->list([$this->node()])->offsetExists($offset);
+    }
+
+    #[Test]
+    #[DataProvider('provideInvalidOffsets')]
+    public function offsetGetRejectsInvalidOffset(mixed $offset): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->list([$this->node()])->offsetGet($offset);
+    }
+
+    #[Test]
+    #[DataProvider('provideInvalidOffsets')]
+    public function offsetUnsetRejectsInvalidOffset(mixed $offset): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->list([$this->node()])->offsetUnset($offset);
+    }
+
+    #[Test]
+    public function offsetSetRejectsInvalidOffset(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->list()->offsetSet(-1, $this->node());
+    }
+
+    #[Test]
+    public function offsetSetRejectsNonNodeValue(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->list()->offsetSet(null, 'not a node');
+    }
+
+    #[Test]
+    public function offsetSetBeyondTheEndAppendsAndKeepsTheListSequential(): void
+    {
+        $a = $this->node('A');
+        $b = $this->node('B');
+        $list = $this->list([$a]);
+
+        $list[5] = $b;
+
+        self::assertSame([$a, $b], $list->items);
     }
 }

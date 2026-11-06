@@ -492,4 +492,21 @@ final class TypeNameTest extends TestCase
         self::assertSame(7, $name->withAdded(TypeName::from('Baz'))->offset);
         self::assertSame(7, $name->expandAlias(TypeName::from('Alias\Baz'))->offset);
     }
+
+    #[Test]
+    public function toArrayReturnsTheIdentifiers(): void
+    {
+        $name = TypeName::from('Foo\Bar');
+
+        self::assertSame($name->parts, $name->toArray());
+        self::assertSame(['Foo', 'Bar'], $name->toArrayStrings());
+    }
+
+    #[Test]
+    public function iteratorYieldsTheIdentifiersInOrder(): void
+    {
+        $name = TypeName::from('Foo\Bar');
+
+        self::assertSame($name->parts, \iterator_to_array($name));
+    }
 }

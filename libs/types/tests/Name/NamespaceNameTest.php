@@ -60,4 +60,23 @@ final class NamespaceNameTest extends TestCase
         self::assertFalse((new NamespaceName([]))->isSpecial());
         self::assertFalse((new NamespaceName([]))->isBuiltin());
     }
+
+    #[Test]
+    public function fromReturnsAnExistingNamespaceWithTheSameOffset(): void
+    {
+        $namespace = NamespaceName::from('Some\Any', 4);
+
+        self::assertSame($namespace, NamespaceName::from($namespace, 4));
+    }
+
+    #[Test]
+    public function fromCopiesAnExistingNamespaceWithAnotherOffset(): void
+    {
+        $namespace = NamespaceName::from('\Some\Any', 4);
+        $copy = NamespaceName::from($namespace, 9);
+
+        self::assertNotSame($namespace, $copy);
+        self::assertSame('\Some\Any', $copy->toString());
+        self::assertSame(9, $copy->offset);
+    }
 }

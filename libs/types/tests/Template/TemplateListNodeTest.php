@@ -37,4 +37,14 @@ final class TemplateListNodeTest extends TestCase
         self::assertCount(1, $list);
         self::assertSame($b, $list[0]);
     }
+
+    #[Test]
+    public function removingTheLastItemIsRejected(): void
+    {
+        $list = new TemplateListNode([$this->makeArg('string')]);
+
+        $this->expectException(\UnderflowException::class);
+
+        unset($list[0]);
+    }
 }

@@ -93,4 +93,32 @@ final class MaskNodeTest extends TestCase
         self::assertInstanceOf(WildcardMaskNode::class, $mask->items[1]);
         self::assertInstanceOf(Identifier::class, $mask->items[2]);
     }
+
+    #[Test]
+    public function emptyMaskIsNotAllowed(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new MaskNode([]);
+    }
+
+    #[Test]
+    public function removingTheLastItemIsRejected(): void
+    {
+        $mask = self::mask(['A']);
+
+        $this->expectException(\UnderflowException::class);
+
+        unset($mask[0]);
+    }
+
+    #[Test]
+    public function removingOneOfSeveralItemsIsAllowed(): void
+    {
+        $mask = self::mask(['A', '*']);
+
+        unset($mask[1]);
+
+        self::assertSame('A', $mask->toString());
+    }
 }
