@@ -9,12 +9,12 @@ use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
 
 /**
- * A single template argument, along with the hint it may carry.
+ * A single template argument, along with the call-site variance it may carry.
  *
  * ```
  *  Some\Any<int, covariant string>
- *  //       ^^^                    simple argument
- *  //            ^^^^^^^^^         a hinted argument
+ *  //       ^^^                    an invariant argument
+ *  //            ^^^^^^^^^^^^^^^^  a covariant argument
  * ```
  */
 final class TemplateArgumentNode extends Node
@@ -33,10 +33,10 @@ final class TemplateArgumentNode extends Node
          *
          * ```
          *  Some\Any<covariant string>
-         *  //       ^^^^^^^^^ the hint
+         *  //       ^^^^^^^^^ the variance
          * ```
          */
-        public ?Identifier $hint = null,
+        public ?Identifier $variance = null,
         int $offset = 0,
     ) {
         parent::__construct($offset);

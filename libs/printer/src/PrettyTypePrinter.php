@@ -298,8 +298,8 @@ class PrettyTypePrinter extends TypePrinter
         /** @var non-empty-string $result */
         $result = $this->make($argument->value);
 
-        if ($argument->hint !== null) {
-            return $argument->hint->toString() . ' ' . $result;
+        if ($argument->variance !== null) {
+            return $argument->variance->toString() . ' ' . $result;
         }
 
         return $result;

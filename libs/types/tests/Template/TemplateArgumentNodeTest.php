@@ -23,34 +23,34 @@ final class TemplateArgumentNodeTest extends TestCase
     }
 
     #[Test]
-    public function hintDefaultsToNull(): void
+    public function varianceDefaultsToNull(): void
     {
         $node = new TemplateArgumentNode(new NamedTypeNode(Name::createFromString('int')));
 
-        self::assertNull($node->hint);
+        self::assertNull($node->variance);
     }
 
     #[Test]
-    public function constructorAcceptsIdentifierHint(): void
+    public function constructorAcceptsIdentifierVariance(): void
     {
-        $hint = new Identifier('covariant');
+        $variance = new Identifier('covariant');
         $node = new TemplateArgumentNode(
             new NamedTypeNode(Name::createFromString('T')),
-            $hint,
+            $variance,
         );
 
-        self::assertSame($hint, $node->hint);
+        self::assertSame($variance, $node->variance);
     }
 
     #[Test]
-    public function constructorAcceptsNullHint(): void
+    public function constructorAcceptsNullVariance(): void
     {
         $node = new TemplateArgumentNode(
             new NamedTypeNode(Name::createFromString('T')),
             null,
         );
 
-        self::assertNull($node->hint);
+        self::assertNull($node->variance);
     }
 
     #[Test]
