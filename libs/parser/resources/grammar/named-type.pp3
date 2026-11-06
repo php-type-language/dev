@@ -5,9 +5,7 @@
  * -----------------------------------------------------------------------------
  */
 
-// A name is read by this very rule rather than by one of its own: a type is
-// named far more often than anything else is read, so every rule the reading
-// goes through on its way here is paid for by the whole grammar.
+// A name is read by this very rule, the hottest path of the grammar.
 NamedType -> {
     $head = $children[0];
     $suffix = $children[1] ?? null;

@@ -253,8 +253,7 @@ final class Executor extends CompiledExecutor
             return UnrecognizedSyntaxException::becauseSyntaxIsUnrecognized($source, $error->token);
         }
 
-        // An input the lexer says nothing about is reported as an unrecognized
-        // one rather than as a token in a wrong place.
+        // An input the lexer says nothing about is an unrecognized token.
         if ($error->token->channel === Channel::Unknown) {
             return UnrecognizedTokenException::becauseTokenIsUnrecognized($source, $error->token);
         }

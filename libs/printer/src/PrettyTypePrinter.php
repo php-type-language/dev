@@ -170,14 +170,14 @@ class PrettyTypePrinter extends TypePrinter
     {
         if (\count($shape->items) <= $this->multilineShape) {
             return \vsprintf('{%s}', [
-                \implode(', ', $this->getShapeFieldsNodes($node, $shape, false)),
+                \implode(', ', $this->getShapeFieldsNodes($node, $shape)),
             ]);
         }
 
         return \vsprintf('{%s%s%s}', [
             $this->newLine,
             \implode(',' . $this->newLine, $this->nested(section: fn(): array
-                => $this->getShapeFieldsNodes($node, $shape, true))),
+                => $this->getShapeFieldsNodes($node, $shape))),
             $this->newLine . $this->prefix(),
         ]);
     }
@@ -186,7 +186,7 @@ class PrettyTypePrinter extends TypePrinter
      * @return list<non-empty-string>
      * @throws NonPrintableNodeException
      */
-    private function getShapeFieldsNodes(NamedTypeNode $node, FieldsListNode $shape, bool $multiline): array
+    private function getShapeFieldsNodes(NamedTypeNode $node, FieldsListNode $shape): array
     {
         $prefix = $this->prefix();
 

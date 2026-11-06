@@ -8,7 +8,6 @@ use JetBrains\PhpStorm\Language;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\Partial\FailureParsedResult;
 use TypeLang\Parser\Partial\SuccessfulParsedResult;
-use TypeLang\Parser\Validation\CheckResult;
 use TypeLang\Parser\Validation\FailureCheckResult;
 use TypeLang\Parser\Validation\SuccessfulCheckResult;
 use TypeLang\Type\Node;

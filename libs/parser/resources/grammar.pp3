@@ -14,7 +14,7 @@
 %include grammar/shape-fields           // array { key: int, ...<TKey, TValue> }
 %include grammar/named-type             // Map<int<0, max>, non-empty-string>
 
-// The lexer reads bytes rather than codepoints, so a "Тип" is a name the way a "Type" is
+// The lexer reads bytes, so a "Тип" is a name the way a "Type" is
 %pragma lexer.pcre.disable u
 
 %pragma root Type

@@ -68,7 +68,7 @@ final class MethodTagDefinition extends TagDefinition
 
         $method = $callable->type;
 
-        // Guaranteed by the callable combinator; guards the type for the graft.
+        // Guaranteed by the callable combinator, narrows the type.
         if (!$method instanceof CallableTypeNode) {
             throw new \LogicException('Expected a callable type');
         }

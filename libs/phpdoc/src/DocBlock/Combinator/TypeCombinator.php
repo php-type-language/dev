@@ -6,7 +6,6 @@ namespace TypeLang\PhpDoc\DocBlock\Combinator;
 
 use TypeLang\Parser\Partial\SuccessfulParsedResult;
 use TypeLang\Parser\TypeParser;
-use TypeLang\Parser\TypeParserInterface;
 use TypeLang\PhpDoc\DocBlock\Reference\TypeReference;
 use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;

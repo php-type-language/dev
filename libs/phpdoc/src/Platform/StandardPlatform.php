@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc\Platform;
 
 use TypeLang\Parser\TypeParser;
-use TypeLang\Parser\TypeParserInterface;
 use TypeLang\PhpDoc\DocBlock\Combinator\AssertSubjectCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\CallableTypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator;

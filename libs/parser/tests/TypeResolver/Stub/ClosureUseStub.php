@@ -14,7 +14,7 @@ $closureUseStubFactory = static function () use ($closureUseStubCaptured): int {
 
 /**
  * The namespace-level closure above carries a `use (...)` clause that captures
- * variables — it is not an import and must be ignored.
+ * variables, it is not an import and must be ignored.
  *
  * @uses RealImport
  */

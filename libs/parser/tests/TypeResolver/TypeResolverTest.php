@@ -366,7 +366,7 @@ final class TypeResolverTest extends TypeResolverTestCase
 
     /**
      * Nodes that carry no {@see Name} at all (literal types) pass through the
-     * resolver completely untouched — same instance, identical structure.
+     * resolver completely untouched: same instance, identical structure.
      *
      * @return iterable<non-empty-string, array{non-empty-string}>
      */
@@ -444,12 +444,12 @@ final class TypeResolverTest extends TypeResolverTestCase
      */
     public static function fullyQualifiedNameDataProvider(): iterable
     {
-        // Collides with `use TypeLang\Parser\Node` — but must stay absolute.
+        // Collides with `use TypeLang\Parser\Node`, but must stay absolute.
         yield 'fq alias root' => ['\Node', '\Node'];
         yield 'fq alias with tail' => ['\Node\Foo', '\Node\Foo'];
         // Collides with `use TypeLang\Parser\Exception as Error`.
         yield 'fq aliased root' => ['\Error\SemanticException', '\Error\SemanticException'];
-        // No collision — trivially unchanged (sanity contrast).
+        // No collision, trivially unchanged (sanity contrast).
         yield 'fq unrelated' => ['\Some\Other\Node', '\Some\Other\Node'];
     }
 
