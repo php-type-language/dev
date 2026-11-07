@@ -14,7 +14,7 @@ final class FloatLiteralNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{float, non-empty-string}>
      */
-    public static function provideDerivedRawValues(): iterable
+    public static function derivedRawValuesDataProvider(): iterable
     {
         yield 'whole number' => [1.0, '1.0'];
         yield 'fraction' => [0.5, '0.5'];
@@ -23,7 +23,7 @@ final class FloatLiteralNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideDerivedRawValues')]
+    #[DataProvider('derivedRawValuesDataProvider')]
     public function derivedRawValueIsAFloatLiteral(float $value, string $raw): void
     {
         self::assertSame($raw, (new FloatLiteralNode($value))->raw);
@@ -32,7 +32,7 @@ final class FloatLiteralNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{float}>
      */
-    public static function provideNonFiniteValues(): iterable
+    public static function nonFiniteValuesDataProvider(): iterable
     {
         yield 'infinity' => [\INF];
         yield 'negative infinity' => [-\INF];
@@ -40,7 +40,7 @@ final class FloatLiteralNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideNonFiniteValues')]
+    #[DataProvider('nonFiniteValuesDataProvider')]
     public function nonFiniteValueRequiresRawText(float $value): void
     {
         $this->expectException(\InvalidArgumentException::class);

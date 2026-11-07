@@ -19,7 +19,7 @@ final class LiteralNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{LiteralNode, mixed, non-empty-string}>
      */
-    public static function provideLiterals(): iterable
+    public static function literalsDataProvider(): iterable
     {
         yield 'bool(true)' => [new BoolLiteralNode(true, 'true'), true, 'true'];
         yield 'bool(false)' => [new BoolLiteralNode(false, 'false'), false, 'false'];
@@ -30,7 +30,7 @@ final class LiteralNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLiterals')]
+    #[DataProvider('literalsDataProvider')]
     public function stringRepresentationIsTheRawValue(LiteralNode $node, mixed $value, string $raw): void
     {
         self::assertSame($raw, (string) $node);

@@ -22,7 +22,7 @@ final class ComplexFieldNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{TypeNode}>
      */
-    public static function provideLiteralKeys(): iterable
+    public static function literalKeysDataProvider(): iterable
     {
         yield 'int' => [new IntLiteralNode(0)];
         yield 'string' => [new StringLiteralNode('key')];
@@ -31,7 +31,7 @@ final class ComplexFieldNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLiteralKeys')]
+    #[DataProvider('literalKeysDataProvider')]
     public function literalKeyIsRejected(TypeNode $key): void
     {
         $this->expectException(\InvalidArgumentException::class);

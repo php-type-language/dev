@@ -45,7 +45,7 @@ final class IdentifierTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideSpecialNames')]
+    #[DataProvider('specialNamesDataProvider')]
     public function isSpecialIsTrueForSpecialClassNames(string $name): void
     {
         $id = new Identifier($name);
@@ -53,7 +53,7 @@ final class IdentifierTest extends TestCase
         self::assertTrue($id->isSpecial());
     }
 
-    public static function provideSpecialNames(): iterable
+    public static function specialNamesDataProvider(): iterable
     {
         return [['self'], ['parent'], ['static'], ['SELF'], ['PARENT'], ['Static']];
     }
@@ -67,7 +67,7 @@ final class IdentifierTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideBuiltinNames')]
+    #[DataProvider('builtinNamesDataProvider')]
     public function isBuiltinIsTrueForBuiltinTypes(string $name): void
     {
         $id = new Identifier($name);
@@ -75,7 +75,7 @@ final class IdentifierTest extends TestCase
         self::assertTrue($id->isBuiltin());
     }
 
-    public static function provideBuiltinNames(): iterable
+    public static function builtinNamesDataProvider(): iterable
     {
         return [
             ['int'], ['string'], ['float'], ['bool'], ['null'],

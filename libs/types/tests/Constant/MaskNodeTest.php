@@ -34,7 +34,7 @@ final class MaskNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{list<non-empty-string>, non-empty-string, list<non-empty-string>}>
      */
-    public static function provideMasks(): iterable
+    public static function masksDataProvider(): iterable
     {
         yield 'a wildcard alone' => [['*'], '*', []];
         yield 'a trailing wildcard' => [['BAR_', '*'], 'BAR_*', ['BAR_']];
@@ -54,7 +54,7 @@ final class MaskNodeTest extends TestCase
      * @param list<non-empty-string> $segments
      */
     #[Test]
-    #[DataProvider('provideMasks')]
+    #[DataProvider('masksDataProvider')]
     public function aMaskIsWrittenTheWayItIsRead(array $items, string $expected, array $segments): void
     {
         self::assertSame($expected, self::mask($items)->toString());
@@ -67,7 +67,7 @@ final class MaskNodeTest extends TestCase
      * @param list<non-empty-string> $segments
      */
     #[Test]
-    #[DataProvider('provideMasks')]
+    #[DataProvider('masksDataProvider')]
     public function segmentsAreTheLiteralPartsAlone(array $items, string $expected, array $segments): void
     {
         $mask = self::mask($items);

@@ -59,14 +59,16 @@ final class NodeTest extends TestCase
      *
      * @return iterable<non-empty-string, array{Node}>
      */
-    public static function provideNodes(): iterable
+    public static function nodesDataProvider(): iterable
     {
         yield CallableTypeNode::class => [new CallableTypeNode(TypeName::from('callable'))];
         yield ClassConstMaskTypeNode::class => [new ClassConstMaskTypeNode(TypeName::from('Example'))];
         yield ClassConstTypeNode::class => [
             new ClassConstTypeNode(TypeName::from('Example'), new Identifier('CONST')),
         ];
-        yield ConstMaskTypeNode::class => [new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()]))];
+        yield ConstMaskTypeNode::class => [
+            new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()])),
+        ];
         yield Identifier::class => [new Identifier('Example')];
         yield IntersectionTypeNode::class => [new IntersectionTypeNode([self::type('A'), self::type('B')])];
         yield MaskNode::class => [new MaskNode([new WildcardMaskNode()])];
@@ -124,7 +126,7 @@ final class NodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideNodes')]
+    #[DataProvider('nodesDataProvider')]
     public function everyNodeHasZeroOffsetByDefault(Node $node): void
     {
         self::assertSame(0, $node->offset);
@@ -145,7 +147,7 @@ final class NodeTest extends TestCase
      *
      * @return iterable<non-empty-string, array{Node}>
      */
-    public static function provideNodesWithOffset(): iterable
+    public static function nodesWithOffsetDataProvider(): iterable
     {
         yield CallableTypeNode::class => [
             new CallableTypeNode(TypeName::from('callable'), offset: 42),
@@ -233,7 +235,7 @@ final class NodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideNodesWithOffset')]
+    #[DataProvider('nodesWithOffsetDataProvider')]
     public function everyNodeConstructorPassesTheOffsetThrough(Node $node): void
     {
         self::assertSame(42, $node->offset);
@@ -249,7 +251,7 @@ final class NodeTest extends TestCase
     {
         $expected = $actual = [];
 
-        foreach (self::provideNodes() as [$node]) {
+        foreach (self::nodesDataProvider() as [$node]) {
             $parameters = (new \ReflectionObject($node))
                 ->getConstructor()?->getParameters() ?? [];
 
@@ -261,7 +263,7 @@ final class NodeTest extends TestCase
             $expected[] = $node::class;
         }
 
-        foreach (self::provideNodesWithOffset() as [$node]) {
+        foreach (self::nodesWithOffsetDataProvider() as [$node]) {
             $actual[] = $node::class;
         }
 

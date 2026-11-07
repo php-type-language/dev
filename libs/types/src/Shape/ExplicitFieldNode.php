@@ -30,13 +30,18 @@ abstract class ExplicitFieldNode extends FieldNode
          */
         public Identifier|TypeNode $key,
         TypeNode $type,
-        bool $isOptional = false,
+        /**
+         * Whether a field may be absent, written as a `?` in front of
+         * the colon. Only a field with a key can be marked so.
+         *
+         * ```
+         *  array{name: string}   // false
+         *  array{name?: string}  // true
+         * ```
+         */
+        public bool $isOptional = false,
         int $offset = 0,
     ) {
-        parent::__construct(
-            type: $type,
-            isOptional: $isOptional,
-            offset: $offset,
-        );
+        parent::__construct($type, $offset);
     }
 }

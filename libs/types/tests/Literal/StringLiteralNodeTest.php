@@ -14,7 +14,7 @@ final class StringLiteralNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{string, non-empty-string}>
      */
-    public static function provideDerivedRawValues(): iterable
+    public static function derivedRawValuesDataProvider(): iterable
     {
         yield 'plain' => ['example', '"example"'];
         yield 'double quote' => ['a"b', '"a\"b"'];
@@ -26,7 +26,7 @@ final class StringLiteralNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideDerivedRawValues')]
+    #[DataProvider('derivedRawValuesDataProvider')]
     public function constructorEscapesTheDerivedRawValue(string $value, string $raw): void
     {
         $node = new StringLiteralNode($value);

@@ -244,7 +244,7 @@ final class NodesListNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{mixed}>
      */
-    public static function provideInvalidOffsets(): iterable
+    public static function invalidOffsetsDataProvider(): iterable
     {
         yield 'negative int' => [-1];
         yield 'numeric string' => ['0'];
@@ -253,7 +253,7 @@ final class NodesListNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideInvalidOffsets')]
+    #[DataProvider('invalidOffsetsDataProvider')]
     public function offsetExistsRejectsInvalidOffset(mixed $offset): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -262,7 +262,7 @@ final class NodesListNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideInvalidOffsets')]
+    #[DataProvider('invalidOffsetsDataProvider')]
     public function offsetGetRejectsInvalidOffset(mixed $offset): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -271,7 +271,7 @@ final class NodesListNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideInvalidOffsets')]
+    #[DataProvider('invalidOffsetsDataProvider')]
     public function offsetUnsetRejectsInvalidOffset(mixed $offset): void
     {
         $this->expectException(\InvalidArgumentException::class);

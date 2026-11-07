@@ -27,16 +27,6 @@ abstract class FieldNode extends Node
      */
     public function __construct(
         public TypeNode $type,
-        /**
-         * Whether a field may be absent, written as a `?` in front of
-         * the colon.
-         *
-         * ```
-         *  array{name: string}   // false
-         *  array{name?: string}  // true
-         * ```
-         */
-        public bool $isOptional = false,
         int $offset = 0,
     ) {
         parent::__construct($offset);

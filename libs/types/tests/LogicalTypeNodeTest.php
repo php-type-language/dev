@@ -22,14 +22,14 @@ final class LogicalTypeNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{class-string<LogicalTypeNode>}>
      */
-    public static function provideLogicalTypes(): iterable
+    public static function logicalTypesDataProvider(): iterable
     {
         yield UnionTypeNode::class => [UnionTypeNode::class];
         yield IntersectionTypeNode::class => [IntersectionTypeNode::class];
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function twoStatementsAreEnough(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')]);
@@ -39,7 +39,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function anArbitraryNumberOfStatementsIsStored(string $class): void
     {
         $node = new $class([
@@ -53,7 +53,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function typesOrderIsPreserved(string $class): void
     {
         $a = $this->type('A');
@@ -66,7 +66,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function typesAreAcceptedFromAnyTraversable(string $class): void
     {
         $a = $this->type('A');
@@ -78,7 +78,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function typesAreAcceptedFromAGenerator(string $class): void
     {
         $a = $this->type('A');
@@ -93,7 +93,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function typesAreReindexedIntoAList(string $class): void
     {
         $a = $this->type('A');
@@ -105,7 +105,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function aSingleStatementIsRejected(string $class): void
     {
         $this->expectException(\LogicException::class);
@@ -114,7 +114,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function noStatementsAreRejected(string $class): void
     {
         $this->expectException(\LogicException::class);
@@ -127,7 +127,7 @@ final class LogicalTypeNodeTest extends TestCase
      * same type: the nested one is flattened into it.
      */
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function aSingleNestedStatementIsUnwrapped(string $class): void
     {
         $a = $this->type('A');
@@ -143,7 +143,7 @@ final class LogicalTypeNodeTest extends TestCase
      * checked, so a single type wrapped into a logical type is still too little.
      */
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function aStatementFlattenedIntoASingleTypeIsRejected(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')]);
@@ -155,7 +155,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function nestedStatementsOfTheSameTypeAreFlattened(string $class): void
     {
         $a = $this->type('A');
@@ -168,7 +168,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function deeplyNestedStatementsAreFlattened(string $class): void
     {
         $a = $this->type('A');
@@ -182,7 +182,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function nestedStatementsAreFlattenedInAnyPosition(string $class): void
     {
         $a = $this->type('A');
@@ -217,7 +217,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function iteratorYieldsStatements(string $class): void
     {
         $a = $this->type('A');
@@ -229,7 +229,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function serializationRoundtripPreservesStatementsAndOffset(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')], 13);
@@ -249,7 +249,7 @@ final class LogicalTypeNodeTest extends TestCase
      * longer it gets: the flattening is linear in the number of types.
      */
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function flatteningIsLinear(string $class): void
     {
         $types = [];
@@ -267,7 +267,7 @@ final class LogicalTypeNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{mixed}>
      */
-    public static function provideInvalidOffsets(): iterable
+    public static function invalidOffsetsDataProvider(): iterable
     {
         yield 'negative int' => [-1];
         yield 'numeric string' => ['0'];
@@ -276,7 +276,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function arrayAccessReadsTypes(string $class): void
     {
         $a = $this->type('A');
@@ -289,7 +289,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function arrayAccessReplacesAndAppendsTypes(string $class): void
     {
         $a = $this->type('A');
@@ -305,7 +305,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function arrayAccessSetBeyondTheEndKeepsTheListSequential(string $class): void
     {
         $a = $this->type('A');
@@ -319,7 +319,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function arrayAccessUnsetReindexesTheTypes(string $class): void
     {
         $a = $this->type('A');
@@ -332,7 +332,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function arrayAccessUnsetBelowTwoTypesIsRejected(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')]);
@@ -343,7 +343,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function arrayAccessRejectsNonNodeValue(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')]);
@@ -354,12 +354,12 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function arrayAccessRejectsInvalidOffsets(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')]);
 
-        foreach (self::provideInvalidOffsets() as [$offset]) {
+        foreach (self::invalidOffsetsDataProvider() as [$offset]) {
             foreach (['offsetExists', 'offsetGet', 'offsetUnset'] as $method) {
                 try {
                     $node->$method($offset);
@@ -377,7 +377,7 @@ final class LogicalTypeNodeTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideLogicalTypes')]
+    #[DataProvider('logicalTypesDataProvider')]
     public function iteratorYieldsTheTypesInOrder(string $class): void
     {
         $a = $this->type('A');
