@@ -5,43 +5,43 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Exception;
 
 use Phplrt\Contracts\Lexer\Channel;
+use Phplrt\Contracts\Position\PositionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Lexer\Token\Token;
+use Phplrt\Parser\Context;
+use Phplrt\Position\Position;
+use TypeLang\Parser\TypeParserFeatures;
 
 /**
- * The source uses a syntax of the feature that the parser has disabled.
+ * The source uses a syntax of the feature ({@see TypeParserFeatures}) that the
+ * parser has disabled.
  *
  * ```
  *  $parser = new TypeParser(new TypeParserFeatures(literals: false));
  *  $parser->parse('42');
  *  // => FeatureNotEnabledException: Literals not allowed
  * ```
- *
- * @see \TypeLang\Parser\TypeParserFeatures
  */
 final class FeatureNotEnabledException extends ParsingException
 {
     /**
+     * @param int<0, max> $offset
+     * @param int<0, max> $length
      * @param non-empty-string $feature The name of the disabled feature
-     * @param non-empty-string $text The part of the source that uses it
-     * @param int<0, max> $offset The offset of this part in bytes
      */
     public static function becauseFeatureIsNotEnabled(
         string $feature,
-        string $text,
-        int $offset,
         ReadableInterface $source,
+        int $offset = 0,
+        int $length = 0,
     ): self {
-        $token = new Token(
-            id: -1,
-            name: null,
-            channel: Channel::Default,
-            value: $text,
-            offset: $offset,
-        );
+        $message = \sprintf('%s feature is not allowed', \ucfirst($feature));
 
-        $message = \sprintf('%s not allowed', \ucfirst($feature));
+        return new self(new ParsingErrorRange($offset, $length), $source, $message);
+    }
 
-        return new self($token, $source, $message);
+    public static function becauseFeatureIsNotEnabledIn(string $feature, Context $ctx): self
+    {
+        return self::becauseFeatureIsNotEnabled($feature, $ctx->source, $ctx->begin, $ctx->length);
     }
 }

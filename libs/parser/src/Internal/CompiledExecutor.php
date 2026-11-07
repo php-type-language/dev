@@ -452,18 +452,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
 
     private function reduceLiteral(\Phplrt\Parser\Context $ctx, mixed $children): mixed
     {
-        // The variables below are declared by the compiler
-        $source = $ctx->source;
-        $offset = $ctx->begin;
-
         /** @var Type\Literal\LiteralNode $children */
         if (!$this->features->literals) {
-            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
-                feature: 'literals',
-                text: $children->raw,
-                offset: $offset,
-                source: $source,
-            );
+            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('literals', $ctx);
         }
 
         return $children;

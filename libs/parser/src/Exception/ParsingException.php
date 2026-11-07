@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Exception;
 
-use Phplrt\Contracts\Lexer\TokenInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Exception\ErrorPrinter;
 
@@ -12,7 +11,7 @@ abstract class ParsingException extends ParserException implements
     ParserRuntimeExceptionInterface
 {
     public function __construct(
-        public readonly TokenInterface $token,
+        public readonly ParsingErrorRange $range,
         ReadableInterface $source,
         string $message,
         int $code = 0,
@@ -32,7 +31,8 @@ abstract class ParsingException extends ParserException implements
             return (string) (new ErrorPrinter())
                 ->print($this)
                 ->withSource($this->source)
-                ->withInterval($this->token->offset, $this->token->size);
+                ->withInterval($this->range->offset, $this->range->length)
+            ;
         } catch (\Throwable) {
             return parent::__toString();
         }
