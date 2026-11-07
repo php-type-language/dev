@@ -15,6 +15,8 @@ use TypeLang\Parser\Partial\SuccessfulParsedResult;
 use TypeLang\Parser\Validation\FailureCheckResult;
 use TypeLang\Parser\Validation\SuccessfulCheckResult;
 use TypeLang\Type\Node;
+use TypeLang\Type\Template\TemplateParameterNode;
+use TypeLang\Type\TypeNode;
 
 /**
  * @template-covariant TResult of Node = TypeNode
@@ -86,5 +88,29 @@ final class TypeParser implements TypeParserInterface
     private function toSource(mixed $source): ReadableInterface
     {
         return $this->sources->create($source);
+    }
+
+    /**
+     * @return self<TypeNode, TSource>
+     */
+    public function forType(): self
+    {
+        /** @var self<TypeNode, TSource> */
+        return $this->for(Internal\CompiledExecutor::Type);
+    }
+
+    /**
+     * @param int<0, max> $rule
+     * @return self<Node, TSource>
+     */
+    private function for(int $rule): self
+    {
+        $executor = $this->getExecutor();
+
+        $self = clone $this;
+        /** @phpstan-ignore-next-line : Allow executor type change */
+        $self->executor = $executor->for($rule);
+
+        return $self;
     }
 }

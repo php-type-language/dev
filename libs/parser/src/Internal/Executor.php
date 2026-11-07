@@ -13,10 +13,13 @@ use TypeLang\Parser\Internal\Literal\OctIntParser;
 use TypeLang\Parser\Internal\Literal\OctLegacyIntParser;
 use TypeLang\Parser\Internal\Literal\SqStringParser;
 use TypeLang\Parser\TypeParserFeatures;
+use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
 
 /**
- * @template-extends CompiledExecutor<TypeNode>
+ * @template T of Node = TypeNode
+ *
+ * @template-extends CompiledExecutor<T>
  */
 final class Executor extends CompiledExecutor
 {
@@ -45,5 +48,17 @@ final class Executor extends CompiledExecutor
         $this->float = new FloatParser();
         $this->dqString = new DqStringParser();
         $this->sqString = new SqStringParser();
+    }
+
+    /**
+     * @param int<0, max> $rule
+     * @return self<Node>
+     */
+    public function for(int $rule): self
+    {
+        $self = clone $this;
+        $self->parser = $self->parser->withInitial($rule);
+
+        return $self;
     }
 }
