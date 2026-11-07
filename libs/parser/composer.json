@@ -11,7 +11,8 @@
     "require": {
         "php": "^8.1",
         "type-lang/types": "^2.0",
-        "phplrt/runtime": "^4.2.4"
+        "phplrt/runtime": "^4.2.4",
+        "phplrt/exception": "^4.2.4"
     },
     "autoload": {
         "psr-4": {

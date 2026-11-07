@@ -18,17 +18,22 @@ use TypeLang\Type\TypeNode;
 
 /**
  * @phpstan-type ParserOptionsType array{
- *     tolerant?: bool,
- *     conditional?: bool,
- *     shapes?: bool,
- *     callables?: bool,
- *     literals?: bool,
- *     generics?: bool,
- *     union?: bool,
- *     intersection?: bool,
- *     list?: bool,
+ *     unions?: bool,
+ *     intersections?: bool,
+ *     nullables?: bool,
+ *     lists?: bool,
  *     offsets?: bool,
+ *     conditions?: bool,
+ *     generics?: bool,
+ *     wildcards?: bool,
  *     hints?: bool,
+ *     callables?: bool,
+ *     templates?: bool,
+ *     defaults?: bool,
+ *     shapes?: bool,
+ *     constants?: bool,
+ *     masks?: bool,
+ *     literals?: bool,
  * }
  */
 #[Group('unit'), Group('type-lang/parser')]

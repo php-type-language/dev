@@ -169,7 +169,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
     /** @var array<int, bool> */
     private const PARSER_KEPT_TABLE = [
         true,
-        false,
+        true,
         true,
         false,
         true,
@@ -425,6 +425,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
             initial: 0,
             reducers: [
+                1 => $this->reduceLiteral(...),
                 2 => self::reduceNullLiteral(...),
                 4 => self::reduceTrueLiteral(...),
                 5 => self::reduceFalseLiteral(...),
@@ -447,6 +448,25 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
     public function parse(\Phplrt\Contracts\Source\ReadableInterface $source): mixed
     {
         return $this->parser->parse($source);
+    }
+
+    private function reduceLiteral(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        // The variables below are declared by the compiler
+        $source = $ctx->source;
+        $offset = $ctx->begin;
+
+        /** @var Type\Literal\LiteralNode $children */
+        if (!$this->features->literals) {
+            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
+                feature: 'literals',
+                text: $children->raw,
+                offset: $offset,
+                source: $source,
+            );
+        }
+
+        return $children;
     }
 
     private static function reduceNullLiteral(\Phplrt\Parser\Context $ctx, mixed $children): mixed

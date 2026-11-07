@@ -5,6 +5,27 @@
  */
 
 
+// Any of the literals below. Requires the `literals` feature
+Literal -> {
+    /** @var Type\Literal\LiteralNode $children */
+    if (!$this->features->literals) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
+            feature: 'literals',
+            text: $children->raw,
+            offset: $offset,
+            source: $source,
+        );
+    }
+
+    return $children;
+}
+  : NullLiteral()
+  | BoolLiteral()
+  | FloatLiteral()
+  | IntLiteral()
+  | StringLiteral()
+  ;
+
 BoolLiteral
   : TrueLiteral()
   | FalseLiteral()
@@ -96,13 +117,4 @@ SingleQuotedStringLiteral -> {
     return $this->sqString->parse($children->value, $offset);
 }
   : <T_SQ_STRING>
-  ;
-
-// Any of the literals above
-Literal
-  : NullLiteral()
-  | BoolLiteral()
-  | FloatLiteral()
-  | IntLiteral()
-  | StringLiteral()
   ;

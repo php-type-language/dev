@@ -15,7 +15,6 @@ use TypeLang\Parser\Partial\SuccessfulParsedResult;
 use TypeLang\Parser\Validation\FailureCheckResult;
 use TypeLang\Parser\Validation\SuccessfulCheckResult;
 use TypeLang\Type\Node;
-use TypeLang\Type\Template\TemplateParameterNode;
 use TypeLang\Type\TypeNode;
 
 /**
