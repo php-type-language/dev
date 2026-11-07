@@ -198,8 +198,8 @@ final class PrinterOptions
          */
         public readonly ListStyle $listStyle = self::DEFAULT_LIST_STYLE,
     ) {
-        if ($maxInlineCallableParameters < 0) {
-            throw new \InvalidArgumentException('The "$maxInlineCallableParameters" option must not be negative');
+        if ($maxInlineShapeFields < 0) {
+            throw new \InvalidArgumentException('The "$maxInlineShapeFields" option must not be negative');
         }
 
         if ($maxInlineTemplateItems < 0) {

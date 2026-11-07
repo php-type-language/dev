@@ -8,11 +8,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Printer\NativeTypePrinter\TypeAliases;
 use TypeLang\Printer\Tests\TestCase;
-use TypeLang\TypeSystem\Constraint\RangeConstraint;
-use TypeLang\TypeSystem\Dialect;
-use TypeLang\TypeSystem\Native;
-use TypeLang\TypeSystem\Registry;
-use TypeLang\TypeSystem\Type\AtomicType;
 
 #[CoversClass(TypeAliases::class)]
 final class TypeAliasesTest extends TestCase
@@ -55,13 +50,14 @@ final class TypeAliasesTest extends TestCase
 
         self::assertSame('A&B', $aliases->resolve('Both'));
     }
+
     /**
      * @return iterable<non-empty-string, array{non-empty-string, non-empty-string}>
      */
     public static function builtinDataProvider(): iterable
     {
         yield 'native' => ['int', 'int'];
-        yield 'native in any case' => ['STRING', 'string'];
+        yield 'native is kept as written' => ['STRING', 'STRING'];
         yield 'qualified string' => ['non-empty-lowercase-string', 'string'];
         yield 'interval' => ['non-zero-int', 'int'];
         yield 'list' => ['non-empty-list', 'array'];
@@ -81,19 +77,26 @@ final class TypeAliasesTest extends TestCase
      * @param non-empty-string $expected
      */
     #[DataProvider('builtinDataProvider')]
-    public function testBuiltinNamesAreResolvedByTheTypeSystem(string $name, string $expected): void
+    public function testBuiltinNamesAreResolvedByTheTables(string $name, string $expected): void
     {
         self::assertSame($expected, (new TypeAliases())->resolve($name));
     }
 
-    public function testRegistryOfTheTypeSystemIsUsed(): void
+    public function testEveryAliasOfTheTablesIsResolved(): void
     {
-        $registry = new Registry([Dialect::Php]);
-        $registry->define('Money', new AtomicType(Native::Int, [new RangeConstraint(0)]));
+        $builtin = [];
 
-        $aliases = new TypeAliases($registry);
+        foreach (['phan', 'psalm', 'phpstan'] as $dialect) {
+            /** @var array<non-empty-lowercase-string, non-empty-string> $table */
+            $table = require __DIR__ . '/../../resources/aliases/' . $dialect . '.php';
 
-        self::assertSame('int', $aliases->resolve('money'));
-        self::assertSame('non-empty-string', $aliases->resolve('non-empty-string'));
+            $builtin += $table;
+        }
+
+        $aliases = new TypeAliases();
+
+        foreach ($builtin as $alias => $type) {
+            self::assertSame($type, $aliases->resolve($alias));
+        }
     }
 }

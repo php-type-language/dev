@@ -29,7 +29,6 @@ use TypeLang\Type\TypeNode;
 use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
 use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
 use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
-use TypeLang\TypeSystem\Registry;
 
 /**
  * Prints the native PHP type a type stands for.
@@ -42,15 +41,12 @@ final class NativeTypePrinter implements TypePrinterInterface
 
     /**
      * @param iterable<non-empty-string, non-empty-string> $aliases
-     * @param Registry|null $registry the names of the types the printer knows, all of the
-     *        dialects by default
      */
     public function __construct(
         iterable $aliases = [],
         PrinterOptions $options = new PrinterOptions(),
-        ?Registry $registry = null,
     ) {
-        $this->aliases = new TypeAliases($registry);
+        $this->aliases = new TypeAliases();
 
         foreach ($aliases as $alias => $type) {
             $this->aliases->add($alias, $type);

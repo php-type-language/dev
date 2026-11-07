@@ -7,7 +7,9 @@ namespace TypeLang\Printer\Tests\NodePrinter\Shape\FieldNodePrinter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\Shape\FieldNodePrinter\ScalarFieldNodePrinter;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
+use TypeLang\Type\Literal\IntLiteralKind;
 use TypeLang\Type\Literal\IntLiteralNode;
+use TypeLang\Type\Literal\StringLiteralKind;
 use TypeLang\Type\Literal\StringLiteralNode;
 use TypeLang\Type\Shape\ScalarFieldNode;
 
@@ -21,20 +23,22 @@ final class ScalarFieldNodePrinterTest extends NodePrinterTestCase
 
     public function testStringKeyIsPrintedInQuotes(): void
     {
-        self::assertSame('"some key": int', self::pretty(ScalarFieldNode::from('some key', self::named('int'))));
+        self::assertSame("'some key': int", self::pretty(ScalarFieldNode::from('some key', self::named('int'))));
     }
 
     public function testKeyIsPrintedTheWayItWasWritten(): void
     {
-        $field = new ScalarFieldNode(new IntLiteralNode(42, '0x2A'), self::named('int'));
+        $key = new IntLiteralNode(42, kind: IntLiteralKind::Hexadecimal, raw: '0x2A');
+        $field = new ScalarFieldNode($key, self::named('int'));
 
         self::assertSame('0x2A: int', self::pretty($field));
     }
 
     public function testOriginalQuotesOfAStringKeyAreKept(): void
     {
-        $field = new ScalarFieldNode(new StringLiteralNode('a', "'a'"), self::named('int'), true);
+        $key = new StringLiteralNode('a', StringLiteralKind::DoubleQuoted, '"a"');
+        $field = new ScalarFieldNode($key, self::named('int'), true);
 
-        self::assertSame("'a'?: int", self::pretty($field));
+        self::assertSame('"a"?: int', self::pretty($field));
     }
 }

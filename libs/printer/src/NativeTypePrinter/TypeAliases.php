@@ -4,40 +4,48 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer\NativeTypePrinter;
 
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\TypeSystem\Normalizer;
-use TypeLang\TypeSystem\Registry;
-use TypeLang\TypeSystem\Resolver;
-
 /**
  * The map of the names of virtual types to the native types they stand for.
  *
- * The names added by hand win. The builtin names are resolved by the
- * {@see Resolver} of the type system, which knows what the types of
- * PHP, PHPStan, Psalm and Phan stand for.
+ * The builtin names are the ones of Phan, Psalm and PHPStan, taken in this
+ * order of priority from `resources/aliases`. The names added by hand win.
  */
 final class TypeAliases
 {
     /**
-     * @var array<non-empty-lowercase-string, non-empty-string>
+     * @var array<non-empty-lowercase-string, non-empty-string>|null
      */
-    private array $aliases = [];
+    private static ?array $builtin = null;
 
     /**
-     * The native types the builtin names stand for, to resolve each once.
-     *
      * @var array<non-empty-lowercase-string, non-empty-string>
      */
-    private array $resolved = [];
+    private array $aliases;
 
-    private readonly Normalizer $normalizer;
-
-    private readonly Resolver $resolver;
-
-    public function __construct(?Registry $registry = null)
+    public function __construct()
     {
-        $this->normalizer = new Normalizer($registry ?? new Registry());
-        $this->resolver = new Resolver();
+        $this->aliases = self::getBuiltin();
+    }
+
+    /**
+     * @return array<non-empty-lowercase-string, non-empty-string>
+     */
+    private static function getBuiltin(): array
+    {
+        if (self::$builtin !== null) {
+            return self::$builtin;
+        }
+
+        $aliases = [];
+
+        foreach (['phan', 'psalm', 'phpstan'] as $name) {
+            /** @var array<non-empty-lowercase-string, non-empty-string> */
+            $table = require __DIR__ . '/../../resources/aliases/' . $name . '.php';
+
+            $aliases += $table;
+        }
+
+        return self::$builtin = $aliases;
     }
 
     /**
@@ -80,15 +88,6 @@ final class TypeAliases
      */
     public function resolve(string $name): string
     {
-        $key = \strtolower($name);
-
-        // The union printer collapses them into a bool
-        if (\in_array($key, ['true', 'false', '\true', '\false'], true)) {
-            return $this->aliases[$key] ?? $name;
-        }
-
-        return $this->aliases[$key] ?? $this->resolved[$key] ??= $this->resolver->print(
-            $this->normalizer->normalize(NamedTypeNode::from($name)),
-        );
+        return $this->aliases[\strtolower($name)] ?? $name;
     }
 }
