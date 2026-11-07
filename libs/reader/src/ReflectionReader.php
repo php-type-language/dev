@@ -11,12 +11,12 @@ use TypeLang\Reader\Exception\UnrecognizedParameterTypeException;
 use TypeLang\Reader\Exception\UnrecognizedPropertyTypeException;
 use TypeLang\Reader\Exception\UnrecognizedReflectionTypeException;
 use TypeLang\Reader\Exception\UnrecognizedTypeException;
-use TypeLang\Type\IntersectionTypeNode;
-use TypeLang\Type\Name;
+use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
+use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\Name\TypeName;
 use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\NullableTypeNode;
 use TypeLang\Type\TypeNode;
-use TypeLang\Type\UnionTypeNode;
+use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
 
 final class ReflectionReader implements ReaderInterface
 {
@@ -158,13 +158,13 @@ final class ReflectionReader implements ReaderInterface
         /** @var non-empty-string $literal */
         $literal = $type->getName();
 
-        $name = Name::createFromString($literal);
+        $name = TypeName::from($literal);
 
         if ($type->isBuiltin() || $name->isSpecial() || $name->isBuiltin()) {
             return new NamedTypeNode($name);
         }
 
-        return new NamedTypeNode($name->toFullQualified());
+        return new NamedTypeNode($name->toFullyQualified());
     }
 
     /**
