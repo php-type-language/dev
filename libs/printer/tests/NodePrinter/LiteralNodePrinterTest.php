@@ -24,7 +24,7 @@ final class LiteralNodePrinterTest extends NodePrinterTestCase
     {
         yield 'int in hex' => [new IntLiteralNode(42, '0x2A'), '0x2A'];
         yield 'int with separators' => [new IntLiteralNode(1000, '1_000'), '1_000'];
-        yield 'float' => [new FloatLiteralNode(1.5, '1.5e0'), '1.5e0'];
+        yield 'float' => [new FloatLiteralNode(1.5, raw: '1.5e0'), '1.5e0'];
         yield 'string in single quotes' => [new StringLiteralNode('a', "'a'"), "'a'"];
         yield 'string in double quotes' => [new StringLiteralNode('a', '"a"'), '"a"'];
         yield 'bool in any case' => [new BoolLiteralNode(true, 'TruE'), 'TruE'];
