@@ -1,128 +1,177 @@
-
 /**
  * -----------------------------------------------------------------------------
  *  Pattern Fragments
  * -----------------------------------------------------------------------------
  */
 
-//
-// Identifiers
-//
 
-%fragment IDENT_HEAD    [a-zA-Z_\x80-\xff]
-%fragment IDENT_TAIL    [a-zA-Z0-9\-_\x80-\xff]
+// The first character of a name
+%fragment NAME_START    [A-Za-z_\x80-\xFF]
 
-// The "foo_1" of a "$foo_1", which carries no dash
-%fragment VAR_TAIL      [a-zA-Z0-9_\x80-\xff]
+// Any following character of a name
+%fragment NAME_CHAR     [\w\x80-\xFF]
 
-%fragment KEYWORD_END   (?!(?&IDENT_TAIL))
+// A word ends where no more name characters follow, a hyphen is one of them:
+// "is-x" and "is-" are names, "is" is a keyword
+%fragment WORD_END      (?![\w\x80-\xFF-])
 
-%fragment LITERAL_END   (?!(?&IDENT_TAIL)|\\)
+// The digits of a number, a single "_" is allowed between two of them
+%fragment DIGITS        [0-9](?:_?+[0-9])*+
 
-//
-// Numbers
-//
+// The exponent of a float
+%fragment EXPONENT      [eE][+-]?+(?&DIGITS)
 
-// The "-" of a "-42"
-%fragment SIGN          [-+]
-
-// The "F" of a "0xFF"
-%fragment DIGIT_HEAD    [0-9]
-%fragment BIN_HEAD      [01]
-%fragment OCT_HEAD      [0-7]
-%fragment HEX_HEAD      [0-9a-fA-F]
-
-%fragment DEC_HEAD      [1-9]
-
-%fragment DIGIT_TAIL    _?(?&DIGIT_HEAD)
-%fragment DEC_TAIL      _?(?&DIGIT_HEAD)
-%fragment BIN_TAIL      _?(?&BIN_HEAD)
-%fragment OCT_TAIL      _?(?&OCT_HEAD)
-%fragment HEX_TAIL      _?(?&HEX_HEAD)
-
-// The "FE_DE" of a "0xFE_DE"
-%fragment DIGITS        (?&DIGIT_HEAD)(?&DIGIT_TAIL)*+
-%fragment DEC_DIGITS    (?&DEC_HEAD)(?&DEC_TAIL)*+
-%fragment BIN_DIGITS    (?&BIN_HEAD)(?&BIN_TAIL)*+
-%fragment OCT_DIGITS    (?&OCT_HEAD)(?&OCT_TAIL)*+
-%fragment HEX_DIGITS    (?&HEX_HEAD)(?&HEX_TAIL)*+
-
-// A "42.0", a "42." or a ".42"
-%fragment FRACTION      (?&DIGITS)\.(?:(?&DIGITS))?|\.(?&DIGITS)
-
-// An "e2", an "E-2" or an "e+2"
-%fragment EXPONENT      [eE](?&SIGN)?(?&DIGITS)
 
 /**
  * -----------------------------------------------------------------------------
- *  Lexeme/Token Definitions
+ *  Reserved Words
+ *
+ *  Literals and "$this" are never names. They are case insensitive, except
+ *  "$this" itself: it is a PHP variable.
  * -----------------------------------------------------------------------------
  */
 
+
+%token T_TRUE           (?i:true)(?&WORD_END)
+%token T_FALSE          (?i:false)(?&WORD_END)
+%token T_NULL           (?i:null)(?&WORD_END)
+%token T_THIS           \$this(?&WORD_END)
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Variables
+ * -----------------------------------------------------------------------------
+ */
+
+
+// A "$name"
+%token T_VARIABLE       \$(?&NAME_START)(?&NAME_CHAR)*+
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Numbers
+ *
+ *  A sign is a part of a number. A float goes before an integer, otherwise
+ *  an integer part would be read from it. An integer of a base with a prefix
+ *  goes before the decimal one, otherwise its "0" would be read from it.
+ * -----------------------------------------------------------------------------
+ */
+
+// A "1.5", "1.", ".5", "1e3", "1.5e-3", "1_000.5"
+%token T_FLOAT          [+-]?+(?:(?&DIGITS)\.(?:(?&DIGITS))?+(?:(?&EXPONENT))?+|\.(?&DIGITS)(?:(?&EXPONENT))?+|(?&DIGITS)(?&EXPONENT))
+
+// A hexadecimal "0x1F", "0XDE_AD"
+%token T_INT_HEX        [+-]?+0[xX][0-9a-fA-F](?:_?+[0-9a-fA-F])*+
+
+// A binary "0b101", "0B10_10"
+%token T_INT_BIN        [+-]?+0[bB][01](?:_?+[01])*+
+
+// An octal "0o17", "0O17", "0o6_5_5"
+%token T_INT_OCT        [+-]?+0[oO][0-7](?:_?+[0-7])*+
+
+// A legacy octal "017", "0_42", "00" and a lone "0"
+%token T_INT_OCT_LEGACY [+-]?+0(?:_?+[0-7])*+
+
+// A decimal "42", "1_000"
+%token T_INT_DEC        [+-]?+[1-9](?:_?+[0-9])*+
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Strings
+ *
+ *  A string ends on the same line it starts on.
+ * -----------------------------------------------------------------------------
+ */
+
+
+// A 'text'
+%token T_SQ_STRING      '([^'\\]*(?:\\.[^'\\]*)*)'
+
+// A "text"
+%token T_DQ_STRING      "([^"\\]*(?:\\.[^"\\]*)*)"
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Keywords
+ *
+ *  A keyword has a meaning in its own position only: a rule of a name accepts
+ *  them too, so each of them stays a valid name of a type. They are written
+ *  in lower case only, any other case is an ordinary name.
+ * -----------------------------------------------------------------------------
+ */
+
+
+%token T_IS             is(?&WORD_END)
+%token T_NOT            not(?&WORD_END)
+%token T_OF             of(?&WORD_END)
+%token T_AS             as(?&WORD_END)
+%token T_SUPER          super(?&WORD_END)
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Names
+ * -----------------------------------------------------------------------------
+ */
+
+
+// A lone "*" that is not a part of a longer mask
+%token T_WILDCARD       \*(?![\w\x80-\xFF*])
+
+// A mask of a constant: "BAR_*", "*_BAZ", "B*R", "A*B*C", but not "**"
+%token T_MASK           (?=[\w\x80-\xFF*]*[\w\x80-\xFF])(?&NAME_CHAR)*+\*(?:(?&NAME_CHAR)++\*)*+(?&NAME_CHAR)*+
+
+// A segment of a name, a hyphen is allowed anywhere behind the first character
+%token T_NAME           (?&NAME_START)[\w\x80-\xFF-]*+
+
+// A "\" that separates two segments of a name: it has a name character right
+// before it and a name right behind it
+%token T_NS_SEP         (?<=[\w\x80-\xFF-])\\(?=(?&NAME_START)|\*)
+
+// A "\" in front of a name
+%token T_NS_ROOT        \\(?=(?&NAME_START)|\*)
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Punctuation
+ * -----------------------------------------------------------------------------
+ */
+
+
+%token T_DOUBLE_COLON   ::
+%token T_COLON          :
+%token T_ELLIPSIS       \.\.\.
+%token T_ASSIGN         =
+%token T_UNION          \|
+%token T_AMPERSAND      &
+%token T_QUESTION       \?
+%token T_COMMA          ,
+%token T_PAREN_OPEN     \(
+%token T_PAREN_CLOSE    \)
+%token T_ANGLE_OPEN     <
+%token T_ANGLE_CLOSE    >
+%token T_BRACKET_OPEN   \[
+%token T_BRACKET_CLOSE  \]
+%token T_BRACE_OPEN     \{
+%token T_BRACE_CLOSE    \}
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Skips
+ * -----------------------------------------------------------------------------
+ */
+
+// Any whitespaces
 %skip   T_WHITESPACE            \s++
-
-// An "is"
-%token  T_EQ                    is(?&KEYWORD_END)
-// A "not"
-%token  T_NOT                   not(?&KEYWORD_END)
-// A "true" or a "TRUE"
-%token  T_TRUE_LITERAL          (?i:true)(?&LITERAL_END)
-// A "false" or a "FALSE"
-%token  T_FALSE_LITERAL         (?i:false)(?&LITERAL_END)
-// A "null" or a "NULL"
-%token  T_NULL_LITERAL          (?i:null)(?&LITERAL_END)
-
-// Identifiers
-
-%token  T_NAME_WITH_SPACE       (?&IDENT_HEAD)(?&IDENT_TAIL)*+\s++
-// An "int", a "non-empty-string" or a "_42"
-%token  T_NAME                  (?&IDENT_HEAD)(?&IDENT_TAIL)*+
-
-%token  T_NS_DELIMITER          \\
-%token  T_OR                    \|
-%token  T_COMMA                 ,
-%token  T_DOUBLE_COLON          ::
-%token  T_COLON                 :
-%token  T_ANGLE_BRACKET_OPEN    <
-%token  T_ANGLE_BRACKET_CLOSE   >
-%token  T_QMARK                 \?
-%token  T_BRACE_OPEN            \{
-%token  T_BRACE_CLOSE           \}
-%token  T_PARENTHESIS_OPEN      \(
-%token  T_PARENTHESIS_CLOSE     \)
-%token  T_SQUARE_BRACKET_OPEN   \[
-%token  T_SQUARE_BRACKET_CLOSE  \]
-%token  T_AMP                   &
-%token  T_ELLIPSIS              \.\.\.
-%token  T_ASSIGN                =
-%token  T_ASTERISK              \*
-
-// Variables
-
-// A "$this"
-%token  T_THIS                  \$this(?!(?&VAR_TAIL))
-// A "$value" or a "$_"
-%token  T_VARIABLE              \$(?&IDENT_HEAD)(?&VAR_TAIL)*+
-
-// Literals
-
-// A double quoted "text"
-%token  T_DQ_STRING_LITERAL     "[^"\\]*+(?:\\.[^"\\]*+)*+"
-%token  T_SQ_STRING_LITERAL     '[^'\\]*+(?:\\.[^'\\]*+)*+'
-// A "42.0", a "42.", a ".42", a "42e2", a "-1.5e+3" or a "2_3.4_5e-6_7"
-%token  T_FLOAT_LITERAL         (?&SIGN)?(?:(?&FRACTION)(?:(?&EXPONENT))?|(?&DIGITS)(?&EXPONENT))
-// A "0b1010", a "0B0001_1000" or a "-0b10"
-%token  T_BIN_INT_LITERAL       (?&SIGN)?0[bB](?&BIN_DIGITS)
-// A "0o42", a "0O42", a "042" or an "04_23"
-%token  T_OCT_INT_LITERAL       (?&SIGN)?0(?:[oO](?&OCT_DIGITS)|(?&OCT_TAIL)++)
-// A "0xDEAD", a "0XDeaD" or a "0xFE_DE"
-%token  T_HEX_INT_LITERAL       (?&SIGN)?0[xX](?&HEX_DIGITS)
-// A "42", a "+42_04" or a "0"
-%token  T_DEC_INT_LITERAL       (?&SIGN)?(?:(?&DEC_DIGITS)|0)
-
-// Comments
 
 // A "// text" or a "# text"
 %skip   T_COMMENT               (?://|#)[^\r\n]*+
+
 // A "/* text */"
-%skip   T_DOC_COMMENT           /\*.*?\*/
+%skip   T_DOC_COMMENT           /\*(?:[^*]++|\*(?!/))*+\*/

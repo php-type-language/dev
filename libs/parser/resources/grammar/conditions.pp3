@@ -1,0 +1,12 @@
+/**
+ * -----------------------------------------------------------------------------
+ *  Conditional Types
+ *
+ *  Every way of reading a condition is a sequence of its own: if the first
+ *  does not end up in "? then : else", the next one is tried. So in
+ *  "T is not ? A : B" the word "not" is a type, not a negation.
+ * -----------------------------------------------------------------------------
+ */
+
+
+// TODO

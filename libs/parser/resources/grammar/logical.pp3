@@ -1,0 +1,11 @@
+/**
+ * -----------------------------------------------------------------------------
+ *  Logical Types
+ *
+ *  A level of precedence is a rule of its own, from the weakest to the
+ *  strongest: Conditional, Union, Intersection, Suffixed.
+ * -----------------------------------------------------------------------------
+ */
+
+
+// TODO

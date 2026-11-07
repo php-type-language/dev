@@ -39,7 +39,7 @@ interface TypeParserInterface
      * @throws ParserExceptionInterface in case of parsing exception occurs
      * @throws \Throwable in case of internal error occurs
      */
-    public function parse(#[Language('PHP')] mixed $source): Node;
+    public function parse(#[Language('PHP')] mixed $source): mixed;
 
     /**
      * Parses as much of the provided source code as possible and returns

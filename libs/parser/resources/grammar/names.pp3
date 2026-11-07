@@ -1,0 +1,12 @@
+/**
+ * -----------------------------------------------------------------------------
+ *  Names
+ *
+ *  The rules are named after the nodes of the syntax tree they stand for.
+ *  A whitespace is never allowed inside a name: the separator "\" is a token
+ *  of its own that exists only right between two segments.
+ * -----------------------------------------------------------------------------
+ */
+
+
+// TODO
