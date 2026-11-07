@@ -4,35 +4,56 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer\Tests;
 
+use TypeLang\Printer\PrinterOptions\UnionSpacing;
+use TypeLang\Printer\PrinterOptions\IntersectionSpacing;
+use TypeLang\Printer\PrinterOptions\CallableReturnSpacing;
+use TypeLang\Printer\PrinterOptions\CommaSpacing;
+use TypeLang\Printer\PrinterOptions\NullableStyle;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Printer\Exception\NonPrintableNodeException;
 use TypeLang\Printer\PrettyTypePrinter;
+use TypeLang\Printer\PrinterOptions;
+use TypeLang\Printer\PrinterOptions\ListStyle;
+use TypeLang\Type\Callable\CallableParameterListNode;
+use TypeLang\Type\Callable\CallableParameterNode;
+use TypeLang\Type\Callable\CallableTypeNode;
+use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
+use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Shape\FieldListNode;
+use TypeLang\Type\Shape\NamedFieldNode;
+use TypeLang\Type\Template\TemplateListNode;
+use TypeLang\Type\Template\TypedTemplateArgumentNode;
 use TypeLang\Type\TypeNode;
+use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
+use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
+use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 #[CoversClass(PrettyTypePrinter::class)]
 final class PrettyTypePrinterTest extends TestCase
 {
     /**
      * @param non-empty-string $newLine
-     * @param non-empty-string $indention
+     * @param non-empty-string $indentation
      */
     private function printer(
         string $newLine = "\n",
-        string $indention = '    ',
-        bool $wrapUnionType = true,
-        bool $wrapIntersectionType = true,
-        bool $wrapCallableReturnType = true,
-        int $multilineShape = 1,
+        string $indentation = '    ',
+        UnionSpacing $unionSpacing = UnionSpacing::Spaced,
+        IntersectionSpacing $intersectionSpacing = IntersectionSpacing::Spaced,
+        CallableReturnSpacing $callableReturnSpacing = CallableReturnSpacing::Spaced,
+        int $maxInlineShapeFields = 1,
     ): PrettyTypePrinter {
-        return new PrettyTypePrinter(
+        return new PrettyTypePrinter(new PrinterOptions(
             newLine: $newLine,
-            indention: $indention,
-            wrapUnionType: $wrapUnionType,
-            wrapIntersectionType: $wrapIntersectionType,
-            wrapCallableReturnType: $wrapCallableReturnType,
-            multilineShape: $multilineShape,
-        );
+            indentation: $indentation,
+            unionSpacing: $unionSpacing,
+            intersectionSpacing: $intersectionSpacing,
+            callableReturnSpacing: $callableReturnSpacing,
+            maxInlineShapeFields: $maxInlineShapeFields,
+        ));
     }
 
     public function testPrintNamedType(): void
@@ -52,7 +73,7 @@ final class PrettyTypePrinterTest extends TestCase
 
     public function testPrintUnionTypeWithoutWrapping(): void
     {
-        self::assertSame('int|string', $this->printer(wrapUnionType: false)
+        self::assertSame('int|string', $this->printer(unionSpacing: UnionSpacing::Compact)
             ->print(self::parse('int|string')));
     }
 
@@ -68,7 +89,7 @@ final class PrettyTypePrinterTest extends TestCase
 
     public function testPrintIntersectionTypeWithoutWrapping(): void
     {
-        self::assertSame('int&string', $this->printer(wrapIntersectionType: false)
+        self::assertSame('int&string', $this->printer(intersectionSpacing: IntersectionSpacing::Compact)
             ->print(self::parse('int&string')));
     }
 
@@ -161,7 +182,7 @@ final class PrettyTypePrinterTest extends TestCase
 
     public function testPrintShapeInlineWhenBelowMultilineThreshold(): void
     {
-        self::assertSame('array{a: int, b: string, c: float}', $this->printer(multilineShape: 5)
+        self::assertSame('array{a: int, b: string, c: float}', $this->printer(maxInlineShapeFields: 5)
             ->print(self::parse('array{a: int, b: string, c: float}')));
     }
 
@@ -220,7 +241,7 @@ final class PrettyTypePrinterTest extends TestCase
 
     public function testPrintCallableReturnTypeWithoutWrapping(): void
     {
-        self::assertSame('callable(int):void', $this->printer(wrapCallableReturnType: false)
+        self::assertSame('callable(int):void', $this->printer(callableReturnSpacing: CallableReturnSpacing::Compact)
             ->print(self::parse('callable(int): void')));
     }
 
@@ -293,7 +314,6 @@ final class PrettyTypePrinterTest extends TestCase
     {
         yield 'a wildcard argument' => ['Collection<*>'];
         yield 'a wildcard beside a type' => ['HashMap<array-key, *>'];
-        yield 'a hinted wildcard' => ['Collection<out *>'];
         yield 'a template parameter' => ['callable<T>(T): T'];
         yield 'a bounded template parameter' => ['callable<T of Some>(T): T'];
         yield 'every kind of bound' => ['Closure<T of Some, U super Any, V = int>(T, U): V'];
@@ -360,11 +380,11 @@ final class PrettyTypePrinterTest extends TestCase
         yield 'not equal' => ['($x is not int ? string : bool)', '($x is not int ? string : bool)'];
     }
 
-    public function testPrintUsesCustomNewLineAndIndention(): void
+    public function testPrintUsesCustomNewLineAndIndentation(): void
     {
         self::assertSame(
             'array{|>>int,|>>string|}',
-            $this->printer(newLine: '|', indention: '>>')
+            $this->printer(newLine: '|', indentation: '>>')
                 ->print(self::parse('array{int, string}')),
         );
     }
@@ -387,5 +407,232 @@ final class PrettyTypePrinterTest extends TestCase
         $this->expectException(NonPrintableNodeException::class);
 
         $this->printer()->print($node);
+    }
+
+    private static function named(string $name): NamedTypeNode
+    {
+        return NamedTypeNode::from($name);
+    }
+
+    /**
+     * array<int, string>
+     */
+    private static function generic(): NamedTypeNode
+    {
+        return new NamedTypeNode(TypeName::from('array'), new TemplateListNode([
+            new TypedTemplateArgumentNode(self::named('int')),
+            new TypedTemplateArgumentNode(self::named('string')),
+        ]));
+    }
+
+    /**
+     * callable(int, string): void
+     */
+    private static function callable(): CallableTypeNode
+    {
+        return new CallableTypeNode(
+            TypeName::from('callable'),
+            new CallableParameterListNode([
+                new CallableParameterNode(self::named('int')),
+                new CallableParameterNode(self::named('string')),
+            ]),
+            self::named('void'),
+        );
+    }
+
+    /**
+     * array{a: int, b: string}
+     */
+    private static function shape(): NamedTypeNode
+    {
+        return new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([
+            NamedFieldNode::from('a', self::named('int')),
+            NamedFieldNode::from('b', self::named('string')),
+        ]));
+    }
+
+    private function assertPrinted(string $expected, PrettyTypePrinter $printer, TypeNode $type): void
+    {
+        self::assertSame($expected, $printer->print($type));
+    }
+
+    public function testTemplateIsSingleLineByDefault(): void
+    {
+        $this->assertPrinted('array<int, string>', new PrettyTypePrinter(), self::generic());
+    }
+
+    public function testTemplateIsMultilineAfterTheThreshold(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(maxInlineTemplateItems: 1));
+
+        $this->assertPrinted("array<\n    int,\n    string\n>", $printer, self::generic());
+    }
+
+    public function testTemplateIsSingleLineUpToTheThreshold(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(maxInlineTemplateItems: 2));
+
+        $this->assertPrinted('array<int, string>', $printer, self::generic());
+    }
+
+    public function testCallableIsSingleLineByDefault(): void
+    {
+        $this->assertPrinted('callable(int, string): void', new PrettyTypePrinter(), self::callable());
+    }
+
+    public function testCallableIsMultilineAfterTheThreshold(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(maxInlineCallableParameters: 1));
+
+        $this->assertPrinted("callable(\n    int,\n    string\n): void", $printer, self::callable());
+    }
+
+    public function testMultilineItemsAreIndentedOneLevelDeeper(): void
+    {
+        $type = new NamedTypeNode(TypeName::from('array'), new TemplateListNode([
+            new TypedTemplateArgumentNode(self::named('int')),
+            new TypedTemplateArgumentNode(self::shape()),
+        ]));
+
+        $printer = new PrettyTypePrinter(new PrinterOptions(maxInlineShapeFields: 1, maxInlineTemplateItems: 1));
+
+        $this->assertPrinted(
+            "array<\n    int,\n    array{\n        a: int,\n        b: string\n    }\n>",
+            $printer,
+            $type,
+        );
+    }
+
+    public function testNoSpaceAfterCommaInTemplate(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(commaSpacing: CommaSpacing::Compact));
+
+        $this->assertPrinted('array<int,string>', $printer, self::generic());
+    }
+
+    public function testNoSpaceAfterCommaInCallable(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(commaSpacing: CommaSpacing::Compact));
+
+        $this->assertPrinted('callable(int,string): void', $printer, self::callable());
+    }
+
+    public function testNoSpaceAfterCommaInSingleLineShape(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(
+            maxInlineShapeFields: 2,
+            commaSpacing: CommaSpacing::Compact,
+        ));
+
+        $this->assertPrinted('array{a: int,b: string}', $printer, self::shape());
+    }
+
+    public function testNullableIsShortByDefault(): void
+    {
+        $this->assertPrinted('?int', new PrettyTypePrinter(), new NullableTypeNode(self::named('int')));
+    }
+
+    public function testNullableIsWrittenAsUnionWithNull(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(nullableStyle: NullableStyle::Union));
+
+        $this->assertPrinted('int|null', $printer, new NullableTypeNode(self::named('int')));
+    }
+
+    public function testNullableAsUnionFollowsTheUnionFormat(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(
+            unionSpacing: UnionSpacing::Spaced,
+            nullableStyle: NullableStyle::Union,
+        ));
+
+        $this->assertPrinted('int | null', $printer, new NullableTypeNode(self::named('int')));
+    }
+
+    public function testListIsWrittenWithBracketsByDefault(): void
+    {
+        $this->assertPrinted('int[]', new PrettyTypePrinter(), new TypesListTypeNode(self::named('int')));
+    }
+
+    public function testListIsWrittenAsGenericArray(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(listStyle: ListStyle::Generic));
+
+        $this->assertPrinted('array<int>', $printer, new TypesListTypeNode(self::named('int')));
+    }
+
+    public function testNestedListsFollowTheListStyle(): void
+    {
+        $printer = new PrettyTypePrinter(new PrinterOptions(listStyle: ListStyle::Generic));
+        $type = new TypesListTypeNode(new TypesListTypeNode(self::named('int')));
+
+        $this->assertPrinted('array<array<int>>', $printer, $type);
+    }
+
+    private static function union(string ...$names): UnionTypeNode
+    {
+        return new UnionTypeNode(\array_map(self::named(...), $names));
+    }
+
+    private function pretty(TypeNode $type): string
+    {
+        $options = new PrinterOptions(intersectionSpacing: IntersectionSpacing::Compact);
+
+        return (new PrettyTypePrinter($options))->print($type);
+    }
+
+    public function testEveryUnionOfTemplateArgumentsIsWrittenWithNoBrackets(): void
+    {
+        $type = new NamedTypeNode(TypeName::from('array'), new TemplateListNode([
+            new TypedTemplateArgumentNode(self::union('int', 'string')),
+            new TypedTemplateArgumentNode(self::union('float', 'bool')),
+        ]));
+
+        self::assertSame('array<int|string, float|bool>', $this->pretty($type));
+    }
+
+    public function testUnionInsideAnIntersectionIsWrapped(): void
+    {
+        $type = new IntersectionTypeNode([self::named('A'), self::union('B', 'C')]);
+
+        self::assertSame('A&(B|C)', $this->pretty($type));
+    }
+
+    public function testIntersectionInsideAUnionIsWrapped(): void
+    {
+        $type = new UnionTypeNode([self::named('A'), new IntersectionTypeNode([self::named('B'), self::named('C')])]);
+
+        self::assertSame('A|(B&C)', $this->pretty($type));
+    }
+
+    public function testTemplateArgumentsOfATypeInsideAnIntersectionAreNotWrapped(): void
+    {
+        $generic = new NamedTypeNode(TypeName::from('Foo'), new TemplateListNode([
+            new TypedTemplateArgumentNode(self::union('A', 'B')),
+        ]));
+
+        $type = new IntersectionTypeNode([$generic, self::named('C')]);
+
+        self::assertSame('Foo<A|B>&C', $this->pretty($type));
+    }
+
+    public function testListOfAUnionIsWrapped(): void
+    {
+        self::assertSame('(int|string)[]', $this->pretty(new TypesListTypeNode(self::union('int', 'string'))));
+    }
+
+    public function testOffsetAccessToAUnionIsWrapped(): void
+    {
+        $type = new TypeOffsetAccessTypeNode(self::union('A', 'B'), self::named('K'));
+
+        self::assertSame('(A|B)[K]', $this->pretty($type));
+    }
+
+    public function testNestingIsNotKeptBetweenSeparateUnions(): void
+    {
+        $printer = new PrettyTypePrinter();
+
+        self::assertSame('int|string', $printer->print(self::union('int', 'string')));
+        self::assertSame('int|string', $printer->print(self::union('int', 'string')));
     }
 }

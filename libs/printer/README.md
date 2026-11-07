@@ -54,13 +54,69 @@ $type = $parser->parse(<<<'PHP'
     }
     PHP);
 
-echo new TypeLang\Printer\NativeTypePrinter()->print($type);
+echo (new TypeLang\Printer\NativeTypePrinter())->print($type);
 // array
 
-echo new TypeLang\Printer\PrettyTypePrinter()->print($type);
+echo (new TypeLang\Printer\PrettyTypePrinter())->print($type);
 // array{
 //     field1: callable(Example, int): mixed,
 //     field2: list<Some>,
 //     ...
 // }
 ```
+
+
+### Options
+
+The formatting is set with the `PrinterOptions`:
+
+```php
+use TypeLang\Printer\PrettyTypePrinter;
+use TypeLang\Printer\PrinterOptions;
+use TypeLang\Printer\PrinterOptions\CommaSpacing;
+use TypeLang\Printer\PrinterOptions\ListStyle;
+use TypeLang\Printer\PrinterOptions\NullableStyle;
+use TypeLang\Printer\PrinterOptions\UnionSpacing;
+
+$printer = new PrettyTypePrinter(new PrinterOptions(
+    unionSpacing: UnionSpacing::Spaced,        // int | string
+    maxInlineTemplateItems: 2,             // array<K, V> is written one argument per line after 2 of them
+    commaSpacing: CommaSpacing::Compact,       // array<K,V>
+    nullableStyle: NullableStyle::Union,   // int|null instead of ?int
+    listStyle: ListStyle::Generic,         // array<int> instead of int[]
+));
+```
+
+### Printing a node in your own way
+
+Every kind of node is printed by its own `NodePrinterInterface`, and a printer
+looks them up in a registry. To change how a node is printed, replace its
+printer instead of extending the printer:
+
+```php
+use TypeLang\Printer\NodePrinterInterface;
+use TypeLang\Printer\PrettyTypePrinter;
+use TypeLang\Printer\PrinterContext;
+use TypeLang\Printer\TypePrinter;
+use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Node;
+
+/**
+ * @template-implements NodePrinterInterface<NamedTypeNode>
+ */
+final class ShoutingNamePrinter implements NodePrinterInterface
+{
+    public function printNode(Node $node, PrinterContext $context): string
+    {
+        return \strtoupper($node->name->toString());
+    }
+}
+
+$printer = new TypePrinter(
+    PrettyTypePrinter::createRegistry()->with(NamedTypeNode::class, new ShoutingNamePrinter()),
+);
+```
+
+A node without its own printer is printed by the printer of the closest parent
+class. The `PrinterContext` prints the children of a node (`$context->print()`)
+and carries the options.

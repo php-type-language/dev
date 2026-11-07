@@ -4,57 +4,80 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Type\CallableTypeNode;
-use TypeLang\Type\ClassConstMaskNode;
-use TypeLang\Type\ClassConstNode;
-use TypeLang\Type\ConstMaskNode;
-use TypeLang\Type\IntersectionTypeNode;
-use TypeLang\Type\Literal\BoolLiteralNode;
-use TypeLang\Type\Literal\FloatLiteralNode;
-use TypeLang\Type\Literal\IntLiteralNode;
+use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistry;
+use TypeLang\Printer\NodePrinter\Registry\CachedNodePrinterRegistry;
+use TypeLang\Printer\NativeTypePrinter\TypeAliases;
+use TypeLang\Printer\NodePrinter\Callable\NativeCallableTypeNodePrinter;
+use TypeLang\Printer\NodePrinter\Condition\NativeConditionalTypeNodePrinter;
+use TypeLang\Printer\NodePrinter\LogicalTypeNodePrinter\NativeIntersectionTypeNodePrinter;
+use TypeLang\Printer\NodePrinter\LogicalTypeNodePrinter\NativeUnionTypeNodePrinter;
+use TypeLang\Printer\NodePrinter\NativeFixedNodePrinter;
+use TypeLang\Printer\NodePrinter\NativeLiteralNodePrinter;
+use TypeLang\Printer\NodePrinter\NativeNamedTypeNodePrinter;
+use TypeLang\Printer\NodePrinter\NativeNullableTypeNodePrinter;
+use TypeLang\Type\Callable\CallableTypeNode;
+use TypeLang\Type\Condition\ConditionalTypeNode;
+use TypeLang\Type\Constant\ClassConstMaskTypeNode;
+use TypeLang\Type\Constant\ClassConstTypeNode;
+use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Literal\LiteralNode;
-use TypeLang\Type\Literal\NullLiteralNode;
-use TypeLang\Type\Literal\StringLiteralNode;
+use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
+use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\TernaryExpressionNode;
-use TypeLang\Type\ThisNode;
-use TypeLang\Type\TypeOffsetAccessNode;
-use TypeLang\Type\TypesListNode;
-use TypeLang\Type\UnionTypeNode;
-use TypeLang\Type\WildcardNode;
+use TypeLang\Type\ThisTypeNode;
+use TypeLang\Type\TypeNode;
+use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
+use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
+use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
+use TypeLang\TypeSystem\Registry;
 
-class NativeTypePrinter extends PrettyTypePrinter
+/**
+ * Prints the native PHP type a type stands for.
+ */
+final class NativeTypePrinter implements TypePrinterInterface
 {
-    /**
-     * @var array<non-empty-string, non-empty-string>
-     */
-    private array $aliases = [];
+    private readonly TypeAliases $aliases;
+
+    private readonly TypePrinter $printer;
 
     /**
      * @param iterable<non-empty-string, non-empty-string> $aliases
-     * @param non-empty-string $newLine
-     * @param non-empty-string $indention
+     * @param Registry|null $registry the names of the types the printer knows, all of the
+     *        dialects by default
      */
     public function __construct(
         iterable $aliases = [],
-        string $newLine = self::DEFAULT_NEW_LINE_DELIMITER,
-        string $indention = self::DEFAULT_INDENTION,
+        PrinterOptions $options = new PrinterOptions(),
+        ?Registry $registry = null,
     ) {
-        parent::__construct($newLine, $indention);
-
-        // preload phan type aliases
-        // @phpstan-ignore-next-line : PHPStan false-positive, not a bug
-        $this->aliases += require __DIR__ . '/../resources/aliases/phan.php';
-        // preload psalm type aliases
-        // @phpstan-ignore-next-line : PHPStan false-positive, not a bug
-        $this->aliases += require __DIR__ . '/../resources/aliases/psalm.php';
-        // preload phpstan type aliases
-        // @phpstan-ignore-next-line : PHPStan false-positive, not a bug
-        $this->aliases += require __DIR__ . '/../resources/aliases/phpstan.php';
+        $this->aliases = new TypeAliases($registry);
 
         foreach ($aliases as $alias => $type) {
-            $this->addTypeAlias($alias, $type);
+            $this->aliases->add($alias, $type);
         }
+
+        $this->printer = new TypePrinter(
+            registry: new CachedNodePrinterRegistry($this->createRegistry()),
+            options: $options,
+        );
+    }
+
+    private function createRegistry(): NodePrinterRegistry
+    {
+        return PrettyTypePrinter::createRegistry()
+            ->with(LiteralNode::class, new NativeLiteralNodePrinter())
+            ->with(NamedTypeNode::class, new NativeNamedTypeNodePrinter($this->aliases))
+            ->with(CallableTypeNode::class, new NativeCallableTypeNodePrinter($this->aliases))
+            ->with(UnionTypeNode::class, new NativeUnionTypeNodePrinter())
+            ->with(IntersectionTypeNode::class, new NativeIntersectionTypeNodePrinter())
+            ->with(ConditionalTypeNode::class, new NativeConditionalTypeNodePrinter())
+            ->with(NullableTypeNode::class, new NativeNullableTypeNodePrinter())
+            ->with(ThisTypeNode::class, new NativeFixedNodePrinter('self'))
+            ->with(TypesListTypeNode::class, new NativeFixedNodePrinter('iterable'))
+            ->with(TypeOffsetAccessTypeNode::class, new NativeFixedNodePrinter('mixed'))
+            ->with(ClassConstTypeNode::class, new NativeFixedNodePrinter('mixed'))
+            ->with(ClassConstMaskTypeNode::class, new NativeFixedNodePrinter('mixed'))
+            ->with(ConstMaskTypeNode::class, new NativeFixedNodePrinter('mixed'));
     }
 
     /**
@@ -65,7 +88,7 @@ class NativeTypePrinter extends PrettyTypePrinter
      */
     public function addTypeAlias(string $alias, string $type): void
     {
-        $this->aliases[\strtolower($alias)] = $type;
+        $this->aliases->add($alias, $type);
     }
 
     /**
@@ -76,9 +99,7 @@ class NativeTypePrinter extends PrettyTypePrinter
      */
     public function addUnionTypeAlias(string $alias, array $types): void
     {
-        \sort($types);
-
-        $this->aliases[\strtolower($alias)] = \implode('|', $types);
+        $this->aliases->addUnion($alias, $types);
     }
 
     /**
@@ -89,161 +110,11 @@ class NativeTypePrinter extends PrettyTypePrinter
      */
     public function addIntersectionTypeAlias(string $alias, array $types): void
     {
-        \sort($types);
-
-        $this->aliases[\strtolower($alias)] = \implode('&', $types);
+        $this->aliases->addIntersection($alias, $types);
     }
 
-    /**
-     * @return non-empty-string
-     */
-    #[\Override]
-    protected function printTypeListNode(TypesListNode $node): string
+    public function print(TypeNode $stmt): string
     {
-        return 'iterable';
-    }
-
-    #[\Override]
-    protected function printTernaryType(TernaryExpressionNode $node): string
-    {
-        /** @var non-empty-string */
-        return $this->make(new UnionTypeNode([$node->then, $node->else]));
-    }
-
-    #[\Override]
-    protected function printClassConstMaskNode(ClassConstMaskNode $node): string
-    {
-        return 'mixed';
-    }
-
-    #[\Override]
-    protected function printConstMaskNode(ConstMaskNode $node): string
-    {
-        return 'mixed';
-    }
-
-    #[\Override]
-    protected function printWildcardNode(WildcardNode $node): string
-    {
-        return 'mixed';
-    }
-
-    #[\Override]
-    protected function printThisNode(ThisNode $node): string
-    {
-        return 'self';
-    }
-
-    #[\Override]
-    protected function printClassConstNode(ClassConstNode $node): string
-    {
-        return 'mixed';
-    }
-
-    #[\Override]
-    protected function printUnionTypeNode(UnionTypeNode $node): string
-    {
-        $shouldWrap = $this->nesting++ > 0;
-
-        $result = $this->unwrapAndPrint($node);
-
-        $result = $this->formatUnionWithMixed($result);
-        $result = $this->formatBoolWithTrueAndFalse($result);
-
-        /** @var non-empty-string */
-        return \vsprintf($shouldWrap ? '(%s)' : '%s', [
-            \implode('|', [...\array_unique($result)]),
-        ]);
-    }
-
-    /**
-     * Replace "true" + "false" pair into "bool"
-     *
-     * @param list<non-empty-string> $result
-     * @return list<non-empty-string>
-     */
-    private function formatBoolWithTrueAndFalse(array $result): array
-    {
-        $containsBool = (\in_array('true', $result, true) || \in_array('\true', $result, true))
-            && (\in_array('false', $result, true) || \in_array('\false', $result, true));
-
-        if (!$containsBool) {
-            return $result;
-        }
-
-        $filtered = \array_filter($result, static fn(string $type): bool
-            => !\in_array($type, ['true', 'false', '\true', '\false'], true));
-        $filtered[] = 'bool';
-
-        /** @var list<non-empty-string> */
-        return $filtered;
-    }
-
-    /**
-     * Replace everything that contain "mixed" type
-     * if one of the types is "mixed".
-     *
-     * @param list<non-empty-string> $result
-     * @return list<non-empty-string>
-     */
-    private function formatUnionWithMixed(array $result): array
-    {
-        if (\in_array('mixed', $result, true)) {
-            return ['mixed'];
-        }
-
-        return $result;
-    }
-
-    #[\Override]
-    protected function printIntersectionTypeNode(IntersectionTypeNode $node): string
-    {
-        /** @var non-empty-string */
-        return \vsprintf($this->nesting++ > 0 ? '(%s)' : '%s', [
-            \implode('&', [...$this->unwrapAndPrint($node)]),
-        ]);
-    }
-
-    #[\Override]
-    protected function printCallableTypeNode(CallableTypeNode $node): string
-    {
-        return $this->getTypeName($node->name->toString());
-    }
-
-    /**
-     * @param non-empty-string $name
-     * @return non-empty-string
-     */
-    protected function getTypeName(string $name): string
-    {
-        return $this->aliases[\strtolower($name)] ?? $name;
-    }
-
-    #[\Override]
-    protected function printNamedTypeNode(NamedTypeNode $node): string
-    {
-        return $this->getTypeName($node->name->toString());
-    }
-
-    #[\Override]
-    protected function printLiteralNode(LiteralNode $node): string
-    {
-        /** @var non-empty-string */
-        return match (true) {
-            $node instanceof BoolLiteralNode => 'bool',
-            $node instanceof FloatLiteralNode => 'float',
-            $node instanceof IntLiteralNode => 'int',
-            $node instanceof NullLiteralNode => 'null',
-            $node instanceof StringLiteralNode => 'string',
-            default => \get_debug_type($node->value),
-        };
-    }
-
-    #[\Override]
-    protected function printTypeOffsetAccessNode(TypeOffsetAccessNode $node): string
-    {
-        // Getting an offset requires information about the data from which the
-        // offset is needed. Therefore, we return a mixed type.
-        return 'mixed';
+        return $this->printer->print($stmt);
     }
 }

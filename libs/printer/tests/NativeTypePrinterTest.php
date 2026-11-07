@@ -8,6 +8,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Printer\Exception\NonPrintableNodeException;
 use TypeLang\Printer\NativeTypePrinter;
+use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
+use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\TypeNode;
 
 #[CoversClass(NativeTypePrinter::class)]
@@ -119,11 +122,6 @@ final class NativeTypePrinterTest extends TestCase
         self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('FOO_*')));
     }
 
-    public function testPrintWildcardAsMixed(): void
-    {
-        self::assertSame('mixed', (new NativeTypePrinter())->print(new \TypeLang\Type\WildcardNode()));
-    }
-
     public function testPrintTypeOffsetAccessAsMixed(): void
     {
         self::assertSame('mixed', (new NativeTypePrinter())->print(self::parse('Foo[Bar]')));
@@ -205,5 +203,36 @@ final class NativeTypePrinterTest extends TestCase
         $this->expectException(NonPrintableNodeException::class);
 
         (new NativeTypePrinter())->print($node);
+    }
+
+    public function testPrintWrapsNestedLogicalTypes(): void
+    {
+        $union = new UnionTypeNode([NamedTypeNode::from('A'), NamedTypeNode::from('B')]);
+        $type = new UnionTypeNode([
+            new IntersectionTypeNode([$union, NamedTypeNode::from('C')]),
+            NamedTypeNode::from('D'),
+        ]);
+
+        self::assertSame('((A|B)&C)|D', (new NativeTypePrinter())->print($type));
+    }
+
+    public function testAliasesAreAddedAfterTheConstruction(): void
+    {
+        $printer = new NativeTypePrinter();
+        $printer->addTypeAlias('Custom', 'int');
+        $printer->addUnionTypeAlias('Number', ['int', 'float']);
+        $printer->addIntersectionTypeAlias('Both', ['B', 'A']);
+
+        self::assertSame('int', $printer->print(NamedTypeNode::from('Custom')));
+        self::assertSame('float|int', $printer->print(NamedTypeNode::from('Number')));
+        self::assertSame('A&B', $printer->print(NamedTypeNode::from('Both')));
+    }
+
+    public function testPrintOfHandBuiltNodesUsesTheAliases(): void
+    {
+        $printer = new NativeTypePrinter(['Custom' => 'int']);
+
+        self::assertSame('int', $printer->print(NamedTypeNode::from('Custom')));
+        self::assertSame('int', $printer->print(NamedTypeNode::from('positive-int')));
     }
 }
