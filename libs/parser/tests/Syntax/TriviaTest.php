@@ -36,7 +36,7 @@ final class TriviaTest extends SyntaxTestCase
     public function testACommentPartsTwoTokens(string $type): void
     {
         self::assertSame(<<<'AST'
-            UnionTypeNode
+            LogicalTypeNode\UnionTypeNode
               NamedTypeNode
                 Name(int)
               NamedTypeNode
@@ -98,7 +98,7 @@ final class TriviaTest extends SyntaxTestCase
     public function testACommentStandsBetweenANameAndItsParameters(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
               NamedTypeNode
@@ -125,11 +125,11 @@ final class TriviaTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Some)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(int)
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(string)
             AST, $this->parseAndPrint($type));
@@ -138,7 +138,7 @@ final class TriviaTest extends SyntaxTestCase
     public function testSpaceStandsAroundEveryPartOfACallable(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -182,7 +182,7 @@ final class TriviaTest extends SyntaxTestCase
     public function testTriviaPartsTheWordsOfAnIsNot(string $type): void
     {
         self::assertSame(<<<'AST'
-            TernaryExpressionNode
+            Condition\ConditionalTypeNode
               Condition\NotEqualConditionNode
                 NamedTypeNode
                   Name(A)

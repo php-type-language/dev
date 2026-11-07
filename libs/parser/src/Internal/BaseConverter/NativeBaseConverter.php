@@ -33,6 +33,10 @@ final class NativeBaseConverter implements BaseConverterInterface
 
     public function toDecimal(string $digits, int $base): string
     {
+        if ($base === self::OUTPUT_RADIX) {
+            return $digits;
+        }
+
         $limbs = [0];
 
         for ($i = 0, $length = \strlen($digits); $i < $length; ++$i) {

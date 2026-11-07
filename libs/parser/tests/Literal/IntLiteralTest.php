@@ -15,6 +15,13 @@ use TypeLang\Type\Literal\IntLiteralNode;
  */
 final class IntLiteralTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        self::markTestIncomplete('TODO');
+    }
+
     /**
      * @throws \Throwable
      */

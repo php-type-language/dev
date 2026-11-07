@@ -16,7 +16,7 @@ final class LogicalTest extends SyntaxTestCase
     public function testUnionType(): void
     {
         self::assertSame(<<<'AST'
-            UnionTypeNode
+            LogicalTypeNode\UnionTypeNode
               NamedTypeNode
                 Name(A)
               NamedTypeNode
@@ -29,7 +29,7 @@ final class LogicalTest extends SyntaxTestCase
     public function testIntersectionType(): void
     {
         self::assertSame(<<<'AST'
-            IntersectionTypeNode
+            LogicalTypeNode\IntersectionTypeNode
               NamedTypeNode
                 Name(A)
               NamedTypeNode
@@ -42,7 +42,7 @@ final class LogicalTest extends SyntaxTestCase
     public function testNullableType(): void
     {
         self::assertSame(<<<'AST'
-            NullableTypeNode
+            WrappingTypeNode\NullableTypeNode
               NamedTypeNode
                 Name(Example)
             AST, $this->parseAndPrint('?Example'));
@@ -51,8 +51,8 @@ final class LogicalTest extends SyntaxTestCase
     public function testDisjunctiveNormalForm(): void
     {
         self::assertSame(<<<'AST'
-            UnionTypeNode
-              IntersectionTypeNode
+            LogicalTypeNode\UnionTypeNode
+              LogicalTypeNode\IntersectionTypeNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode
@@ -65,8 +65,8 @@ final class LogicalTest extends SyntaxTestCase
     public function testConjunctiveNormalForm(): void
     {
         self::assertSame(<<<'AST'
-            IntersectionTypeNode
-              UnionTypeNode
+            LogicalTypeNode\IntersectionTypeNode
+              LogicalTypeNode\UnionTypeNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode

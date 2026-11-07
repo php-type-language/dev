@@ -139,7 +139,7 @@ final class TypeResolverTest extends TypeResolverTestCase
             ->withTypeImportAs('TypeLang\Parser\Exception', 'Error');
 
         self::assertSame(<<<'AST'
-            UnionTypeNode
+            LogicalTypeNode\UnionTypeNode
               NamedTypeNode
                 Name(TypeLang\Parser\Node)
               NamedTypeNode
@@ -175,8 +175,8 @@ final class TypeResolverTest extends TypeResolverTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Vendor\Collection)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(Vendor\Node)
             AST, $this->print($resolver->resolve($this->parse('Collection<Node>'))));
@@ -257,7 +257,7 @@ final class TypeResolverTest extends TypeResolverTestCase
             ->withTypeImportAs('App\Err\Exception', 'Error');
 
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -274,7 +274,7 @@ final class TypeResolverTest extends TypeResolverTestCase
             ->withTypeImport('App\Node');
 
         self::assertSame(<<<'AST'
-            ClassConstNode
+            Constant\ClassConstNode
               Name(App\Node)
               Identifier(FOO)
             AST, $this->print($resolver->resolve($this->parse('Node::FOO'))));
@@ -286,10 +286,10 @@ final class TypeResolverTest extends TypeResolverTestCase
             ->withTypeImport('App\Node');
 
         self::assertSame(<<<'AST'
-            ClassConstMaskNode
+            Constant\ClassConstMaskNode
               Name(App\Node)
-              MaskNode(*)
-                WildcardNode(*)
+              Constant\MaskNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
             AST, $this->print($resolver->resolve($this->parse('Node::*'))));
     }
 
@@ -300,7 +300,7 @@ final class TypeResolverTest extends TypeResolverTestCase
             ->withTypeImportAs('App\Err\Exception', 'Error');
 
         self::assertSame(<<<'AST'
-            IntersectionTypeNode
+            LogicalTypeNode\IntersectionTypeNode
               NamedTypeNode
                 Name(App\Node)
               NamedTypeNode
@@ -315,7 +315,7 @@ final class TypeResolverTest extends TypeResolverTestCase
             ->withTypeImportAs('App\Err\Exception', 'Error');
 
         self::assertSame(<<<'AST'
-            TernaryExpressionNode
+            Condition\ConditionalTypeNode
               Condition\EqualConditionNode
                 NamedTypeNode
                   Name(App\Node)

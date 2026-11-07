@@ -130,8 +130,8 @@ final class NameTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(list)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(Тип)
             AST, $this->parseAndPrint('list<Тип>'));

@@ -15,7 +15,7 @@ final class CallableTest extends SyntaxTestCase
     public function testCallableWithoutParametersAndReturnType(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
             AST, $this->parseAndPrint('foo()'));
@@ -24,7 +24,7 @@ final class CallableTest extends SyntaxTestCase
     public function testCallableWithParameterAndReturnType(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -38,24 +38,24 @@ final class CallableTest extends SyntaxTestCase
     public function testComplexNestedCallable(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(a)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
                   NamedTypeNode
                     Name(int)
-                    Template\TemplateArgumentListNode
-                      Template\TemplateArgumentNode
+                    Template\TemplateListNode
+                      Template\TypedTemplateArgumentNode
                         Literal\IntLiteralNode(0)
-                      Template\TemplateArgumentNode
+                      Template\TypedTemplateArgumentNode
                         NamedTypeNode
                           Name(max)
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
-                  CallableTypeNode
+                  Callable\CallableTypeNode
                     Name(c)
                     Callable\CallableParameterListNode
                       Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
-                        NullableTypeNode
+                        WrappingTypeNode\NullableTypeNode
                           NamedTypeNode
                             Name(C)
                     NamedTypeNode
@@ -72,8 +72,8 @@ final class CallableTest extends SyntaxTestCase
     public function testUnionBehindReturnTypeIsAUnionOfTheCallable(): void
     {
         self::assertSame(<<<'AST'
-            UnionTypeNode
-              CallableTypeNode
+            LogicalTypeNode\UnionTypeNode
+              Callable\CallableTypeNode
                 Name(foo)
                 Callable\CallableParameterListNode
                 NamedTypeNode
@@ -86,8 +86,8 @@ final class CallableTest extends SyntaxTestCase
     public function testIntersectionBehindReturnTypeIsAnIntersectionOfTheCallable(): void
     {
         self::assertSame(<<<'AST'
-            IntersectionTypeNode
-              CallableTypeNode
+            LogicalTypeNode\IntersectionTypeNode
+              Callable\CallableTypeNode
                 Name(foo)
                 Callable\CallableParameterListNode
                 NamedTypeNode
@@ -100,10 +100,10 @@ final class CallableTest extends SyntaxTestCase
     public function testGroupedLogicalReturnType(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
-              UnionTypeNode
+              LogicalTypeNode\UnionTypeNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode
@@ -114,11 +114,11 @@ final class CallableTest extends SyntaxTestCase
     public function testNullableListReturnType(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
-              NullableTypeNode
-                TypesListNode
+              WrappingTypeNode\NullableTypeNode
+                WrappingTypeNode\TypesListNode
                   NamedTypeNode
                     Name(A)
             AST, $this->parseAndPrint('foo(): ?A[]'));
@@ -127,7 +127,7 @@ final class CallableTest extends SyntaxTestCase
     public function testNamedParameter(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -141,7 +141,7 @@ final class CallableTest extends SyntaxTestCase
     public function testMixedNamedAndAnonymousParameters(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -161,7 +161,7 @@ final class CallableTest extends SyntaxTestCase
     public function testOutputParameter(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=true, isVariadic=false, isOptional=false)
@@ -173,7 +173,7 @@ final class CallableTest extends SyntaxTestCase
     public function testOutputNamedParameter(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=true, isVariadic=false, isOptional=false)
@@ -187,7 +187,7 @@ final class CallableTest extends SyntaxTestCase
     public function testOptionalParameter(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=true)
@@ -206,7 +206,7 @@ final class CallableTest extends SyntaxTestCase
     public function testVariadicParameter(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=true, isOptional=false)
@@ -257,7 +257,7 @@ final class CallableTest extends SyntaxTestCase
     public function testReferenceAndVariadicMarkersOfATypedParameterAreOrdered(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=true, isVariadic=true, isOptional=false)
@@ -285,7 +285,7 @@ final class CallableTest extends SyntaxTestCase
     public function testTypedParameterAllowsBothMarkersWithoutAName(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(foo)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=true, isVariadic=true, isOptional=false)

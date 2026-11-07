@@ -26,7 +26,7 @@ final class ConditionalTest extends SyntaxTestCase
     public function testConditionalOperators(string $type, string $condition): void
     {
         self::assertSame(<<<AST
-            TernaryExpressionNode
+            Condition\ConditionalTypeNode
               Condition\\{$condition}
                 NamedTypeNode
                   Name(A)
@@ -42,7 +42,7 @@ final class ConditionalTest extends SyntaxTestCase
     public function testConditionalWithVariableSubject(): void
     {
         self::assertSame(<<<'AST'
-            TernaryExpressionNode
+            Condition\ConditionalTypeNode
               Condition\EqualConditionNode
                 VariableNode
                   Identifier(T)

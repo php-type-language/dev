@@ -23,4 +23,17 @@ final class OctLegacyIntParser extends IntParser
     protected const PREFIX_LENGTH = 0;
 
     protected const KIND = IntLiteralKind::Octal;
+
+    /**
+     * A lone zero is a decimal number, any other legacy octal stays octal.
+     */
+    #[\Override]
+    protected function getKind(int $value): IntLiteralKind
+    {
+        if ($value === 0) {
+            return IntLiteralKind::Decimal;
+        }
+
+        return parent::getKind($value);
+    }
 }

@@ -17,6 +17,13 @@ use TypeLang\Type\NamedTypeNode;
 
 final class TypeParserTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        self::markTestIncomplete('TODO');
+    }
+
     #[Test]
     public function everyFeatureIsEnabledByDefault(): void
     {

@@ -14,6 +14,11 @@ namespace TypeLang\Parser\Internal\BaseConverter;
 interface BaseConverterInterface
 {
     /**
+     * @var int<0, max>
+     */
+    public const OUTPUT_RADIX = 10;
+
+    /**
      * Whether the extension the converter relies on is loaded.
      */
     public function isAvailable(): bool;

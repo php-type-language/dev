@@ -7,8 +7,8 @@ namespace TypeLang\Parser\Tests\Syntax;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\TypeOffsetAccessNode;
-use TypeLang\Type\TypesListNode;
+use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessNode;
+use TypeLang\Type\WrappingTypeNode\TypesListNode;
 
 /**
  * Tests for the way the parts of a type bind to one another, that is, what
@@ -24,8 +24,8 @@ final class GroupingTest extends SyntaxTestCase
     public function testAnIntersectionBindsTighterThanAUnion(): void
     {
         self::assertSame(<<<'AST'
-            UnionTypeNode
-              IntersectionTypeNode
+            LogicalTypeNode\UnionTypeNode
+              LogicalTypeNode\IntersectionTypeNode
                 NamedTypeNode
                   Name(int)
                 NamedTypeNode
@@ -38,8 +38,8 @@ final class GroupingTest extends SyntaxTestCase
     public function testParenthesesTurnAUnionIntoAMemberOfAnIntersection(): void
     {
         self::assertSame(<<<'AST'
-            IntersectionTypeNode
-              UnionTypeNode
+            LogicalTypeNode\IntersectionTypeNode
+              LogicalTypeNode\UnionTypeNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode
@@ -78,8 +78,8 @@ final class GroupingTest extends SyntaxTestCase
     public function testTheQuestionMarkReachesOverAWholeGroup(): void
     {
         self::assertSame(<<<'AST'
-            NullableTypeNode
-              UnionTypeNode
+            WrappingTypeNode\NullableTypeNode
+              LogicalTypeNode\UnionTypeNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode
@@ -94,8 +94,8 @@ final class GroupingTest extends SyntaxTestCase
     public function testTheQuestionMarkReachesOverAListAndNotOverItsElement(): void
     {
         self::assertSame(<<<'AST'
-            NullableTypeNode
-              TypesListNode
+            WrappingTypeNode\NullableTypeNode
+              WrappingTypeNode\TypesListNode
                 NamedTypeNode
                   Name(int)
             AST, $this->parseAndPrint('?int[]'));
@@ -104,8 +104,8 @@ final class GroupingTest extends SyntaxTestCase
     public function testAListIsMadeOfAWholeGroup(): void
     {
         self::assertSame(<<<'AST'
-            TypesListNode
-              UnionTypeNode
+            WrappingTypeNode\TypesListNode
+              LogicalTypeNode\UnionTypeNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode
@@ -116,8 +116,8 @@ final class GroupingTest extends SyntaxTestCase
     public function testListsNestFromTheInsideOut(): void
     {
         self::assertSame(<<<'AST'
-            TypesListNode
-              TypesListNode
+            WrappingTypeNode\TypesListNode
+              WrappingTypeNode\TypesListNode
                 NamedTypeNode
                   Name(int)
             AST, $this->parseAndPrint('int[][]'));
@@ -126,8 +126,8 @@ final class GroupingTest extends SyntaxTestCase
     public function testAListFollowsAnOffsetItIsWrittenBehind(): void
     {
         self::assertSame(<<<'AST'
-            TypesListNode
-              TypeOffsetAccessNode
+            WrappingTypeNode\TypesListNode
+              WrappingTypeNode\TypeOffsetAccessNode
                 NamedTypeNode
                   Name(K)
                 NamedTypeNode
@@ -162,17 +162,17 @@ final class GroupingTest extends SyntaxTestCase
     #[DataProvider('listedPrimaryTypeDataProvider')]
     public function testEveryPrimaryTypeCarriesAList(string $type): void
     {
-        self::assertStringStartsWith('TypesListNode', $this->parseAndPrint($type));
+        self::assertStringStartsWith('WrappingTypeNode\TypesListNode', $this->parseAndPrint($type));
     }
 
     public function testCallablesNestInTheirParameters(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
-                  CallableTypeNode
+                  Callable\CallableTypeNode
                     Name(callable)
                     Callable\CallableParameterListNode
                       Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -188,10 +188,10 @@ final class GroupingTest extends SyntaxTestCase
     public function testACallableReturnsACallable(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
-              CallableTypeNode
+              Callable\CallableTypeNode
                 Name(callable)
                 Callable\CallableParameterListNode
                 NamedTypeNode
@@ -206,13 +206,13 @@ final class GroupingTest extends SyntaxTestCase
     public function testAConditionNestsInTheBranchOfAnother(): void
     {
         self::assertSame(<<<'AST'
-            TernaryExpressionNode
+            Condition\ConditionalTypeNode
               Condition\EqualConditionNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode
                   Name(B)
-              TernaryExpressionNode
+              Condition\ConditionalTypeNode
                 Condition\EqualConditionNode
                   NamedTypeNode
                     Name(C)
@@ -230,7 +230,7 @@ final class GroupingTest extends SyntaxTestCase
     public function testAUnionReachesIntoTheBranchOfACondition(): void
     {
         self::assertSame(<<<'AST'
-            TernaryExpressionNode
+            Condition\ConditionalTypeNode
               Condition\EqualConditionNode
                 NamedTypeNode
                   Name(A)
@@ -238,7 +238,7 @@ final class GroupingTest extends SyntaxTestCase
                   Name(B)
               NamedTypeNode
                 Name(C)
-              UnionTypeNode
+              LogicalTypeNode\UnionTypeNode
                 NamedTypeNode
                   Name(D)
                 NamedTypeNode
@@ -249,9 +249,9 @@ final class GroupingTest extends SyntaxTestCase
     public function testTheSubjectOfAConditionIsAWholeUnion(): void
     {
         self::assertSame(<<<'AST'
-            TernaryExpressionNode
+            Condition\ConditionalTypeNode
               Condition\EqualConditionNode
-                UnionTypeNode
+                LogicalTypeNode\UnionTypeNode
                   NamedTypeNode
                     Name(int)
                   NamedTypeNode
@@ -291,7 +291,7 @@ final class GroupingTest extends SyntaxTestCase
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
                   Identifier(a)
-                  UnionTypeNode
+                  LogicalTypeNode\UnionTypeNode
                     NamedTypeNode
                       Name(A)
                     NamedTypeNode

@@ -6,7 +6,7 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Type\ConstMaskNode;
+use TypeLang\Type\Constant\ConstMaskNode;
 
 /**
  * Tests for the constant grammar: global constants, class constants and masks.
@@ -33,7 +33,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testClassConstant(): void
     {
         self::assertSame(<<<'AST'
-            ClassConstNode
+            Constant\ClassConstNode
               Name(ClassName)
               Identifier(CONSTANT_NAME)
             AST, $this->parseAndPrint('ClassName::CONSTANT_NAME'));
@@ -42,7 +42,7 @@ final class ConstantTest extends SyntaxTestCase
     public function testNamespacedClassConstant(): void
     {
         self::assertSame(<<<'AST'
-            ClassConstNode
+            Constant\ClassConstNode
               Name(Path\To\ClassName)
               Identifier(ANOTHER_CONSTANT_NAME)
             AST, $this->parseAndPrint('Path\\To\\ClassName::ANOTHER_CONSTANT_NAME'));
@@ -51,20 +51,20 @@ final class ConstantTest extends SyntaxTestCase
     public function testGlobalConstantMask(): void
     {
         self::assertSame(<<<'AST'
-            ConstMaskNode(namespaceOrFullyQualified=false)
-              MaskNode(JSON_*)
+            Constant\ConstMaskNode(namespaceOrFullyQualified=false)
+              Constant\MaskNode(JSON_*)
                 Identifier(JSON_)
-                WildcardNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
             AST, $this->parseAndPrint('JSON_*'));
     }
 
     public function testGlobalConstantMaskInANamespace(): void
     {
         self::assertSame(<<<'AST'
-            ConstMaskNode
-              MaskNode(JSON_*)
+            Constant\ConstMaskNode
+              Constant\MaskNode(JSON_*)
                 Identifier(JSON_)
-                WildcardNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
               Name(Path\To)
             AST, $this->parseAndPrint('Path\\To\\JSON_*'));
     }
@@ -72,9 +72,9 @@ final class ConstantTest extends SyntaxTestCase
     public function testGlobalConstantMaskMayBeginWithAnAsterisk(): void
     {
         self::assertSame(<<<'AST'
-            ConstMaskNode(namespaceOrFullyQualified=false)
-              MaskNode(*_SUFFIX)
-                WildcardNode(*)
+            Constant\ConstMaskNode(namespaceOrFullyQualified=false)
+              Constant\MaskNode(*_SUFFIX)
+                Constant\MaskNode\WildcardMaskNode(*)
                 Identifier(_SUFFIX)
             AST, $this->parseAndPrint('*_SUFFIX'));
     }
@@ -82,9 +82,9 @@ final class ConstantTest extends SyntaxTestCase
     public function testGlobalConstantMaskOfAWholeNamespace(): void
     {
         self::assertSame(<<<'AST'
-            ConstMaskNode
-              MaskNode(*)
-                WildcardNode(*)
+            Constant\ConstMaskNode
+              Constant\MaskNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
               Name(Path\To)
             AST, $this->parseAndPrint('Path\\To\\*'));
     }
@@ -92,21 +92,21 @@ final class ConstantTest extends SyntaxTestCase
     public function testClassConstantMask(): void
     {
         self::assertSame(<<<'AST'
-            ClassConstMaskNode
+            Constant\ClassConstMaskNode
               Name(Path\To\ClassName)
-              MaskNode(PREFIX_*)
+              Constant\MaskNode(PREFIX_*)
                 Identifier(PREFIX_)
-                WildcardNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
             AST, $this->parseAndPrint('Path\\To\\ClassName::PREFIX_*'));
     }
 
     public function testClassConstantMaskWithoutPrefix(): void
     {
         self::assertSame(<<<'AST'
-            ClassConstMaskNode
+            Constant\ClassConstMaskNode
               Name(Path\To\ClassName)
-              MaskNode(*)
-                WildcardNode(*)
+              Constant\MaskNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
             AST, $this->parseAndPrint('Path\\To\\ClassName::*'));
     }
 
@@ -131,11 +131,11 @@ final class ConstantTest extends SyntaxTestCase
     public function testMaskIsMadeOfEverySegmentItIsWrittenOf(): void
     {
         self::assertSame(<<<'AST'
-            ClassConstMaskNode
+            Constant\ClassConstMaskNode
               Name(Path\To\ClassName)
-              MaskNode(PREFIX_*_SUFFIX)
+              Constant\MaskNode(PREFIX_*_SUFFIX)
                 Identifier(PREFIX_)
-                WildcardNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
                 Identifier(_SUFFIX)
             AST, $this->parseAndPrint('Path\\To\\ClassName::PREFIX_*_SUFFIX'));
     }
@@ -143,10 +143,10 @@ final class ConstantTest extends SyntaxTestCase
     public function testMaskMayBeginWithAnAsterisk(): void
     {
         self::assertSame(<<<'AST'
-            ClassConstMaskNode
+            Constant\ClassConstMaskNode
               Name(Path\To\ClassName)
-              MaskNode(*_SUFFIX)
-                WildcardNode(*)
+              Constant\MaskNode(*_SUFFIX)
+                Constant\MaskNode\WildcardMaskNode(*)
                 Identifier(_SUFFIX)
             AST, $this->parseAndPrint('Path\\To\\ClassName::*_SUFFIX'));
     }
@@ -158,10 +158,10 @@ final class ConstantTest extends SyntaxTestCase
     public function testFullyQualifiedGlobalConstantMask(): void
     {
         self::assertSame(<<<'AST'
-            ConstMaskNode(namespaceOrFullyQualified=true)
-              MaskNode(JSON_*)
+            Constant\ConstMaskNode(namespaceOrFullyQualified=true)
+              Constant\MaskNode(JSON_*)
                 Identifier(JSON_)
-                WildcardNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
             AST, $this->parseAndPrint('\JSON_*'));
     }
 
@@ -172,10 +172,10 @@ final class ConstantTest extends SyntaxTestCase
     public function testFullyQualifiedGlobalConstantMaskInANamespace(): void
     {
         self::assertSame(<<<'AST'
-            ConstMaskNode
-              MaskNode(JSON_*)
+            Constant\ConstMaskNode
+              Constant\MaskNode(JSON_*)
                 Identifier(JSON_)
-                WildcardNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
               Name(\Path\To)
             AST, $this->parseAndPrint('\Path\To\JSON_*'));
     }
@@ -183,9 +183,9 @@ final class ConstantTest extends SyntaxTestCase
     public function testFullyQualifiedGlobalConstantMaskOfAWholeNamespace(): void
     {
         self::assertSame(<<<'AST'
-            ConstMaskNode
-              MaskNode(*)
-                WildcardNode(*)
+            Constant\ConstMaskNode
+              Constant\MaskNode(*)
+                Constant\MaskNode\WildcardMaskNode(*)
               Name(\Path\To)
             AST, $this->parseAndPrint('\Path\To\*'));
     }

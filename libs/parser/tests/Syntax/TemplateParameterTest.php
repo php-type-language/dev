@@ -6,7 +6,7 @@ namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Type\CallableTypeNode;
+use TypeLang\Type\Callable\CallableTypeNode;
 
 /**
  * Tests for the template parameters a callable type declares, that is, the
@@ -18,7 +18,7 @@ final class TemplateParameterTest extends SyntaxTestCase
     public function testCallableDeclaresATemplateParameter(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -35,7 +35,7 @@ final class TemplateParameterTest extends SyntaxTestCase
     public function testEveryLimitIsReadIntoAPlaceOfItsOwn(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(Closure)
               Callable\CallableParameterListNode
               Template\TemplateParameterListNode

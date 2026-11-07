@@ -19,6 +19,10 @@ final class GmpBaseConverter implements BaseConverterInterface
 
     public function toDecimal(string $digits, int $base): string
     {
+        if ($base === self::OUTPUT_RADIX) {
+            return $digits;
+        }
+
         /** @var numeric-string */
         return \gmp_strval(\gmp_init($digits, $base));
     }

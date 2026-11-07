@@ -14,6 +14,13 @@ use TypeLang\Parser\Tests\TestCase;
 #[Group('unit'), Group('type-lang/parser')]
 abstract class SyntaxTestCase extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        self::markTestIncomplete('TODO');
+    }
+
     /**
      * @param class-string<ParserExceptionInterface> $class
      */

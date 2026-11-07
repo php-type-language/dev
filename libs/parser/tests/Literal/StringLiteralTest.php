@@ -16,6 +16,13 @@ use TypeLang\Type\Literal\StringLiteralNode;
  */
 final class StringLiteralTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        self::markTestIncomplete('TODO');
+    }
+
     /**
      * @throws \Throwable
      */

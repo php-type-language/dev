@@ -30,8 +30,7 @@
  */
 
 
-// Any type, the weakest level of precedence. It is an entry point: a document
-// block holds types on their own
+// Any type, the weakest level of precedence. An entry point
 #Type
   : Literal()
   ;

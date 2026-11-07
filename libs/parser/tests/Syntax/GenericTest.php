@@ -17,11 +17,11 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Path\To\ExampleClass)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(T)
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(U)
             AST, $this->parseAndPrint('Path\\To\\ExampleClass<T, U>'));
@@ -32,8 +32,8 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Collection)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(User)
             AST, $this->parseAndPrint('Collection<User>'));
@@ -44,21 +44,21 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(iterable)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(int)
-                    Template\TemplateArgumentListNode
-                      Template\TemplateArgumentNode
+                    Template\TemplateListNode
+                      Template\TypedTemplateArgumentNode
                         Literal\IntLiteralNode(0)
-                      Template\TemplateArgumentNode
+                      Template\TypedTemplateArgumentNode
                         NamedTypeNode
                           Name(max)
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(Collection)
-                    Template\TemplateArgumentListNode
-                      Template\TemplateArgumentNode
+                    Template\TemplateListNode
+                      Template\TypedTemplateArgumentNode
                         NamedTypeNode
                           Name(User)
             AST, $this->parseAndPrint('iterable<int<0, max>, Collection<User>>'));
@@ -69,11 +69,11 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(HashMap)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(Request)
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(User)
             AST, $this->parseAndPrint('HashMap<Request, User,>'));
@@ -84,11 +84,11 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(HashMap)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(array-key)
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(Request)
                   Identifier(covariant)
@@ -105,8 +105,8 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Type)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(out\Some)
             AST, $this->parseAndPrint('Type<out\\Some>'));
@@ -122,8 +122,8 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Type)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(\Some)
                   Identifier(out)
@@ -139,8 +139,8 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Type)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(out\Some\Deep)
             AST, $this->parseAndPrint('Type<out\\Some\\Deep>'));
@@ -155,8 +155,8 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Type)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(Some)
                   Identifier(out)
@@ -168,9 +168,9 @@ final class GenericTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Type)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
-                  TernaryExpressionNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
+                  Condition\ConditionalTypeNode
                     Condition\EqualConditionNode
                       NamedTypeNode
                         Name(Some)

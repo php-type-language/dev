@@ -14,12 +14,4 @@ namespace TypeLang\Parser\Internal\Literal;
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Parser\Internal
  */
-final class DecIntParser extends IntParser
-{
-    protected function convert(string $digits): string
-    {
-        \assert(\is_numeric($digits));
-
-        return $digits;
-    }
-}
+final class DecIntParser extends IntParser {}

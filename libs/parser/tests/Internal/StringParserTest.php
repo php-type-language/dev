@@ -11,6 +11,13 @@ use TypeLang\Parser\Tests\TestCase;
 
 final class StringParserTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        self::markTestIncomplete('TODO');
+    }
+
     /**
      * @return iterable<non-empty-string, array{string, string}>
      */

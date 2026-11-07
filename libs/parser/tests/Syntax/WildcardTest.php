@@ -18,9 +18,8 @@ final class WildcardTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Collection)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
-                  WildcardNode(*)
+              Template\TemplateListNode
+                Template\WildcardTemplateArgumentNode
             AST, $this->parseAndPrint('Collection<*>'));
     }
 
@@ -29,25 +28,12 @@ final class WildcardTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(HashMap)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(array-key)
-                Template\TemplateArgumentNode
-                  WildcardNode(*)
+                Template\WildcardTemplateArgumentNode
             AST, $this->parseAndPrint('HashMap<array-key, *>'));
-    }
-
-    public function testWildcardCarriesAHint(): void
-    {
-        self::assertSame(<<<'AST'
-            NamedTypeNode
-              Name(Collection)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
-                  WildcardNode(*)
-                  Identifier(out)
-            AST, $this->parseAndPrint('Collection<out *>'));
     }
 
     public function testWildcardIsReadInsideAnUnsealedShape(): void
@@ -55,9 +41,8 @@ final class WildcardTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
-                  WildcardNode(*)
+              Template\TemplateListNode
+                Template\WildcardTemplateArgumentNode
               Shape\FieldsListNode(isSealed=false)
             AST, $this->parseAndPrint('array{...<*>}'));
     }
@@ -71,8 +56,8 @@ final class WildcardTest extends SyntaxTestCase
 
         $argument = $node->arguments->items[1];
 
-        self::assertInstanceOf(\TypeLang\Type\WildcardNode::class, $argument->value);
-        self::assertSame(16, $argument->value->offset);
+        self::assertInstanceOf(\TypeLang\Type\Template\WildcardTemplateArgumentNode::class, $argument);
+        self::assertSame(16, $argument->offset);
     }
 
     public function testWildcardIsNotAType(): void

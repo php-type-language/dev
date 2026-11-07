@@ -15,7 +15,7 @@ final class ListTest extends SyntaxTestCase
     public function testSimpleList(): void
     {
         self::assertSame(<<<'AST'
-            TypesListNode
+            WrappingTypeNode\TypesListNode
               NamedTypeNode
                 Name(User)
             AST, $this->parseAndPrint('User[]'));
@@ -24,8 +24,8 @@ final class ListTest extends SyntaxTestCase
     public function testNestedList(): void
     {
         self::assertSame(<<<'AST'
-            TypesListNode
-              TypesListNode
+            WrappingTypeNode\TypesListNode
+              WrappingTypeNode\TypesListNode
                 NamedTypeNode
                   Name(User)
             AST, $this->parseAndPrint('User[][]'));

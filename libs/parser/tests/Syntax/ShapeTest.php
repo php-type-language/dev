@@ -143,11 +143,11 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(string)
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(object)
               Shape\FieldsListNode(isSealed=false)

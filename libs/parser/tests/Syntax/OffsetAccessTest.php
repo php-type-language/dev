@@ -15,7 +15,7 @@ final class OffsetAccessTest extends SyntaxTestCase
     public function testStringOffset(): void
     {
         self::assertSame(<<<'AST'
-            TypeOffsetAccessNode
+            WrappingTypeNode\TypeOffsetAccessNode
               Literal\StringLiteralNode('offset')
               NamedTypeNode
                 Name(T)
@@ -25,7 +25,7 @@ final class OffsetAccessTest extends SyntaxTestCase
     public function testDependentKeyOffset(): void
     {
         self::assertSame(<<<'AST'
-            TypeOffsetAccessNode
+            WrappingTypeNode\TypeOffsetAccessNode
               NamedTypeNode
                 Name(U)
               NamedTypeNode
@@ -36,7 +36,7 @@ final class OffsetAccessTest extends SyntaxTestCase
     public function testShapeWithNumericOffset(): void
     {
         self::assertSame(<<<'AST'
-            TypeOffsetAccessNode
+            WrappingTypeNode\TypeOffsetAccessNode
               Literal\IntLiteralNode(0)
               NamedTypeNode
                 Name(array)
@@ -53,7 +53,7 @@ final class OffsetAccessTest extends SyntaxTestCase
     public function testComplexOffsetWithGenericsAndShapes(): void
     {
         self::assertSame(<<<'AST'
-            TypeOffsetAccessNode
+            WrappingTypeNode\TypeOffsetAccessNode
               NamedTypeNode
                 Name(object)
                 Shape\FieldsListNode(isSealed=false)
@@ -63,8 +63,8 @@ final class OffsetAccessTest extends SyntaxTestCase
                       Name(int)
               NamedTypeNode
                 Name(T)
-                Template\TemplateArgumentListNode
-                  Template\TemplateArgumentNode
+                Template\TemplateListNode
+                  Template\TypedTemplateArgumentNode
                     NamedTypeNode
                       Name(U)
             AST, $this->parseAndPrint('T<U>[object{key: int, ...}]'));

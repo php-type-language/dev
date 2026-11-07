@@ -7,8 +7,8 @@ namespace TypeLang\Parser\Tests\Syntax;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use TypeLang\Parser\Exception\UnexpectedTokenException;
-use TypeLang\Type\CallableTypeNode;
-use TypeLang\Type\TernaryExpressionNode;
+use TypeLang\Type\Callable\CallableTypeNode;
+use TypeLang\Type\Condition\ConditionalTypeNode;
 use TypeLang\Type\ThisNode;
 use TypeLang\Type\VariableNode;
 
@@ -27,7 +27,7 @@ final class VariableTest extends SyntaxTestCase
     public function testThisStandsAsAReturnType(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
               ThisNode
@@ -37,7 +37,7 @@ final class VariableTest extends SyntaxTestCase
     public function testThisStandsAsAParameterType(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -54,7 +54,7 @@ final class VariableTest extends SyntaxTestCase
     public function testThisNamesAParameter(): void
     {
         self::assertSame(<<<'AST'
-            CallableTypeNode
+            Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
@@ -72,8 +72,8 @@ final class VariableTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(Some)
-              Template\TemplateArgumentListNode
-                Template\TemplateArgumentNode
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
                   ThisNode
             AST, $this->parseAndPrint('Some<$this>'));
     }
@@ -95,9 +95,9 @@ final class VariableTest extends SyntaxTestCase
      */
     public static function wrappedThisDataProvider(): iterable
     {
-        yield 'list' => ['$this[]', 'TypesListNode'];
-        yield 'nullable' => ['?$this', 'NullableTypeNode'];
-        yield 'union' => ['$this|null', 'UnionTypeNode'];
+        yield 'list' => ['$this[]', 'WrappingTypeNode\TypesListNode'];
+        yield 'nullable' => ['?$this', 'WrappingTypeNode\NullableTypeNode'];
+        yield 'union' => ['$this|null', 'LogicalTypeNode\UnionTypeNode'];
     }
 
     /**
@@ -119,7 +119,7 @@ final class VariableTest extends SyntaxTestCase
     {
         $node = $this->parse('$this is B ? C : D');
 
-        self::assertInstanceOf(TernaryExpressionNode::class, $node);
+        self::assertInstanceOf(ConditionalTypeNode::class, $node);
         self::assertInstanceOf(ThisNode::class, $node->condition->subject);
     }
 
@@ -131,7 +131,7 @@ final class VariableTest extends SyntaxTestCase
     {
         $node = $this->parse('$This is B ? C : D');
 
-        self::assertInstanceOf(TernaryExpressionNode::class, $node);
+        self::assertInstanceOf(ConditionalTypeNode::class, $node);
         self::assertInstanceOf(VariableNode::class, $node->condition->subject);
         self::assertSame('This', $node->condition->subject->name->value);
     }
@@ -140,7 +140,7 @@ final class VariableTest extends SyntaxTestCase
     {
         $node = $this->parse('$value is B ? C : D');
 
-        self::assertInstanceOf(TernaryExpressionNode::class, $node);
+        self::assertInstanceOf(ConditionalTypeNode::class, $node);
         self::assertInstanceOf(VariableNode::class, $node->condition->subject);
         self::assertSame('value', $node->condition->subject->name->value);
     }
@@ -256,7 +256,7 @@ final class VariableTest extends SyntaxTestCase
     {
         $node = $this->parse($type . ' is B ? C : D');
 
-        self::assertInstanceOf(TernaryExpressionNode::class, $node);
+        self::assertInstanceOf(ConditionalTypeNode::class, $node);
         self::assertInstanceOf(VariableNode::class, $node->condition->subject);
         self::assertSame(\substr($type, 1), $node->condition->subject->name->value);
     }
