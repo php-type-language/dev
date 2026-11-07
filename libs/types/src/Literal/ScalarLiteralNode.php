@@ -9,4 +9,5 @@ namespace TypeLang\Type\Literal;
  *
  * @template-extends LiteralNode<TValue>
  */
-abstract class ScalarLiteralNode extends LiteralNode {}
+abstract class ScalarLiteralNode extends
+    LiteralNode {}

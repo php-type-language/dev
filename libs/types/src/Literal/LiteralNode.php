@@ -20,7 +20,8 @@ use TypeLang\Type\TypeNode;
  *
  * @template TValue of mixed = mixed
  */
-abstract class LiteralNode extends TypeNode implements \Stringable
+abstract class LiteralNode extends TypeNode implements
+    \Stringable
 {
     /**
      * @param int<0, max> $offset
@@ -30,12 +31,18 @@ abstract class LiteralNode extends TypeNode implements \Stringable
          * @var TValue
          */
         public readonly mixed $value,
+        /**
+         * @var non-empty-string
+         */
         public readonly string $raw,
         int $offset = 0,
     ) {
         parent::__construct($offset);
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function __toString(): string
     {
         return $this->raw;
