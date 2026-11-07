@@ -13,7 +13,7 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\Spec;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPlacement;
-use TypeLang\Type\CallableTypeNode;
+use TypeLang\Type\Callable\CallableTypeNode;
 
 /**
  * The `@method` tag declares a "magic" method that can be called on the
