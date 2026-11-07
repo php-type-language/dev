@@ -42,10 +42,14 @@ final class CallableParameterNodePrinter implements NodePrinterInterface
             $result .= $context->print($node->name);
         }
 
-        if ($node->isOptional) {
-            $result .= '=';
+        if ($node->default === null) {
+            return $result;
         }
 
-        return $result;
+        if ($node->default->value === null) {
+            return $result . '=';
+        }
+
+        return $result . ' = ' . $context->print($node->default->value);
     }
 }
