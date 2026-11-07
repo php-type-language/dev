@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Callable\CallableParameterListNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
+use TypeLang\Type\Callable\DefaultValueNode;
 use TypeLang\Type\Constant\ClassConstMaskTypeNode;
 use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Condition\EqualConditionNode;
@@ -90,6 +91,7 @@ final class NodeTest extends TestCase
 
         yield CallableParameterListNode::class => [new CallableParameterListNode()];
         yield CallableParameterNode::class => [new CallableParameterNode(self::type())];
+        yield DefaultValueNode::class => [new DefaultValueNode()];
 
         yield EqualConditionNode::class => [new EqualConditionNode(self::type('A'), self::type('B'))];
         yield NotEqualConditionNode::class => [new NotEqualConditionNode(self::type('A'), self::type('B'))];
@@ -183,6 +185,7 @@ final class NodeTest extends TestCase
 
         yield CallableParameterListNode::class => [new CallableParameterListNode([], 42)];
         yield CallableParameterNode::class => [new CallableParameterNode(self::type(), offset: 42)];
+        yield DefaultValueNode::class => [new DefaultValueNode(offset: 42)];
 
         yield EqualConditionNode::class => [new EqualConditionNode(self::type('A'), self::type('B'), 42)];
         yield NotEqualConditionNode::class => [

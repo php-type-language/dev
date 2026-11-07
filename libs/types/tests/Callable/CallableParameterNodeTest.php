@@ -6,6 +6,8 @@ namespace TypeLang\Type\Tests\Callable;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Callable\CallableParameterNode;
+use TypeLang\Type\Callable\DefaultValueNode;
+use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\Name\TypeName;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Tests\TestCase;
@@ -22,14 +24,49 @@ final class CallableParameterNodeTest extends TestCase
     }
 
     #[Test]
-    public function throwsWhenBothVariadicAndOptionalAreTrue(): void
+    public function throwsWhenBothVariadicAndDefaultAreSet(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         new CallableParameterNode(
             type: new NamedTypeNode(TypeName::from('int')),
             isVariadic: true,
-            isOptional: true,
+            default: new DefaultValueNode(),
         );
+    }
+
+    #[Test]
+    public function parameterHasNoDefaultByDefault(): void
+    {
+        $parameter = new CallableParameterNode(new NamedTypeNode(TypeName::from('int')));
+
+        self::assertNull($parameter->default);
+    }
+
+    #[Test]
+    public function storesDefaultWithoutValue(): void
+    {
+        $default = new DefaultValueNode();
+
+        $parameter = new CallableParameterNode(
+            type: new NamedTypeNode(TypeName::from('int')),
+            default: $default,
+        );
+
+        self::assertSame($default, $parameter->default);
+        self::assertNull($parameter->default->value);
+    }
+
+    #[Test]
+    public function storesDefaultWithValue(): void
+    {
+        $value = new IntLiteralNode(42);
+
+        $parameter = new CallableParameterNode(
+            type: new NamedTypeNode(TypeName::from('int')),
+            default: new DefaultValueNode($value),
+        );
+
+        self::assertSame($value, $parameter->default?->value);
     }
 }

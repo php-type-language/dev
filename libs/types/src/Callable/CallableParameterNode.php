@@ -12,10 +12,13 @@ use TypeLang\Type\VariableNode;
  * A single parameter of a callable.
  *
  * ```
- *  callable(int &$byRef, string ...$rest, bool $flag = )
- *  //       ^^^^^^^^^^^  ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^
- *  //       by reference  variadic         optional
+ *  callable(int &$byRef, string ...$rest, bool $flag = true)
+ *  //       ^^^^^^^^^^^  ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^
+ *  //       by reference  variadic         optional, with a default
  * ```
+ *
+ * A parameter is optional when it has a {@see DefaultValueNode}, with a value
+ * or without one.
  *
  * The constructor checks the parameter on creation only. The properties are
  * public and writable, so a later change is not checked. Since PHP 8.4,
@@ -26,7 +29,7 @@ final class CallableParameterNode extends Node
     /**
      * @param int<0, max> $offset
      * @throws \InvalidArgumentException in case of the parameter carries neither a type nor a name,
-     *         or is both variadic and optional
+     *         or is both variadic and has a default
      */
     public function __construct(
         /**
@@ -57,11 +60,16 @@ final class CallableParameterNode extends Node
          */
         public bool $isVariadic = false,
         /**
-         * Whether a parameter may be left out, written as a trailing `=`:
-         * A `callable(bool $flag =)`. A variadic parameter is optional
-         * itself, so the two flags are never both set.
+         * Default of a parameter, or {@see null} in case of a required one.
+         * A variadic parameter is optional itself, so it has no default.
+         *
+         * ```
+         *  callable(int $a)            // null
+         *  callable(int $a =)          // a default without a value
+         *  callable(int $a = 42)       // a default with a value
+         * ```
          */
-        public bool $isOptional = false,
+        public ?DefaultValueNode $default = null,
         int $offset = 0,
     ) {
         if ($type === null && $name === null) {
@@ -70,9 +78,9 @@ final class CallableParameterNode extends Node
             );
         }
 
-        if ($isVariadic && $isOptional) {
+        if ($isVariadic && $default !== null) {
             throw new \InvalidArgumentException(
-                'Parameter cannot be both variable and optional (variadic parameter is already optional)',
+                'Parameter cannot be both variable and have a default (variadic parameter is already optional)',
             );
         }
 

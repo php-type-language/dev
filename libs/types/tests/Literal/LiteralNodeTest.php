@@ -23,10 +23,10 @@ final class LiteralNodeTest extends TestCase
     {
         yield 'bool(true)' => [new BoolLiteralNode(true, 'true'), true, 'true'];
         yield 'bool(false)' => [new BoolLiteralNode(false, 'false'), false, 'false'];
-        yield 'float' => [new FloatLiteralNode(0.5, '0.5'), 0.5, '0.5'];
-        yield 'int' => [new IntLiteralNode(42, '42', '42'), 42, '42'];
+        yield 'float' => [new FloatLiteralNode(0.5, raw: '0.5'), 0.5, '0.5'];
+        yield 'int' => [new IntLiteralNode(42, '42', raw: '42'), 42, '42'];
         yield 'null' => [new NullLiteralNode(), null, 'null'];
-        yield 'string' => [new StringLiteralNode('example', '"example"'), 'example', '"example"'];
+        yield 'string' => [new StringLiteralNode('example', raw: '"example"'), 'example', '"example"'];
     }
 
     #[Test]
@@ -53,7 +53,7 @@ final class LiteralNodeTest extends TestCase
     #[Test]
     public function stringLiteralDerivesRawFromValue(): void
     {
-        self::assertSame('"example"', (new StringLiteralNode('example'))->raw);
+        self::assertSame("'example'", (new StringLiteralNode('example'))->raw);
     }
 
     #[Test]
