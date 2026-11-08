@@ -31,7 +31,118 @@
 
 
 // Any type, the weakest level of precedence. An entry point
-#Type
+#Type -> {
+    if (\is_array($children)) {
+        return $children[0];
+    }
+
+    return $children;
+}
+  : NullableType()
+  ;
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Nullable Types
+ * -----------------------------------------------------------------------------
+ */
+
+
+// A type with the "?" before it: int, ?int, ?int[], ?T[K]. The question mark is
+// weaker than the suffixes, so it reaches over all of them: ?int[] is ?(int[])
+NullableType -> {
+    if (!\is_array($children)) {
+        return $children;
+    }
+
+    // [type], there is no question mark
+    if (!isset($children[1])) {
+        return $children[0];
+    }
+
+    // [question mark, type]
+    if (!$this->features->nullables) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
+            'nullables',
+            $ctx->source,
+            $children[0]->offset,
+            1,
+        );
+    }
+
+    return new Type\WrappingTypeNode\NullableTypeNode($children[1], $children[0]->offset);
+}
+  : <T_QUESTION>? ListTypeOrOffsetAccess()
+  ;
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Lists and Offset Accesses
+ * -----------------------------------------------------------------------------
+ */
+
+
+// A type with the "[]" and "[K]" suffixes behind it: int, int[], T[K],
+// Foo::BAR[][], (A)[], T['a'][]
+ListTypeOrOffsetAccess -> {
+    // No suffixes
+    if (!\is_array($children)) {
+        return $children;
+    }
+
+    // The children are the type and the opening brackets, a bracket is
+    // followed by the type inside of it (the key), if there is one
+    $type = $children[0];
+    $bracket = null;
+    $length = \count($children);
+
+    // The element behind the last one is the end: it closes the last bracket
+    for ($i = 1; $i <= $length; ++$i) {
+        $child = $children[$i] ?? null;
+
+        // T[K], the key belongs to the bracket before it
+        if ($child instanceof Type\TypeNode) {
+            if (!$this->features->offsets) {
+                throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
+                    'offsets',
+                    $ctx->source,
+                    $bracket->offset,
+                    1,
+                );
+            }
+
+            $type = new Type\WrappingTypeNode\TypeOffsetAccessTypeNode($type, $child, $bracket->offset);
+            $bracket = null;
+
+            continue;
+        }
+
+        // T[], the previous bracket has nothing inside
+        if ($bracket !== null) {
+            if (!$this->features->lists) {
+                throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
+                    'lists',
+                    $ctx->source,
+                    $bracket->offset,
+                    1,
+                );
+            }
+
+            $type = new Type\WrappingTypeNode\TypesListTypeNode($type, $bracket->offset);
+        }
+
+        $bracket = $child;
+    }
+
+    return $type;
+}
+  : Atom() (<T_BRACKET_OPEN> Type()? ::T_BRACKET_CLOSE::)*
+  ;
+
+// A type that stands alone: the suffixes and the operators go behind it
+Atom
   : Literal()
   | NamedType()
   | ThisType()
@@ -91,12 +202,6 @@ ThisType -> {
 
 
 // (int), ((int)). The parentheses only group, they build no node
-Group -> {
-    if (\is_array($children)) {
-        return $children[0];
-    }
-
-    return $children;
-}
+Group
   : ::T_PAREN_OPEN:: Type() ::T_PAREN_CLOSE::
   ;
