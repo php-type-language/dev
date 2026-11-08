@@ -134,7 +134,7 @@ final class CallableTest extends SyntaxTestCase
                   NamedTypeNode
                     Name(T)
                   VariableNode
-                    Identifier(name)
+                    Name(name)
             AST, $this->parseAndPrint('foo(T $name)'));
     }
 
@@ -148,7 +148,7 @@ final class CallableTest extends SyntaxTestCase
                   NamedTypeNode
                     Name(A)
                   VariableNode
-                    Identifier(a)
+                    Name(a)
                 Callable\CallableParameterNode(isOutput=false, isVariadic=false, isOptional=false)
                   NamedTypeNode
                     Name(B)
@@ -180,7 +180,7 @@ final class CallableTest extends SyntaxTestCase
                   NamedTypeNode
                     Name(T)
                   VariableNode
-                    Identifier(name)
+                    Name(name)
             AST, $this->parseAndPrint('foo(T &$name)'));
     }
 
@@ -264,7 +264,7 @@ final class CallableTest extends SyntaxTestCase
                   NamedTypeNode
                     Name(T)
                   VariableNode
-                    Identifier(name)
+                    Name(name)
             AST, $this->parseAndPrint('foo(T &...$name)'));
     }
 

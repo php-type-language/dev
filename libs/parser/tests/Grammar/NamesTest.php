@@ -5,19 +5,13 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Grammar;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
- * Names, namespaces, variables and `$this` (grammar/names.pp3).
+ * Names of types (grammar/names.pp3).
  */
 final class NamesTest extends GrammarTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        self::markTestIncomplete('TODO');
-    }
-
     /**
      * @return iterable<non-empty-string, array{string}>
      */
@@ -61,12 +55,10 @@ final class NamesTest extends GrammarTestCase
         yield 'keyword with a hyphen' => ['is-x'];
         yield 'keyword in upper case' => ['IS'];
 
-        yield 'literal word in a fully qualified name' => ['\\true'];
+        yield 'fully qualified literal word leads a namespace' => ['\\true\\Foo'];
         yield 'literal word leads a namespace' => ['true\\null'];
         yield 'literal word ends a namespace' => ['Foo\\true'];
         yield 'literal word with a hyphen' => ['null-type'];
-
-        yield 'this' => ['$this'];
     }
 
     #[DataProvider('validNameDataProvider')]
@@ -103,5 +95,10 @@ final class NamesTest extends GrammarTestCase
     public function testNameIsRejected(string $source): void
     {
         self::assertRejected($source);
+    }
+
+    public function testThisIsAccepted(): void
+    {
+        self::markTestIncomplete('The type $this is added with ThisType');
     }
 }

@@ -2,9 +2,22 @@
  * -----------------------------------------------------------------------------
  *  Names
  *
- *  Names of types and namespaces. A whitespace is not allowed inside a name.
+ *  Names of types.
  * -----------------------------------------------------------------------------
  */
 
 
-// TODO
+// Foo, \Foo, Foo\Bar, \Foo\Bar, true\null
+Name -> {
+    return new Type\Name($children->value, $offset);
+}
+  : <T_NAME>
+  | <T_IS>
+  | <T_NOT>
+  | <T_OF>
+  | <T_AS>
+  | <T_SUPER>
+  | <T_TRUE>
+  | <T_FALSE>
+  | <T_NULL>
+  ;

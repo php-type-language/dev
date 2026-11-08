@@ -28,7 +28,7 @@ final class TypeResolverTest extends TypeResolverTestCase
 
         self::assertInstanceOf(NamedTypeNode::class, $node);
 
-        return $node->name->toString();
+        return $node->name->unqualified;
     }
 
     public function testResolvesImportedName(): void
@@ -192,7 +192,7 @@ final class TypeResolverTest extends TypeResolverTestCase
 
         self::assertSame($source, $result);
         self::assertInstanceOf(NamedTypeNode::class, $result);
-        self::assertSame('TypeLang\Parser\Node', $result->name->toString());
+        self::assertSame('TypeLang\Parser\Node', $result->name->unqualified);
     }
 
     public function testWithTypeImportDoesNotMutateSourceResolver(): void
@@ -276,7 +276,7 @@ final class TypeResolverTest extends TypeResolverTestCase
         self::assertSame(<<<'AST'
             Constant\ClassConstNode
               Name(App\Node)
-              Identifier(FOO)
+              Name(FOO)
             AST, $this->print($resolver->resolve($this->parse('Node::FOO'))));
     }
 
@@ -557,7 +557,7 @@ final class TypeResolverTest extends TypeResolverTestCase
         $resolver->resolve($node);
 
         self::assertInstanceOf(NamedTypeNode::class, $node);
-        self::assertSame('TypeLang\Parser\Node\Foo', $node->name->toString());
+        self::assertSame('TypeLang\Parser\Node\Foo', $node->name->unqualified);
     }
 
     /**

@@ -9,7 +9,6 @@ use TypeLang\Parser\Tests\TestCase;
 use TypeLang\Parser\Traverser;
 use TypeLang\Parser\Traverser\Command;
 use TypeLang\Parser\Traverser\MatcherVisitor;
-use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
@@ -125,12 +124,12 @@ final class MatcherVisitorTest extends TestCase
     {
         $visitor = Traverser::through(
             new MatcherVisitor(
-                matcher: static fn(Node $node): bool => $node instanceof Identifier,
+                matcher: static fn(Node $node): bool => $node instanceof Name,
                 break: static fn(Node $node): bool => $node instanceof UnionTypeNode,
             ),
             [
                 new UnionTypeNode([$this->type('A'), $this->type('B')]),
-                new Identifier('Example'),
+                new Name('Example'),
             ],
         );
 
@@ -222,7 +221,7 @@ final class MatcherVisitorTest extends TestCase
     {
         $visitor = Traverser::through(
             new MatcherVisitor(static fn(Node $node): bool
-                => $node instanceof NamedTypeNode && $node->name->toString() === 'Second'),
+                => $node instanceof NamedTypeNode && $node->name->unqualified === 'Second'),
             [$this->type('First'), $this->type('Second')],
         );
 

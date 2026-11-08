@@ -91,7 +91,7 @@ final class GenericTest extends SyntaxTestCase
                 Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(Request)
-                  Identifier(covariant)
+                  Name(covariant)
             AST, $this->parseAndPrint('HashMap<array-key, covariant Request>'));
     }
 
@@ -126,7 +126,7 @@ final class GenericTest extends SyntaxTestCase
                 Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(\Some)
-                  Identifier(out)
+                  Name(out)
             AST, $this->parseAndPrint('Type<out \\Some>'));
     }
 
@@ -159,7 +159,7 @@ final class GenericTest extends SyntaxTestCase
                 Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(Some)
-                  Identifier(out)
+                  Name(out)
             AST, $this->parseAndPrint('Type<out Some>'));
     }
 

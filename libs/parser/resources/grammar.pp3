@@ -33,4 +33,20 @@
 // Any type, the weakest level of precedence. An entry point
 #Type
   : Literal()
+  | NamedType()
+  ;
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Named Types
+ * -----------------------------------------------------------------------------
+ */
+
+
+// Foo, \Foo\Bar
+NamedType -> {
+    return new Type\NamedTypeNode($children[0], null, null, $offset);
+}
+  : Name()
   ;

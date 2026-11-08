@@ -12,7 +12,6 @@ use TypeLang\Parser\Traverser\PropertyAccessor\PropertyAccessorInterface;
 use TypeLang\Parser\Traverser\PropertyAccessor\SimplePropertyAccessor;
 use TypeLang\Parser\Traverser\Visitor;
 use TypeLang\Parser\Traverser\VisitorInterface;
-use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
@@ -375,10 +374,10 @@ final class TraverserTest extends TestCase
         $visitor = $this->recorder();
 
         Traverser::new([$visitor])->traverse(new \ArrayIterator([
-            new Identifier('Example'),
+            new Name('Example'),
         ]));
 
-        self::assertSame([Identifier::class], $visitor->entered);
+        self::assertSame([Name::class], $visitor->entered);
     }
 
     #[Test]

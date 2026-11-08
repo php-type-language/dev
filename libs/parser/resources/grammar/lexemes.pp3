@@ -1,21 +1,20 @@
+
+// The end of a word: no name character, no hyphen and no "\" with a name
+// behind it follows ("is" in "is-x" and in "is\Foo" is not a word)
+%fragment WORD_END      (?![\w\x80-\xFF-]|\\(?&NAME_START))
+
+
 /**
  * -----------------------------------------------------------------------------
- *  Reserved Words
+ *  Common Literals
  *
- *  The words that are never names: `true`, `false`, `null` in any case, and
- *  `$this`.
+ *  The words that are never names: `true`, `false`, `null`
  * -----------------------------------------------------------------------------
  */
 
-
-// The end of a word: no name character and no hyphen follows ("is" in "is-x"
-// is not a word)
-%fragment WORD_END      (?![\w\x80-\xFF-])
-
-%token T_TRUE           (?i:true)(?&WORD_END)
-%token T_FALSE          (?i:false)(?&WORD_END)
-%token T_NULL           (?i:null)(?&WORD_END)
-%token T_THIS           \$this(?&WORD_END)
+%token T_TRUE           \\?+(?i:true)(?&WORD_END)
+%token T_FALSE          \\?+(?i:false)(?&WORD_END)
+%token T_NULL           \\?+(?i:null)(?&WORD_END)
 
 
 /**
@@ -24,6 +23,8 @@
  * -----------------------------------------------------------------------------
  */
 
+// A special "$this" variable name
+%token T_THIS           \$this(?&WORD_END)
 
 // A "$name"
 %token T_VARIABLE       \$(?&NAME_START)(?&NAME_CHAR)*+
@@ -84,7 +85,7 @@
 
 /**
  * -----------------------------------------------------------------------------
- *  Keywords
+ *  Other Keywords
  *
  *  The words `is`, `not`, `of`, `as`, `super` have a meaning in their own
  *  position only. The rule of a name accepts them too, in any other position
@@ -113,21 +114,11 @@
 // Any following character of a name. Variables use it too
 %fragment NAME_CHAR     [\w\x80-\xFF]
 
-// A lone "*" that is not a part of a longer mask
-%token T_WILDCARD       \*(?![\w\x80-\xFF*])
+// A word of a name, a hyphen is allowed anywhere behind the first character
+%fragment NAME_WORD     (?&NAME_START)[\w\x80-\xFF-]*+
 
-// A mask of a constant: "BAR_*", "*_BAZ", "B*R", "A*B*C", but not "**"
-%token T_MASK           (?=[\w\x80-\xFF*]*[\w\x80-\xFF])(?&NAME_CHAR)*+\*(?:(?&NAME_CHAR)++\*)*+(?&NAME_CHAR)*+
-
-// A segment of a name, a hyphen is allowed anywhere behind the first character
-%token T_NAME           (?&NAME_START)[\w\x80-\xFF-]*+
-
-// A "\" that separates two segments of a name: it has a name character right
-// before it and a name right behind it
-%token T_NS_SEP         (?<=[\w\x80-\xFF-])\\(?=(?&NAME_START)|\*)
-
-// A "\" in front of a name
-%token T_NS_ROOT        \\(?=(?&NAME_START)|\*)
+// A name: "Foo", "\Foo", "Foo\Bar", "true\null"
+%token T_NAME           \\?+(?&NAME_WORD)(?:\\(?&NAME_WORD))*+
 
 
 /**

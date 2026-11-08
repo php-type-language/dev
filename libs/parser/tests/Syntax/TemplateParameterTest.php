@@ -28,7 +28,7 @@ final class TemplateParameterTest extends SyntaxTestCase
                 Name(T)
               Template\TemplateParameterListNode
                 Template\TemplateParameterNode
-                  Identifier(T)
+                  Name(T)
             AST, $this->parseAndPrint('callable<T>(T): T'));
     }
 
@@ -40,13 +40,13 @@ final class TemplateParameterTest extends SyntaxTestCase
               Callable\CallableParameterListNode
               Template\TemplateParameterListNode
                 Template\TemplateParameterNode
-                  Identifier(T)
+                  Name(T)
                   Template\TemplateBoundEdgeNode
-                    Identifier(of)
+                    Name(of)
                     NamedTypeNode
                       Name(Some)
                   Template\TemplateBoundEdgeNode
-                    Identifier(super)
+                    Name(super)
                     NamedTypeNode
                       Name(Any)
                   NamedTypeNode
@@ -64,7 +64,7 @@ final class TemplateParameterTest extends SyntaxTestCase
 
         self::assertInstanceOf(CallableTypeNode::class, $node);
         self::assertNotNull($node->templates);
-        self::assertSame('as', $node->templates->items[0]->upper?->operator->value);
+        self::assertSame('as', $node->templates->items[0]->upper?->operator->unqualified);
     }
 
     /**
@@ -93,7 +93,7 @@ final class TemplateParameterTest extends SyntaxTestCase
 
         $parameter = $node->templates->items[0];
 
-        self::assertSame('T', $parameter->name->value);
+        self::assertSame('T', $parameter->name->unqualified);
 
         foreach (['upper', 'lower', 'default'] as $place) {
             if ($place === $filled) {
@@ -115,8 +115,8 @@ final class TemplateParameterTest extends SyntaxTestCase
 
         $parameter = $node->templates->items[0];
 
-        self::assertSame('of', $parameter->upper?->operator->value);
-        self::assertSame('super', $parameter->lower?->operator->value);
+        self::assertSame('of', $parameter->upper?->operator->unqualified);
+        self::assertSame('super', $parameter->lower?->operator->unqualified);
         self::assertNotNull($parameter->default);
     }
 
@@ -185,8 +185,8 @@ final class TemplateParameterTest extends SyntaxTestCase
 
         $parameter = $node->templates->items[0];
 
-        self::assertSame('of', $parameter->upper?->operator->value);
-        self::assertSame('super', $parameter->lower?->operator->value);
+        self::assertSame('of', $parameter->upper?->operator->unqualified);
+        self::assertSame('super', $parameter->lower?->operator->unqualified);
     }
 
     /**
@@ -212,7 +212,7 @@ final class TemplateParameterTest extends SyntaxTestCase
         $names = [];
 
         foreach ($node->templates as $parameter) {
-            $names[] = $parameter->name->value;
+            $names[] = $parameter->name->unqualified;
         }
 
         self::assertSame(['T', 'U', 'V'], $names);

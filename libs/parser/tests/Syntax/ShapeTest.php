@@ -20,11 +20,11 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(a)
+                  Name(a)
                   NamedTypeNode
                     Name(first)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(b)
+                  Name(b)
                   NamedTypeNode
                     Name(second)
             AST, $this->parseAndPrint('array{a: first, b: second}'));
@@ -95,7 +95,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(a)
+                  Name(a)
                   NamedTypeNode
                     Name(int)
             AST, $this->parseAndPrint('array{a: int,}'));
@@ -119,7 +119,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=true)
-                  Identifier(key)
+                  Name(key)
                   NamedTypeNode
                     Name(Type)
             AST, $this->parseAndPrint('array{key?: Type}'));
@@ -132,7 +132,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=false)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(key)
+                  Name(key)
                   NamedTypeNode
                     Name(type)
             AST, $this->parseAndPrint('array{key: type, ...}'));
@@ -152,7 +152,7 @@ final class ShapeTest extends SyntaxTestCase
                     Name(object)
               Shape\FieldsListNode(isSealed=false)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(user)
+                  Name(user)
                   NamedTypeNode
                     Name(User)
             AST, $this->parseAndPrint('array{user: User, ...<string, object>}'));
@@ -165,7 +165,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(App\Domain\User)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(userName)
+                  Name(userName)
                   NamedTypeNode
                     Name(non-empty-string)
             AST, $this->parseAndPrint('App\\Domain\\User{userName: non-empty-string}'));
@@ -182,7 +182,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(named)
+                  Name(named)
                   NamedTypeNode
                     Name(first)
                 Shape\ImplicitFieldNode(isOptional=false)
@@ -201,7 +201,7 @@ final class ShapeTest extends SyntaxTestCase
                   NamedTypeNode
                     Name(int)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(a)
+                  Name(a)
                   NamedTypeNode
                     Name(string)
             AST, $this->parseAndPrint('array{int, a: string}'));
@@ -218,11 +218,11 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(a)
+                  Name(a)
                   NamedTypeNode
                     Name(int)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(a)
+                  Name(a)
                   NamedTypeNode
                     Name(string)
             AST, $this->parseAndPrint('array{a: int, a: string}'));

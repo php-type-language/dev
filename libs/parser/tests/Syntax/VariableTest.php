@@ -61,7 +61,7 @@ final class VariableTest extends SyntaxTestCase
                   NamedTypeNode
                     Name(int)
                   VariableNode
-                    Identifier(this)
+                    Name(this)
               NamedTypeNode
                 Name(void)
             AST, $this->parseAndPrint('callable(int $this): void'));
@@ -85,7 +85,7 @@ final class VariableTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(a)
+                  Name(a)
                   ThisNode
             AST, $this->parseAndPrint('array{a: $this}'));
     }
@@ -133,7 +133,7 @@ final class VariableTest extends SyntaxTestCase
 
         self::assertInstanceOf(ConditionalTypeNode::class, $node);
         self::assertInstanceOf(VariableNode::class, $node->condition->subject);
-        self::assertSame('This', $node->condition->subject->name->value);
+        self::assertSame('This', $node->condition->subject->name->unqualified);
     }
 
     public function testAVariableStandsBesideACondition(): void
@@ -142,7 +142,7 @@ final class VariableTest extends SyntaxTestCase
 
         self::assertInstanceOf(ConditionalTypeNode::class, $node);
         self::assertInstanceOf(VariableNode::class, $node->condition->subject);
-        self::assertSame('value', $node->condition->subject->name->value);
+        self::assertSame('value', $node->condition->subject->name->unqualified);
     }
 
     /**
@@ -258,7 +258,7 @@ final class VariableTest extends SyntaxTestCase
 
         self::assertInstanceOf(ConditionalTypeNode::class, $node);
         self::assertInstanceOf(VariableNode::class, $node->condition->subject);
-        self::assertSame(\substr($type, 1), $node->condition->subject->name->value);
+        self::assertSame(\substr($type, 1), $node->condition->subject->name->unqualified);
     }
     public function testTheDollarSignAloneIsNoVariable(): void
     {

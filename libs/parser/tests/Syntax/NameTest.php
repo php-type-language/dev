@@ -38,7 +38,7 @@ final class NameTest extends SyntaxTestCase
         $statement = $this->parse($type);
 
         self::assertInstanceOf(NamedTypeNode::class, $statement);
-        self::assertSame($expected, $statement->name->toString());
+        self::assertSame($expected, $statement->name->unqualified);
         self::assertTrue($statement->name->isSimple());
     }
 
@@ -119,7 +119,7 @@ final class NameTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Identifier(ключ)
+                  Name(ключ)
                   NamedTypeNode
                     Name(int)
             AST, $this->parseAndPrint('array{ключ: int}'));

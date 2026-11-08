@@ -35,7 +35,7 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             Constant\ClassConstNode
               Name(ClassName)
-              Identifier(CONSTANT_NAME)
+              Name(CONSTANT_NAME)
             AST, $this->parseAndPrint('ClassName::CONSTANT_NAME'));
     }
 
@@ -44,7 +44,7 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             Constant\ClassConstNode
               Name(Path\To\ClassName)
-              Identifier(ANOTHER_CONSTANT_NAME)
+              Name(ANOTHER_CONSTANT_NAME)
             AST, $this->parseAndPrint('Path\\To\\ClassName::ANOTHER_CONSTANT_NAME'));
     }
 
@@ -53,7 +53,7 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             Constant\ConstMaskNode(namespaceOrFullyQualified=false)
               Constant\MaskNode(JSON_*)
-                Identifier(JSON_)
+                Name(JSON_)
                 Constant\MaskNode\WildcardMaskNode(*)
             AST, $this->parseAndPrint('JSON_*'));
     }
@@ -63,7 +63,7 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             Constant\ConstMaskNode
               Constant\MaskNode(JSON_*)
-                Identifier(JSON_)
+                Name(JSON_)
                 Constant\MaskNode\WildcardMaskNode(*)
               Name(Path\To)
             AST, $this->parseAndPrint('Path\\To\\JSON_*'));
@@ -75,7 +75,7 @@ final class ConstantTest extends SyntaxTestCase
             Constant\ConstMaskNode(namespaceOrFullyQualified=false)
               Constant\MaskNode(*_SUFFIX)
                 Constant\MaskNode\WildcardMaskNode(*)
-                Identifier(_SUFFIX)
+                Name(_SUFFIX)
             AST, $this->parseAndPrint('*_SUFFIX'));
     }
 
@@ -95,7 +95,7 @@ final class ConstantTest extends SyntaxTestCase
             Constant\ClassConstMaskNode
               Name(Path\To\ClassName)
               Constant\MaskNode(PREFIX_*)
-                Identifier(PREFIX_)
+                Name(PREFIX_)
                 Constant\MaskNode\WildcardMaskNode(*)
             AST, $this->parseAndPrint('Path\\To\\ClassName::PREFIX_*'));
     }
@@ -134,9 +134,9 @@ final class ConstantTest extends SyntaxTestCase
             Constant\ClassConstMaskNode
               Name(Path\To\ClassName)
               Constant\MaskNode(PREFIX_*_SUFFIX)
-                Identifier(PREFIX_)
+                Name(PREFIX_)
                 Constant\MaskNode\WildcardMaskNode(*)
-                Identifier(_SUFFIX)
+                Name(_SUFFIX)
             AST, $this->parseAndPrint('Path\\To\\ClassName::PREFIX_*_SUFFIX'));
     }
 
@@ -147,7 +147,7 @@ final class ConstantTest extends SyntaxTestCase
               Name(Path\To\ClassName)
               Constant\MaskNode(*_SUFFIX)
                 Constant\MaskNode\WildcardMaskNode(*)
-                Identifier(_SUFFIX)
+                Name(_SUFFIX)
             AST, $this->parseAndPrint('Path\\To\\ClassName::*_SUFFIX'));
     }
 
@@ -160,7 +160,7 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             Constant\ConstMaskNode(namespaceOrFullyQualified=true)
               Constant\MaskNode(JSON_*)
-                Identifier(JSON_)
+                Name(JSON_)
                 Constant\MaskNode\WildcardMaskNode(*)
             AST, $this->parseAndPrint('\JSON_*'));
     }
@@ -174,7 +174,7 @@ final class ConstantTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             Constant\ConstMaskNode
               Constant\MaskNode(JSON_*)
-                Identifier(JSON_)
+                Name(JSON_)
                 Constant\MaskNode\WildcardMaskNode(*)
               Name(\Path\To)
             AST, $this->parseAndPrint('\Path\To\JSON_*'));

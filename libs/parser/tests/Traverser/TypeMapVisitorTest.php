@@ -12,9 +12,8 @@ use TypeLang\Type\Callable\CallableTypeNode;
 use TypeLang\Type\Constant\ClassConstMaskNode;
 use TypeLang\Type\Constant\ClassConstNode;
 use TypeLang\Type\Constant\ConstMaskNode;
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Name;
+use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
@@ -40,7 +39,7 @@ final class TypeMapVisitorTest extends TestCase
 
         Traverser::new([$this->alias()])->traverse([$node]);
 
-        self::assertSame('Aliased', $node->name->toString());
+        self::assertSame('Aliased', $node->name->unqualified);
     }
 
     #[Test]
@@ -50,14 +49,14 @@ final class TypeMapVisitorTest extends TestCase
 
         Traverser::new([$this->alias()])->traverse([$node]);
 
-        self::assertSame('Aliased', $node->name->toString());
+        self::assertSame('Aliased', $node->name->unqualified);
     }
 
     #[Test]
     public function theNamespaceOfAConstMaskIsTransformed(): void
     {
         $node = new ConstMaskNode(
-            new MaskNode([new Identifier('SOME_'), new WildcardMaskNode()]),
+            new MaskNode([new Name('SOME_'), new WildcardMaskNode()]),
             Name::createFromString('Vendor'),
         );
 
@@ -70,7 +69,7 @@ final class TypeMapVisitorTest extends TestCase
     #[Test]
     public function aConstMaskWithoutANamespaceIsLeftAlone(): void
     {
-        $node = new ConstMaskNode(new MaskNode([new WildcardMaskNode(), new Identifier('_SOME')]));
+        $node = new ConstMaskNode(new MaskNode([new WildcardMaskNode(), new Name('_SOME')]));
 
         Traverser::new([$this->alias()])->traverse([$node]);
 
@@ -82,7 +81,7 @@ final class TypeMapVisitorTest extends TestCase
     {
         $node = new ClassConstNode(
             class: Name::createFromString('Example'),
-            constant: new Identifier('CONSTANT'),
+            constant: new Name('CONSTANT'),
         );
 
         Traverser::new([$this->alias()])->traverse([$node]);
@@ -95,7 +94,7 @@ final class TypeMapVisitorTest extends TestCase
     {
         $node = new ClassConstNode(
             class: Name::createFromString('Example'),
-            constant: new Identifier('CONSTANT'),
+            constant: new Name('CONSTANT'),
         );
 
         Traverser::new([$this->alias()])->traverse([$node]);
@@ -138,7 +137,7 @@ final class TypeMapVisitorTest extends TestCase
         self::assertSame(
             ['Aliased', 'Aliased'],
             \array_map(
-                static fn(NamedTypeNode $type): string => $type->name->toString(),
+                static fn(NamedTypeNode $type): string => $type->name->unqualified,
                 $node->statements,
             ),
         );

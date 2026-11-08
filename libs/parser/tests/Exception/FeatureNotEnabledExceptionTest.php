@@ -19,9 +19,9 @@ final class FeatureNotEnabledExceptionTest extends TestCase
     {
         return FeatureNotEnabledException::becauseFeatureIsNotEnabled(
             feature: 'literals',
-            text: '"a"',
-            offset: 4,
             source: SourceFactory::createDefault()->create('int|"a"'),
+            offset: 4,
+            length: 3,
         );
     }
 
@@ -41,18 +41,18 @@ final class FeatureNotEnabledExceptionTest extends TestCase
     public function messageNamesTheFeature(): void
     {
         self::assertSame(
-            'Literals not allowed',
+            'Literals feature is not allowed',
             $this->createException()->getMessage(),
         );
     }
 
     #[Test]
-    public function tokenPointsToTheUsedSyntax(): void
+    public function rangePointsToTheUsedSyntax(): void
     {
-        $token = $this->createException()->token;
+        $range = $this->createException()->range;
 
-        self::assertSame('"a"', $token->value);
-        self::assertSame(4, $token->offset);
+        self::assertSame(4, $range->offset);
+        self::assertSame(3, $range->length);
     }
 
     #[Test]

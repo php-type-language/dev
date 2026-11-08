@@ -9,7 +9,6 @@ use TypeLang\Parser\Tests\TestCase;
 use TypeLang\Parser\Traverser;
 use TypeLang\Parser\Traverser\DumperVisitor;
 use TypeLang\Parser\Traverser\StringDumperVisitor;
-use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
@@ -63,8 +62,8 @@ final class StringDumperVisitorTest extends TestCase
     public function theSimplifiedNamespaceCanBeChanged(): void
     {
         self::assertSame(
-            "Type\\Identifier(Example)\n",
-            $this->dump([new Identifier('Example')], 'TypeLang\\'),
+            "Type\\Name(Example)\n",
+            $this->dump([new Name('Example')], 'TypeLang\\'),
         );
     }
 
@@ -72,8 +71,8 @@ final class StringDumperVisitorTest extends TestCase
     public function theNodeNameIsPrintedAsIsInCaseOfANonMatchingNamespace(): void
     {
         self::assertSame(
-            "TypeLang\\Type\\Identifier(Example)\n",
-            $this->dump([new Identifier('Example')], 'Example\\'),
+            "TypeLang\\Type\\Name(Example)\n",
+            $this->dump([new Name('Example')], 'Example\\'),
         );
     }
 
@@ -81,8 +80,8 @@ final class StringDumperVisitorTest extends TestCase
     public function theDefaultSimplifiedNamespaceIsUsed(): void
     {
         self::assertSame(
-            $this->dump([new Identifier('Example')]),
-            $this->dump([new Identifier('Example')], DumperVisitor::DEFAULT_SIMPLIFIED_NODE_NAMESPACE),
+            $this->dump([new Name('Example')]),
+            $this->dump([new Name('Example')], DumperVisitor::DEFAULT_SIMPLIFIED_NODE_NAMESPACE),
         );
     }
 
@@ -201,7 +200,7 @@ final class StringDumperVisitorTest extends TestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=true)
-                  Identifier(foo)
+                  Name(foo)
                   NamedTypeNode
                     Name(int)
 
@@ -212,7 +211,7 @@ final class StringDumperVisitorTest extends TestCase
     public function resetClearsTheOutput(): void
     {
         $visitor = new StringDumperVisitor();
-        Traverser::new([$visitor])->traverse([new Identifier('Example')]);
+        Traverser::new([$visitor])->traverse([new Name('Example')]);
 
         $visitor->reset();
 
@@ -225,10 +224,10 @@ final class StringDumperVisitorTest extends TestCase
         $visitor = new StringDumperVisitor();
         $traverser = Traverser::new([$visitor]);
 
-        $traverser->traverse([new Identifier('First')]);
-        $traverser->traverse([new Identifier('Second')]);
+        $traverser->traverse([new Name('First')]);
+        $traverser->traverse([new Name('Second')]);
 
-        self::assertSame("Identifier(Second)\n", $visitor->output);
+        self::assertSame("Name(Second)\n", $visitor->output);
     }
 
     #[Test]
@@ -238,8 +237,8 @@ final class StringDumperVisitorTest extends TestCase
         $traverser = Traverser::new([$visitor]);
 
         $traverser->traverse([new NamedTypeNode(Name::createFromString('First'))]);
-        $traverser->traverse([new Identifier('Second')]);
+        $traverser->traverse([new Name('Second')]);
 
-        self::assertSame("Identifier(Second)\n", $visitor->output);
+        self::assertSame("Name(Second)\n", $visitor->output);
     }
 }

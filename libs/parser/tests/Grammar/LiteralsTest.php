@@ -83,6 +83,10 @@ final class LiteralsTest extends GrammarTestCase
         yield 'true in upper case' => ['TRUE'];
         yield 'false in mixed case' => ['False'];
         yield 'null in mixed case' => ['Null'];
+        yield 'fully qualified true' => ['\\true'];
+        yield 'fully qualified false' => ['\\false'];
+        yield 'fully qualified null' => ['\\null'];
+        yield 'fully qualified true in upper case' => ['\\TRUE'];
     }
 
     #[DataProvider('validLiteralDataProvider')]

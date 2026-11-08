@@ -58,6 +58,6 @@ final class FeatureToggleTest extends SyntaxTestCase
         $type = $result->type;
 
         self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame('int', $type->name->toString());
+        self::assertSame('int', $type->name->unqualified);
     }
 }

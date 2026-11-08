@@ -45,7 +45,7 @@ final class ConditionalTest extends SyntaxTestCase
             Condition\ConditionalTypeNode
               Condition\EqualConditionNode
                 VariableNode
-                  Identifier(T)
+                  Name(T)
                 NamedTypeNode
                   Name(B)
               NamedTypeNode

@@ -28,7 +28,7 @@ final class TypeResolverImportsTest extends TypeResolverTestCase
 
         self::assertInstanceOf(NamedTypeNode::class, $node);
 
-        return $node->name->toString();
+        return $node->name->unqualified;
     }
 
     /**
