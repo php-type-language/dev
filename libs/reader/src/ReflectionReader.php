@@ -15,6 +15,8 @@ use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\NamespaceName;
+use TypeLang\Type\NamespaceName\NamespaceKind;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
 
@@ -193,7 +195,20 @@ final class ReflectionReader implements ReaderInterface
             return new NamedTypeNode(new Name($literal));
         }
 
-        return new NamedTypeNode(new Name('\\' . $literal));
+        $separator = \strrpos($literal, '\\');
+
+        // A class with no namespace stands right in the root one
+        if ($separator === false) {
+            return new NamedTypeNode(new Name($literal, new NamespaceName('', NamespaceKind::FullyQualified)));
+        }
+
+        /** @var non-empty-string $word */
+        $word = \substr($literal, $separator + 1);
+
+        /** @var non-empty-string $namespace */
+        $namespace = \substr($literal, 0, $separator);
+
+        return new NamedTypeNode(new Name($word, new NamespaceName($namespace, NamespaceKind::FullyQualified)));
     }
 
     /**
