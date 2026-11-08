@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Shape;
 
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -15,7 +15,7 @@ use TypeLang\Type\TypeNode;
  * a scalar value and a {@see ComplexFieldNode} a reference that has to
  * be read.
  *
- * @template TKey of Identifier|TypeNode
+ * @template TKey of Name|TypeNode
  */
 abstract class ExplicitFieldNode extends FieldNode
 {
@@ -28,7 +28,7 @@ abstract class ExplicitFieldNode extends FieldNode
          *
          * @var TKey
          */
-        public Identifier|TypeNode $key,
+        public Name|TypeNode $key,
         TypeNode $type,
         /**
          * Whether a field may be absent, written as a `?` in front of

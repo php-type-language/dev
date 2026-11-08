@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Callable;
 
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\Template\TemplateParameterListNode;
 use TypeLang\Type\TypeNode;
 
@@ -25,7 +25,7 @@ final class CallableTypeNode extends TypeNode
      * @param int<0, max> $offset
      */
     public function __construct(
-        public TypeName $name,
+        public Name $name,
         /**
          * Parameters a callable accepts. The list is never {@see null}, an
          * empty list stands for empty parentheses.

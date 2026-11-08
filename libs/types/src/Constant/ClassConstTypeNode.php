@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Constant;
 
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -25,8 +24,8 @@ final class ClassConstTypeNode extends TypeNode
      * @param int<0, max> $offset
      */
     public function __construct(
-        public TypeName $class,
-        public Identifier $constant,
+        public Name $class,
+        public Name $constant,
         int $offset = 0,
     ) {
         parent::__construct($offset);
@@ -35,10 +34,12 @@ final class ClassConstTypeNode extends TypeNode
     /**
      * Creates a constant reference out of a class name and a constant name.
      *
+     * @param non-empty-string $class
+     * @param non-empty-string $constant
      * @param int<0, max> $offset
      */
-    public static function from(string|\Stringable $class, string|\Stringable $constant, int $offset = 0): self
+    public static function from(string $class, string $constant, int $offset = 0): self
     {
-        return new self(TypeName::from($class, $offset), Identifier::from($constant, $offset), $offset);
+        return new self(new Name($class, $offset), new Name($constant, $offset), $offset);
     }
 }

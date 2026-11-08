@@ -24,7 +24,7 @@ final class VariableNode extends Node
         /**
          * The name of the variable, written without the leading `$`.
          */
-        public Identifier $name,
+        public Name $name,
         int $offset = 0,
     ) {
         parent::__construct($offset);
@@ -33,10 +33,11 @@ final class VariableNode extends Node
     /**
      * Creates a variable out of its name, written without the leading `$`.
      *
+     * @param non-empty-string $name
      * @param int<0, max> $offset
      */
-    public static function from(string|\Stringable $name, int $offset = 0): self
+    public static function from(string $name, int $offset = 0): self
     {
-        return new self(Identifier::from($name, $offset), $offset);
+        return new self(new Name($name, $offset), $offset);
     }
 }

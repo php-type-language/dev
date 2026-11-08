@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Constant;
 
-use TypeLang\Type\Name\NamespaceName;
+use TypeLang\Type\Name;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -30,11 +30,17 @@ final class ConstMaskTypeNode extends TypeNode
          */
         public MaskNode $mask,
         /**
-         * The namespace the constant belongs to, which is empty in case of
-         * the constant is written with none. Whether the reference is read
-         * from the root namespace is told by the namespace itself.
+         * The namespace the constant belongs to, or {@see null} in case of
+         * the constant is written with none. The root namespace is a lone
+         * separator.
+         *
+         * ```
+         *  Some\Any\SOME_*  // Some\Any
+         *  \SOME_*          // \
+         *  SOME_*           // null
+         * ```
          */
-        public NamespaceName $namespace = new NamespaceName([]),
+        public ?Name $namespace = null,
         int $offset = 0,
     ) {
         parent::__construct($offset);

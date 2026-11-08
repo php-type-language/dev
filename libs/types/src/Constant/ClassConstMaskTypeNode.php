@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type\Constant;
 
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -23,7 +23,7 @@ final class ClassConstMaskTypeNode extends TypeNode
      * @param int<0, max> $offset
      */
     public function __construct(
-        public TypeName $class,
+        public Name $class,
         public MaskNode $mask = new MaskNode([new WildcardMaskNode()]),
         int $offset = 0,
     ) {

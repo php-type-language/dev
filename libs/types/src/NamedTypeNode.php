@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Type;
 
-use TypeLang\Type\Name\TypeName;
 use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Template\TemplateListNode;
 
@@ -37,7 +36,7 @@ final class NamedTypeNode extends TypeNode
      * @param int<0, max> $offset
      */
     public function __construct(
-        public TypeName $name,
+        public Name $name,
         /**
          * Template arguments of a type, or {@see null} in case of the name is
          * followed by none.
@@ -65,15 +64,5 @@ final class NamedTypeNode extends TypeNode
         int $offset = 0,
     ) {
         parent::__construct($offset);
-    }
-
-    /**
-     * Creates a type that is referenced by a bare name.
-     *
-     * @param int<0, max> $offset
-     */
-    public static function from(string|\Stringable $name, int $offset = 0): self
-    {
-        return new self(TypeName::from($name, $offset), offset: $offset);
     }
 }

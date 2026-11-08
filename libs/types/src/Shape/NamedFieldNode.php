@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Shape;
 
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -18,7 +18,7 @@ use TypeLang\Type\TypeNode;
  * A `true`, a `false` and a `null` are bare words as well. In the place of
  * a key they name nothing but themselves.
  *
- * @template-extends ExplicitFieldNode<Identifier>
+ * @template-extends ExplicitFieldNode<Name>
  */
 final class NamedFieldNode extends ExplicitFieldNode
 {
@@ -26,7 +26,7 @@ final class NamedFieldNode extends ExplicitFieldNode
      * @param int<0, max> $offset
      */
     public function __construct(
-        Identifier $key,
+        Name $key,
         TypeNode $type,
         bool $isOptional = false,
         int $offset = 0,
@@ -42,14 +42,15 @@ final class NamedFieldNode extends ExplicitFieldNode
     /**
      * Creates a field out of a key written as a bare word.
      *
+     * @param non-empty-string $key
      * @param int<0, max> $offset
      */
     public static function from(
-        string|\Stringable $key,
+        string $key,
         TypeNode $type,
         bool $isOptional = false,
         int $offset = 0,
     ): self {
-        return new self(Identifier::from($key, $offset), $type, $isOptional, $offset);
+        return new self(new Name($key, $offset), $type, $isOptional, $offset);
     }
 }

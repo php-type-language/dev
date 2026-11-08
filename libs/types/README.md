@@ -45,24 +45,29 @@ it can be built by hand as well. Every node also keeps the `$offset` of its
 token in the source.
 
 ```php
-// array<string, int>|null
+// Example<string, int, *>|null
 $type = new UnionTypeNode([
     new NamedTypeNode(
-        name: TypeName::from('array'),
+        name: new Name('Example'),
         arguments: new TemplateListNode([
-            new TypedTemplateArgumentNode(NamedTypeNode::from('string')),
-            new TypedTemplateArgumentNode(NamedTypeNode::from('int')),
+            new TypedTemplateArgumentNode(
+                new NamedTypeNode(new Name('string')),
+            ),
+            new TypedTemplateArgumentNode(
+                new NamedTypeNode(new Name('int')),
+            ),
+            new WildcardTemplateArgumentNode()
         ]),
     ),
     new NullLiteralNode(),
 ]);
 
 // Read the tree
-$type[0]->name->toString();                    // 'array'
-$type[0]->arguments[1]->value->name->toString(); // 'int'
+$type[0]->name->value;                    // 'array'
+$type[0]->arguments[1]->value->name->value; // 'int'
 
 // Change it: the tree is mutable, names and literals are immutable values
-$type[0]->name = TypeName::from('iterable');
+$type[0]->name = new Name('iterable');
 ```
 
 The package covers the full type grammar: unions and intersections, generics,

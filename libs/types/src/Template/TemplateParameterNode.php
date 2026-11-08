@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Template;
 
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -27,7 +27,7 @@ final class TemplateParameterNode extends TemplateNode
      * @param int<0, max> $offset
      */
     public function __construct(
-        public Identifier $name,
+        public Name $name,
         /**
          * The end the parameter is bounded at from above, written with an
          * `of` or an `as`.
@@ -57,7 +57,7 @@ final class TemplateParameterNode extends TemplateNode
          * What the word means is left to whoever reads the tree. A `covariant`
          * or an `out` is an ordinary identifier as far as the tree goes.
          */
-        public ?Identifier $variance = null,
+        public ?Name $variance = null,
         int $offset = 0,
     ) {
         parent::__construct($offset);
