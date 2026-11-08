@@ -13,7 +13,7 @@ use TypeLang\Reader\Exception\UnrecognizedReflectionTypeException;
 use TypeLang\Reader\Exception\UnrecognizedTypeException;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
@@ -24,6 +24,31 @@ final class ReflectionReader implements ReaderInterface
      * @var list<non-empty-lowercase-string>
      */
     private const NULLABLE_BUILTIN_TYPES = ['null', 'mixed'];
+
+    /**
+     * @var list<non-empty-lowercase-string>
+     */
+    private const SPECIAL_CLASS_NAMES = ['self', 'parent', 'static'];
+
+    /**
+     * @var list<non-empty-lowercase-string>
+     */
+    private const BUILTIN_TYPE_NAMES = [
+        'mixed',
+        'string',
+        'int',
+        'float',
+        'bool',
+        'object',
+        'array',
+        'void',
+        'never',
+        'callable',
+        'iterable',
+        'null',
+        'true',
+        'false',
+    ];
 
     public function findConstantType(\ReflectionClassConstant $constant): ?TypeNode
     {
@@ -158,13 +183,17 @@ final class ReflectionReader implements ReaderInterface
         /** @var non-empty-string $literal */
         $literal = $type->getName();
 
-        $name = TypeName::from($literal);
+        $lowercase = \strtolower($literal);
 
-        if ($type->isBuiltin() || $name->isSpecial() || $name->isBuiltin()) {
-            return new NamedTypeNode($name);
+        if (
+            $type->isBuiltin()
+            || \in_array($lowercase, self::SPECIAL_CLASS_NAMES, true)
+            || \in_array($lowercase, self::BUILTIN_TYPE_NAMES, true)
+        ) {
+            return new NamedTypeNode(new Name($literal));
         }
 
-        return new NamedTypeNode($name->toFullyQualified());
+        return new NamedTypeNode(new Name('\\' . $literal));
     }
 
     /**
