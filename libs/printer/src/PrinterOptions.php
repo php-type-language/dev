@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
+use TypeLang\Printer\PrinterOptions\CallableReturnSpacing;
 use TypeLang\Printer\PrinterOptions\CommaSpacing;
 use TypeLang\Printer\PrinterOptions\IntersectionSpacing;
 use TypeLang\Printer\PrinterOptions\ListStyle;
 use TypeLang\Printer\PrinterOptions\NullableStyle;
-use TypeLang\Printer\PrinterOptions\CallableReturnSpacing;
 use TypeLang\Printer\PrinterOptions\UnionSpacing;
 
 /**

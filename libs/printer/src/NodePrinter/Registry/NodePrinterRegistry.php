@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer\NodePrinter\Registry;
 
-use TypeLang\Printer\NodePrinterInterface;
 use TypeLang\Printer\Exception\NonPrintableNodeException;
+use TypeLang\Printer\NodePrinterInterface;
 use TypeLang\Type\Node;
 
 /**

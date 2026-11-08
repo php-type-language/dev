@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistry;
-use TypeLang\Printer\NodePrinter\Registry\CachedNodePrinterRegistry;
 use TypeLang\Printer\NativeTypePrinter\TypeAliases;
 use TypeLang\Printer\NodePrinter\Callable\NativeCallableTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Condition\NativeConditionalTypeNodePrinter;
@@ -15,6 +13,8 @@ use TypeLang\Printer\NodePrinter\NativeFixedNodePrinter;
 use TypeLang\Printer\NodePrinter\NativeLiteralNodePrinter;
 use TypeLang\Printer\NodePrinter\NativeNamedTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\NativeNullableTypeNodePrinter;
+use TypeLang\Printer\NodePrinter\Registry\CachedNodePrinterRegistry;
+use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistry;
 use TypeLang\Type\Callable\CallableTypeNode;
 use TypeLang\Type\Condition\ConditionalTypeNode;
 use TypeLang\Type\Constant\ClassConstMaskTypeNode;

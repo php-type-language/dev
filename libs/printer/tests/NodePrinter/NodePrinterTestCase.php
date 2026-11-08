@@ -13,6 +13,8 @@ use TypeLang\Printer\Tests\TestCase;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\NamespaceName;
+use TypeLang\Type\NamespaceName\NamespaceKind;
 use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
 
@@ -22,9 +24,35 @@ use TypeLang\Type\TypeNode;
  */
 abstract class NodePrinterTestCase extends TestCase
 {
+    /**
+     * Builds a named type out of a name written as a string: `int`,
+     * `Some\Any`, `\Some\Any`, `\true`.
+     *
+     * @param non-empty-string $name
+     */
     protected static function named(string $name): NamedTypeNode
     {
-        return new NamedTypeNode(new Name($name));
+        $separator = \strrpos($name, '\\');
+
+        if ($separator === false) {
+            return new NamedTypeNode(new Name($name));
+        }
+
+        /** @var non-empty-string $word */
+        $word = \substr($name, $separator + 1);
+
+        $kind = NamespaceKind::Qualified;
+
+        if ($name[0] === '\\') {
+            $kind = NamespaceKind::FullyQualified;
+        }
+
+        $namespace = new NamespaceName(
+            value: \ltrim(\substr($name, 0, $separator), '\\'),
+            kind: $kind,
+        );
+
+        return new NamedTypeNode(new Name($word, $namespace));
     }
 
     protected static function union(TypeNode ...$types): UnionTypeNode

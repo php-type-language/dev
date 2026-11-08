@@ -7,6 +7,7 @@ namespace TypeLang\Printer\Tests\NodePrinter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\NativeNamedTypeNodePrinter;
 use TypeLang\Type\Name;
+use TypeLang\Type\NamespaceName;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Template\TemplateListNode;
@@ -17,7 +18,7 @@ final class NativeNamedTypeNodePrinterTest extends NodePrinterTestCase
 {
     public function testNameWithNoAliasIsPrintedAsIs(): void
     {
-        self::assertSame('Some\Any', self::native(new NamedTypeNode(new Name('Some\Any'))));
+        self::assertSame('Some\Any', self::native(new NamedTypeNode(new Name('Any', new NamespaceName('Some')))));
     }
 
     public function testBuiltinAliasIsResolved(): void

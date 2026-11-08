@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistry;
-use TypeLang\Printer\NodePrinter\Registry\CachedNodePrinterRegistry;
 use TypeLang\Printer\NodePrinter\Callable\CallableParameterNodePrinter;
 use TypeLang\Printer\NodePrinter\Callable\CallableTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Condition\ConditionalTypeNodePrinter;
@@ -19,6 +17,8 @@ use TypeLang\Printer\NodePrinter\LogicalTypeNodePrinter\IntersectionTypeNodePrin
 use TypeLang\Printer\NodePrinter\LogicalTypeNodePrinter\UnionTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\NamedTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\NullableTypeNodePrinter;
+use TypeLang\Printer\NodePrinter\Registry\CachedNodePrinterRegistry;
+use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistry;
 use TypeLang\Printer\NodePrinter\Shape\FieldNodePrinter\ComplexFieldNodePrinter;
 use TypeLang\Printer\NodePrinter\Shape\FieldNodePrinter\ImplicitFieldNodePrinter;
 use TypeLang\Printer\NodePrinter\Shape\FieldNodePrinter\NamedFieldNodePrinter;

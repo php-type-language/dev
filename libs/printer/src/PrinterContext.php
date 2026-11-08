@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
-use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistryInterface;
 use TypeLang\Printer\Exception\PrinterExceptionInterface;
+use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistryInterface;
 use TypeLang\Printer\PrinterOptions\CommaSpacing;
 use TypeLang\Type\Node;
 

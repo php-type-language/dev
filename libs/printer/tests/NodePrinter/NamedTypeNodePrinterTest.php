@@ -9,6 +9,8 @@ use TypeLang\Printer\NodePrinter\NamedTypeNodePrinter;
 use TypeLang\Printer\PrinterOptions;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\NamespaceName;
+use TypeLang\Type\NamespaceName\NamespaceKind;
 use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Template\TemplateListNode;
@@ -27,8 +29,8 @@ final class NamedTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testBareNameIsPrintedAsIs(): void
     {
-        self::assertSame('Some\Any', self::pretty(new NamedTypeNode(new Name('Some\Any'))));
-        self::assertSame('\Some\Any', self::pretty(new NamedTypeNode(new Name('\Some\Any'))));
+        self::assertSame('Some\Any', self::pretty(new NamedTypeNode(new Name('Any', new NamespaceName('Some')))));
+        self::assertSame('\Some\Any', self::pretty(new NamedTypeNode(new Name('Any', new NamespaceName('Some', NamespaceKind::FullyQualified)))));
     }
 
     public function testTemplateArgumentsFollowTheName(): void

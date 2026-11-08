@@ -22,6 +22,11 @@ final class ConstMaskTypeNodePrinter implements NodePrinterInterface
             return $result;
         }
 
+        // The root namespace is the separator alone
+        if ($node->namespace->isRoot()) {
+            return '\\' . $result;
+        }
+
         return $node->namespace->toString() . '\\' . $result;
     }
 }

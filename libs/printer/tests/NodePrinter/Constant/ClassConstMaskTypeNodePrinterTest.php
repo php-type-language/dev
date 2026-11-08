@@ -12,6 +12,7 @@ use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
+use TypeLang\Type\NamespaceName;
 
 #[CoversClass(ClassConstMaskTypeNodePrinter::class)]
 final class ClassConstMaskTypeNodePrinterTest extends NodePrinterTestCase
@@ -20,7 +21,7 @@ final class ClassConstMaskTypeNodePrinterTest extends NodePrinterTestCase
     {
         $mask = new MaskNode([new Identifier('FOO_'), new WildcardMaskNode()]);
 
-        $type = new ClassConstMaskTypeNode(new Name('Some\Any'), $mask);
+        $type = new ClassConstMaskTypeNode(new Name('Any', new NamespaceName('Some')), $mask);
 
         self::assertSame('Some\Any::FOO_*', self::pretty($type));
     }
