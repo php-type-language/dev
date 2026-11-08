@@ -11,6 +11,7 @@ use TypeLang\Printer\PrinterContext;
 use TypeLang\Printer\PrinterOptions;
 use TypeLang\Printer\Tests\TestCase;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
@@ -23,7 +24,7 @@ abstract class NodePrinterTestCase extends TestCase
 {
     protected static function named(string $name): NamedTypeNode
     {
-        return NamedTypeNode::from($name);
+        return new NamedTypeNode(new Name($name));
     }
 
     protected static function union(TypeNode ...$types): UnionTypeNode

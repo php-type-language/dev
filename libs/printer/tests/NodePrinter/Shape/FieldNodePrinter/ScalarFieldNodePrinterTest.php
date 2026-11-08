@@ -18,12 +18,12 @@ final class ScalarFieldNodePrinterTest extends NodePrinterTestCase
 {
     public function testNumberKeyIsPrintedAsIs(): void
     {
-        self::assertSame('0: int', self::pretty(ScalarFieldNode::from(0, self::named('int'))));
+        self::assertSame('0: int', self::pretty(new ScalarFieldNode(new IntLiteralNode(0), self::named('int'))));
     }
 
     public function testStringKeyIsPrintedInQuotes(): void
     {
-        self::assertSame("'some key': int", self::pretty(ScalarFieldNode::from('some key', self::named('int'))));
+        self::assertSame("'some key': int", self::pretty(new ScalarFieldNode(new StringLiteralNode('some key'), self::named('int'))));
     }
 
     public function testKeyIsPrintedTheWayItWasWritten(): void

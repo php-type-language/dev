@@ -10,6 +10,7 @@ use TypeLang\Printer\Exception\NonPrintableNodeException;
 use TypeLang\Printer\NativeTypePrinter;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\TypeNode;
 
@@ -207,10 +208,16 @@ final class NativeTypePrinterTest extends TestCase
 
     public function testPrintWrapsNestedLogicalTypes(): void
     {
-        $union = new UnionTypeNode([NamedTypeNode::from('A'), NamedTypeNode::from('B')]);
+        $union = new UnionTypeNode([
+            new NamedTypeNode(new Name('A')),
+            new NamedTypeNode(new Name('B')),
+        ]);
         $type = new UnionTypeNode([
-            new IntersectionTypeNode([$union, NamedTypeNode::from('C')]),
-            NamedTypeNode::from('D'),
+            new IntersectionTypeNode([
+                $union,
+                new NamedTypeNode(new Name('C')),
+            ]),
+            new NamedTypeNode(new Name('D')),
         ]);
 
         self::assertSame('((A|B)&C)|D', (new NativeTypePrinter())->print($type));
@@ -223,16 +230,16 @@ final class NativeTypePrinterTest extends TestCase
         $printer->addUnionTypeAlias('Number', ['int', 'float']);
         $printer->addIntersectionTypeAlias('Both', ['B', 'A']);
 
-        self::assertSame('int', $printer->print(NamedTypeNode::from('Custom')));
-        self::assertSame('float|int', $printer->print(NamedTypeNode::from('Number')));
-        self::assertSame('A&B', $printer->print(NamedTypeNode::from('Both')));
+        self::assertSame('int', $printer->print(new NamedTypeNode(new Name('Custom'))));
+        self::assertSame('float|int', $printer->print(new NamedTypeNode(new Name('Number'))));
+        self::assertSame('A&B', $printer->print(new NamedTypeNode(new Name('Both'))));
     }
 
     public function testPrintOfHandBuiltNodesUsesTheAliases(): void
     {
         $printer = new NativeTypePrinter(['Custom' => 'int']);
 
-        self::assertSame('int', $printer->print(NamedTypeNode::from('Custom')));
-        self::assertSame('int', $printer->print(NamedTypeNode::from('positive-int')));
+        self::assertSame('int', $printer->print(new NamedTypeNode(new Name('Custom'))));
+        self::assertSame('int', $printer->print(new NamedTypeNode(new Name('positive-int'))));
     }
 }

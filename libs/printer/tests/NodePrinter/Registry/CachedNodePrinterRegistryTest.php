@@ -11,6 +11,7 @@ use TypeLang\Printer\NodePrinter\ThisTypeNodePrinter;
 use TypeLang\Printer\NodePrinterInterface;
 use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistry;
 use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistryInterface;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\ThisTypeNode;
@@ -43,7 +44,7 @@ final class CachedNodePrinterRegistryTest extends TestCase
 
         $registry->getPrinter(new ThisTypeNode());
         $registry->getPrinter(new ThisTypeNode());
-        $registry->getPrinter(NamedTypeNode::from('int'));
+        $registry->getPrinter(new NamedTypeNode(new Name('int')));
 
         self::assertSame(2, $delegate->calls);
     }

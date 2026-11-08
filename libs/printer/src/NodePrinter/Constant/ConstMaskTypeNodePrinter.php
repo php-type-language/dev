@@ -18,14 +18,10 @@ final class ConstMaskTypeNodePrinter implements NodePrinterInterface
     {
         $result = $node->mask->toString();
 
-        if (\count($node->namespace) > 0) {
-            $result = $node->namespace->toUnqualifiedString() . '\\' . $result;
+        if ($node->namespace === null) {
+            return $result;
         }
 
-        if ($node->namespace->isFullyQualified) {
-            return '\\' . $result;
-        }
-
-        return $result;
+        return $node->namespace->toString() . '\\' . $result;
     }
 }

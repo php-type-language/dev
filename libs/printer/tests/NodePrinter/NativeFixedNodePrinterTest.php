@@ -12,7 +12,7 @@ use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\ThisTypeNode;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
@@ -31,8 +31,8 @@ final class NativeFixedNodePrinterTest extends NodePrinterTestCase
         yield 'this' => [new ThisTypeNode(), 'self'];
         yield 'list' => [new TypesListTypeNode(self::named('int')), 'iterable'];
         yield 'offset' => [new TypeOffsetAccessTypeNode(self::named('Foo'), self::named('K')), 'mixed'];
-        yield 'class constant' => [ClassConstTypeNode::from('Some', 'FOO'), 'mixed'];
-        yield 'class constant mask' => [new ClassConstMaskTypeNode(TypeName::from('Some'), $mask), 'mixed'];
+        yield 'class constant' => [new ClassConstTypeNode(new Name('Some'), new Name('FOO')), 'mixed'];
+        yield 'class constant mask' => [new ClassConstMaskTypeNode(new Name('Some'), $mask), 'mixed'];
         yield 'constant mask' => [new ConstMaskTypeNode($mask), 'mixed'];
     }
 

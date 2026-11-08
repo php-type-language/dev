@@ -7,7 +7,7 @@ namespace TypeLang\Printer\Tests\NodePrinter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\NamedTypeNodePrinter;
 use TypeLang\Printer\PrinterOptions;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Shape\NamedFieldNode;
@@ -27,21 +27,21 @@ final class NamedTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testBareNameIsPrintedAsIs(): void
     {
-        self::assertSame('Some\Any', self::pretty(NamedTypeNode::from('Some\Any')));
-        self::assertSame('\Some\Any', self::pretty(NamedTypeNode::from('\Some\Any')));
+        self::assertSame('Some\Any', self::pretty(new NamedTypeNode(new Name('Some\Any'))));
+        self::assertSame('\Some\Any', self::pretty(new NamedTypeNode(new Name('\Some\Any'))));
     }
 
     public function testTemplateArgumentsFollowTheName(): void
     {
-        $type = new NamedTypeNode(TypeName::from('array'), self::arguments('int', 'string'));
+        $type = new NamedTypeNode(new Name('array'), self::arguments('int', 'string'));
 
         self::assertSame('array<int, string>', self::pretty($type));
     }
 
     public function testShapeFollowsTheName(): void
     {
-        $type = new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([
-            NamedFieldNode::from('a', self::named('int')),
+        $type = new NamedTypeNode(new Name('array'), null, new FieldListNode([
+            new NamedFieldNode(new Name('a'), self::named('int')),
         ]));
 
         self::assertSame('array{a: int}', self::pretty($type));
@@ -50,14 +50,14 @@ final class NamedTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testEmptyShapeIsPrintedWithEmptyBraces(): void
     {
-        $type = new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([]));
+        $type = new NamedTypeNode(new Name('array'), null, new FieldListNode([]));
 
         self::assertSame('array{}', self::pretty($type));
     }
 
     public function testUnsealedShapeEndsInEllipsis(): void
     {
-        $type = new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([], false));
+        $type = new NamedTypeNode(new Name('array'), null, new FieldListNode([], false));
 
         self::assertSame('array{...}', self::pretty($type));
     }
@@ -65,9 +65,9 @@ final class NamedTypeNodePrinterTest extends NodePrinterTestCase
     public function testUnsealedShapeWithTemplateArgumentsCarriesThemAfterTheEllipsis(): void
     {
         $type = new NamedTypeNode(
-            TypeName::from('array'),
+            new Name('array'),
             self::arguments('string', 'int'),
-            new FieldListNode([NamedFieldNode::from('a', self::named('int'))]),
+            new FieldListNode([new NamedFieldNode(new Name('a'), self::named('int'))]),
         );
 
         $options = new PrinterOptions(maxInlineShapeFields: 5);
@@ -77,9 +77,9 @@ final class NamedTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testShapeIsMultilineAfterTheThreshold(): void
     {
-        $type = new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([
-            NamedFieldNode::from('a', self::named('int')),
-            NamedFieldNode::from('b', self::named('string')),
+        $type = new NamedTypeNode(new Name('array'), null, new FieldListNode([
+            new NamedFieldNode(new Name('a'), self::named('int')),
+            new NamedFieldNode(new Name('b'), self::named('string')),
         ]));
 
         self::assertSame('array{a: int, b: string}', self::pretty($type, new PrinterOptions(maxInlineShapeFields: 2)));
@@ -91,11 +91,11 @@ final class NamedTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testNestedShapeIsIndentedDeeper(): void
     {
-        $inner = new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([
-            NamedFieldNode::from('x', self::named('int')),
+        $inner = new NamedTypeNode(new Name('array'), null, new FieldListNode([
+            new NamedFieldNode(new Name('x'), self::named('int')),
         ]));
-        $type = new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([
-            NamedFieldNode::from('a', $inner),
+        $type = new NamedTypeNode(new Name('array'), null, new FieldListNode([
+            new NamedFieldNode(new Name('a'), $inner),
         ]));
 
         self::assertSame(

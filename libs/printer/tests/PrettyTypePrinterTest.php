@@ -20,7 +20,7 @@ use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Shape\NamedFieldNode;
@@ -411,7 +411,7 @@ final class PrettyTypePrinterTest extends TestCase
 
     private static function named(string $name): NamedTypeNode
     {
-        return NamedTypeNode::from($name);
+        return new NamedTypeNode(new Name($name));
     }
 
     /**
@@ -419,7 +419,7 @@ final class PrettyTypePrinterTest extends TestCase
      */
     private static function generic(): NamedTypeNode
     {
-        return new NamedTypeNode(TypeName::from('array'), new TemplateListNode([
+        return new NamedTypeNode(new Name('array'), new TemplateListNode([
             new TypedTemplateArgumentNode(self::named('int')),
             new TypedTemplateArgumentNode(self::named('string')),
         ]));
@@ -431,7 +431,7 @@ final class PrettyTypePrinterTest extends TestCase
     private static function callable(): CallableTypeNode
     {
         return new CallableTypeNode(
-            TypeName::from('callable'),
+            new Name('callable'),
             new CallableParameterListNode([
                 new CallableParameterNode(self::named('int')),
                 new CallableParameterNode(self::named('string')),
@@ -445,9 +445,9 @@ final class PrettyTypePrinterTest extends TestCase
      */
     private static function shape(): NamedTypeNode
     {
-        return new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([
-            NamedFieldNode::from('a', self::named('int')),
-            NamedFieldNode::from('b', self::named('string')),
+        return new NamedTypeNode(new Name('array'), null, new FieldListNode([
+            new NamedFieldNode(new Name('a'), self::named('int')),
+            new NamedFieldNode(new Name('b'), self::named('string')),
         ]));
     }
 
@@ -489,7 +489,7 @@ final class PrettyTypePrinterTest extends TestCase
 
     public function testMultilineItemsAreIndentedOneLevelDeeper(): void
     {
-        $type = new NamedTypeNode(TypeName::from('array'), new TemplateListNode([
+        $type = new NamedTypeNode(new Name('array'), new TemplateListNode([
             new TypedTemplateArgumentNode(self::named('int')),
             new TypedTemplateArgumentNode(self::shape()),
         ]));
@@ -583,7 +583,7 @@ final class PrettyTypePrinterTest extends TestCase
 
     public function testEveryUnionOfTemplateArgumentsIsWrittenWithNoBrackets(): void
     {
-        $type = new NamedTypeNode(TypeName::from('array'), new TemplateListNode([
+        $type = new NamedTypeNode(new Name('array'), new TemplateListNode([
             new TypedTemplateArgumentNode(self::union('int', 'string')),
             new TypedTemplateArgumentNode(self::union('float', 'bool')),
         ]));
@@ -607,7 +607,7 @@ final class PrettyTypePrinterTest extends TestCase
 
     public function testTemplateArgumentsOfATypeInsideAnIntersectionAreNotWrapped(): void
     {
-        $generic = new NamedTypeNode(TypeName::from('Foo'), new TemplateListNode([
+        $generic = new NamedTypeNode(new Name('Foo'), new TemplateListNode([
             new TypedTemplateArgumentNode(self::union('A', 'B')),
         ]));
 

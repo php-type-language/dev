@@ -10,6 +10,7 @@ use TypeLang\Printer\PrettyTypePrinter;
 use TypeLang\Printer\PrinterContext;
 use TypeLang\Printer\TypePrinter;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 
@@ -29,8 +30,8 @@ final class TypePrinterTest extends TestCase
         $printer = new TypePrinter(PrettyTypePrinter::createRegistry()->with(NamedTypeNode::class, $shouting));
 
         self::assertSame('INT|STRING', $printer->print(new UnionTypeNode([
-            NamedTypeNode::from('int'),
-            NamedTypeNode::from('string'),
+            new NamedTypeNode(new Name('int')),
+            new NamedTypeNode(new Name('string')),
         ])));
     }
 }

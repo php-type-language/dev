@@ -9,6 +9,7 @@ use TypeLang\Printer\NodePrinterInterface;
 use TypeLang\Printer\PrinterContext;
 use TypeLang\Printer\PrinterOptions\NullableStyle;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
@@ -26,7 +27,10 @@ final class NullableTypeNodePrinter implements NodePrinterInterface
     {
         return match ($context->options->nullableStyle) {
             NullableStyle::Question => '?' . $context->groupLogical(fn(): string => $context->print($node->type)),
-            NullableStyle::Union => $context->print(new UnionTypeNode([$node->type, NamedTypeNode::from('null')])),
+            NullableStyle::Union => $context->print(new UnionTypeNode([
+                $node->type,
+                new NamedTypeNode(new Name('null')),
+            ])),
         };
     }
 }

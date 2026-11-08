@@ -8,6 +8,7 @@ use TypeLang\Printer\Exception\PrinterExceptionInterface;
 use TypeLang\Printer\NodePrinterInterface;
 use TypeLang\Printer\PrinterContext;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
@@ -26,6 +27,6 @@ final class NativeNullableTypeNodePrinter implements NodePrinterInterface
      */
     public function printNode(Node $node, PrinterContext $context): string
     {
-        return $context->print(new UnionTypeNode([$node->type, NamedTypeNode::from('null')]));
+        return $context->print(new UnionTypeNode([$node->type, new NamedTypeNode(new Name('null'))]));
     }
 }

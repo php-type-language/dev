@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\Condition\ConditionNodePrinter\EqualConditionNodePrinter;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Condition\EqualConditionNode;
+use TypeLang\Type\Name;
 use TypeLang\Type\VariableNode;
 
 #[CoversClass(EqualConditionNodePrinter::class)]
@@ -22,14 +23,14 @@ final class EqualConditionNodePrinterTest extends NodePrinterTestCase
 
     public function testSubjectMayBeAVariable(): void
     {
-        $condition = new EqualConditionNode(VariableNode::from('value'), self::named('int'));
+        $condition = new EqualConditionNode(new VariableNode(new Name('value')), self::named('int'));
 
         self::assertSame('$value is int', self::pretty($condition));
     }
 
     public function testTargetMayBeAVariable(): void
     {
-        $condition = new EqualConditionNode(self::named('T'), VariableNode::from('value'));
+        $condition = new EqualConditionNode(self::named('T'), new VariableNode(new Name('value')));
 
         self::assertSame('T is $value', self::pretty($condition));
     }

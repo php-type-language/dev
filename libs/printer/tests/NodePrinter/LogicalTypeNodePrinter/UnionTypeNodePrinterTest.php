@@ -12,7 +12,7 @@ use TypeLang\Printer\PrinterOptions;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Template\TemplateListNode;
 use TypeLang\Type\Template\TypedTemplateArgumentNode;
@@ -72,7 +72,7 @@ final class UnionTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testEveryUnionOfTemplateArgumentsIsWrittenWithNoBrackets(): void
     {
-        $type = new NamedTypeNode(TypeName::from('array'), new TemplateListNode([
+        $type = new NamedTypeNode(new Name('array'), new TemplateListNode([
             new TypedTemplateArgumentNode(self::union(self::named('int'), self::named('string'))),
             new TypedTemplateArgumentNode(self::union(self::named('float'), self::named('bool'))),
         ]));
@@ -82,7 +82,7 @@ final class UnionTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testTemplateArgumentsOfATypeInsideAnIntersectionAreNotWrapped(): void
     {
-        $generic = new NamedTypeNode(TypeName::from('Foo'), new TemplateListNode([
+        $generic = new NamedTypeNode(new Name('Foo'), new TemplateListNode([
             new TypedTemplateArgumentNode(self::union(self::named('A'), self::named('B'))),
         ]));
 

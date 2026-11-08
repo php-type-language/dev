@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\Template\TemplateListNodePrinter;
 use TypeLang\Printer\PrinterOptions;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\Template\TemplateListNode;
 use TypeLang\Type\Template\TemplateParameterListNode;
 use TypeLang\Type\Template\TemplateParameterNode;
@@ -67,7 +67,7 @@ final class TemplateListNodePrinterTest extends NodePrinterTestCase
     public function testArgumentsMayBeDeclaredParameters(): void
     {
         $list = new TemplateListNode([
-            new TemplateParameterNode(new Identifier('T')),
+            new TemplateParameterNode(new Name('T')),
             new TypedTemplateArgumentNode(self::named('int')),
         ]);
 
@@ -77,8 +77,8 @@ final class TemplateListNodePrinterTest extends NodePrinterTestCase
     public function testParametersAreWrittenInAngleBrackets(): void
     {
         $list = new TemplateParameterListNode([
-            new TemplateParameterNode(new Identifier('T')),
-            new TemplateParameterNode(new Identifier('U')),
+            new TemplateParameterNode(new Name('T')),
+            new TemplateParameterNode(new Name('U')),
         ]);
 
         self::assertSame('<T, U>', self::pretty($list));
@@ -87,8 +87,8 @@ final class TemplateListNodePrinterTest extends NodePrinterTestCase
     public function testParametersAreMultilineAfterTheThreshold(): void
     {
         $list = new TemplateParameterListNode([
-            new TemplateParameterNode(new Identifier('T')),
-            new TemplateParameterNode(new Identifier('U')),
+            new TemplateParameterNode(new Name('T')),
+            new TemplateParameterNode(new Name('U')),
         ]);
 
         self::assertSame("<\n    T,\n    U\n>", self::pretty($list, new PrinterOptions(maxInlineTemplateItems: 1)));

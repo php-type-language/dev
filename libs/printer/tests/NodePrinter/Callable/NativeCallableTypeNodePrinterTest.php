@@ -10,7 +10,7 @@ use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Callable\CallableParameterListNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 
 #[CoversClass(NativeCallableTypeNodePrinter::class)]
 final class NativeCallableTypeNodePrinterTest extends NodePrinterTestCase
@@ -18,7 +18,7 @@ final class NativeCallableTypeNodePrinterTest extends NodePrinterTestCase
     public function testParametersAndReturnTypeAreDropped(): void
     {
         $type = new CallableTypeNode(
-            TypeName::from('callable'),
+            new Name('callable'),
             new CallableParameterListNode([new CallableParameterNode(self::named('int'))]),
             self::named('void'),
         );
@@ -28,14 +28,14 @@ final class NativeCallableTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testNameIsResolvedByTheAliases(): void
     {
-        $type = new CallableTypeNode(TypeName::from('pure-callable'));
+        $type = new CallableTypeNode(new Name('pure-callable'));
 
         self::assertSame('callable', self::native($type));
     }
 
     public function testCustomAliasIsResolved(): void
     {
-        $type = new CallableTypeNode(TypeName::from('Handler'));
+        $type = new CallableTypeNode(new Name('Handler'));
 
         self::assertSame('Closure', self::native($type, ['Handler' => 'Closure']));
     }

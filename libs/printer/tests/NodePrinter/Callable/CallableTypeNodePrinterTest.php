@@ -14,9 +14,8 @@ use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Callable\CallableParameterListNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
-use TypeLang\Type\Name\TypeName;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Shape\NamedFieldNode;
@@ -35,7 +34,7 @@ final class CallableTypeNodePrinterTest extends NodePrinterTestCase
     private static function callable(?TypeNode $return = null, CallableParameterNode ...$parameters): CallableTypeNode
     {
         return new CallableTypeNode(
-            TypeName::from('callable'),
+            new Name('callable'),
             new CallableParameterListNode($parameters),
             $return,
         );
@@ -102,7 +101,7 @@ final class CallableTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testReturnedTypeWithAUnionInItsTemplateArgumentsIsNotWrapped(): void
     {
-        $return = new NamedTypeNode(TypeName::from('array'), new TemplateListNode([
+        $return = new NamedTypeNode(new Name('array'), new TemplateListNode([
             new TypedTemplateArgumentNode(self::union(self::named('A'), self::named('B'))),
         ]));
 
@@ -111,8 +110,8 @@ final class CallableTypeNodePrinterTest extends NodePrinterTestCase
 
     public function testReturnedTypeWithAUnionInItsShapeIsNotWrapped(): void
     {
-        $return = new NamedTypeNode(TypeName::from('array'), null, new FieldListNode([
-            NamedFieldNode::from('a', self::union(self::named('A'), self::named('B'))),
+        $return = new NamedTypeNode(new Name('array'), null, new FieldListNode([
+            new NamedFieldNode(new Name('a'), self::union(self::named('A'), self::named('B'))),
         ]));
 
         self::assertSame('callable(): array{a: A|B}', self::pretty(self::callable($return)));
@@ -121,13 +120,13 @@ final class CallableTypeNodePrinterTest extends NodePrinterTestCase
     public function testTemplateParametersFollowTheName(): void
     {
         $type = new CallableTypeNode(
-            TypeName::from('callable'),
+            new Name('callable'),
             new CallableParameterListNode(),
             self::named('void'),
             new TemplateParameterListNode([
                 new TemplateParameterNode(
-                    new Identifier('T'),
-                    new TemplateBoundNode(new Identifier('of'), self::named('int')),
+                    new Name('T'),
+                    new TemplateBoundNode(new Name('of'), self::named('int')),
                 ),
             ]),
         );
