@@ -26,11 +26,6 @@ final class NamesTest extends GrammarTestCase
         yield 'with underscore' => ['Foo_Bar'];
 
         yield 'hyphen in the middle' => ['non-empty-string'];
-        yield 'double hyphen' => ['a--b'];
-        yield 'trailing hyphen' => ['Foo-'];
-        yield 'trailing hyphen before a separator' => ['Foo-\\Bar'];
-        yield 'keyword with a trailing hyphen' => ['is-'];
-        yield 'hyphen in a segment' => ['Foo\\Bar-baz'];
 
         yield 'cyrillic' => ['Фу'];
         yield 'cyrillic namespace' => ['Фу\\Бар'];
@@ -88,6 +83,13 @@ final class NamesTest extends GrammarTestCase
         yield 'space after the leading separator' => ['\\ Foo'];
         yield 'starts with a digit' => ['1Foo'];
         yield 'starts with a hyphen' => ['-foo'];
+        yield 'double hyphen' => ['a--b'];
+        yield 'trailing hyphen' => ['Foo-'];
+        yield 'trailing hyphen before a separator' => ['Foo-\\Bar'];
+        yield 'keyword with a trailing hyphen' => ['is-'];
+        yield 'hyphen in a segment' => ['Foo\\Bar-baz'];
+        yield 'hyphen in the first segment' => ['non-empty\\Foo'];
+        yield 'hyphen in a fully qualified name' => ['\\non-empty'];
         yield 'segment starts with a hyphen' => ['Foo\\-bar'];
         yield 'variable' => ['$that'];
         yield 'variable with a namespace' => ['$this\\Foo'];

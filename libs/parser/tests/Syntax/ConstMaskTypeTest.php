@@ -26,15 +26,18 @@ final class ConstMaskTypeTest extends TestCase
         yield 'inside' => ['PHP_*_MAX', null, false, 'PHP_*_MAX'];
         yield 'both ends' => ['*A*', null, false, '*A*'];
         yield 'a word and a star' => ['Foo*', null, false, 'Foo*'];
-        yield 'fully qualified' => ['\\PHP_*', null, true, 'PHP_*'];
-        yield 'fully qualified root' => ['\\*', null, true, '*'];
-        yield 'fully qualified root with a suffix' => ['\\*_SUFFIX', null, true, '*_SUFFIX'];
+        yield 'fully qualified' => ['\\PHP_*', '\\', true, 'PHP_*'];
+        yield 'fully qualified root' => ['\\*', '\\', true, '*'];
+        yield 'fully qualified root with a suffix' => ['\\*_SUFFIX', '\\', true, '*_SUFFIX'];
         yield 'namespaced' => ['Foo\\Bar\\BAZ_*', 'Foo\\Bar', false, 'BAZ_*'];
         yield 'namespaced and fully qualified' => ['\\Foo\\BAR_*', '\\Foo', true, 'BAR_*'];
         yield 'whole namespace' => ['Path\\To\\*', 'Path\\To', false, '*'];
         yield 'whole one word namespace' => ['Path\\*', 'Path', false, '*'];
         yield 'whole namespace with a suffix' => ['Path\\To\\*_SUFFIX', 'Path\\To', false, '*_SUFFIX'];
         yield 'whole fully qualified namespace' => ['\\Path\\To\\*', '\\Path\\To', true, '*'];
+        yield 'current namespace' => ['namespace\\BAR_*', 'namespace', false, 'BAR_*'];
+        yield 'relative to the current namespace' => ['namespace\\Foo\\BAR_*', 'namespace\\Foo', false, 'BAR_*'];
+        yield 'whole current namespace' => ['namespace\\*', 'namespace', false, '*'];
         yield 'word of a literal' => ['true*', null, false, 'true*'];
         yield 'digits behind a star' => ['A_*_1', null, false, 'A_*_1'];
     }
@@ -50,7 +53,7 @@ final class ConstMaskTypeTest extends TestCase
 
         self::assertInstanceOf(ConstMaskTypeNode::class, $type);
         self::assertSame($namespace, $type->namespace?->toString());
-        self::assertSame($isFullyQualified, $type->isFullyQualified);
+        self::assertSame($isFullyQualified, $type->isFullyQualified());
         self::assertSame($mask, $type->mask->toString());
     }
 

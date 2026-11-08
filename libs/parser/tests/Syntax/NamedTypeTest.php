@@ -10,6 +10,7 @@ use TypeLang\Type\Literal\BoolLiteralNode;
 use TypeLang\Type\Literal\LiteralNode;
 use TypeLang\Type\Literal\NullLiteralNode;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\NamespaceName\NamespaceKind;
 
 /**
  * A type that is a name and nothing more.
@@ -24,7 +25,6 @@ final class NamedTypeTest extends TestCase
         yield 'simple' => ['Foo'];
         yield 'builtin' => ['int'];
         yield 'hyphen' => ['non-empty-string'];
-        yield 'trailing hyphen' => ['Foo-'];
         yield 'multibyte' => ['Фу'];
         yield 'case is kept' => ['IS'];
 
@@ -46,7 +46,6 @@ final class NamedTypeTest extends TestCase
         yield 'fully qualified null' => ['\\NULL'];
         yield 'fully qualified literal word leads a namespace' => ['\\true\\Foo'];
         yield 'fully qualified literal word with a suffix' => ['\\truefoo'];
-        yield 'fully qualified literal word with a hyphen' => ['\\true-x'];
         yield 'literal word leads a namespace' => ['true\\null'];
         yield 'literal word ends a namespace' => ['Foo\\false'];
         yield 'literal word in the middle' => ['Foo\\null\\Bar'];
@@ -168,5 +167,44 @@ final class NamedTypeTest extends TestCase
         self::assertSame($value, $type->value);
         self::assertSame($source, $type->raw);
         self::assertSame(2, $type->offset);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string, string|null, NamespaceKind|null}>
+     */
+    public static function namespaceDataProvider(): iterable
+    {
+        yield 'no namespace' => ['Foo', 'Foo', null, null];
+        yield 'qualified' => ['Some\Foo', 'Foo', 'Some', NamespaceKind::Qualified];
+        yield 'qualified deeper' => ['Some\Any\Foo', 'Foo', 'Some\Any', NamespaceKind::Qualified];
+        yield 'root' => ['\Foo', 'Foo', '', NamespaceKind::FullyQualified];
+        yield 'fully qualified' => ['\Some\Foo', 'Foo', 'Some', NamespaceKind::FullyQualified];
+        yield 'fully qualified deeper' => ['\Some\Any\Foo', 'Foo', 'Some\Any', NamespaceKind::FullyQualified];
+        yield 'current namespace' => ['namespace\Foo', 'Foo', '', NamespaceKind::NamespaceRelative];
+        yield 'relative to the current' => ['namespace\Some\Foo', 'Foo', 'Some', NamespaceKind::NamespaceRelative];
+        yield 'keyword in upper case' => ['NAMESPACE\Foo', 'Foo', '', NamespaceKind::NamespaceRelative];
+        yield 'keyword as a word' => ['Some\namespace\Foo', 'Foo', 'Some\namespace', NamespaceKind::Qualified];
+        yield 'virtual name' => ['non-empty-string', 'non-empty-string', null, null];
+    }
+
+    /**
+     * @param non-empty-string $source
+     * @param non-empty-string $word
+     */
+    #[DataProvider('namespaceDataProvider')]
+    public function testNameIsCutIntoNamespaceAndWord(
+        string $source,
+        string $word,
+        ?string $value,
+        ?NamespaceKind $kind,
+    ): void {
+        $type = $this->parse("  $source");
+
+        self::assertInstanceOf(NamedTypeNode::class, $type);
+        self::assertSame($word, $type->name->value);
+        self::assertSame($value, $type->name->namespace?->value);
+        self::assertSame($kind, $type->name->namespace?->kind);
+        self::assertSame(2, $type->name->offset);
+        self::assertSame($kind === null ? null : 2, $type->name->namespace?->offset);
     }
 }

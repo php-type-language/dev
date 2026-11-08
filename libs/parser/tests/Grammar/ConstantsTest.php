@@ -196,6 +196,14 @@ final class ConstantsTest extends GrammarTestCase
         yield 'this with a star' => ['$this*'];
         yield 'variable with a star' => ['$foo*'];
 
+        // A constant has no hyphens, only a virtual type has
+        yield 'hyphen in a constant' => ['Foo::BAR-BAZ'];
+        yield 'virtual name as a constant' => ['Foo::non-empty'];
+        yield 'hyphen in a mask of a class' => ['Foo::BAR-*'];
+        yield 'hyphen in a global mask' => ['PHP-*'];
+        yield 'hyphen behind a star' => ['*-SUFFIX'];
+        yield 'hyphen in a namespace of a mask' => ['Foo-Bar\\BAZ_*'];
+
         // A mask is one token, there is no room for a space in it
         yield 'spaces inside a mask of a class' => ['Foo::A * B'];
         yield 'space before a star' => ['PHP_ *'];

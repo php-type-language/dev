@@ -8,24 +8,53 @@
  */
 
 
-// BAR, BAR_*, *, *_BAZ, A*B*C
-ConstantMask -> {
-    if ($children instanceof Type\Identifier) {
-        return $children;
+// BAR_*, *_BAZ, A*B*C
+IdentifierMask -> {
+    $items = [];
+    $position = $offset;
+
+    foreach (\explode('*', $children->value) as $index => $word) {
+        if ($index > 0) {
+            $items[] = new Type\Constant\MaskNode\WildcardMaskNode($position++);
+        }
+
+        if ($word !== '') {
+            $items[] = new Type\Identifier($word, $position);
+            $position += \strlen($word);
+        }
     }
 
-    return $this->classConstMask->parse($children->value, $offset);
+    return new Type\Constant\MaskNode($items, $offset);
 }
   : <T_IDENTIFIER_MASK>
-  | <T_WILDCARD>
+  ;
+
+// *
+WildcardMask -> {
+    return new Type\Constant\MaskNode([new Type\Constant\MaskNode\WildcardMaskNode($offset)], $offset);
+}
+  : <T_WILDCARD>
+  ;
+
+// BAR, BAR_*, *, *_BAZ, A*B*C
+ConstantMask
+  : IdentifierMask()
+  | WildcardMask()
   | Identifier()
   ;
 
 
-// PHP_*, *_SUFFIX, \PHP_*, Foo\BAR_*, Path\To\*, \*
+// PHP_*, *_SUFFIX, \PHP_*, Foo\BAR_*, Path\To\*, \*. A lone star is a mask
+// only behind a namespace
 ConstMaskType -> {
-    return $this->constMask->parse($children->value, $offset);
+    // PHP_*
+    if (!\is_array($children)) {
+        return new Type\Constant\ConstMaskTypeNode($children, null, $offset);
+    }
+
+    // Foo\BAR_*, \*
+    return new Type\Constant\ConstMaskTypeNode($children[1], $children[0], $offset);
 }
-  : <T_IDENTIFIER_MASK>
-  | <T_NAME_MASK>
+  : IdentifierMask()
+  | Namespace() (IdentifierMask() | WildcardMask())
   ;

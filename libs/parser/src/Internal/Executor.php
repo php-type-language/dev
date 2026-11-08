@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Internal;
 
 use TypeLang\Parser\Internal\SubParser\BinIntParser;
-use TypeLang\Parser\Internal\SubParser\ConstMaskParser;
 use TypeLang\Parser\Internal\SubParser\DecIntParser;
 use TypeLang\Parser\Internal\SubParser\DqStringParser;
 use TypeLang\Parser\Internal\SubParser\FloatParser;
 use TypeLang\Parser\Internal\SubParser\HexIntParser;
-use TypeLang\Parser\Internal\SubParser\ClassConstMaskParser;
 use TypeLang\Parser\Internal\SubParser\OctIntParser;
 use TypeLang\Parser\Internal\SubParser\OctLegacyIntParser;
 use TypeLang\Parser\Internal\SubParser\SqStringParser;
@@ -32,8 +30,6 @@ final class Executor extends CompiledExecutor
     protected readonly FloatParser $float;
     protected readonly DqStringParser $dqString;
     protected readonly SqStringParser $sqString;
-    protected readonly ClassConstMaskParser $classConstMask;
-    protected readonly ConstMaskParser $constMask;
 
     public function __construct(
         protected readonly TypeParserFeatures $features,
@@ -51,8 +47,6 @@ final class Executor extends CompiledExecutor
         $this->float = new FloatParser();
         $this->dqString = new DqStringParser();
         $this->sqString = new SqStringParser();
-        $this->classConstMask = new ClassConstMaskParser();
-        $this->constMask = new ConstMaskParser($this->classConstMask);
     }
 
     /**

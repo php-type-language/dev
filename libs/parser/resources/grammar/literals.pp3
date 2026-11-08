@@ -5,111 +5,38 @@
  */
 
 
-// Any of the literals below. Requires the `literals` feature
+// Any of the literals: `null`, `true`, `false`, the numbers of any base (42,
+// 0x1F, 0b101, 0o17, 017, -42, 1_000, 1.5, .5, 1e-3) and the strings ('text',
+// "text"). The token tells which of them it is. Requires the `literals` feature
 Literal -> {
-    /** @var Type\Literal\LiteralNode $children */
+    /** @var \Phplrt\Contracts\Lexer\TokenInterface $children */
     if (!$this->features->literals) {
         throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('literals', $ctx);
     }
 
-    return $children;
-}
-  : NullLiteral()
-  | BoolLiteral()
-  | FloatLiteral()
-  | IntLiteral()
-  | StringLiteral()
-  ;
-
-BoolLiteral
-  : TrueLiteral()
-  | FalseLiteral()
-  ;
-
-FalseLiteral -> {
-    return new Type\Literal\BoolLiteralNode(false, $children->value, $offset);
-}
-  : <T_FALSE>
-  ;
-
-TrueLiteral -> {
-    return new Type\Literal\BoolLiteralNode(true, $children->value, $offset);
-}
-  : <T_TRUE>
-  ;
-
-NullLiteral -> {
-    return new Type\Literal\NullLiteralNode($children->value, $offset);
+    return match ($children->id) {
+        self::T_NULL => new Type\Literal\NullLiteralNode($children->value, $offset),
+        self::T_TRUE => new Type\Literal\BoolLiteralNode(true, $children->value, $offset),
+        self::T_FALSE => new Type\Literal\BoolLiteralNode(false, $children->value, $offset),
+        self::T_FLOAT => $this->float->parse($children->value, $offset),
+        self::T_INT_DEC => $this->decInt->parse($children->value, $offset),
+        self::T_INT_HEX => $this->hexInt->parse($children->value, $offset),
+        self::T_INT_BIN => $this->binInt->parse($children->value, $offset),
+        self::T_INT_OCT => $this->octInt->parse($children->value, $offset),
+        self::T_INT_OCT_LEGACY => $this->octLegacyInt->parse($children->value, $offset),
+        self::T_SQ_STRING => $this->sqString->parse($children->value, $offset),
+        default => $this->dqString->parse($children->value, $offset),
+    };
 }
   : <T_NULL>
-  ;
-
-// 42, 0x1F, 0b101, 0o17, 017, -42, 1_000
-IntLiteral
-  : DecIntLiteral()
-  | HexIntLiteral()
-  | BinIntLiteral()
-  | OctIntLiteral()
-  | OctLegacyIntLiteral()
-  ;
-
-// 42, -42, 1_000
-DecIntLiteral -> {
-    return $this->decInt->parse($children->value, $offset);
-}
-  : <T_INT_DEC>
-  ;
-
-// 0x1F, -0XDE_AD
-HexIntLiteral -> {
-    return $this->hexInt->parse($children->value, $offset);
-}
-  : <T_INT_HEX>
-  ;
-
-// 0b101, 0B10_10
-BinIntLiteral -> {
-    return $this->binInt->parse($children->value, $offset);
-}
-  : <T_INT_BIN>
-  ;
-
-// 0o17, 0O6_5_5
-OctIntLiteral -> {
-    return $this->octInt->parse($children->value, $offset);
-}
-  : <T_INT_OCT>
-  ;
-
-// 017, 0_42, 0
-OctLegacyIntLiteral -> {
-    return $this->octLegacyInt->parse($children->value, $offset);
-}
-  : <T_INT_OCT_LEGACY>
-  ;
-
-// 1.5, .5, 1e-3
-FloatLiteral -> {
-    return $this->float->parse($children->value, $offset);
-}
-  : <T_FLOAT>
-  ;
-
-
-// 'text', "text"
-StringLiteral
-  : SingleQuotedStringLiteral()
-  | DoubleQuotedStringLiteral()
-  ;
-
-DoubleQuotedStringLiteral -> {
-    return $this->dqString->parse($children->value, $offset);
-}
-  : <T_DQ_STRING>
-  ;
-
-SingleQuotedStringLiteral -> {
-    return $this->sqString->parse($children->value, $offset);
-}
-  : <T_SQ_STRING>
+  | <T_TRUE>
+  | <T_FALSE>
+  | <T_FLOAT>
+  | <T_INT_DEC>
+  | <T_INT_HEX>
+  | <T_INT_BIN>
+  | <T_INT_OCT>
+  | <T_INT_OCT_LEGACY>
+  | <T_SQ_STRING>
+  | <T_DQ_STRING>
   ;
