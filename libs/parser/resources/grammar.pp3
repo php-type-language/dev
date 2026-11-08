@@ -36,6 +36,7 @@
   | NamedType()
   | ThisType()
   | ConstMaskType()
+  | Group()
   ;
 
 
@@ -79,4 +80,23 @@ ThisType -> {
     return new Type\ThisTypeNode($offset);
 }
   : <T_THIS>
+  ;
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Group
+ * -----------------------------------------------------------------------------
+ */
+
+
+// (int), ((int)). The parentheses only group, they build no node
+Group -> {
+    if (\is_array($children)) {
+        return $children[0];
+    }
+
+    return $children;
+}
+  : ::T_PAREN_OPEN:: Type() ::T_PAREN_CLOSE::
   ;

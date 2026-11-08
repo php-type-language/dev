@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Internal;
 
-use TypeLang\Parser\Exception;
 use TypeLang\Type;
+use TypeLang\Parser\Exception;
 
 \interface_exists(\Phplrt\Contracts\Source\Exception\SourceExceptionInterface::class);
 \interface_exists(\Phplrt\Contracts\Source\ReadableInterface::class);
@@ -204,6 +204,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         true,
         true,
         false,
+        true,
+        false,
+        false,
     ];
 
     /** @var array<int, array<int, true>|null> */
@@ -230,6 +233,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             true,
             true,
             true,
+            31 => true,
         ],
         [
             2 => true,
@@ -392,6 +396,15 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             1 => true,
             22 => true,
         ],
+        [
+            31 => true,
+        ],
+        [
+            31 => true,
+        ],
+        [
+            32 => true,
+        ],
     ];
 
     /** @var array<int, array<int, list<int>>> */
@@ -463,6 +476,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
             1 => [
                 33,
+            ],
+            31 => [
+                36,
             ],
         ],
         [
@@ -695,7 +711,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $this->parser = new \Phplrt\Parser\Parser(
             lexer: $this->lexer,
             grammar: [
-                new \Phplrt\Parser\Grammar\Alternation([1, 13, 32, 33]),
+                new \Phplrt\Parser\Grammar\Alternation([1, 13, 32, 33, 36]),
                 new \Phplrt\Parser\Grammar\Alternation([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_NULL, true),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_TRUE, true),
@@ -731,6 +747,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 new \Phplrt\Parser\Grammar\Alternation([29, 34]),
                 new \Phplrt\Parser\Grammar\Concatenation([16, 35]),
                 new \Phplrt\Parser\Grammar\Alternation([29, 30]),
+                new \Phplrt\Parser\Grammar\Concatenation([37, 0, 38]),
+                new \Phplrt\Parser\Grammar\Lexeme(self::T_PAREN_OPEN, false),
+                new \Phplrt\Parser\Grammar\Lexeme(self::T_PAREN_CLOSE, false),
             ],
             initial: 0,
             reducers: [
@@ -743,6 +762,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 31 => self::reduceIdentifier(...),
                 32 => self::reduceThisType(...),
                 33 => self::reduceConstMaskType(...),
+                36 => self::reduceGroup(...),
             ],
             expectations: self::PARSER_EXPECTATIONS,
             kept: self::PARSER_KEPT_TABLE,
@@ -890,5 +910,14 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
 
         // Foo\BAR_*, \*
         return new Type\Constant\ConstMaskTypeNode($children[1], $children[0], $offset);
+    }
+
+    private static function reduceGroup(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        if (\is_array($children)) {
+            return $children[0];
+        }
+
+        return $children;
     }
 }
