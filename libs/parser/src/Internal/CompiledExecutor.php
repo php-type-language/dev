@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Internal;
 
-use TypeLang\Type;
 use TypeLang\Parser\Exception;
+use TypeLang\Type;
 
 \interface_exists(\Phplrt\Contracts\Source\Exception\SourceExceptionInterface::class);
 \interface_exists(\Phplrt\Contracts\Source\ReadableInterface::class);

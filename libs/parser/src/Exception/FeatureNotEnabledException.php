@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Exception;
 
-use Phplrt\Contracts\Lexer\Channel;
-use Phplrt\Contracts\Position\PositionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
-use Phplrt\Lexer\Token\Token;
 use Phplrt\Parser\Context;
-use Phplrt\Position\Position;
 use TypeLang\Parser\TypeParserFeatures;
 
 /**
