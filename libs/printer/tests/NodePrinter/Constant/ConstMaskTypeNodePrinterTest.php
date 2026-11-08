@@ -10,6 +10,7 @@ use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 
 #[CoversClass(ConstMaskTypeNodePrinter::class)]
@@ -17,7 +18,7 @@ final class ConstMaskTypeNodePrinterTest extends NodePrinterTestCase
 {
     private static function mask(): MaskNode
     {
-        return new MaskNode([new Name('JSON_'), new WildcardMaskNode()]);
+        return new MaskNode([new Identifier('JSON_'), new WildcardMaskNode()]);
     }
 
     public function testMaskWithNoNamespaceIsWrittenAlone(): void

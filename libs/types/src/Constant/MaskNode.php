@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type\Constant;
 
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
-use TypeLang\Type\Name;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\NodesListNode;
 
 /**
@@ -26,12 +26,12 @@ use TypeLang\Type\NodesListNode;
  *  //        ^ a single wildcard
  * ```
  *
- * @template-extends NodesListNode<Name|WildcardMaskNode, true>
+ * @template-extends NodesListNode<Identifier|WildcardMaskNode, true>
  */
 final class MaskNode extends NodesListNode implements \Stringable
 {
     /**
-     * @param iterable<mixed, Name|WildcardMaskNode> $items
+     * @param iterable<mixed, Identifier|WildcardMaskNode> $items
      * @param int<0, max> $offset
      */
     public function __construct(iterable $items, int $offset = 0)
@@ -68,14 +68,14 @@ final class MaskNode extends NodesListNode implements \Stringable
      *  $mask->getSegments(); // []
      * ```
      *
-     * @return list<Name>
+     * @return list<Identifier>
      */
     public function getSegments(): array
     {
         $result = [];
 
         foreach ($this->items as $item) {
-            if ($item instanceof Name) {
+            if ($item instanceof Identifier) {
                 $result[] = $item;
             }
         }
@@ -91,8 +91,8 @@ final class MaskNode extends NodesListNode implements \Stringable
         $result = [];
 
         foreach ($this->items as $item) {
-            if ($item instanceof Name) {
-                $result[] = $item->unqualified;
+            if ($item instanceof Identifier) {
+                $result[] = $item->value;
             }
         }
 
@@ -107,11 +107,7 @@ final class MaskNode extends NodesListNode implements \Stringable
         $result = '';
 
         foreach ($this->items as $item) {
-            if ($item instanceof Name) {
-                $result .= $item->unqualified;
-            } else {
-                $result .= $item->toString();
-            }
+            $result .= $item->toString();
         }
 
         /** @var non-empty-string */

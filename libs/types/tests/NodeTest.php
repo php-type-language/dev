@@ -15,6 +15,7 @@ use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Condition\EqualConditionNode;
 use TypeLang\Type\Condition\NotEqualConditionNode;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\Literal\BoolLiteralNode;
@@ -69,8 +70,9 @@ final class NodeTest extends TestCase
             new ClassConstTypeNode(new Name('Example'), new Name('CONST')),
         ];
         yield ConstMaskTypeNode::class => [
-            new ConstMaskTypeNode(new MaskNode([new Name('CONST'), new WildcardMaskNode()])),
+            new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()])),
         ];
+        yield Identifier::class => [new Identifier('Example')];
         yield Name::class => [new Name('Example')];
         yield IntersectionTypeNode::class => [new IntersectionTypeNode([self::type('A'), self::type('B')])];
         yield MaskNode::class => [new MaskNode([new WildcardMaskNode()])];
@@ -160,8 +162,9 @@ final class NodeTest extends TestCase
             new ClassConstTypeNode(new Name('Example'), new Name('CONST'), 42),
         ];
         yield ConstMaskTypeNode::class => [
-            new ConstMaskTypeNode(new MaskNode([new Name('CONST'), new WildcardMaskNode()]), offset: 42),
+            new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()]), offset: 42),
         ];
+        yield Identifier::class => [new Identifier('Example', 42)];
         yield Name::class => [new Name('Example', 42)];
         yield MaskNode::class => [new MaskNode([new WildcardMaskNode()], 42)];
         yield NamedTypeNode::class => [new NamedTypeNode(new Name('Example'), offset: 42)];

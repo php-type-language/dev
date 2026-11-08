@@ -24,7 +24,9 @@ final class ClassConstMaskTypeNode extends TypeNode
      */
     public function __construct(
         public Name $class,
-        public MaskNode $mask = new MaskNode([new WildcardMaskNode()]),
+        public MaskNode $mask = new MaskNode([
+            new WildcardMaskNode(),
+        ]),
         int $offset = 0,
     ) {
         parent::__construct($offset);

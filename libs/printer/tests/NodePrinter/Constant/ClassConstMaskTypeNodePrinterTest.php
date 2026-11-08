@@ -10,6 +10,7 @@ use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Constant\ClassConstMaskTypeNode;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 
 #[CoversClass(ClassConstMaskTypeNodePrinter::class)]
@@ -17,7 +18,7 @@ final class ClassConstMaskTypeNodePrinterTest extends NodePrinterTestCase
 {
     public function testClassAndMaskAreJoinedByTheDoubleColon(): void
     {
-        $mask = new MaskNode([new Name('FOO_'), new WildcardMaskNode()]);
+        $mask = new MaskNode([new Identifier('FOO_'), new WildcardMaskNode()]);
 
         $type = new ClassConstMaskTypeNode(new Name('Some\Any'), $mask);
 
@@ -32,9 +33,9 @@ final class ClassConstMaskTypeNodePrinterTest extends NodePrinterTestCase
     public function testMaskMayHaveSeveralWildcards(): void
     {
         $mask = new MaskNode([
-            new Name('A'),
+            new Identifier('A'),
             new WildcardMaskNode(),
-            new Name('B'),
+            new Identifier('B'),
             new WildcardMaskNode(),
         ]);
 

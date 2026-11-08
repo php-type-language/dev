@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\Tests\TestCase;
 
@@ -15,7 +16,7 @@ final class ConstMaskTypeNodeTest extends TestCase
 {
     private static function mask(): MaskNode
     {
-        return new MaskNode([new Name('SOME_'), new WildcardMaskNode()]);
+        return new MaskNode([new Identifier('SOME_'), new WildcardMaskNode()]);
     }
 
     #[Test]
@@ -45,9 +46,9 @@ final class ConstMaskTypeNodeTest extends TestCase
     {
         $node = new ConstMaskTypeNode(
             new MaskNode([
-                new Name('SOME'),
+                new Identifier('SOME'),
                 new WildcardMaskNode(),
-                new Name('ANY'),
+                new Identifier('ANY'),
                 new WildcardMaskNode(),
             ]),
         );
