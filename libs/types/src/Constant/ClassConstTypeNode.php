@@ -30,16 +30,4 @@ final class ClassConstTypeNode extends TypeNode
     ) {
         parent::__construct($offset);
     }
-
-    /**
-     * Creates a constant reference out of a class name and a constant name.
-     *
-     * @param non-empty-string $class
-     * @param non-empty-string $constant
-     * @param int<0, max> $offset
-     */
-    public static function from(string $class, string $constant, int $offset = 0): self
-    {
-        return new self(new Name($class, $offset), new Name($constant, $offset), $offset);
-    }
 }

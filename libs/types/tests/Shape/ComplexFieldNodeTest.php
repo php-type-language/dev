@@ -11,7 +11,7 @@ use TypeLang\Type\Literal\FloatLiteralNode;
 use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\Literal\NullLiteralNode;
 use TypeLang\Type\Literal\StringLiteralNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\ComplexFieldNode;
 use TypeLang\Type\Tests\TestCase;
@@ -36,14 +36,14 @@ final class ComplexFieldNodeTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new ComplexFieldNode($key, new NamedTypeNode(TypeName::from('T')));
+        new ComplexFieldNode($key, new NamedTypeNode(new Name('T')));
     }
 
     #[Test]
     public function typeKeyIsAccepted(): void
     {
-        $key = new NamedTypeNode(TypeName::from('User'));
-        $field = new ComplexFieldNode($key, new NamedTypeNode(TypeName::from('T')));
+        $key = new NamedTypeNode(new Name('User'));
+        $field = new ComplexFieldNode($key, new NamedTypeNode(new Name('T')));
 
         self::assertSame($key, $field->key);
     }
@@ -53,6 +53,6 @@ final class ComplexFieldNodeTest extends TestCase
     {
         $key = new FloatLiteralNode(1.5);
 
-        self::assertSame($key, (new ComplexFieldNode($key, new NamedTypeNode(TypeName::from('T'))))->key);
+        self::assertSame($key, (new ComplexFieldNode($key, new NamedTypeNode(new Name('T'))))->key);
     }
 }

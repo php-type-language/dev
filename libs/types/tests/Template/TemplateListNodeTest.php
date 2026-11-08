@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests\Template;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Template\TemplateListNode;
 use TypeLang\Type\Template\TypedTemplateArgumentNode;
@@ -13,9 +13,12 @@ use TypeLang\Type\Tests\TestCase;
 
 final class TemplateListNodeTest extends TestCase
 {
+    /**
+     * @param non-empty-string $type
+     */
     private function makeArg(string $type): TypedTemplateArgumentNode
     {
-        return new TypedTemplateArgumentNode(new NamedTypeNode(TypeName::from($type)));
+        return new TypedTemplateArgumentNode(new NamedTypeNode(new Name($type)));
     }
 
     #[Test]

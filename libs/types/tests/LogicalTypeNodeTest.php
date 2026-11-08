@@ -8,15 +8,18 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 
 final class LogicalTypeNodeTest extends TestCase
 {
+    /**
+     * @param non-empty-string $name
+     */
     private function type(string $name): NamedTypeNode
     {
-        return new NamedTypeNode(TypeName::from($name));
+        return new NamedTypeNode(new Name($name));
     }
 
     /**

@@ -29,15 +29,4 @@ final class VariableNode extends Node
     ) {
         parent::__construct($offset);
     }
-
-    /**
-     * Creates a variable out of its name, written without the leading `$`.
-     *
-     * @param non-empty-string $name
-     * @param int<0, max> $offset
-     */
-    public static function from(string $name, int $offset = 0): self
-    {
-        return new self(new Name($name, $offset), $offset);
-    }
 }

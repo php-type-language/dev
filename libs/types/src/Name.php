@@ -323,7 +323,7 @@ final class Name extends Node implements
     /**
      * Iterates the segments of the name.
      *
-     * @return \Traversable<int, non-empty-string>
+     * @return \Traversable<int<0, max>, non-empty-string>
      */
     public function getIterator(): \Traversable
     {

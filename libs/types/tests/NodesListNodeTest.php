@@ -6,7 +6,7 @@ namespace TypeLang\Type\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\Node;
 use TypeLang\Type\NodesListNode;
 
@@ -22,9 +22,12 @@ final class NodesListNodeTest extends TestCase
         return new class ($items) extends NodesListNode {};
     }
 
-    private function node(string $name = 'Example'): Identifier
+    /**
+     * @param non-empty-string $name
+     */
+    private function node(string $name = 'Example'): Name
     {
-        return new Identifier($name);
+        return new Name($name);
     }
 
     #[Test]
@@ -48,8 +51,8 @@ final class NodesListNodeTest extends TestCase
         $list = new class ($generator) extends NodesListNode {};
 
         self::assertCount(2, $list);
-        self::assertSame('A', (string) $list->items[0]);
-        self::assertSame('B', (string) $list->items[1]);
+        self::assertEquals(new Name('A'), $list->items[0]);
+        self::assertEquals(new Name('B'), $list->items[1]);
     }
 
     #[Test]

@@ -7,7 +7,7 @@ namespace TypeLang\Type\Tests\Constant;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Constant\ClassConstMaskTypeNode;
 use TypeLang\Type\Constant\MaskNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 use TypeLang\Type\Tests\TestCase;
 
@@ -18,7 +18,7 @@ final class ClassConstMaskTypeNodeTest extends TestCase
     public function aMaskOfNothingButAWildcardCarriesNoSegments(): void
     {
         $node = new ClassConstMaskTypeNode(
-            TypeName::from('MyEnum'),
+            new Name('MyEnum'),
             new MaskNode([new WildcardMaskNode()]),
         );
 

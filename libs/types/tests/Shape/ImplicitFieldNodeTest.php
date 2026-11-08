@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests\Shape;
 
 use PHPUnit\Framework\Attributes\Test;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\ComplexFieldNode;
 use TypeLang\Type\Shape\ExplicitFieldNode;
@@ -18,7 +19,7 @@ final class ImplicitFieldNodeTest extends TestCase
     #[Test]
     public function typeAndOffsetAreStored(): void
     {
-        $type = NamedTypeNode::from('int');
+        $type = new NamedTypeNode(new Name('int'));
         $field = new ImplicitFieldNode($type, 5);
 
         self::assertSame($type, $field->type);

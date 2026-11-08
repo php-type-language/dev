@@ -15,7 +15,7 @@ use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Condition\EqualConditionNode;
 use TypeLang\Type\Condition\NotEqualConditionNode;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\Literal\BoolLiteralNode;
 use TypeLang\Type\Literal\FloatLiteralNode;
@@ -25,8 +25,6 @@ use TypeLang\Type\Literal\StringLiteralNode;
 use TypeLang\Type\ThisTypeNode;
 use TypeLang\Type\VariableNode;
 use TypeLang\Type\Constant\MaskNode;
-use TypeLang\Type\Name\NamespaceName;
-use TypeLang\Type\Name\TypeName;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
@@ -49,9 +47,12 @@ use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 
 final class NodeTest extends TestCase
 {
+    /**
+     * @param non-empty-string $name
+     */
     private static function type(string $name = 'Example'): NamedTypeNode
     {
-        return new NamedTypeNode(TypeName::from($name));
+        return new NamedTypeNode(new Name($name));
     }
 
     /**
@@ -62,19 +63,17 @@ final class NodeTest extends TestCase
      */
     public static function nodesDataProvider(): iterable
     {
-        yield CallableTypeNode::class => [new CallableTypeNode(TypeName::from('callable'))];
-        yield ClassConstMaskTypeNode::class => [new ClassConstMaskTypeNode(TypeName::from('Example'))];
+        yield CallableTypeNode::class => [new CallableTypeNode(new Name('callable'))];
+        yield ClassConstMaskTypeNode::class => [new ClassConstMaskTypeNode(new Name('Example'))];
         yield ClassConstTypeNode::class => [
-            new ClassConstTypeNode(TypeName::from('Example'), new Identifier('CONST')),
+            new ClassConstTypeNode(new Name('Example'), new Name('CONST')),
         ];
         yield ConstMaskTypeNode::class => [
-            new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()])),
+            new ConstMaskTypeNode(new MaskNode([new Name('CONST'), new WildcardMaskNode()])),
         ];
-        yield Identifier::class => [new Identifier('Example')];
+        yield Name::class => [new Name('Example')];
         yield IntersectionTypeNode::class => [new IntersectionTypeNode([self::type('A'), self::type('B')])];
         yield MaskNode::class => [new MaskNode([new WildcardMaskNode()])];
-        yield TypeName::class => [TypeName::from('Example')];
-        yield NamespaceName::class => [NamespaceName::from('Example')];
         yield NamedTypeNode::class => [self::type()];
         yield NullableTypeNode::class => [new NullableTypeNode(self::type())];
         yield ConditionalTypeNode::class => [
@@ -102,17 +101,17 @@ final class NodeTest extends TestCase
         yield NullLiteralNode::class => [new NullLiteralNode()];
         yield StringLiteralNode::class => [new StringLiteralNode('example')];
         yield ThisTypeNode::class => [new ThisTypeNode()];
-        yield VariableNode::class => [new VariableNode(new Identifier('example'))];
+        yield VariableNode::class => [new VariableNode(new Name('example'))];
 
         yield ComplexFieldNode::class => [
             new ComplexFieldNode(
-                new ClassConstTypeNode(TypeName::from('Example'), new Identifier('CONST')),
+                new ClassConstTypeNode(new Name('Example'), new Name('CONST')),
                 self::type(),
             ),
         ];
         yield FieldListNode::class => [new FieldListNode()];
         yield ImplicitFieldNode::class => [new ImplicitFieldNode(self::type())];
-        yield NamedFieldNode::class => [new NamedFieldNode(new Identifier('key'), self::type())];
+        yield NamedFieldNode::class => [new NamedFieldNode(new Name('key'), self::type())];
         yield ScalarFieldNode::class => [new ScalarFieldNode(new IntLiteralNode(0), self::type())];
 
         yield TemplateListNode::class => [
@@ -120,11 +119,11 @@ final class NodeTest extends TestCase
         ];
         yield TypedTemplateArgumentNode::class => [new TypedTemplateArgumentNode(self::type())];
         yield WildcardTemplateArgumentNode::class => [new WildcardTemplateArgumentNode()];
-        yield TemplateBoundNode::class => [new TemplateBoundNode(new Identifier('of'), self::type())];
+        yield TemplateBoundNode::class => [new TemplateBoundNode(new Name('of'), self::type())];
         yield TemplateParameterListNode::class => [
-            new TemplateParameterListNode([new TemplateParameterNode(new Identifier('T'))]),
+            new TemplateParameterListNode([new TemplateParameterNode(new Name('T'))]),
         ];
-        yield TemplateParameterNode::class => [new TemplateParameterNode(new Identifier('T'))];
+        yield TemplateParameterNode::class => [new TemplateParameterNode(new Name('T'))];
     }
 
     #[Test]
@@ -152,22 +151,20 @@ final class NodeTest extends TestCase
     public static function nodesWithOffsetDataProvider(): iterable
     {
         yield CallableTypeNode::class => [
-            new CallableTypeNode(TypeName::from('callable'), offset: 42),
+            new CallableTypeNode(new Name('callable'), offset: 42),
         ];
         yield ClassConstMaskTypeNode::class => [
-            new ClassConstMaskTypeNode(TypeName::from('Example'), offset: 42),
+            new ClassConstMaskTypeNode(new Name('Example'), offset: 42),
         ];
         yield ClassConstTypeNode::class => [
-            new ClassConstTypeNode(TypeName::from('Example'), new Identifier('CONST'), 42),
+            new ClassConstTypeNode(new Name('Example'), new Name('CONST'), 42),
         ];
         yield ConstMaskTypeNode::class => [
-            new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()]), offset: 42),
+            new ConstMaskTypeNode(new MaskNode([new Name('CONST'), new WildcardMaskNode()]), offset: 42),
         ];
-        yield Identifier::class => [new Identifier('Example', 42)];
+        yield Name::class => [new Name('Example', 42)];
         yield MaskNode::class => [new MaskNode([new WildcardMaskNode()], 42)];
-        yield TypeName::class => [TypeName::from('Example', 42)];
-        yield NamespaceName::class => [NamespaceName::from('Example', 42)];
-        yield NamedTypeNode::class => [new NamedTypeNode(TypeName::from('Example'), offset: 42)];
+        yield NamedTypeNode::class => [new NamedTypeNode(new Name('Example'), offset: 42)];
         yield NullableTypeNode::class => [new NullableTypeNode(self::type(), 42)];
         yield ConditionalTypeNode::class => [
             new ConditionalTypeNode(
@@ -198,11 +195,11 @@ final class NodeTest extends TestCase
         yield NullLiteralNode::class => [new NullLiteralNode(offset: 42)];
         yield StringLiteralNode::class => [new StringLiteralNode('example', offset: 42)];
         yield ThisTypeNode::class => [new ThisTypeNode(42)];
-        yield VariableNode::class => [new VariableNode(new Identifier('example'), 42)];
+        yield VariableNode::class => [new VariableNode(new Name('example'), 42)];
 
         yield ComplexFieldNode::class => [
             new ComplexFieldNode(
-                new ClassConstTypeNode(TypeName::from('Example'), new Identifier('CONST')),
+                new ClassConstTypeNode(new Name('Example'), new Name('CONST')),
                 self::type(),
                 offset: 42,
             ),
@@ -210,7 +207,7 @@ final class NodeTest extends TestCase
         yield FieldListNode::class => [new FieldListNode(offset: 42)];
         yield ImplicitFieldNode::class => [new ImplicitFieldNode(self::type(), offset: 42)];
         yield NamedFieldNode::class => [
-            new NamedFieldNode(new Identifier('key'), self::type(), offset: 42),
+            new NamedFieldNode(new Name('key'), self::type(), offset: 42),
         ];
         yield ScalarFieldNode::class => [
             new ScalarFieldNode(new IntLiteralNode(0), self::type(), offset: 42),
@@ -222,13 +219,13 @@ final class NodeTest extends TestCase
         yield TypedTemplateArgumentNode::class => [new TypedTemplateArgumentNode(self::type(), offset: 42)];
         yield WildcardTemplateArgumentNode::class => [new WildcardTemplateArgumentNode(42)];
         yield TemplateBoundNode::class => [
-            new TemplateBoundNode(new Identifier('of'), self::type(), 42),
+            new TemplateBoundNode(new Name('of'), self::type(), 42),
         ];
         yield TemplateParameterListNode::class => [
-            new TemplateParameterListNode([new TemplateParameterNode(new Identifier('T'))], 42),
+            new TemplateParameterListNode([new TemplateParameterNode(new Name('T'))], 42),
         ];
         yield TemplateParameterNode::class => [
-            new TemplateParameterNode(new Identifier('T'), offset: 42),
+            new TemplateParameterNode(new Name('T'), offset: 42),
         ];
 
         yield UnionTypeNode::class => [new UnionTypeNode([self::type('A'), self::type('B')], 42)];

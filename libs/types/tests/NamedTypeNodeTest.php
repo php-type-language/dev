@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 
 final class NamedTypeNodeTest extends TestCase
 {
     #[Test]
-    public function fromBuildsTheNameFromAString(): void
+    public function constructorKeepsTheNameAndTheOffset(): void
     {
-        $node = NamedTypeNode::from('\Type\Name', 7);
+        $node = new NamedTypeNode(new Name('\Type\Name', 7), offset: 7);
 
         self::assertSame('\Type\Name', $node->name->toString());
         self::assertSame(7, $node->offset);
@@ -23,18 +23,11 @@ final class NamedTypeNodeTest extends TestCase
     }
 
     #[Test]
-    public function fromKeepsAnExistingName(): void
-    {
-        $name = TypeName::from('Example');
-
-        self::assertSame($name, NamedTypeNode::from($name)->name);
-    }
-
-    #[Test]
-    public function fromRejectsAnEmptyName(): void
+    public function emptyNameIsRejected(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        NamedTypeNode::from('');
+        // @phpstan-ignore-next-line : An empty string is what the test passes on purpose
+        new NamedTypeNode(new Name(''));
     }
 }

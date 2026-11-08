@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\DefaultValueNode;
 use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\Name\TypeName;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Tests\TestCase;
 
@@ -29,7 +29,7 @@ final class CallableParameterNodeTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         new CallableParameterNode(
-            type: new NamedTypeNode(TypeName::from('int')),
+            type: new NamedTypeNode(new Name('int')),
             isVariadic: true,
             default: new DefaultValueNode(),
         );
@@ -38,7 +38,7 @@ final class CallableParameterNodeTest extends TestCase
     #[Test]
     public function parameterHasNoDefaultByDefault(): void
     {
-        $parameter = new CallableParameterNode(new NamedTypeNode(TypeName::from('int')));
+        $parameter = new CallableParameterNode(new NamedTypeNode(new Name('int')));
 
         self::assertNull($parameter->default);
     }
@@ -49,7 +49,7 @@ final class CallableParameterNodeTest extends TestCase
         $default = new DefaultValueNode();
 
         $parameter = new CallableParameterNode(
-            type: new NamedTypeNode(TypeName::from('int')),
+            type: new NamedTypeNode(new Name('int')),
             default: $default,
         );
 
@@ -63,7 +63,7 @@ final class CallableParameterNodeTest extends TestCase
         $value = new IntLiteralNode(42);
 
         $parameter = new CallableParameterNode(
-            type: new NamedTypeNode(TypeName::from('int')),
+            type: new NamedTypeNode(new Name('int')),
             default: new DefaultValueNode($value),
         );
 

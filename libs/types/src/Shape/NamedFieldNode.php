@@ -38,19 +38,4 @@ final class NamedFieldNode extends ExplicitFieldNode
             offset: $offset,
         );
     }
-
-    /**
-     * Creates a field out of a key written as a bare word.
-     *
-     * @param non-empty-string $key
-     * @param int<0, max> $offset
-     */
-    public static function from(
-        string $key,
-        TypeNode $type,
-        bool $isOptional = false,
-        int $offset = 0,
-    ): self {
-        return new self(new Name($key, $offset), $type, $isOptional, $offset);
-    }
 }

@@ -6,7 +6,7 @@ namespace TypeLang\Type\Tests\Constant;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 use TypeLang\Type\Tests\TestCase;
@@ -25,7 +25,7 @@ final class MaskNodeTest extends TestCase
         $parts = [];
 
         foreach ($items as $item) {
-            $parts[] = $item === '*' ? new WildcardMaskNode() : new Identifier($item);
+            $parts[] = $item === '*' ? new WildcardMaskNode() : new Name($item);
         }
 
         return new MaskNode($parts);
@@ -77,7 +77,7 @@ final class MaskNodeTest extends TestCase
         $identifiers = [];
 
         foreach ($mask->getSegments() as $identifier) {
-            $identifiers[] = $identifier->value;
+            $identifiers[] = $identifier->unqualified;
         }
 
         self::assertSame($segments, $identifiers);
@@ -89,9 +89,9 @@ final class MaskNodeTest extends TestCase
         $mask = self::mask(['A', '*', 'B']);
 
         self::assertCount(3, $mask);
-        self::assertInstanceOf(Identifier::class, $mask->items[0]);
+        self::assertInstanceOf(Name::class, $mask->items[0]);
         self::assertInstanceOf(WildcardMaskNode::class, $mask->items[1]);
-        self::assertInstanceOf(Identifier::class, $mask->items[2]);
+        self::assertInstanceOf(Name::class, $mask->items[2]);
     }
 
     #[Test]

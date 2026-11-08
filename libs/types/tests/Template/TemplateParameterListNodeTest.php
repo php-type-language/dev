@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests\Template;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\Template\TemplateParameterListNode;
 use TypeLang\Type\Template\TemplateParameterNode;
 use TypeLang\Type\Tests\TestCase;
@@ -23,7 +23,7 @@ final class TemplateParameterListNodeTest extends TestCase
     #[Test]
     public function lastParameterCannotBeRemoved(): void
     {
-        $list = new TemplateParameterListNode([new TemplateParameterNode(new Identifier('T'))]);
+        $list = new TemplateParameterListNode([new TemplateParameterNode(new Name('T'))]);
 
         $this->expectException(\UnderflowException::class);
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\Node;
 use TypeLang\Type\ThisTypeNode;
 use TypeLang\Type\TypeNode;
@@ -21,18 +21,21 @@ final class VariableNodeTest extends TestCase
     #[Test]
     public function variableIsNotAType(): void
     {
-        $node = new VariableNode(new Identifier('foo'));
+        $node = new VariableNode(new Name('foo'));
 
         self::assertInstanceOf(Node::class, $node);
         self::assertNotInstanceOf(TypeNode::class, $node);
     }
 
     #[Test]
-    public function fromBuildsTheNameFromAString(): void
+    public function constructorKeepsTheNameAndTheOffset(): void
     {
-        $node = VariableNode::from('value', 2);
+        $name = new Name('value', 2);
 
-        self::assertSame('value', $node->name->value);
+        $node = new VariableNode($name, 2);
+
+        self::assertSame($name, $node->name);
+        self::assertSame('value', $node->name->toString());
         self::assertSame(2, $node->offset);
     }
 

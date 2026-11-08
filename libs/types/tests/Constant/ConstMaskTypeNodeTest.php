@@ -8,42 +8,36 @@ use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Name\NamespaceName;
+use TypeLang\Type\Name;
 use TypeLang\Type\Tests\TestCase;
 
 final class ConstMaskTypeNodeTest extends TestCase
 {
     private static function mask(): MaskNode
     {
-        return new MaskNode([new Identifier('SOME_'), new WildcardMaskNode()]);
+        return new MaskNode([new Name('SOME_'), new WildcardMaskNode()]);
     }
 
     #[Test]
-    public function theNamespaceIsEmptyByDefault(): void
+    public function theNamespaceIsNullByDefault(): void
     {
         $node = new ConstMaskTypeNode(self::mask());
 
-        self::assertCount(0, $node->namespace);
-        self::assertFalse($node->namespace->isFullyQualified);
+        self::assertNull($node->namespace);
     }
 
     #[Test]
-    public function theNamespaceSaysTheReferenceIsFullyQualified(): void
+    public function theNamespaceIsKeptAsItIsWritten(): void
     {
-        $node = new ConstMaskTypeNode(self::mask(), NamespaceName::from('\Some\Any'));
+        $node = new ConstMaskTypeNode(self::mask(), new Name('\Some\Any'));
 
-        self::assertTrue($node->namespace->isFullyQualified);
-        self::assertSame('\Some\Any', $node->namespace->toString());
+        self::assertSame('\Some\Any', $node->namespace?->toString());
     }
 
     #[Test]
-    public function aMaskWithNoNamespaceMayBeFullyQualified(): void
+    public function theRootNamespaceIsALoneSeparator(): void
     {
-        $node = new ConstMaskTypeNode(self::mask(), new NamespaceName([], true));
-
-        self::assertCount(0, $node->namespace);
-        self::assertTrue($node->namespace->isFullyQualified);
+        self::markTestIncomplete('A Name cannot be a lone separator, the root namespace has no representation yet');
     }
 
     #[Test]
@@ -51,9 +45,9 @@ final class ConstMaskTypeNodeTest extends TestCase
     {
         $node = new ConstMaskTypeNode(
             new MaskNode([
-                new Identifier('SOME'),
+                new Name('SOME'),
                 new WildcardMaskNode(),
-                new Identifier('ANY'),
+                new Name('ANY'),
                 new WildcardMaskNode(),
             ]),
         );

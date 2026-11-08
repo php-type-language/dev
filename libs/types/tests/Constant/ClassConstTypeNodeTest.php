@@ -6,26 +6,23 @@ namespace TypeLang\Type\Tests\Constant;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Constant\ClassConstTypeNode;
-use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\Tests\TestCase;
 
 final class ClassConstTypeNodeTest extends TestCase
 {
     #[Test]
-    public function fromBuildsTheClassAndTheConstantFromStrings(): void
+    public function constructorKeepsTheClassTheConstantAndTheOffset(): void
     {
-        $node = ClassConstTypeNode::from('\Some\Any', 'CONST_NAME', 5);
+        $class = new Name('\Some\Any');
+        $constant = new Name('CONST_NAME');
 
+        $node = new ClassConstTypeNode($class, $constant, 5);
+
+        self::assertSame($class, $node->class);
+        self::assertSame($constant, $node->constant);
         self::assertSame('\Some\Any', $node->class->toString());
-        self::assertSame('CONST_NAME', $node->constant->value);
+        self::assertSame('CONST_NAME', $node->constant->toString());
         self::assertSame(5, $node->offset);
-    }
-
-    #[Test]
-    public function fromKeepsAnExistingIdentifier(): void
-    {
-        $constant = new Identifier('CONST_NAME');
-
-        self::assertSame($constant, ClassConstTypeNode::from('Some', $constant)->constant);
     }
 }
