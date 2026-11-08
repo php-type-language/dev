@@ -96,9 +96,4 @@ final class NamesTest extends GrammarTestCase
     {
         self::assertRejected($source);
     }
-
-    public function testThisIsAccepted(): void
-    {
-        self::markTestIncomplete('The type $this is added with ThisType');
-    }
 }

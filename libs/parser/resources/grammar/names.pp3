@@ -7,11 +7,9 @@
  */
 
 
-// Foo, \Foo, Foo\Bar, \Foo\Bar, true\null
-Name -> {
-    return new Type\Name($children->value, $offset);
-}
-  : <T_NAME>
+// A word: Foo, non-empty-string, is, true
+Word
+  : <T_IDENTIFIER>
   | <T_IS>
   | <T_NOT>
   | <T_OF>
@@ -20,4 +18,19 @@ Name -> {
   | <T_TRUE>
   | <T_FALSE>
   | <T_NULL>
+  ;
+
+// A single word with no separators in it
+Identifier -> {
+    return new Type\Identifier($children[0]->value, $offset);
+}
+  : Word()
+  ;
+
+// Foo, \Foo, Foo\Bar, \Foo\Bar, true\null
+Name -> {
+    return new Type\Name($children->value, $offset);
+}
+  : <T_NAME>
+  | Word()
   ;

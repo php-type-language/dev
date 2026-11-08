@@ -34,6 +34,7 @@
 #Type
   : Literal()
   | NamedType()
+  | ThisType()
   ;
 
 
@@ -49,4 +50,19 @@ NamedType -> {
     return new Type\NamedTypeNode($children[0], null, null, $offset);
 }
   : Name()
+  ;
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  This Type
+ * -----------------------------------------------------------------------------
+ */
+
+
+// $this
+ThisType -> {
+    return new Type\ThisTypeNode($offset);
+}
+  : <T_THIS>
   ;

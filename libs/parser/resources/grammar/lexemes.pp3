@@ -117,8 +117,11 @@
 // A word of a name, a hyphen is allowed anywhere behind the first character
 %fragment NAME_WORD     (?&NAME_START)[\w\x80-\xFF-]*+
 
-// A name: "Foo", "\Foo", "Foo\Bar", "true\null"
-%token T_NAME           \\?+(?&NAME_WORD)(?:\\(?&NAME_WORD))*+
+// A name with a separator: "\Foo", "Foo\Bar", "true\null"
+%token T_NAME           \\(?&NAME_WORD)(?:\\(?&NAME_WORD))*+|(?&NAME_WORD)(?:\\(?&NAME_WORD))++
+
+// A name of one word: "Foo", "non-empty-string"
+%token T_IDENTIFIER     (?&NAME_WORD)
 
 
 /**
