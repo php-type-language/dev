@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Constant;
 
-use TypeLang\Type\Name;
+use TypeLang\Type\NamespaceName;
+use TypeLang\Type\NamespaceName\NamespaceKind;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -25,23 +26,6 @@ use TypeLang\Type\TypeNode;
 final class ConstMaskTypeNode extends TypeNode
 {
     /**
-     * Whether the reference is read from the root namespace, that is, written
-     * with the leading separator.
-     *
-     * A namespace tells it by itself, so the flag is the one of the namespace
-     * in case of the constant is written with one.
-     *
-     * ```
-     *  \SOME_*           // true
-     *  \Some\Any\SOME_*  // true
-     *  Some\Any\SOME_*   // false
-     *  SOME_*            // false
-     * ```
-     */
-    public readonly bool $isFullyQualified;
-
-    /**
-     * @param bool $isFullyQualified the flag of a mask written with no namespace
      * @param int<0, max> $offset
      */
     public function __construct(
@@ -56,16 +40,31 @@ final class ConstMaskTypeNode extends TypeNode
          * ```
          *  Some\Any\SOME_*  // Some\Any
          *  \Some\Any\SOME_* // \Some\Any
+         *  \SOME_*          // \ (the root namespace)
          *  SOME_*           // null
-         *  \SOME_*          // null
          * ```
          */
-        public ?Name $namespace = null,
-        bool $isFullyQualified = false,
+        public ?NamespaceName $namespace = null,
         int $offset = 0,
     ) {
-        $this->isFullyQualified = $namespace->isFullyQualified ?? $isFullyQualified;
-
         parent::__construct($offset);
+    }
+
+    /**
+     * Whether the reference is read from the root namespace, that is, written
+     * with the leading separator.
+     *
+     * ```
+     *  \SOME_*           // true
+     *  \Some\Any\SOME_*  // true
+     *  Some\Any\SOME_*   // false
+     *  SOME_*            // false
+     * ```
+     *
+     * @api
+     */
+    public function isFullyQualified(): bool
+    {
+        return $this->namespace?->kind === NamespaceKind::FullyQualified;
     }
 }

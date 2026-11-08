@@ -15,7 +15,7 @@ final class NamedFieldNodeTest extends TestCase
     #[Test]
     public function constructorKeepsTheKeyTheTypeAndTheOffset(): void
     {
-        $key = new Name('name', 3);
+        $key = new Name('name', offset: 3);
         $type = new NamedTypeNode(new Name('int'));
 
         $field = new NamedFieldNode($key, $type, true, 3);

@@ -30,7 +30,7 @@ final class VariableNodeTest extends TestCase
     #[Test]
     public function constructorKeepsTheNameAndTheOffset(): void
     {
-        $name = new Name('value', 2);
+        $name = new Name('value', offset: 2);
 
         $node = new VariableNode($name, 2);
 

@@ -165,7 +165,7 @@ final class NodeTest extends TestCase
             new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()]), offset: 42),
         ];
         yield Identifier::class => [new Identifier('Example', 42)];
-        yield Name::class => [new Name('Example', 42)];
+        yield Name::class => [new Name('Example', offset: 42)];
         yield MaskNode::class => [new MaskNode([new WildcardMaskNode()], 42)];
         yield NamedTypeNode::class => [new NamedTypeNode(new Name('Example'), offset: 42)];
         yield NullableTypeNode::class => [new NullableTypeNode(self::type(), 42)];
