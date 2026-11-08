@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal\Literal;
+namespace TypeLang\Parser\Internal\SubParser;
 
 use TypeLang\Type\Literal\StringLiteralNode;
 
@@ -10,9 +10,9 @@ use TypeLang\Type\Literal\StringLiteralNode;
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Parser\Internal
  *
- * @template-implements LiteralParserInterface<StringLiteralNode>
+ * @template-implements SubParserInterface<StringLiteralNode>
  */
-abstract class StringParser implements LiteralParserInterface
+abstract class StringParser implements SubParserInterface
 {
     /**
      * Decodes the sequences of an unpacked body: A `\\` in a single-quoted

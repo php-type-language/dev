@@ -7,7 +7,7 @@ namespace TypeLang\Parser\Tests\Internal\Literal;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Parser\Internal\BaseConverter\NativeBaseConverter;
-use TypeLang\Parser\Internal\Literal\DecIntParser;
+use TypeLang\Parser\Internal\SubParser\DecIntParser;
 use TypeLang\Parser\Tests\TestCase;
 use TypeLang\Type\Literal\IntLiteralKind;
 use TypeLang\Type\Literal\IntLiteralNode;

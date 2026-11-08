@@ -34,7 +34,8 @@ final class ConstantsTest extends GrammarTestCase
         yield 'comment behind a constant' => ['Foo::BAR // c'];
         yield 'spaces behind a star' => ['Foo::* '];
         yield 'spaces behind a mask' => ['Foo::A*B '];
-        yield 'spaces inside a mask' => ['Foo::A * B'];
+        yield 'digit behind a star' => ['Foo::A*1'];
+        yield 'digits behind a star' => ['Foo::A_*_1_2'];
 
         yield 'mask of a class' => ['Foo::*'];
         yield 'mask with a suffix' => ['Foo::BAR_*'];
@@ -65,18 +66,32 @@ final class ConstantsTest extends GrammarTestCase
         yield 'global mask' => ['PHP_*'];
         yield 'global mask with a prefix' => ['*_SUFFIX'];
         yield 'global mask inside' => ['PHP_*_MAX'];
+        yield 'global mask on both ends' => ['*A*'];
+        yield 'global mask of three words' => ['A*B*C'];
+        yield 'global mask of a word and a star' => ['Foo*'];
+        yield 'global mask of a keyword' => ['is*'];
         yield 'fully qualified global mask' => ['\\PHP_*'];
+        yield 'fully qualified root' => ['\\*'];
+        yield 'fully qualified root with a suffix' => ['\\*_SUFFIX'];
         yield 'namespaced global mask' => ['\\Foo\\BAR_*'];
         yield 'namespaced mask without a prefix' => ['Foo\\Bar\\BAZ_*'];
         yield 'mask of a whole namespace' => ['Path\\To\\*'];
+        yield 'mask of a whole one word namespace' => ['Path\\*'];
         yield 'mask with a suffix in a namespace' => ['Path\\To\\*_SUFFIX'];
         yield 'mask of a whole fully qualified namespace' => ['\\Path\\To\\*'];
+        yield 'mask with words in a namespace' => ['Path\\To\\*A*B'];
+        yield 'spaces behind a mask' => ['PHP_*  '];
+        yield 'comment behind a mask' => ['PHP_* // c'];
+        yield 'spaces before a mask' => ['  *_SUFFIX'];
+        yield 'mask of a literal word' => ['true*'];
+        yield 'mask of null' => ['null*'];
+        yield 'mask of a keyword' => ['is_*'];
     }
 
     #[DataProvider('validGlobalMaskDataProvider')]
     public function testGlobalMaskIsAccepted(string $source): void
     {
-        self::markTestIncomplete('Global masks are a step of their own');
+        self::assertAccepted($source);
     }
 
     /**
@@ -124,7 +139,6 @@ final class ConstantsTest extends GrammarTestCase
         yield 'constant starts with a digit' => ['Foo::1'];
         yield 'constant is a hexadecimal' => ['Foo::0x1F'];
         yield 'constant is a float' => ['Foo::1.5'];
-        yield 'number inside a mask' => ['Foo::A*1'];
         yield 'constant is a string' => ['Foo::"BAR"'];
         yield 'constant is a single quoted string' => ["Foo::'BAR'"];
         yield 'constant is a variable' => ['Foo::$bar'];
@@ -160,7 +174,37 @@ final class ConstantsTest extends GrammarTestCase
         yield 'class is a mask' => ['Foo*::BAR'];
         yield 'class is a mask with a word' => ['*Foo::BAR'];
 
-        // A mask or a star alone is not a type until it has a class
+        // A global mask that is not one
+        yield 'two stars behind a word' => ['PHP_**'];
+        yield 'two stars before a word' => ['**A'];
+        yield 'two stars in a namespace' => ['Path\\To\\**'];
+        yield 'two stars in the root' => ['\\**'];
+        yield 'namespace with no star' => ['Path\\To\\'];
+        yield 'star behind a star of a namespace' => ['Path\\To\\*\\*'];
+        yield 'two namespaces' => ['Path\\*\\To\\*'];
+        yield 'separators in a row before a star' => ['\\\\*'];
+        yield 'separator alone' => ['\\'];
+        yield 'separator and a space before a star' => ['\\ *'];
+        yield 'constant of a global mask' => ['PHP_*::X'];
+        yield 'constant of a namespace mask' => ['Path\\To\\*::X'];
+        yield 'constant of the root' => ['\\*::X'];
+        yield 'two masks' => ['A* B*C D'];
+        yield 'bar behind a mask' => ['PHP_*|'];
+        yield 'colon behind a global mask' => ['PHP_*:'];
+        yield 'number with a star' => ['1*'];
+        yield 'string with a star' => ['"s"*'];
+        yield 'this with a star' => ['$this*'];
+        yield 'variable with a star' => ['$foo*'];
+
+        // A mask is one token, there is no room for a space in it
+        yield 'spaces inside a mask of a class' => ['Foo::A * B'];
+        yield 'space before a star' => ['PHP_ *'];
+        yield 'space behind a star' => ['PHP_* MAX'];
+        yield 'spaces around a star' => ['PHP_ * MAX'];
+        yield 'comment inside a mask' => ['PHP_/* c */*'];
+        yield 'space in a namespaced mask' => ['Path\\To\\ *'];
+
+        // A mask or a star alone is not a type until it has a class or a star alone is not a type until it has a class
         yield 'lone star' => ['*'];
         yield 'two stars' => ['**'];
         yield 'two stars apart alone' => ['* *'];

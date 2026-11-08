@@ -36,9 +36,38 @@ final class ConstMaskTypeNodeTest extends TestCase
     }
 
     #[Test]
-    public function theRootNamespaceIsALoneSeparator(): void
+    public function theRootNamespaceIsToldByTheFlag(): void
     {
-        self::markTestIncomplete('A Name cannot be a lone separator, the root namespace has no representation yet');
+        $node = new ConstMaskTypeNode(self::mask(), isFullyQualified: true);
+
+        self::assertNull($node->namespace);
+        self::assertTrue($node->isFullyQualified);
+    }
+
+    #[Test]
+    public function aMaskIsNotFullyQualifiedByDefault(): void
+    {
+        self::assertFalse((new ConstMaskTypeNode(self::mask()))->isFullyQualified);
+    }
+
+    #[Test]
+    public function aNamespaceTellsWhetherTheMaskIsFullyQualified(): void
+    {
+        $relative = new ConstMaskTypeNode(self::mask(), new Name('Some\Any'));
+        $absolute = new ConstMaskTypeNode(self::mask(), new Name('\Some\Any'));
+
+        self::assertFalse($relative->isFullyQualified);
+        self::assertTrue($absolute->isFullyQualified);
+    }
+
+    #[Test]
+    public function aNamespaceWinsOverTheFlag(): void
+    {
+        $relative = new ConstMaskTypeNode(self::mask(), new Name('Some\Any'), true);
+        $absolute = new ConstMaskTypeNode(self::mask(), new Name('\Some\Any'), false);
+
+        self::assertFalse($relative->isFullyQualified);
+        self::assertTrue($absolute->isFullyQualified);
     }
 
     #[Test]

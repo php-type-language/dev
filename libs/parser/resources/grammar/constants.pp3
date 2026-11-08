@@ -3,28 +3,29 @@
  *  Constants
  *
  *  The part of a constant of a class that follows the colons, a lone word or
- *  a mask. The words and the stars take turns, so each token is read once.
+ *  a mask. A mask is one token, the stars of it are cut out of the text.
  * -----------------------------------------------------------------------------
  */
 
 
 // BAR, BAR_*, *, *_BAZ, A*B*C
-ConstantMask
-  : Wildcard() AfterWildcard()?
-  | Identifier() AfterIdentifier()?
-  ;
+ConstantMask -> {
+    if ($children instanceof Type\Identifier) {
+        return $children;
+    }
 
-AfterWildcard
-  : Identifier() AfterIdentifier()?
-  ;
-
-AfterIdentifier
-  : Wildcard() AfterWildcard()?
-  ;
-
-// *
-Wildcard -> {
-    return new Type\Constant\MaskNode\WildcardMaskNode($offset);
+    return $this->classConstMask->parse($children->value, $offset);
 }
-  : <T_WILDCARD>
+  : <T_IDENTIFIER_MASK>
+  | <T_WILDCARD>
+  | Identifier()
+  ;
+
+
+// PHP_*, *_SUFFIX, \PHP_*, Foo\BAR_*, Path\To\*, \*
+ConstMaskType -> {
+    return $this->constMask->parse($children->value, $offset);
+}
+  : <T_IDENTIFIER_MASK>
+  | <T_NAME_MASK>
   ;

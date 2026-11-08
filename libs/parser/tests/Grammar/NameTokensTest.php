@@ -65,6 +65,23 @@ final class NameTokensTest extends GrammarTestCase
     {
         $colons = SyntaxChecker::T_DOUBLE_COLON;
 
+        $star = SyntaxChecker::T_WILDCARD;
+        $mask = SyntaxChecker::T_IDENTIFIER_MASK;
+        $nameMask = SyntaxChecker::T_NAME_MASK;
+
+        yield 'global mask' => ['PHP_*', [$mask]];
+        yield 'global mask of a namespaced name' => ['Foo\\BAR_*', [$nameMask]];
+        yield 'mask with a prefix' => ['*_SUFFIX', [$mask]];
+        yield 'mask of a namespace' => ['Path\\To\\*', [$nameMask]];
+        yield 'mask of a one word namespace' => ['Path\\*', [$nameMask]];
+        yield 'mask of a fully qualified namespace' => ['\\Path\\To\\*', [$nameMask]];
+        yield 'mask of the root' => ['\\*', [$nameMask]];
+        yield 'mask with the stars between words' => ['A*B*C', [$mask]];
+        yield 'mask of a keyword with a star' => ['true*', [$mask]];
+        yield 'two stars in a row are not a mask' => ['A**', [$mask, $star]];
+        yield 'lone star' => ['*', [$star]];
+        yield 'mask behind the colons' => ['Foo::BAR_*', [SyntaxChecker::T_IDENTIFIER, $colons, $mask]];
+        yield 'star behind the colons' => ['Foo::*', [SyntaxChecker::T_IDENTIFIER, $colons, $star]];
         yield 'constant' => ['Foo::BAR', [SyntaxChecker::T_IDENTIFIER, $colons, SyntaxChecker::T_IDENTIFIER]];
         yield 'constant named like a keyword' => ['Foo::is', [SyntaxChecker::T_IDENTIFIER, $colons, SyntaxChecker::T_IS]];
         yield 'constant named like a literal' => ['Foo::NULL', [SyntaxChecker::T_IDENTIFIER, $colons, SyntaxChecker::T_NULL]];

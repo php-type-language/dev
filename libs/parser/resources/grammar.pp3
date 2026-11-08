@@ -35,6 +35,7 @@
   : Literal()
   | NamedType()
   | ThisType()
+  | ConstMaskType()
   ;
 
 
@@ -45,31 +46,26 @@
  */
 
 
-// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*. The name is read once for all of them
+// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*
 NamedType -> {
+    $name = $children[0];
+    $constant = $children[1] ?? null;
+
     // Foo, \Foo\Bar
-    if (!isset($children[1])) {
-        return new Type\NamedTypeNode($children[0], null, null, $offset);
+    if ($constant === null) {
+        return new Type\NamedTypeNode($name, null, null, $offset);
     }
 
-    $items = \array_slice($children, 1);
-
     // Foo::BAR, a lone word is a constant
-    if (\count($items) === 1 && $items[0] instanceof Type\Identifier) {
-        return new Type\Constant\ClassConstTypeNode($children[0], $items[0], $offset);
+    if ($constant instanceof Type\Identifier) {
+        return new Type\Constant\ClassConstTypeNode($name, $constant, $offset);
     }
 
     // Foo::BAR_*, anything else is a mask of constants
-
-    return new Type\Constant\ClassConstMaskTypeNode(
-        $children[0],
-        new Type\Constant\MaskNode($items, $items[0]->offset),
-        $offset,
-    );
+    return new Type\Constant\ClassConstMaskTypeNode($name, $constant, $offset);
 }
   : Name() (::T_DOUBLE_COLON:: ConstantMask())?
   ;
-
 
 /**
  * -----------------------------------------------------------------------------

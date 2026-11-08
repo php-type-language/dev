@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal\Literal;
+namespace TypeLang\Parser\Internal\SubParser;
 
 use TypeLang\Parser\Internal\BaseConverter\BaseConverterInterface;
-use TypeLang\Parser\Internal\Literal\IntParser\IntNumberSign;
+use TypeLang\Parser\Internal\SubParser\IntParser\IntNumberSign;
 use TypeLang\Type\Literal\IntLiteralKind;
 use TypeLang\Type\Literal\IntLiteralNode;
 
@@ -19,9 +19,9 @@ use TypeLang\Type\Literal\IntLiteralNode;
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Parser\Internal
  *
- * @template-implements LiteralParserInterface<IntLiteralNode>
+ * @template-implements SubParserInterface<IntLiteralNode>
  */
-abstract class IntParser implements LiteralParserInterface
+abstract class IntParser implements SubParserInterface
 {
     /**
      * The base of the digits.

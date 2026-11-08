@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal\Literal\IntParser;
+namespace TypeLang\Parser\Internal\SubParser\IntParser;
 
 enum IntNumberSign
 {

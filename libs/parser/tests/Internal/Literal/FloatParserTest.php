@@ -6,7 +6,7 @@ namespace TypeLang\Parser\Tests\Internal\Literal;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use TypeLang\Parser\Internal\Literal\FloatParser;
+use TypeLang\Parser\Internal\SubParser\FloatParser;
 use TypeLang\Parser\Tests\TestCase;
 use TypeLang\Type\Literal\FloatLiteralNode;
 

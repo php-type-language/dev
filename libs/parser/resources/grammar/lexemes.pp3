@@ -6,6 +6,26 @@
 
 /**
  * -----------------------------------------------------------------------------
+ *  Masks
+ *
+ *  A word with a star in it, the stars are separated by words. The tokens stand
+ *  before the keywords, so any word with a star is a mask: "true*", "is_*".
+ * -----------------------------------------------------------------------------
+ */
+
+// What follows the first star of a mask: "_SUFFIX", "_A*B*C"
+%fragment MASK_REST     (?:[\w\x80-\xFF-]++\*)*+[\w\x80-\xFF-]*+
+
+// A mask with no separators: "PHP_*", "*_SUFFIX", "A*B". A lone star is
+// not a mask but a wildcard
+%token T_IDENTIFIER_MASK (?:(?&NAME_START)[\w\x80-\xFF-]*+\*|\*(?=[\w\x80-\xFF-]))(?&MASK_REST)
+
+// A mask behind a namespace: "Foo\BAR_*", "\PHP_*", "Path\To\*", "\*"
+%token T_NAME_MASK      (?:\\|(?&NAME_WORD)\\)(?:(?&NAME_WORD)\\)*+(?:(?&NAME_START)[\w\x80-\xFF-]*+\*|\*)(?&MASK_REST)
+
+
+/**
+ * -----------------------------------------------------------------------------
  *  Common Literals
  *
  *  The words that are never names: `true`, `false`, `null`
@@ -131,6 +151,7 @@
  */
 
 
+// A lone star
 %token T_WILDCARD       \*
 %token T_DOUBLE_COLON   ::
 %token T_COLON          :

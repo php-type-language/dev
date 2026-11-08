@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal\Literal;
+namespace TypeLang\Parser\Internal\SubParser;
 
 use TypeLang\Type\Literal\IntLiteralKind;
 

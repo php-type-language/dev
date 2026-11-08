@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal\Literal\StringParser;
+namespace TypeLang\Parser\Internal\SubParser\StringParser;
 
 
 /**

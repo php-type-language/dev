@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Parser\Internal\Literal\StringParser;
+namespace TypeLang\Parser\Internal\SubParser\StringParser;
 
 /**
  * @internal this is an internal library class, please do not use it in your code

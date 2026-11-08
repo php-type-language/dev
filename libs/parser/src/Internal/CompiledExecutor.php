@@ -33,90 +33,96 @@ use TypeLang\Parser\Exception;
 abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterface
 {
     /** @var int */
-    public const T_TRUE = 0;
+    public const T_IDENTIFIER_MASK = 0;
     /** @var int */
-    public const T_FALSE = 1;
+    public const T_NAME_MASK = 1;
     /** @var int */
-    public const T_NULL = 2;
+    public const T_TRUE = 2;
     /** @var int */
-    public const T_THIS = 3;
+    public const T_FALSE = 3;
     /** @var int */
-    public const T_VARIABLE = 4;
+    public const T_NULL = 4;
     /** @var int */
-    public const T_FLOAT = 5;
+    public const T_THIS = 5;
     /** @var int */
-    public const T_INT_HEX = 6;
+    public const T_VARIABLE = 6;
     /** @var int */
-    public const T_INT_BIN = 7;
+    public const T_FLOAT = 7;
     /** @var int */
-    public const T_INT_OCT = 8;
+    public const T_INT_HEX = 8;
     /** @var int */
-    public const T_INT_OCT_LEGACY = 9;
+    public const T_INT_BIN = 9;
     /** @var int */
-    public const T_INT_DEC = 10;
+    public const T_INT_OCT = 10;
     /** @var int */
-    public const T_SQ_STRING = 11;
+    public const T_INT_OCT_LEGACY = 11;
     /** @var int */
-    public const T_DQ_STRING = 12;
+    public const T_INT_DEC = 12;
     /** @var int */
-    public const T_IS = 13;
+    public const T_SQ_STRING = 13;
     /** @var int */
-    public const T_NOT = 14;
+    public const T_DQ_STRING = 14;
     /** @var int */
-    public const T_OF = 15;
+    public const T_IS = 15;
     /** @var int */
-    public const T_AS = 16;
+    public const T_NOT = 16;
     /** @var int */
-    public const T_SUPER = 17;
+    public const T_OF = 17;
     /** @var int */
-    public const T_NAME = 18;
+    public const T_AS = 18;
     /** @var int */
-    public const T_IDENTIFIER = 19;
+    public const T_SUPER = 19;
     /** @var int */
-    public const T_WILDCARD = 20;
+    public const T_NAME = 20;
     /** @var int */
-    public const T_DOUBLE_COLON = 21;
+    public const T_IDENTIFIER = 21;
     /** @var int */
-    public const T_COLON = 22;
+    public const T_WILDCARD = 22;
     /** @var int */
-    public const T_ELLIPSIS = 23;
+    public const T_DOUBLE_COLON = 23;
     /** @var int */
-    public const T_ASSIGN = 24;
+    public const T_COLON = 24;
     /** @var int */
-    public const T_UNION = 25;
+    public const T_ELLIPSIS = 25;
     /** @var int */
-    public const T_AMPERSAND = 26;
+    public const T_ASSIGN = 26;
     /** @var int */
-    public const T_QUESTION = 27;
+    public const T_UNION = 27;
     /** @var int */
-    public const T_COMMA = 28;
+    public const T_AMPERSAND = 28;
     /** @var int */
-    public const T_PAREN_OPEN = 29;
+    public const T_QUESTION = 29;
     /** @var int */
-    public const T_PAREN_CLOSE = 30;
+    public const T_COMMA = 30;
     /** @var int */
-    public const T_ANGLE_OPEN = 31;
+    public const T_PAREN_OPEN = 31;
     /** @var int */
-    public const T_ANGLE_CLOSE = 32;
+    public const T_PAREN_CLOSE = 32;
     /** @var int */
-    public const T_BRACKET_OPEN = 33;
+    public const T_ANGLE_OPEN = 33;
     /** @var int */
-    public const T_BRACKET_CLOSE = 34;
+    public const T_ANGLE_CLOSE = 34;
     /** @var int */
-    public const T_BRACE_OPEN = 35;
+    public const T_BRACKET_OPEN = 35;
     /** @var int */
-    public const T_BRACE_CLOSE = 36;
+    public const T_BRACKET_CLOSE = 36;
     /** @var int */
-    public const T_WHITESPACE = 37;
+    public const T_BRACE_OPEN = 37;
     /** @var int */
-    public const T_COMMENT = 38;
+    public const T_BRACE_CLOSE = 38;
     /** @var int */
-    public const T_DOC_COMMENT = 39;
+    public const T_WHITESPACE = 39;
+    /** @var int */
+    public const T_COMMENT = 40;
+    /** @var int */
+    public const T_DOC_COMMENT = 41;
     /** @var int */
     public const Type = 0;
 
     /** @var array<int, non-empty-string> */
     private const PARSER_EXPECTATIONS = [
+        'T_IDENTIFIER_MASK',
+        'T_NAME_MASK',
         'T_TRUE',
         'T_FALSE',
         'T_NULL',
@@ -194,14 +200,13 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         false,
         false,
         false,
-        false,
-        false,
         true,
         false,
         false,
         true,
-        false,
         true,
+        true,
+        false,
     ];
 
     /** @var array<int, array<int, true>|null> */
@@ -211,7 +216,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             true,
             true,
             true,
-            5 => true,
+            true,
+            true,
+            7 => true,
             true,
             true,
             true,
@@ -219,19 +226,6 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             true,
             true,
             true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-        ],
-        [
-            true,
-            true,
-            true,
-            5 => true,
             true,
             true,
             true,
@@ -242,35 +236,42 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         ],
         [
             2 => true,
-        ],
-        [
             true,
             true,
-        ],
-        [
+            7 => true,
             true,
-        ],
-        [
-            1 => true,
-        ],
-        [
-            5 => true,
-        ],
-        [
-            6 => true,
+            true,
+            true,
             true,
             true,
             true,
             true,
         ],
         [
-            10 => true,
+            4 => true,
         ],
         [
-            6 => true,
+            2 => true,
+            true,
+        ],
+        [
+            2 => true,
+        ],
+        [
+            3 => true,
         ],
         [
             7 => true,
+        ],
+        [
+            8 => true,
+            true,
+            true,
+            true,
+            true,
+        ],
+        [
+            12 => true,
         ],
         [
             8 => true,
@@ -279,61 +280,61 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             9 => true,
         ],
         [
-            11 => true,
-            true,
+            10 => true,
         ],
         [
             11 => true,
         ],
         [
-            12 => true,
-        ],
-        [
-            true,
-            true,
-            true,
             13 => true,
             true,
-            true,
-            true,
-            true,
-            true,
-            true,
-        ],
-        [
-            true,
-            true,
-            true,
-            13 => true,
-            true,
-            true,
-            true,
-            true,
-            true,
-            true,
-        ],
-        [
-            18 => true,
-        ],
-        [
-            true,
-            true,
-            true,
-            13 => true,
-            true,
-            true,
-            true,
-            true,
-            19 => true,
-        ],
-        [
-            19 => true,
         ],
         [
             13 => true,
         ],
         [
             14 => true,
+        ],
+        [
+            2 => true,
+            true,
+            true,
+            15 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        ],
+        [
+            2 => true,
+            true,
+            true,
+            15 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        ],
+        [
+            20 => true,
+        ],
+        [
+            2 => true,
+            true,
+            true,
+            15 => true,
+            true,
+            true,
+            true,
+            true,
+            21 => true,
+        ],
+        [
+            21 => true,
         ],
         [
             15 => true,
@@ -345,72 +346,73 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             17 => true,
         ],
         [
-            true,
+            18 => true,
         ],
         [
-            1 => true,
+            19 => true,
         ],
         [
             2 => true,
         ],
-        null,
-        [
-            21 => true,
-        ],
-        [
-            21 => true,
-        ],
-        [
-            true,
-            true,
-            true,
-            13 => true,
-            true,
-            true,
-            true,
-            true,
-            19 => true,
-            true,
-        ],
-        [
-            20 => true,
-        ],
-        [
-            20 => true,
-        ],
-        null,
-        [
-            true,
-            true,
-            true,
-            13 => true,
-            true,
-            true,
-            true,
-            true,
-            19 => true,
-        ],
-        [
-            true,
-            true,
-            true,
-            13 => true,
-            true,
-            true,
-            true,
-            true,
-            19 => true,
-        ],
-        null,
         [
             3 => true,
+        ],
+        [
+            4 => true,
+        ],
+        null,
+        [
+            23 => true,
+        ],
+        [
+            23 => true,
+        ],
+        [
+            true,
+            2 => true,
+            true,
+            true,
+            15 => true,
+            true,
+            true,
+            true,
+            true,
+            21 => true,
+            true,
+        ],
+        [
+            true,
+        ],
+        [
+            22 => true,
+        ],
+        [
+            2 => true,
+            true,
+            true,
+            15 => true,
+            true,
+            true,
+            true,
+            true,
+            21 => true,
+        ],
+        [
+            5 => true,
+        ],
+        [
+            true,
+            true,
+        ],
+        [
+            1 => true,
         ],
     ];
 
     /** @var array<int, array<int, list<int>>> */
     private const PARSER_CHOICE_PREDICTION_TABLE = [
         [
-            [
+            2 => [
                 1,
                 16,
             ],
@@ -420,68 +422,74 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
             [
                 1,
+                16,
+            ],
+            7 => [
+                1,
+            ],
+            [
+                1,
+            ],
+            [
+                1,
+            ],
+            [
+                1,
+            ],
+            [
+                1,
+            ],
+            [
+                1,
+            ],
+            [
+                1,
+            ],
+            [
+                1,
+            ],
+            [
+                16,
+            ],
+            [
+                16,
+            ],
+            [
+                16,
+            ],
+            [
+                16,
+            ],
+            [
+                16,
+            ],
+            [
+                16,
+            ],
+            [
                 16,
             ],
             5 => [
-                1,
+                -37,
             ],
-            [
-                1,
+            0 => [
+                37,
             ],
-            [
-                1,
-            ],
-            [
-                1,
-            ],
-            [
-                1,
-            ],
-            [
-                1,
-            ],
-            [
-                1,
-            ],
-            [
-                1,
-            ],
-            [
-                16,
-            ],
-            [
-                16,
-            ],
-            [
-                16,
-            ],
-            [
-                16,
-            ],
-            [
-                16,
-            ],
-            [
-                16,
-            ],
-            [
-                16,
-            ],
-            3 => [
-                -40,
+            1 => [
+                37,
             ],
         ],
         [
-            2 => [
+            4 => [
                 -3,
             ],
-            0 => [
+            2 => [
                 3,
             ],
-            1 => [
+            3 => [
                 3,
             ],
-            5 => [
+            7 => [
                 -7,
             ],
             [
@@ -507,7 +515,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
         ],
         3 => [
-            [
+            2 => [
                 -5,
             ],
             [
@@ -515,24 +523,24 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
         ],
         7 => [
-            10 => [
+            12 => [
                 -9,
             ],
-            6 => [
+            8 => [
                 -10,
             ],
-            7 => [
+            9 => [
                 -11,
             ],
-            8 => [
+            10 => [
                 -12,
             ],
-            9 => [
+            11 => [
                 -13,
             ],
         ],
         13 => [
-            11 => [
+            13 => [
                 -15,
             ],
             [
@@ -540,22 +548,16 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
         ],
         17 => [
-            18 => [
+            20 => [
                 -19,
-            ],
-            0 => [
-                19,
-            ],
-            1 => [
-                19,
             ],
             2 => [
                 19,
             ],
-            13 => [
+            3 => [
                 19,
             ],
-            14 => [
+            4 => [
                 19,
             ],
             15 => [
@@ -565,6 +567,12 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 19,
             ],
             17 => [
+                19,
+            ],
+            18 => [
+                19,
+            ],
+            19 => [
                 19,
             ],
             [
@@ -572,64 +580,75 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
         ],
         19 => [
-            19 => [
+            21 => [
                 -21,
             ],
-            13 => [
+            15 => [
                 -22,
             ],
-            14 => [
+            16 => [
                 -23,
             ],
-            15 => [
+            17 => [
                 -24,
             ],
-            16 => [
+            18 => [
                 -25,
             ],
-            17 => [
+            19 => [
                 -26,
             ],
-            0 => [
+            2 => [
                 -27,
             ],
-            1 => [
+            3 => [
                 -28,
             ],
-            2 => [
+            4 => [
                 -29,
             ],
         ],
         32 => [
-            20 => [
-                33,
+            [
+                -34,
             ],
-            0 => [
-                36,
-            ],
-            1 => [
-                36,
+            22 => [
+                -35,
             ],
             2 => [
-                36,
+                35,
             ],
-            13 => [
-                36,
+            3 => [
+                35,
             ],
-            14 => [
-                36,
+            4 => [
+                35,
             ],
             15 => [
-                36,
+                35,
             ],
             16 => [
-                36,
+                35,
             ],
             17 => [
-                36,
+                35,
+            ],
+            18 => [
+                35,
             ],
             19 => [
-                36,
+                35,
+            ],
+            21 => [
+                35,
+            ],
+        ],
+        37 => [
+            [
+                -34,
+            ],
+            [
+                -39,
             ],
         ],
     ];
@@ -639,14 +658,6 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         16 => [
             17,
             -31,
-        ],
-        33 => [
-            34,
-            -37,
-        ],
-        36 => [
-            37,
-            -34,
         ],
     ];
 
@@ -660,14 +671,16 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
     public function __construct()
     {
         $this->lexer = new \Phplrt\Lexer\Lexer(
-            pattern: '/\\G(?|(?:(?:(?i:true)(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:0))|(?:(?:(?i:false)(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:1))|(?:(?:(?i:null)(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:2))|(?:(?:\\$this(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:3))|(?:(?:\\$(?:[A-Za-z_\\x80-\\xFF])(?:[\\w\\x80-\\xFF])*+)(*MARK:4))|(?:(?:(?:(?:[+-]\\s*+)?+)(?:(?:[0-9](?:_?+[0-9])*+)\\.(?:(?:[0-9](?:_?+[0-9])*+))?+(?:(?:[eE][+-]?+(?:[0-9](?:_?+[0-9])*+)))?+|\\.(?:[0-9](?:_?+[0-9])*+)(?:(?:[eE][+-]?+(?:[0-9](?:_?+[0-9])*+)))?+|(?:[0-9](?:_?+[0-9])*+)(?:[eE][+-]?+(?:[0-9](?:_?+[0-9])*+))))(*MARK:5))|(?:(?:(?:(?:[+-]\\s*+)?+)0[xX][0-9a-fA-F](?:_?+[0-9a-fA-F])*+)(*MARK:6))|(?:(?:(?:(?:[+-]\\s*+)?+)0[bB][01](?:_?+[01])*+)(*MARK:7))|(?:(?:(?:(?:[+-]\\s*+)?+)0[oO][0-7](?:_?+[0-7])*+)(*MARK:8))|(?:(?:(?:(?:[+-]\\s*+)?+)0(?:_?+[0-7])*+)(*MARK:9))|(?:(?:(?:(?:[+-]\\s*+)?+)[1-9](?:_?+[0-9])*+)(*MARK:10))|(?:(?:\'([^\'\\\\]*(?:\\\\.[^\'\\\\]*)*)\')(*MARK:11))|(?:(?:"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)")(*MARK:12))|(?:(?:is(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:13))|(?:(?:not(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:14))|(?:(?:of(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:15))|(?:(?:as(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:16))|(?:(?:super(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:17))|(?:(?:\\\\(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+)(?:\\\\(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+))*+|(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+)(?:\\\\(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+))++)(*MARK:18))|(?:(?:(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+))(*MARK:19))|(?:(?:\\*)(*MARK:20))|(?:(?:::)(*MARK:21))|(?:(?::)(*MARK:22))|(?:(?:\\.\\.\\.)(*MARK:23))|(?:(?:=)(*MARK:24))|(?:(?:\\|)(*MARK:25))|(?:(?:&)(*MARK:26))|(?:(?:\\?)(*MARK:27))|(?:(?:,)(*MARK:28))|(?:(?:\\()(*MARK:29))|(?:(?:\\))(*MARK:30))|(?:(?:<)(*MARK:31))|(?:(?:>)(*MARK:32))|(?:(?:\\[)(*MARK:33))|(?:(?:\\])(*MARK:34))|(?:(?:\\{)(*MARK:35))|(?:(?:\\})(*MARK:36))|(?:(?:\\s++)(*MARK:37))|(?:(?:(?:\\/\\/|#)[^\\r\\n]*+)(*MARK:38))|(?:(?:\\/\\*(?:[^*]++|\\*(?!\\/))*+\\*\\/)(*MARK:39))|(?:(?:[^\\s]++)(*MARK:40)))/Ssm',
+            pattern: '/\\G(?|(?:(?:(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+\\*|\\*(?=[\\w\\x80-\\xFF-]))(?:(?:[\\w\\x80-\\xFF-]++\\*)*+[\\w\\x80-\\xFF-]*+))(*MARK:0))|(?:(?:(?:\\\\|(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+)\\\\)(?:(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+)\\\\)*+(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+\\*|\\*)(?:(?:[\\w\\x80-\\xFF-]++\\*)*+[\\w\\x80-\\xFF-]*+))(*MARK:1))|(?:(?:(?i:true)(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:2))|(?:(?:(?i:false)(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:3))|(?:(?:(?i:null)(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:4))|(?:(?:\\$this(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:5))|(?:(?:\\$(?:[A-Za-z_\\x80-\\xFF])(?:[\\w\\x80-\\xFF])*+)(*MARK:6))|(?:(?:(?:(?:[+-]\\s*+)?+)(?:(?:[0-9](?:_?+[0-9])*+)\\.(?:(?:[0-9](?:_?+[0-9])*+))?+(?:(?:[eE][+-]?+(?:[0-9](?:_?+[0-9])*+)))?+|\\.(?:[0-9](?:_?+[0-9])*+)(?:(?:[eE][+-]?+(?:[0-9](?:_?+[0-9])*+)))?+|(?:[0-9](?:_?+[0-9])*+)(?:[eE][+-]?+(?:[0-9](?:_?+[0-9])*+))))(*MARK:7))|(?:(?:(?:(?:[+-]\\s*+)?+)0[xX][0-9a-fA-F](?:_?+[0-9a-fA-F])*+)(*MARK:8))|(?:(?:(?:(?:[+-]\\s*+)?+)0[bB][01](?:_?+[01])*+)(*MARK:9))|(?:(?:(?:(?:[+-]\\s*+)?+)0[oO][0-7](?:_?+[0-7])*+)(*MARK:10))|(?:(?:(?:(?:[+-]\\s*+)?+)0(?:_?+[0-7])*+)(*MARK:11))|(?:(?:(?:(?:[+-]\\s*+)?+)[1-9](?:_?+[0-9])*+)(*MARK:12))|(?:(?:\'([^\'\\\\]*(?:\\\\.[^\'\\\\]*)*)\')(*MARK:13))|(?:(?:"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)")(*MARK:14))|(?:(?:is(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:15))|(?:(?:not(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:16))|(?:(?:of(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:17))|(?:(?:as(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:18))|(?:(?:super(?:(?![\\w\\x80-\\xFF-]|\\\\(?:[A-Za-z_\\x80-\\xFF]))))(*MARK:19))|(?:(?:\\\\(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+)(?:\\\\(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+))*+|(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+)(?:\\\\(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+))++)(*MARK:20))|(?:(?:(?:(?:[A-Za-z_\\x80-\\xFF])[\\w\\x80-\\xFF-]*+))(*MARK:21))|(?:(?:\\*)(*MARK:22))|(?:(?:::)(*MARK:23))|(?:(?::)(*MARK:24))|(?:(?:\\.\\.\\.)(*MARK:25))|(?:(?:=)(*MARK:26))|(?:(?:\\|)(*MARK:27))|(?:(?:&)(*MARK:28))|(?:(?:\\?)(*MARK:29))|(?:(?:,)(*MARK:30))|(?:(?:\\()(*MARK:31))|(?:(?:\\))(*MARK:32))|(?:(?:<)(*MARK:33))|(?:(?:>)(*MARK:34))|(?:(?:\\[)(*MARK:35))|(?:(?:\\])(*MARK:36))|(?:(?:\\{)(*MARK:37))|(?:(?:\\})(*MARK:38))|(?:(?:\\s++)(*MARK:39))|(?:(?:(?:\\/\\/|#)[^\\r\\n]*+)(*MARK:40))|(?:(?:\\/\\*(?:[^*]++|\\*(?!\\/))*+\\*\\/)(*MARK:41))|(?:(?:[^\\s]++)(*MARK:42)))/Ssm',
             channels: [
-                37 => 'Hidden',
+                39 => 'Hidden',
                 'Hidden',
                 'Hidden',
                 'Unknown',
             ],
             names: [
+                'T_IDENTIFIER_MASK',
+                'T_NAME_MASK',
                 'T_TRUE',
                 'T_FALSE',
                 'T_NULL',
@@ -710,7 +723,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 'T_DOC_COMMENT',
             ],
             subgroups: [
-                11 => 1,
+                13 => 1,
                 1,
             ],
         );
@@ -718,7 +731,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $this->parser = new \Phplrt\Parser\Parser(
             lexer: $this->lexer,
             grammar: [
-                new \Phplrt\Parser\Grammar\Alternation([1, 16, 39]),
+                new \Phplrt\Parser\Grammar\Alternation([1, 16, 36, 37]),
                 new \Phplrt\Parser\Grammar\Alternation([2, 3, 6, 7, 13]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_NULL, true),
                 new \Phplrt\Parser\Grammar\Alternation([4, 5]),
@@ -750,14 +763,13 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 new \Phplrt\Parser\Grammar\Optional(30),
                 new \Phplrt\Parser\Grammar\Concatenation([31, 32]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_DOUBLE_COLON, false),
-                new \Phplrt\Parser\Grammar\Alternation([33, 36]),
-                new \Phplrt\Parser\Grammar\Concatenation([34, 35]),
+                new \Phplrt\Parser\Grammar\Alternation([33, 34, 35]),
+                new \Phplrt\Parser\Grammar\Lexeme(self::T_IDENTIFIER_MASK, true),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_WILDCARD, true),
-                new \Phplrt\Parser\Grammar\Optional(36),
-                new \Phplrt\Parser\Grammar\Concatenation([37, 38]),
                 new \Phplrt\Parser\Grammar\Concatenation([19]),
-                new \Phplrt\Parser\Grammar\Optional(33),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_THIS, true),
+                new \Phplrt\Parser\Grammar\Alternation([33, 38]),
+                new \Phplrt\Parser\Grammar\Lexeme(self::T_NAME_MASK, true),
             ],
             initial: 0,
             reducers: [
@@ -775,9 +787,10 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 15 => $this->reduceDoubleQuotedStringLiteral(...),
                 16 => self::reduceNamedType(...),
                 17 => self::reduceName(...),
-                34 => self::reduceWildcard(...),
-                37 => self::reduceIdentifier(...),
-                39 => self::reduceThisType(...),
+                32 => $this->reduceConstantMask(...),
+                35 => self::reduceIdentifier(...),
+                36 => self::reduceThisType(...),
+                37 => $this->reduceConstMaskType(...),
             ],
             expectations: self::PARSER_EXPECTATIONS,
             kept: self::PARSER_KEPT_TABLE,
@@ -895,25 +908,21 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         // The variables below are declared by the compiler
         $offset = $ctx->begin;
 
+        $name = $children[0];
+        $constant = $children[1] ?? null;
+
         // Foo, \Foo\Bar
-        if (!isset($children[1])) {
-            return new Type\NamedTypeNode($children[0], null, null, $offset);
+        if ($constant === null) {
+            return new Type\NamedTypeNode($name, null, null, $offset);
         }
 
-        $items = \array_slice($children, 1);
-
         // Foo::BAR, a lone word is a constant
-        if (\count($items) === 1 && $items[0] instanceof Type\Identifier) {
-            return new Type\Constant\ClassConstTypeNode($children[0], $items[0], $offset);
+        if ($constant instanceof Type\Identifier) {
+            return new Type\Constant\ClassConstTypeNode($name, $constant, $offset);
         }
 
         // Foo::BAR_*, anything else is a mask of constants
-
-        return new Type\Constant\ClassConstMaskTypeNode(
-            $children[0],
-            new Type\Constant\MaskNode($items, $items[0]->offset),
-            $offset,
-        );
+        return new Type\Constant\ClassConstMaskTypeNode($name, $constant, $offset);
     }
 
     private static function reduceName(\Phplrt\Parser\Context $ctx, mixed $children): mixed
@@ -924,12 +933,16 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         return new Type\Name($children->value, $offset);
     }
 
-    private static function reduceWildcard(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    private function reduceConstantMask(\Phplrt\Parser\Context $ctx, mixed $children): mixed
     {
         // The variables below are declared by the compiler
         $offset = $ctx->begin;
 
-        return new Type\Constant\MaskNode\WildcardMaskNode($offset);
+        if ($children instanceof Type\Identifier) {
+            return $children;
+        }
+
+        return $this->classConstMask->parse($children->value, $offset);
     }
 
     private static function reduceIdentifier(\Phplrt\Parser\Context $ctx, mixed $children): mixed
@@ -946,5 +959,13 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $offset = $ctx->begin;
 
         return new Type\ThisTypeNode($offset);
+    }
+
+    private function reduceConstMaskType(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        // The variables below are declared by the compiler
+        $offset = $ctx->begin;
+
+        return $this->constMask->parse($children->value, $offset);
     }
 }
