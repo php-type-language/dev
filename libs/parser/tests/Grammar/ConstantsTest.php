@@ -11,13 +11,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 final class ConstantsTest extends GrammarTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        self::markTestIncomplete('TODO');
-    }
-
     /**
      * @return iterable<non-empty-string, array{string}>
      */
@@ -36,6 +29,12 @@ final class ConstantsTest extends GrammarTestCase
         yield 'keyword as a constant' => ['Foo::is'];
         yield 'builtin as a class' => ['int::BAR'];
         yield 'spaces around the colons' => ['Foo :: BAR'];
+        yield 'comment behind the colons' => ['Foo::/* c */BAR'];
+        yield 'spaces behind a constant' => ['Foo::BAR  '];
+        yield 'comment behind a constant' => ['Foo::BAR // c'];
+        yield 'spaces behind a star' => ['Foo::* '];
+        yield 'spaces behind a mask' => ['Foo::A*B '];
+        yield 'spaces inside a mask' => ['Foo::A * B'];
 
         yield 'mask of a class' => ['Foo::*'];
         yield 'mask with a suffix' => ['Foo::BAR_*'];
@@ -43,18 +42,10 @@ final class ConstantsTest extends GrammarTestCase
         yield 'mask inside' => ['Foo::B*R'];
         yield 'mask with two stars' => ['Foo::A*B*'];
         yield 'mask on both ends' => ['Foo::*BAR*'];
+        yield 'mask with three words' => ['Foo::A*B*C'];
         yield 'mask of a fully qualified class' => ['\\Foo::BAR_*'];
         yield 'mask of self' => ['self::*'];
-
-        yield 'global mask' => ['PHP_*'];
-        yield 'global mask with a prefix' => ['*_SUFFIX'];
-        yield 'global mask inside' => ['PHP_*_MAX'];
-        yield 'fully qualified global mask' => ['\\PHP_*'];
-        yield 'namespaced global mask' => ['\\Foo\\BAR_*'];
-        yield 'namespaced mask without a prefix' => ['Foo\\Bar\\BAZ_*'];
-        yield 'mask of a whole namespace' => ['Path\\To\\*'];
-        yield 'mask with a suffix in a namespace' => ['Path\\To\\*_SUFFIX'];
-        yield 'mask of a whole fully qualified namespace' => ['\\Path\\To\\*'];
+        yield 'mask of a keyword' => ['Foo::is*'];
 
         yield 'global constant' => ['PHP_EOL'];
         yield 'namespaced global constant' => ['Foo\\BAR'];
@@ -69,24 +60,116 @@ final class ConstantsTest extends GrammarTestCase
     /**
      * @return iterable<non-empty-string, array{string}>
      */
-    public static function invalidConstantDataProvider(): iterable
+    public static function validGlobalMaskDataProvider(): iterable
     {
-        yield 'no constant' => ['Foo::'];
-        yield 'one colon' => ['Foo:BAR'];
-        yield 'three colons' => ['Foo:::BAR'];
-        yield 'constant of a constant' => ['Foo::BAR::BAZ'];
-        yield 'constant of this' => ['$this::BAR'];
-        yield 'constant starts with a digit' => ['Foo::1'];
-        yield 'two stars in a row' => ['Foo::**'];
-        yield 'two stars in a row inside' => ['Foo::A**B'];
-        yield 'two stars in a row behind a name' => ['A**'];
-        yield 'lone star' => ['*'];
-        yield 'two stars' => ['**'];
-        yield 'two stars behind a name' => ['Foo::BAR**'];
-        yield 'constant of a mask' => ['Foo::*::BAR'];
-        yield 'literal as a class' => ['true::BAR'];
+        yield 'global mask' => ['PHP_*'];
+        yield 'global mask with a prefix' => ['*_SUFFIX'];
+        yield 'global mask inside' => ['PHP_*_MAX'];
+        yield 'fully qualified global mask' => ['\\PHP_*'];
+        yield 'namespaced global mask' => ['\\Foo\\BAR_*'];
+        yield 'namespaced mask without a prefix' => ['Foo\\Bar\\BAZ_*'];
+        yield 'mask of a whole namespace' => ['Path\\To\\*'];
+        yield 'mask with a suffix in a namespace' => ['Path\\To\\*_SUFFIX'];
+        yield 'mask of a whole fully qualified namespace' => ['\\Path\\To\\*'];
     }
 
+    #[DataProvider('validGlobalMaskDataProvider')]
+    public function testGlobalMaskIsAccepted(string $source): void
+    {
+        self::markTestIncomplete('Global masks are a step of their own');
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{string}>
+     */
+    public static function invalidConstantDataProvider(): iterable
+    {
+        // A part of the constant is missing
+        yield 'no constant' => ['Foo::'];
+        yield 'no constant, spaces behind' => ['Foo ::  '];
+        yield 'no class' => ['::BAR'];
+        yield 'no class, a mask' => ['::*'];
+        yield 'colons alone' => ['::'];
+        yield 'class behind a separator only' => ['Foo\\::BAR'];
+        yield 'leading separator only' => ['\\::BAR'];
+
+        // The colons are not a pair of them
+        yield 'one colon' => ['Foo:BAR'];
+        yield 'three colons' => ['Foo:::BAR'];
+        yield 'four colons' => ['Foo::::BAR'];
+        yield 'colons apart' => ['Foo: :BAR'];
+        yield 'colon behind a mask' => ['Foo::*:'];
+        yield 'colon behind a constant' => ['Foo::BAR:'];
+
+        // More than one pair of colons
+        yield 'constant of a constant' => ['Foo::BAR::BAZ'];
+        yield 'constant of a mask' => ['Foo::*::BAR'];
+        yield 'colons behind a constant' => ['Foo::BAR::'];
+        yield 'two constants in a row' => ['Foo::BAR Foo::BAZ'];
+
+        // The words and the stars do not take turns
+        yield 'two stars in a row' => ['Foo::**'];
+        yield 'two stars in a row inside' => ['Foo::A**B'];
+        yield 'two stars in a row behind a word' => ['Foo::BAR**'];
+        yield 'two stars in a row before a word' => ['Foo::**BAR'];
+        yield 'two stars apart' => ['Foo::* *'];
+        yield 'two stars apart by a comment' => ['Foo::*/* c */*'];
+        yield 'two words' => ['Foo::A B'];
+        yield 'two words behind a star' => ['Foo::*A B'];
+        yield 'two words before a star' => ['Foo::A B*'];
+        yield 'two words inside a mask' => ['Foo::A*B C*D'];
+        yield 'three stars' => ['Foo::A***'];
+
+        // A part of the constant is not a word or a star
+        yield 'constant starts with a digit' => ['Foo::1'];
+        yield 'constant is a hexadecimal' => ['Foo::0x1F'];
+        yield 'constant is a float' => ['Foo::1.5'];
+        yield 'number inside a mask' => ['Foo::A*1'];
+        yield 'constant is a string' => ['Foo::"BAR"'];
+        yield 'constant is a single quoted string' => ["Foo::'BAR'"];
+        yield 'constant is a variable' => ['Foo::$bar'];
+        yield 'constant is this' => ['Foo::$this'];
+        yield 'constant with a namespace' => ['Foo::Bar\\Baz'];
+        yield 'constant with a leading separator' => ['Foo::\\BAR'];
+        yield 'literal word with a leading separator as a constant' => ['Foo::\\null'];
+        yield 'namespaced word inside a mask' => ['Foo::A*Bar\\Baz'];
+        yield 'mask with a separator inside' => ['Foo::A*\\B'];
+
+        // Something that is not a part of a constant follows it
+        yield 'bar behind a constant' => ['Foo::BAR|'];
+        yield 'comma behind a constant' => ['Foo::BAR,'];
+        yield 'question mark behind a constant' => ['Foo::BAR?'];
+        yield 'ampersand behind a constant' => ['Foo::BAR&'];
+        yield 'bracket behind a constant' => ['Foo::BAR)'];
+        yield 'square bracket behind a constant' => ['Foo::BAR]'];
+        yield 'brace behind a constant' => ['Foo::BAR}'];
+        yield 'angle bracket behind a constant' => ['Foo::BAR>'];
+        yield 'ellipsis behind a constant' => ['Foo::BAR...'];
+        yield 'name behind a constant' => ['Foo::BAR Foo'];
+        yield 'number behind a constant' => ['Foo::BAR 1'];
+        yield 'variable behind a constant' => ['Foo::BAR $x'];
+
+        // The class is not a name
+        yield 'class is this' => ['$this::BAR'];
+        yield 'class is a variable' => ['$foo::BAR'];
+        yield 'class is a number' => ['1::BAR'];
+        yield 'class is a string' => ['"Foo"::BAR'];
+        yield 'class is a literal' => ['true::BAR'];
+        yield 'class is null' => ['null::BAR'];
+        yield 'class is a star' => ['*::BAR'];
+        yield 'class is a mask' => ['Foo*::BAR'];
+        yield 'class is a mask with a word' => ['*Foo::BAR'];
+
+        // A mask or a star alone is not a type until it has a class
+        yield 'lone star' => ['*'];
+        yield 'two stars' => ['**'];
+        yield 'two stars apart alone' => ['* *'];
+        yield 'two stars behind a name' => ['A**'];
+
+        // A comment that is not closed swallows the rest
+        yield 'unclosed comment behind a constant' => ['Foo::BAR /*'];
+        yield 'unclosed comment instead of a constant' => ['Foo::/* BAR'];
+    }
     #[DataProvider('invalidConstantDataProvider')]
     public function testConstantIsRejected(string $source): void
     {

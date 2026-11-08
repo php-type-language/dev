@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Constant;
 
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\TypeNode;
 
@@ -25,7 +26,7 @@ final class ClassConstTypeNode extends TypeNode
      */
     public function __construct(
         public Name $class,
-        public Name $constant,
+        public Identifier $constant,
         int $offset = 0,
     ) {
         parent::__construct($offset);

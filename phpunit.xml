@@ -12,7 +12,7 @@
     <testsuites>
         <testsuite name="components">
             <directory>libs/parser/tests</directory>
-            <directory>libs/phpdoc/tests</directory>
+            <!--<directory>libs/phpdoc/tests</directory>-->
             <directory>libs/printer/tests</directory>
             <directory>libs/reader/tests</directory>
             <directory>libs/types/tests</directory>

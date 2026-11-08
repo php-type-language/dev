@@ -6,6 +6,7 @@ namespace TypeLang\Type\Tests\Constant;
 
 use PHPUnit\Framework\Attributes\Test;
 use TypeLang\Type\Constant\ClassConstTypeNode;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\Tests\TestCase;
 
@@ -15,7 +16,7 @@ final class ClassConstTypeNodeTest extends TestCase
     public function constructorKeepsTheClassTheConstantAndTheOffset(): void
     {
         $class = new Name('\Some\Any');
-        $constant = new Name('CONST_NAME');
+        $constant = new Identifier('CONST_NAME');
 
         $node = new ClassConstTypeNode($class, $constant, 5);
 

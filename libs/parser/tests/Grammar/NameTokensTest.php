@@ -35,6 +35,9 @@ final class NameTokensTest extends GrammarTestCase
         yield 'literal word leads a namespace' => ['true\\null', SyntaxChecker::T_NAME];
         yield 'literal word ends a namespace' => ['Foo\\null', SyntaxChecker::T_NAME];
         yield 'fully qualified literal word leads a namespace' => ['\\true\\Foo', SyntaxChecker::T_NAME];
+        yield 'fully qualified true' => ['\\true', SyntaxChecker::T_NAME];
+        yield 'fully qualified false in upper case' => ['\\FALSE', SyntaxChecker::T_NAME];
+        yield 'fully qualified null' => ['\\null', SyntaxChecker::T_NAME];
 
         yield 'keyword is' => ['is', SyntaxChecker::T_IS];
         yield 'keyword not' => ['not', SyntaxChecker::T_NOT];
@@ -45,8 +48,6 @@ final class NameTokensTest extends GrammarTestCase
         yield 'true' => ['true', SyntaxChecker::T_TRUE];
         yield 'false in upper case' => ['FALSE', SyntaxChecker::T_FALSE];
         yield 'null' => ['null', SyntaxChecker::T_NULL];
-        yield 'fully qualified true' => ['\\true', SyntaxChecker::T_TRUE];
-        yield 'fully qualified null' => ['\\NULL', SyntaxChecker::T_NULL];
     }
 
     #[DataProvider('singleTokenDataProvider')]

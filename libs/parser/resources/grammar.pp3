@@ -45,11 +45,29 @@
  */
 
 
-// Foo, \Foo\Bar
+// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*. The name is read once for all of them
 NamedType -> {
-    return new Type\NamedTypeNode($children[0], null, null, $offset);
+    // Foo, \Foo\Bar
+    if (!isset($children[1])) {
+        return new Type\NamedTypeNode($children[0], null, null, $offset);
+    }
+
+    $items = \array_slice($children, 1);
+
+    // Foo::BAR, a lone word is a constant
+    if (\count($items) === 1 && $items[0] instanceof Type\Identifier) {
+        return new Type\Constant\ClassConstTypeNode($children[0], $items[0], $offset);
+    }
+
+    // Foo::BAR_*, anything else is a mask of constants
+
+    return new Type\Constant\ClassConstMaskTypeNode(
+        $children[0],
+        new Type\Constant\MaskNode($items, $items[0]->offset),
+        $offset,
+    );
 }
-  : Name()
+  : Name() (::T_DOUBLE_COLON:: ConstantMask())?
   ;
 
 

@@ -41,6 +41,9 @@ final class NamedTypeTest extends TestCase
         yield 'keyword in a namespace' => ['Foo\\is\\of'];
         yield 'keyword leads a namespace' => ['is\\Foo'];
 
+        yield 'fully qualified true' => ['\\true'];
+        yield 'fully qualified false' => ['\\false'];
+        yield 'fully qualified null' => ['\\NULL'];
         yield 'fully qualified literal word leads a namespace' => ['\\true\\Foo'];
         yield 'fully qualified literal word with a suffix' => ['\\truefoo'];
         yield 'fully qualified literal word with a hyphen' => ['\\true-x'];
@@ -129,13 +132,6 @@ final class NamedTypeTest extends TestCase
         yield 'null' => ['null', NullLiteralNode::class];
         yield 'true in upper case' => ['TRUE', BoolLiteralNode::class];
         yield 'null in mixed case' => ['NuLL', NullLiteralNode::class];
-
-        // PHP reads a fully qualified `\true`, `\false` and `\null` as the constants
-        yield 'fully qualified true' => ['\\true', BoolLiteralNode::class];
-        yield 'fully qualified false' => ['\\false', BoolLiteralNode::class];
-        yield 'fully qualified null' => ['\\null', NullLiteralNode::class];
-        yield 'fully qualified true in upper case' => ['\\TRUE', BoolLiteralNode::class];
-        yield 'fully qualified null in upper case' => ['\\NULL', NullLiteralNode::class];
     }
 
     /**
@@ -156,9 +152,6 @@ final class NamedTypeTest extends TestCase
         yield 'true' => ['true', true];
         yield 'false' => ['false', false];
         yield 'null' => ['null', null];
-        yield 'fully qualified true' => ['\\true', true];
-        yield 'fully qualified false in upper case' => ['\\FALSE', false];
-        yield 'fully qualified null' => ['\\null', null];
     }
 
     /**

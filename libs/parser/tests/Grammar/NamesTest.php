@@ -55,6 +55,9 @@ final class NamesTest extends GrammarTestCase
         yield 'keyword with a hyphen' => ['is-x'];
         yield 'keyword in upper case' => ['IS'];
 
+        yield 'fully qualified true' => ['\\true'];
+        yield 'fully qualified false' => ['\\false'];
+        yield 'fully qualified null' => ['\\NULL'];
         yield 'fully qualified literal word leads a namespace' => ['\\true\\Foo'];
         yield 'literal word leads a namespace' => ['true\\null'];
         yield 'literal word ends a namespace' => ['Foo\\true'];

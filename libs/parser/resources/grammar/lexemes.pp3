@@ -12,9 +12,9 @@
  * -----------------------------------------------------------------------------
  */
 
-%token T_TRUE           \\?+(?i:true)(?&WORD_END)
-%token T_FALSE          \\?+(?i:false)(?&WORD_END)
-%token T_NULL           \\?+(?i:null)(?&WORD_END)
+%token T_TRUE           (?i:true)(?&WORD_END)
+%token T_FALSE          (?i:false)(?&WORD_END)
+%token T_NULL           (?i:null)(?&WORD_END)
 
 
 /**
@@ -131,6 +131,7 @@
  */
 
 
+%token T_WILDCARD       \*
 %token T_DOUBLE_COLON   ::
 %token T_COLON          :
 %token T_ELLIPSIS       \.\.\.

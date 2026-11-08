@@ -67,7 +67,7 @@ final class NodeTest extends TestCase
         yield CallableTypeNode::class => [new CallableTypeNode(new Name('callable'))];
         yield ClassConstMaskTypeNode::class => [new ClassConstMaskTypeNode(new Name('Example'))];
         yield ClassConstTypeNode::class => [
-            new ClassConstTypeNode(new Name('Example'), new Name('CONST')),
+            new ClassConstTypeNode(new Name('Example'), new Identifier('CONST')),
         ];
         yield ConstMaskTypeNode::class => [
             new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()])),
@@ -107,7 +107,7 @@ final class NodeTest extends TestCase
 
         yield ComplexFieldNode::class => [
             new ComplexFieldNode(
-                new ClassConstTypeNode(new Name('Example'), new Name('CONST')),
+                new ClassConstTypeNode(new Name('Example'), new Identifier('CONST')),
                 self::type(),
             ),
         ];
@@ -159,7 +159,7 @@ final class NodeTest extends TestCase
             new ClassConstMaskTypeNode(new Name('Example'), offset: 42),
         ];
         yield ClassConstTypeNode::class => [
-            new ClassConstTypeNode(new Name('Example'), new Name('CONST'), 42),
+            new ClassConstTypeNode(new Name('Example'), new Identifier('CONST'), 42),
         ];
         yield ConstMaskTypeNode::class => [
             new ConstMaskTypeNode(new MaskNode([new Identifier('CONST'), new WildcardMaskNode()]), offset: 42),
@@ -202,7 +202,7 @@ final class NodeTest extends TestCase
 
         yield ComplexFieldNode::class => [
             new ComplexFieldNode(
-                new ClassConstTypeNode(new Name('Example'), new Name('CONST')),
+                new ClassConstTypeNode(new Name('Example'), new Identifier('CONST')),
                 self::type(),
                 offset: 42,
             ),

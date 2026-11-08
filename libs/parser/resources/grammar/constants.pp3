@@ -1,8 +1,30 @@
 /**
  * -----------------------------------------------------------------------------
  *  Constants
+ *
+ *  The part of a constant of a class that follows the colons, a lone word or
+ *  a mask. The words and the stars take turns, so each token is read once.
  * -----------------------------------------------------------------------------
  */
 
 
-// TODO
+// BAR, BAR_*, *, *_BAZ, A*B*C
+ConstantMask
+  : Wildcard() AfterWildcard()?
+  | Identifier() AfterIdentifier()?
+  ;
+
+AfterWildcard
+  : Identifier() AfterIdentifier()?
+  ;
+
+AfterIdentifier
+  : Wildcard() AfterWildcard()?
+  ;
+
+// *
+Wildcard -> {
+    return new Type\Constant\MaskNode\WildcardMaskNode($offset);
+}
+  : <T_WILDCARD>
+  ;
