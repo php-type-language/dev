@@ -108,6 +108,24 @@ ThisType -> {
 
 /**
  * -----------------------------------------------------------------------------
+ *  Variables
+ *
+ *  A variable is no type, it stands in the parameters of a callable and in the
+ *  conditions, so it is a rule of its own with its own entry.
+ * -----------------------------------------------------------------------------
+ */
+
+
+// $a, $_x, $thisFoo. The name of the node is the text behind the dollar sign
+#Variable -> {
+    return new Type\VariableNode(\substr($children->value, 1), $offset);
+}
+  : <T_VARIABLE>
+  ;
+
+
+/**
+ * -----------------------------------------------------------------------------
  *  Group
  * -----------------------------------------------------------------------------
  */

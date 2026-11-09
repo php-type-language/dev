@@ -19,14 +19,21 @@ final class VariableNode extends Node
 {
     /**
      * @param int<0, max> $offset
+     * @throws \InvalidArgumentException in case of the name is empty
      */
     public function __construct(
         /**
          * The name of the variable, written without the leading `$`.
+         *
+         * @var non-empty-string
          */
-        public Name $name,
+        public string $name,
         int $offset = 0,
     ) {
+        if ($name === '') {
+            throw new \InvalidArgumentException('Variable name cannot be empty');
+        }
+
         parent::__construct($offset);
     }
 }
