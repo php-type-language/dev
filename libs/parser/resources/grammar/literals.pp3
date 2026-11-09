@@ -7,36 +7,64 @@
 
 // Any of the literals: `null`, `true`, `false`, the numbers of any base (42,
 // 0x1F, 0b101, 0o17, 017, -42, 1_000, 1.5, .5, 1e-3) and the strings ('text',
-// "text"). The token tells which of them it is. Requires the `literals` feature
+// "text"). Requires the `literals` feature
 Literal -> {
-    /** @var \Phplrt\Contracts\Lexer\TokenInterface $children */
     if (!$this->features->literals) {
         throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('literals', $ctx);
     }
 
+    return $children;
+}
+  : KeywordLiteral()
+  | FloatLiteral()
+  | IntLiteral()
+  | StringLiteral()
+  ;
+
+// null, true, false
+KeywordLiteral -> {
     return match ($children->id) {
         self::T_NULL => new Type\Literal\NullLiteralNode($children->value, $offset),
         self::T_TRUE => new Type\Literal\BoolLiteralNode(true, $children->value, $offset),
-        self::T_FALSE => new Type\Literal\BoolLiteralNode(false, $children->value, $offset),
-        self::T_FLOAT => $this->float->parse($children->value, $offset),
-        self::T_INT_DEC => $this->decInt->parse($children->value, $offset),
-        self::T_INT_HEX => $this->hexInt->parse($children->value, $offset),
-        self::T_INT_BIN => $this->binInt->parse($children->value, $offset),
-        self::T_INT_OCT => $this->octInt->parse($children->value, $offset),
-        self::T_INT_OCT_LEGACY => $this->octLegacyInt->parse($children->value, $offset),
-        self::T_SQ_STRING => $this->sqString->parse($children->value, $offset),
-        default => $this->dqString->parse($children->value, $offset),
+        default => new Type\Literal\BoolLiteralNode(false, $children->value, $offset),
     };
 }
   : <T_NULL>
   | <T_TRUE>
   | <T_FALSE>
-  | <T_FLOAT>
-  | <T_INT_DEC>
+  ;
+
+// 1.5, .5, 1e-3, -1.5
+FloatLiteral -> {
+    return $this->float->parse($children->value, $offset);
+}
+  : <T_FLOAT>
+  ;
+
+// 42, -42, 1_000, 0x1F, 0b101, 0o17, 017
+IntLiteral -> {
+    return match ($children->id) {
+        self::T_INT_DEC => $this->decInt->parse($children->value, $offset),
+        self::T_INT_HEX => $this->hexInt->parse($children->value, $offset),
+        self::T_INT_BIN => $this->binInt->parse($children->value, $offset),
+        self::T_INT_OCT => $this->octInt->parse($children->value, $offset),
+        default => $this->octLegacyInt->parse($children->value, $offset),
+    };
+}
+  : <T_INT_DEC>
   | <T_INT_HEX>
   | <T_INT_BIN>
   | <T_INT_OCT>
   | <T_INT_OCT_LEGACY>
-  | <T_SQ_STRING>
+  ;
+
+// 'text', "text"
+StringLiteral -> {
+    return match ($children->id) {
+        self::T_SQ_STRING => $this->sqString->parse($children->value, $offset),
+        default => $this->dqString->parse($children->value, $offset),
+    };
+}
+  : <T_SQ_STRING>
   | <T_DQ_STRING>
   ;

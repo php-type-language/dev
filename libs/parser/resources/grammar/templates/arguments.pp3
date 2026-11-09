@@ -37,15 +37,17 @@ WildcardTemplateArgument -> {
 // and invariant are the variances: "covariant (A|B)" is a variance and a group,
 // "in (A|B)" is a callable named "in"
 TypedTemplateArgument -> {
-    if (\is_array($children)) {
-        if (!$this->features->hints) {
-            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('hints', $ctx);
-        }
-
-        return new Type\Template\TypedTemplateArgumentNode($children[1], $children[0], $offset);
+    // T
+    if (!\is_array($children)) {
+        return new Type\Template\TypedTemplateArgumentNode($children, null, $offset);
     }
 
-    return new Type\Template\TypedTemplateArgumentNode($children, null, $offset);
+    // covariant T
+    if (!$this->features->hints) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('hints', $ctx);
+    }
+
+    return new Type\Template\TypedTemplateArgumentNode($children[1], $children[0], $offset);
 }
   : (Variance() Type())
   | Type()

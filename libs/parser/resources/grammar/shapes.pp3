@@ -9,57 +9,51 @@
  * -----------------------------------------------------------------------------
  */
 
+// {a: int}, {a: int, ...}, {...<K, V>}. Returns the list of the fields and the
+// arguments of the unsealed part, null if there are none
 ShapeFields -> {
     if (!$this->features->shapes) {
         throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('shapes', $ctx);
     }
 
-    $last = \end($children);
+    $fields = new Type\Shape\FieldListNode([], true, $offset);
     $arguments = null;
-    $isSealed = true;
 
-    if ($last instanceof Type\Template\TemplateListNode) {
-        $arguments = \array_pop($children);
-        $isSealed = false;
-    } elseif ($last === true) {
-        \array_pop($children);
-        $isSealed = false;
+    foreach ($children as $child) {
+        switch (true) {
+            case $child instanceof Type\Shape\FieldNode:
+                $fields->items[] = $child;
+                break;
+
+            case $child instanceof Type\Template\TemplateListNode:
+                $arguments = $child;
+                break;
+
+            default:
+                $fields->isSealed = false;
+                break;
+        }
     }
 
-    $fields = new Type\Shape\FieldListNode($children, $isSealed, $offset);
-
-    if ($arguments !== null) {
-        return [$fields, $arguments];
-    }
-
-    return $fields;
+    return [$fields, $arguments];
 }
   : ::T_BRACE_OPEN::
-        ShapeBody()?
+        (ShapeFieldList() ShapeTail()? | ShapeUnsealed())?
     ::T_BRACE_CLOSE::
   ;
 
-ShapeBody
-  : ShapeFieldsList()
-    (::T_COMMA:: ShapeSuffix() | ::T_COMMA::)?
-  | ShapeSuffix()
-  ;
-
-ShapeFieldsList
+// a: int, b?: string, int
+ShapeFieldList
   : ShapeField()
     (::T_COMMA:: ShapeField())*
   ;
 
-ShapeSuffix
-  : ShapeUnsealed() ::T_COMMA::?
+// A trailing comma, with the unsealed part behind it or without it
+ShapeTail
+  : ::T_COMMA:: ShapeUnsealed()?
   ;
 
-ShapeUnsealed -> {
-    if (\count($children) > 1) {
-        return $children[1];
-    }
-
-    return true;
-}
-  : <T_ELLIPSIS> TemplateArguments()?
+// ..., ...<K, V>, ..., . The ellipsis is kept, it tells the shape is not sealed
+ShapeUnsealed
+  : <T_ELLIPSIS> TemplateArguments()? ::T_COMMA::?
   ;

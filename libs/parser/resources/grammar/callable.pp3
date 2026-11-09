@@ -37,16 +37,26 @@ CallableParameter -> {
     $isVariadic = false;
 
     foreach ($children as $child) {
-        if ($child instanceof Type\TypeNode) {
-            $type = $child;
-        } elseif ($child instanceof Type\VariableNode) {
-            $name = $child;
-        } elseif ($child instanceof Type\Callable\DefaultValueNode) {
-            $default = $child;
-        } elseif ($child->id === self::T_AMPERSAND) {
-            $isOutput = true;
-        } else {
-            $isVariadic = true;
+        switch (true) {
+            case $child instanceof Type\TypeNode:
+                $type = $child;
+                break;
+
+            case $child instanceof Type\VariableNode:
+                $name = $child;
+                break;
+
+            case $child instanceof Type\Callable\DefaultValueNode:
+                $default = $child;
+                break;
+
+            case $child->id === self::T_AMPERSAND:
+                $isOutput = true;
+                break;
+
+            default:
+                $isVariadic = true;
+                break;
         }
     }
 
