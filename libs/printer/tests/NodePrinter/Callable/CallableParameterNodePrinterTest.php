@@ -26,7 +26,15 @@ final class CallableParameterNodePrinterTest extends NodePrinterTestCase
 
         yield 'type only' => [new CallableParameterNode($int), 'int'];
         yield 'type and name' => [new CallableParameterNode($int, $name), 'int $value'];
-        yield 'name only' => [new CallableParameterNode(null, $name), 'mixed $value'];
+        yield 'name only' => [new CallableParameterNode(null, $name), '$value'];
+        yield 'name only by reference' => [new CallableParameterNode(null, $name, true), '&$value'];
+        yield 'name only variadic' => [new CallableParameterNode(null, $name, false, true), '...$value'];
+        yield 'name only by reference and variadic' => [new CallableParameterNode(null, $name, true, true), '&...$value'];
+        yield 'name only optional' => [new CallableParameterNode(null, $name, false, false, new DefaultValueNode()), '$value='];
+        yield 'name only with a default' => [
+            new CallableParameterNode(null, $name, false, false, new DefaultValueNode(new IntLiteralNode(42))),
+            '$value = 42',
+        ];
         yield 'by reference' => [new CallableParameterNode($int, $name, true), 'int &$value'];
         yield 'variadic' => [new CallableParameterNode($int, $name, false, true), 'int ...$value'];
         yield 'optional' => [new CallableParameterNode($int, $name, false, false, new DefaultValueNode()), 'int $value='];

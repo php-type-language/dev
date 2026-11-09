@@ -18,11 +18,16 @@ use TypeLang\Printer\PrinterOptions\ListStyle;
 use TypeLang\Type\Callable\CallableParameterListNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
+use TypeLang\Type\Constant\ClassConstMaskTypeNode;
+use TypeLang\Type\Constant\ConstMaskTypeNode;
+use TypeLang\Type\Constant\MaskNode;
+use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Shape\ComplexFieldNode;
 use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Template\TemplateListNode;
@@ -205,22 +210,41 @@ final class PrettyTypePrinterTest extends TestCase
             ->print(self::parse('array{Foo::BAR: int}')));
     }
 
+    /**
+     * A mask is no key the parser reads, but the tree may carry one.
+     */
+    private static function shapeWithKey(TypeNode $key): NamedTypeNode
+    {
+        return new NamedTypeNode(
+            name: new Name('array'),
+            fields: new FieldListNode([
+                new ComplexFieldNode($key, new NamedTypeNode(new Name('int'))),
+            ]),
+        );
+    }
+
     public function testPrintClassConstantWildcardMaskShapeKey(): void
     {
-        self::assertSame('array{Foo::*: int}', $this->printer()
-            ->print(self::parse('array{Foo::*: int}')));
+        $key = new ClassConstMaskTypeNode(new Name('Foo'), new MaskNode([new WildcardMaskNode()]));
+
+        self::assertSame('array{Foo::*: int}', $this->printer()->print(self::shapeWithKey($key)));
     }
 
     public function testPrintClassConstantPrefixMaskShapeKey(): void
     {
-        self::assertSame('array{Foo::BAR_*: int}', $this->printer()
-            ->print(self::parse('array{Foo::BAR_*: int}')));
+        $key = new ClassConstMaskTypeNode(
+            new Name('Foo'),
+            new MaskNode([new Identifier('BAR_'), new WildcardMaskNode()]),
+        );
+
+        self::assertSame('array{Foo::BAR_*: int}', $this->printer()->print(self::shapeWithKey($key)));
     }
 
     public function testPrintConstantMaskShapeKey(): void
     {
-        self::assertSame('array{FOO_*: int}', $this->printer()
-            ->print(self::parse('array{FOO_*: int}')));
+        $key = new ConstMaskTypeNode(new MaskNode([new Identifier('FOO_'), new WildcardMaskNode()]));
+
+        self::assertSame('array{FOO_*: int}', $this->printer()->print(self::shapeWithKey($key)));
     }
 
     public function testPrintCallableType(): void

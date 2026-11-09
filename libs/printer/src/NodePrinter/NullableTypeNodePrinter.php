@@ -26,11 +26,24 @@ final class NullableTypeNodePrinter implements NodePrinterInterface
     public function printNode(Node $node, PrinterContext $context): string
     {
         return match ($context->options->nullableStyle) {
-            NullableStyle::Question => '?' . $context->groupLogical(fn(): string => $context->print($node->type)),
+            NullableStyle::Question => '?' . $this->printOperand($node->type, $context),
             NullableStyle::Union => $context->print(new UnionTypeNode([
                 $node->type,
                 new NamedTypeNode(new Name('null')),
             ])),
         };
+    }
+
+    /**
+     * A nullable type of a nullable one is grouped: `?(?int)`, the `??int`
+     * is no type.
+     *
+     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     */
+    private function printOperand(TypeNode $type, PrinterContext $context): string
+    {
+        $printed = $context->groupLogical(fn(): string => $context->print($type));
+
+        return $type instanceof NullableTypeNode ? '(' . $printed . ')' : $printed;
     }
 }

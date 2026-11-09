@@ -23,7 +23,7 @@ final class TypesListTypeNodePrinter implements NodePrinterInterface
     public function printNode(Node $node, PrinterContext $context): string
     {
         return match ($context->options->listStyle) {
-            ListStyle::Brackets => $context->groupLogical(fn(): string => $context->print($node->type)) . '[]',
+            ListStyle::Brackets => $context->printSuffixBase($node->type) . '[]',
             ListStyle::Generic => 'array<' . $context->isolate(fn(): string => $context->print($node->type)) . '>',
         };
     }

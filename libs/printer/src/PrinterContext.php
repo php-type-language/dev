@@ -7,7 +7,10 @@ namespace TypeLang\Printer;
 use TypeLang\Printer\Exception\PrinterExceptionInterface;
 use TypeLang\Printer\NodePrinter\Registry\NodePrinterRegistryInterface;
 use TypeLang\Printer\PrinterOptions\CommaSpacing;
+use TypeLang\Printer\PrinterOptions\NullableStyle;
+use TypeLang\Type\Callable\CallableTypeNode;
 use TypeLang\Type\Node;
+use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
 
 /**
  * The state of a single print: the settings, the printers of the nodes and
@@ -119,6 +122,27 @@ final class PrinterContext
         } finally {
             $this->nesting = $nesting;
         }
+    }
+
+    /**
+     * Prints the type that a suffix is written behind: the `[]` of `int[]`
+     * and the `[K]` of `T[K]`.
+     *
+     * A union or an intersection takes the brackets of its own. A nullable
+     * type and a callable with a return type would take the suffix for their
+     * own part (`?int[]` is a nullable list, `callable(): int[]` is a callable
+     * that returns a list), so they are grouped here.
+     *
+     * @throws PrinterExceptionInterface in case of the node cannot be printed
+     */
+    public function printSuffixBase(Node $node): string
+    {
+        $printed = $this->groupLogical(fn(): string => $this->print($node));
+
+        $isGrouped = ($node instanceof NullableTypeNode && $this->options->nullableStyle === NullableStyle::Question)
+            || ($node instanceof CallableTypeNode && $node->type !== null);
+
+        return $isGrouped ? '(' . $printed . ')' : $printed;
     }
 
     /**

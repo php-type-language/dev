@@ -21,7 +21,7 @@ final class TypeOffsetAccessTypeNodePrinter implements NodePrinterInterface
      */
     public function printNode(Node $node, PrinterContext $context): string
     {
-        $type = $context->groupLogical(fn(): string => $context->print($node->type));
+        $type = $context->printSuffixBase($node->type);
         $access = $context->isolate(fn(): string => $context->print($node->access));
 
         return $type . '[' . $access . ']';

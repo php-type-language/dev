@@ -20,13 +20,13 @@ final class CallableParameterNodePrinter implements NodePrinterInterface
      */
     public function printNode(Node $node, PrinterContext $context): string
     {
-        $result = 'mixed';
+        $result = '';
 
         if ($node->type !== null) {
             $result = $context->print($node->type);
         }
 
-        if ($node->name !== null) {
+        if ($node->type !== null && $node->name !== null) {
             $result .= ' ';
         }
 
