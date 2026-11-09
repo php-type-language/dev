@@ -17,7 +17,7 @@ use TypeLang\Type\Node;
  *  $result = $parser->partial($source);
  *
  *  echo \substr($source, $result->offset);
- *  // => " and more"
+ *  // => "and more"
  * ```
  *
  * @template-covariant TResult of Node

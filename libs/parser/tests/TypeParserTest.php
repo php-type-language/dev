@@ -119,8 +119,6 @@ final class TypeParserTest extends TestCase
     #[Test]
     public function aPartialReadingOfAWholeSourceIsASuccessfulOne(): void
     {
-        self::markTestIncomplete('TODO: Diagnostics (step 18)');
-
         $result = (new TypeParser())->partial('int');
 
         self::assertInstanceOf(SuccessfulParsedResult::class, $result);
@@ -132,8 +130,6 @@ final class TypeParserTest extends TestCase
     #[Test]
     public function theOffsetPointsToTheUnparsedTail(): void
     {
-        self::markTestIncomplete('TODO: Diagnostics (step 18)');
-
         $source = 'array{ field: result } This is an example';
         $result = (new TypeParser())->partial($source);
 
@@ -144,8 +140,6 @@ final class TypeParserTest extends TestCase
     #[Test]
     public function aPartialReadingOfNoTypeAtAllIsAFailure(): void
     {
-        self::markTestIncomplete('TODO: Diagnostics (step 18)');
-
         $result = (new TypeParser())->partial('|int');
 
         self::assertInstanceOf(FailureParsedResult::class, $result);
@@ -185,8 +179,6 @@ final class TypeParserTest extends TestCase
     #[DataProvider('tolerantInputDataProvider')]
     public function aPartialReadingStopsAtWhatItCannotRead(string $source, string $expected, int $offset): void
     {
-        self::markTestIncomplete('TODO: Diagnostics (step 18)');
-
         $result = $this->partial($source);
 
         self::assertInstanceOf(PartialParsedResult::class, $result);
@@ -197,8 +189,6 @@ final class TypeParserTest extends TestCase
     #[Test]
     public function aPartialReadingOfNoTypeAtAllCarriesTheMessageAndThePosition(): void
     {
-        self::markTestIncomplete('TODO: Diagnostics (step 18)');
-
         $result = $this->partial('|int');
 
         self::assertInstanceOf(FailureParsedResult::class, $result);
@@ -230,16 +220,12 @@ final class TypeParserTest extends TestCase
     #[DataProvider('checkedInputDataProvider')]
     public function aCheckTellsWhetherASourceIsAWholeType(string $source, string $expected): void
     {
-        self::markTestIncomplete('TODO: Diagnostics (step 18)');
-
         self::assertInstanceOf($expected, $this->validate($source));
     }
 
     #[Test]
     public function aPartialCheckIsAFailureWithTheOffsetOfTheTail(): void
     {
-        self::markTestIncomplete('TODO: Diagnostics (step 18)');
-
         $result = $this->validate('array{a: int} tail');
 
         self::assertInstanceOf(FailureCheckResult::class, $result);

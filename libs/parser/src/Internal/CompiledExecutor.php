@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Parser\Internal;
 
-use TypeLang\Type;
 use TypeLang\Parser\Exception;
+use TypeLang\Type;
 
 \interface_exists(\Phplrt\Contracts\Source\Exception\SourceExceptionInterface::class);
 \interface_exists(\Phplrt\Contracts\Source\ReadableInterface::class);
@@ -3146,7 +3146,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 => new Type\Shape\ScalarFieldNode($key, $type, $isOptional, $offset),
             // Foo::BAR
             default
-                => new Type\Shape\ComplexFieldNode($key, $type, $isOptional, $offset),
+            => new Type\Shape\ComplexFieldNode($key, $type, $isOptional, $offset),
         };
     }
 

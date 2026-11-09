@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace TypeLang\Parser;
 
 use JetBrains\PhpStorm\Language;
+use Phplrt\Contracts\Position\PositionFactoryInterface;
 use Phplrt\Contracts\Source\Exception\SourceExceptionInterface;
 use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
+use Phplrt\Position\PositionFactory;
 use Phplrt\Source\SourceFactory;
 use TypeLang\Parser\Internal\Executor;
 use TypeLang\Parser\Partial\FailureParsedResult;
@@ -27,6 +29,7 @@ use TypeLang\Type\TypeNode;
 final class TypeParser implements TypeParserInterface
 {
     private readonly SourceFactoryInterface $sources;
+    private readonly PositionFactoryInterface $positions;
 
     private ?Executor $executor = null;
 
@@ -35,6 +38,7 @@ final class TypeParser implements TypeParserInterface
         ?SourceFactoryInterface $sources = null,
     ) {
         $this->sources = $sources ?? SourceFactory::createDefault();
+        $this->positions = new PositionFactory();
     }
 
     /**
@@ -55,8 +59,9 @@ final class TypeParser implements TypeParserInterface
         );
     }
 
-    public function parse(#[Language('PHP')] mixed $source): mixed
+    public function parse(#[Language('PHP')] mixed $source): Node
     {
+        /** @var Executor<TResult> $executor */
         $executor = $this->getExecutor();
 
         return $executor->parse($this->toSource($source));
@@ -64,21 +69,26 @@ final class TypeParser implements TypeParserInterface
 
     public function partial(#[Language('PHP')] mixed $source): SuccessfulParsedResult|FailureParsedResult
     {
+        /** @var Executor<TResult> $executor */
         $executor = $this->getExecutor();
 
-        // TODO
+        return $executor->partial($this->toSource($source));
     }
 
     public function validate(#[Language('PHP')] mixed $source): SuccessfulCheckResult|FailureCheckResult
     {
+        /** @var Executor<TResult> $executor */
         $executor = $this->getExecutor();
 
-        // TODO
+        return $executor->validate($this->toSource($source));
     }
 
     private function getExecutor(): Executor
     {
-        return $this->executor ??= new Executor($this->features);
+        return $this->executor ??= new Executor(
+            features: $this->features,
+            positions: $this->positions,
+        );
     }
 
     /**

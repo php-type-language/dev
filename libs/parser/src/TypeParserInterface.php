@@ -11,10 +11,13 @@ use TypeLang\Parser\Partial\SuccessfulParsedResult;
 use TypeLang\Parser\Validation\FailureCheckResult;
 use TypeLang\Parser\Validation\SuccessfulCheckResult;
 use TypeLang\Type\Node;
+use TypeLang\Type\TypeNode;
 
 /**
- * @template-covariant TResult of Node = \TypeLang\Type\TypeNode
+ * @template-covariant TResult of Node = TypeNode
  * @template-contravariant TSource of mixed = mixed
+ *
+ * @see TypeNode used by default
  */
 interface TypeParserInterface
 {
@@ -39,7 +42,7 @@ interface TypeParserInterface
      * @throws ParserExceptionInterface in case of parsing exception occurs
      * @throws \Throwable in case of internal error occurs
      */
-    public function parse(#[Language('PHP')] mixed $source): mixed;
+    public function parse(#[Language('PHP')] mixed $source): Node;
 
     /**
      * Parses as much of the provided source code as possible and returns
