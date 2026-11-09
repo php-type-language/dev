@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Template;
 
-use TypeLang\Type\Name;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -36,7 +36,7 @@ final class TypedTemplateArgumentNode extends TemplateArgumentNode
          *  //       ^^^^^^^^^ the variance
          * ```
          */
-        public ?Name $variance = null,
+        public ?Identifier $variance = null,
         int $offset = 0,
     ) {
         parent::__construct($offset);
