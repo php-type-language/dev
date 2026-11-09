@@ -91,6 +91,14 @@ final class TypeParser implements TypeParserInterface
     }
 
     /**
+     * Returns type recognition context:
+     * ```
+     * $result = $parser->forType()
+     *     ->parse('Type<U, V>');
+     * ```
+     *
+     * @api
+     *
      * @return self<TypeNode, TSource>
      */
     public function forType(): self
@@ -100,6 +108,14 @@ final class TypeParser implements TypeParserInterface
     }
 
     /**
+     * Returns template parameter recognition context:
+     * ```
+     * $result = $parser->forType()
+     *     ->parse('T of U<V> = Default<Z>');
+     * ```
+     *
+     * @api
+     *
      * @return self<TemplateParameterNode, TSource>
      */
     public function forTemplateParameter(): self
