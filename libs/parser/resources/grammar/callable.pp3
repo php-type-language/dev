@@ -60,8 +60,8 @@ CallableParameter -> {
     return new Type\Callable\CallableParameterNode($type, $name, $isOutput, $isVariadic, $default, $offset);
 }
   : Type() <T_AMPERSAND>? (<T_ELLIPSIS> Variable()? | Variable()? CallableDefault()?)
-  | <T_AMPERSAND>? (<T_ELLIPSIS> Variable() | Variable() CallableDefault()?)
   | <T_ELLIPSIS> Type()
+  | <T_AMPERSAND>? (<T_ELLIPSIS> Variable() | Variable() CallableDefault()?)
   ;
 
 // = 42, = Foo::BAR, = null, =

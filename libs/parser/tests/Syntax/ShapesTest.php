@@ -94,10 +94,6 @@ final class ShapesTest extends SyntaxTestCase
     #[DataProvider('validShapeDataProvider')]
     public function testShapeIsAccepted(string $source): void
     {
-        if (\str_contains($source, ' is ')) {
-            self::markTestIncomplete('TODO: Conditions (step 17)');
-        }
-
         self::assertAccepted($source);
     }
 

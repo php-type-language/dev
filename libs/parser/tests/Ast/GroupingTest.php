@@ -205,8 +205,6 @@ final class GroupingTest extends AstTestCase
      */
     public function testAConditionNestsInTheBranchOfAnother(): void
     {
-        self::markTestIncomplete('TODO: Conditions (step 17)');
-
         self::assertSame(<<<'AST'
             Condition\ConditionalTypeNode
               Condition\EqualConditionNode
@@ -231,8 +229,6 @@ final class GroupingTest extends AstTestCase
 
     public function testAUnionReachesIntoTheBranchOfACondition(): void
     {
-        self::markTestIncomplete('TODO: Conditions (step 17)');
-
         self::assertSame(<<<'AST'
             Condition\ConditionalTypeNode
               Condition\EqualConditionNode
@@ -252,8 +248,6 @@ final class GroupingTest extends AstTestCase
 
     public function testTheSubjectOfAConditionIsAWholeUnion(): void
     {
-        self::markTestIncomplete('TODO: Conditions (step 17)');
-
         self::assertSame(<<<'AST'
             Condition\ConditionalTypeNode
               Condition\EqualConditionNode

@@ -71,10 +71,6 @@ final class TemplatesTest extends SyntaxTestCase
     #[DataProvider('validArgumentsDataProvider')]
     public function testArgumentsAreAccepted(string $source): void
     {
-        if (\str_contains($source, ' is ')) {
-            self::markTestIncomplete('TODO: Conditions (step 17)');
-        }
-
         self::assertAccepted($source);
     }
 

@@ -39,6 +39,9 @@ final class TriviaTest extends AstTestCase
             "callable( int /* c */ \$a , // x\n string ... \$b ) : void",
             'callable(int $a,string ...$b):void',
         ];
+        yield 'comments inside a condition' => ['A is /* c */ B /* d */ ? C /* e */ : D', 'A is B ? C : D'];
+        yield 'line breaks inside a negation' => ["A is\nnot\nB ? C : D", 'A is not B ? C : D'];
+        yield 'comments inside a negation' => ['A is /* c */ not /* d */ B ? C : D', 'A is not B ? C : D'];
         yield 'comment between a name and the parameters' => ['callable /* c */ (int)', 'callable(int)'];
     }
 

@@ -11,13 +11,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 final class ConditionsTest extends SyntaxTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        self::markTestIncomplete('TODO');
-    }
-
     /**
      * @return iterable<non-empty-string, array{string}>
      */
@@ -78,9 +71,15 @@ final class ConditionsTest extends SyntaxTestCase
         yield 'condition in a field' => ['array{a: T is int ? A : B}'];
         yield 'condition in a parameter' => ['callable(T is int ? A : B $x): void'];
 
-        yield 'keyword as a target' => ['T is not ? A : B'];
+        yield 'negation of a nullable' => ['T is not ?A ? X : Y'];
+        yield 'negation of a nullable union' => ['T is not ?A|B ? X : Y'];
+        yield 'negation of a grouped nullable' => ['T is not (?A) ? X : Y'];
+        yield 'negation of a nullable list' => ['T is not (?A)[] ? X : Y'];
+        yield 'negation with a comment between the words' => ['T is /* c */ not int ? A : B'];
+        yield 'negation with a line break between the words' => ["T is\nnot int ? A : B"];
+        yield 'target that opens with the word not' => ['T is notX ? A : B'];
         yield 'keywords as names' => ['is is is ? is : is'];
-        yield 'keyword not as a subject' => ['not is not ? A : B'];
+        yield 'keyword not as a subject' => ['not is int ? A : B'];
     }
 
     #[DataProvider('validConditionDataProvider')]
@@ -103,6 +102,9 @@ final class ConditionsTest extends SyntaxTestCase
         yield 'no operator' => ['T ? A : B'];
         yield 'no operator on a variable' => ['$a ? A : B'];
         yield 'negation twice' => ['T is not not int ? A : B'];
+        yield 'keyword not as a target' => ['T is not ? A : B'];
+        yield 'keyword not as a target and a subject' => ['not is not ? A : B'];
+        yield 'keyword not as a target of a union' => ['T is not|int ? A : B'];
         yield 'elvis' => ['T is int ?: B'];
         yield 'two branches in a row' => ['T is int ? A, B : C'];
         yield 'trailing semicolon' => ['T is int ? A : B ;'];

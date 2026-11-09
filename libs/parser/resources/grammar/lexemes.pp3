@@ -100,6 +100,12 @@
  * -----------------------------------------------------------------------------
  */
 
+// Whitespaces and comments between the words of "is not"
+%fragment TRIVIA        (?:\s++|/\*(?:[^*]++|\*(?!/))*+\*/|(?://|#)[^\r\n]*+)
+
+// is not, is /* c */ not. It stands before "is", the longest token is read
+%token T_IS_NOT         is(?&WORD_END)(?&TRIVIA)++not(?&WORD_END)
+
 // Lower case only: IS is an ordinary name
 %token T_IS             is(?&WORD_END)
 %token T_NOT            not(?&WORD_END)
