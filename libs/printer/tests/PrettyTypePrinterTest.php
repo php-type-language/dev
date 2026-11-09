@@ -38,6 +38,7 @@ final class PrettyTypePrinterTest extends TestCase
     /**
      * @param non-empty-string $newLine
      * @param non-empty-string $indentation
+     * @param int<0, max> $maxInlineShapeFields
      */
     private function printer(
         string $newLine = "\n",
