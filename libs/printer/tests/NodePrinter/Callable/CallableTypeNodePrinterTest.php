@@ -21,6 +21,7 @@ use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Template\TemplateBoundNode;
+use TypeLang\Type\Template\TemplateBoundNode\BoundKind;
 use TypeLang\Type\Template\TemplateListNode;
 use TypeLang\Type\Template\TemplateParameterListNode;
 use TypeLang\Type\Template\TemplateParameterNode;
@@ -127,7 +128,7 @@ final class CallableTypeNodePrinterTest extends NodePrinterTestCase
             new TemplateParameterListNode([
                 new TemplateParameterNode(
                     new Identifier('T'),
-                    new TemplateBoundNode(new Identifier('of'), self::named('int')),
+                    new TemplateBoundNode(self::named('int'), BoundKind::Upper),
                 ),
             ]),
         );

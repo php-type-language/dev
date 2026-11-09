@@ -7,21 +7,19 @@ namespace TypeLang\Printer\Tests\NodePrinter\Template;
 use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\Template\TemplateBoundNodePrinter;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
-use TypeLang\Type\Identifier;
 use TypeLang\Type\Template\TemplateBoundNode;
+use TypeLang\Type\Template\TemplateBoundNode\BoundKind;
 
 #[CoversClass(TemplateBoundNodePrinter::class)]
 final class TemplateBoundNodePrinterTest extends NodePrinterTestCase
 {
-    public function testOperatorIsWrittenBeforeTheType(): void
+    public function testUpperBoundIsWrittenWithOf(): void
     {
-        self::assertSame('of int', self::pretty(new TemplateBoundNode(new Identifier('of'), self::named('int'))));
+        self::assertSame('of int', self::pretty(new TemplateBoundNode(self::named('int'), BoundKind::Upper)));
     }
 
-    public function testOperatorIsWrittenTheWayItWasWritten(): void
+    public function testLowerBoundIsWrittenWithSuper(): void
     {
-        $bound = new TemplateBoundNode(new Identifier('as'), self::named('int'));
-
-        self::assertSame('as int', self::pretty($bound));
+        self::assertSame('super int', self::pretty(new TemplateBoundNode(self::named('int'), BoundKind::Lower)));
     }
 }

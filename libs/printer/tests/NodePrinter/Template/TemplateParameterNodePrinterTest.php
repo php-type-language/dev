@@ -9,6 +9,7 @@ use TypeLang\Printer\NodePrinter\Template\TemplateParameterNodePrinter;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\Template\TemplateBoundNode;
+use TypeLang\Type\Template\TemplateBoundNode\BoundKind;
 use TypeLang\Type\Template\TemplateParameterNode;
 use TypeLang\Type\Template\VarianceNode;
 use TypeLang\Type\Template\VarianceNode\VarianceKind;
@@ -25,7 +26,7 @@ final class TemplateParameterNodePrinterTest extends NodePrinterTestCase
     {
         $parameter = new TemplateParameterNode(
             new Identifier('T'),
-            new TemplateBoundNode(new Identifier('of'), self::named('int')),
+            new TemplateBoundNode(self::named('int'), BoundKind::Upper),
         );
 
         self::assertSame('T of int', self::pretty($parameter));
@@ -35,8 +36,8 @@ final class TemplateParameterNodePrinterTest extends NodePrinterTestCase
     {
         $parameter = new TemplateParameterNode(
             new Identifier('T'),
-            new TemplateBoundNode(new Identifier('of'), self::named('int')),
-            new TemplateBoundNode(new Identifier('super'), self::named('float')),
+            new TemplateBoundNode(self::named('int'), BoundKind::Upper),
+            new TemplateBoundNode(self::named('float'), BoundKind::Lower),
         );
 
         self::assertSame('T of int super float', self::pretty($parameter));
@@ -47,7 +48,7 @@ final class TemplateParameterNodePrinterTest extends NodePrinterTestCase
         $parameter = new TemplateParameterNode(
             new Identifier('T'),
             null,
-            new TemplateBoundNode(new Identifier('super'), self::named('float')),
+            new TemplateBoundNode(self::named('float'), BoundKind::Lower),
         );
 
         self::assertSame('T super float', self::pretty($parameter));
@@ -90,8 +91,8 @@ final class TemplateParameterNodePrinterTest extends NodePrinterTestCase
     {
         $parameter = new TemplateParameterNode(
             new Identifier('T'),
-            new TemplateBoundNode(new Identifier('of'), self::named('int')),
-            new TemplateBoundNode(new Identifier('super'), self::named('float')),
+            new TemplateBoundNode(self::named('int'), BoundKind::Upper),
+            new TemplateBoundNode(self::named('float'), BoundKind::Lower),
             self::named('int'),
             new VarianceNode(VarianceKind::Contravariant),
         );
