@@ -10,7 +10,6 @@ use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Condition\ConditionalTypeNode;
 use TypeLang\Type\Condition\EqualConditionNode;
 use TypeLang\Type\Condition\NotEqualConditionNode;
-use TypeLang\Type\Name;
 use TypeLang\Type\VariableNode;
 
 #[CoversClass(ConditionalTypeNodePrinter::class)]
@@ -19,7 +18,7 @@ final class ConditionalTypeNodePrinterTest extends NodePrinterTestCase
     public function testConditionAndBothResultsAreWrittenInBrackets(): void
     {
         $type = new ConditionalTypeNode(
-            new EqualConditionNode(new VariableNode(new Name('x')), self::named('int')),
+            new EqualConditionNode(new VariableNode('x'), self::named('int')),
             self::named('A'),
             self::named('B'),
         );

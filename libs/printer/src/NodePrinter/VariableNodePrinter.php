@@ -16,6 +16,6 @@ final class VariableNodePrinter implements NodePrinterInterface
 {
     public function printNode(Node $node, PrinterContext $context): string
     {
-        return '$' . $node->name->toString();
+        return '$' . $node->name;
     }
 }

@@ -55,7 +55,7 @@ final class TriviaTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   NamedTypeNode
                     Name(int)
             AST, $this->parseAndPrint("array{\n  // the key\n  a: int,\n}"));

@@ -119,7 +119,7 @@ final class NameTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(ключ)
+                  Identifier(ключ)
                   NamedTypeNode
                     Name(int)
             AST, $this->parseAndPrint('array{ключ: int}'));

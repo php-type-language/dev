@@ -18,6 +18,7 @@ use TypeLang\Printer\PrinterOptions\ListStyle;
 use TypeLang\Type\Callable\CallableParameterListNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\Name;
@@ -446,8 +447,8 @@ final class PrettyTypePrinterTest extends TestCase
     private static function shape(): NamedTypeNode
     {
         return new NamedTypeNode(new Name('array'), null, new FieldListNode([
-            new NamedFieldNode(new Name('a'), self::named('int')),
-            new NamedFieldNode(new Name('b'), self::named('string')),
+            new NamedFieldNode(new Identifier('a'), self::named('int')),
+            new NamedFieldNode(new Identifier('b'), self::named('string')),
         ]));
     }
 

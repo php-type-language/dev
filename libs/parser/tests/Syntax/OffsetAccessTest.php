@@ -58,7 +58,7 @@ final class OffsetAccessTest extends SyntaxTestCase
                 Name(object)
                 Shape\FieldsListNode(isSealed=false)
                   Shape\NamedFieldNode(isOptional=false)
-                    Name(key)
+                    Identifier(key)
                     NamedTypeNode
                       Name(int)
               NamedTypeNode

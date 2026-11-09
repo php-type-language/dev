@@ -272,12 +272,12 @@ final class GroupingTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   NamedTypeNode
                     Name(array)
                     Shape\FieldsListNode(isSealed=true)
                       Shape\NamedFieldNode(isOptional=false)
-                        Name(b)
+                        Identifier(b)
                         NamedTypeNode
                           Name(int)
             AST, $this->parseAndPrint('array{a: array{b: int}}'));
@@ -290,7 +290,7 @@ final class GroupingTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   LogicalTypeNode\UnionTypeNode
                     NamedTypeNode
                       Name(A)

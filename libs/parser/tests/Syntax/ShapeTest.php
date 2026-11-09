@@ -25,11 +25,11 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   NamedTypeNode
                     Name(first)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(b)
+                  Identifier(b)
                   NamedTypeNode
                     Name(second)
             AST, $this->parseAndPrint('array{a: first, b: second}'));
@@ -100,7 +100,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   NamedTypeNode
                     Name(int)
             AST, $this->parseAndPrint('array{a: int,}'));
@@ -124,7 +124,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=true)
-                  Name(key)
+                  Identifier(key)
                   NamedTypeNode
                     Name(Type)
             AST, $this->parseAndPrint('array{key?: Type}'));
@@ -137,7 +137,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldListNode(isSealed=false)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(key)
+                  Identifier(key)
                   NamedTypeNode
                     Name(type)
             AST, $this->parseAndPrint('array{key: type, ...}'));
@@ -157,7 +157,7 @@ final class ShapeTest extends SyntaxTestCase
                     Name(object)
               Shape\FieldListNode(isSealed=false)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(user)
+                  Identifier(user)
                   NamedTypeNode
                     Name(User)
             AST, $this->parseAndPrint('array{user: User, ...<string, object>}'));
@@ -170,7 +170,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(App\Domain\User)
               Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(userName)
+                  Identifier(userName)
                   NamedTypeNode
                     Name(non-empty-string)
             AST, $this->parseAndPrint('App\\Domain\\User{userName: non-empty-string}'));
@@ -187,7 +187,7 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(named)
+                  Identifier(named)
                   NamedTypeNode
                     Name(first)
                 Shape\ImplicitFieldNode
@@ -206,7 +206,7 @@ final class ShapeTest extends SyntaxTestCase
                   NamedTypeNode
                     Name(int)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   NamedTypeNode
                     Name(string)
             AST, $this->parseAndPrint('array{int, a: string}'));
@@ -223,11 +223,11 @@ final class ShapeTest extends SyntaxTestCase
               Name(array)
               Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   NamedTypeNode
                     Name(int)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   NamedTypeNode
                     Name(string)
             AST, $this->parseAndPrint('array{a: int, a: string}'));
@@ -381,7 +381,7 @@ final class ShapeTest extends SyntaxTestCase
         $field = $node->fields[0];
 
         self::assertInstanceOf(\TypeLang\Type\Shape\NamedFieldNode::class, $field);
-        self::assertInstanceOf(\TypeLang\Type\Name::class, $field->key);
+        self::assertInstanceOf(\TypeLang\Type\Identifier::class, $field->key);
         self::assertSame($key, $field->key->toString());
         self::assertSame($isOptional, $field->isOptional);
     }

@@ -200,7 +200,7 @@ final class StringDumperVisitorTest extends TestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=true)
-                  Name(foo)
+                  Identifier(foo)
                   NamedTypeNode
                     Name(int)
 

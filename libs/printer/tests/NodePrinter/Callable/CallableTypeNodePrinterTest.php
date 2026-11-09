@@ -14,6 +14,7 @@ use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Callable\CallableParameterListNode;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\NamedTypeNode;
@@ -111,7 +112,7 @@ final class CallableTypeNodePrinterTest extends NodePrinterTestCase
     public function testReturnedTypeWithAUnionInItsShapeIsNotWrapped(): void
     {
         $return = new NamedTypeNode(new Name('array'), null, new FieldListNode([
-            new NamedFieldNode(new Name('a'), self::union(self::named('A'), self::named('B'))),
+            new NamedFieldNode(new Identifier('a'), self::union(self::named('A'), self::named('B'))),
         ]));
 
         self::assertSame('callable(): array{a: A|B}', self::pretty(self::callable($return)));
@@ -125,8 +126,8 @@ final class CallableTypeNodePrinterTest extends NodePrinterTestCase
             self::named('void'),
             new TemplateParameterListNode([
                 new TemplateParameterNode(
-                    new Name('T'),
-                    new TemplateBoundNode(new Name('of'), self::named('int')),
+                    new Identifier('T'),
+                    new TemplateBoundNode(new Identifier('of'), self::named('int')),
                 ),
             ]),
         );

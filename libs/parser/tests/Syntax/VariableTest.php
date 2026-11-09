@@ -85,7 +85,7 @@ final class VariableTest extends SyntaxTestCase
               Name(array)
               Shape\FieldsListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
-                  Name(a)
+                  Identifier(a)
                   ThisNode
             AST, $this->parseAndPrint('array{a: $this}'));
     }

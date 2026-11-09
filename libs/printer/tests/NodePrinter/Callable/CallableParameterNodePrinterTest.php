@@ -11,7 +11,6 @@ use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\DefaultValueNode;
 use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\Name;
 use TypeLang\Type\VariableNode;
 
 #[CoversClass(CallableParameterNodePrinter::class)]
@@ -23,7 +22,7 @@ final class CallableParameterNodePrinterTest extends NodePrinterTestCase
     public static function parametersDataProvider(): iterable
     {
         $int = self::named('int');
-        $name = new VariableNode(new Name('value'));
+        $name = new VariableNode('value');
 
         yield 'type only' => [new CallableParameterNode($int), 'int'];
         yield 'type and name' => [new CallableParameterNode($int, $name), 'int $value'];
