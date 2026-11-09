@@ -40,6 +40,7 @@ use TypeLang\Type\Template\VarianceNode;
 use TypeLang\Type\Template\VarianceNode\VarianceKind;
 use TypeLang\Type\Template\WildcardTemplateArgumentNode;
 use TypeLang\Type\Template\TemplateBoundNode;
+use TypeLang\Type\Template\TemplateBoundNode\BoundKind;
 use TypeLang\Type\Template\TemplateParameterListNode;
 use TypeLang\Type\Template\TemplateParameterNode;
 use TypeLang\Type\Condition\ConditionalTypeNode;
@@ -124,7 +125,7 @@ final class NodeTest extends TestCase
         yield TypedTemplateArgumentNode::class => [new TypedTemplateArgumentNode(self::type())];
         yield WildcardTemplateArgumentNode::class => [new WildcardTemplateArgumentNode()];
         yield VarianceNode::class => [new VarianceNode(VarianceKind::Covariant)];
-        yield TemplateBoundNode::class => [new TemplateBoundNode(new Identifier('of'), self::type())];
+        yield TemplateBoundNode::class => [new TemplateBoundNode(self::type(), BoundKind::Upper)];
         yield TemplateParameterListNode::class => [
             new TemplateParameterListNode([new TemplateParameterNode(new Identifier('T'))]),
         ];
@@ -226,7 +227,7 @@ final class NodeTest extends TestCase
         yield WildcardTemplateArgumentNode::class => [new WildcardTemplateArgumentNode(42)];
         yield VarianceNode::class => [new VarianceNode(VarianceKind::Covariant, 42)];
         yield TemplateBoundNode::class => [
-            new TemplateBoundNode(new Identifier('of'), self::type(), 42),
+            new TemplateBoundNode(self::type(), BoundKind::Upper, 42),
         ];
         yield TemplateParameterListNode::class => [
             new TemplateParameterListNode([new TemplateParameterNode(new Identifier('T'))], 42),

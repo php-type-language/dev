@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type\Template;
 
 use TypeLang\Type\Identifier;
+use TypeLang\Type\Template\TemplateBoundNode\BoundKind;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -25,6 +26,7 @@ final class TemplateParameterNode extends TemplateNode
 {
     /**
      * @param int<0, max> $offset
+     * @throws \InvalidArgumentException in case of the upper bound is not an upper one or the lower bound is not a lower one
      */
     public function __construct(
         public Identifier $name,
@@ -57,6 +59,14 @@ final class TemplateParameterNode extends TemplateNode
         public ?VarianceNode $variance = null,
         int $offset = 0,
     ) {
+        if ($upper !== null && $upper->kind !== BoundKind::Upper) {
+            throw new \InvalidArgumentException('The upper bound of a template parameter must be an upper one');
+        }
+
+        if ($lower !== null && $lower->kind !== BoundKind::Lower) {
+            throw new \InvalidArgumentException('The lower bound of a template parameter must be a lower one');
+        }
+
         parent::__construct($offset);
     }
 }

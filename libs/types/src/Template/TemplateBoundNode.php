@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Template;
 
-use TypeLang\Type\Identifier;
 use TypeLang\Type\Node;
+use TypeLang\Type\Template\TemplateBoundNode\BoundKind;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -24,8 +24,12 @@ final class TemplateBoundNode extends Node
      * @param int<0, max> $offset
      */
     public function __construct(
-        public Identifier $operator,
         public TypeNode $type,
+        /**
+         * The end of the bound: `of` and `as` bound from above, `super` from
+         * below.
+         */
+        public BoundKind $kind,
         int $offset = 0,
     ) {
         parent::__construct($offset);
