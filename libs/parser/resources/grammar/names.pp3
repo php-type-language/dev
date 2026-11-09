@@ -15,6 +15,9 @@ Word
   | <T_OF>
   | <T_AS>
   | <T_SUPER>
+  | <T_COVARIANT>
+  | <T_CONTRAVARIANT>
+  | <T_INVARIANT>
   | <T_TRUE>
   | <T_FALSE>
   | <T_NULL>

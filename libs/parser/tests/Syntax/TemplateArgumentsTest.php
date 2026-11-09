@@ -22,6 +22,7 @@ use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Template\TemplateListNode;
 use TypeLang\Type\Template\TypedTemplateArgumentNode;
+use TypeLang\Type\Template\VarianceNode;
 use TypeLang\Type\Template\WildcardTemplateArgumentNode;
 use TypeLang\Type\ThisTypeNode;
 use TypeLang\Type\TypeNode;
@@ -103,13 +104,36 @@ final class TemplateArgumentsTest extends TestCase
     {
         yield 'covariant' => ['Foo<covariant T>', 'covariant', 'T'];
         yield 'contravariant' => ['Foo<contravariant T>', 'contravariant', 'T'];
-        yield 'in' => ['Foo<in T>', 'in', 'T'];
-        yield 'out' => ['Foo<out T>', 'out', 'T'];
-        yield 'any word' => ['Foo<A B>', 'A', 'B'];
-        yield 'keyword is' => ['Foo<is T>', 'is', 'T'];
-        yield 'keyword of' => ['Foo<of T>', 'of', 'T'];
-        yield 'keyword as' => ['Foo<as T>', 'as', 'T'];
-        yield 'keyword super' => ['Foo<super T>', 'super', 'T'];
+        yield 'invariant' => ['Foo<invariant T>', 'invariant', 'T'];
+    }
+
+    /**
+     * Only covariant, contravariant and invariant are the variances.
+     *
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function notVarianceDataProvider(): iterable
+    {
+        yield 'in' => ['Foo<in T>'];
+        yield 'out' => ['Foo<out T>'];
+        yield 'any word' => ['Foo<A B>'];
+        yield 'keyword is' => ['Foo<is T>'];
+        yield 'keyword of' => ['Foo<of T>'];
+        yield 'keyword as' => ['Foo<as T>'];
+        yield 'keyword super' => ['Foo<super T>'];
+        yield 'variance in upper case' => ['Foo<COVARIANT T>'];
+        yield 'variance in camel case' => ['Foo<Covariant T>'];
+    }
+
+    /**
+     * @param non-empty-string $source
+     */
+    #[DataProvider('notVarianceDataProvider')]
+    public function testWordIsNotAVariance(string $source): void
+    {
+        $this->expectException(\Throwable::class);
+
+        $this->parse($source);
     }
 
     /**
@@ -129,7 +153,8 @@ final class TemplateArgumentsTest extends TestCase
         $arg = $node->arguments[0];
         self::assertInstanceOf(TypedTemplateArgumentNode::class, $arg);
         self::assertNotNull($arg->variance);
-        self::assertSame($expectedVariance, $arg->variance->toString());
+        self::assertInstanceOf(VarianceNode::class, $arg->variance);
+        self::assertSame($expectedVariance, $arg->variance->kind->value);
         self::assertInstanceOf(NamedTypeNode::class, $arg->value);
         self::assertSame($expectedTypeName, $arg->value->name->toString());
     }

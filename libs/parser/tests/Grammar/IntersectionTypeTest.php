@@ -126,7 +126,7 @@ final class IntersectionTypeTest extends GrammarTestCase
         yield 'ampersand with a colon' => ['A&:B'];
         yield 'ampersand with a star' => ['A&*'];
         yield 'type behind' => ['A&B C'];
-        yield 'type behind the group' => ['A&B (C)'];
+        yield 'list behind the group' => ['A&B[] (C)'];
         yield 'type in front' => ['A B&C'];
         yield 'a comma' => ['A&B,C'];
         yield 'comment swallows the second type' => ['A& // B'];

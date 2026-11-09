@@ -61,7 +61,8 @@ final class GroupTest extends GrammarTestCase
         yield 'two types' => ['(int string)'];
         yield 'two groups' => ['(int) (string)'];
         yield 'two groups with no space' => ['(int)(string)'];
-        yield 'type and group' => ['int (string)'];
+        yield 'list and group' => ['int[] (string)'];
+        yield 'literal and group' => ['42 (string)'];
         yield 'group and type' => ['(int) string'];
         yield 'comment swallows the bracket' => ['(int // )'];
         yield 'bracket in a comment only' => ['(int /* ) */'];

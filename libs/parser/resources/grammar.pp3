@@ -66,7 +66,8 @@ Atom
  */
 
 
-// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*, Foo<T>, \Foo\Bar<T, U>, Foo{...}, \Foo\Bar{...}
+// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*, Foo<T>, \Foo\Bar<T, U>, Foo{...}, \Foo\Bar{...},
+// Foo(int): void
 NamedType -> {
     $name = $children[0];
     $second = $children[1] ?? null;
@@ -78,6 +79,8 @@ NamedType -> {
         $second instanceof Type\Template\TemplateListNode => new Type\NamedTypeNode($name, $second, null, $offset),
         // Foo{...}, Foo{...<K, V>}
         $second instanceof Type\Shape\FieldListNode => new Type\NamedTypeNode($name, $children[2] ?? null, $second, $offset),
+        // Foo(int): void, Foo()
+        $second instanceof Type\Callable\CallableParameterListNode => new Type\Callable\CallableTypeNode($name, $second, $children[2] ?? null, null, $offset),
         // Foo::BAR, a lone word is a constant
         $second instanceof Type\Identifier => new Type\Constant\ClassConstTypeNode($name, $second, $offset),
         // Foo::BAR_*, anything else is a mask of constants
@@ -88,6 +91,7 @@ NamedType -> {
       ::T_DOUBLE_COLON:: ConstantMask()
       | TemplateArguments()
       | ShapeFields()
+      | CallableSignature()
     )?
   ;
 

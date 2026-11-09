@@ -112,9 +112,10 @@
  * -----------------------------------------------------------------------------
  *  Other Keywords
  *
- *  The words `is`, `not`, `of`, `as`, `super` have a meaning in their own
- *  position only. The rule of a name accepts them too, in any other position
- *  they are ordinary names. Lower case only, `IS` is an ordinary name.
+ *  The words `is`, `not`, `of`, `as`, `super`, `covariant`, `contravariant`
+ *  and `invariant` have a meaning in their own position only. The rule of a
+ *  name accepts them too, in any other position they are ordinary names. Lower
+ *  case only, `IS` is an ordinary name.
  * -----------------------------------------------------------------------------
  */
 
@@ -124,6 +125,11 @@
 %token T_OF             of(?&WORD_END)
 %token T_AS             as(?&WORD_END)
 %token T_SUPER          super(?&WORD_END)
+
+// The variance of a template argument or a template parameter
+%token T_COVARIANT      covariant(?&WORD_END)
+%token T_CONTRAVARIANT  contravariant(?&WORD_END)
+%token T_INVARIANT      invariant(?&WORD_END)
 
 
 /**

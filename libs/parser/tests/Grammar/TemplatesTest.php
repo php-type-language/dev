@@ -31,10 +31,15 @@ final class TemplatesTest extends GrammarTestCase
         yield 'wildcard behind an argument' => ['Foo<int, *>'];
         yield 'covariant' => ['Foo<covariant T>'];
         yield 'contravariant and covariant' => ['Foo<contravariant T, covariant U>'];
-        yield 'any word as a variance' => ['Foo<in T>'];
+        yield 'invariant' => ['Foo<invariant T>'];
         yield 'variance and a wildcard' => ['Foo<covariant A, contravariant B, *>'];
-        yield 'two names, the first is a variance' => ['Foo<A B>'];
+        yield 'variance and a group' => ['Foo<covariant (A|B)>'];
+        yield 'variance and a group with no space' => ['Foo<covariant(A|B)>'];
         yield 'callable is not a variance' => ['Foo<callable(int): void>'];
+        yield 'any other word before a group is a callable' => ['Foo<in (A|B)>'];
+        yield 'variance word as a name' => ['Foo<covariant>'];
+        yield 'variance word as a name behind a comma' => ['Foo<A, invariant>'];
+        yield 'variance word as a type of a variance' => ['Foo<covariant covariant>'];
 
         yield 'keyword is' => ['Foo<is>'];
         yield 'keyword not' => ['Foo<not>'];
@@ -89,7 +94,12 @@ final class TemplatesTest extends GrammarTestCase
         yield 'unclosed' => ['Foo<int'];
         yield 'extra bracket' => ['Foo<int>>'];
         yield 'three names' => ['Foo<A B C>'];
-        yield 'question mark' => ['Foo<?>'];
+        yield 'two names, the first is no variance' => ['Foo<A B>'];
+        yield 'in is no variance' => ['Foo<in T>'];
+        yield 'out is no variance' => ['Foo<out T>'];
+        yield 'keyword is is no variance' => ['Foo<is T>'];
+        yield 'variance in upper case' => ['Foo<COVARIANT T>'];
+        yield 'two variances' => ['Foo<covariant contravariant T>'];        yield 'question mark' => ['Foo<?>'];
         yield 'colon' => ['Foo<T: int>'];
         yield 'assignment' => ['Foo<T = int>'];
         yield 'bound' => ['Foo<T of int>'];

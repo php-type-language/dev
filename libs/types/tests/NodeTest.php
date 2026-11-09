@@ -36,6 +36,8 @@ use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Shape\ScalarFieldNode;
 use TypeLang\Type\Template\TemplateListNode;
 use TypeLang\Type\Template\TypedTemplateArgumentNode;
+use TypeLang\Type\Template\VarianceNode;
+use TypeLang\Type\Template\VarianceNode\VarianceKind;
 use TypeLang\Type\Template\WildcardTemplateArgumentNode;
 use TypeLang\Type\Template\TemplateBoundNode;
 use TypeLang\Type\Template\TemplateParameterListNode;
@@ -121,6 +123,7 @@ final class NodeTest extends TestCase
         ];
         yield TypedTemplateArgumentNode::class => [new TypedTemplateArgumentNode(self::type())];
         yield WildcardTemplateArgumentNode::class => [new WildcardTemplateArgumentNode()];
+        yield VarianceNode::class => [new VarianceNode(VarianceKind::Covariant)];
         yield TemplateBoundNode::class => [new TemplateBoundNode(new Identifier('of'), self::type())];
         yield TemplateParameterListNode::class => [
             new TemplateParameterListNode([new TemplateParameterNode(new Identifier('T'))]),
@@ -221,6 +224,7 @@ final class NodeTest extends TestCase
         ];
         yield TypedTemplateArgumentNode::class => [new TypedTemplateArgumentNode(self::type(), offset: 42)];
         yield WildcardTemplateArgumentNode::class => [new WildcardTemplateArgumentNode(42)];
+        yield VarianceNode::class => [new VarianceNode(VarianceKind::Covariant, 42)];
         yield TemplateBoundNode::class => [
             new TemplateBoundNode(new Identifier('of'), self::type(), 42),
         ];

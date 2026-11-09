@@ -1,7 +1,80 @@
 /**
  * -----------------------------------------------------------------------------
  *  Callable Types
+ *
+ *  A callable is a name with the list of parameters behind it and, maybe, the
+ *  return type: "callable(int $a): void", "Closure(): int", "foo(T)". It is a
+ *  part of a named type, the name stands in front of the parentheses.
  * -----------------------------------------------------------------------------
  */
 
-// TODO
+
+// (int $a, string ...$b): void, (int), (): void. The return type is one type
+// with the suffixes, so "callable(): int|string" is "(callable(): int)|string"
+CallableSignature
+  : CallableParameters() (::T_COLON:: NullableType())?
+  ;
+
+// (), (int), (int $a, string $b,)
+CallableParameters -> {
+    if (!$this->features->callables) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('callables', $ctx);
+    }
+
+    return new Type\Callable\CallableParameterListNode($children, $offset);
+}
+  : ::T_PAREN_OPEN::
+        (CallableParameter() (::T_COMMA:: CallableParameter())* ::T_COMMA::?)?
+    ::T_PAREN_CLOSE::
+  ;
+
+// int, int $a, int &$a, int ...$a, int &...$a, int=, int $a = 42, $a, &$a, ...$a, ...int
+CallableParameter -> {
+    $type = null;
+    $name = null;
+    $default = null;
+    $isOutput = false;
+    $isVariadic = false;
+
+    foreach ($children as $child) {
+        if ($child instanceof Type\TypeNode) {
+            $type = $child;
+        } elseif ($child instanceof Type\VariableNode) {
+            $name = $child;
+        } elseif ($child instanceof Type\Callable\DefaultValueNode) {
+            $default = $child;
+        } elseif ($child->id === self::T_AMPERSAND) {
+            $isOutput = true;
+        } else {
+            $isVariadic = true;
+        }
+    }
+
+    return new Type\Callable\CallableParameterNode($type, $name, $isOutput, $isVariadic, $default, $offset);
+}
+  : Type() <T_AMPERSAND>? (<T_ELLIPSIS> Variable()? | Variable()? CallableDefault()?)
+  | <T_AMPERSAND>? (<T_ELLIPSIS> Variable() | Variable() CallableDefault()?)
+  | <T_ELLIPSIS> Type()
+  ;
+
+// = 42, = Foo::BAR, = null, =. A literal or a constant, no expressions
+CallableDefault -> {
+    if (!$this->features->defaults) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('defaults', $ctx);
+    }
+
+    return new Type\Callable\DefaultValueNode($children[1] ?? null, $offset);
+}
+  : <T_ASSIGN> (Literal() | CallableConstant())?
+  ;
+
+// FOO, \PHP_EOL, Foo::BAR, Foo::class
+CallableConstant -> {
+    if (isset($children[1])) {
+        return new Type\Constant\ClassConstTypeNode($children[0], $children[1], $offset);
+    }
+
+    return new Type\NamedTypeNode($children[0], null, null, $offset);
+}
+  : Name() (::T_DOUBLE_COLON:: Identifier())?
+  ;

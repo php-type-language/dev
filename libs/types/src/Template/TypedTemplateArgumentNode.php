@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Template;
 
-use TypeLang\Type\Identifier;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -25,18 +24,15 @@ final class TypedTemplateArgumentNode extends TemplateArgumentNode
     public function __construct(
         public TypeNode $value,
         /**
-         * Word standing in front of the argument, or {@see null} in case of it
-         * carries none, which makes the argument invariant.
-         *
-         * What the word means is left to whoever reads the tree. A `covariant`
-         * or an `out` is an ordinary identifier as far as the grammar goes.
+         * Variance standing in front of the argument, or {@see null} in case of
+         * it carries none, which makes the argument invariant.
          *
          * ```
          *  Some\Any<covariant string>
          *  //       ^^^^^^^^^ the variance
          * ```
          */
-        public ?Identifier $variance = null,
+        public ?VarianceNode $variance = null,
         int $offset = 0,
     ) {
         parent::__construct($offset);

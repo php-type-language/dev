@@ -197,9 +197,11 @@ final class NamedTypeTest extends GrammarTestCase
         yield 'comment behind' => ['Foo<A/* c */>'];
         yield 'comment in front' => ['Foo</* c */A>'];
 
-        // A word in front of a type is a variance
+        // covariant, contravariant and invariant in front of a type are a variance
         yield 'variance and a name' => ['Foo<covariant T>'];
-        yield 'variance and a list' => ['Foo<A B[]>'];
+        yield 'contravariance and a name' => ['Foo<contravariant T>'];
+        yield 'invariance and a name' => ['Foo<invariant T>'];
+        yield 'variance and a list' => ['Foo<covariant B[]>'];
         yield 'variance and a group of a union' => ['Foo<covariant (A|B)>'];
         yield 'variance and a class constant' => ['Foo<covariant A::B>'];
         yield 'variance and a qualified name' => ['Foo<covariant A\\B>'];
@@ -211,6 +213,8 @@ final class NamedTypeTest extends GrammarTestCase
 
         // A lone word is a name, not a variance
         yield 'lone covariant' => ['Foo<covariant>'];
+        yield 'lone contravariant' => ['Foo<contravariant>'];
+        yield 'lone invariant' => ['Foo<invariant>'];
         yield 'lone in' => ['Foo<in>'];
     }
 
@@ -221,9 +225,8 @@ final class NamedTypeTest extends GrammarTestCase
     }
 
     /**
-     * What is accepted now and is not decided yet (questions 6 and 7 of
-     * grammar-questions.md): a gap before the opening symbol, a word and a
-     * group behind it read as a variance and a type.
+     * A gap, a line break and a comment are allowed before the opening symbol
+     * and behind a variance (question 7 of grammar-questions.md).
      *
      * @return iterable<non-empty-string, array{string}>
      */
@@ -235,12 +238,16 @@ final class NamedTypeTest extends GrammarTestCase
         yield 'space before the fields' => ['array {a: int}'];
         yield 'line break before the fields' => ["array\n{a: int}"];
         yield 'comment before the fields' => ['array/* c */{a: int}'];
-        yield 'group behind a variance' => ['Foo<A (B)>'];
+        yield 'space before the parameters' => ['callable (int)'];
+        yield 'group behind a variance' => ['Foo<covariant (A)>'];
         yield 'group behind a variance in a union' => ['Foo<covariant (A|B)>'];
-        yield 'call-like type behind a variance' => ['Foo<callable(int)>'];
-        yield 'call-like type with a space behind a variance' => ['Foo<callable (int)>'];
-        yield 'line break behind a variance' => ["Foo<A\nB>"];
-        yield 'comment behind a variance' => ['Foo<A/* c */B>'];
+        yield 'group behind a variance with no space' => ['Foo<covariant(A|B)>'];
+        yield 'callable of a word that is no variance' => ['Foo<A (B)>'];
+        yield 'callable of in' => ['Foo<in (A|B)>'];
+        yield 'call-like type' => ['Foo<callable(int)>'];
+        yield 'call-like type with a space' => ['Foo<callable (int)>'];
+        yield 'line break behind a variance' => ["Foo<covariant\nB>"];
+        yield 'comment behind a variance' => ['Foo<covariant/* c */B>'];
     }
 
     #[DataProvider('validGapDataProvider')]

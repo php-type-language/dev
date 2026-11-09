@@ -33,6 +33,9 @@ WildcardTemplateArgument -> {
   : <T_WILDCARD>
   ;
 
+// T, covariant T, callable(int): void. Only the words covariant, contravariant
+// and invariant are the variances: "covariant (A|B)" is a variance and a group,
+// "in (A|B)" is a callable named "in"
 TypedTemplateArgument -> {
     if (\is_array($children)) {
         if (!$this->features->hints) {
@@ -44,6 +47,21 @@ TypedTemplateArgument -> {
 
     return new Type\Template\TypedTemplateArgumentNode($children, null, $offset);
 }
-  : (Identifier() Type())
+  : (Variance() Type())
   | Type()
+  ;
+
+// covariant, contravariant, invariant
+Variance -> {
+    $kind = match ($children->id) {
+        self::T_COVARIANT => Type\Template\VarianceNode\VarianceKind::Covariant,
+        self::T_CONTRAVARIANT => Type\Template\VarianceNode\VarianceKind::Contravariant,
+        default => Type\Template\VarianceNode\VarianceKind::Invariant,
+    };
+
+    return new Type\Template\VarianceNode($kind, $offset);
+}
+  : <T_COVARIANT>
+  | <T_CONTRAVARIANT>
+  | <T_INVARIANT>
   ;

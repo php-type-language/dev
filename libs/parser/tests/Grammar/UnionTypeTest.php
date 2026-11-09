@@ -172,7 +172,7 @@ final class UnionTypeTest extends GrammarTestCase
         yield 'bar with a colon' => ['A|:B'];
         yield 'bar with a star' => ['A|*'];
         yield 'type behind' => ['A|B C'];
-        yield 'type behind the group' => ['A|B (C)'];
+        yield 'list behind the group' => ['A|B[] (C)'];
         yield 'type in front' => ['A B|C'];
         yield 'a comma' => ['A|B,C'];
         yield 'comment swallows the second type' => ['A| // B'];

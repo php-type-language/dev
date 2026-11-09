@@ -53,11 +53,8 @@ final class TemplateParameterNode extends TemplateNode
         /**
          * Declaration-site variance of the parameter, or {@see null} in case of
          * it carries none, which makes the parameter invariant.
-         *
-         * What the word means is left to whoever reads the tree. A `covariant`
-         * or an `out` is an ordinary identifier as far as the tree goes.
          */
-        public ?Identifier $variance = null,
+        public ?VarianceNode $variance = null,
         int $offset = 0,
     ) {
         parent::__construct($offset);
