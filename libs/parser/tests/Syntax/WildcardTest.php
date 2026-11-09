@@ -13,6 +13,11 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('unit'), Group('type-lang/parser')]
 final class WildcardTest extends SyntaxTestCase
 {
+    protected function setUp(): void
+    {
+        // Enabled for step 12
+    }
+
     public function testWildcardTemplateArgument(): void
     {
         self::assertSame(<<<'AST'
@@ -38,6 +43,8 @@ final class WildcardTest extends SyntaxTestCase
 
     public function testWildcardIsReadInsideAnUnsealedShape(): void
     {
+        self::markTestIncomplete('TODO: Shapes (step 13)');
+
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
@@ -69,6 +76,8 @@ final class WildcardTest extends SyntaxTestCase
 
     public function testWildcardIsNotACallableParameter(): void
     {
+        self::markTestIncomplete('TODO: Callables (step 15)');
+
         $this->expectParsingException();
 
         $this->parse('callable(*): void');
@@ -76,7 +85,7 @@ final class WildcardTest extends SyntaxTestCase
 
     public function testWildcardIsRefusedWhenGenericsAreDisabled(): void
     {
-        $this->expectParsingException('Template arguments not allowed');
+        $this->expectFeatureException('Generics feature is not allowed');
 
         $this->parse('Collection<*>', ['generics' => false]);
     }

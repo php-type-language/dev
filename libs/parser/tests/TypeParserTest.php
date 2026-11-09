@@ -43,14 +43,14 @@ final class TypeParserTest extends TestCase
     {
         $parser = new TypeParser();
 
-        self::assertNotSame($parser, $parser->withFeatures(shapes: false));
+        self::assertNotSame($parser, $parser->with(shapes: false));
     }
 
     #[Test]
     public function withFeaturesDoesNotModifyTheOriginalParser(): void
     {
         $parser = new TypeParser();
-        $parser->withFeatures(shapes: false);
+        $parser->with(shapes: false);
 
         self::assertTrue($parser->features->shapes);
     }
@@ -58,7 +58,7 @@ final class TypeParserTest extends TestCase
     #[Test]
     public function withFeaturesOverridesTheGivenFeature(): void
     {
-        $parser = (new TypeParser())->withFeatures(shapes: false);
+        $parser = (new TypeParser())->with(shapes: false);
 
         self::assertFalse($parser->features->shapes);
     }
@@ -67,7 +67,7 @@ final class TypeParserTest extends TestCase
     public function withFeaturesKeepsTheNonSpecifiedFeatures(): void
     {
         $parser = (new TypeParser(new TypeParserFeatures(literals: false)))
-            ->withFeatures(shapes: false);
+            ->with(shapes: false);
 
         self::assertFalse($parser->features->literals);
         self::assertTrue($parser->features->generics);
@@ -76,7 +76,7 @@ final class TypeParserTest extends TestCase
     #[Test]
     public function withFeaturesAffectsTheParsingBehaviour(): void
     {
-        $parser = (new TypeParser())->withFeatures(shapes: false);
+        $parser = (new TypeParser())->with(shapes: false);
 
         $this->expectException(ParserException::class);
 
@@ -87,7 +87,7 @@ final class TypeParserTest extends TestCase
     public function theOriginalParserKeepsItsParsingBehaviour(): void
     {
         $parser = new TypeParser();
-        $parser->withFeatures(shapes: false);
+        $parser->with(shapes: false);
 
         self::assertInstanceOf(NamedTypeNode::class, $parser->parse('array{a: int}'));
     }
@@ -112,7 +112,7 @@ final class TypeParserTest extends TestCase
     public function theSourceFactoryIsInheritedByTheNewInstance(): void
     {
         $parser = (new TypeParser(sources: SourceFactory::createDefault()))
-            ->withFeatures(shapes: false);
+            ->with(shapes: false);
 
         self::assertInstanceOf(NamedTypeNode::class, $parser->parse('int'));
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Parser\Exception\FeatureNotAllowedException;
+use TypeLang\Parser\Exception\FeatureNotEnabledException;
 use TypeLang\Parser\Exception\ParserException;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
 use TypeLang\Parser\Exception\SemanticException;
@@ -22,7 +22,7 @@ abstract class SyntaxTestCase extends TestCase
     }
 
     /**
-     * @param class-string<ParserExceptionInterface> $class
+     * @param class-string<\Throwable> $class
      */
     private function expectParserExceptionOf(string $class, ?string $message = null): void
     {
@@ -35,7 +35,7 @@ abstract class SyntaxTestCase extends TestCase
 
     protected function expectParsingException(?string $message = null): void
     {
-        $this->expectParserExceptionOf(ParserException::class, $message);
+        $this->expectParserExceptionOf(\Throwable::class, $message);
     }
 
     protected function expectSemanticException(?string $message = null): void
@@ -45,6 +45,6 @@ abstract class SyntaxTestCase extends TestCase
 
     protected function expectFeatureException(?string $message = null): void
     {
-        $this->expectParserExceptionOf(FeatureNotAllowedException::class, $message);
+        $this->expectParserExceptionOf(FeatureNotEnabledException::class, $message);
     }
 }

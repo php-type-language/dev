@@ -46,7 +46,7 @@ final class TypeParser implements TypeParserInterface
      * );
      * ```
      */
-    public function withFeatures(bool ...$features): self
+    public function with(bool ...$features): self
     {
         return new self(
             features: $this->features->with(...$features),

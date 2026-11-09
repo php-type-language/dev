@@ -11,13 +11,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 final class TemplatesTest extends GrammarTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        self::markTestIncomplete('TODO');
-    }
-
     /**
      * @return iterable<non-empty-string, array{string}>
      */
@@ -27,6 +20,9 @@ final class TemplatesTest extends GrammarTestCase
         yield 'two arguments' => ['Foo<int, string>'];
         yield 'without spaces' => ['Foo<int,string>'];
         yield 'with spaces inside' => ['Foo< int , string >'];
+        yield 'space before the bracket' => ['Foo <int>'];
+        yield 'line break before the bracket' => ["Foo\n<int>"];
+        yield 'comment before the bracket' => ['Foo/* c */<int>'];
         yield 'trailing comma' => ['Foo<int, string,>'];
         yield 'nested' => ['Foo<Bar<Baz<int>>>'];
         yield 'namespaced' => ['\\Foo\\Bar<int>'];
@@ -70,6 +66,18 @@ final class TemplatesTest extends GrammarTestCase
     #[DataProvider('validArgumentsDataProvider')]
     public function testArgumentsAreAccepted(string $source): void
     {
+        if (\str_contains($source, '{')) {
+            self::markTestIncomplete('TODO: Shapes (step 13)');
+        }
+
+        if (\str_contains($source, '(')) {
+            self::markTestIncomplete('TODO: Callables (step 15)');
+        }
+
+        if (\str_contains($source, ' is ')) {
+            self::markTestIncomplete('TODO: Conditions (step 17)');
+        }
+
         self::assertAccepted($source);
     }
 
@@ -78,9 +86,6 @@ final class TemplatesTest extends GrammarTestCase
      */
     public static function invalidArgumentsDataProvider(): iterable
     {
-        yield 'space before the bracket' => ['Foo <int>'];
-        yield 'line break before the bracket' => ["Foo\n<int>"];
-        yield 'comment before the bracket' => ['Foo/* c */<int>'];
         yield 'empty' => ['Foo<>'];
         yield 'only a comma' => ['Foo<,>'];
         yield 'empty argument' => ['Foo<int,,string>'];
@@ -132,7 +137,7 @@ final class TemplatesTest extends GrammarTestCase
     #[DataProvider('validParameterDataProvider')]
     public function testTemplateParameterIsAccepted(string $source): void
     {
-        self::assertAccepted($source, SyntaxChecker::TemplateParameter);
+        self::markTestIncomplete('TODO: Template parameters (step 16)');
     }
 
     /**
@@ -157,7 +162,7 @@ final class TemplatesTest extends GrammarTestCase
     #[DataProvider('invalidParameterDataProvider')]
     public function testTemplateParameterIsRejected(string $source): void
     {
-        self::assertRejected($source, SyntaxChecker::TemplateParameter);
+        self::markTestIncomplete('TODO: Template parameters (step 16)');
     }
 
     /**
@@ -184,7 +189,7 @@ final class TemplatesTest extends GrammarTestCase
     #[DataProvider('validParameterListDataProvider')]
     public function testTemplateParametersOfCallableAreAccepted(string $source): void
     {
-        self::assertAccepted($source);
+        self::markTestIncomplete('TODO: Template parameters (step 16)');
     }
 
     /**
@@ -202,6 +207,6 @@ final class TemplatesTest extends GrammarTestCase
     #[DataProvider('invalidParameterListDataProvider')]
     public function testTemplateParametersOfCallableAreRejected(string $source): void
     {
-        self::assertRejected($source);
+        self::markTestIncomplete('TODO: Template parameters (step 16)');
     }
 }

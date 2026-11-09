@@ -207,7 +207,7 @@ final class SuffixFeatureTest extends TestCase
 
     public function testFeaturesAreChangedWithTheParser(): void
     {
-        $parser = (new TypeParser())->withFeatures(lists: false);
+        $parser = (new TypeParser())->with(lists: false);
 
         self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $parser->parse('T[K]'));
 
@@ -218,7 +218,7 @@ final class SuffixFeatureTest extends TestCase
 
     public function testDefaultParserIsNotAffectedByAnotherOne(): void
     {
-        (new TypeParser())->withFeatures(lists: false, offsets: false, nullables: false, intersections: false, unions: false);
+        (new TypeParser())->with(lists: false, offsets: false, nullables: false, intersections: false, unions: false);
 
         self::assertInstanceOf(TypesListTypeNode::class, (new TypeParser())->parse('int[]'));
     }

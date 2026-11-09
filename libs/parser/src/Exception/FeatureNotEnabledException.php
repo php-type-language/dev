@@ -36,6 +36,9 @@ final class FeatureNotEnabledException extends ParsingException
         return new self(new ParsingErrorRange($offset, $length), $source, $message);
     }
 
+    /**
+     * @param non-empty-string $feature
+     */
     public static function becauseFeatureIsNotEnabledIn(string $feature, Context $ctx): self
     {
         return self::becauseFeatureIsNotEnabled($feature, $ctx->source, $ctx->begin, $ctx->length);

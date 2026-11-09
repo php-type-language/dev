@@ -174,25 +174,23 @@ Atom
  */
 
 
-// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*
+// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*, Foo<T>, \Foo\Bar<T, U>
 NamedType -> {
     $name = $children[0];
-    $constant = $children[1] ?? null;
+    $second = $children[1] ?? null;
 
-    // Foo, \Foo\Bar
-    if ($constant === null) {
-        return new Type\NamedTypeNode($name, null, null, $offset);
-    }
-
-    // Foo::BAR, a lone word is a constant
-    if ($constant instanceof Type\Identifier) {
-        return new Type\Constant\ClassConstTypeNode($name, $constant, $offset);
-    }
-
-    // Foo::BAR_*, anything else is a mask of constants
-    return new Type\Constant\ClassConstMaskTypeNode($name, $constant, $offset);
+    return match (true) {
+        // Foo, \Foo\Bar
+        $second === null => new Type\NamedTypeNode($name, null, null, $offset),
+        // Foo<T>, \Foo\Bar<T, U>
+        $second instanceof Type\Template\TemplateListNode => new Type\NamedTypeNode($name, $second, null, $offset),
+        // Foo::BAR, a lone word is a constant
+        $second instanceof Type\Identifier => new Type\Constant\ClassConstTypeNode($name, $second, $offset),
+        // Foo::BAR_*, anything else is a mask of constants
+        default => new Type\Constant\ClassConstMaskTypeNode($name, $second, $offset),
+    };
 }
-  : Name() (::T_DOUBLE_COLON:: ConstantMask())?
+  : Name() (::T_DOUBLE_COLON:: ConstantMask() | TemplateArguments())?
   ;
 
 /**
