@@ -45,13 +45,22 @@ final class FloatLiteralNodeTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new FloatLiteralNode($value);
+        new FloatLiteralNode($value, '1', '999');
     }
 
     #[Test]
-    public function nonFiniteValueIsAllowedWithRawText(): void
+    #[DataProvider('nonFiniteValuesDataProvider')]
+    public function nonFiniteValueRequiresMantissaAndExponent(float $value): void
     {
-        $node = new FloatLiteralNode(\INF, raw: '1e999');
+        $this->expectException(\InvalidArgumentException::class);
+
+        new FloatLiteralNode($value, raw: '1e999');
+    }
+
+    #[Test]
+    public function nonFiniteValueIsAllowedWithRawTextMantissaAndExponent(): void
+    {
+        $node = new FloatLiteralNode(\INF, '1', '999', '1e999');
 
         self::assertSame('1e999', $node->raw);
         self::assertSame('1', $node->mantissa);
@@ -59,55 +68,42 @@ final class FloatLiteralNodeTest extends TestCase
     }
 
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, numeric-string, numeric-string}>
+     * @return iterable<non-empty-string, array{float, numeric-string, numeric-string}>
      */
-    public static function mantissaAndExponentDataProvider(): iterable
+    public static function mantissaAndExponentOfValueDataProvider(): iterable
     {
-        yield 'fraction' => ['1.5', '1.5', '0'];
-        yield 'without an integer part' => ['.5', '.5', '0'];
-        yield 'without a fraction' => ['1.', '1.', '0'];
-        yield 'exponent' => ['1e3', '1', '3'];
-        yield 'exponent in upper case' => ['1E3', '1', '3'];
-        yield 'positive exponent' => ['1e+3', '1', '3'];
-        yield 'negative exponent' => ['1e-3', '1', '-3'];
-        yield 'signed mantissa' => ['+1.5', '1.5', '0'];
-        yield 'negative mantissa' => ['-1.5e2', '-1.5', '2'];
-        yield 'separators' => ['-1_0.5_0e-1_0', '-10.50', '-10'];
-        yield 'leading zeros in the mantissa' => ['-055e45', '-55', '45'];
-        yield 'leading zeros before the point' => ['00.5', '0.5', '0'];
-        yield 'zero before the point' => ['0.5', '0.5', '0'];
-        yield 'zeros only' => ['000', '0', '0'];
-        yield 'negative zero' => ['-0.0', '-0.0', '0'];
-        yield 'leading zeros in the exponent' => ['1e-007', '1', '-7'];
-        yield 'zero exponent' => ['1e+00', '1', '0'];
-        yield 'negative zero exponent' => ['1e-00', '1', '0'];
-        yield 'exponent with trailing zeros' => ['1e-100', '1', '-100'];
-        yield 'exponent out of the range of a double' => ['1e999', '1', '999'];
-        yield 'derived from value' => ['1.0E+25', '1.0', '25'];
+        yield 'fraction' => [1.5, '1.5', '0'];
+        yield 'whole number' => [100.0, '100.0', '0'];
+        yield 'negative' => [-1.5, '-1.5', '0'];
+        yield 'negative zero' => [-0.0, '-0.0', '0'];
+        yield 'large' => [1.0E+25, '1.0', '25'];
+        yield 'small' => [1.0E-7, '1.0', '-7'];
+        yield 'negative small' => [-1.5E-10, '-1.5', '-10'];
+        yield 'maximum' => [\PHP_FLOAT_MAX, '1.7976931348623157', '308'];
     }
 
     /**
-     * @param non-empty-string $raw
      * @param numeric-string $mantissa
      * @param numeric-string $exponent
      */
     #[Test]
-    #[DataProvider('mantissaAndExponentDataProvider')]
-    public function mantissaAndExponentAreTakenFromRawText(string $raw, string $mantissa, string $exponent): void
+    #[DataProvider('mantissaAndExponentOfValueDataProvider')]
+    public function mantissaAndExponentAreTakenFromValueByDefault(float $value, string $mantissa, string $exponent): void
     {
-        $node = new FloatLiteralNode(1.0, raw: $raw);
+        $node = new FloatLiteralNode($value);
 
         self::assertSame($mantissa, $node->mantissa);
         self::assertSame($exponent, $node->exponent);
     }
 
     #[Test]
-    public function mantissaAndExponentAreTakenFromValueWithNoRawText(): void
+    public function rawTextIsNotReadForMantissaAndExponent(): void
     {
-        $node = new FloatLiteralNode(1.0E+25);
+        $node = new FloatLiteralNode(1.5, raw: '15e-1');
 
-        self::assertSame('1.0', $node->mantissa);
-        self::assertSame('25', $node->exponent);
+        self::assertSame('15e-1', $node->raw);
+        self::assertSame('1.5', $node->mantissa);
+        self::assertSame('0', $node->exponent);
     }
 
     #[Test]
@@ -117,5 +113,14 @@ final class FloatLiteralNodeTest extends TestCase
 
         self::assertSame('5', $node->mantissa);
         self::assertSame('-1', $node->exponent);
+    }
+
+    #[Test]
+    public function explicitMantissaIsKeptAndExponentIsTakenFromValue(): void
+    {
+        $node = new FloatLiteralNode(1.0E+25, '10', null, '10e24');
+
+        self::assertSame('10', $node->mantissa);
+        self::assertSame('25', $node->exponent);
     }
 }

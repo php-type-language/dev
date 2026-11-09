@@ -8,19 +8,26 @@ namespace TypeLang\Type\Literal;
  * A floating point number.
  *
  * The value is the nearest double, the mantissa and the exponent keep the
- * exact number: `mantissa * 10 ** exponent`.
+ * exact number: `mantissa * 10 ** exponent`. A parser stores the nearest bound
+ * of the range (`PHP_FLOAT_MAX`) for a number out of it, never an infinity.
  *
  * ```
  *  -1_5.5e+3  // value: -15500.0, raw: "-1_5.5e+3", mantissa: "-15.5", exponent: "3"
- *  .42        // value: 0.42,     raw: ".42",       mantissa: ".42",   exponent: "0"
+ *  .42        // value: 0.42,     raw: ".42",       mantissa: "0.42",  exponent: "0"
+ *  - 1.5      // value: -1.5,     raw: "- 1.5",     mantissa: "-1.5",  exponent: "0"
  * ```
+ *
+ * A node made by hand has no text to read the exact number from, so the
+ * mantissa and the exponent are the ones of the value itself.
  *
  * @template-extends ScalarLiteralNode<float>
  */
 final class FloatLiteralNode extends ScalarLiteralNode
 {
     /**
-     * The number before the exponent, without separators.
+     * The number before the exponent, without separators and leading zeros. The
+     * integer part is always there, the point is there only with a fraction:
+     * `0.5`, `1`, `-0.10`.
      *
      * @var numeric-string
      */
@@ -34,11 +41,11 @@ final class FloatLiteralNode extends ScalarLiteralNode
     public readonly string $exponent;
 
     /**
-     * @param numeric-string|null $mantissa {@see null} to take it from the raw text
-     * @param numeric-string|null $exponent {@see null} to take it from the raw text
+     * @param numeric-string|null $mantissa {@see null} to take it from the value
+     * @param numeric-string|null $exponent {@see null} to take it from the value
      * @param non-empty-string|null $raw
      * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of a non-finite value is passed with no raw text
+     * @throws \InvalidArgumentException in case of a non-finite value is passed with no raw text, no mantissa or no exponent
      */
     public function __construct(
         float $value,
@@ -47,16 +54,19 @@ final class FloatLiteralNode extends ScalarLiteralNode
         ?string $raw = null,
         int $offset = 0,
     ) {
-        $raw ??= self::representAsRawValue($value);
+        if ($mantissa === null || $exponent === null) {
+            [$valueMantissa, $valueExponent] = self::splitValue($value);
 
-        [$rawMantissa, $rawExponent] = self::splitRawValue($raw);
+            $mantissa ??= $valueMantissa;
+            $exponent ??= $valueExponent;
+        }
 
-        $this->mantissa = $mantissa ?? $rawMantissa;
-        $this->exponent = $exponent ?? $rawExponent;
+        $this->mantissa = $mantissa;
+        $this->exponent = $exponent;
 
         parent::__construct(
             value: $value,
-            raw: $raw,
+            raw: $raw ?? self::representAsRawValue($value),
             offset: $offset,
         );
     }
@@ -76,49 +86,25 @@ final class FloatLiteralNode extends ScalarLiteralNode
     }
 
     /**
-     * @param non-empty-string $raw
+     * Splits the shortest text of the value into the mantissa and the exponent:
+     * `1.0E+25` is `1.0` and `25`.
+     *
      * @return array{numeric-string, numeric-string}
+     * @throws \InvalidArgumentException in case of a non-finite value
      */
-    private static function splitRawValue(string $raw): array
+    private static function splitValue(float $value): array
     {
-        $text = \ltrim(\str_replace('_', '', $raw), '+');
-        $position = \strcspn($text, 'eE');
-
-        $mantissa = self::trimMantissa(\substr($text, 0, $position));
-        $exponent = $position === \strlen($text) ? '0' : self::trimExponent(\substr($text, $position + 1));
-
-        \assert(\is_numeric($mantissa) && \is_numeric($exponent));
-
-        return [$mantissa, $exponent];
-    }
-
-    /**
-     * Drops the leading zeros, the one before the point stays: `-055` is `-55`, `00.5` is `0.5`.
-     */
-    private static function trimMantissa(string $mantissa): string
-    {
-        $sign = $mantissa[0] === '-' ? '-' : '';
-        $digits = \ltrim($mantissa, '-');
-        $trimmed = \ltrim($digits, '0');
-
-        if ($digits[0] === '0' && ($trimmed === '' || $trimmed[0] === '.')) {
-            $trimmed = '0' . $trimmed;
+        if (!\is_finite($value)) {
+            throw new \InvalidArgumentException('A non-finite float requires the mantissa and the exponent');
         }
 
-        return $sign . $trimmed;
-    }
+        $text = \var_export($value, true);
+        $position = \strcspn($text, 'E');
 
-    /**
-     * Drops the plus sign and the leading zeros: `+007` is `7`, `-00` is `0`.
-     */
-    private static function trimExponent(string $exponent): string
-    {
-        $digits = \ltrim($exponent, '+-0');
-
-        if ($digits === '') {
-            return '0';
-        }
-
-        return ($exponent[0] === '-' ? '-' : '') . $digits;
+        /** @var array{numeric-string, numeric-string} */
+        return [
+            \substr($text, 0, $position),
+            (string) (int) \substr($text, $position + 1),
+        ];
     }
 }
