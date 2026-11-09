@@ -126,8 +126,6 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
     public const Type = 0;
     /** @var int */
     public const TemplateParameter = 49;
-    /** @var int */
-    public const Variable = 80;
 
     /** @var array<int, non-empty-string> */
     private const PARSER_EXPECTATIONS = [
@@ -2672,7 +2670,6 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             return $children[0];
         }
 
-        // [type, type]
         if (!$this->features->unions) {
             throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('unions', $ctx);
         }
@@ -2689,7 +2686,6 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             return $children[0];
         }
 
-        // [type, type, ...]
         if (!$this->features->intersections) {
             throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('intersections', $ctx);
         }
@@ -2714,13 +2710,11 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         // The variables below are declared by the compiler
         $offset = $ctx->begin;
 
-        // No suffixes
         if (!\is_array($children)) {
             return $children;
         }
 
-        // The children are the type and the suffixes: the closing bracket for
-        // "[]" and the type inside of the brackets for "[K]"
+        // The children are the type and the suffixes: "]" for "[]", K for "[K]"
         $type = null;
 
         foreach ($children as $child) {
@@ -2815,9 +2809,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             $second instanceof Type\Callable\CallableParameterListNode => new Type\Callable\CallableTypeNode($name, $second, $children[2] ?? null, null, $offset),
             // Foo<T>(T): T
             $second instanceof Type\Template\TemplateParameterListNode => new Type\Callable\CallableTypeNode($name, $children[2], $children[3] ?? null, $second, $offset),
-            // Foo::BAR, a lone word is a constant
+            // Foo::BAR
             $second instanceof Type\Identifier => new Type\Constant\ClassConstTypeNode($name, $second, $offset),
-            // Foo::BAR_*, anything else is a mask of constants
+            // Foo::BAR_*, Foo::*
             default => new Type\Constant\ClassConstMaskTypeNode($name, $second, $offset),
         };
     }
