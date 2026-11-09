@@ -15,6 +15,7 @@ use TypeLang\Parser\Partial\SuccessfulParsedResult;
 use TypeLang\Parser\Validation\FailureCheckResult;
 use TypeLang\Parser\Validation\SuccessfulCheckResult;
 use TypeLang\Type\Node;
+use TypeLang\Type\Template\TemplateParameterNode;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -96,6 +97,15 @@ final class TypeParser implements TypeParserInterface
     {
         /** @var self<TypeNode, TSource> */
         return $this->for(Internal\CompiledExecutor::Type);
+    }
+
+    /**
+     * @return self<TemplateParameterNode, TSource>
+     */
+    public function forTemplateParameter(): self
+    {
+        /** @var self<TemplateParameterNode, TSource> */
+        return $this->for(Internal\CompiledExecutor::TemplateParameter);
     }
 
     /**
