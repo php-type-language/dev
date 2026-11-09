@@ -4,13 +4,10 @@
 /**
  * -----------------------------------------------------------------------------
  *  Shapes
- *
- *  A shape is a part of a named type: "array{...}", "list{...}", "Some{...}".
  * -----------------------------------------------------------------------------
  */
 
-// {a: int}, {a: int, ...}, {...<K, V>}. Returns the list of the fields and the
-// arguments of the unsealed part, null if there are none
+// array{a: int}, list{a: int, ...}, Some{...<K, V>}
 ShapeFields -> {
     if (!$this->features->shapes) {
         throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('shapes', $ctx);
@@ -48,12 +45,12 @@ ShapeFieldList
     (::T_COMMA:: ShapeField())*
   ;
 
-// A trailing comma, with the unsealed part behind it or without it
+// , ... | , ...<K, V> | ,
 ShapeTail
   : ::T_COMMA:: ShapeUnsealed()?
   ;
 
-// ..., ...<K, V>, ..., . The ellipsis is kept, it tells the shape is not sealed
+// ..., ...<K, V>
 ShapeUnsealed
   : <T_ELLIPSIS> TemplateArguments()? ::T_COMMA::?
   ;

@@ -1,13 +1,11 @@
 /**
  * -----------------------------------------------------------------------------
  *  Names
- *
- *  Names of types.
  * -----------------------------------------------------------------------------
  */
 
 
-// A word with no hyphens: Foo, PHP_EOL, is, true
+// Foo, PHP_EOL, is, true
 Word
   : <T_IDENTIFIER>
   | <T_IS>
@@ -23,7 +21,7 @@ Word
   | <T_NULL>
   ;
 
-// A single word with no separators in it
+// Foo
 Identifier -> {
     return new Type\Identifier($children[0]->value, $offset);
 }

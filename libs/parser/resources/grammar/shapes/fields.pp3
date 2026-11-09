@@ -41,7 +41,7 @@ ShapeKey
   | StringLiteral()
   ;
 
-// a, a-b, Foo\Bar, \FOO. A key is one word, the namespace is a part of it
+// a, a-b, Foo\Bar, \FOO
 ShapeNamedKey -> {
     return new Type\Identifier($children[0]->toString(), $children[0]->offset);
 }

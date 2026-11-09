@@ -1,9 +1,6 @@
 /**
  * -----------------------------------------------------------------------------
  *  Language Syntax Summary
- *
- *  A rule is named after the node of the syntax tree it stands for, and reads
- *  its own sequence of tokens.
  * -----------------------------------------------------------------------------
  */
 
@@ -25,12 +22,12 @@
 
 /**
  * -----------------------------------------------------------------------------
- *  Type Statement
+ *  Type
  * -----------------------------------------------------------------------------
  */
 
 
-// Any type, the weakest level of precedence. An entry point
+// Any type. An entry point
 #Type -> {
     if (\is_array($children)) {
         return $children[0];
@@ -49,7 +46,6 @@
  */
 
 
-// A type that stands alone: the suffixes and the operators go behind it
 Atom
   : Literal()
   | NamedType()
@@ -58,16 +54,8 @@ Atom
   | Group()
   ;
 
-
-/**
- * -----------------------------------------------------------------------------
- *  Named Types
- * -----------------------------------------------------------------------------
- */
-
-
-// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*, Foo<T>, \Foo\Bar<T, U>, Foo{...}, \Foo\Bar{...},
-// Foo(int): void, Foo<T>(T): T
+// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*, Foo<T>, \Foo\Bar<T, U>,
+// Foo{...}, \Foo\Bar{...}, Foo(int): void, Foo<T>(T): T
 NamedType -> {
     $name = $children[0];
     $second = $children[1] ?? null;
@@ -83,9 +71,9 @@ NamedType -> {
         $second instanceof Type\Callable\CallableParameterListNode => new Type\Callable\CallableTypeNode($name, $second, $children[2] ?? null, null, $offset),
         // Foo<T>(T): T
         $second instanceof Type\Template\TemplateParameterListNode => new Type\Callable\CallableTypeNode($name, $children[2], $children[3] ?? null, $second, $offset),
-        // Foo::BAR, a lone word is a constant
+        // Foo::BAR
         $second instanceof Type\Identifier => new Type\Constant\ClassConstTypeNode($name, $second, $offset),
-        // Foo::BAR_*, anything else is a mask of constants
+        // Foo::BAR_*, Foo::*
         default => new Type\Constant\ClassConstMaskTypeNode($name, $second, $offset),
     };
 }
@@ -98,13 +86,6 @@ NamedType -> {
     )?
   ;
 
-/**
- * -----------------------------------------------------------------------------
- *  This Type
- * -----------------------------------------------------------------------------
- */
-
-
 // $this
 ThisType -> {
     return new Type\ThisTypeNode($offset);
@@ -112,33 +93,14 @@ ThisType -> {
   : <T_THIS>
   ;
 
-
-/**
- * -----------------------------------------------------------------------------
- *  Variables
- *
- *  A variable is no type, it stands in the parameters of a callable and in the
- *  conditions, so it is a rule of its own with its own entry.
- * -----------------------------------------------------------------------------
- */
-
-
-// $a, $_x, $thisFoo. The name of the node is the text behind the dollar sign
-#Variable -> {
+// $a, $_x, $thisFoo
+Variable -> {
     return new Type\VariableNode(\substr($children->value, 1), $offset);
 }
   : <T_VARIABLE>
   ;
 
-
-/**
- * -----------------------------------------------------------------------------
- *  Group
- * -----------------------------------------------------------------------------
- */
-
-
-// (int), ((int)). The parentheses only group, they build no node
+// (int), ((int))
 Group
   : ::T_PAREN_OPEN:: Type() ::T_PAREN_CLOSE::
   ;

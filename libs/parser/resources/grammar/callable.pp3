@@ -1,16 +1,12 @@
 /**
  * -----------------------------------------------------------------------------
  *  Callable Types
- *
- *  A callable is a name with the list of parameters behind it and, maybe, the
- *  return type: "callable(int $a): void", "Closure(): int", "foo(T)". It is a
- *  part of a named type, the name stands in front of the parentheses.
  * -----------------------------------------------------------------------------
  */
 
 
-// (int $a, string ...$b): void, (int), (): void. The return type is one type
-// with the suffixes, so "callable(): int|string" is "(callable(): int)|string"
+// (int $a, string ...$b): void, (int), (): void
+// callable(): int|string is (callable(): int)|string
 CallableSignature
   : CallableParameters() (::T_COLON:: NullableType())?
   ;
@@ -28,7 +24,8 @@ CallableParameters -> {
     ::T_PAREN_CLOSE::
   ;
 
-// int, int $a, int &$a, int ...$a, int &...$a, int=, int $a = 42, $a, &$a, ...$a, ...int
+// int, int $a, int &$a, int ...$a, int &...$a, int=, int $a = 42, $a, &$a,
+// ...$a, ...int
 CallableParameter -> {
     $type = null;
     $name = null;
@@ -67,7 +64,7 @@ CallableParameter -> {
   | <T_ELLIPSIS> Type()
   ;
 
-// = 42, = Foo::BAR, = null, =. A literal or a constant, no expressions
+// = 42, = Foo::BAR, = null, =
 CallableDefault -> {
     if (!$this->features->defaults) {
         throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('defaults', $ctx);

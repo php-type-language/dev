@@ -1,9 +1,6 @@
 /**
  * -----------------------------------------------------------------------------
  *  Constants
- *
- *  The part of a constant of a class that follows the colons, a lone word or
- *  a mask. A mask is one token, the stars of it are cut out of the text.
  * -----------------------------------------------------------------------------
  */
 
@@ -44,8 +41,7 @@ ConstantMask
   ;
 
 
-// PHP_*, *_SUFFIX, \PHP_*, Foo\BAR_*, Path\To\*, \*. A lone star is a mask
-// only behind a namespace
+// PHP_*, *_SUFFIX, \PHP_*, Foo\BAR_*, Path\To\*, \*
 ConstMaskType -> {
     // PHP_*
     if (!\is_array($children)) {

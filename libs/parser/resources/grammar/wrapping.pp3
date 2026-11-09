@@ -1,18 +1,11 @@
 /**
  * -----------------------------------------------------------------------------
  *  Wrapping Types
- *
- *  The types that wrap another one: the nullable, the lists and the offset
- *  accesses. A level of precedence is a rule of its own, from the weakest to the
- *  strongest: Nullable, ListOrOffsetAccess. Both are tighter than the logical
- *  types, see logical.pp3.
  * -----------------------------------------------------------------------------
  */
 
 
-// A type with the "?" before it or without it. The question mark is weaker than
-// the suffixes and stronger than the operators: ?A[] is ?(A[]), ?A|B is (?A)|B,
-// ?A&B is (?A)&B
+// ?A[] is ?(A[]), ?A|B is (?A)|B, ?A&B is (?A)&B
 NullableType
   : QuestionType()
   | ListTypeOrOffsetAccess()
@@ -30,16 +23,13 @@ QuestionType -> {
   ;
 
 
-// A type with the "[]" and "[K]" suffixes behind it: int, int[], T[K],
-// Foo::BAR[][], (A)[], T['a'][]
+// int, int[], T[K], Foo::BAR[][], (A)[], T['a'][]
 ListTypeOrOffsetAccess -> {
-    // No suffixes
     if (!\is_array($children)) {
         return $children;
     }
 
-    // The children are the type and the suffixes: the closing bracket for
-    // "[]" and the type inside of the brackets for "[K]"
+    // The children are the type and the suffixes: "]" for "[]", K for "[K]"
     $type = null;
 
     foreach ($children as $child) {

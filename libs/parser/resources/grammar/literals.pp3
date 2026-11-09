@@ -5,9 +5,8 @@
  */
 
 
-// Any of the literals: `null`, `true`, `false`, the numbers of any base (42,
-// 0x1F, 0b101, 0o17, 017, -42, 1_000, 1.5, .5, 1e-3) and the strings ('text',
-// "text"). Requires the `literals` feature
+// null, true, false, 42, 0x1F, 0b101, 0o17, 017, -42, 1_000, 1.5, .5, 1e-3,
+// 'text', "text"
 Literal -> {
     if (!$this->features->literals) {
         throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('literals', $ctx);

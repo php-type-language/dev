@@ -1,39 +1,31 @@
 
-// The end of a word: no name character, no hyphen and no "\" with a name
-// behind it follows ("is" in "is-x" and in "is\Foo" is not a word)
+// The end of a word: no name character, hyphen or "\Name" follows
+// ("is" in "is-x" and in "is\Foo" is not a word)
 %fragment WORD_END      (?!(?&NAME_CHAR)|-|\\(?&NAME_START))
 
 
 /**
  * -----------------------------------------------------------------------------
  *  Namespaces and Masks
- *
- *  A namespace is a token of its own, the word or the mask it belongs to is the
- *  next one. A namespace is a token only when a word or a mask follows right
- *  behind it. The tokens stand before the keywords, so any word with a star is
- *  a mask ("true*", "is_*") and any word behind a namespace is a name.
  * -----------------------------------------------------------------------------
  */
 
-// A namespace with the separator at its end: "Foo\", "\Foo\Bar\", "\"
+// Foo\, \Foo\Bar\, \
 %token T_NAMESPACE      (?:\\(?:(?&NAME_WORD)\\)*+|(?:(?&NAME_WORD)\\)++)(?=(?&NAME_START)|\*)
 
-// The start of a mask up to its first star: "PHP_*", "*"
+// PHP_*, *
 %fragment MASK_HEAD     (?:(?&NAME_START)(?&NAME_CHAR)*+\*|\*)
 
-// What follows the first star of a mask: "_SUFFIX", "_A*B*C"
+// _SUFFIX, _A*B*C
 %fragment MASK_REST     (?:(?&NAME_CHAR)++\*)*+(?&NAME_CHAR)*+
 
-// A mask with no separators: "PHP_*", "*_SUFFIX", "A*B". A lone star is
-// not a mask but a wildcard
+// PHP_*, *_SUFFIX, A*B, true*, is_*. A lone star is a wildcard
 %token T_IDENTIFIER_MASK (?!\*(?!(?&NAME_CHAR)))(?&MASK_HEAD)(?&MASK_REST)
 
 
 /**
  * -----------------------------------------------------------------------------
  *  Common Literals
- *
- *  The words that are never names: `true`, `false`, `null`
  * -----------------------------------------------------------------------------
  */
 
@@ -48,85 +40,74 @@
  * -----------------------------------------------------------------------------
  */
 
-// A special "$this" variable name
+// $this
 %token T_THIS           \$this(?&WORD_END)
 
-// A "$name"
+// $name
 %token T_VARIABLE       \$(?&NAME_START)(?&NAME_CHAR)*+
 
 
 /**
  * -----------------------------------------------------------------------------
  *  Numbers
- *
- *  Floats and integers of four bases, the sign belongs to the number. The
- *  order of the tokens matters: float, integers with a prefix, decimal.
  * -----------------------------------------------------------------------------
  */
 
-// The digits of a number, a single "_" is allowed between two of them
+// 1_000: a single "_" is allowed between two digits
 %fragment DIGITS        [0-9](?:_?+[0-9])*+
 
-// The exponent of a float
+// e3, E-3
 %fragment EXPONENT      [eE][+-]?+(?&DIGITS)
 
-// An optional sign, whitespaces may follow it: "- 1"
+// +, -, "- 1": whitespaces may follow the sign
 %fragment SIGN          (?:[+-]\s*+)?+
 
-// A "1.5", "1.", ".5", "1e3", "1.5e-3", "1_000.5"
+// 1.5, 1., .5, 1e3, 1.5e-3, 1_000.5
 %token T_FLOAT         (?&SIGN)(?:(?&DIGITS)\.(?:(?&DIGITS))?+(?:(?&EXPONENT))?+|\.(?&DIGITS)(?:(?&EXPONENT))?+|(?&DIGITS)(?&EXPONENT))
 
-// A hexadecimal "0x1F", "0XDE_AD"
+// 0x1F, 0XDE_AD
 %token T_INT_HEX        (?&SIGN)0[xX][0-9a-fA-F](?:_?+[0-9a-fA-F])*+
 
-// A binary "0b101", "0B10_10"
+// 0b101, 0B10_10
 %token T_INT_BIN        (?&SIGN)0[bB][01](?:_?+[01])*+
 
-// An octal "0o17", "0O17", "0o6_5_5"
+// 0o17, 0O17, 0o6_5_5
 %token T_INT_OCT        (?&SIGN)0[oO][0-7](?:_?+[0-7])*+
 
-// A legacy octal "017", "0_42", "00" and a lone "0"
+// 017, 0_42, 00, 0
 %token T_INT_OCT_LEGACY (?&SIGN)0(?:_?+[0-7])*+
 
-// A decimal "42", "1_000"
+// 42, 1_000
 %token T_INT_DEC        (?&SIGN)[1-9](?:_?+[0-9])*+
 
 
 /**
  * -----------------------------------------------------------------------------
  *  Strings
- *
- *  Strings in single and double quotes, a line break may be inside.
  * -----------------------------------------------------------------------------
  */
 
-
-// A 'text'
+// 'text'
 %token T_SQ_STRING      '([^'\\]*(?:\\.[^'\\]*)*)'
 
-// A "text"
+// "text"
 %token T_DQ_STRING      "([^"\\]*(?:\\.[^"\\]*)*)"
 
 
 /**
  * -----------------------------------------------------------------------------
  *  Other Keywords
- *
- *  The words `is`, `not`, `of`, `as`, `super`, `covariant`, `contravariant`
- *  and `invariant` have a meaning in their own position only. The rule of a
- *  name accepts them too, in any other position they are ordinary names. Lower
- *  case only, `IS` is an ordinary name.
  * -----------------------------------------------------------------------------
  */
 
-
+// Lower case only: IS is an ordinary name
 %token T_IS             is(?&WORD_END)
 %token T_NOT            not(?&WORD_END)
 %token T_OF             of(?&WORD_END)
 %token T_AS             as(?&WORD_END)
 %token T_SUPER          super(?&WORD_END)
 
-// The variance of a template argument or a template parameter
+// covariant, contravariant, invariant
 %token T_COVARIANT      covariant(?&WORD_END)
 %token T_CONTRAVARIANT  contravariant(?&WORD_END)
 %token T_INVARIANT      invariant(?&WORD_END)
@@ -138,20 +119,19 @@
  * -----------------------------------------------------------------------------
  */
 
-
 // The first character of a name
 %fragment NAME_START    [A-Za-z_\x80-\xFF]
 
-// Any following character of a name. Variables use it too
+// Any other character of a name
 %fragment NAME_CHAR     [\w\x80-\xFF]
 
-// A word of a name: a segment of a namespace, a constant. It has no hyphens
+// A word with no hyphens
 %fragment NAME_WORD     (?&NAME_START)(?&NAME_CHAR)*+
 
-// A name of a virtual type, it is a single word with hyphens: "non-empty-string"
+// non-empty-string: a word with hyphens between the characters
 %token T_VIRTUAL_NAME   (?&NAME_WORD)(?:-(?&NAME_CHAR)++)++
 
-// A name of one word: "Foo", "PHP_EOL"
+// Foo, PHP_EOL
 %token T_IDENTIFIER     (?&NAME_WORD)
 
 
@@ -161,8 +141,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-// A lone star
 %token T_WILDCARD       \*
 %token T_DOUBLE_COLON   ::
 %token T_COLON          :
@@ -188,11 +166,10 @@
  * -----------------------------------------------------------------------------
  */
 
-// Any whitespaces
 %skip   T_WHITESPACE            \s++
 
-// A "// text" or a "# text"
+// // text, # text
 %skip   T_COMMENT               (?://|#)[^\r\n]*+
 
-// A "/* text */"
+// /* text */
 %skip   T_DOC_COMMENT           /\*(?:[^*]++|\*(?!/))*+\*/

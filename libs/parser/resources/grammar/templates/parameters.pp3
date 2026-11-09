@@ -1,10 +1,6 @@
 /**
  * -----------------------------------------------------------------------------
  *  Template Parameters
- *
- *  A template parameter is declared by a callable: "callable<T of int>(T): T".
- *  The list stands between the name and the parentheses. A parameter has an
- *  entry of its own, a tag "@template" is made of it.
  * -----------------------------------------------------------------------------
  */
 
