@@ -38,44 +38,56 @@
 
     return $children;
 }
-  : NullableType()
+  : UnionType()
   ;
 
 
 /**
  * -----------------------------------------------------------------------------
- *  Nullable Types
+ *  Union Types
  * -----------------------------------------------------------------------------
  */
 
 
-// A type with the "?" before it: int, ?int, ?int[], ?T[K]. The question mark is
-// weaker than the suffixes, so it reaches over all of them: ?int[] is ?(int[])
-NullableType -> {
-    if (!\is_array($children)) {
-        return $children;
-    }
-
-    // [type], there is no question mark
+// The types joined with "|", the ampersand is tighter: A|B&C is A|(B&C)
+UnionType -> {
     if (!isset($children[1])) {
         return $children[0];
     }
 
-    // [question mark, type]
-    if (!$this->features->nullables) {
-        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
-            'nullables',
-            $ctx->source,
-            $children[0]->offset,
-            1,
-        );
+    // [type, type]
+    if (!$this->features->unions) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('unions', $ctx);
     }
 
-    return new Type\WrappingTypeNode\NullableTypeNode($children[1], $children[0]->offset);
+    return new Type\LogicalTypeNode\UnionTypeNode($children, $offset);
 }
-  : <T_QUESTION>? ListTypeOrOffsetAccess()
+  : IntersectionType() (::T_UNION:: IntersectionType())*
   ;
 
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Intersection Types
+ * -----------------------------------------------------------------------------
+ */
+
+
+// The types joined with "&", the suffixes are tighter: A&B[] is A&(B[])
+IntersectionType -> {
+    if (!isset($children[1])) {
+        return $children[0];
+    }
+
+    // [type, type, ...]
+    if (!$this->features->intersections) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('intersections', $ctx);
+    }
+
+    return new Type\LogicalTypeNode\IntersectionTypeNode($children, $offset);
+}
+  : NullableType() (::T_AMPERSAND:: NullableType())*
+  ;
 
 /**
  * -----------------------------------------------------------------------------
@@ -92,53 +104,57 @@ ListTypeOrOffsetAccess -> {
         return $children;
     }
 
-    // The children are the type and the opening brackets, a bracket is
-    // followed by the type inside of it (the key), if there is one
+    // The children are the type and, for every suffix, the type inside of
+    // the brackets (the key), if there is one, and the closing bracket
     $type = $children[0];
-    $bracket = null;
-    $length = \count($children);
 
-    // The element behind the last one is the end: it closes the last bracket
-    for ($i = 1; $i <= $length; ++$i) {
-        $child = $children[$i] ?? null;
-
-        // T[K], the key belongs to the bracket before it
-        if ($child instanceof Type\TypeNode) {
+    for ($i = 1, $length = \count($children); $i < $length; ++$i) {
+        // T[K], the closing bracket is behind the key
+        if ($children[$i] instanceof Type\TypeNode) {
             if (!$this->features->offsets) {
-                throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
-                    'offsets',
-                    $ctx->source,
-                    $bracket->offset,
-                    1,
-                );
+                throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('offsets', $ctx);
             }
 
-            $type = new Type\WrappingTypeNode\TypeOffsetAccessTypeNode($type, $child, $bracket->offset);
-            $bracket = null;
+            $type = new Type\WrappingTypeNode\TypeOffsetAccessTypeNode($type, $children[$i++], $offset);
 
             continue;
         }
 
-        // T[], the previous bracket has nothing inside
-        if ($bracket !== null) {
-            if (!$this->features->lists) {
-                throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabled(
-                    'lists',
-                    $ctx->source,
-                    $bracket->offset,
-                    1,
-                );
-            }
-
-            $type = new Type\WrappingTypeNode\TypesListTypeNode($type, $bracket->offset);
+        // T[]
+        if (!$this->features->lists) {
+            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('lists', $ctx);
         }
 
-        $bracket = $child;
+        $type = new Type\WrappingTypeNode\TypesListTypeNode($type, $offset);
     }
 
     return $type;
 }
-  : Atom() (<T_BRACKET_OPEN> Type()? ::T_BRACKET_CLOSE::)*
+  : Atom() (::T_BRACKET_OPEN:: Type()? <T_BRACKET_CLOSE>)*
+  ;
+
+
+/**
+ * -----------------------------------------------------------------------------
+ *  Nullable Types
+ * -----------------------------------------------------------------------------
+ */
+
+
+// A type with the "?" before it. The question mark is weaker than the suffixes and
+// stronger than the operators: ?A[] is ?(A[]), ?A|B is (?A)|B, ?A&B is (?A)&B
+NullableType -> {
+    if (\count($children) === 2) {
+        if (!$this->features->nullables) {
+            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('nullables', $ctx);
+        }
+
+        return new Type\WrappingTypeNode\NullableTypeNode($children[1], $offset);
+    }
+
+    return $children[0];
+}
+  : <T_QUESTION>? ListTypeOrOffsetAccess()
   ;
 
 // A type that stands alone: the suffixes and the operators go behind it

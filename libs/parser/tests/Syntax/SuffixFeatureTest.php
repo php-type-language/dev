@@ -9,14 +9,16 @@ use TypeLang\Parser\Exception\FeatureNotEnabledException;
 use TypeLang\Parser\Tests\TestCase;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserFeatures;
+use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
+use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\TypeNode;
 use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
 use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
 use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 /**
- * The features `lists`, `offsets` and `nullables` turn the suffixes `[]`, `[K]`
- * and the question mark on and off.
+ * The features `lists`, `offsets`, `nullables`, `intersections` and `unions` turn
+ * the suffixes `[]`, `[K]`, the question mark, the ampersand and the bar on and off.
  */
 final class SuffixFeatureTest extends TestCase
 {
@@ -30,6 +32,8 @@ final class SuffixFeatureTest extends TestCase
         self::assertInstanceOf(TypesListTypeNode::class, $parser->parse('int[]'));
         self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $parser->parse('T[K]'));
         self::assertInstanceOf(NullableTypeNode::class, $parser->parse('?int'));
+        self::assertInstanceOf(IntersectionTypeNode::class, $parser->parse('A&B'));
+        self::assertInstanceOf(UnionTypeNode::class, $parser->parse('A|B'));
     }
 
     /**
@@ -37,21 +41,21 @@ final class SuffixFeatureTest extends TestCase
      */
     public static function disabledDataProvider(): iterable
     {
-        // The feature, the source, the message, the offset of the first character that is not allowed
-        yield 'list' => ['lists', 'int[]', 'Lists feature is not allowed', 3];
-        yield 'list with spaces' => ['lists', 'int  [ ]', 'Lists feature is not allowed', 5];
-        yield 'second list' => ['lists', 'int[][]', 'Lists feature is not allowed', 3];
-        yield 'list of a group' => ['lists', '(int)[]', 'Lists feature is not allowed', 5];
-        yield 'list behind an access' => ['lists', 'T[K][]', 'Lists feature is not allowed', 4];
-        yield 'list in a key' => ['lists', 'T[K[]]', 'Lists feature is not allowed', 3];
-        yield 'list in a nullable' => ['lists', '?int[]', 'Lists feature is not allowed', 4];
-        yield 'access' => ['offsets', 'T[K]', 'Offsets feature is not allowed', 1];
-        yield 'access with spaces' => ['offsets', 'T  [ K ]', 'Offsets feature is not allowed', 3];
-        yield 'second access' => ['offsets', 'T[K][L]', 'Offsets feature is not allowed', 1];
-        yield 'access of a group' => ['offsets', '(T)[K]', 'Offsets feature is not allowed', 3];
-        yield 'access behind a list' => ['offsets', 'T[][K]', 'Offsets feature is not allowed', 3];
-        yield 'access in a key' => ['offsets', 'T[K[L]]', 'Offsets feature is not allowed', 3];
-        yield 'access in a nullable' => ['offsets', '?T[K]', 'Offsets feature is not allowed', 2];
+        // The feature, the source, the message, the offset where the type with the suffixes begins
+        yield 'list' => ['lists', 'int[]', 'Lists feature is not allowed', 0];
+        yield 'list with spaces' => ['lists', '  int  [ ]', 'Lists feature is not allowed', 2];
+        yield 'second list' => ['lists', 'int[][]', 'Lists feature is not allowed', 0];
+        yield 'list of a group' => ['lists', '(int)[]', 'Lists feature is not allowed', 1];
+        yield 'list behind an access' => ['lists', 'T[K][]', 'Lists feature is not allowed', 0];
+        yield 'list in a key' => ['lists', 'T[K[]]', 'Lists feature is not allowed', 2];
+        yield 'list in a nullable' => ['lists', '?int[]', 'Lists feature is not allowed', 1];
+        yield 'access' => ['offsets', 'T[K]', 'Offsets feature is not allowed', 0];
+        yield 'access with spaces' => ['offsets', '  T  [ K ]', 'Offsets feature is not allowed', 2];
+        yield 'second access' => ['offsets', 'T[K][L]', 'Offsets feature is not allowed', 0];
+        yield 'access of a group' => ['offsets', '(T)[K]', 'Offsets feature is not allowed', 1];
+        yield 'access behind a list' => ['offsets', 'T[][K]', 'Offsets feature is not allowed', 0];
+        yield 'access in a key' => ['offsets', 'T[K[L]]', 'Offsets feature is not allowed', 2];
+        yield 'access in a nullable' => ['offsets', '?T[K]', 'Offsets feature is not allowed', 1];
         yield 'nullable' => ['nullables', '?int', 'Nullables feature is not allowed', 0];
         yield 'nullable with a space' => ['nullables', '  ? int', 'Nullables feature is not allowed', 2];
         yield 'nullable of a list' => ['nullables', '?int[]', 'Nullables feature is not allowed', 0];
@@ -59,6 +63,28 @@ final class SuffixFeatureTest extends TestCase
         yield 'nullable in a group' => ['nullables', '(?int)', 'Nullables feature is not allowed', 1];
         yield 'nullable in a key' => ['nullables', 'T[?K]', 'Nullables feature is not allowed', 2];
         // The inner one is built first, so it is the one that is reported
+        yield 'intersection' => ['intersections', 'A&B', 'Intersections feature is not allowed', 0];
+        yield 'intersection with spaces' => ['intersections', '  A  &  B', 'Intersections feature is not allowed', 2];
+        yield 'intersection of three' => ['intersections', 'A&B&C', 'Intersections feature is not allowed', 0];
+        yield 'intersection with a nullable' => ['intersections', 'A&?B', 'Intersections feature is not allowed', 0];
+        yield 'intersection of nullables' => ['intersections', '(?A)&(?B)', 'Intersections feature is not allowed', 1];
+        yield 'intersection in a group' => ['intersections', '(A&B)', 'Intersections feature is not allowed', 1];
+        yield 'intersection in a key' => ['intersections', 'T[A&B]', 'Intersections feature is not allowed', 2];
+        yield 'intersection in a list' => ['intersections', '(A&B)[]', 'Intersections feature is not allowed', 1];
+        yield 'intersection of a nullable group' => ['intersections', '?(A&B)', 'Intersections feature is not allowed', 2];
+        yield 'union' => ['unions', 'A|B', 'Unions feature is not allowed', 0];
+        yield 'union with spaces' => ['unions', '  A  |  B', 'Unions feature is not allowed', 2];
+        yield 'union of three' => ['unions', 'A|B|C', 'Unions feature is not allowed', 0];
+        yield 'union of nullables' => ['unions', 'A|(?B)', 'Unions feature is not allowed', 0];
+        yield 'union with a nullable' => ['unions', 'A|?B', 'Unions feature is not allowed', 0];
+        yield 'union in front of a nullable' => ['unions', '?A|B', 'Unions feature is not allowed', 0];
+        yield 'union in a group' => ['unions', '(A|B)', 'Unions feature is not allowed', 1];
+        yield 'union in a key' => ['unions', 'T[A|B]', 'Unions feature is not allowed', 2];
+        yield 'union in a list' => ['unions', '(A|B)[]', 'Unions feature is not allowed', 1];
+        yield 'union of intersections' => ['unions', 'A&B|C', 'Unions feature is not allowed', 0];
+        yield 'union in an intersection' => ['unions', 'A&(B|C)', 'Unions feature is not allowed', 3];
+        yield 'intersection in a union' => ['intersections', 'A|B&C', 'Intersections feature is not allowed', 2];
+        // The innermost question mark is the one that is reported
         yield 'nullable in a nullable' => ['nullables', '?(?int)', 'Nullables feature is not allowed', 2];
     }
 
@@ -78,7 +104,8 @@ final class SuffixFeatureTest extends TestCase
         } catch (FeatureNotEnabledException $e) {
             self::assertSame($message, $e->getMessage());
             self::assertSame($offset, $e->range->offset);
-            self::assertSame(1, $e->range->length);
+            self::assertGreaterThanOrEqual(1, $e->range->length);
+            self::assertLessThanOrEqual(\strlen($source), $e->range->offset + $e->range->length);
 
             return;
         }
@@ -99,6 +126,21 @@ final class SuffixFeatureTest extends TestCase
         yield 'offsets off, nullable' => ['offsets', '?T', NullableTypeNode::class];
         yield 'offsets off, nullable list' => ['offsets', '?T[]', NullableTypeNode::class];
         yield 'nullables off, list' => ['nullables', 'T[]', TypesListTypeNode::class];
+        yield 'intersections off, list' => ['intersections', 'A[]', TypesListTypeNode::class];
+        yield 'intersections off, access' => ['intersections', 'A[K]', TypeOffsetAccessTypeNode::class];
+        yield 'intersections off, nullable' => ['intersections', '?A', NullableTypeNode::class];
+        yield 'lists off, intersection' => ['lists', 'A&B', IntersectionTypeNode::class];
+        yield 'offsets off, intersection' => ['offsets', 'A&B', IntersectionTypeNode::class];
+        yield 'nullables off, intersection' => ['nullables', 'A&B', IntersectionTypeNode::class];
+        yield 'unions off, intersection' => ['unions', 'A&B', IntersectionTypeNode::class];
+        yield 'unions off, nullable' => ['unions', '?A', NullableTypeNode::class];
+        yield 'unions off, list' => ['unions', 'A[]', TypesListTypeNode::class];
+        yield 'unions off, access' => ['unions', 'A[K]', TypeOffsetAccessTypeNode::class];
+        yield 'unions off, nullable intersection' => ['unions', '?A&B', IntersectionTypeNode::class];
+        yield 'lists off, union' => ['lists', 'A|B', UnionTypeNode::class];
+        yield 'offsets off, union' => ['offsets', 'A|B', UnionTypeNode::class];
+        yield 'nullables off, union' => ['nullables', 'A|B', UnionTypeNode::class];
+        yield 'intersections off, union' => ['intersections', 'A|B', UnionTypeNode::class];
         yield 'nullables off, access' => ['nullables', 'T[K]', TypeOffsetAccessTypeNode::class];
         yield 'nullables off, list of groups' => ['nullables', '(T)[][K]', TypeOffsetAccessTypeNode::class];
     }
@@ -141,16 +183,16 @@ final class SuffixFeatureTest extends TestCase
     #[DataProvider('plainTypesDataProvider')]
     public function testPlainTypesNeedNoFeatureOfThem(string $source): void
     {
-        $parser = new TypeParser(new TypeParserFeatures(lists: false, offsets: false, nullables: false));
+        $parser = new TypeParser(new TypeParserFeatures(lists: false, offsets: false, nullables: false, intersections: false, unions: false));
 
         self::assertInstanceOf(TypeNode::class, $parser->parse($source));
     }
 
-    public function testAllThreeFeaturesCanBeTurnedOffAtOnce(): void
+    public function testAllFeaturesCanBeTurnedOffAtOnce(): void
     {
-        $parser = new TypeParser(new TypeParserFeatures(lists: false, offsets: false, nullables: false));
+        $parser = new TypeParser(new TypeParserFeatures(lists: false, offsets: false, nullables: false, intersections: false, unions: false));
 
-        foreach (['int[]', 'T[K]', '?int', '?T[?K]'] as $source) {
+        foreach (['int[]', 'T[K]', '?int', '?T[?K]', 'A&B', 'A|B'] as $source) {
             try {
                 $parser->parse($source);
             } catch (FeatureNotEnabledException) {
@@ -176,7 +218,7 @@ final class SuffixFeatureTest extends TestCase
 
     public function testDefaultParserIsNotAffectedByAnotherOne(): void
     {
-        (new TypeParser())->withFeatures(lists: false, offsets: false, nullables: false);
+        (new TypeParser())->withFeatures(lists: false, offsets: false, nullables: false, intersections: false, unions: false);
 
         self::assertInstanceOf(TypesListTypeNode::class, (new TypeParser())->parse('int[]'));
     }

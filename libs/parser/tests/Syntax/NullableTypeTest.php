@@ -11,6 +11,8 @@ use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\Literal\NullLiteralNode;
 use TypeLang\Type\Literal\StringLiteralNode;
+use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
+use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\ThisTypeNode;
 use TypeLang\Type\TypeNode;
@@ -36,9 +38,14 @@ final class NullableTypeTest extends TestCase
         yield 'this' => ['?$this', ThisTypeNode::class];
         yield 'class constant' => ['?Foo::BAR', ClassConstTypeNode::class];
         yield 'global mask' => ['?PHP_*', ConstMaskTypeNode::class];
+        yield 'group' => ['?(int)', NamedTypeNode::class];
         yield 'list' => ['?int[]', TypesListTypeNode::class];
         yield 'access' => ['?T[K]', TypeOffsetAccessTypeNode::class];
-        yield 'group' => ['?(int)', NamedTypeNode::class];
+        yield 'list of lists' => ['?int[][]', TypesListTypeNode::class];
+        yield 'group of a list' => ['?(int[])', TypesListTypeNode::class];
+        yield 'group of an access' => ['?(T[K])', TypeOffsetAccessTypeNode::class];
+        yield 'group of a union' => ['?(A|B)', UnionTypeNode::class];
+        yield 'group of an intersection' => ['?(A&B)', IntersectionTypeNode::class];
         yield 'group of a nullable' => ['?(?int)', NullableTypeNode::class];
         yield 'space' => ['? int', NamedTypeNode::class];
         yield 'line break' => ["?\nint", NamedTypeNode::class];
@@ -56,6 +63,24 @@ final class NullableTypeTest extends TestCase
 
         self::assertInstanceOf(NullableTypeNode::class, $type);
         self::assertInstanceOf($inner, $type->type);
+    }
+
+    /**
+     * The mark reaches over the suffixes behind it, the operators go over the nullable.
+     */
+    public function testOperatorsWrapTheNullable(): void
+    {
+        $union = $this->parse('?A|B');
+
+        self::assertInstanceOf(UnionTypeNode::class, $union);
+        self::assertInstanceOf(NullableTypeNode::class, $union->types[0]);
+        self::assertInstanceOf(NamedTypeNode::class, $union->types[1]);
+
+        $intersection = $this->parse('?A&B');
+
+        self::assertInstanceOf(IntersectionTypeNode::class, $intersection);
+        self::assertInstanceOf(NullableTypeNode::class, $intersection->types[0]);
+        self::assertInstanceOf(NamedTypeNode::class, $intersection->types[1]);
     }
 
     public function testTypeWithNoMarkIsNotNullable(): void
@@ -122,7 +147,7 @@ final class NullableTypeTest extends TestCase
 
     public function testOffsetsOfNullablesInsideOfSuffixes(): void
     {
-        // ?T[?K]: the mark of the outer one, the bracket, the mark of the key, the key
+        // ?T[?K]: the mark of the outer one, the type, the mark of the key, the key
         $node = $this->parse('?T[?K]');
 
         self::assertInstanceOf(NullableTypeNode::class, $node);
@@ -131,7 +156,7 @@ final class NullableTypeTest extends TestCase
         $access = $node->type;
 
         self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $access);
-        self::assertSame(2, $access->offset);
+        self::assertSame(1, $access->offset);
         self::assertSame(1, $access->type->offset);
 
         $key = $access->access;
@@ -141,14 +166,14 @@ final class NullableTypeTest extends TestCase
         self::assertSame(4, $key->type->offset);
     }
 
-    public function testNullableOfAListBeginsAtTheMarkNotAtTheBrackets(): void
+    public function testNullableOfAListBeginsAtTheMarkAndTheListAtTheType(): void
     {
         $node = $this->parse('  ? int []');
 
         self::assertInstanceOf(NullableTypeNode::class, $node);
         self::assertSame(2, $node->offset);
         self::assertInstanceOf(TypesListTypeNode::class, $node->type);
-        self::assertSame(8, $node->type->offset);
+        self::assertSame(4, $node->type->offset);
         self::assertSame(4, $node->type->type->offset);
     }
 

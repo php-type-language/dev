@@ -43,6 +43,9 @@ final class NullableTypeTest extends GrammarTestCase
         yield 'nullable key with a nullable key' => ['T[?K[?L]]'];
 
         yield 'group' => ['?(int)'];
+        yield 'mark over a group of a nullable' => ['?(?int)'];
+        yield 'mark over a group of a nullable list' => ['?(?int[])'];
+        yield 'mark over a group of a nullable in the brackets' => ['T[?(?K)]'];
         yield 'group of a nullable' => ['(?int)'];
         yield 'group of a nullable and a list' => ['(?int)[]'];
         yield 'group of a nullable and an access' => ['(?T)[K]'];
@@ -84,8 +87,12 @@ final class NullableTypeTest extends GrammarTestCase
         yield 'mark and a comment' => ['? /* c */'];
         yield 'two marks' => ['??int'];
         yield 'two marks with a space' => ['? ?int'];
-        yield 'three marks' => ['???int'];
         yield 'two marks over a group' => ['??(int)'];
+        yield 'two marks over a list' => ['??int[]'];
+        yield 'two marks over a union' => ['??A|B'];
+        yield 'two marks over an intersection' => ['??A&B'];
+        yield 'three marks' => ['???int'];
+        yield 'three marks with spaces' => ['? ? ?int'];
         yield 'mark behind the type' => ['int?'];
         yield 'mark behind the type with a space' => ['int ?'];
         yield 'mark between the type and a list' => ['int?[]'];
@@ -102,6 +109,8 @@ final class NullableTypeTest extends GrammarTestCase
         yield 'mark in the brackets alone' => ['T[?]'];
         yield 'two marks in the brackets' => ['T[??K]'];
         yield 'two marks in the nested brackets' => ['T[K[??L]]'];
+        yield 'three marks in the brackets' => ['T[???K]'];
+        yield 'three marks in the nested brackets' => ['T[K[???L]]'];
         yield 'type behind' => ['?int string'];
         yield 'type behind with no space' => ['?int,string'];
         yield 'two nullables' => ['?int ?string'];
@@ -170,7 +179,7 @@ final class NullableTypeTest extends GrammarTestCase
     }
 
     /**
-     * Two marks in a row are never a nullable of a nullable, however deep they are.
+     * A type has one mark only, the second one is written with a group: `?(?int)`.
      *
      * @param int<1, max> $depth
      */

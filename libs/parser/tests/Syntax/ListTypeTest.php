@@ -84,22 +84,23 @@ final class ListTypeTest extends TestCase
     }
 
     /**
-     * Every list begins where its opening bracket stands, the type under it keeps
-     * its own offset. The offsets of the lists go from the outer one to the inner one.
+     * Every list begins where the type under it begins, so all the lists of a
+     * chain have the offset of the type. The offsets of the lists go from the
+     * outer one to the inner one.
      *
      * @return iterable<non-empty-string, array{non-empty-string, list<int<0, max>>, int<0, max>}>
      */
     public static function offsetDataProvider(): iterable
     {
-        yield 'no trivia' => ['int[]', [3], 0];
-        yield 'spaces before' => ['  int[]', [5], 2];
-        yield 'spaces before the brackets' => ['int  []', [5], 0];
-        yield 'comment before' => ['/* c */ int[]', [11], 8];
-        yield 'multibyte before' => ['/* Фу */ int[]', [14], 11];
-        yield 'group' => ['(int)[]', [5], 1];
-        yield 'group with spaces' => ['(  int  ) []', [10], 3];
-        yield 'two groups' => ['((int))[]', [7], 2];
-        yield 'chain' => ['  int [][] []', [11, 8, 6], 2];
+        yield 'no trivia' => ['int[]', [0], 0];
+        yield 'spaces before' => ['  int[]', [2], 2];
+        yield 'spaces before the brackets' => ['int  []', [0], 0];
+        yield 'comment before' => ['/* c */ int[]', [8], 8];
+        yield 'multibyte before' => ['/* Фу */ int[]', [11], 11];
+        yield 'group' => ['(int)[]', [1], 1];
+        yield 'group with spaces' => ['(  int  ) []', [3], 3];
+        yield 'two groups' => ['((int))[]', [2], 2];
+        yield 'chain' => ['  int [][] []', [2, 2, 2], 2];
     }
 
     /**
@@ -108,7 +109,7 @@ final class ListTypeTest extends TestCase
      * @param int<0, max> $offset
      */
     #[DataProvider('offsetDataProvider')]
-    public function testOffsetOfEveryListIsTheOffsetOfItsBracket(string $source, array $lists, int $offset): void
+    public function testOffsetOfEveryListIsTheOffsetOfItsType(string $source, array $lists, int $offset): void
     {
         $type = $this->parse($source);
         $actual = [];

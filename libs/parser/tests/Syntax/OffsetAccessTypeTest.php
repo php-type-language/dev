@@ -117,22 +117,21 @@ final class OffsetAccessTypeTest extends TestCase
     }
 
     /**
-     * Every access begins where its opening bracket stands, the type before it and the key
-     * keep their own offsets.
+     * Every access begins where the type before it begins, the key keeps its own offset.
      *
      * @return iterable<non-empty-string, array{non-empty-string, int<0, max>, int<0, max>, int<0, max>}>
      */
     public static function offsetDataProvider(): iterable
     {
-        yield 'no trivia' => ['T[K]', 1, 0, 2];
-        yield 'spaces before' => ['  T[K]', 3, 2, 4];
-        yield 'spaces before the bracket' => ['T  [K]', 3, 0, 4];
-        yield 'spaces inside' => ['T[  K  ]', 1, 0, 4];
-        yield 'line breaks' => ["T\n[\nK\n]", 2, 0, 4];
-        yield 'comments' => ['T/* a */[/* b */K]', 8, 0, 16];
-        yield 'multibyte comments' => ['/* Фу */ T[/* Бар */ K]', 12, 11, 26];
-        yield 'group' => ['(T)[K]', 3, 1, 4];
-        yield 'group of the key' => ['T[(K)]', 1, 0, 3];
+        yield 'no trivia' => ['T[K]', 0, 0, 2];
+        yield 'spaces before' => ['  T[K]', 2, 2, 4];
+        yield 'spaces before the bracket' => ['T  [K]', 0, 0, 4];
+        yield 'spaces inside' => ['T[  K  ]', 0, 0, 4];
+        yield 'line breaks' => ["T\n[\nK\n]", 0, 0, 4];
+        yield 'comments' => ['T/* a */[/* b */K]', 0, 0, 16];
+        yield 'multibyte comments' => ['/* Фу */ T[/* Бар */ K]', 11, 11, 26];
+        yield 'group' => ['(T)[K]', 1, 1, 4];
+        yield 'group of the key' => ['T[(K)]', 0, 0, 3];
     }
 
     /**
@@ -142,7 +141,7 @@ final class OffsetAccessTypeTest extends TestCase
      * @param int<0, max> $key
      */
     #[DataProvider('offsetDataProvider')]
-    public function testOffsetOfAnAccessIsTheOffsetOfItsBracket(string $source, int $access, int $type, int $key): void
+    public function testOffsetOfAnAccessIsTheOffsetOfItsType(string $source, int $access, int $type, int $key): void
     {
         $node = $this->parse($source);
 
@@ -152,7 +151,7 @@ final class OffsetAccessTypeTest extends TestCase
         self::assertSame($key, $node->access->offset);
     }
 
-    public function testOffsetsOfAChainAreTheOffsetsOfItsBrackets(): void
+    public function testOffsetsOfAChainAreTheOffsetOfItsType(): void
     {
         $node = $this->parse('T[A][B] []');
         $offsets = [];
@@ -162,7 +161,7 @@ final class OffsetAccessTypeTest extends TestCase
             $node = $node->type;
         }
 
-        self::assertSame([8, 4, 1], $offsets);
+        self::assertSame([0, 0, 0], $offsets);
     }
 
     public function testTriviaAroundTheAccessIsIgnored(): void
