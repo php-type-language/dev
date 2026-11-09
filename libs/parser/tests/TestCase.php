@@ -14,6 +14,8 @@ use TypeLang\Parser\Validation\CheckResult;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserFeatures;
 use TypeLang\Parser\TypeParserInterface;
+use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Name;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -62,6 +64,21 @@ abstract class TestCase extends BaseTestCase
         $parser = $this->parser($options);
 
         return $parser->parse($code);
+    }
+
+    /**
+     * Reads a name the same way the parser does: `Foo`, `Foo\Bar`, `\Foo\Bar`.
+     *
+     * @param non-empty-string $name
+     * @throws \Throwable
+     */
+    protected function parseName(string $name): Name
+    {
+        $type = $this->parse($name);
+
+        \assert($type instanceof NamedTypeNode);
+
+        return $type->name;
     }
 
     /**

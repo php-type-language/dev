@@ -5,178 +5,137 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use TypeLang\Parser\Tests\TestCase;
-use TypeLang\Type\Constant\ClassConstTypeNode;
-use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\Literal\StringLiteralNode;
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\ThisTypeNode;
-use TypeLang\Type\TypeNode;
-use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
-use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 /**
- * The suffix `[K]` wraps the type before it, the type inside of the brackets is the key.
+ * The suffix `[K]` behind a type (grammar.pp3).
  */
-final class OffsetAccessTypeTest extends TestCase
+final class OffsetAccessTypeTest extends SyntaxTestCase
 {
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, class-string<TypeNode>, class-string<TypeNode>}>
+     * @return iterable<non-empty-string, array{string}>
      */
-    public static function accessDataProvider(): iterable
+    public static function validAccessDataProvider(): iterable
     {
-        yield 'name by a name' => ['T[K]', NamedTypeNode::class, NamedTypeNode::class];
-        yield 'name by a string' => ["T['a']", NamedTypeNode::class, StringLiteralNode::class];
-        yield 'name by an int' => ['T[0]', NamedTypeNode::class, IntLiteralNode::class];
-        yield 'name by a negative int' => ['T[-1]', NamedTypeNode::class, IntLiteralNode::class];
-        yield 'name by a constant' => ['T[Foo::A]', NamedTypeNode::class, ClassConstTypeNode::class];
-        yield 'name by a list' => ['T[K[]]', NamedTypeNode::class, TypesListTypeNode::class];
-        yield 'name by an access' => ['T[K[L]]', NamedTypeNode::class, TypeOffsetAccessTypeNode::class];
-        yield 'name by a group' => ['T[(K)]', NamedTypeNode::class, NamedTypeNode::class];
-        yield 'this by a name' => ['$this[K]', ThisTypeNode::class, NamedTypeNode::class];
-        yield 'constant by a name' => ['Foo::BAR[K]', ClassConstTypeNode::class, NamedTypeNode::class];
-        yield 'group by a name' => ['(T)[K]', NamedTypeNode::class, NamedTypeNode::class];
-        yield 'spaces' => ['T [ K ]', NamedTypeNode::class, NamedTypeNode::class];
-        yield 'line breaks' => ["T\n[\nK\n]", NamedTypeNode::class, NamedTypeNode::class];
+        yield 'name' => ['T[K]'];
+        yield 'qualified names' => ['\\Foo\\Bar[\\Baz]'];
+        yield 'builtin' => ['array[int]'];
+        yield 'single quoted key' => ["T['a']"];
+        yield 'double quoted key' => ['T["a"]'];
+        yield 'int key' => ['T[0]'];
+        yield 'negative int key' => ['T[-1]'];
+        yield 'hex key' => ['T[0x1F]'];
+        yield 'float key' => ['T[1.5]'];
+        yield 'bool key' => ['T[true]'];
+        yield 'null key' => ['T[null]'];
+        yield 'class constant key' => ['T[Foo::A]'];
+        yield 'class constant mask key' => ['T[Foo::A_*]'];
+        yield 'global mask key' => ['T[PHP_*]'];
+        yield 'this key' => ['T[$this]'];
+        yield 'list key' => ['T[K[]]'];
+        yield 'access key' => ['T[K[L]]'];
+        yield 'group key' => ['T[(K)]'];
+        yield 'group of a list key' => ['T[(K)[]]'];
+
+        yield 'this' => ['$this[K]'];
+        yield 'class constant' => ['Foo::BAR[K]'];
+        yield 'class constant mask' => ['Foo::*[K]'];
+        yield 'global mask' => ['PHP_*[K]'];
+        yield 'literal' => ["'a'[K]"];
+        yield 'group' => ['(T)[K]'];
+        yield 'group of a list' => ['(T[])[K]'];
+
+        yield 'chain' => ['T[K][L]'];
+        yield 'long chain' => ['T[A][B][C][D]'];
+        yield 'list behind' => ['T[K][]'];
+        yield 'list before' => ['T[][K]'];
+        yield 'mix' => ['T[][K][][L]'];
+
+        yield 'space before the bracket' => ['T [K]'];
+        yield 'space after the bracket' => ['T[ K]'];
+        yield 'space before the closing bracket' => ['T[K ]'];
+        yield 'spaces everywhere' => ['T [ K ] [ L ]'];
+        yield 'line breaks' => ["T\n[\nK\n]"];
+        yield 'carriage returns' => ["T\r\n[\r\nK\r\n]"];
+        yield 'block comments' => ['T/* a */[/* b */K/* c */]'];
+        yield 'line comment inside' => ["T[ // c\nK]"];
+        yield 'line comment behind' => ['T[K] // c'];
+    }
+
+    #[DataProvider('validAccessDataProvider')]
+    public function testAccessIsAccepted(string $source): void
+    {
+        self::assertAccepted($source);
     }
 
     /**
-     * @param non-empty-string $source
-     * @param class-string<TypeNode> $type
-     * @param class-string<TypeNode> $access
+     * @return iterable<non-empty-string, array{string}>
      */
-    #[DataProvider('accessDataProvider')]
-    public function testAccessWrapsTheTypeBeforeItAndKeepsTheKey(string $source, string $type, string $access): void
+    public static function invalidAccessDataProvider(): iterable
     {
-        $node = $this->parse($source);
-
-        self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $node);
-        self::assertInstanceOf($type, $node->type);
-        self::assertInstanceOf($access, $node->access);
+        yield 'not closed' => ['T[K'];
+        yield 'not closed chain' => ['T[K][L'];
+        yield 'not opened' => ['T]'];
+        yield 'extra closing bracket' => ['T[K]]'];
+        yield 'reversed' => ['T]K['];
+        yield 'key alone' => ['[K]'];
+        yield 'brackets in brackets' => ['T[[]]'];
+        yield 'brackets with a key in brackets' => ['T[[K]]'];
+        yield 'two keys' => ['T[K L]'];
+        yield 'keys with a comma' => ['T[K, L]'];
+        yield 'type behind' => ['T[K] L'];
+        yield 'type behind with no space' => ['T[K]L'];
+        yield 'key behind' => ['T[]K'];
+        yield 'group behind' => ['T[K](L)'];
+        yield 'shape behind' => ["T['a']{a: int}"];
+        yield 'empty group inside' => ['T[()]'];
+        yield 'star inside' => ['T[*]'];
+        yield 'colons inside' => ['T[::]'];
+        yield 'comment swallows the bracket' => ['T[K // ]'];
+        yield 'key in a comment' => ['T[/* K */'];
     }
 
-    public function testTypeAndKeyAreKeptAsTheyAreWritten(): void
+    #[DataProvider('invalidAccessDataProvider')]
+    public function testAccessIsRejected(string $source): void
     {
-        $node = $this->parse("\\Some\\Any['key']");
-
-        self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $node);
-        self::assertInstanceOf(NamedTypeNode::class, $node->type);
-        self::assertSame('\\Some\\Any', $node->type->name->toString());
-        self::assertInstanceOf(StringLiteralNode::class, $node->access);
-        self::assertSame('key', $node->access->value);
+        self::assertRejected($source);
     }
 
     /**
-     * What a chain is made of, from the outer suffix to the inner one: `L` is a list, `A` is an access.
-     *
-     * @return iterable<non-empty-string, array{non-empty-string, string}>
+     * @return iterable<non-empty-string, array{int<1, max>}>
      */
-    public static function chainDataProvider(): iterable
+    public static function depthDataProvider(): iterable
     {
-        yield 'access' => ['T[K]', 'A'];
-        yield 'two accesses' => ['T[K][L]', 'AA'];
-        yield 'access and list' => ['T[K][]', 'LA'];
-        yield 'list and access' => ['T[][K]', 'AL'];
-        yield 'mix' => ['T[][K][][L]', 'ALAL'];
-        yield 'long chain' => ['T[A][B][C][D]', 'AAAA'];
-        yield 'group of an access' => ['(T[K])[]', 'LA'];
-        yield 'group of a list' => ['(T[])[K]', 'AL'];
+        yield 'one' => [1];
+        yield 'ten' => [10];
+        yield 'twenty' => [20];
+        yield 'two hundred' => [200];
     }
 
     /**
-     * @param non-empty-string $source
+     * @param int<1, max> $depth
      */
-    #[DataProvider('chainDataProvider')]
-    public function testSuffixesAreAppliedFromLeftToRight(string $source, string $expected): void
+    #[DataProvider('depthDataProvider')]
+    public function testChainOfAccessesIsAccepted(int $depth): void
     {
-        $node = $this->parse($source);
-        $actual = '';
-
-        while ($node instanceof TypeOffsetAccessTypeNode || $node instanceof TypesListTypeNode) {
-            $actual .= $node instanceof TypeOffsetAccessTypeNode ? 'A' : 'L';
-            $node = $node->type;
-        }
-
-        // The outer suffix is the last one written, so the chain read from outside is reversed
-        self::assertSame($expected, $actual);
-        self::assertInstanceOf(NamedTypeNode::class, $node);
-        self::assertSame('T', $node->name->toString());
-    }
-
-    public function testKeysOfAChainAreInTheOrderTheyAreWritten(): void
-    {
-        $node = $this->parse('T[A][B][C]');
-        $keys = [];
-
-        while ($node instanceof TypeOffsetAccessTypeNode) {
-            \array_unshift($keys, $node->access->name->toString());
-            $node = $node->type;
-        }
-
-        self::assertSame(['A', 'B', 'C'], $keys);
+        self::assertAccepted('T' . \str_repeat('[K]', $depth));
     }
 
     /**
-     * Every access begins where the type before it begins, the key keeps its own offset.
-     *
-     * @return iterable<non-empty-string, array{non-empty-string, int<0, max>, int<0, max>, int<0, max>}>
+     * @param int<1, max> $depth
      */
-    public static function offsetDataProvider(): iterable
+    #[DataProvider('depthDataProvider')]
+    public function testAccessesInsideOfAccessesAreAccepted(int $depth): void
     {
-        yield 'no trivia' => ['T[K]', 0, 0, 2];
-        yield 'spaces before' => ['  T[K]', 2, 2, 4];
-        yield 'spaces before the bracket' => ['T  [K]', 0, 0, 4];
-        yield 'spaces inside' => ['T[  K  ]', 0, 0, 4];
-        yield 'line breaks' => ["T\n[\nK\n]", 0, 0, 4];
-        yield 'comments' => ['T/* a */[/* b */K]', 0, 0, 16];
-        yield 'multibyte comments' => ['/* Фу */ T[/* Бар */ K]', 11, 11, 26];
-        yield 'group' => ['(T)[K]', 1, 1, 4];
-        yield 'group of the key' => ['T[(K)]', 0, 0, 3];
+        self::assertAccepted('T' . \str_repeat('[K', $depth) . \str_repeat(']', $depth));
     }
 
     /**
-     * @param non-empty-string $source
-     * @param int<0, max> $access
-     * @param int<0, max> $type
-     * @param int<0, max> $key
+     * @param int<1, max> $depth
      */
-    #[DataProvider('offsetDataProvider')]
-    public function testOffsetOfAnAccessIsTheOffsetOfItsType(string $source, int $access, int $type, int $key): void
+    #[DataProvider('depthDataProvider')]
+    public function testAccessesInsideOfAccessesNotClosedAreRejected(int $depth): void
     {
-        $node = $this->parse($source);
-
-        self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $node);
-        self::assertSame($access, $node->offset);
-        self::assertSame($type, $node->type->offset);
-        self::assertSame($key, $node->access->offset);
-    }
-
-    public function testOffsetsOfAChainAreTheOffsetOfItsType(): void
-    {
-        $node = $this->parse('T[A][B] []');
-        $offsets = [];
-
-        while ($node instanceof TypeOffsetAccessTypeNode || $node instanceof TypesListTypeNode) {
-            $offsets[] = $node->offset;
-            $node = $node->type;
-        }
-
-        self::assertSame([0, 0, 0], $offsets);
-    }
-
-    public function testTriviaAroundTheAccessIsIgnored(): void
-    {
-        $node = $this->parse("/* a */ T /* b */ [ /* c */ K /* d */ ] // e\n");
-
-        self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $node);
-        self::assertInstanceOf(NamedTypeNode::class, $node->type);
-        self::assertInstanceOf(NamedTypeNode::class, $node->access);
-    }
-
-    public function testTypeWithNoBracketsIsNotAnAccess(): void
-    {
-        self::assertInstanceOf(NamedTypeNode::class, $this->parse('T'));
-        self::assertInstanceOf(NamedTypeNode::class, $this->parse('T /* [K] */'));
-        self::assertInstanceOf(TypesListTypeNode::class, $this->parse('T[]'));
+        self::assertRejected('T' . \str_repeat('[K', $depth) . \str_repeat(']', $depth - 1));
+        self::assertRejected('T' . \str_repeat('[K', $depth) . \str_repeat(']', $depth + 1));
     }
 }

@@ -5,206 +5,357 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use TypeLang\Parser\Tests\TestCase;
-use TypeLang\Type\Literal\BoolLiteralNode;
-use TypeLang\Type\Literal\LiteralNode;
-use TypeLang\Type\Literal\NullLiteralNode;
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\NamespaceName\NamespaceKind;
 
 /**
- * A type that is a name and nothing more.
+ * A name with a constant, with template arguments or with shape fields behind
+ * it, and what may stand around them (grammar.pp3).
  */
-final class NamedTypeTest extends TestCase
+final class NamedTypeTest extends SyntaxTestCase
 {
     /**
-     * @return iterable<non-empty-string, array{non-empty-string}>
+     * @return iterable<non-empty-string, array{string}>
      */
-    public static function nameDataProvider(): iterable
+    public static function validConstantDataProvider(): iterable
     {
-        yield 'simple' => ['Foo'];
-        yield 'builtin' => ['int'];
-        yield 'hyphen' => ['non-empty-string'];
-        yield 'multibyte' => ['Фу'];
-        yield 'case is kept' => ['IS'];
+        // What stands before the double colon
+        yield 'qualified class' => ['Foo\\Bar::BAR'];
+        yield 'fully qualified class' => ['\\Foo\\Bar::BAR'];
+        yield 'namespace relative class' => ['namespace\\Foo::BAR'];
+        yield 'self' => ['self::BAR'];
+        yield 'static' => ['static::BAR'];
+        yield 'parent' => ['parent::BAR'];
+        yield 'int' => ['int::BAR'];
+        yield 'string' => ['string::BAR'];
+        yield 'array' => ['array::BAR'];
+        yield 'list' => ['list::BAR'];
+        yield 'mixed' => ['mixed::BAR'];
+        yield 'object' => ['object::BAR'];
+        yield 'iterable' => ['iterable::BAR'];
+        yield 'callable' => ['callable::BAR'];
+        yield 'virtual name' => ['class-string::BAR'];
+        yield 'virtual name with hyphens' => ['non-empty-string::BAR'];
 
-        yield 'keyword is' => ['is'];
-        yield 'keyword not' => ['not'];
-        yield 'keyword of' => ['of'];
-        yield 'keyword as' => ['as'];
-        yield 'keyword super' => ['super'];
-        yield 'keyword with a hyphen' => ['is-x'];
+        // What stands behind the double colon
+        yield 'constant in lower case' => ['Foo::bar'];
+        yield 'constant in camel case' => ['Foo::Bar'];
+        yield 'constant with a digit' => ['Foo::BAR_1'];
+        yield 'constant with an underscore in front' => ['Foo::_BAR'];
+        yield 'class' => ['Foo::class'];
+        yield 'class in upper case' => ['Foo::CLASS'];
+        yield 'true' => ['Foo::true'];
+        yield 'null' => ['Foo::null'];
+        yield 'type name' => ['Foo::int'];
+        yield 'array name' => ['Foo::array'];
 
-        yield 'fully qualified' => ['\\Foo'];
-        yield 'qualified' => ['Foo\\Bar'];
-        yield 'fully qualified and qualified' => ['\\Foo\\Bar\\Baz'];
-        yield 'keyword in a namespace' => ['Foo\\is\\of'];
-        yield 'keyword leads a namespace' => ['is\\Foo'];
+        // Masks of constants
+        yield 'mask' => ['Foo::BAR_*'];
+        yield 'lone star' => ['Foo::*'];
+        yield 'star in front' => ['Foo::*_BAR'];
+        yield 'star in the middle' => ['Foo::A*B'];
+        yield 'two parts around a star' => ['Foo::A_*_B'];
+        yield 'mask of a qualified class' => ['Foo\\Bar::BAR_*'];
+        yield 'mask of a fully qualified class' => ['\\Foo::BAR_*'];
+        yield 'mask of self' => ['self::BAR_*'];
+        yield 'mask of static' => ['static::BAR_*'];
+        yield 'mask of parent' => ['parent::BAR_*'];
+        yield 'mask of int' => ['int::BAR_*'];
+        yield 'mask of array' => ['array::BAR_*'];
 
-        yield 'fully qualified true' => ['\\true'];
-        yield 'fully qualified false' => ['\\false'];
-        yield 'fully qualified null' => ['\\NULL'];
-        yield 'fully qualified literal word leads a namespace' => ['\\true\\Foo'];
-        yield 'fully qualified literal word with a suffix' => ['\\truefoo'];
-        yield 'literal word leads a namespace' => ['true\\null'];
-        yield 'literal word ends a namespace' => ['Foo\\false'];
-        yield 'literal word in the middle' => ['Foo\\null\\Bar'];
-        yield 'literal word with a hyphen' => ['null-type'];
-        yield 'literal word with a suffix' => ['trueFoo'];
+        // Around a constant
+        yield 'constant in a union' => ['Foo|Bar::BAR'];
+        yield 'constant in front of a union' => ['Foo::BAR|Bar'];
+        yield 'nullable constant' => ['?Foo::BAR'];
+        yield 'list of a mask' => ['Foo::BAR_*[]'];
+        yield 'list of constants' => ['Foo::BAR[]'];
+    }
+
+    #[DataProvider('validConstantDataProvider')]
+    public function testConstantIsAccepted(string $source): void
+    {
+        self::assertAccepted($source);
     }
 
     /**
-     * @param non-empty-string $source
-     */
-    #[DataProvider('nameDataProvider')]
-    public function testNameIsKeptAsItIsWritten(string $source): void
-    {
-        $type = $this->parse($source);
-
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame($source, $type->name->toString());
-        self::assertNull($type->arguments);
-        self::assertNull($type->fields);
-    }
-
-    /**
-     * @return iterable<non-empty-string, array{non-empty-string, int<0, max>}>
-     */
-    public static function offsetDataProvider(): iterable
-    {
-        yield 'no trivia' => ['Foo', 0];
-        yield 'spaces' => ['  Foo', 2];
-        yield 'line break' => ["\n\nFoo", 2];
-        yield 'block comment' => ['/* c */ Foo', 8];
-        yield 'line comment' => ["// c\nFoo", 5];
-        yield 'hash comment' => ["# c\nFoo", 4];
-        yield 'qualified' => ['  Foo\\Bar', 2];
-        yield 'before a root separator' => ['  \\Foo', 2];
-        yield 'multibyte before' => ['/* Фу */ Foo', 11];
-    }
-
-    /**
-     * The offset of a type is where its first character stands, the root separator included.
+     * Only a name may stand before the double colon, and nothing but a word or a
+     * mask behind it.
      *
-     * @param non-empty-string $source
-     * @param int<0, max> $offset
+     * @return iterable<non-empty-string, array{string}>
      */
-    #[DataProvider('offsetDataProvider')]
-    public function testOffsetPointsToTheFirstCharacter(string $source, int $offset): void
+    public static function invalidConstantDataProvider(): iterable
     {
-        $type = $this->parse($source);
+        yield 'variable' => ['$a::BAR'];
+        yield 'this' => ['$this::BAR'];
+        yield 'mask of this' => ['$this::BAR_*'];
+        yield 'class of this' => ['$this::class'];
+        yield 'string' => ["'Foo'::BAR"];
+        yield 'list' => ['Foo[]::BAR'];
+        yield 'group' => ['(Foo)::BAR'];
+        yield 'group class' => ['(Foo)::class'];
+        yield 'group of a union' => ['(Foo|Bar)::class'];
+        yield 'group of a generic' => ['(Foo<int>)::BAR'];
+        yield 'group of a generic class' => ['(Foo<int>)::class'];
+        yield 'group of a shape' => ['(Foo{a: int})::BAR'];
+        yield 'group of a mask' => ['(Foo)::BAR_*'];
+        yield 'two constants' => ['Foo::BAR::BAR'];
+        yield 'constant and class' => ['Foo::BAR::class'];
+        yield 'two classes' => ['Foo::class::class'];
+        yield 'mask and constant' => ['Foo::*::BAR'];
+        yield 'number' => ['Foo::1'];
+        yield 'variable behind' => ['Foo::$bar'];
+        yield 'call' => ['Foo::bar()'];
+        yield 'hyphen in a constant' => ['Foo::BAR-BAR'];
+        yield 'backslash in a constant' => ['Foo::BAR\\Baz'];
+    }
 
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame($offset, $type->offset);
-        self::assertSame($offset, $type->name->offset);
+    #[DataProvider('invalidConstantDataProvider')]
+    public function testConstantIsRejected(string $source): void
+    {
+        self::assertRejected($source);
     }
 
     /**
-     * @return iterable<non-empty-string, array{non-empty-string}>
-     */
-    public static function triviaAroundDataProvider(): iterable
-    {
-        yield 'spaces' => ['  Foo  '];
-        yield 'line breaks' => ["\r\nFoo\r\n"];
-        yield 'comments' => ["/* a */ Foo // b\n"];
-    }
-
-    /**
-     * @param non-empty-string $source
-     */
-    #[DataProvider('triviaAroundDataProvider')]
-    public function testTriviaAroundIsIgnored(string $source): void
-    {
-        $type = $this->parse($source);
-
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame('Foo', $type->name->toString());
-    }
-
-    /**
-     * @return iterable<non-empty-string, array{non-empty-string, class-string}>
-     */
-    public static function literalDataProvider(): iterable
-    {
-        yield 'true' => ['true', BoolLiteralNode::class];
-        yield 'false' => ['false', BoolLiteralNode::class];
-        yield 'null' => ['null', NullLiteralNode::class];
-        yield 'true in upper case' => ['TRUE', BoolLiteralNode::class];
-        yield 'null in mixed case' => ['NuLL', NullLiteralNode::class];
-    }
-
-    /**
-     * @param non-empty-string $source
-     * @param class-string $class
-     */
-    #[DataProvider('literalDataProvider')]
-    public function testLoneReservedWordIsALiteral(string $source, string $class): void
-    {
-        self::assertInstanceOf($class, $this->parse($source));
-    }
-
-    /**
-     * @return iterable<non-empty-string, array{non-empty-string, bool|null}>
-     */
-    public static function literalValueDataProvider(): iterable
-    {
-        yield 'true' => ['true', true];
-        yield 'false' => ['false', false];
-        yield 'null' => ['null', null];
-    }
-
-    /**
-     * The leading separator is a part of the text, as it is written.
+     * Template arguments, shape fields and a constant do not go together on
+     * one name, none of the tools allows it.
      *
-     * @param non-empty-string $source
+     * @return iterable<non-empty-string, array{string}>
      */
-    #[DataProvider('literalValueDataProvider')]
-    public function testLiteralKeepsTheValueAndTheTextItIsWrittenAs(string $source, bool|null $value): void
+    public static function invalidCombinationDataProvider(): iterable
     {
-        $type = $this->parse("  $source");
+        yield 'constant behind the arguments' => ['Foo<int>::BAR'];
+        yield 'mask behind the arguments' => ['Foo<int>::BAR_*'];
+        yield 'lone star behind the arguments' => ['Foo<int>::*'];
+        yield 'class behind the arguments' => ['Foo<int>::class'];
+        yield 'constant behind the arguments of array' => ['array<int, string>::BAR'];
+        yield 'constant behind the fields' => ['Foo{a: int}::BAR'];
+        yield 'mask behind the fields' => ['Foo{a: int}::BAR_*'];
+        yield 'constant behind the unsealed fields' => ['Foo{a: int, ...<T>}::BAR'];
+        yield 'constant behind the fields of array' => ['array{a: int}::BAR'];
+        yield 'arguments behind a constant' => ['Foo::BAR<int>'];
+        yield 'arguments behind a mask' => ['Foo::BAR_*<int>'];
+        yield 'fields behind a constant' => ['Foo::BAR{a: int}'];
+        yield 'fields behind the arguments' => ['Foo<int>{a: int}'];
+        yield 'arguments behind the fields' => ['Foo{a: int}<int>'];
+        yield 'list of a constant behind the arguments' => ['Foo<int>::BAR[]'];
+        yield 'constant with the arguments as a key' => ['array{Foo<int>::BAR: int}'];
+        yield 'constant with the arguments behind as a key' => ['array{Foo::BAR<int>: int}'];
+    }
 
-        self::assertInstanceOf(LiteralNode::class, $type);
-        self::assertSame($value, $type->value);
-        self::assertSame($source, $type->raw);
-        self::assertSame(2, $type->offset);
+    #[DataProvider('invalidCombinationDataProvider')]
+    public function testCombinationIsRejected(string $source): void
+    {
+        self::assertRejected($source);
     }
 
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string, string|null, NamespaceKind|null}>
+     * @return iterable<non-empty-string, array{string}>
      */
-    public static function namespaceDataProvider(): iterable
+    public static function validAroundDataProvider(): iterable
     {
-        yield 'no namespace' => ['Foo', 'Foo', null, null];
-        yield 'qualified' => ['Some\Foo', 'Foo', 'Some', NamespaceKind::Qualified];
-        yield 'qualified deeper' => ['Some\Any\Foo', 'Foo', 'Some\Any', NamespaceKind::Qualified];
-        yield 'root' => ['\Foo', 'Foo', '', NamespaceKind::FullyQualified];
-        yield 'fully qualified' => ['\Some\Foo', 'Foo', 'Some', NamespaceKind::FullyQualified];
-        yield 'fully qualified deeper' => ['\Some\Any\Foo', 'Foo', 'Some\Any', NamespaceKind::FullyQualified];
-        yield 'current namespace' => ['namespace\Foo', 'Foo', '', NamespaceKind::NamespaceRelative];
-        yield 'relative to the current' => ['namespace\Some\Foo', 'Foo', 'Some', NamespaceKind::NamespaceRelative];
-        yield 'keyword in upper case' => ['NAMESPACE\Foo', 'Foo', '', NamespaceKind::NamespaceRelative];
-        yield 'keyword as a word' => ['Some\namespace\Foo', 'Foo', 'Some\namespace', NamespaceKind::Qualified];
-        yield 'virtual name' => ['non-empty-string', 'non-empty-string', null, null];
+        yield 'list of arguments' => ['Foo<int>[]'];
+        yield 'access of arguments' => ['Foo<int>[K]'];
+        yield 'list of fields' => ['Foo{a: int}[]'];
+        yield 'access of fields' => ['Foo{a: int}[K]'];
+        yield 'list of list of fields' => ['array{a: int}[][K]'];
+        yield 'list of unsealed fields' => ['array{a: int, ...<K, V>}[]'];
+        yield 'union of arguments' => ['Foo<int>|Bar<string>'];
+        yield 'union of arguments and fields' => ['Foo<int>|Foo{a: int}'];
+        yield 'intersection of arguments and fields' => ['Foo<int>&Foo{a: int}'];
+        yield 'union of fields' => ['array{a: int}|B'];
+        yield 'nullable fields' => ['?Foo{a: int}'];
+        yield 'custom name with fields' => ['Foo{a: int}'];
+        yield 'custom name with no fields' => ['Foo{}'];
+        yield 'qualified custom name with fields' => ['\\Foo\\Bar{a: int}'];
+    }
+
+    #[DataProvider('validAroundDataProvider')]
+    public function testSuffixesAndOperatorsBehindArgumentsAndFieldsAreAccepted(string $source): void
+    {
+        self::assertAccepted($source);
     }
 
     /**
-     * @param non-empty-string $source
-     * @param non-empty-string $word
+     * @return iterable<non-empty-string, array{string}>
      */
-    #[DataProvider('namespaceDataProvider')]
-    public function testNameIsCutIntoNamespaceAndWord(
-        string $source,
-        string $word,
-        ?string $value,
-        ?NamespaceKind $kind,
-    ): void {
-        $type = $this->parse("  $source");
+    public static function validArgumentDataProvider(): iterable
+    {
+        yield 'trailing comma' => ['Foo<int,>'];
+        yield 'four arguments' => ['Foo<A,B,C,D>'];
+        yield 'wildcard first' => ['Foo<*,int>'];
+        yield 'wildcard last' => ['Foo<A,*>'];
+        yield 'nested' => ['Foo<int<A>>'];
+        yield 'union' => ['Foo<A|B>'];
+        yield 'list' => ['Foo<A[]>'];
+        yield 'list of a shape' => ['Foo<array{a: int}[]>'];
+        yield 'nullable' => ['Foo<?int>'];
+        yield 'group' => ['Foo<(A)>'];
+        yield 'class constant' => ['Foo<A::B>'];
+        yield 'qualified name' => ['Foo<A\\B>'];
+        yield 'string' => ["Foo<'a'>"];
+        yield 'number' => ['Foo<1>'];
+        yield 'true' => ['Foo<true>'];
+        yield 'null' => ['Foo<null>'];
+        yield 'comment behind' => ['Foo<A/* c */>'];
+        yield 'comment in front' => ['Foo</* c */A>'];
 
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame($word, $type->name->value);
-        self::assertSame($value, $type->name->namespace?->value);
-        self::assertSame($kind, $type->name->namespace?->kind);
-        self::assertSame(2, $type->name->offset);
-        self::assertSame($kind === null ? null : 2, $type->name->namespace?->offset);
+        // covariant, contravariant and invariant in front of a type are a variance
+        yield 'variance and a name' => ['Foo<covariant T>'];
+        yield 'contravariance and a name' => ['Foo<contravariant T>'];
+        yield 'invariance and a name' => ['Foo<invariant T>'];
+        yield 'variance and a list' => ['Foo<covariant B[]>'];
+        yield 'variance and a group of a union' => ['Foo<covariant (A|B)>'];
+        yield 'variance and a class constant' => ['Foo<covariant A::B>'];
+        yield 'variance and a qualified name' => ['Foo<covariant A\\B>'];
+        yield 'variance and a nullable' => ['Foo<covariant ?int>'];
+        yield 'variance and this' => ['Foo<covariant $this>'];
+        yield 'variance and a string' => ["Foo<covariant 'a'>"];
+        yield 'variance and a number' => ['Foo<covariant 1>'];
+        yield 'variance and true' => ['Foo<covariant true>'];
+
+        // A lone word is a name, not a variance
+        yield 'lone covariant' => ['Foo<covariant>'];
+        yield 'lone contravariant' => ['Foo<contravariant>'];
+        yield 'lone invariant' => ['Foo<invariant>'];
+        yield 'lone in' => ['Foo<in>'];
+    }
+
+    #[DataProvider('validArgumentDataProvider')]
+    public function testArgumentsAreAccepted(string $source): void
+    {
+        self::assertAccepted($source);
+    }
+
+    /**
+     * A gap, a line break and a comment are allowed before the opening symbol
+     * and behind a variance (question 7 of grammar-questions.md).
+     *
+     * @return iterable<non-empty-string, array{string}>
+     */
+    public static function validGapDataProvider(): iterable
+    {
+        yield 'space before the arguments' => ['Foo <int>'];
+        yield 'line break before the arguments' => ["Foo\n<int>"];
+        yield 'comment before the arguments' => ['Foo/* c */<int>'];
+        yield 'space before the fields' => ['array {a: int}'];
+        yield 'line break before the fields' => ["array\n{a: int}"];
+        yield 'comment before the fields' => ['array/* c */{a: int}'];
+        yield 'space before the parameters' => ['callable (int)'];
+        yield 'group behind a variance' => ['Foo<covariant (A)>'];
+        yield 'group behind a variance in a union' => ['Foo<covariant (A|B)>'];
+        yield 'group behind a variance with no space' => ['Foo<covariant(A|B)>'];
+        yield 'callable of a word that is no variance' => ['Foo<A (B)>'];
+        yield 'callable of in' => ['Foo<in (A|B)>'];
+        yield 'call-like type' => ['Foo<callable(int)>'];
+        yield 'call-like type with a space' => ['Foo<callable (int)>'];
+        yield 'line break behind a variance' => ["Foo<covariant\nB>"];
+        yield 'comment behind a variance' => ['Foo<covariant/* c */B>'];
+    }
+
+    #[DataProvider('validGapDataProvider')]
+    public function testGapIsAccepted(string $source): void
+    {
+        self::assertAccepted($source);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{string}>
+     */
+    public static function invalidArgumentDataProvider(): iterable
+    {
+        yield 'wildcard in a union' => ['Foo<*|int>'];
+        yield 'two wildcards glued' => ['Foo<**>'];
+        yield 'empty' => ['Foo<>'];
+        yield 'comma alone' => ['Foo<,>'];
+        yield 'two commas' => ['Foo<int,,string>'];
+        yield 'not closed' => ['Foo<int'];
+        yield 'not opened' => ['Foo int>'];
+        yield 'closed twice' => ['Foo<int>>'];
+        yield 'three words' => ['Foo<A B C>'];
+    }
+
+    #[DataProvider('invalidArgumentDataProvider')]
+    public function testArgumentsAreRejected(string $source): void
+    {
+        self::assertRejected($source);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{string}>
+     */
+    public static function validShapeDataProvider(): iterable
+    {
+        yield 'spaces only' => ['array{ }'];
+        yield 'spaces around' => ['array{ a : int }'];
+        yield 'spaces around an optional mark' => ['array{ a? : int }'];
+        yield 'implicit fields' => ['array{a, b}'];
+        yield 'explicit and implicit fields' => ['array{a: int, b}'];
+        yield 'union and nullable fields' => ['array{A|B, ?int}'];
+        yield 'virtual name as a key' => ['array{non-empty-string: int}'];
+        yield 'class constant as a key' => ['array{Foo\\Bar::BAZ: int}'];
+        yield 'optional class constant as a key' => ['array{Foo::BAR?: int}'];
+        yield 'class named class as a key' => ['array{Foo::class: int}'];
+        yield 'global constant as a key' => ['array{FOO: int}'];
+        yield 'fully qualified name as a key' => ['array{\\Foo: int}'];
+        yield 'qualified name as a key' => ['array{Foo\\Bar: int}'];
+        yield 'qualified constant as a key' => ['array{Foo\\BAR: int}'];
+        yield 'fully qualified constant as a key' => ['array{\\Foo\\BAR: int}'];
+        yield 'optional qualified name as a key' => ['array{Foo\\Bar?: int}'];
+        yield 'negative integer as a key' => ['array{-1: int}'];
+        yield 'negative integer with a space as a key' => ['array{- 1: int}'];
+        yield 'positive integer as a key' => ['array{+1: int}'];
+        yield 'positive integer with a space as a key' => ['array{+ 1: int}'];
+        yield 'class constant as an implicit field' => ['array{Foo::BAR, int}'];
+        yield 'class constant mask as an implicit field' => ['array{Foo::BAR_*, int}'];
+        yield 'nested shapes and arguments' => ['array{a: Foo<int>, b: Bar{c: int}}'];
+        yield 'deeply nested' => ['array{a: array{b: Foo<array{c: int}>}}'];
+        yield 'unsealed with an argument' => ['array{a: int, ...<K>}'];
+        yield 'unsealed with a wildcard' => ['array{a: int, ...<*>}'];
+        yield 'unsealed with a trailing comma in the arguments' => ['array{a: int, ...<K,>}'];
+        yield 'unsealed with a comma behind' => ['array{a: int, ...<K>,}'];
+        yield 'unsealed with a space before the arguments' => ['array{a: int, ... <K>}'];
+        yield 'unsealed with the comma and the space behind' => ['array{a: int, ...<K, V>, }'];
+    }
+
+    #[DataProvider('validShapeDataProvider')]
+    public function testShapeIsAccepted(string $source): void
+    {
+        self::assertAccepted($source);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{string}>
+     */
+    public static function invalidShapeDataProvider(): iterable
+    {
+        yield 'field behind the unsealed mark' => ['array{a: int, ..., b: int}'];
+        yield 'field behind the unsealed arguments' => ['array{...<K>, a: int}'];
+        yield 'two commas' => ['array{a: int,,b: int}'];
+        yield 'two commas in front of the unsealed mark' => ['array{a: int,, ...}'];
+        yield 'two words with no colon' => ['array{a int}'];
+        yield 'colon with no key' => ['array{?: int}'];
+        yield 'optional mark with no type' => ['array{a?}'];
+        yield 'colon with no type' => ['array{a: }'];
+        yield 'comma alone' => ['array{,}'];
+        yield 'empty arguments of the unsealed mark' => ['array{a: int, ...<>}'];
+        yield 'mask in a key' => ['array{PHP_*: int}'];
+        yield 'optional mask in a key' => ['array{PHP_*?: int}'];
+        yield 'qualified mask in a key' => ['array{Foo\\BAR_*: int}'];
+        yield 'fully qualified mask in a key' => ['array{\\PHP_*: int}'];
+        yield 'class constant mask in a key' => ['array{Foo::BAR_*: int}'];
+        yield 'optional class constant mask in a key' => ['array{Foo::BAR_*?: int}'];
+        yield 'class lone star mask in a key' => ['array{Foo::*: int}'];
+        yield 'star in a key' => ['array{*: int}'];
+        yield 'float in a key' => ['array{0.5: int}'];
+        yield 'float with a sign in a key' => ['array{-1.5: int}'];
+        yield 'float with a sign and a space in a key' => ['array{- 1.5: int}'];
+        yield 'float with a plus and a space in a key' => ['array{+ 1.5: int}'];
+        yield 'float with an exponent in a key' => ['array{1e3: int}'];
+        yield 'variable in a key' => ['array{$a: int}'];
+        yield 'this in a key' => ['array{$this: int}'];
+    }
+
+    #[DataProvider('invalidShapeDataProvider')]
+    public function testShapeIsRejected(string $source): void
+    {
+        self::assertRejected($source);
     }
 }

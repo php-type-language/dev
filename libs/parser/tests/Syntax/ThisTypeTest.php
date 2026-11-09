@@ -5,53 +5,54 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use TypeLang\Parser\Tests\TestCase;
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\ThisTypeNode;
 
 /**
- * The type `$this` is not a name.
+ * The type `$this` (grammar.pp3).
  */
-final class ThisTypeTest extends TestCase
+final class ThisTypeTest extends SyntaxTestCase
 {
-    public function testThisIsAThisTypeNode(): void
+    /**
+     * @return iterable<non-empty-string, array{string}>
+     */
+    public static function validThisDataProvider(): iterable
     {
-        self::assertInstanceOf(ThisTypeNode::class, $this->parse('$this'));
+        yield 'this' => ['$this'];
+        yield 'spaces around' => ['  $this  '];
+        yield 'line breaks around' => ["\n\$this\r\n"];
+        yield 'block comment before' => ['/* c */ $this'];
+        yield 'line comment behind' => ['$this // c'];
+        yield 'hash comment behind' => ["\$this # c\n"];
+    }
+
+    #[DataProvider('validThisDataProvider')]
+    public function testThisIsAccepted(string $source): void
+    {
+        self::assertAccepted($source);
     }
 
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, int<0, max>}>
+     * @return iterable<non-empty-string, array{string}>
      */
-    public static function offsetDataProvider(): iterable
+    public static function invalidThisDataProvider(): iterable
     {
-        yield 'no trivia' => ['$this', 0];
-        yield 'spaces' => ['  $this', 2];
-        yield 'line break' => ["\n\n\$this", 2];
-        yield 'block comment' => ['/* c */ $this', 8];
-        yield 'line comment' => ["// c\n\$this", 5];
-        yield 'multibyte before' => ['/* Фу */ $this', 11];
+        yield 'upper case' => ['$THIS'];
+        yield 'capitalized' => ['$This'];
+        yield 'with a suffix' => ['$thisFoo'];
+        yield 'with an underscore behind' => ['$this_'];
+        yield 'with a digit behind' => ['$this1'];
+        yield 'with a hyphen behind' => ['$this-x'];
+        yield 'other variable' => ['$that'];
+        yield 'lone dollar' => ['$'];
+        yield 'class constant of this' => ['$this::Foo'];
+        yield 'namespace of this' => ['$this\\Foo'];
+        yield 'fully qualified this' => ['\\$this'];
+        yield 'glued to a name' => ['Foo$this'];
+        yield 'two of them' => ['$this $this'];
     }
 
-    /**
-     * @param non-empty-string $source
-     * @param int<0, max> $offset
-     */
-    #[DataProvider('offsetDataProvider')]
-    public function testOffsetPointsToTheDollar(string $source, int $offset): void
+    #[DataProvider('invalidThisDataProvider')]
+    public function testThisIsRejected(string $source): void
     {
-        $type = $this->parse($source);
-
-        self::assertInstanceOf(ThisTypeNode::class, $type);
-        self::assertSame($offset, $type->offset);
-    }
-
-    public function testTriviaAroundIsIgnored(): void
-    {
-        self::assertInstanceOf(ThisTypeNode::class, $this->parse("/* a */ \$this // b\n"));
-    }
-
-    public function testThisWordWithNoDollarIsAName(): void
-    {
-        self::assertInstanceOf(NamedTypeNode::class, $this->parse('this'));
+        self::assertRejected($source);
     }
 }

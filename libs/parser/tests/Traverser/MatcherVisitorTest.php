@@ -16,16 +16,9 @@ use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 
 final class MatcherVisitorTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        self::markTestIncomplete('TODO');
-    }
-
     private function type(string $name = 'Example'): NamedTypeNode
     {
-        return new NamedTypeNode(Name::createFromString($name));
+        return new NamedTypeNode($this->parseName($name));
     }
 
     #[Test]
@@ -221,7 +214,7 @@ final class MatcherVisitorTest extends TestCase
     {
         $visitor = Traverser::through(
             new MatcherVisitor(static fn(Node $node): bool
-                => $node instanceof NamedTypeNode && $node->name->unqualified === 'Second'),
+                => $node instanceof NamedTypeNode && $node->name->value === 'Second'),
             [$this->type('First'), $this->type('Second')],
         );
 

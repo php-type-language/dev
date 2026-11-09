@@ -5,136 +5,113 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use TypeLang\Parser\Tests\TestCase;
-use TypeLang\Type\Constant\ClassConstTypeNode;
-use TypeLang\Type\Constant\ConstMaskTypeNode;
-use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\ThisTypeNode;
-use TypeLang\Type\TypeNode;
-use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 /**
- * The suffix `[]` wraps the type before it into a list.
+ * The suffix `[]` behind a type (grammar.pp3).
  */
-final class ListTypeTest extends TestCase
+final class ListTypeTest extends SyntaxTestCase
 {
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, class-string<TypeNode>}>
+     * @return iterable<non-empty-string, array{string}>
      */
-    public static function listedDataProvider(): iterable
+    public static function validListDataProvider(): iterable
     {
-        yield 'name' => ['int[]', NamedTypeNode::class];
-        yield 'qualified name' => ['\\Foo\\Bar[]', NamedTypeNode::class];
-        yield 'literal' => ['42[]', IntLiteralNode::class];
-        yield 'this' => ['$this[]', ThisTypeNode::class];
-        yield 'class constant' => ['Foo::BAR[]', ClassConstTypeNode::class];
-        yield 'global mask' => ['PHP_*[]', ConstMaskTypeNode::class];
-        yield 'group' => ['(int)[]', NamedTypeNode::class];
-        yield 'spaces' => ['int [ ]', NamedTypeNode::class];
-        yield 'line breaks' => ["int\n[\n]", NamedTypeNode::class];
+        yield 'name' => ['int[]'];
+        yield 'qualified name' => ['\\Foo\\Bar[]'];
+        yield 'virtual name' => ['non-empty-string[]'];
+        yield 'keyword' => ['is[]'];
+        yield 'literal word' => ['null[]'];
+        yield 'bool literal' => ['true[]'];
+        yield 'int literal' => ['42[]'];
+        yield 'float literal' => ['1.5[]'];
+        yield 'string literal' => ["'text'[]"];
+        yield 'this' => ['$this[]'];
+        yield 'class constant' => ['Foo::BAR[]'];
+        yield 'class constant mask' => ['Foo::BAR_*[]'];
+        yield 'star of a class' => ['Foo::*[]'];
+        yield 'global mask' => ['PHP_*[]'];
+        yield 'mask of a namespace' => ['Path\\To\\*[]'];
+        yield 'group' => ['(int)[]'];
+        yield 'group of a list' => ['(int[])[]'];
+        yield 'two lists' => ['int[][]'];
+        yield 'five lists' => ['int[][][][][]'];
+        yield 'group and lists' => ['(A)[][]'];
+
+        yield 'space before' => ['int []'];
+        yield 'space inside' => ['int[ ]'];
+        yield 'spaces around' => ['int [ ]'];
+        yield 'space between the lists' => ['int[] []'];
+        yield 'spaces between everything' => ['int [ ] [ ]'];
+        yield 'line break before' => ["int\n[]"];
+        yield 'line break inside' => ["int[\n]"];
+        yield 'line breaks around' => ["int\r\n[\r\n]\r\n"];
+        yield 'block comment before' => ['int/* c */[]'];
+        yield 'block comment inside' => ['int[/* c */]'];
+        yield 'line comment before' => ["int // c\n[]"];
+        yield 'comment after the list' => ['int[] // c'];
+        yield 'space behind a group' => ['(int) []'];
+        yield 'brackets in a comment only' => ['int /* [] */'];
+    }
+
+    #[DataProvider('validListDataProvider')]
+    public function testListIsAccepted(string $source): void
+    {
+        self::assertAccepted($source);
     }
 
     /**
-     * @param non-empty-string $source
-     * @param class-string<TypeNode> $element
+     * @return iterable<non-empty-string, array{string}>
      */
-    #[DataProvider('listedDataProvider')]
-    public function testListWrapsTheTypeBeforeIt(string $source, string $element): void
+    public static function invalidListDataProvider(): iterable
     {
-        $type = $this->parse($source);
+        yield 'brackets alone' => ['[]'];
+        yield 'not closed' => ['int['];
+        yield 'not opened' => ['int]'];
+        yield 'reversed' => ['int]['];
+        yield 'nested brackets' => ['int[[]]'];
+        yield 'words inside' => ['int[ a b ]'];
+        yield 'type behind' => ['int[] string'];
+        yield 'type behind with no space' => ['int[]string'];
+        yield 'two types' => ['int string[]'];
+        yield 'group behind' => ['int[](string)'];
+        yield 'empty group' => ['()[]'];
+        yield 'star alone' => ['*[]'];
+        yield 'comment swallows the bracket' => ['int[ // ]'];
+    }
 
-        self::assertInstanceOf(TypesListTypeNode::class, $type);
-        self::assertInstanceOf($element, $type->type);
+    #[DataProvider('invalidListDataProvider')]
+    public function testListIsRejected(string $source): void
+    {
+        self::assertRejected($source);
     }
 
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, int<1, max>}>
+     * @return iterable<non-empty-string, array{int<1, max>}>
      */
-    public static function chainDataProvider(): iterable
+    public static function depthDataProvider(): iterable
     {
-        yield 'one' => ['int[]', 1];
-        yield 'two' => ['int[][]', 2];
-        yield 'two with spaces' => ['int [] []', 2];
-        yield 'three' => ['int[][][]', 3];
-        yield 'group of one and one' => ['(int[])[]', 2];
-        yield 'group of two and one' => ['(int[][])[]', 3];
-        yield 'two groups' => ['((int)[])[]', 2];
-        yield 'twenty' => ['int' . \str_repeat('[]', 20), 20];
+        yield 'one' => [1];
+        yield 'ten' => [10];
+        yield 'twenty' => [20];
+        yield 'two hundred' => [200];
     }
 
     /**
-     * @param non-empty-string $source
      * @param int<1, max> $depth
      */
-    #[DataProvider('chainDataProvider')]
-    public function testEachPairOfBracketsIsOneMoreList(string $source, int $depth): void
+    #[DataProvider('depthDataProvider')]
+    public function testChainOfListsIsAccepted(int $depth): void
     {
-        $type = $this->parse($source);
-        $count = 0;
-
-        while ($type instanceof TypesListTypeNode) {
-            $type = $type->type;
-            ++$count;
-        }
-
-        self::assertSame($depth, $count);
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame('int', $type->name->toString());
+        self::assertAccepted('int' . \str_repeat('[]', $depth));
     }
 
     /**
-     * Every list begins where the type under it begins, so all the lists of a
-     * chain have the offset of the type. The offsets of the lists go from the
-     * outer one to the inner one.
-     *
-     * @return iterable<non-empty-string, array{non-empty-string, list<int<0, max>>, int<0, max>}>
+     * @param int<1, max> $depth
      */
-    public static function offsetDataProvider(): iterable
+    #[DataProvider('depthDataProvider')]
+    public function testChainOfListsNotClosedIsRejected(int $depth): void
     {
-        yield 'no trivia' => ['int[]', [0], 0];
-        yield 'spaces before' => ['  int[]', [2], 2];
-        yield 'spaces before the brackets' => ['int  []', [0], 0];
-        yield 'comment before' => ['/* c */ int[]', [8], 8];
-        yield 'multibyte before' => ['/* Фу */ int[]', [11], 11];
-        yield 'group' => ['(int)[]', [1], 1];
-        yield 'group with spaces' => ['(  int  ) []', [3], 3];
-        yield 'two groups' => ['((int))[]', [2], 2];
-        yield 'chain' => ['  int [][] []', [2, 2, 2], 2];
-    }
-
-    /**
-     * @param non-empty-string $source
-     * @param list<int<0, max>> $lists
-     * @param int<0, max> $offset
-     */
-    #[DataProvider('offsetDataProvider')]
-    public function testOffsetOfEveryListIsTheOffsetOfItsType(string $source, array $lists, int $offset): void
-    {
-        $type = $this->parse($source);
-        $actual = [];
-
-        while ($type instanceof TypesListTypeNode) {
-            $actual[] = $type->offset;
-            $type = $type->type;
-        }
-
-        self::assertSame($lists, $actual);
-        self::assertSame($offset, $type->offset);
-    }
-
-    public function testTriviaAroundTheListIsIgnored(): void
-    {
-        $type = $this->parse("/* a */ int /* b */ [ /* c */ ] // d\n");
-
-        self::assertInstanceOf(TypesListTypeNode::class, $type);
-        self::assertInstanceOf(NamedTypeNode::class, $type->type);
-    }
-
-    public function testTypeWithNoBracketsIsNotAList(): void
-    {
-        self::assertInstanceOf(NamedTypeNode::class, $this->parse('int'));
-        self::assertInstanceOf(NamedTypeNode::class, $this->parse('(int)'));
-        self::assertInstanceOf(NamedTypeNode::class, $this->parse('int /* [] */'));
+        self::assertRejected('int' . \str_repeat('[]', $depth - 1) . '[');
+        self::assertRejected('int' . \str_repeat('[]', $depth - 1) . ']');
     }
 }

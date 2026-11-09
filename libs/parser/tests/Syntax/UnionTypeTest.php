@@ -5,343 +5,247 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use TypeLang\Parser\Tests\TestCase;
-use TypeLang\Type\Constant\ClassConstTypeNode;
-use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
-use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\ThisTypeNode;
-use TypeLang\Type\TypeNode;
-use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
-use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
-use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 /**
- * The bar joins the types around it into one union.
+ * The types joined with the bar (grammar.pp3).
  */
-final class UnionTypeTest extends TestCase
+final class UnionTypeTest extends SyntaxTestCase
 {
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, list<class-string<TypeNode>>}>
+     * @return iterable<non-empty-string, array{string}>
      */
-    public static function membersDataProvider(): iterable
+    public static function validUnionDataProvider(): iterable
     {
-        yield 'two names' => ['A|B', [NamedTypeNode::class, NamedTypeNode::class]];
-        yield 'three names' => ['A|B|C', [NamedTypeNode::class, NamedTypeNode::class, NamedTypeNode::class]];
-        yield 'literals' => ['1|2', [IntLiteralNode::class, IntLiteralNode::class]];
-        yield 'this and a name' => ['$this|A', [ThisTypeNode::class, NamedTypeNode::class]];
-        yield 'constants' => ['Foo::A|Foo::B', [ClassConstTypeNode::class, ClassConstTypeNode::class]];
-        yield 'lists' => ['A[]|B[]', [TypesListTypeNode::class, TypesListTypeNode::class]];
-        yield 'list and name' => ['A[]|B', [TypesListTypeNode::class, NamedTypeNode::class]];
-        yield 'name and list' => ['A|B[]', [NamedTypeNode::class, TypesListTypeNode::class]];
-        yield 'accesses' => ['A[K]|B[L]', [TypeOffsetAccessTypeNode::class, TypeOffsetAccessTypeNode::class]];
-        yield 'name and access' => ['A|B[K]', [NamedTypeNode::class, TypeOffsetAccessTypeNode::class]];
-        yield 'intersection on the left' => ['A&B|C', [IntersectionTypeNode::class, NamedTypeNode::class]];
-        yield 'intersection on the right' => ['A|B&C', [NamedTypeNode::class, IntersectionTypeNode::class]];
-        yield 'intersection in the middle' => [
-            'A|B&C|D',
-            [NamedTypeNode::class, IntersectionTypeNode::class, NamedTypeNode::class],
-        ];
-        yield 'intersections' => ['A&B|C&D', [IntersectionTypeNode::class, IntersectionTypeNode::class]];
-        yield 'nullable on the right' => ['A|?B', [NamedTypeNode::class, NullableTypeNode::class]];
-        yield 'nullable on the left' => ['?A|B', [NullableTypeNode::class, NamedTypeNode::class]];
-        yield 'nullables' => ['?A|?B', [NullableTypeNode::class, NullableTypeNode::class]];
-        yield 'nullable in a group on the right' => ['A|(?B)', [NamedTypeNode::class, NullableTypeNode::class]];
-        yield 'nullable in a group on the left' => ['(?A)|B', [NullableTypeNode::class, NamedTypeNode::class]];
-        yield 'nullable list on the right' => ['A|?B[]', [NamedTypeNode::class, NullableTypeNode::class]];
-        yield 'nullable list in a group on the right' => [
-            'A|(?B[])',
-            [NamedTypeNode::class, NullableTypeNode::class],
-        ];
-        yield 'nullable in an intersection' => ['A|?B&C', [NamedTypeNode::class, IntersectionTypeNode::class]];
-        yield 'groups' => ['(A)|(B)', [NamedTypeNode::class, NamedTypeNode::class]];
-        yield 'group of an intersection' => ['(A&B)|C', [IntersectionTypeNode::class, NamedTypeNode::class]];
-        yield 'spaces' => ['A  |  B', [NamedTypeNode::class, NamedTypeNode::class]];
-        yield 'line breaks' => ["A\n|\nB", [NamedTypeNode::class, NamedTypeNode::class]];
-        yield 'comments' => ['A/* a */|/* b */B', [NamedTypeNode::class, NamedTypeNode::class]];
+        yield 'two names' => ['A|B'];
+        yield 'three names' => ['A|B|C'];
+        yield 'ten names' => ['A|B|C|D|E|F|G|H|I|J'];
+        yield 'qualified names' => ['\\Foo\\Bar|Foo\\Baz'];
+        yield 'virtual names' => ['non-empty-string|callable-string'];
+        yield 'keywords' => ['is|of'];
+        yield 'literals' => ['1|2'];
+        yield 'negative literals' => ['-1|-2'];
+        yield 'strings' => ["'a'|\"b\""];
+        yield 'null' => ['null|true|false'];
+        yield 'this' => ['$this|A'];
+        yield 'class constants' => ['Foo::A|Foo::B'];
+        yield 'class constant masks' => ['Foo::A_*|Foo::*'];
+        yield 'global masks' => ['PHP_*|E_*'];
+        yield 'mask of a namespace' => ['Path\\To\\*|A'];
+
+        // The suffixes are tighter
+        yield 'lists' => ['A[]|B[]'];
+        yield 'list on the left' => ['A[]|B'];
+        yield 'list on the right' => ['A|B[]'];
+        yield 'accesses' => ['A[K]|B[L]'];
+        yield 'access on the left' => ['A[K]|B'];
+        yield 'access on the right' => ['A|B[K]'];
+        yield 'chains' => ['A[][K]|B[K][]'];
+
+        // The ampersand is tighter
+        yield 'intersection on the left' => ['A&B|C'];
+        yield 'intersection on the right' => ['A|B&C'];
+        yield 'intersections' => ['A&B|C&D'];
+        yield 'intersection in the middle' => ['A|B&C|D'];
+        yield 'long intersection' => ['A&B&C&D|E'];
+        yield 'intersections with suffixes' => ['A[]&B[K]|C[]&D'];
+
+        // The question mark in front reaches over the whole union
+        yield 'nullable in front' => ['?A|B'];
+        yield 'nullable in front of three' => ['?A|B|C'];
+        yield 'nullable in front of an intersection' => ['?A&B|C'];
+        yield 'nullable in front of a list' => ['?A[]|B'];
+        yield 'nullable in front of a union with a nullable group' => ['?A|(?B)'];
+
+        // The type behind a bar is any type, the mark reaches over the rest
+        yield 'nullable on the right' => ['A|?B'];
+        yield 'nullable on the right with a space' => ['A | ? B'];
+        yield 'nullable in the middle' => ['A|?B|C'];
+        yield 'nullable on the last' => ['A|B|?C'];
+        yield 'nullables' => ['A|?B|?C'];
+        yield 'nullable list on the right' => ['A|?B[]'];
+        yield 'nullable intersection on the right' => ['A|?B&C'];
+        yield 'nullable between the intersections' => ['A&B|?C&D'];
+        yield 'nullable in a key' => ['T[A|?B]'];
+
+        // A nullable group
+        yield 'nullable behind an ampersand' => ['A|B&?C'];
+        yield 'nullable group on the right' => ['A|(?B)'];
+        yield 'nullable group in the middle' => ['A|(?B)|C'];
+        yield 'nullable group, then a nullable' => ['A|(?B)|?C'];
+        yield 'nullable group on the last' => ['A|B|(?C)'];
+        yield 'nullable groups' => ['A|(?B)|(?C)'];
+        yield 'nullable list group on the right' => ['A|(?B[])'];
+        yield 'nullable group in an intersection on the right' => ['A|(?B)&C'];
+        yield 'nullable group as a member of an intersection' => ['A|B&(?C)'];
+        yield 'nullable groups in an intersection' => ['A|(?B)&(?C)'];
+        yield 'nullable group between the intersections' => ['A&B|(?C)&D'];
+
+        // Groups
+        yield 'group' => ['(A|B)'];
+        yield 'group on the left' => ['(A)|B'];
+        yield 'group on the right' => ['A|(B)'];
+        yield 'groups on both sides' => ['(A)|(B)'];
+        yield 'group of a union on the left' => ['(A|B)|C'];
+        yield 'group of a union on the right' => ['A|(B|C)'];
+        yield 'group of a nullable' => ['(?A)|B'];
+        yield 'group of a union in a nullable' => ['?(A|B)'];
+        yield 'group of a union in an intersection' => ['(A|B)&C'];
+        yield 'group of a union on the right of an intersection' => ['A&(B|C)'];
+        yield 'group of a union in a list' => ['(A|B)[]'];
+        yield 'group of a union in a list of lists' => ['(A[]|B[])[]'];
+        yield 'group of a union in an access' => ['(A|B)[K]'];
+        yield 'group of an intersection' => ['(A&B)|C'];
+        yield 'nullable group of a union' => ['(?A|B)[]'];
+        yield 'groups in groups' => ['((A|B)|(C|D))'];
+
+        // A union as a key
+        yield 'union in a key' => ['T[A|B]'];
+        yield 'union in a key behind a key' => ['T[A|B][C|D]'];
+        yield 'union in a key with a list' => ['T[A|B[]]'];
+        yield 'union in a key with an intersection' => ['T[A&B|C]'];
+        yield 'nullable union in a key' => ['T[?A|B]'];
+        yield 'union in a key of a key' => ['T[K[A|B]]'];
+        yield 'union of keys' => ['T[A]|U[B]'];
+
+        // Trivia
+        yield 'space before' => ['A |B'];
+        yield 'space behind' => ['A| B'];
+        yield 'spaces around' => ['A | B'];
+        yield 'many spaces' => ['A     |     B'];
+        yield 'tabs' => ["A\t|\tB"];
+        yield 'line breaks' => ["A\n|\nB"];
+        yield 'carriage returns' => ["A\r\n|\r\nB"];
+        yield 'line break before' => ["A\n|B"];
+        yield 'line break behind' => ["A|\nB"];
+        yield 'block comments' => ['A/* a */|/* b */B'];
+        yield 'line comments' => ["A // a\n| // b\nB"];
+        yield 'hash comments' => ["A # a\n| # b\nB"];
+        yield 'spaces around everything' => ['  A  |  B  '];
+        yield 'comments around everything' => ['/* a */ A /* b */ | /* c */ B /* d */'];
+        yield 'comment behind' => ['A|B // c'];
+        yield 'spaces inside of a key' => ['T[ A | B ]'];
+        yield 'spaces everywhere' => ['? A [ ] | ? B [ K ] & C | ( D )'];
+    }
+
+    #[DataProvider('validUnionDataProvider')]
+    public function testUnionIsAccepted(string $source): void
+    {
+        self::assertAccepted($source);
     }
 
     /**
-     * @param non-empty-string $source
-     * @param list<class-string<TypeNode>> $members
+     * @return iterable<non-empty-string, array{string}>
      */
-    #[DataProvider('membersDataProvider')]
-    public function testUnionKeepsItsMembersInTheOrderTheyAreWritten(string $source, array $members): void
+    public static function invalidUnionDataProvider(): iterable
     {
-        $type = $this->parse($source);
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertCount(\count($members), $type->types);
-
-        foreach ($members as $index => $class) {
-            self::assertInstanceOf($class, $type->types[$index]);
-        }
+        yield 'bar alone' => ['|'];
+        yield 'bars alone' => ['||'];
+        yield 'bar before' => ['|A'];
+        yield 'bar behind' => ['A|'];
+        yield 'bar behind with a space' => ['A |'];
+        yield 'bar behind with a comment' => ['A| /* c */'];
+        yield 'bar before with a space' => ['| A'];
+        yield 'two bars' => ['A||B'];
+        yield 'two bars with a space' => ['A| |B'];
+        yield 'two bars with a space between everything' => ['A | | B'];
+        yield 'three bars' => ['A|||B'];
+        yield 'bar behind the second type' => ['A|B|'];
+        yield 'bar before the first type' => ['|A|B'];
+        yield 'bar in the empty group' => ['(|)'];
+        yield 'bar in the group before' => ['(|A)'];
+        yield 'bar in the group behind' => ['(A|)'];
+        yield 'bar in the key before' => ['T[|A]'];
+        yield 'bar in the key behind' => ['T[A|]'];
+        yield 'bar in the empty key' => ['T[|]'];
+        yield 'bar after a mark' => ['?|A'];
+        yield 'bar behind a mark' => ['A|?'];
+        yield 'bar in front of a mark' => ['A?|B'];
+        yield 'bar and an ampersand' => ['A|&B'];
+        yield 'ampersand and a bar' => ['A&|B'];
+        yield 'three marks in front' => ['???A|B'];
+        yield 'two marks behind a bar' => ['A|??B'];
+        yield 'two marks with a space behind a bar' => ['A| ? ?B'];
+        yield 'mark behind a type' => ['A?|B'];
+        yield 'bar glued to the brackets' => ['A|[]'];
+        yield 'bar in a list' => ['A[|]'];
+        yield 'bar behind the brackets' => ['A[]|'];
+        yield 'bar with a colon' => ['A|:B'];
+        yield 'bar with a star' => ['A|*'];
+        yield 'type behind' => ['A|B C'];
+        yield 'list behind the group' => ['A|B[] (C)'];
+        yield 'type in front' => ['A B|C'];
+        yield 'a comma' => ['A|B,C'];
+        yield 'comment swallows the second type' => ['A| // B'];
+        yield 'bar in a comment only' => ['A /* | */ B'];
+        yield 'not closed group' => ['(A|B'];
+        yield 'not opened group' => ['A|B)'];
+        yield 'not closed key' => ['T[A|B'];
+        yield 'not opened key' => ['TA|B]'];
+        yield 'mark in front of a bar only' => ['?|'];
     }
 
-    public function testMembersAreKeptAsTheyAreWritten(): void
+    #[DataProvider('invalidUnionDataProvider')]
+    public function testUnionIsRejected(string $source): void
     {
-        $type = $this->parse('\\Some\\Any|Other|$this');
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertInstanceOf(NamedTypeNode::class, $type->types[0]);
-        self::assertSame('\\Some\\Any', $type->types[0]->name->toString());
-        self::assertInstanceOf(NamedTypeNode::class, $type->types[1]);
-        self::assertSame('Other', $type->types[1]->name->toString());
-        self::assertInstanceOf(ThisTypeNode::class, $type->types[2]);
-    }
-
-    public function testManyTypesAreOneUnionNotANestedOne(): void
-    {
-        $type = $this->parse('A|B|C|D|E');
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertCount(5, $type->types);
-
-        foreach ($type->types as $member) {
-            self::assertInstanceOf(NamedTypeNode::class, $member);
-        }
+        self::assertRejected($source);
     }
 
     /**
-     * Unions are associative, a group of a union inside of another union is merged with it.
-     *
-     * @return iterable<non-empty-string, array{non-empty-string, list<non-empty-string>}>
+     * @return iterable<non-empty-string, array{int<2, max>}>
      */
-    public static function mergedDataProvider(): iterable
+    public static function countDataProvider(): iterable
     {
-        yield 'group on the left' => ['(A|B)|C', ['A', 'B', 'C']];
-        yield 'group on the right' => ['A|(B|C)', ['A', 'B', 'C']];
-        yield 'groups on both sides' => ['(A|B)|(C|D)', ['A', 'B', 'C', 'D']];
-        yield 'nested groups' => ['((A|B)|C)|D', ['A', 'B', 'C', 'D']];
-        yield 'deep group' => ['A|(B|(C|(D|E)))', ['A', 'B', 'C', 'D', 'E']];
+        yield 'two' => [2];
+        yield 'ten' => [10];
+        yield 'one hundred' => [100];
+        yield 'one thousand' => [1000];
     }
 
     /**
-     * @param non-empty-string $source
-     * @param list<non-empty-string> $names
+     * @param int<2, max> $count
      */
-    #[DataProvider('mergedDataProvider')]
-    public function testGroupedUnionsAreMerged(string $source, array $names): void
+    #[DataProvider('countDataProvider')]
+    public function testManyTypesAreAccepted(int $count): void
     {
-        $type = $this->parse($source);
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-
-        $actual = [];
-
-        foreach ($type->types as $member) {
-            self::assertInstanceOf(NamedTypeNode::class, $member);
-            $actual[] = $member->name->toString();
-        }
-
-        self::assertSame($names, $actual);
-    }
-
-    public function testGroupBehindASuffixIsNotMerged(): void
-    {
-        $type = $this->parse('(A|B)[]|C');
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertCount(2, $type->types);
-        self::assertInstanceOf(TypesListTypeNode::class, $type->types[0]);
-        self::assertInstanceOf(UnionTypeNode::class, $type->types[0]->type);
-    }
-
-    public function testGroupOfANullableIsNotMerged(): void
-    {
-        $type = $this->parse('(?(A|B))|C');
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertCount(2, $type->types);
-        self::assertInstanceOf(NullableTypeNode::class, $type->types[0]);
-        self::assertInstanceOf(UnionTypeNode::class, $type->types[0]->type);
-    }
-
-    public function testUnionInAGroupOfAnIntersectionIsNotMerged(): void
-    {
-        $type = $this->parse('(A|B)&C');
-
-        self::assertInstanceOf(IntersectionTypeNode::class, $type);
-        self::assertInstanceOf(UnionTypeNode::class, $type->types[0]);
-    }
-
-    public function testIntersectionBindsTighterThanUnion(): void
-    {
-        $type = $this->parse('A|B&C|D&E&F');
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertCount(3, $type->types);
-        self::assertInstanceOf(NamedTypeNode::class, $type->types[0]);
-        self::assertInstanceOf(IntersectionTypeNode::class, $type->types[1]);
-        self::assertCount(2, $type->types[1]->types);
-        self::assertInstanceOf(IntersectionTypeNode::class, $type->types[2]);
-        self::assertCount(3, $type->types[2]->types);
-    }
-
-    public function testTypeWithNoBarIsNotAUnion(): void
-    {
-        self::assertNotInstanceOf(UnionTypeNode::class, $this->parse('A'));
-        self::assertNotInstanceOf(UnionTypeNode::class, $this->parse('(A)'));
-        self::assertNotInstanceOf(UnionTypeNode::class, $this->parse('?A'));
-        self::assertNotInstanceOf(UnionTypeNode::class, $this->parse('A&B'));
-        self::assertNotInstanceOf(UnionTypeNode::class, $this->parse('A[]'));
-        self::assertNotInstanceOf(UnionTypeNode::class, $this->parse('A /* | */'));
-    }
-
-    public function testUnionInsideOfAKeyIsTheKey(): void
-    {
-        $type = $this->parse('T[A|B]');
-
-        self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $type);
-        self::assertInstanceOf(NamedTypeNode::class, $type->type);
-        self::assertInstanceOf(UnionTypeNode::class, $type->access);
-    }
-
-    public function testUnionInsideOfAGroupBeforeASuffixIsTheElement(): void
-    {
-        $list = $this->parse('(A|B)[]');
-
-        self::assertInstanceOf(TypesListTypeNode::class, $list);
-        self::assertInstanceOf(UnionTypeNode::class, $list->type);
-
-        $access = $this->parse('(A|B)[K]');
-
-        self::assertInstanceOf(TypeOffsetAccessTypeNode::class, $access);
-        self::assertInstanceOf(UnionTypeNode::class, $access->type);
+        self::assertAccepted(\implode('|', \array_fill(0, $count, 'A')));
     }
 
     /**
-     * The question mark reaches over the member behind it only, a member is
-     * nullable when the mark is the first thing of it.
-     *
-     * @return iterable<non-empty-string, array{non-empty-string, list<bool>}>
+     * @param int<2, max> $count
      */
-    public static function memberMarkDataProvider(): iterable
+    #[DataProvider('countDataProvider')]
+    public function testManyTypesWithADanglingBarAreRejected(int $count): void
     {
-        yield 'first' => ['?A|B', [true, false]];
-        yield 'first of three' => ['?A|B|C', [true, false, false]];
-        yield 'second' => ['A|?B', [false, true]];
-        yield 'both' => ['?A|?B', [true, true]];
-        yield 'middle' => ['A|?B|C', [false, true, false]];
-        yield 'last' => ['A|B|?C', [false, false, true]];
-        yield 'all' => ['?A|?B|?C', [true, true, true]];
-        yield 'all but the first' => ['A|?B|?C', [false, true, true]];
-        yield 'nullable list' => ['A|?B[]', [false, true]];
-        yield 'nullable list in front' => ['?A[]|B', [true, false]];
-        yield 'intersection with a nullable' => ['A|?B&C', [false, false]];
-        yield 'intersection with a nullable in front' => ['?A&B|C', [false, false]];
-        yield 'group of a nullable' => ['(?A)|B', [true, false]];
-        yield 'group of a nullable on the right' => ['A|(?B)', [false, true]];
-        yield 'nullable of a group of a union' => ['?(A|B)|C', [true, false]];
-        yield 'space' => ['A | ? B', [false, true]];
-        yield 'line breaks' => ["A\n|\n?\nB", [false, true]];
-        yield 'comments' => ['A/* a */|/* b */?/* c */B', [false, true]];
+        self::assertRejected(\implode('|', \array_fill(0, $count, 'A')) . '|');
+        self::assertRejected('|' . \implode('|', \array_fill(0, $count, 'A')));
     }
 
     /**
-     * @param non-empty-string $source
-     * @param list<bool> $nullable
+     * @param int<2, max> $count
      */
-    #[DataProvider('memberMarkDataProvider')]
-    public function testQuestionMarkIsTheOneOfItsMemberOnly(string $source, array $nullable): void
+    #[DataProvider('countDataProvider')]
+    public function testManyIntersectionsInAUnionAreAccepted(int $count): void
     {
-        $type = $this->parse($source);
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-
-        $actual = [];
-
-        foreach ($type->types as $member) {
-            $actual[] = $member instanceof NullableTypeNode;
-        }
-
-        self::assertSame($nullable, $actual);
-    }
-
-    public function testQuestionMarkInAnIntersectionOfAMemberIsTheOneOfItsType(): void
-    {
-        $type = $this->parse('A|?B&C');
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertInstanceOf(IntersectionTypeNode::class, $type->types[1]);
-        self::assertCount(2, $type->types[1]->types);
-        self::assertInstanceOf(NullableTypeNode::class, $type->types[1]->types[0]);
-        self::assertInstanceOf(NamedTypeNode::class, $type->types[1]->types[1]);
-    }
-
-    public function testQuestionMarkBehindAnAmpersandInAMemberIsTheOneOfItsType(): void
-    {
-        $type = $this->parse('A|B&?C');
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertInstanceOf(IntersectionTypeNode::class, $type->types[1]);
-        self::assertInstanceOf(NamedTypeNode::class, $type->types[1]->types[0]);
-        self::assertInstanceOf(NullableTypeNode::class, $type->types[1]->types[1]);
-    }
-
-    public function testNullableListIsANullableMember(): void
-    {
-        $type = $this->parse('A|?B[]');
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertInstanceOf(NullableTypeNode::class, $type->types[1]);
-        self::assertInstanceOf(TypesListTypeNode::class, $type->types[1]->type);
+        self::assertAccepted(\implode('|', \array_fill(0, $count, 'A&B&C')));
     }
 
     /**
-     * A union begins where its first type begins, the types keep their own offsets.
-     *
-     * @return iterable<non-empty-string, array{non-empty-string, int<0, max>, list<int<0, max>>}>
+     * @param int<2, max> $count
      */
-    public static function offsetDataProvider(): iterable
+    #[DataProvider('countDataProvider')]
+    public function testManyNestedGroupsOfUnionsAreAccepted(int $count): void
     {
-        yield 'no trivia' => ['A|B', 0, [0, 2]];
-        yield 'three' => ['A|B|C', 0, [0, 2, 4]];
-        yield 'spaces before' => ['  A|B', 2, [2, 4]];
-        yield 'spaces around' => ['A  |  B', 0, [0, 6]];
-        yield 'line breaks' => ["A\n|\nB", 0, [0, 4]];
-        yield 'comments' => ['A/* a */|/* b */B', 0, [0, 16]];
-        yield 'multibyte comments' => ['/* Фу */ A /* Бар */ | B', 11, [11, 28]];
-        yield 'nullable in a group on the right' => ['A|(?B)', 0, [0, 3]];
-        yield 'nullable in a group on the left' => ['(?A)|B', 1, [1, 5]];
-        yield 'nullable on the right' => ['A|?B', 0, [0, 2]];
-        yield 'list' => ['A[]|B[]', 0, [0, 4]];
-        yield 'group on the left' => ['(A)|B', 1, [1, 4]];
-        yield 'group of two' => ['(A)|(B)', 1, [1, 5]];
-        yield 'many' => ['A |B| C', 0, [0, 3, 6]];
-        yield 'intersection on the right' => ['A|B&C', 0, [0, 2]];
-        yield 'intersection on the left' => ['A&B|C', 0, [0, 4]];
+        $depth = \min($count, 200);
+
+        self::assertAccepted(\str_repeat('(A|', $depth) . 'B' . \str_repeat(')', $depth));
     }
 
     /**
-     * @param non-empty-string $source
-     * @param int<0, max> $offset
-     * @param list<int<0, max>> $members
+     * @param int<2, max> $count
      */
-    #[DataProvider('offsetDataProvider')]
-    public function testOffsetOfAUnionIsTheOffsetOfItsFirstType(string $source, int $offset, array $members): void
+    #[DataProvider('countDataProvider')]
+    public function testManyNullableMembersAreAccepted(int $count): void
     {
-        $type = $this->parse($source);
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertSame($offset, $type->offset);
-
-        $actual = [];
-
-        foreach ($type->types as $member) {
-            $actual[] = $member->offset;
-        }
-
-        // The offset of a nullable, a list or an intersection is the offset of its own sign
-        self::assertSame($members, $actual);
-    }
-
-    public function testTriviaAroundTheUnionIsIgnored(): void
-    {
-        $type = $this->parse("/* a */ A /* b */ | // c\n B /* d */ // e\n");
-
-        self::assertInstanceOf(UnionTypeNode::class, $type);
-        self::assertCount(2, $type->types);
+        self::assertAccepted(\implode('|', \array_fill(0, $count, '?A')));
     }
 }

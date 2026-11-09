@@ -5,88 +5,102 @@ declare(strict_types=1);
 namespace TypeLang\Parser\Tests\Syntax;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use TypeLang\Parser\Tests\TestCase;
-use TypeLang\Type\Constant\ClassConstTypeNode;
-use TypeLang\Type\Constant\ConstMaskTypeNode;
-use TypeLang\Type\Literal\IntLiteralNode;
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\ThisTypeNode;
-use TypeLang\Type\TypeNode;
 
 /**
- * The parentheses group a type and build no node of their own.
+ * The parentheses around a type (grammar.pp3).
  */
-final class GroupTest extends TestCase
+final class GroupTest extends SyntaxTestCase
 {
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, class-string<TypeNode>}>
+     * @return iterable<non-empty-string, array{string}>
      */
-    public static function groupedDataProvider(): iterable
+    public static function validGroupDataProvider(): iterable
     {
-        yield 'name' => ['(int)', NamedTypeNode::class];
-        yield 'two pairs' => ['((int))', NamedTypeNode::class];
-        yield 'qualified name' => ['(\\Foo\\Bar)', NamedTypeNode::class];
-        yield 'literal' => ['(42)', IntLiteralNode::class];
-        yield 'this' => ['($this)', ThisTypeNode::class];
-        yield 'class constant' => ['(Foo::BAR)', ClassConstTypeNode::class];
-        yield 'global mask' => ['(PHP_*)', ConstMaskTypeNode::class];
+        yield 'name' => ['(int)'];
+        yield 'two pairs' => ['((int))'];
+        yield 'three pairs' => ['(((int)))'];
+        yield 'qualified name' => ['(\\Foo\\Bar)'];
+        yield 'virtual name' => ['(non-empty-string)'];
+        yield 'literal' => ['(42)'];
+        yield 'string literal' => ["('text')"];
+        yield 'this' => ['($this)'];
+        yield 'class constant' => ['(Foo::BAR)'];
+        yield 'class constant mask' => ['(Foo::BAR_*)'];
+        yield 'global mask' => ['(PHP_*)'];
+        yield 'spaces inside' => ['(  int  )'];
+        yield 'spaces around' => ['  ( int )  '];
+        yield 'line breaks inside' => ["(\n    int\n)"];
+        yield 'comment inside' => ['( /* c */ int /* c */ )'];
+        yield 'comment behind' => ['(int) // c'];
+        yield 'spaces between the pairs' => ['( ( int ) )'];
+        yield 'comment between the pairs' => ['(/* c */(int))'];
+    }
+
+    #[DataProvider('validGroupDataProvider')]
+    public function testGroupIsAccepted(string $source): void
+    {
+        self::assertAccepted($source);
     }
 
     /**
-     * @param non-empty-string $source
-     * @param class-string<TypeNode> $class
+     * @return iterable<non-empty-string, array{string}>
      */
-    #[DataProvider('groupedDataProvider')]
-    public function testGroupIsTheTypeInsideOfIt(string $source, string $class): void
+    public static function invalidGroupDataProvider(): iterable
     {
-        self::assertInstanceOf($class, $this->parse($source));
+        yield 'empty' => ['()'];
+        yield 'empty with spaces' => ['(  )'];
+        yield 'empty pair inside' => ['(())'];
+        yield 'empty pair in a pair' => ['( () )'];
+        yield 'not closed' => ['(int'];
+        yield 'not closed pair in a pair' => ['((int)'];
+        yield 'not opened' => ['int)'];
+        yield 'not opened pair in a pair' => ['(int))'];
+        yield 'open alone' => ['('];
+        yield 'close alone' => [')'];
+        yield 'reversed' => [')int('];
+        yield 'two types' => ['(int string)'];
+        yield 'two groups' => ['(int) (string)'];
+        yield 'two groups with no space' => ['(int)(string)'];
+        yield 'list and group' => ['int[] (string)'];
+        yield 'literal and group' => ['42 (string)'];
+        yield 'group and type' => ['(int) string'];
+        yield 'comment swallows the bracket' => ['(int // )'];
+        yield 'bracket in a comment only' => ['(int /* ) */'];
     }
 
-    public function testGroupKeepsTheTypeAsItIsWritten(): void
+    #[DataProvider('invalidGroupDataProvider')]
+    public function testGroupIsRejected(string $source): void
     {
-        $type = $this->parse('((\\Foo\\Bar))');
-
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame('\\Foo\\Bar', $type->name->toString());
-        self::assertNull($type->arguments);
-        self::assertNull($type->fields);
-    }
-
-    public function testTriviaAroundTheGroupIsIgnored(): void
-    {
-        $type = $this->parse("/* a */ ( /* b */ int /* c */ ) // d\n");
-
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame('int', $type->name->toString());
+        self::assertRejected($source);
     }
 
     /**
-     * The offset of a type is where the type begins, the parentheses are not a part of it.
-     *
-     * @return iterable<non-empty-string, array{non-empty-string, int<0, max>}>
+     * @return iterable<non-empty-string, array{int<1, max>}>
      */
-    public static function offsetDataProvider(): iterable
+    public static function depthDataProvider(): iterable
     {
-        yield 'one pair' => ['(int)', 1];
-        yield 'two pairs' => ['((int))', 2];
-        yield 'spaces inside' => ['(  int  )', 3];
-        yield 'spaces around' => ['  ( int )', 4];
-        yield 'comment inside' => ['(/* c */ int)', 9];
-        yield 'multibyte before' => ['(/* Фу */ int)', 12];
-        yield 'twenty pairs' => [\str_repeat('(', 20) . 'int' . \str_repeat(')', 20), 20];
+        yield 'one' => [1];
+        yield 'ten' => [10];
+        yield 'twenty' => [20];
+        yield 'two hundred' => [200];
     }
 
     /**
-     * @param non-empty-string $source
-     * @param int<0, max> $offset
+     * @param int<1, max> $depth
      */
-    #[DataProvider('offsetDataProvider')]
-    public function testOffsetPointsToTheTypeNotToTheParentheses(string $source, int $offset): void
+    #[DataProvider('depthDataProvider')]
+    public function testNestedGroupsAreAccepted(int $depth): void
     {
-        $type = $this->parse($source);
+        self::assertAccepted(\str_repeat('(', $depth) . 'int' . \str_repeat(')', $depth));
+    }
 
-        self::assertInstanceOf(NamedTypeNode::class, $type);
-        self::assertSame($offset, $type->offset);
-        self::assertSame($offset, $type->name->offset);
+    /**
+     * @param int<1, max> $depth
+     */
+    #[DataProvider('depthDataProvider')]
+    public function testNestedGroupsNotClosedAreRejected(int $depth): void
+    {
+        self::assertRejected(\str_repeat('(', $depth) . 'int' . \str_repeat(')', $depth - 1));
+        self::assertRejected(\str_repeat('(', $depth - 1) . 'int' . \str_repeat(')', $depth));
     }
 }

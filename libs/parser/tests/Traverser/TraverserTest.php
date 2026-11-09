@@ -28,14 +28,12 @@ final class TraverserTest extends TestCase
     {
         parent::setUp();
 
-        self::markTestIncomplete('TODO');
-
         $this->log = new \ArrayObject();
     }
 
     private function type(string $name = 'Example'): NamedTypeNode
     {
-        return new NamedTypeNode(Name::createFromString($name));
+        return new NamedTypeNode($this->parseName($name));
     }
 
     /**
