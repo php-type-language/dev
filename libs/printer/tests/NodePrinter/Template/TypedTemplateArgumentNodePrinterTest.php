@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace TypeLang\Printer\Tests\NodePrinter\Template;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Printer\NodePrinter\Template\TypedTemplateArgumentNodePrinter;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
-use TypeLang\Type\Identifier;
 use TypeLang\Type\Template\TypedTemplateArgumentNode;
+use TypeLang\Type\Template\VarianceNode;
+use TypeLang\Type\Template\VarianceNode\VarianceKind;
 
 #[CoversClass(TypedTemplateArgumentNodePrinter::class)]
 final class TypedTemplateArgumentNodePrinterTest extends NodePrinterTestCase
@@ -18,17 +20,21 @@ final class TypedTemplateArgumentNodePrinterTest extends NodePrinterTestCase
         self::assertSame('int', self::pretty(new TypedTemplateArgumentNode(self::named('int'))));
     }
 
-    public function testVarianceIsWrittenBeforeTheType(): void
+    /**
+     * @return iterable<non-empty-string, array{VarianceKind, non-empty-string}>
+     */
+    public static function varianceDataProvider(): iterable
     {
-        $argument = new TypedTemplateArgumentNode(self::named('int'), new Identifier('covariant'));
-
-        self::assertSame('covariant int', self::pretty($argument));
+        yield 'covariant' => [VarianceKind::Covariant, 'covariant int'];
+        yield 'contravariant' => [VarianceKind::Contravariant, 'contravariant int'];
+        yield 'invariant' => [VarianceKind::Invariant, 'invariant int'];
     }
 
-    public function testVarianceIsWrittenTheWayItWasWritten(): void
+    #[DataProvider('varianceDataProvider')]
+    public function testVarianceIsWrittenBeforeTheType(VarianceKind $kind, string $expected): void
     {
-        $argument = new TypedTemplateArgumentNode(self::named('int'), new Identifier('out'));
+        $argument = new TypedTemplateArgumentNode(self::named('int'), new VarianceNode($kind));
 
-        self::assertSame('out int', self::pretty($argument));
+        self::assertSame($expected, self::pretty($argument));
     }
 }

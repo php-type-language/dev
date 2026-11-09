@@ -23,7 +23,7 @@ final class TypedTemplateArgumentNodePrinter implements NodePrinterInterface
         $result = $context->print($node->value);
 
         if ($node->variance !== null) {
-            return $node->variance->toString() . ' ' . $result;
+            return $node->variance->kind->value . ' ' . $result;
         }
 
         return $result;

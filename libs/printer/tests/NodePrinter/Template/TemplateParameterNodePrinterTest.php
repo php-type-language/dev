@@ -10,6 +10,8 @@ use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\Template\TemplateBoundNode;
 use TypeLang\Type\Template\TemplateParameterNode;
+use TypeLang\Type\Template\VarianceNode;
+use TypeLang\Type\Template\VarianceNode\VarianceKind;
 
 #[CoversClass(TemplateParameterNodePrinter::class)]
 final class TemplateParameterNodePrinterTest extends NodePrinterTestCase
@@ -60,9 +62,28 @@ final class TemplateParameterNodePrinterTest extends NodePrinterTestCase
 
     public function testVarianceIsWrittenBeforeTheName(): void
     {
-        $parameter = new TemplateParameterNode(new Identifier('T'), null, null, null, new Identifier('covariant'));
+        $parameter = new TemplateParameterNode(
+            new Identifier('T'),
+            null,
+            null,
+            null,
+            new VarianceNode(VarianceKind::Covariant),
+        );
 
         self::assertSame('covariant T', self::pretty($parameter));
+    }
+
+    public function testContravarianceIsWrittenBeforeTheName(): void
+    {
+        $parameter = new TemplateParameterNode(
+            new Identifier('T'),
+            null,
+            null,
+            null,
+            new VarianceNode(VarianceKind::Contravariant),
+        );
+
+        self::assertSame('contravariant T', self::pretty($parameter));
     }
 
     public function testEverythingAtOnce(): void
@@ -72,9 +93,9 @@ final class TemplateParameterNodePrinterTest extends NodePrinterTestCase
             new TemplateBoundNode(new Identifier('of'), self::named('int')),
             new TemplateBoundNode(new Identifier('super'), self::named('float')),
             self::named('int'),
-            new Identifier('in'),
+            new VarianceNode(VarianceKind::Contravariant),
         );
 
-        self::assertSame('in T of int super float = int', self::pretty($parameter));
+        self::assertSame('contravariant T of int super float = int', self::pretty($parameter));
     }
 }

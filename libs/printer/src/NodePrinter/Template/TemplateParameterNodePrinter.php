@@ -23,7 +23,7 @@ final class TemplateParameterNodePrinter implements NodePrinterInterface
         $result = $node->name->toString();
 
         if ($node->variance !== null) {
-            $result = $node->variance->toString() . ' ' . $result;
+            $result = $node->variance->kind->value . ' ' . $result;
         }
 
         if ($node->upper !== null) {
