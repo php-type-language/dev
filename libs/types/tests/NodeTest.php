@@ -103,7 +103,7 @@ final class NodeTest extends TestCase
         yield NullLiteralNode::class => [new NullLiteralNode()];
         yield StringLiteralNode::class => [new StringLiteralNode('example')];
         yield ThisTypeNode::class => [new ThisTypeNode()];
-        yield VariableNode::class => [new VariableNode(new Name('example'))];
+        yield VariableNode::class => [new VariableNode('example')];
 
         yield ComplexFieldNode::class => [
             new ComplexFieldNode(
@@ -113,7 +113,7 @@ final class NodeTest extends TestCase
         ];
         yield FieldListNode::class => [new FieldListNode()];
         yield ImplicitFieldNode::class => [new ImplicitFieldNode(self::type())];
-        yield NamedFieldNode::class => [new NamedFieldNode(new Name('key'), self::type())];
+        yield NamedFieldNode::class => [new NamedFieldNode(new Identifier('key'), self::type())];
         yield ScalarFieldNode::class => [new ScalarFieldNode(new IntLiteralNode(0), self::type())];
 
         yield TemplateListNode::class => [
@@ -121,11 +121,11 @@ final class NodeTest extends TestCase
         ];
         yield TypedTemplateArgumentNode::class => [new TypedTemplateArgumentNode(self::type())];
         yield WildcardTemplateArgumentNode::class => [new WildcardTemplateArgumentNode()];
-        yield TemplateBoundNode::class => [new TemplateBoundNode(new Name('of'), self::type())];
+        yield TemplateBoundNode::class => [new TemplateBoundNode(new Identifier('of'), self::type())];
         yield TemplateParameterListNode::class => [
-            new TemplateParameterListNode([new TemplateParameterNode(new Name('T'))]),
+            new TemplateParameterListNode([new TemplateParameterNode(new Identifier('T'))]),
         ];
-        yield TemplateParameterNode::class => [new TemplateParameterNode(new Name('T'))];
+        yield TemplateParameterNode::class => [new TemplateParameterNode(new Identifier('T'))];
     }
 
     #[Test]
@@ -198,7 +198,7 @@ final class NodeTest extends TestCase
         yield NullLiteralNode::class => [new NullLiteralNode(offset: 42)];
         yield StringLiteralNode::class => [new StringLiteralNode('example', offset: 42)];
         yield ThisTypeNode::class => [new ThisTypeNode(42)];
-        yield VariableNode::class => [new VariableNode(new Name('example'), 42)];
+        yield VariableNode::class => [new VariableNode('example', 42)];
 
         yield ComplexFieldNode::class => [
             new ComplexFieldNode(
@@ -210,7 +210,7 @@ final class NodeTest extends TestCase
         yield FieldListNode::class => [new FieldListNode(offset: 42)];
         yield ImplicitFieldNode::class => [new ImplicitFieldNode(self::type(), offset: 42)];
         yield NamedFieldNode::class => [
-            new NamedFieldNode(new Name('key'), self::type(), offset: 42),
+            new NamedFieldNode(new Identifier('key'), self::type(), offset: 42),
         ];
         yield ScalarFieldNode::class => [
             new ScalarFieldNode(new IntLiteralNode(0), self::type(), offset: 42),
@@ -222,13 +222,13 @@ final class NodeTest extends TestCase
         yield TypedTemplateArgumentNode::class => [new TypedTemplateArgumentNode(self::type(), offset: 42)];
         yield WildcardTemplateArgumentNode::class => [new WildcardTemplateArgumentNode(42)];
         yield TemplateBoundNode::class => [
-            new TemplateBoundNode(new Name('of'), self::type(), 42),
+            new TemplateBoundNode(new Identifier('of'), self::type(), 42),
         ];
         yield TemplateParameterListNode::class => [
-            new TemplateParameterListNode([new TemplateParameterNode(new Name('T'))], 42),
+            new TemplateParameterListNode([new TemplateParameterNode(new Identifier('T'))], 42),
         ];
         yield TemplateParameterNode::class => [
-            new TemplateParameterNode(new Name('T'), offset: 42),
+            new TemplateParameterNode(new Identifier('T'), offset: 42),
         ];
 
         yield UnionTypeNode::class => [new UnionTypeNode([self::type('A'), self::type('B')], 42)];

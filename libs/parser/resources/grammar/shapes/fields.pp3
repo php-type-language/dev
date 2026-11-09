@@ -15,7 +15,7 @@ ShapeExplicitField -> {
     $type = \end($children);
     $isOptional = \count($children) === 3;
 
-    if ($key instanceof Type\Name) {
+    if ($key instanceof Type\Identifier) {
         return new Type\Shape\NamedFieldNode($key, $type, $isOptional, $offset);
     }
 
@@ -31,9 +31,16 @@ ShapeExplicitField -> {
 // a, Foo\BAR, Foo::BAR, 42, 'text'. A mask of constants is not a key
 ShapeKey
   : ShapeClassConstKey()
-  | Name()
+  | ShapeNamedKey()
   | ShapeIntKey()
   | ShapeStringKey()
+  ;
+
+// a, a-b, Foo\Bar, \FOO. A key is one word, the namespace is a part of it
+ShapeNamedKey -> {
+    return new Type\Identifier($children[0]->toString(), $children[0]->offset);
+}
+  : Name()
   ;
 
 ShapeClassConstKey -> {

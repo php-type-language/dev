@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Type\Tests\Shape;
 
 use PHPUnit\Framework\Attributes\Test;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Shape\NamedFieldNode;
@@ -15,7 +16,7 @@ final class NamedFieldNodeTest extends TestCase
     #[Test]
     public function constructorKeepsTheKeyTheTypeAndTheOffset(): void
     {
-        $key = new Name('name', offset: 3);
+        $key = new Identifier('name', offset: 3);
         $type = new NamedTypeNode(new Name('int'));
 
         $field = new NamedFieldNode($key, $type, true, 3);
@@ -30,7 +31,7 @@ final class NamedFieldNodeTest extends TestCase
     #[Test]
     public function fieldIsRequiredByDefault(): void
     {
-        $field = new NamedFieldNode(new Name('name'), new NamedTypeNode(new Name('int')));
+        $field = new NamedFieldNode(new Identifier('name'), new NamedTypeNode(new Name('int')));
 
         self::assertFalse($field->isOptional);
         self::assertSame(0, $field->offset);

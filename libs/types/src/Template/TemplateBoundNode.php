@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Template;
 
-use TypeLang\Type\Name;
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Node;
 use TypeLang\Type\TypeNode;
 
@@ -24,7 +24,7 @@ final class TemplateBoundNode extends Node
      * @param int<0, max> $offset
      */
     public function __construct(
-        public Name $operator,
+        public Identifier $operator,
         public TypeNode $type,
         int $offset = 0,
     ) {
