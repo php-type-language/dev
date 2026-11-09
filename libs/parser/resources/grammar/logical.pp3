@@ -3,9 +3,41 @@
  *  Logical Types
  *
  *  A level of precedence is a rule of its own, from the weakest to the
- *  strongest: Conditional, Union, Intersection, Suffixed.
+ *  strongest: Union, Intersection. The wrapping types (the nullable, the lists
+ *  and the offset accesses) are tighter than both, see wrapping.pp3.
  * -----------------------------------------------------------------------------
  */
 
 
-// TODO
+// The types joined with "|", the ampersand is tighter: A|B&C is A|(B&C)
+UnionType -> {
+    if (!isset($children[1])) {
+        return $children[0];
+    }
+
+    // [type, type]
+    if (!$this->features->unions) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('unions', $ctx);
+    }
+
+    return new Type\LogicalTypeNode\UnionTypeNode($children, $offset);
+}
+  : IntersectionType() (::T_UNION:: IntersectionType())*
+  ;
+
+
+// The types joined with "&", the wrapping types are tighter: A&B[] is A&(B[])
+IntersectionType -> {
+    if (!isset($children[1])) {
+        return $children[0];
+    }
+
+    // [type, type, ...]
+    if (!$this->features->intersections) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('intersections', $ctx);
+    }
+
+    return new Type\LogicalTypeNode\IntersectionTypeNode($children, $offset);
+}
+  : NullableType() (::T_AMPERSAND:: NullableType())*
+  ;

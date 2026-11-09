@@ -44,118 +44,10 @@
 
 /**
  * -----------------------------------------------------------------------------
- *  Union Types
+ *  Atoms
  * -----------------------------------------------------------------------------
  */
 
-
-// The types joined with "|", the ampersand is tighter: A|B&C is A|(B&C)
-UnionType -> {
-    if (!isset($children[1])) {
-        return $children[0];
-    }
-
-    // [type, type]
-    if (!$this->features->unions) {
-        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('unions', $ctx);
-    }
-
-    return new Type\LogicalTypeNode\UnionTypeNode($children, $offset);
-}
-  : IntersectionType() (::T_UNION:: IntersectionType())*
-  ;
-
-
-/**
- * -----------------------------------------------------------------------------
- *  Intersection Types
- * -----------------------------------------------------------------------------
- */
-
-
-// The types joined with "&", the suffixes are tighter: A&B[] is A&(B[])
-IntersectionType -> {
-    if (!isset($children[1])) {
-        return $children[0];
-    }
-
-    // [type, type, ...]
-    if (!$this->features->intersections) {
-        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('intersections', $ctx);
-    }
-
-    return new Type\LogicalTypeNode\IntersectionTypeNode($children, $offset);
-}
-  : NullableType() (::T_AMPERSAND:: NullableType())*
-  ;
-
-/**
- * -----------------------------------------------------------------------------
- *  Lists and Offset Accesses
- * -----------------------------------------------------------------------------
- */
-
-
-// A type with the "[]" and "[K]" suffixes behind it: int, int[], T[K],
-// Foo::BAR[][], (A)[], T['a'][]
-ListTypeOrOffsetAccess -> {
-    // No suffixes
-    if (!\is_array($children)) {
-        return $children;
-    }
-
-    // The children are the type and, for every suffix, the type inside of
-    // the brackets (the key), if there is one, and the closing bracket
-    $type = $children[0];
-
-    for ($i = 1, $length = \count($children); $i < $length; ++$i) {
-        // T[K], the closing bracket is behind the key
-        if ($children[$i] instanceof Type\TypeNode) {
-            if (!$this->features->offsets) {
-                throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('offsets', $ctx);
-            }
-
-            $type = new Type\WrappingTypeNode\TypeOffsetAccessTypeNode($type, $children[$i++], $offset);
-
-            continue;
-        }
-
-        // T[]
-        if (!$this->features->lists) {
-            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('lists', $ctx);
-        }
-
-        $type = new Type\WrappingTypeNode\TypesListTypeNode($type, $offset);
-    }
-
-    return $type;
-}
-  : Atom() (::T_BRACKET_OPEN:: Type()? <T_BRACKET_CLOSE>)*
-  ;
-
-
-/**
- * -----------------------------------------------------------------------------
- *  Nullable Types
- * -----------------------------------------------------------------------------
- */
-
-
-// A type with the "?" before it. The question mark is weaker than the suffixes and
-// stronger than the operators: ?A[] is ?(A[]), ?A|B is (?A)|B, ?A&B is (?A)&B
-NullableType -> {
-    if (\count($children) === 2) {
-        if (!$this->features->nullables) {
-            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('nullables', $ctx);
-        }
-
-        return new Type\WrappingTypeNode\NullableTypeNode($children[1], $offset);
-    }
-
-    return $children[0];
-}
-  : <T_QUESTION>? ListTypeOrOffsetAccess()
-  ;
 
 // A type that stands alone: the suffixes and the operators go behind it
 Atom
@@ -174,7 +66,7 @@ Atom
  */
 
 
-// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*, Foo<T>, \Foo\Bar<T, U>
+// Foo, \Foo\Bar, Foo::BAR, Foo::BAR_*, Foo::*, Foo<T>, \Foo\Bar<T, U>, Foo{...}, \Foo\Bar{...}
 NamedType -> {
     $name = $children[0];
     $second = $children[1] ?? null;
@@ -184,13 +76,19 @@ NamedType -> {
         $second === null => new Type\NamedTypeNode($name, null, null, $offset),
         // Foo<T>, \Foo\Bar<T, U>
         $second instanceof Type\Template\TemplateListNode => new Type\NamedTypeNode($name, $second, null, $offset),
+        // Foo{...}, Foo{...<K, V>}
+        $second instanceof Type\Shape\FieldListNode => new Type\NamedTypeNode($name, $children[2] ?? null, $second, $offset),
         // Foo::BAR, a lone word is a constant
         $second instanceof Type\Identifier => new Type\Constant\ClassConstTypeNode($name, $second, $offset),
         // Foo::BAR_*, anything else is a mask of constants
         default => new Type\Constant\ClassConstMaskTypeNode($name, $second, $offset),
     };
 }
-  : Name() (::T_DOUBLE_COLON:: ConstantMask() | TemplateArguments())?
+  : Name() (
+      ::T_DOUBLE_COLON:: ConstantMask()
+      | TemplateArguments()
+      | ShapeFields()
+    )?
   ;
 
 /**

@@ -66,10 +66,6 @@ final class TemplatesTest extends GrammarTestCase
     #[DataProvider('validArgumentsDataProvider')]
     public function testArgumentsAreAccepted(string $source): void
     {
-        if (\str_contains($source, '{')) {
-            self::markTestIncomplete('TODO: Shapes (step 13)');
-        }
-
         if (\str_contains($source, '(')) {
             self::markTestIncomplete('TODO: Callables (step 15)');
         }

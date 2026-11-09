@@ -43,14 +43,12 @@ final class WildcardTest extends SyntaxTestCase
 
     public function testWildcardIsReadInsideAnUnsealedShape(): void
     {
-        self::markTestIncomplete('TODO: Shapes (step 13)');
-
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
               Template\TemplateListNode
                 Template\WildcardTemplateArgumentNode
-              Shape\FieldsListNode(isSealed=false)
+              Shape\FieldListNode(isSealed=false)
             AST, $this->parseAndPrint('array{...<*>}'));
     }
 

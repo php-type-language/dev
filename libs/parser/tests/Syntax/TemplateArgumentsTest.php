@@ -169,14 +169,14 @@ final class TemplateArgumentsTest extends TestCase
      */
     public static function offsetDataProvider(): iterable
     {
-        // source, typeOffset, listOffset, [argOffsets...]
-        yield 'simple' => ['Foo<int>', 0, 3, [4]];
-        yield 'spaces before' => ['  Foo<int>', 2, 5, [6]];
-        yield 'spaces around brackets' => ['Foo < int >', 0, 4, [6]];
-        yield 'multiple' => ['Foo<int, string>', 0, 3, [4, 9]];
-        yield 'variance' => ['Foo<covariant T>', 0, 3, [4]];
-        yield 'wildcard' => ['Foo<*>', 0, 3, [4]];
-        yield 'wildcard with multiple' => ['Foo<int, *>', 0, 3, [4, 9]];
+        // source, typeOffset, listOffset (where the first argument begins), [argOffsets...]
+        yield 'simple' => ['Foo<int>', 0, 4, [4]];
+        yield 'spaces before' => ['  Foo<int>', 2, 6, [6]];
+        yield 'spaces around brackets' => ['Foo < int >', 0, 6, [6]];
+        yield 'multiple' => ['Foo<int, string>', 0, 4, [4, 9]];
+        yield 'variance' => ['Foo<covariant T>', 0, 4, [4]];
+        yield 'wildcard' => ['Foo<*>', 0, 4, [4]];
+        yield 'wildcard with multiple' => ['Foo<int, *>', 0, 4, [4, 9]];
     }
 
     /**

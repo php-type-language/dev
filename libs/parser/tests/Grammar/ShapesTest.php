@@ -11,13 +11,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 final class ShapesTest extends GrammarTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        self::markTestIncomplete('TODO');
-    }
-
     /**
      * @return iterable<non-empty-string, array{string}>
      */
@@ -29,6 +22,10 @@ final class ShapesTest extends GrammarTestCase
         yield 'object' => ['object{a: int}'];
         yield 'fully qualified name' => ['\\Foo\\Bar{a: int}'];
         yield 'non empty array' => ['non-empty-array{a: int}'];
+        yield 'space before the brace' => ['array {a: int}'];
+        yield 'line break before the brace' => ["array\n{a: int}"];
+        yield 'comment before the brace' => ['array/* c */{a: int}'];
+        yield 'space before the brace of an empty shape' => ['array {}'];
 
         yield 'implicit field' => ['array{int}'];
         yield 'implicit fields' => ['array{int, string}'];
@@ -97,6 +94,14 @@ final class ShapesTest extends GrammarTestCase
     #[DataProvider('validShapeDataProvider')]
     public function testShapeIsAccepted(string $source): void
     {
+        if (\str_contains($source, 'callable(')) {
+            self::markTestIncomplete('TODO: Callables (step 15)');
+        }
+
+        if (\str_contains($source, ' is ')) {
+            self::markTestIncomplete('TODO: Conditions (step 17)');
+        }
+
         self::assertAccepted($source);
     }
 
@@ -105,10 +110,6 @@ final class ShapesTest extends GrammarTestCase
      */
     public static function invalidShapeDataProvider(): iterable
     {
-        yield 'space before the brace' => ['array {a: int}'];
-        yield 'line break before the brace' => ["array\n{a: int}"];
-        yield 'comment before the brace' => ['array/* c */{a: int}'];
-        yield 'space before the brace of an empty shape' => ['array {}'];
         yield 'unclosed' => ['array{'];
         yield 'unclosed behind a field' => ['array{a: int'];
         yield 'only a comma' => ['array{,}'];

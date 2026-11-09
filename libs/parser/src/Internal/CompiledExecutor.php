@@ -221,6 +221,30 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         false,
         false,
         true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
         true,
         true,
         false,
@@ -511,6 +535,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         [
             23 => true,
             33 => true,
+            37 => true,
         ],
         [
             23 => true,
@@ -634,6 +659,208 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             34 => true,
         ],
         [
+            37 => true,
+        ],
+        [
+            37 => true,
+        ],
+        null,
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            7 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            25 => true,
+            29 => true,
+            31 => true,
+        ],
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            7 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            29 => true,
+            31 => true,
+        ],
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            7 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            29 => true,
+            31 => true,
+        ],
+        [
+            true,
+            2 => true,
+            true,
+            true,
+            8 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        ],
+        [
+            true,
+            2 => true,
+            true,
+            true,
+            8 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        ],
+        [
+            true,
+            2 => true,
+            true,
+            true,
+            15 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        ],
+        [
+            8 => true,
+            true,
+            true,
+            true,
+            true,
+        ],
+        [
+            13 => true,
+            true,
+        ],
+        [
+            24 => true,
+        ],
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            7 => true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            29 => true,
+            31 => true,
+        ],
+        null,
+        [
+            30 => true,
+        ],
+        [
+            30 => true,
+        ],
+        null,
+        [
+            30 => true,
+        ],
+        [
+            30 => true,
+        ],
+        [
+            25 => true,
+        ],
+        [
+            25 => true,
+        ],
+        [
+            25 => true,
+        ],
+        null,
+        [
+            38 => true,
+        ],
+        [
             5 => true,
         ],
         [
@@ -733,7 +960,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
             0 => [
                 20,
-                53,
+                77,
             ],
             [
                 20,
@@ -757,13 +984,13 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 20,
             ],
             5 => [
-                -53,
+                -77,
             ],
             1 => [
-                53,
+                77,
             ],
             31 => [
-                56,
+                80,
             ],
         ],
         [
@@ -871,6 +1098,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             ],
             33 => [
                 40,
+            ],
+            37 => [
+                52,
             ],
         ],
         36 => [
@@ -1026,15 +1256,204 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 0,
             ],
         ],
-        53 => [
+        55 => [
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            7 => [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            [
+                56,
+            ],
+            29 => [
+                56,
+            ],
+            31 => [
+                56,
+            ],
+            25 => [
+                71,
+            ],
+        ],
+        57 => [
+            1 => [
+                64,
+            ],
+            5 => [
+                64,
+            ],
+            7 => [
+                64,
+            ],
+            29 => [
+                64,
+            ],
+            31 => [
+                64,
+            ],
+        ],
+        59 => [
+            [
+                60,
+                21,
+            ],
+            2 => [
+                60,
+                21,
+            ],
+            [
+                60,
+                21,
+            ],
+            [
+                60,
+                21,
+            ],
+            15 => [
+                60,
+                21,
+            ],
+            [
+                60,
+                21,
+            ],
+            [
+                60,
+                21,
+            ],
+            [
+                60,
+                21,
+            ],
+            [
+                60,
+                21,
+            ],
+            [
+                60,
+                21,
+            ],
+            [
+                60,
+                21,
+            ],
+            8 => [
+                61,
+            ],
+            9 => [
+                61,
+            ],
+            10 => [
+                61,
+            ],
+            11 => [
+                61,
+            ],
+            12 => [
+                61,
+            ],
+            13 => [
+                62,
+            ],
+            14 => [
+                62,
+            ],
+        ],
+        61 => [
+            12 => [
+                -14,
+            ],
+            8 => [
+                -15,
+            ],
+            9 => [
+                -16,
+            ],
+            10 => [
+                -17,
+            ],
+            11 => [
+                -18,
+            ],
+        ],
+        [
+            13 => [
+                -19,
+            ],
+            [
+                -20,
+            ],
+        ],
+        69 => [
+            30 => [
+                70,
+                -50,
+            ],
+        ],
+        77 => [
             1 => [
                 -38,
             ],
             0 => [
-                54,
+                78,
             ],
         ],
-        55 => [
+        79 => [
             1 => [
                 -38,
             ],
@@ -1048,11 +1467,11 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
     private const PARSER_SEQUENCE_PREDICTION_TABLE = [
         1 => [
             2,
-            -71,
+            -95,
         ],
         [
             3,
-            -67,
+            -91,
         ],
         [
             -6,
@@ -1060,7 +1479,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         ],
         6 => [
             7,
-            -61,
+            -85,
         ],
         20 => [
             21,
@@ -1073,10 +1492,34 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             -50,
             51,
         ],
-        61 => [
-            62,
+        52 => [
+            53,
+            -56,
+            75,
+        ],
+        56 => [
+            57,
+            -67,
+            -70,
+        ],
+        58 => [
+            59,
+            -6,
+            63,
+            0,
+        ],
+        71 => [
+            72,
+            -50,
+        ],
+        [
+            73,
+            -41,
+        ],
+        85 => [
+            86,
             -1,
-            64,
+            88,
         ],
     ];
 
@@ -1151,13 +1594,13 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             lexer: $this->lexer,
             grammar: [
                 new \Phplrt\Parser\Grammar\Concatenation([1]),
-                new \Phplrt\Parser\Grammar\Concatenation([2, 69]),
-                new \Phplrt\Parser\Grammar\Concatenation([3, 65]),
+                new \Phplrt\Parser\Grammar\Concatenation([2, 93]),
+                new \Phplrt\Parser\Grammar\Concatenation([3, 89]),
                 new \Phplrt\Parser\Grammar\Concatenation([4, 6]),
                 new \Phplrt\Parser\Grammar\Optional(5),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_QUESTION, true),
-                new \Phplrt\Parser\Grammar\Concatenation([7, 59]),
-                new \Phplrt\Parser\Grammar\Alternation([8, 20, 52, 53, 56]),
+                new \Phplrt\Parser\Grammar\Concatenation([7, 83]),
+                new \Phplrt\Parser\Grammar\Alternation([8, 20, 76, 77, 80]),
                 new \Phplrt\Parser\Grammar\Alternation([9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_NULL, true),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_TRUE, true),
@@ -1183,7 +1626,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_SUPER, true),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_VIRTUAL_NAME, true),
                 new \Phplrt\Parser\Grammar\Optional(33),
-                new \Phplrt\Parser\Grammar\Alternation([34, 40]),
+                new \Phplrt\Parser\Grammar\Alternation([34, 40, 52]),
                 new \Phplrt\Parser\Grammar\Concatenation([35, 36]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_DOUBLE_COLON, false),
                 new \Phplrt\Parser\Grammar\Alternation([37, 38, 39]),
@@ -1202,26 +1645,50 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_COMMA, false),
                 new \Phplrt\Parser\Grammar\Optional(49),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_ANGLE_CLOSE, false),
+                new \Phplrt\Parser\Grammar\Concatenation([53, 54, 75]),
+                new \Phplrt\Parser\Grammar\Lexeme(self::T_BRACE_OPEN, false),
+                new \Phplrt\Parser\Grammar\Optional(55),
+                new \Phplrt\Parser\Grammar\Alternation([56, 71]),
+                new \Phplrt\Parser\Grammar\Concatenation([57, 65, 68]),
+                new \Phplrt\Parser\Grammar\Alternation([58, 64]),
+                new \Phplrt\Parser\Grammar\Concatenation([59, 4, 63, 0]),
+                new \Phplrt\Parser\Grammar\Alternation([60, 21, 61, 62]),
+                new \Phplrt\Parser\Grammar\Concatenation([21, 35, 39]),
+                new \Phplrt\Parser\Grammar\Alternation([13, 14, 15, 16, 17]),
+                new \Phplrt\Parser\Grammar\Alternation([18, 19]),
+                new \Phplrt\Parser\Grammar\Lexeme(self::T_COLON, false),
+                new \Phplrt\Parser\Grammar\Concatenation([0]),
+                new \Phplrt\Parser\Grammar\Optional(66),
+                new \Phplrt\Parser\Grammar\Repetition(67, 1, \INF),
+                new \Phplrt\Parser\Grammar\Concatenation([49, 57]),
+                new \Phplrt\Parser\Grammar\Optional(69),
+                new \Phplrt\Parser\Grammar\Alternation([70, 49]),
+                new \Phplrt\Parser\Grammar\Concatenation([49, 71]),
+                new \Phplrt\Parser\Grammar\Concatenation([72, 50]),
+                new \Phplrt\Parser\Grammar\Concatenation([73, 74]),
+                new \Phplrt\Parser\Grammar\Lexeme(self::T_ELLIPSIS, true),
+                new \Phplrt\Parser\Grammar\Optional(40),
+                new \Phplrt\Parser\Grammar\Lexeme(self::T_BRACE_CLOSE, false),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_THIS, true),
-                new \Phplrt\Parser\Grammar\Alternation([37, 54]),
-                new \Phplrt\Parser\Grammar\Concatenation([23, 55]),
+                new \Phplrt\Parser\Grammar\Alternation([37, 78]),
+                new \Phplrt\Parser\Grammar\Concatenation([23, 79]),
                 new \Phplrt\Parser\Grammar\Alternation([37, 38]),
-                new \Phplrt\Parser\Grammar\Concatenation([57, 0, 58]),
+                new \Phplrt\Parser\Grammar\Concatenation([81, 0, 82]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_PAREN_OPEN, false),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_PAREN_CLOSE, false),
-                new \Phplrt\Parser\Grammar\Optional(60),
-                new \Phplrt\Parser\Grammar\Repetition(61, 1, \INF),
-                new \Phplrt\Parser\Grammar\Concatenation([62, 63, 64]),
+                new \Phplrt\Parser\Grammar\Optional(84),
+                new \Phplrt\Parser\Grammar\Repetition(85, 1, \INF),
+                new \Phplrt\Parser\Grammar\Concatenation([86, 87, 88]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_BRACKET_OPEN, false),
                 new \Phplrt\Parser\Grammar\Optional(0),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_BRACKET_CLOSE, true),
-                new \Phplrt\Parser\Grammar\Optional(66),
-                new \Phplrt\Parser\Grammar\Repetition(67, 1, \INF),
-                new \Phplrt\Parser\Grammar\Concatenation([68, 3]),
+                new \Phplrt\Parser\Grammar\Optional(90),
+                new \Phplrt\Parser\Grammar\Repetition(91, 1, \INF),
+                new \Phplrt\Parser\Grammar\Concatenation([92, 3]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_AMPERSAND, false),
-                new \Phplrt\Parser\Grammar\Optional(70),
-                new \Phplrt\Parser\Grammar\Repetition(71, 1, \INF),
-                new \Phplrt\Parser\Grammar\Concatenation([72, 2]),
+                new \Phplrt\Parser\Grammar\Optional(94),
+                new \Phplrt\Parser\Grammar\Repetition(95, 1, \INF),
+                new \Phplrt\Parser\Grammar\Concatenation([96, 2]),
                 new \Phplrt\Parser\Grammar\Lexeme(self::T_UNION, false),
             ],
             initial: 0,
@@ -1241,8 +1708,15 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 40 => $this->reduceTemplateArguments(...),
                 43 => $this->reduceWildcardTemplateArgument(...),
                 44 => $this->reduceTypedTemplateArgument(...),
-                52 => self::reduceThisType(...),
-                53 => self::reduceConstMaskType(...),
+                52 => $this->reduceShapeFields(...),
+                58 => self::reduceShapeExplicitField(...),
+                60 => self::reduceShapeClassConstKey(...),
+                61 => $this->reduceShapeIntKey(...),
+                62 => $this->reduceShapeStringKey(...),
+                64 => self::reduceShapeImplicitField(...),
+                72 => self::reduceShapeUnsealed(...),
+                76 => self::reduceThisType(...),
+                77 => self::reduceConstMaskType(...),
             ],
             expectations: self::PARSER_EXPECTATIONS,
             kept: self::PARSER_KEPT_TABLE,
@@ -1392,6 +1866,8 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             $second === null => new Type\NamedTypeNode($name, null, null, $offset),
             // Foo<T>, \Foo\Bar<T, U>
             $second instanceof Type\Template\TemplateListNode => new Type\NamedTypeNode($name, $second, null, $offset),
+            // Foo{...}, Foo{...<K, V>}
+            $second instanceof Type\Shape\FieldListNode => new Type\NamedTypeNode($name, $children[2] ?? null, $second, $offset),
             // Foo::BAR, a lone word is a constant
             $second instanceof Type\Identifier => new Type\Constant\ClassConstTypeNode($name, $second, $offset),
             // Foo::BAR_*, anything else is a mask of constants
@@ -1503,6 +1979,106 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         }
 
         return new Type\Template\TypedTemplateArgumentNode($children, null, $offset);
+    }
+
+    private function reduceShapeFields(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        // The variables below are declared by the compiler
+        $offset = $ctx->begin;
+
+        if (!$this->features->shapes) {
+            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('shapes', $ctx);
+        }
+
+        $last = \end($children);
+        $arguments = null;
+        $isSealed = true;
+
+        if ($last instanceof Type\Template\TemplateListNode) {
+            $arguments = \array_pop($children);
+            $isSealed = false;
+        } elseif ($last === true) {
+            \array_pop($children);
+            $isSealed = false;
+        }
+
+        $fields = new Type\Shape\FieldListNode($children, $isSealed, $offset);
+
+        if ($arguments !== null) {
+            return [$fields, $arguments];
+        }
+
+        return $fields;
+    }
+
+    private static function reduceShapeExplicitField(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        // The variables below are declared by the compiler
+        $offset = $ctx->begin;
+
+        $key = $children[0];
+        $type = \end($children);
+        $isOptional = \count($children) === 3;
+
+        if ($key instanceof Type\Name) {
+            return new Type\Shape\NamedFieldNode($key, $type, $isOptional, $offset);
+        }
+
+        if ($key instanceof Type\Literal\IntLiteralNode || $key instanceof Type\Literal\StringLiteralNode) {
+            return new Type\Shape\ScalarFieldNode($key, $type, $isOptional, $offset);
+        }
+
+        return new Type\Shape\ComplexFieldNode($key, $type, $isOptional, $offset);
+    }
+
+    private static function reduceShapeClassConstKey(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        // The variables below are declared by the compiler
+        $offset = $ctx->begin;
+
+        return new Type\Constant\ClassConstTypeNode($children[0], $children[1], $offset);
+    }
+
+    private function reduceShapeIntKey(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        // The variables below are declared by the compiler
+        $offset = $ctx->begin;
+
+        return match ($children->id) {
+            self::T_INT_DEC => $this->decInt->parse($children->value, $offset),
+            self::T_INT_HEX => $this->hexInt->parse($children->value, $offset),
+            self::T_INT_BIN => $this->binInt->parse($children->value, $offset),
+            self::T_INT_OCT => $this->octInt->parse($children->value, $offset),
+            default => $this->octLegacyInt->parse($children->value, $offset),
+        };
+    }
+
+    private function reduceShapeStringKey(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        // The variables below are declared by the compiler
+        $offset = $ctx->begin;
+
+        return match ($children->id) {
+            self::T_SQ_STRING => $this->sqString->parse($children->value, $offset),
+            default => $this->dqString->parse($children->value, $offset),
+        };
+    }
+
+    private static function reduceShapeImplicitField(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        // The variables below are declared by the compiler
+        $offset = $ctx->begin;
+
+        return new Type\Shape\ImplicitFieldNode($children[0], $offset);
+    }
+
+    private static function reduceShapeUnsealed(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    {
+        if (\count($children) > 1) {
+            return $children[1];
+        }
+
+        return true;
     }
 
     private static function reduceThisType(\Phplrt\Parser\Context $ctx, mixed $children): mixed

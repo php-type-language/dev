@@ -1,0 +1,69 @@
+
+ShapeField
+  : ShapeExplicitField()
+  | ShapeImplicitField()
+  ;
+
+ShapeImplicitField -> {
+    return new Type\Shape\ImplicitFieldNode($children[0], $offset);
+}
+  : Type()
+  ;
+
+ShapeExplicitField -> {
+    $key = $children[0];
+    $type = \end($children);
+    $isOptional = \count($children) === 3;
+
+    if ($key instanceof Type\Name) {
+        return new Type\Shape\NamedFieldNode($key, $type, $isOptional, $offset);
+    }
+
+    if ($key instanceof Type\Literal\IntLiteralNode || $key instanceof Type\Literal\StringLiteralNode) {
+        return new Type\Shape\ScalarFieldNode($key, $type, $isOptional, $offset);
+    }
+
+    return new Type\Shape\ComplexFieldNode($key, $type, $isOptional, $offset);
+}
+  : ShapeKey() <T_QUESTION>? ::T_COLON:: Type()
+  ;
+
+// a, Foo\BAR, Foo::BAR, 42, 'text'. A mask of constants is not a key
+ShapeKey
+  : ShapeClassConstKey()
+  | Name()
+  | ShapeIntKey()
+  | ShapeStringKey()
+  ;
+
+ShapeClassConstKey -> {
+    return new Type\Constant\ClassConstTypeNode($children[0], $children[1], $offset);
+}
+  : Name() ::T_DOUBLE_COLON:: Identifier()
+  ;
+
+ShapeIntKey -> {
+    return match ($children->id) {
+        self::T_INT_DEC => $this->decInt->parse($children->value, $offset),
+        self::T_INT_HEX => $this->hexInt->parse($children->value, $offset),
+        self::T_INT_BIN => $this->binInt->parse($children->value, $offset),
+        self::T_INT_OCT => $this->octInt->parse($children->value, $offset),
+        default => $this->octLegacyInt->parse($children->value, $offset),
+    };
+}
+  : <T_INT_DEC>
+  | <T_INT_HEX>
+  | <T_INT_BIN>
+  | <T_INT_OCT>
+  | <T_INT_OCT_LEGACY>
+  ;
+
+ShapeStringKey -> {
+    return match ($children->id) {
+        self::T_SQ_STRING => $this->sqString->parse($children->value, $offset),
+        default => $this->dqString->parse($children->value, $offset),
+    };
+}
+  : <T_SQ_STRING>
+  | <T_DQ_STRING>
+  ;

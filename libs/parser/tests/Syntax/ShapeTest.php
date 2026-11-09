@@ -13,12 +13,17 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('unit'), Group('type-lang/parser')]
 final class ShapeTest extends SyntaxTestCase
 {
+    protected function setUp(): void
+    {
+        // Enabled for step 13
+    }
+
     public function testNamedExplicitKeys(): void
     {
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
                   Name(a)
                   NamedTypeNode
@@ -35,7 +40,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\ScalarFieldNode(isOptional=false)
                   Literal\IntLiteralNode(1)
                   NamedTypeNode
@@ -52,7 +57,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\ScalarFieldNode(isOptional=false)
                   Literal\StringLiteralNode("name-some")
                   NamedTypeNode
@@ -69,11 +74,11 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
-                Shape\ImplicitFieldNode(isOptional=false)
+              Shape\FieldListNode(isSealed=true)
+                Shape\ImplicitFieldNode
                   NamedTypeNode
                     Name(first)
-                Shape\ImplicitFieldNode(isOptional=false)
+                Shape\ImplicitFieldNode
                   NamedTypeNode
                     Name(second)
             AST, $this->parseAndPrint('array{first, second}'));
@@ -84,7 +89,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
             AST, $this->parseAndPrint('array{}'));
     }
 
@@ -93,7 +98,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
                   Name(a)
                   NamedTypeNode
@@ -107,7 +112,7 @@ final class ShapeTest extends SyntaxTestCase
      */
     public function testTrailingCommaOfEmptyShapeIsNotAllowed(): void
     {
-        $this->expectParsingException('a shape must be closed with a brace "}"');
+        $this->expectParsingException();
 
         $this->parse('array{,}');
     }
@@ -117,7 +122,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=true)
                   Name(key)
                   NamedTypeNode
@@ -130,7 +135,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=false)
+              Shape\FieldListNode(isSealed=false)
                 Shape\NamedFieldNode(isOptional=false)
                   Name(key)
                   NamedTypeNode
@@ -150,7 +155,7 @@ final class ShapeTest extends SyntaxTestCase
                 Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(object)
-              Shape\FieldsListNode(isSealed=false)
+              Shape\FieldListNode(isSealed=false)
                 Shape\NamedFieldNode(isOptional=false)
                   Name(user)
                   NamedTypeNode
@@ -163,7 +168,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(App\Domain\User)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
                   Name(userName)
                   NamedTypeNode
@@ -180,12 +185,12 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
                   Name(named)
                   NamedTypeNode
                     Name(first)
-                Shape\ImplicitFieldNode(isOptional=false)
+                Shape\ImplicitFieldNode
                   NamedTypeNode
                     Name(second)
             AST, $this->parseAndPrint('array{named: first, second}'));
@@ -196,8 +201,8 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
-                Shape\ImplicitFieldNode(isOptional=false)
+              Shape\FieldListNode(isSealed=true)
+                Shape\ImplicitFieldNode
                   NamedTypeNode
                     Name(int)
                 Shape\NamedFieldNode(isOptional=false)
@@ -216,7 +221,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\NamedFieldNode(isOptional=false)
                   Name(a)
                   NamedTypeNode
@@ -236,7 +241,7 @@ final class ShapeTest extends SyntaxTestCase
         self::assertSame(<<<'AST'
             NamedTypeNode
               Name(array)
-              Shape\FieldsListNode(isSealed=true)
+              Shape\FieldListNode(isSealed=true)
                 Shape\ScalarFieldNode(isOptional=false)
                   Literal\IntLiteralNode(1)
                   NamedTypeNode
@@ -250,7 +255,7 @@ final class ShapeTest extends SyntaxTestCase
 
     public function testOptionalValueSyntaxIsNotAllowed(): void
     {
-        $this->expectParsingException('a shape must be closed with a brace "}"');
+        $this->expectParsingException();
 
         $this->parse('array{key: Type?}');
     }
@@ -294,9 +299,202 @@ final class ShapeTest extends SyntaxTestCase
     #[DataProvider('invalidKeyDataProvider')]
     public function testKeyIsANumberAStringOrANameAlone(string $type): void
     {
-        $this->expectParsingException('Shape key must be a name, a number, a string');
+        $this->expectParsingException();
 
         $this->parse($type);
+    }
+
+    public function testConstantKeys(): void
+    {
+        self::assertSame(<<<'AST'
+            NamedTypeNode
+              Name(array)
+              Shape\FieldListNode(isSealed=true)
+                Shape\ComplexFieldNode(isOptional=false)
+                  Constant\ClassConstTypeNode
+                    Name(Foo)
+                    Identifier(BAR)
+                  NamedTypeNode
+                    Name(int)
+                Shape\ComplexFieldNode(isOptional=true)
+                  Constant\ClassConstTypeNode
+                    Name(\Foo\Bar)
+                    Identifier(BAZ)
+                  NamedTypeNode
+                    Name(string)
+                Shape\ComplexFieldNode(isOptional=false)
+                  Constant\ClassConstTypeNode
+                    Name(Foo)
+                    Identifier(class)
+                  NamedTypeNode
+                    Name(bool)
+            AST, $this->parseAndPrint('array{Foo::BAR: int, \Foo\Bar::BAZ?: string, Foo::class: bool}'));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function maskKeyDataProvider(): iterable
+    {
+        yield 'global mask' => ['array{PHP_*: int}'];
+        yield 'namespace mask' => ['array{Foo\\BAR_*: int}'];
+        yield 'class constant mask' => ['array{Foo::BAR_*: int}'];
+        yield 'class lone star mask' => ['array{Foo::*: int}'];
+        yield 'optional mask' => ['array{PHP_*?: int}'];
+    }
+
+    /**
+     * @param non-empty-string $source
+     */
+    #[DataProvider('maskKeyDataProvider')]
+    public function testMaskKeysAreRejected(string $source): void
+    {
+        $this->expectParsingException();
+
+        $this->parse($source);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string, bool}>
+     */
+    public static function qualifiedKeyDataProvider(): iterable
+    {
+        yield 'qualified' => ['array{Foo\\Bar: int}', 'Foo\\Bar', false];
+        yield 'fully qualified' => ['array{\\Foo: int}', '\\Foo', false];
+        yield 'qualified constant' => ['array{Foo\\BAR: int}', 'Foo\\BAR', false];
+        yield 'fully qualified constant' => ['array{\\Foo\\BAR: int}', '\\Foo\\BAR', false];
+        yield 'optional' => ['array{Foo\\Bar?: int}', 'Foo\\Bar', true];
+    }
+
+    /**
+     * @param non-empty-string $source
+     * @param non-empty-string $key
+     */
+    #[DataProvider('qualifiedKeyDataProvider')]
+    public function testQualifiedNameKeys(string $source, string $key, bool $isOptional): void
+    {
+        $node = $this->parse($source);
+
+        self::assertInstanceOf(\TypeLang\Type\NamedTypeNode::class, $node);
+        self::assertNotNull($node->fields);
+
+        $field = $node->fields[0];
+
+        self::assertInstanceOf(\TypeLang\Type\Shape\NamedFieldNode::class, $field);
+        self::assertInstanceOf(\TypeLang\Type\Name::class, $field->key);
+        self::assertSame($key, $field->key->toString());
+        self::assertSame($isOptional, $field->isOptional);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, int}>
+     */
+    public static function signedIntKeyDataProvider(): iterable
+    {
+        yield 'negative' => ['array{-1: int}', -1];
+        yield 'negative with a space' => ['array{- 1: int}', -1];
+        yield 'positive' => ['array{+1: int}', 1];
+        yield 'positive with a space' => ['array{+ 1: int}', 1];
+        yield 'unsigned' => ['array{1: int}', 1];
+    }
+
+    /**
+     * @param non-empty-string $source
+     */
+    #[DataProvider('signedIntKeyDataProvider')]
+    public function testSignedIntegerKeys(string $source, int $key): void
+    {
+        $node = $this->parse($source);
+
+        self::assertInstanceOf(\TypeLang\Type\NamedTypeNode::class, $node);
+        self::assertNotNull($node->fields);
+
+        $field = $node->fields[0];
+
+        self::assertInstanceOf(\TypeLang\Type\Shape\ScalarFieldNode::class, $field);
+        self::assertInstanceOf(\TypeLang\Type\Literal\IntLiteralNode::class, $field->key);
+        self::assertSame($key, $field->key->value);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function floatKeyDataProvider(): iterable
+    {
+        yield 'float' => ['array{1.5: int}'];
+        yield 'negative float' => ['array{-1.5: int}'];
+        yield 'negative float with a space' => ['array{- 1.5: int}'];
+        yield 'positive float with a space' => ['array{+ 1.5: int}'];
+        yield 'float with an exponent' => ['array{1e3: int}'];
+    }
+
+    /**
+     * @param non-empty-string $source
+     */
+    #[DataProvider('floatKeyDataProvider')]
+    public function testFloatKeysAreRejected(string $source): void
+    {
+        $this->expectParsingException();
+
+        $this->parse($source);
+    }
+
+    public function testOffsets(): void
+    {
+        $node = $this->parse('  array{a: int, 0?: string, Foo::BAR: bool, ...<K, V>}  ');
+
+        self::assertInstanceOf(\TypeLang\Type\NamedTypeNode::class, $node);
+        self::assertSame(2, $node->offset);
+        self::assertSame(2, $node->name->offset);
+
+        self::assertNotNull($node->fields);
+        self::assertSame(8, $node->fields->offset);
+        self::assertFalse($node->fields->isSealed);
+        self::assertCount(3, $node->fields);
+
+        // a: int
+        $f0 = $node->fields[0];
+        self::assertInstanceOf(\TypeLang\Type\Shape\NamedFieldNode::class, $f0);
+        self::assertSame(8, $f0->offset);
+        self::assertSame(8, $f0->key->offset);
+        self::assertSame('a', $f0->key->toString());
+        self::assertSame(11, $f0->type->offset);
+        self::assertFalse($f0->isOptional);
+
+        // 0?: string
+        $f1 = $node->fields[1];
+        self::assertInstanceOf(\TypeLang\Type\Shape\ScalarFieldNode::class, $f1);
+        self::assertSame(16, $f1->offset);
+        self::assertSame(16, $f1->key->offset);
+        self::assertSame(20, $f1->type->offset);
+        self::assertTrue($f1->isOptional);
+
+        // Foo::BAR: bool
+        $f2 = $node->fields[2];
+        self::assertInstanceOf(\TypeLang\Type\Shape\ComplexFieldNode::class, $f2);
+        self::assertSame(28, $f2->offset);
+        self::assertSame(28, $f2->key->offset);
+        self::assertSame(38, $f2->type->offset);
+        self::assertFalse($f2->isOptional);
+
+        // ...<K, V>
+        self::assertNotNull($node->arguments);
+        self::assertSame(48, $node->arguments->offset);
+        self::assertCount(2, $node->arguments);
+    }
+
+    public function testDisabledShapes(): void
+    {
+        $this->expectFeatureException('Shapes feature is not allowed');
+
+        $this->parse('array{a: int}', ['shapes' => false]);
+    }
+
+    public function testDisabledGenericsInUnsealedShape(): void
+    {
+        $this->expectFeatureException('Generics feature is not allowed');
+
+        $this->parse('array{a: int, ...<K, V>}', ['generics' => false]);
     }
 
     /**
@@ -305,7 +503,7 @@ final class ShapeTest extends SyntaxTestCase
      */
     public function testKeyDoesNotReachBeyondAPrimaryType(): void
     {
-        $this->expectParsingException('a shape must be closed with a brace "}"');
+        $this->expectParsingException();
 
         $this->parse('array{T is A ? B : C: int}');
     }

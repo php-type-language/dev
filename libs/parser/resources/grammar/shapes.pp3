@@ -1,3 +1,6 @@
+
+%include shapes/fields
+
 /**
  * -----------------------------------------------------------------------------
  *  Shapes
@@ -6,5 +9,57 @@
  * -----------------------------------------------------------------------------
  */
 
+ShapeFields -> {
+    if (!$this->features->shapes) {
+        throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('shapes', $ctx);
+    }
 
-// TODO
+    $last = \end($children);
+    $arguments = null;
+    $isSealed = true;
+
+    if ($last instanceof Type\Template\TemplateListNode) {
+        $arguments = \array_pop($children);
+        $isSealed = false;
+    } elseif ($last === true) {
+        \array_pop($children);
+        $isSealed = false;
+    }
+
+    $fields = new Type\Shape\FieldListNode($children, $isSealed, $offset);
+
+    if ($arguments !== null) {
+        return [$fields, $arguments];
+    }
+
+    return $fields;
+}
+  : ::T_BRACE_OPEN::
+        ShapeBody()?
+    ::T_BRACE_CLOSE::
+  ;
+
+ShapeBody
+  : ShapeFieldsList()
+    (::T_COMMA:: ShapeSuffix() | ::T_COMMA::)?
+  | ShapeSuffix()
+  ;
+
+ShapeFieldsList
+  : ShapeField()
+    (::T_COMMA:: ShapeField())*
+  ;
+
+ShapeSuffix
+  : ShapeUnsealed() ::T_COMMA::?
+  ;
+
+ShapeUnsealed -> {
+    if (\count($children) > 1) {
+        return $children[1];
+    }
+
+    return true;
+}
+  : <T_ELLIPSIS> TemplateArguments()?
+  ;
