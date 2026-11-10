@@ -171,11 +171,11 @@ final class GroupingTest extends AstTestCase
             Callable\CallableTypeNode
               Name(callable)
               Callable\CallableParameterListNode
-                Callable\CallableParameterNode(isOutput=false, isVariadic=false)
+                Callable\CallableParameterNode(isByReference=false, isVariadic=false)
                   Callable\CallableTypeNode
                     Name(callable)
                     Callable\CallableParameterListNode
-                      Callable\CallableParameterNode(isOutput=false, isVariadic=false)
+                      Callable\CallableParameterNode(isByReference=false, isVariadic=false)
                         NamedTypeNode
                           Name(int)
                     NamedTypeNode

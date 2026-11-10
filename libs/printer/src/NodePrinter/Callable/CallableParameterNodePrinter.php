@@ -30,7 +30,7 @@ final class CallableParameterNodePrinter implements NodePrinterInterface
             $result .= ' ';
         }
 
-        if ($node->isOutput) {
+        if ($node->isByReference) {
             $result .= '&';
         }
 

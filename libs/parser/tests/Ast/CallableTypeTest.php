@@ -128,7 +128,7 @@ final class CallableTypeTest extends TestCase
         string $source,
         ?string $type,
         ?string $name,
-        bool $isOutput,
+        bool $isByReference,
         bool $isVariadic,
         bool $hasDefault,
     ): void {
@@ -141,7 +141,7 @@ final class CallableTypeTest extends TestCase
         }
 
         self::assertSame($name, $parameter->name?->name);
-        self::assertSame($isOutput, $parameter->isOutput);
+        self::assertSame($isByReference, $parameter->isByReference);
         self::assertSame($isVariadic, $parameter->isVariadic);
         self::assertSame($hasDefault, $parameter->default !== null);
     }

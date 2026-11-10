@@ -53,7 +53,7 @@ final class CallableParameterNode extends Node
          * It is written as an `&` behind the type, like the one of
          * a `callable(int &$byRef)`.
          */
-        public bool $isOutput = false,
+        public bool $isByReference = false,
         /**
          * Whether a parameter takes every argument left, written as a `...`:
          * A `callable(string ...$rest)`.

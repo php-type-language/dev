@@ -3507,7 +3507,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $type = null;
         $name = null;
         $default = null;
-        $isOutput = false;
+        $isByReference = false;
         $isVariadic = false;
 
         foreach ($children as $child) {
@@ -3525,7 +3525,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                     break;
 
                 case $child->id === self::T_AMPERSAND:
-                    $isOutput = true;
+                    $isByReference = true;
                     break;
 
                 default:
@@ -3534,7 +3534,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             }
         }
 
-        return new Type\Callable\CallableParameterNode($type, $name, $isOutput, $isVariadic, $default, $offset);
+        return new Type\Callable\CallableParameterNode($type, $name, $isByReference, $isVariadic, $default, $offset);
     }
 
     private static function reduceVariable(\Phplrt\Parser\Context $ctx, mixed $children): mixed
