@@ -69,4 +69,25 @@ final class TemplateParameterNode extends TemplateNode
 
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->name = clone $this->name;
+
+        if ($this->upper !== null) {
+            $this->upper = clone $this->upper;
+        }
+
+        if ($this->lower !== null) {
+            $this->lower = clone $this->lower;
+        }
+
+        if ($this->default !== null) {
+            $this->default = clone $this->default;
+        }
+
+        if ($this->variance !== null) {
+            $this->variance = clone $this->variance;
+        }
+    }
 }

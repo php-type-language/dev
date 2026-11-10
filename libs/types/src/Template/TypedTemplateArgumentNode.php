@@ -37,4 +37,13 @@ final class TypedTemplateArgumentNode extends TemplateArgumentNode
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->value = clone $this->value;
+
+        if ($this->variance !== null) {
+            $this->variance = clone $this->variance;
+        }
+    }
 }

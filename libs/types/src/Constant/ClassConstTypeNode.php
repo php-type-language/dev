@@ -31,4 +31,10 @@ final class ClassConstTypeNode extends TypeNode
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->class = clone $this->class;
+        $this->constant = clone $this->constant;
+    }
 }

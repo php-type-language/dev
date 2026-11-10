@@ -27,4 +27,9 @@ abstract class WrappingTypeNode extends TypeNode
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->type = clone $this->type;
+    }
 }

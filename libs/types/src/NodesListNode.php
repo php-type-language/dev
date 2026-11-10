@@ -161,4 +161,11 @@ abstract class NodesListNode extends Node implements
     {
         return \count($this->items);
     }
+
+    public function __clone()
+    {
+        foreach ($this->items as $index => $node) {
+            $this->items[$index] = clone $node;
+        }
+    }
 }

@@ -62,4 +62,18 @@ final class CallableTypeNode extends TypeNode
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->name = clone $this->name;
+        $this->parameters = clone $this->parameters;
+
+        if ($this->type !== null) {
+            $this->type = clone $this->type;
+        }
+
+        if ($this->templates !== null) {
+            $this->templates = clone $this->templates;
+        }
+    }
 }

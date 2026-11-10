@@ -29,4 +29,11 @@ final class ConditionalTypeNode extends TypeNode
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->condition = clone $this->condition;
+        $this->then = clone $this->then;
+        $this->else = clone $this->else;
+    }
 }

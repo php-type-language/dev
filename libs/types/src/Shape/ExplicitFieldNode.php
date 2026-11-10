@@ -44,4 +44,10 @@ abstract class ExplicitFieldNode extends FieldNode
     ) {
         parent::__construct($type, $offset);
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->key = clone $this->key;
+    }
 }

@@ -65,4 +65,17 @@ final class NamedTypeNode extends TypeNode
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->name = clone $this->name;
+
+        if ($this->arguments !== null) {
+            $this->arguments = clone $this->arguments;
+        }
+
+        if ($this->fields !== null) {
+            $this->fields = clone $this->fields;
+        }
+    }
 }

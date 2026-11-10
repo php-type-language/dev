@@ -38,4 +38,11 @@ final class DefaultValueNode extends Node
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        if ($this->value !== null) {
+            $this->value = clone $this->value;
+        }
+    }
 }

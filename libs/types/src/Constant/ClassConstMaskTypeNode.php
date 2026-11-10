@@ -31,4 +31,10 @@ final class ClassConstMaskTypeNode extends TypeNode
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->class = clone $this->class;
+        $this->mask = clone $this->mask;
+    }
 }

@@ -159,4 +159,11 @@ abstract class LogicalTypeNode extends TypeNode implements
         /** @var int<2, max> */
         return \count($this->types);
     }
+
+    public function __clone()
+    {
+        foreach ($this->types as $index => $node) {
+            $this->types[$index] = clone $node;
+        }
+    }
 }

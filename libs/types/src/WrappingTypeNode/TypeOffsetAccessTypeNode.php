@@ -36,4 +36,10 @@ final class TypeOffsetAccessTypeNode extends WrappingTypeNode
     ) {
         parent::__construct($type, $offset);
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->access = clone $this->access;
+    }
 }

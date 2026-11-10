@@ -67,4 +67,13 @@ final class ConstMaskTypeNode extends TypeNode
     {
         return $this->namespace?->kind === NamespaceKind::FullyQualified;
     }
+
+    public function __clone()
+    {
+        $this->mask = clone $this->mask;
+
+        if ($this->namespace !== null) {
+            $this->namespace = clone $this->namespace;
+        }
+    }
 }

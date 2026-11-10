@@ -30,4 +30,10 @@ abstract class ConditionNode extends Node
     ) {
         parent::__construct($offset);
     }
+
+    public function __clone()
+    {
+        $this->subject = clone $this->subject;
+        $this->target = clone $this->target;
+    }
 }
