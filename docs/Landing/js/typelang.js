@@ -143,8 +143,8 @@
     implicit: 'TypeLang\\Type\\Shape\\ImplicitFieldNode',
     ident: 'TypeLang\\Type\\Identifier',
     cond: 'TypeLang\\Type\\Condition\\ConditionalTypeNode',
-    eq: 'TypeLang\\Type\\Condition\\EqualConditionNode',
-    neq: 'TypeLang\\Type\\Condition\\NotEqualConditionNode',
+    eq: 'TypeLang\\Type\\Condition\\ConditionNode',
+    neq: 'TypeLang\\Type\\Condition\\ConditionNode',
     this: 'TypeLang\\Type\\ThisTypeNode',
     var: 'TypeLang\\Type\\VariableNode',
   };
