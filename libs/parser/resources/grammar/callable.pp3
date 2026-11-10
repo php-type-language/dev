@@ -80,7 +80,7 @@ CallableDefault -> {
 // FOO, \PHP_EOL, Foo::BAR, Foo::class
 CallableConstant -> {
     if (isset($children[1])) {
-        return new Type\Constant\ClassConstTypeNode($children[0], $children[1], $offset);
+        return new Type\Constant\ConstTypeNode($children[0], $children[1], $offset);
     }
 
     return new Type\NamedTypeNode($children[0], null, null, $offset);

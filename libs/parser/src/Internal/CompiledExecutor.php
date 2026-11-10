@@ -3274,9 +3274,9 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
             // Foo<T>(T): T
             $second instanceof Type\Template\TemplateParameterListNode => new Type\Callable\CallableTypeNode($name, $children[2], $children[3] ?? null, $second, $offset),
             // Foo::BAR
-            $second instanceof Type\Identifier => new Type\Constant\ClassConstTypeNode($name, $second, $offset),
+            $second instanceof Type\Identifier => new Type\Constant\ConstTypeNode($name, $second, $offset),
             // Foo::BAR_*, Foo::*
-            default => new Type\Constant\ClassConstMaskTypeNode($name, $second, $offset),
+            default => new Type\Constant\ConstMaskTypeNode($name, $second, $offset),
         };
     }
 
@@ -3563,7 +3563,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         $offset = $ctx->begin;
 
         if (isset($children[1])) {
-            return new Type\Constant\ClassConstTypeNode($children[0], $children[1], $offset);
+            return new Type\Constant\ConstTypeNode($children[0], $children[1], $offset);
         }
 
         return new Type\NamedTypeNode($children[0], null, null, $offset);
@@ -3630,7 +3630,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
 
         // Foo::BAR
         if (isset($children[1])) {
-            return new Type\Constant\ClassConstTypeNode($children[0], $children[1], $offset);
+            return new Type\Constant\ConstTypeNode($children[0], $children[1], $offset);
         }
 
         // a, Foo\Bar
@@ -3660,11 +3660,11 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
 
         // PHP_*
         if (!\is_array($children)) {
-            return new Type\Constant\ConstMaskTypeNode($children, null, $offset);
+            return new Type\Constant\ConstMaskTypeNode(null, $children, $offset);
         }
 
         // Foo\BAR_*, \*
-        return new Type\Constant\ConstMaskTypeNode($children[1], $children[0], $offset);
+        return new Type\Constant\ConstMaskTypeNode($children[0], $children[1], $offset);
     }
 
     private function reduceListSuffix(\Phplrt\Parser\Context $ctx, mixed $children): mixed
