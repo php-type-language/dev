@@ -30,7 +30,7 @@ final class SymbolNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('nodeDataProvider')]
-    public function isANodeAndStringable(SymbolNode $node): void
+    public function isANodeAndStringable(SymbolNode $node, string $_text): void
     {
         self::assertInstanceOf(Node::class, $node);
         self::assertInstanceOf(\Stringable::class, $node);
