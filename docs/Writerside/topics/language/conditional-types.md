@@ -15,8 +15,15 @@ a colon (`:`), and the type used **if the condition is false**.
 > T is int ? "int type" : "not int type"
 > ```
 
-Both the **subject** and the type being compared against can be an arbitrary
-type expression or a [variable](literal-types.md).
+Both the **subject** and the type being compared against can be a [union](logical-types.md#union-types)
+(and so any type below it: an intersection, a nullable, a list, etc.) or a
+variable (`$name`). The branches can be any type, including another
+conditional type, so the chain `T is A ? B : C is D ? E : F` is read as
+`T is A ? B : (C is D ? E : F)`.
+
+> A variable is not a type of its own, so a variable subject always requires
+> the `is` / `is not` operator behind it.
+> {style="note"}
 
 <tabs>
 <tab title="Examples">
@@ -26,7 +33,7 @@ type expression or a [variable](literal-types.md).
 > T is int ? A : B
 > ```
 
-> A [variable](literal-types.md) as the subject.
+> A variable as the subject.
 > ```typescript
 > $value is int ? A : B
 > ```
@@ -58,7 +65,7 @@ type expression or a [variable](literal-types.md).
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "?"
+> Error: Unexpected "?"
 > ```
 > {style="warning"}
 
@@ -68,7 +75,9 @@ type expression or a [variable](literal-types.md).
 ## Equality Operators
 
 The `is` keyword checks whether the subject **is** of the compared type, and
-`is not` checks the opposite. Both keywords are case-insensitive.
+`is not` checks the opposite. Both keywords are written in lower case only:
+`IS` is an ordinary name, not a keyword. Whitespace and comments are allowed
+between the words of `is not`.
 
 <tabs>
 <tab title="Examples">
@@ -83,6 +92,11 @@ The `is` keyword checks whether the subject **is** of the compared type, and
 > T is not int ? A : B
 > ```
 
+> A comment between the words of `is not`.
+> ```typescript
+> T is /* comment */ not int ? A : B
+> ```
+
 </tab>
 <tab title="Counterexamples">
 
@@ -94,7 +108,18 @@ The `is` keyword checks whether the subject **is** of the compared type, and
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "="
+> Error: Unexpected "="
+> ```
+> {style="warning"}
+
+> The `else` branch is required.
+> ```typescript
+> T is int ? A
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> Error: The condition requires an else branch, ":" expected
 > ```
 > {style="warning"}
 
@@ -116,9 +141,14 @@ type on the left and the subject (a type or a variable) on the right.
 > int is T ? A : B
 > ```
 
-> Yoda-style equality check with a [variable](literal-types.md) as the subject.
+> Yoda-style equality check with a variable as the subject.
 > ```typescript
 > int is $value ? A : B
+> ```
+
+> A variable may also stand on both sides.
+> ```typescript
+> $value is not $other ? A : B
 > ```
 
 </tab>
