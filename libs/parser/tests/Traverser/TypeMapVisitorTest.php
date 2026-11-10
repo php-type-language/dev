@@ -16,6 +16,7 @@ use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\NamespaceName;
+use TypeLang\Type\NamespaceName\NamespaceKind;
 use TypeLang\Type\TypeNode;
 
 final class TypeMapVisitorTest extends TestCase
@@ -70,6 +71,24 @@ final class TypeMapVisitorTest extends TestCase
 
         self::assertInstanceOf(NamespaceName::class, $node->namespace);
         self::assertSame('Aliased', $node->namespace->toString());
+    }
+
+    #[Test]
+    public function theNamespaceOfAConstMaskTransformedIntoAFullyQualifiedNameIsReadFromTheRoot(): void
+    {
+        $node = $this->parseAs(ConstMaskTypeNode::class, 'Vendor\SOME_*');
+
+        $visitor = new TypeMapVisitor(static fn(Name $name): Name => new Name(
+            value: 'Aliased',
+            namespace: new NamespaceName('App', NamespaceKind::FullyQualified),
+        ));
+
+        Traverser::new([$visitor])->traverse([$node]);
+
+        self::assertInstanceOf(NamespaceName::class, $node->namespace);
+        self::assertSame(NamespaceKind::FullyQualified, $node->namespace->kind);
+        self::assertSame(['App', 'Aliased'], $node->namespace->toArray());
+        self::assertSame('\App\Aliased', $node->namespace->toString());
     }
 
     #[Test]

@@ -54,7 +54,11 @@ final class TypeMapVisitor extends Visitor
             offset: $namespace->offset,
         ));
 
-        return new NamespaceName($mapped->toString(), NamespaceKind::Qualified, $namespace->offset);
+        return new NamespaceName(
+            value: \implode(NamespaceName::DELIMITER, $mapped->toArray()),
+            kind: $mapped->namespace->kind ?? NamespaceKind::Qualified,
+            offset: $namespace->offset,
+        );
     }
 
     /**
