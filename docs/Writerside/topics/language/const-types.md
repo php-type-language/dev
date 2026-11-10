@@ -76,7 +76,8 @@ a double colon (`::`) character, and then the constant name.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "\"
+> Error: Unexpected "SOME\", expected an identifier, "true",
+> "false", "null" and other
 > ```
 > {style="warning"}
 
@@ -122,6 +123,16 @@ constant that namespace holds.
 > Path\To\*
 > ```
 
+> Reference to any constant of the global namespace explicitly.
+> ```typescript
+> \*
+> ```
+
+> Several asterisks in one mask.
+> ```typescript
+> A*B*C
+> ```
+
 > Reference to any class constant with the `PREFIX_` prefix.
 > ```typescript
 > Path\To\ClassName::PREFIX_*
@@ -155,7 +166,8 @@ constant that namespace holds.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected end of input
+> Error: Unexpected "*", expected a type name, an
+> identifier, "true", "false" and other
 > ```
 > {style="warning"}
 
@@ -166,7 +178,7 @@ constant that namespace holds.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "*"
+> Error: Unexpected "*"
 > ```
 > {style="warning"}
 
