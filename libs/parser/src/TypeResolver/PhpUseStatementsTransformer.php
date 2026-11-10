@@ -51,7 +51,6 @@ final class PhpUseStatementsTransformer
 
     /**
      * @param iterable<array-key, non-empty-string> $replacements
-     *
      * @return array<non-empty-lowercase-string, non-empty-list<non-empty-string>>
      */
     private function format(iterable $replacements): array

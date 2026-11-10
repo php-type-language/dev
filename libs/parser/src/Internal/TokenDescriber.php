@@ -104,7 +104,6 @@ final class TokenDescriber
      * being listed and the rest replaced with an ellipsis.
      *
      * @param list<non-empty-string> $expected
-     *
      * @return string|null The {@see null} in case of nothing is known
      */
     public static function describeExpected(array $expected): ?string
@@ -121,7 +120,6 @@ final class TokenDescriber
 
     /**
      * @param list<non-empty-string> $expected
-     *
      * @return list<non-empty-string>
      */
     private static function createLabels(array $expected): array
@@ -139,7 +137,6 @@ final class TokenDescriber
      * A name covers the contextual words, they are names as well.
      *
      * @param list<non-empty-string> $expected
-     *
      * @return list<non-empty-string>
      */
     private static function withoutCoveredWords(array $expected): array
