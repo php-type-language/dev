@@ -15,7 +15,7 @@ a [`DumperVisitor`](dumper-visitor.md) that buffers into an internal
 use TypeLang\Parser\Traverser;
 use TypeLang\Parser\Traverser\StringDumperVisitor;
 
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('array<array-key, object{ key?: int<0, max> }>');
 
 $visitor = new StringDumperVisitor();
@@ -61,7 +61,7 @@ public function testExampleType(): void
 
     Traverser::new([$visitor])
         ->traverse([
-            (new TypeLang\Parser\TypeParser())
+            new TypeLang\Parser\TypeParser()
                 ->parse('int|null'),
         ]);
 

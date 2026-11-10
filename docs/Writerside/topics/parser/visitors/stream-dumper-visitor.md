@@ -16,7 +16,7 @@ into a string.
 use TypeLang\Parser\Traverser;
 use TypeLang\Parser\Traverser\StreamDumperVisitor;
 
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('array<array-key, object{ key?: int<0, max> }>');
 
 Traverser::new([new StreamDumperVisitor()])->traverse([$type]);

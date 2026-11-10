@@ -15,7 +15,7 @@ use TypeLang\Parser\Traverser;
 use TypeLang\Parser\Traverser\ClassNameMatcherVisitor;
 use TypeLang\Type\Name;
 
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('array<array-key, mixed>');
 
 $finder = Traverser::through(
@@ -44,7 +44,7 @@ operand:
 ```php
 use TypeLang\Type\NamedTypeNode;
 
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('int|string');
 
 $finder = Traverser::through(

@@ -22,7 +22,7 @@ use TypeLang\Parser\Traverser\TypeMapVisitor;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamespaceName;
 
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('User|Admin');
 
 // Replace all "User" occurrences with "App\Example\User"
@@ -50,7 +50,7 @@ The same rewrite reaches class-constant references too, since
 `ClassConstTypeNode::$class` is also a `Name`:
 
 ```php
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('User::STATUS_ACTIVE');
 
 Traverser::new([new TypeMapVisitor($replacement)])

@@ -155,7 +155,7 @@ $statement = new TypeParser()
     ->parse('Node|Error\SemanticException');
 
 $statement = new TypeResolver()
-    ->withTypeImportsFromClass(new ReflectionClass(App\Example::class))
+    ->withTypeImportsFromClassnew ReflectionClass(App\Example::class)
     ->resolve($statement);
 
 foreach ($statement->types as $type) {

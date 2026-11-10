@@ -22,7 +22,7 @@ use TypeLang\Parser\Traverser\Command;
 use TypeLang\Parser\Traverser\Visitor;
 use TypeLang\Type\Node;
 
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('array<array-key, object{ key?: int<0, max> }>');
 
 $visitor = new class extends Visitor {

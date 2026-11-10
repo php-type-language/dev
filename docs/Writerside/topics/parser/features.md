@@ -50,7 +50,7 @@ $strict = $parser->with(
 feature set from an existing one, keeping every flag not explicitly passed:
 
 ```php
-$features = (new TypeParserFeatures())
+$features = new TypeParserFeatures()
     ->with(unions: false);
 ```
 

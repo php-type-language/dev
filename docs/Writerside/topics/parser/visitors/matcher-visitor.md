@@ -40,7 +40,7 @@ use TypeLang\Parser\Traverser\MatcherVisitor;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('int|non-empty-string|bool');
 
 $finder = Traverser::through(new MatcherVisitor(

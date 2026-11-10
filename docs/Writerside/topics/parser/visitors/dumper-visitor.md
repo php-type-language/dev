@@ -16,7 +16,7 @@ leaves only the sink itself abstract:
 ```php
 abstract class DumperVisitor extends Visitor
 {
-    public const DEFAULT_SIMPLIFIED_NODE_NAMESPACE = 'TypeLang\\Type\\';
+    public const string DEFAULT_SIMPLIFIED_NODE_NAMESPACE = 'TypeLang\\Type\\';
 
     public function __construct(
         string $simplifyNodeNamespace
@@ -58,7 +58,7 @@ final class LineCollectorDumperVisitor extends DumperVisitor
     }
 }
 
-$type = (new TypeLang\Parser\TypeParser())
+$type = new TypeLang\Parser\TypeParser()
     ->parse('int|null');
 
 $visitor = new LineCollectorDumperVisitor();
