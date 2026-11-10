@@ -137,7 +137,7 @@
       </li>
       <li class="step" data-type="Closure<T of Order>(T): (T is Paid ? Receipt : null)">
         <h3>Generic callables and conditions</h3>
-        <p>Callables can declare template parameters with variance, <code>of</code> / <code>as</code> and <code>super</code> bounds, and defaults. The return type here is conditional: <code>T is Paid ? Receipt : null</code>, or <code>T is not Paid ? …</code> to negate it.</p>
+        <p>A named callable like <code>Closure</code> can declare template parameters: variance, <code>of</code> / <code>as</code> and <code>super</code> bounds, and defaults. The return type here is conditional: <code>T is Paid ? Receipt : null</code>, or <code>T is not Paid ? …</code> to negate it.</p>
         <a href="https://typelang.dev/conditional-types.html" target="_blank" rel="noopener">Conditional types ↗</a>
       </li>
     </ol>
@@ -209,15 +209,15 @@
     <p class="num">§ 04</p>
     <h2>Coverage.</h2>
     <p class="sub">
-      241 syntactic constructs, the basic ones and those on which PHPStan, Psalm and TypeLang disagree, each fed to the tool's own parser.
+      239 syntactic constructs, the basic ones and those on which PHPStan, Psalm and TypeLang disagree, each fed to the tool's own parser.
       A construct counts when the parser returns a node carrying what was written, not a silently truncated one.
     </p>
   </div>
   <div class="rulers" id="rulers">
-    <div class="ruler" data-value="238"><span class="who">TypeLang <small>type-lang/parser 2.0</small></span><span class="bar"><i></i></span><span class="val">238<small>/241</small></span></div>
-    <div class="ruler" data-value="177"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.4</small></span><span class="bar"><i></i></span><span class="val">177<small>/241</small></span></div>
-    <div class="ruler" data-value="107"><span class="who">Psalm <small>vimeo/psalm 7.0</small></span><span class="bar"><i></i></span><span class="val">107<small>/241</small></span></div>
-    <div class="ruler" data-value="100"><span class="who">Phan <small>phan/phan 6.0</small></span><span class="bar"><i></i></span><span class="val">100<small>/241</small></span></div>
+    <div class="ruler" data-value="236"><span class="who">TypeLang <small>type-lang/parser 2.0</small></span><span class="bar"><i></i></span><span class="val">236<small>/239</small></span></div>
+    <div class="ruler" data-value="180"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.4</small></span><span class="bar"><i></i></span><span class="val">180<small>/239</small></span></div>
+    <div class="ruler" data-value="108"><span class="who">Psalm <small>vimeo/psalm 7.0</small></span><span class="bar"><i></i></span><span class="val">108<small>/239</small></span></div>
+    <div class="ruler" data-value="99"><span class="who">Phan <small>phan/phan 6.0</small></span><span class="bar"><i></i></span><span class="val">99<small>/239</small></span></div>
   </div>
   <p class="foot-note">
     Full table with the verdict for every construct, per tool, in the
