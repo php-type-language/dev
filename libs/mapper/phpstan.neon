@@ -1,3 +1,6 @@
+includes:
+  - libs/property-accessor/phpstan.neon
+
 parameters:
   level: max
   phpVersion:

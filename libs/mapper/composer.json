@@ -14,7 +14,8 @@
     },
     "autoload": {
         "psr-4": {
-            "TypeLang\\Mapper\\": "src"
+            "TypeLang\\Mapper\\": "src",
+            "TypeLang\\Mapper\\PropertyAccessor\\": "libs/property-accessor/src"
         }
     },
     "require-dev": {
@@ -23,7 +24,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TypeLang\\Mapper\\Tests\\": "tests"
+            "TypeLang\\Mapper\\Tests\\": "tests",
+            "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/property-accessor/tests"
         }
     },
     "extra": {

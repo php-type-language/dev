@@ -1,0 +1,47 @@
+{
+    "name": "local/property-accessor",
+    "type": "library",
+    "description": "Library for property availability and read/write operations",
+    "keywords": ["property", "index", "access", "extraction", "injection", "reflection"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "TypeLang\\Mapper\\PropertyAccessor\\": "src"
+        }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.3",
+        "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev",
+            "dev-main": "2.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "platform-check": true,
+        "bin-compat": "full",
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
+        }
+    },
+    "scripts-aliases": {
+        "test:unit": ["test", "phpunit", "unit"]
+    },
+    "scripts": {
+        "test:unit": "phpunit --testdox"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
