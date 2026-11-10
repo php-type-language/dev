@@ -50,4 +50,18 @@ final class TemplateListNodeTest extends TestCase
 
         unset($list[0]);
     }
+
+    #[Test]
+    public function rejectedRemovalLeavesTheListAsItIs(): void
+    {
+        $list = new TemplateListNode([$argument = $this->makeArg('string')]);
+
+        try {
+            unset($list[0]);
+
+            self::fail('The item must not be removed');
+        } catch (\UnderflowException) {
+            self::assertSame([$argument], $list->items);
+        }
+    }
 }

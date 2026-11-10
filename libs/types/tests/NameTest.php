@@ -314,6 +314,15 @@ final class NameTest extends TestCase
     }
 
     #[Test]
+    public function qualifiedNamespaceOfNoWordsAddsNothingToTheName(): void
+    {
+        $name = new Name('Any', new NamespaceName());
+
+        self::assertSame('Any', $name->toString());
+        self::assertFalse($name->isFullyQualified());
+    }
+
+    #[Test]
     public function splitSegmentsAreKeptForRepeatedCalls(): void
     {
         $name = self::nameOf('Some\Any');

@@ -347,6 +347,32 @@ final class LogicalTypeNodeTest extends TestCase
 
     #[Test]
     #[DataProvider('logicalTypesDataProvider')]
+    public function rejectedUnsetLeavesTheTypesAsTheyAre(string $class): void
+    {
+        $node = new $class([$a = $this->type('A'), $b = $this->type('B')]);
+
+        try {
+            unset($node[0]);
+
+            self::fail('The type must not be removed');
+        } catch (\InvalidArgumentException) {
+            self::assertSame([$a, $b], $node->types);
+        }
+    }
+
+    #[Test]
+    #[DataProvider('logicalTypesDataProvider')]
+    public function unsetOfAMissingOffsetIsNotRejected(string $class): void
+    {
+        $node = new $class([$a = $this->type('A'), $b = $this->type('B')]);
+
+        unset($node[42]);
+
+        self::assertSame([$a, $b], $node->types);
+    }
+
+    #[Test]
+    #[DataProvider('logicalTypesDataProvider')]
     public function arrayAccessRejectsNonNodeValue(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')]);
