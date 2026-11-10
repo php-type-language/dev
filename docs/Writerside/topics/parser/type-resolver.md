@@ -158,7 +158,7 @@ $statement = new TypeResolver()
     ->withTypeImportsFromClass(new ReflectionClass(App\Example::class))
     ->resolve($statement);
 
-foreach ($statement->statements as $type) {
+foreach ($statement->types as $type) {
     echo $type->name->toString(), "\n";
 }
 
