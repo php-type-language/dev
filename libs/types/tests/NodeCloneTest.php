@@ -12,9 +12,8 @@ use TypeLang\Type\Callable\DefaultValueNode;
 use TypeLang\Type\Condition\ConditionalTypeNode;
 use TypeLang\Type\Condition\ConditionNode;
 use TypeLang\Type\Condition\ConditionNode\ConditionKind;
-use TypeLang\Type\Constant\ClassConstMaskTypeNode;
-use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
+use TypeLang\Type\Constant\ConstTypeNode;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 use TypeLang\Type\Identifier;
@@ -92,7 +91,7 @@ final class NodeCloneTest extends TestCase
                 new ScalarFieldNode(new IntLiteralNode(0), new BoolLiteralNode(true)),
                 new ScalarFieldNode(new StringLiteralNode('key'), new NullLiteralNode()),
                 new ComplexFieldNode(
-                    new ClassConstTypeNode(new Name('Some'), new Identifier('KEY')),
+                    new ConstTypeNode(new Name('Some'), new Identifier('KEY')),
                     new FloatLiteralNode(1.5),
                 ),
                 new ImplicitFieldNode(new ThisTypeNode()),
@@ -134,10 +133,10 @@ final class NodeCloneTest extends TestCase
             $shape,
             $callable,
             $condition,
-            new ClassConstMaskTypeNode(new Name('Some'), $mask),
+            new ConstMaskTypeNode(new Name('Some'), $mask),
             new ConstMaskTypeNode(
-                new MaskNode([new WildcardMaskNode(), new Identifier('_SOME')]),
                 new NamespaceName('Some'),
+                new MaskNode([new WildcardMaskNode(), new Identifier('_SOME')]),
             ),
         ]);
     }

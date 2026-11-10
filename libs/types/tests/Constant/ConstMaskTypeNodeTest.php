@@ -9,6 +9,7 @@ use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
 use TypeLang\Type\NamespaceName;
 use TypeLang\Type\NamespaceName\NamespaceKind;
 use TypeLang\Type\Tests\TestCase;
@@ -21,44 +22,44 @@ final class ConstMaskTypeNodeTest extends TestCase
     }
 
     #[Test]
-    public function theNamespaceIsNullByDefault(): void
+    public function maskMayBeWrittenWithNoOwner(): void
     {
-        $node = new ConstMaskTypeNode(self::mask());
+        $node = new ConstMaskTypeNode(null, self::mask());
 
-        self::assertNull($node->namespace);
+        self::assertNull($node->owner);
     }
 
     #[Test]
     public function theNamespaceIsKeptAsItIsWritten(): void
     {
         $namespace = new NamespaceName('Some\Any', NamespaceKind::FullyQualified);
-        $node = new ConstMaskTypeNode(self::mask(), $namespace);
+        $node = new ConstMaskTypeNode($namespace, self::mask());
 
-        self::assertSame($namespace, $node->namespace);
-        self::assertSame('\Some\Any', $node->namespace->toString());
+        self::assertSame($namespace, $node->owner);
+        self::assertSame('\Some\Any', $node->owner->toString());
     }
 
     #[Test]
     public function theRootNamespaceHasNoWords(): void
     {
-        $node = new ConstMaskTypeNode(self::mask(), new NamespaceName('', NamespaceKind::FullyQualified));
+        $node = new ConstMaskTypeNode(new NamespaceName('', NamespaceKind::FullyQualified), self::mask());
 
-        self::assertTrue($node->namespace?->isRoot());
+        self::assertTrue($node->owner instanceof NamespaceName && $node->owner->isRoot());
         self::assertTrue($node->isFullyQualified());
     }
 
     #[Test]
     public function aMaskIsNotFullyQualifiedByDefault(): void
     {
-        self::assertFalse((new ConstMaskTypeNode(self::mask()))->isFullyQualified());
+        self::assertFalse((new ConstMaskTypeNode(null, self::mask()))->isFullyQualified());
     }
 
     #[Test]
     public function aNamespaceTellsWhetherTheMaskIsFullyQualified(): void
     {
-        $relative = new ConstMaskTypeNode(self::mask(), new NamespaceName('Some\Any'));
-        $current = new ConstMaskTypeNode(self::mask(), new NamespaceName('namespace\Some\Any'));
-        $absolute = new ConstMaskTypeNode(self::mask(), new NamespaceName('Some\Any', NamespaceKind::FullyQualified));
+        $relative = new ConstMaskTypeNode(new NamespaceName('Some\Any'), self::mask());
+        $current = new ConstMaskTypeNode(new NamespaceName('namespace\Some\Any'), self::mask());
+        $absolute = new ConstMaskTypeNode(new NamespaceName('Some\Any', NamespaceKind::FullyQualified), self::mask());
 
         self::assertFalse($relative->isFullyQualified());
         self::assertFalse($current->isFullyQualified());
@@ -69,6 +70,7 @@ final class ConstMaskTypeNodeTest extends TestCase
     public function aMaskIsWrittenTheWayItIsRead(): void
     {
         $node = new ConstMaskTypeNode(
+            null,
             new MaskNode([
                 new Identifier('SOME'),
                 new WildcardMaskNode(),
@@ -79,5 +81,16 @@ final class ConstMaskTypeNodeTest extends TestCase
 
         self::assertSame('SOME*ANY*', $node->mask->toString());
         self::assertSame(['SOME', 'ANY'], $node->mask->getSegmentsAsStrings());
+    }
+
+    #[Test]
+    public function maskMayBelongToAClass(): void
+    {
+        $class = new Name('Any', new NamespaceName('Some', NamespaceKind::FullyQualified));
+        $node = new ConstMaskTypeNode($class, new MaskNode([new WildcardMaskNode()]));
+
+        self::assertSame($class, $node->owner);
+        self::assertSame([], $node->mask->getSegments());
+        self::assertTrue($node->isFullyQualified());
     }
 }
