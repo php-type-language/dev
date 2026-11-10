@@ -29,7 +29,6 @@ comment.
 
 **Requirements:**
 * `PHP >= 8.1`
-* `ext-mbstring` <sup>optional</sup>
 
 <note>
 Every tag this component understands — including the generic
@@ -93,13 +92,11 @@ TypeLang\PhpDoc\DocBlock\DocBlock {
       +name: "return"
       +description: null
       +type: TypeLang\Type\NamedTypeNode {
+        +offset: 0
         +name: TypeLang\Type\Name {
-          +segments: array:1 [
-            0 => TypeLang\Type\Identifier {
-              +value: "bool"
-            }
-          ]
-          +isFullyQualified: false
+          +offset: 0
+          +value: "bool"
+          +namespace: null
         }
         +arguments: null
         +fields: null
@@ -142,13 +139,14 @@ echo $see->reference; // "Mailer::send()"
 ```
 
 A single malformed tag never brings the rest of the comment down with it.
-A tag whose name isn't recognized, or whose body doesn't match the grammar
-expected for its name, is not thrown as an exception — it is returned as an
-`InvalidTag`, carrying the failure reason alongside it, so that the other,
-well-formed tags around it are still parsed normally:
+A tag whose body doesn't match the grammar expected for its name is not
+thrown as an exception — it is returned as an `InvalidTag`, carrying the
+failure reason (a `Throwable`) alongside it, so that the other, well-formed
+tags around it are still parsed normally. A tag whose name isn't recognized
+at all is not an error either: it becomes a plain `Tag` (see [below](#tag)):
 
 ```php
-$block = $result->parse(<<<'PHPDOC'
+$block = $parser->parse(<<<'PHPDOC'
     /**
      * @param int $wellFormed
      * @param not a valid type here $because
@@ -159,8 +157,7 @@ $broken = $block[1]; // object(InvalidTag)
 
 echo $broken->name; // "param"
 
-// Malformed "@param" tag, expected:
-// <Type> <Variable> [ <Description> ]
+// Malformed "@param" tag, expected: <Type> <Variable> [ <Description> ]
 echo $broken->reason->getMessage();
 ```
 
@@ -215,13 +212,15 @@ fragments and the nested tags found among them.
  */
 ```
 
-Only a handful of tags — [@see](see-tag.md), [@link](link-tag.md),
-[@internal](internal-tag.md), [@inheritdoc](inheritdoc-tag.md),
-[@example](example-tag.md) and [@source](source-tag.md) — are ever recognized
-this way. Whether a tag may be lifted out of running text is declared by its
-[placement](definitions.md#inline-tags); a `{@param}`, for instance, is never
-lifted out: `@param` is a block-only tag, so the braces around it stay exactly
-as written, as plain text.
+Any `{@name ...}` sequence with balanced braces is read as an inline tag, and
+it is parsed by the same [definition](definitions.md) as a block tag of that
+name. Which tags are meant to be written inline is declared by their
+[placement](definitions.md#inline-tags): [@see](see-tag.md),
+[@link](link-tag.md), [@internal](internal-tag.md) and
+[@example](example-tag.md) are usable in both positions,
+[@inheritdoc](inheritdoc-tag.md) and [@source](source-tag.md) only inline. The
+declared placement is currently informational: the parser does not reject a
+block-only tag such as `{@param int $x}` written inline.
 
 ### Tag
 
@@ -239,8 +238,9 @@ unparsed into the description.
 
 Every tag this component recognizes has its own page in the sidebar,
 grouped by where it comes from: Standard, Advanced, phpDocumentor, or a
-specific static analyzer (Psalm, PHPStan, Phan, PhpStorm, PHP
-CodeSniffer) for the ones not yet implemented.
+specific tool (Psalm, PHPStan, Phan, PhpStorm, PHP CodeSniffer). The
+tool-specific groups are loaded by their own [platforms](platforms.md), which
+`DocBlockParser::createDefault()` enables all at once.
 
 <deflist>
     <def title="Extending">
