@@ -13,9 +13,19 @@ as well as the characters `_` (underscore) and `-` (dash).
 In this case, the only difference from [the PHP grammar](https://www.php.net/manual/en/language.variables.basics.php) 
 is that a **dash** (`-`) symbol is allowed in the middle of the name.
 
+A dash is allowed only in a name that has no namespace: `non-empty-string` is a
+name, while `Some\non-empty-string` and `non-empty\Some` are not.
+
 In addition, it is worth noting that the case-insensitive names `true`, `false`
-and `null` are registered PHP literals, so their use as a custom type name 
-is **unacceptable**.
+and `null` are registered PHP literals, so their use as a standalone custom
+type name is **unacceptable**.
+
+> The words `is`, `not`, `of`, `as`, `super`, `covariant`, `contravariant` and
+> `invariant` have a special meaning only in the places where the grammar
+> expects them (for example, `is` in a [conditional type](conditional-types.md)).
+> Anywhere else they are ordinary names, and the words written in upper case
+> (`IS`, `OF`) are always ordinary names.
+> {style="note"}
 
 <tabs>
 <tab title="Examples">
@@ -57,7 +67,18 @@ is **unacceptable**.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "type"
+> UnexpectedTokenException: Unexpected "type"
+> ```
+> {style="warning"}
+
+> A dash cannot be placed at the end of a name or inside a namespaced name.
+> ```typescript
+> example-
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> UnrecognizedSyntaxException: Unrecognized syntax "-"
 > ```
 > {style="warning"}
 
@@ -87,20 +108,14 @@ The namespace delimiter can be used in conjunction with keywords such as `true`,
 > \Absolute\Type\Name
 > ```
 
-</tab>
-<tab title="Counterexamples">
-
-> <tooltip term="Identifier">Identifiers</tooltip> cannot contain keywords
-> reserved for literal values.
+> The keywords reserved for literal values are the names of a namespace and a
+> type here, not literals.
 > ```typescript
 > true\null
 > ```
->
-> An error similar to the one below should occur
-> ```
-> ParseException: Syntax error, unexpected "\"
-> ```
-> {style="warning"}
+
+</tab>
+<tab title="Counterexamples">
 
 > <tooltip term="FQN">FQN</tooltip> type names cannot end in `\` delimiter.
 > ```typescript
@@ -109,7 +124,7 @@ The namespace delimiter can be used in conjunction with keywords such as `true`,
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected end of input
+> UnrecognizedSyntaxException: Unrecognized syntax "\name\"
 > ```
 > {style="warning"}
 
@@ -156,7 +171,7 @@ behind a question mark, or as the type a
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected end of input, T_EQ expected
+> UnexpectedTokenException: Unexpected end of input, expected "is not", "is"
 > ```
 > {style="warning"}
 
@@ -202,7 +217,8 @@ including the next `*/`.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected end of input
+> UnexpectedTokenException: Unexpected end of input, expected a type name, an
+> identifier, "true", "false" and other
 > ```
 > {style="warning"}
 
