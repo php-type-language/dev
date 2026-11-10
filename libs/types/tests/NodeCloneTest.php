@@ -36,7 +36,6 @@ use TypeLang\Type\Shape\ImplicitFieldNode;
 use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Shape\ScalarFieldNode;
 use TypeLang\Type\Template\TemplateBoundNode;
-use TypeLang\Type\Template\TemplateBoundNode\BoundKind;
 use TypeLang\Type\Template\TemplateListNode;
 use TypeLang\Type\Template\TemplateParameterListNode;
 use TypeLang\Type\Template\TemplateParameterNode;
@@ -71,8 +70,8 @@ final class NodeCloneTest extends TestCase
     {
         $parameter = new TemplateParameterNode(
             name: new Identifier('T'),
-            upper: new TemplateBoundNode(self::type('Upper'), BoundKind::Upper),
-            lower: new TemplateBoundNode(self::type('Lower'), BoundKind::Lower),
+            upper: new TemplateBoundNode(self::type('Upper'), new Identifier('of')),
+            lower: new TemplateBoundNode(self::type('Lower'), new Identifier('super')),
             default: self::type('Default'),
             variance: new VarianceNode(VarianceKind::Contravariant),
         );
