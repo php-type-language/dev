@@ -133,12 +133,12 @@ abstract class LogicalTypeNode extends TypeNode implements
             );
         }
 
-        // @phpstan-ignore-next-line : Unset leaves a gap, the list is renumbered below
-        unset($this->types[$offset]);
-
-        if (\count($this->types) < 2) {
+        if (isset($this->types[$offset]) && \count($this->types) < 3) {
             throw new \InvalidArgumentException('A logical type must contain at least 2 types');
         }
+
+        // @phpstan-ignore-next-line : Unset leaves a gap, the list is renumbered below
+        unset($this->types[$offset]);
 
         if (!\array_is_list($this->types)) {
             // @phpstan-ignore-next-line : The size is checked above, renumbering keeps it
