@@ -6,7 +6,7 @@ namespace TypeLang\Printer\Tests\NodePrinter;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\TypeOffsetAccessTypeNodePrinter;
-use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
+use TypeLang\Type\TypeOffsetAccessTypeNode;
 
 #[CoversClass(TypeOffsetAccessTypeNodePrinter::class)]
 final class TypeOffsetAccessTypeNodePrinterTest extends NodePrinterTestCase

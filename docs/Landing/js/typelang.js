@@ -117,7 +117,7 @@
     intersection: 'TypeLang\\Type\\LogicalTypeNode\\IntersectionTypeNode',
     nullable: 'TypeLang\\Type\\WrappingTypeNode\\NullableTypeNode',
     list: 'TypeLang\\Type\\WrappingTypeNode\\TypesListTypeNode',
-    offset: 'TypeLang\\Type\\WrappingTypeNode\\TypeOffsetAccessTypeNode',
+    offset: 'TypeLang\\Type\\TypeOffsetAccessTypeNode',
     int: 'TypeLang\\Type\\Literal\\IntLiteralNode',
     float: 'TypeLang\\Type\\Literal\\FloatLiteralNode',
     string: 'TypeLang\\Type\\Literal\\StringLiteralNode',

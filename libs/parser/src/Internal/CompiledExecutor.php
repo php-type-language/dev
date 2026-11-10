@@ -3183,7 +3183,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                     break;
 
                 case $child instanceof Type\TypeNode:
-                    $type = new Type\WrappingTypeNode\TypeOffsetAccessTypeNode($type, $child, $offset);
+                    $type = new Type\TypeOffsetAccessTypeNode($type, $child, $offset);
                     break;
 
                 default:

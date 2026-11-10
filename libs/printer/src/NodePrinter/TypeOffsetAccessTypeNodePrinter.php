@@ -8,11 +8,10 @@ use TypeLang\Printer\Exception\PrinterExceptionInterface;
 use TypeLang\Printer\NodePrinterInterface;
 use TypeLang\Printer\PrinterContext;
 use TypeLang\Type\Node;
-use TypeLang\Type\TypeNode;
-use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
+use TypeLang\Type\TypeOffsetAccessTypeNode;
 
 /**
- * @template-implements NodePrinterInterface<TypeOffsetAccessTypeNode<TypeNode>>
+ * @template-implements NodePrinterInterface<TypeOffsetAccessTypeNode>
  */
 final class TypeOffsetAccessTypeNodePrinter implements NodePrinterInterface
 {

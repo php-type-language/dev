@@ -16,7 +16,7 @@ use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\ThisTypeNode;
 use TypeLang\Type\TypeNode;
-use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
+use TypeLang\Type\TypeOffsetAccessTypeNode;
 use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 #[CoversClass(NativeFixedNodePrinter::class)]

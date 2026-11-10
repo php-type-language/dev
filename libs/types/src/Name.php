@@ -125,7 +125,6 @@ final class Name extends SymbolNode implements
         return isset(self::BUILTIN_TYPE_NAMES[$this->toLowerString()]);
     }
 
-
     /**
      * Whether a name is written with the leading separator that says it
      * is to be read from the root and not from wherever it stands.

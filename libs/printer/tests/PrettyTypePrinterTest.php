@@ -33,8 +33,8 @@ use TypeLang\Type\Shape\NamedFieldNode;
 use TypeLang\Type\Template\TemplateListNode;
 use TypeLang\Type\Template\TypedTemplateArgumentNode;
 use TypeLang\Type\TypeNode;
+use TypeLang\Type\TypeOffsetAccessTypeNode;
 use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
-use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
 use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 #[CoversClass(PrettyTypePrinter::class)]
