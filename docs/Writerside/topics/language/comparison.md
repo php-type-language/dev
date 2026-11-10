@@ -167,78 +167,57 @@ Class names, pseudo types and `$this`.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>\Foo\Bar</code>
-            <br/>Fully qualified name
-        </td>
+        <td><code>\Foo\Bar</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>non-empty-string</code>
-            <br/>Pseudo type with hyphens
-        </td>
+        <td><code>non-empty-string</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array-key</code>
-            <br/>Pseudo type with a hyphen
-        </td>
+        <td><code>array-key</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>positive-int</code>
-            <br/>Integer refinement
-        </td>
+        <td><code>positive-int</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>namespace\Foo</code>
-            <br/>Relative name
-        </td>
+        <td><code>namespace\Foo</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo-bar</code>
-            <br/>Hyphen inside a name. PHPStan allows it anywhere, Psalm only for known pseudo types
-        </td>
+        <td><code>Foo-bar</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>$this</code>
-            <br/>Psalm resolves it to `static`
-        </td>
+        <td><code>$this</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?$this</code>
-            <br/>Psalm resolves it to `static`
-        </td>
+        <td><code>?$this</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. PHPStan allows it anywhere, Psalm only for known pseudo types.
+2. Psalm resolves it to `static`.
 
 ## Literals
 
@@ -276,276 +255,193 @@ Boolean, null, integer, float and string literals.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>true|false</code>
-            <br/>Union of boolean literals
-        </td>
+        <td><code>true|false</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>42</code>
-            <br/>Integer literal
-        </td>
+        <td><code>42</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>-42</code>
-            <br/>Negative integer literal
-        </td>
+        <td><code>-42</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>1.5</code>
-            <br/>Float literal
-        </td>
+        <td><code>1.5</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>-1.5</code>
-            <br/>Negative float literal
-        </td>
+        <td><code>-1.5</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>'a'</code>
-            <br/>Single-quoted string literal
-        </td>
+        <td><code>'a'</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>"a"</code>
-            <br/>Double-quoted string literal
-        </td>
+        <td><code>"a"</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>1|2|3</code>
-            <br/>Union of integer literals
-        </td>
+        <td><code>1|2|3</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>'a'|'b'</code>
-            <br/>Union of string literals
-        </td>
+        <td><code>'a'|'b'</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>true</code>
-            <br/>Boolean literal
-        </td>
+        <td><code>true</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>null</code>
-            <br/>Null literal
-        </td>
+        <td><code>null</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>+1</code>
-            <br/>Explicit plus sign
-        </td>
+        <td><code>+1</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>- 1</code>
-            <br/>Whitespace after the sign. PHPStan rejects it, Psalm reads it with distortion
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>- 1</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="warning.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>007</code>
-            <br/>Legacy octal
-        </td>
+        <td><code>007</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>0x1F</code>
-            <br/>Hexadecimal
-        </td>
+        <td><code>0x1F</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>-0x1F</code>
-            <br/>Signed hexadecimal
-        </td>
+        <td><code>-0x1F</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>0b101</code>
-            <br/>Binary
-        </td>
+        <td><code>0b101</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>0o17</code>
-            <br/>Explicit octal
-        </td>
+        <td><code>0o17</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>1e3</code>
-            <br/>Exponent without a fraction
-        </td>
+        <td><code>1e3</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>1_000.5</code>
-            <br/>Separator in a float
-        </td>
+        <td><code>1_000.5</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>.5</code>
-            <br/>Float without the integer part
-        </td>
+        <td><code>.5</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>1.</code>
-            <br/>Float without the fraction part
-        </td>
+        <td><code>1.</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>1.5e3</code>
-            <br/>Float with an exponent
-        </td>
+        <td><code>1.5e3</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>9223372036854775808</code>
-            <br/>Above `PHP_INT_MAX`. Psalm clamps it to the maximum
-        </td>
+        <td><code>9223372036854775808</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>-9223372036854775809</code>
-            <br/>Below `PHP_INT_MIN`. Psalm clamps it to the minimum
-        </td>
+        <td><code>-9223372036854775809</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>'a"b'</code>
-            <br/>Double quote inside single quotes. Psalm rejects it
-        </td>
+        <td><code>'a"b'</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>"a\"b"</code>
-            <br/>Escaped quote. Psalm keeps the backslash in the value
-        </td>
+        <td><code>"a\"b"</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>"a\nb"</code>
-            <br/>Escape sequence. Psalm does not decode it
-        </td>
+        <td><code>"a\nb"</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>6</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>"a\x41"</code>
-            <br/>Hexadecimal escape. Psalm does not decode it
-        </td>
+        <td><code>"a\x41"</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>6</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>"a\u{1F600}"</code>
-            <br/>Unicode escape. Psalm does not decode it
-        </td>
+        <td><code>"a\u{1F600}"</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>6</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. Psalm rejects it.
+2. PHPStan rejects it, Psalm reads it with distortion.
+3. Psalm clamps it to the maximum.
+4. Psalm clamps it to the minimum.
+5. Psalm keeps the backslash in the value.
+6. Psalm does not decode it.
 
 ## Constants and masks
 
@@ -583,159 +479,113 @@ Global constants, class constants and masks (`*` as a wildcard in a constant nam
         </td>
     </tr>
     <tr>
-        <td>
-            <code>PHP_EOL</code>
-            <br/>Global constant
-        </td>
+        <td><code>PHP_EOL</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>\PHP_EOL</code>
-            <br/>Fully qualified global constant
-        </td>
+        <td><code>\PHP_EOL</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::BAR</code>
-            <br/>Class constant
-        </td>
+        <td><code>Foo::BAR</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo\Bar::BAZ</code>
-            <br/>Class constant of a qualified class
-        </td>
+        <td><code>Foo\Bar::BAZ</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::class</code>
-            <br/>Class name constant
-        </td>
+        <td><code>Foo::class</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::BAR|Foo::BAZ</code>
-            <br/>Union of class constants
-        </td>
+        <td><code>Foo::BAR|Foo::BAZ</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::*</code>
-            <br/>Every constant of a class
-        </td>
+        <td><code>Foo::*</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>PHP_*</code>
-            <br/>Global constant mask. PHPStan stops at the star
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>PHP_*</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Some\Any\CONST_*</code>
-            <br/>Mask in a namespace
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>Some\Any\CONST_*</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>FOO*BAR</code>
-            <br/>Star in the middle of a name
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>FOO*BAR</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>*_SOME</code>
-            <br/>Star at the start of a name
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>*_SOME</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Some\Any\*</code>
-            <br/>Every constant of a namespace
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>Some\Any\*</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>\*</code>
-            <br/>Every constant of the root namespace
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>\*</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::*_BAZ</code>
-            <br/>Class constant mask with a leading star. Psalm rejects it
-        </td>
+        <td><code>Foo::*_BAZ</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::B*R</code>
-            <br/>Class constant mask with a star in the middle. Psalm rejects it
-        </td>
+        <td><code>Foo::B*R</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>$this::BAR</code>
-            <br/>Constant of a variable. Only Psalm reads it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>$this::BAR</code></td>
+        <td><icon src="ko.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>4</sup></td>
     </tr>
     <tr>
-        <td>
-            <code>$this::class</code>
-            <br/>Class of a variable. Only Psalm reads it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>$this::class</code></td>
+        <td><icon src="ko.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>4</sup></td>
     </tr>
 </table>
+
+1. PHPStan stops at the star.
+2. PHPStan rejects it.
+3. Psalm rejects it.
+4. Only Psalm reads it.
 
 ## Lists and offsets
 
@@ -773,195 +623,138 @@ List `T[]` and offset access `T[K]`.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>int[]</code>
-            <br/>List of a type
-        </td>
+        <td><code>int[]</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int[][]</code>
-            <br/>Nested list
-        </td>
+        <td><code>int[][]</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(A|B)[]</code>
-            <br/>List of a group
-        </td>
+        <td><code>(A|B)[]</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array&lt;int&gt;[]</code>
-            <br/>List of a generic
-        </td>
+        <td><code>array&lt;int&gt;[]</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?int[]</code>
-            <br/>Nullable list
-        </td>
+        <td><code>?int[]</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int[]|null</code>
-            <br/>List or `null`
-        </td>
+        <td><code>int[]|null</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::BAR[]</code>
-            <br/>List of a class constant
-        </td>
+        <td><code>Foo::BAR[]</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T[K]</code>
-            <br/>Offset access
-        </td>
+        <td><code>T[K]</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T[int]</code>
-            <br/>Arbitrary type as an index. Psalm accepts only declared templates
-        </td>
+        <td><code>T[int]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T['a']</code>
-            <br/>Literal as an index
-        </td>
+        <td><code>T['a']</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T[Foo::A]</code>
-            <br/>Class constant as an index
-        </td>
+        <td><code>T[Foo::A]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T[K|L]</code>
-            <br/>Union as an index
-        </td>
+        <td><code>T[K|L]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T[?K]</code>
-            <br/>Nullable index
-        </td>
+        <td><code>T[?K]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(A|B)[K]</code>
-            <br/>Offset access on a group
-        </td>
+        <td><code>(A|B)[K]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(?T)[K]</code>
-            <br/>Offset access on a nullable group
-        </td>
+        <td><code>(?T)[K]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;int&gt;[K]</code>
-            <br/>Offset access on a generic
-        </td>
+        <td><code>Foo&lt;int&gt;[K]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>list&lt;int&gt;[0]</code>
-            <br/>Offset access on a list
-        </td>
+        <td><code>list&lt;int&gt;[0]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int}['a']</code>
-            <br/>Offset access on a shape
-        </td>
+        <td><code>array{a: int}['a']</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T [K]</code>
-            <br/>Space before the brackets. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>T [K]</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int\n[]</code>
-            <br/>Line break before `[]`. Psalm glues it into the name
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>int\n[]</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
+        <td><icon src="warning.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>$this[]</code>
-            <br/>Psalm resolves `$this` to `static`
-        </td>
+        <td><code>$this[]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. Psalm accepts only declared templates.
+2. Psalm rejects it.
+3. PHPStan rejects it.
+4. Psalm glues it into the name.
+5. Psalm resolves `$this` to `static`.
 
 ## Logical types
 
@@ -999,231 +792,165 @@ Union `|`, intersection `&` and nullable `?`, and how they bind next to each oth
         </td>
     </tr>
     <tr>
-        <td>
-            <code>A|B</code>
-            <br/>Union
-        </td>
+        <td><code>A|B</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A|B|C</code>
-            <br/>Union of three
-        </td>
+        <td><code>A|B|C</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A&amp;B</code>
-            <br/>Intersection
-        </td>
+        <td><code>A&amp;B</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A&amp;B&amp;C</code>
-            <br/>Intersection of three
-        </td>
+        <td><code>A&amp;B&amp;C</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(A|B)&amp;C</code>
-            <br/>Union inside an intersection
-        </td>
+        <td><code>(A|B)&amp;C</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(A&amp;B)|C</code>
-            <br/>Intersection inside a union
-        </td>
+        <td><code>(A&amp;B)|C</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?int</code>
-            <br/>Nullable type
-        </td>
+        <td><code>?int</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A&amp;B|C</code>
-            <br/>Mixed operators without parentheses. PHPStan rejects them
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>A&amp;B|C</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A|B&amp;C</code>
-            <br/>Mixed operators without parentheses. PHPStan rejects them
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>A|B&amp;C</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A&amp;B|C&amp;D</code>
-            <br/>Two intersections in a union
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>A&amp;B|C&amp;D</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?A|B</code>
-            <br/>`?` before a union member. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>?A|B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?T|U</code>
-            <br/>`?` before a union member of templates. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>?T|U</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?T|U[]</code>
-            <br/>`?` before a union member and a list. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>?T|U[]</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A|?B</code>
-            <br/>`?` inside a union. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>A|?B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?A&amp;B</code>
-            <br/>Psalm reads `null|(A&amp;B)`, the mark binds weaker there
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>?A&amp;B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="warning.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A&amp;?B</code>
-            <br/>Psalm silently drops the `null`
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>A&amp;?B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="warning.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?A&amp;?B</code>
-            <br/>Psalm loses `B`
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>?A&amp;?B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(?A)&amp;B</code>
-            <br/>The only form PHPStan accepts. Psalm drops the `null`
-        </td>
+        <td><code>(?A)&amp;B</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>6</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(A&amp;B)&amp;C</code>
-            <br/>Nested intersection. Psalm loses `B`
-        </td>
+        <td><code>(A&amp;B)&amp;C</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(int|string)&amp;bool</code>
-            <br/>Union inside an intersection. Psalm rejects it
-        </td>
+        <td><code>(int|string)&amp;bool</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>7</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A[]|B[]</code>
-            <br/>Psalm merges the arrays into one
-        </td>
+        <td><code>A[]|B[]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>8</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A[]&amp;B[]</code>
-            <br/>Psalm merges the arrays into one
-        </td>
+        <td><code>A[]&amp;B[]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>8</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A&amp;B[]</code>
-            <br/>Suffix binds tighter than `&amp;`. Psalm rejects it
-        </td>
+        <td><code>A&amp;B[]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>7</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A|B[K]</code>
-            <br/>Offset access in a union. Psalm rejects it
-        </td>
+        <td><code>A|B[K]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>7</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(A|?B)[]</code>
-            <br/>Nullable inside a grouped list. Psalm loses `B`
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>(A|?B)[]</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. PHPStan rejects them.
+2. PHPStan rejects it.
+3. Psalm reads `null|(A&B)`, the mark binds weaker there.
+4. Psalm silently drops the `null`.
+5. Psalm loses `B`.
+6. The only form PHPStan accepts. Psalm drops the `null`.
+7. Psalm rejects it.
+8. Psalm merges the arrays into one.
 
 ## Generics
 
@@ -1261,132 +988,95 @@ Arguments of `Name<...>`.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>Foo\Bar&lt;int&gt;</code>
-            <br/>Qualified name with an argument
-        </td>
+        <td><code>Foo\Bar&lt;int&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array&lt;int, string&gt;</code>
-            <br/>Generic with two arguments
-        </td>
+        <td><code>array&lt;int, string&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;int&gt;</code>
-            <br/>Generic on any class name
-        </td>
+        <td><code>Foo&lt;int&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>iterable&lt;int&gt;</code>
-            <br/>Generic `iterable`
-        </td>
+        <td><code>iterable&lt;int&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>list&lt;int&gt;</code>
-            <br/>Generic list
-        </td>
+        <td><code>list&lt;int&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>non-empty-list&lt;int&gt;</code>
-            <br/>Non-empty generic list
-        </td>
+        <td><code>non-empty-list&lt;int&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;int, string,&gt;</code>
-            <br/>Trailing comma
-        </td>
+        <td><code>Foo&lt;int, string,&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;*&gt;</code>
-            <br/>Wildcard argument
-        </td>
+        <td><code>Foo&lt;*&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;int, *&gt;</code>
-            <br/>Wildcard after another argument
-        </td>
+        <td><code>Foo&lt;int, *&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;covariant T&gt;</code>
-            <br/>Variance. Psalm drops the keyword silently
-        </td>
+        <td><code>Foo&lt;covariant T&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;contravariant T&gt;</code>
-            <br/>Variance. Psalm drops the keyword silently
-        </td>
+        <td><code>Foo&lt;contravariant T&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;invariant T&gt;</code>
-            <br/>Explicit invariance. Only TypeLang
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>Foo&lt;invariant T&gt;</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;int&gt;[K]</code>
-            <br/>Offset access over a generic
-        </td>
+        <td><code>Foo&lt;int&gt;[K]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;T is int ? A : B&gt;</code>
-            <br/>Conditional type as an argument without parentheses
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>Foo&lt;T is int ? A : B&gt;</code></td>
+        <td><icon src="ko.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. Psalm rejects it.
+2. Psalm drops the keyword silently.
+3. Only TypeLang reads it.
+4. PHPStan rejects it.
 
 ## Templates
 
@@ -1424,114 +1114,81 @@ Template parameters of a callable: `callable<T of X = Y>(T): T`.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T&gt;(T): T</code>
-            <br/>Template parameter
-        </td>
+        <td><code>callable&lt;T&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T, U,&gt;(T): U</code>
-            <br/>Several parameters with a trailing comma
-        </td>
+        <td><code>callable&lt;T, U,&gt;(T): U</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T of int&gt;(T): T</code>
-            <br/>Upper bound `of`
-        </td>
+        <td><code>callable&lt;T of int&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T as int&gt;(T): T</code>
-            <br/>Upper bound `as`
-        </td>
+        <td><code>callable&lt;T as int&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T super int&gt;(T): T</code>
-            <br/>Lower bound `super`
-        </td>
+        <td><code>callable&lt;T super int&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T of A super B&gt;(): void</code>
-            <br/>Both bounds
-        </td>
+        <td><code>callable&lt;T of A super B&gt;(): void</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T = int&gt;(T): T</code>
-            <br/>Default type
-        </td>
+        <td><code>callable&lt;T = int&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T of int = int&gt;(T): T</code>
-            <br/>Bound and default
-        </td>
+        <td><code>callable&lt;T of int = int&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;covariant T&gt;(T): T</code>
-            <br/>Variance of a template. Only TypeLang
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable&lt;covariant T&gt;(T): T</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Closure&lt;T&gt;(T): T</code>
-            <br/>`Closure` with a template
-        </td>
+        <td><code>Closure&lt;T&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>pure-Closure&lt;T&gt;(T): T</code>
-            <br/>`pure-Closure` with a template
-        </td>
+        <td><code>pure-Closure&lt;T&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;T&gt;(T): T</code>
-            <br/>Any name before the parentheses
-        </td>
+        <td><code>Foo&lt;T&gt;(T): T</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. Psalm rejects it.
+2. Only TypeLang reads it.
 
 ## Callable
 
@@ -1569,285 +1226,203 @@ Parameters, return types and modifiers of `callable(...)` and `Closure(...)`.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>callable(): void</code>
-            <br/>Callable without parameters
-        </td>
+        <td><code>callable(): void</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int): void</code>
-            <br/>Callable with a parameter
-        </td>
+        <td><code>callable(int): void</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int $a): void</code>
-            <br/>Callable with a named parameter
-        </td>
+        <td><code>callable(int $a): void</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int ...$a): void</code>
-            <br/>Callable with a variadic parameter
-        </td>
+        <td><code>callable(int ...$a): void</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Closure(int): void</code>
-            <br/>`Closure` with a signature
-        </td>
+        <td><code>Closure(int): void</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>pure-callable(int): void</code>
-            <br/>Pure callable
-        </td>
+        <td><code>pure-callable(int): void</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int)</code>
-            <br/>No return type. PHPStan requires it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(int)</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(...int): void</code>
-            <br/>Variadic marker before the type
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(...int): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int... $a): void</code>
-            <br/>Variadic marker right after the type. Psalm rejects it
-        </td>
+        <td><code>callable(int... $a): void</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(...): void</code>
-            <br/>Variadic mixed parameter. TypeLang rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(...): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>4</sup></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(...$a): void</code>
-            <br/>Variadic parameter without a type
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(...$a): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable($a): void</code>
-            <br/>Parameter without a type
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable($a): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int &amp;$a): void</code>
-            <br/>By-reference parameter
-        </td>
+        <td><code>callable(int &amp;$a): void</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(&amp;$a): void</code>
-            <br/>By-reference parameter without a type
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(&amp;$a): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int&amp;): void</code>
-            <br/>By-reference marker without a name. Psalm drops the `&amp;`
-        </td>
+        <td><code>callable(int&amp;): void</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int &amp;...$a): void</code>
-            <br/>By-reference variadic. Psalm drops the `&amp;`
-        </td>
+        <td><code>callable(int &amp;...$a): void</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int $a=): void</code>
-            <br/>Optional parameter
-        </td>
+        <td><code>callable(int $a=): void</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int=)</code>
-            <br/>Optional parameter without a name
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(int=)</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int = 42): void</code>
-            <br/>Default value without a name. Psalm skips it and loses the value
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>callable(int = 42): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="warning.svg"/><sup>6</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int $a = 42): void</code>
-            <br/>Default value. Neither PHPStan nor Psalm parses it
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(int $a = 42): void</code></td>
+        <td><icon src="ko.svg"/><sup>7</sup></td>
+        <td><icon src="ko.svg"/><sup>7</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int $a = -1): void</code>
-            <br/>Signed default value
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(int $a = -1): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int $a = PHP_INT_MAX): void</code>
-            <br/>Constant as a default value
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(int $a = PHP_INT_MAX): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int $a = Foo::BAR): void</code>
-            <br/>Class constant as a default value
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(int $a = Foo::BAR): void</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(): $this</code>
-            <br/>Return `$this`. Psalm resolves it to `static`
-        </td>
+        <td><code>callable(): $this</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>8</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(): T is int ? A : B</code>
-            <br/>Conditional return type without parentheses
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(): T is int ? A : B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>foo(T): void</code>
-            <br/>Any name before the parentheses
-        </td>
+        <td><code>foo(T): void</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable (int): void</code>
-            <br/>Space before the parentheses
-        </td>
+        <td><code>callable (int): void</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(): T|U</code>
-            <br/>Union after the return type. All three read `(callable(): T)|U`
-        </td>
+        <td><code>callable(): T|U</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(): T&amp;U</code>
-            <br/>Intersection after the return type. Psalm folds it into the return type
-        </td>
+        <td><code>callable(): T&amp;U</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>9</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(): ?T|U</code>
-            <br/>Nullable member of a union after the return type. Psalm folds it into the return type
-        </td>
+        <td><code>callable(): ?T|U</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>9</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(): callable(): T|U</code>
-            <br/>Nested callable with a union. PHPStan rejects it, Psalm folds the union
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>callable(): callable(): T|U</code></td>
+        <td><icon src="ko.svg"/><sup>10</sup></td>
+        <td><icon src="warning.svg"/><sup>10</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. PHPStan requires it.
+2. PHPStan rejects it.
+3. Psalm rejects it.
+4. TypeLang rejects it.
+5. Psalm drops the `&`.
+6. Psalm skips it and loses the value.
+7. Neither PHPStan nor Psalm parses it.
+8. Psalm resolves it to `static`.
+9. Psalm folds it into the return type.
+10. PHPStan rejects it, Psalm folds the union.
 
 ## Shapes
 
@@ -1885,258 +1460,182 @@ Fields of `array{}`, `list{}` and `object{}`.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>array{}</code>
-            <br/>Empty shape
-        </td>
+        <td><code>array{}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int}</code>
-            <br/>Shape with a named field
-        </td>
+        <td><code>array{a: int}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a?: int}</code>
-            <br/>Optional field
-        </td>
+        <td><code>array{a?: int}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{int, string}</code>
-            <br/>Shape with positional fields
-        </td>
+        <td><code>array{int, string}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{0: int}</code>
-            <br/>Integer key
-        </td>
+        <td><code>array{0: int}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{'a': int}</code>
-            <br/>String key
-        </td>
+        <td><code>array{'a': int}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: array{b: int}}</code>
-            <br/>Nested shape
-        </td>
+        <td><code>array{a: array{b: int}}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int, ...}</code>
-            <br/>Unsealed shape
-        </td>
+        <td><code>array{a: int, ...}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>list{int, string}</code>
-            <br/>List shape
-        </td>
+        <td><code>list{int, string}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>object{a: int}</code>
-            <br/>Object shape
-        </td>
+        <td><code>object{a: int}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{int, string,}</code>
-            <br/>Trailing comma
-        </td>
+        <td><code>array{int, string,}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int, string}</code>
-            <br/>Named and positional fields together
-        </td>
+        <td><code>array{a: int, string}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{Foo::BAR: int}</code>
-            <br/>Class constant as a key
-        </td>
+        <td><code>array{Foo::BAR: int}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{covariant: int}</code>
-            <br/>Keyword as a key. Psalm rejects it
-        </td>
+        <td><code>array{covariant: int}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{'Foo\Bar': int}</code>
-            <br/>Backslash in a string key. Psalm drops it
-        </td>
+        <td><code>array{'Foo\Bar': int}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{- 1: int}</code>
-            <br/>Whitespace after the sign in a key. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>array{- 1: int}</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{...}</code>
-            <br/>Unsealed shape. Psalm reads an empty array
-        </td>
+        <td><code>array{...}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int, ...&lt;string&gt;}</code>
-            <br/>Unsealed shape with a value type
-        </td>
+        <td><code>array{a: int, ...&lt;string&gt;}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int, ...&lt;string, int&gt;}</code>
-            <br/>Unsealed shape with key and value types
-        </td>
+        <td><code>array{a: int, ...&lt;string, int&gt;}</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>list{1: int}</code>
-            <br/>Key in a list. Psalm rejects it
-        </td>
+        <td><code>list{1: int}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>list{...}</code>
-            <br/>Unsealed list. Psalm loses the tail
-        </td>
+        <td><code>list{...}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>non-empty-array{a: int}</code>
-            <br/>Shape of a non-empty array
-        </td>
+        <td><code>non-empty-array{a: int}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>object{a: int,}</code>
-            <br/>Trailing comma in an object shape
-        </td>
+        <td><code>object{a: int,}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>object{a: int, ...}</code>
-            <br/>Unsealed object. Psalm drops `...`
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>object{a: int, ...}</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
+        <td><icon src="warning.svg"/><sup>6</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>object{0: int}</code>
-            <br/>Numeric property. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>object{0: int}</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>object{Foo::BAR: int}</code>
-            <br/>Class constant as a property
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>object{Foo::BAR: int}</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo{a: int}</code>
-            <br/>Shape on any class name
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>Foo{a: int}</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int} | array{b: string}</code>
-            <br/>Union of shapes. Psalm merges them into one
-        </td>
+        <td><code>array{a: int} | array{b: string}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>7</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. Psalm rejects it.
+2. Psalm drops it.
+3. PHPStan rejects it.
+4. Psalm reads an empty array.
+5. Psalm loses the tail.
+6. Psalm drops `...`.
+7. Psalm merges them into one.
 
 ## Conditional types
 
@@ -2174,168 +1673,122 @@ The `T is U ? A : B` family.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>(T is int ? A : B)</code>
-            <br/>Conditional type in parentheses
-        </td>
+        <td><code>(T is int ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(T is not int ? A : B)</code>
-            <br/>Negated conditional type in parentheses
-        </td>
+        <td><code>(T is not int ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>($a is int ? A : B)</code>
-            <br/>Conditional type on a parameter in parentheses
-        </td>
+        <td><code>($a is int ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T is int ? A : B</code>
-            <br/>Without parentheses. PHPStan and Psalm require them
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>T is int ? A : B</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T is not int ? A : B</code>
-            <br/>Negation without parentheses
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>T is not int ? A : B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>$a is int ? A : B</code>
-            <br/>Parameter as a subject without parentheses
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>$a is int ? A : B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(T is ?int ? A : B)</code>
-            <br/>Nullable type in the condition. Psalm rejects it
-        </td>
+        <td><code>(T is ?int ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(T is int[] ? A : B)</code>
-            <br/>List type in the condition. Psalm rejects it
-        </td>
+        <td><code>(T is int[] ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(T is callable(int): void ? A : B)</code>
-            <br/>Callable in the condition. Psalm rejects it
-        </td>
+        <td><code>(T is callable(int): void ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(T is int ? A : B is C ? D : E)</code>
-            <br/>Nested condition in the else branch. Only PHPStan and TypeLang
-        </td>
+        <td><code>(T is int ? A : B is C ? D : E)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(T is int ? A : (B is C ? D : E))</code>
-            <br/>Nested condition in parentheses. Psalm rejects it
-        </td>
+        <td><code>(T is int ? A : (B is C ? D : E))</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(T is $this ? A : B)</code>
-            <br/>Psalm resolves `$this` to `static`
-        </td>
+        <td><code>(T is $this ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>($this is int ? A : B)</code>
-            <br/>Subject `$this`. Psalm rejects it
-        </td>
+        <td><code>($this is int ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int &amp;$a): ($a is int ? A : B)</code>
-            <br/>Subject is a by-reference parameter. Psalm rejects it
-        </td>
+        <td><code>callable(int &amp;$a): ($a is int ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: T is int ? A : B}</code>
-            <br/>Inside a shape without parentheses. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>array{a: T is int ? A : B}</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(T $a): T is int ? A : B</code>
-            <br/>As a return type without parentheses. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(T $a): T is int ? A : B</code></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>?T is U ? V : Z</code>
-            <br/>Nullable subject. Psalm moves `null` out of the condition, PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>?T is U ? V : Z</code></td>
+        <td><icon src="ko.svg"/><sup>6</sup></td>
+        <td><icon src="warning.svg"/><sup>6</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A|B is C ? D : E</code>
-            <br/>Union as a subject. TypeLang binds the condition weaker than the union, the others reject it
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>A|B is C ? D : E</code></td>
+        <td><icon src="ko.svg"/><sup>7</sup></td>
+        <td><icon src="ko.svg"/><sup>7</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. PHPStan and Psalm require them.
+2. PHPStan rejects it.
+3. Psalm rejects it.
+4. Only PHPStan and TypeLang read it.
+5. Psalm resolves `$this` to `static`.
+6. Psalm moves `null` out of the condition, PHPStan rejects it.
+7. TypeLang binds the condition weaker than the union, the others reject it.
 
 ## Special names
 
@@ -2373,150 +1826,107 @@ Names that carry meaning in PHPStan and Psalm. PHPStan and TypeLang read them as
         </td>
     </tr>
     <tr>
-        <td>
-            <code>int&lt;0, max&gt;</code>
-            <br/>Integer range
-        </td>
+        <td><code>int&lt;0, max&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int&lt;min, 0&gt;</code>
-            <br/>Integer range with `min`
-        </td>
+        <td><code>int&lt;min, 0&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>class-string&lt;Foo&gt;</code>
-            <br/>Class string
-        </td>
+        <td><code>class-string&lt;Foo&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>key-of&lt;T&gt;</code>
-            <br/>Key of a template
-        </td>
+        <td><code>key-of&lt;T&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>value-of&lt;T&gt;</code>
-            <br/>Value of a template
-        </td>
+        <td><code>value-of&lt;T&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int-mask&lt;1, 2, 4&gt;</code>
-            <br/>Mask of integers
-        </td>
+        <td><code>int-mask&lt;1, 2, 4&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int&lt;10, 0&gt;</code>
-            <br/>Reversed range
-        </td>
+        <td><code>int&lt;10, 0&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int&lt;PHP_INT_MIN, PHP_INT_MAX&gt;</code>
-            <br/>Constants as the bounds
-        </td>
+        <td><code>int&lt;PHP_INT_MIN, PHP_INT_MAX&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int-mask&lt;1, 2, 4,&gt;</code>
-            <br/>Trailing comma in a mask
-        </td>
+        <td><code>int-mask&lt;1, 2, 4,&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int-mask-of&lt;1|2|4&gt;</code>
-            <br/>Mask of a union
-        </td>
+        <td><code>int-mask-of&lt;1|2|4&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>class-string&lt;int&gt;</code>
-            <br/>Class string of a scalar
-        </td>
+        <td><code>class-string&lt;int&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>enum-string&lt;Foo&gt;</code>
-            <br/>Psalm turns it into `class-string`
-        </td>
+        <td><code>enum-string&lt;Foo&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>trait-string&lt;Foo&gt;</code>
-            <br/>Psalm rejects it
-        </td>
+        <td><code>trait-string&lt;Foo&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>key-of&lt;T, U&gt;</code>
-            <br/>Psalm drops the second argument
-        </td>
+        <td><code>key-of&lt;T, U&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>uppercase-string</code>
-            <br/>Psalm drops the refinement
-        </td>
+        <td><code>uppercase-string</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>open-resource</code>
-            <br/>Psalm rejects it
-        </td>
+        <td><code>open-resource</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. Psalm rejects it.
+2. Psalm turns it into `class-string`.
+3. Psalm drops the second argument.
+4. Psalm drops the refinement.
 
 ## Whitespace and comments
 
@@ -2554,195 +1964,136 @@ What may stand between tokens. Newlines are written as `\n`.
         </td>
     </tr>
     <tr>
-        <td>
-            <code>\nint</code>
-            <br/>Leading line break
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>\nint</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int |\n string</code>
-            <br/>Line break after an operator
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>int |\n string</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array&lt;\n    int,\n    string\n&gt;</code>
-            <br/>Multiline generic. Psalm rejects it
-        </td>
+        <td><code>array&lt;\n    int,\n    string\n&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int\n$a): void</code>
-            <br/>Line break inside a parameter
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(int\n$a): void</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array {a: int}</code>
-            <br/>Space before the brace of a shape. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>array {a: int}</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int []</code>
-            <br/>Space before `[]`
-        </td>
+        <td><code>int []</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int [ ]</code>
-            <br/>Spaces inside `[]`
-        </td>
+        <td><code>int [ ]</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T [K]</code>
-            <br/>Space before an offset. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>T [K]</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo &lt;int&gt;</code>
-            <br/>Space before the angle bracket
-        </td>
+        <td><code>Foo &lt;int&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array &lt;K, V&gt;</code>
-            <br/>Space before the angle bracket of `array`
-        </td>
+        <td><code>array &lt;K, V&gt;</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo :: BAR</code>
-            <br/>Spaces around `::`
-        </td>
+        <td><code>Foo :: BAR</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>? int</code>
-            <br/>Space after `?`
-        </td>
+        <td><code>? int</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int | string</code>
-            <br/>Spaces around `|`
-        </td>
+        <td><code>int | string</code></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable( int )</code>
-            <br/>Spaces inside the parentheses. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable( int )</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable(int , string)</code>
-            <br/>Space before a comma. PHPStan rejects it
-        </td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable(int , string)</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>callable&lt;T&gt; (T)</code>
-            <br/>Space between a template list and the parameters. PHPStan and Psalm reject it
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>callable&lt;T&gt; (T)</code></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
+        <td><icon src="ko.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int /* c */</code>
-            <br/>Block comment
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>int /* c */</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int // c</code>
-            <br/>Line comment
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>int // c</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int # c</code>
-            <br/>Hash comment
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>int # c</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int /* c */, b: string}</code>
-            <br/>Comment inside a shape
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>array{a: int /* c */, b: string}</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Some&lt;/* a */int/* b */,/* c */string&gt;</code>
-            <br/>Comments inside generics
-        </td>
-        <td><icon src="ko.svg"/></td>
-        <td><icon src="ko.svg"/></td>
+        <td><code>Some&lt;/* a */int/* b */,/* c */string&gt;</code></td>
+        <td><icon src="ko.svg"/><sup>1</sup></td>
+        <td><icon src="ko.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. PHPStan rejects it.
+2. Psalm rejects it.
+3. PHPStan and Psalm reject it.
 
 ## Malformed input
 
@@ -2780,310 +2131,235 @@ Inputs that must be rejected. A parser that accepts them reads garbage as a type
         </td>
     </tr>
     <tr>
-        <td>
-            <code>int string</code>
-            <br/>Two words. Psalm glues them into `intstring`
-        </td>
+        <td><code>int string</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>1</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;A B&gt;</code>
-            <br/>Two arguments without a comma. Psalm glues them
-        </td>
+        <td><code>Foo&lt;A B&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>2</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int b: string}</code>
-            <br/>Two fields without a comma. Psalm glues the words
-        </td>
+        <td><code>array{a: int b: string}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int)</code>
-            <br/>Stray bracket. Psalm ignores it
-        </td>
+        <td><code>int)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int|</code>
-            <br/>Dangling `|`. Psalm drops it
-        </td>
+        <td><code>int|</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A&amp;</code>
-            <br/>Dangling `&amp;`. Psalm drops it
-        </td>
+        <td><code>A&amp;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A&amp;&amp;B</code>
-            <br/>Doubled `&amp;`. Psalm reads `A&amp;B`
-        </td>
+        <td><code>A&amp;&amp;B</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>6</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(A|)</code>
-            <br/>Dangling `|` in a group. Psalm drops it
-        </td>
+        <td><code>(A|)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>5</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>??int</code>
-            <br/>Doubled `?`. Psalm folds it
-        </td>
+        <td><code>??int</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>7</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int?[]</code>
-            <br/>Psalm drops the mark and the brackets
-        </td>
+        <td><code>int?[]</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>8</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int ? a</code>
-            <br/>Psalm ignores the tail
-        </td>
+        <td><code>int ? a</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>9</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>int *</code>
-            <br/>Psalm accepts a trailing `*`
-        </td>
+        <td><code>int *</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>10</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>PHP_ *</code>
-            <br/>Space inside a mask. Psalm glues it into `PHP_*`
-        </td>
+        <td><code>PHP_ *</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>11</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>in t</code>
-            <br/>Psalm reads `int`
-        </td>
+        <td><code>in t</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>12</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>'a</code>
-            <br/>Unterminated string. Psalm accepts and truncates it
-        </td>
+        <td><code>'a</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>13</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>'a''b'</code>
-            <br/>Two strings in a row. Psalm keeps the first
-        </td>
+        <td><code>'a''b'</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>14</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo\</code>
-            <br/>Trailing backslash. Psalm accepts and ignores it
-        </td>
+        <td><code>Foo\</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>15</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo\\Bar</code>
-            <br/>Doubled backslash
-        </td>
+        <td><code>Foo\\Bar</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>16</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>foo-</code>
-            <br/>Trailing hyphen in a name. PHPStan accepts it
-        </td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>foo-</code></td>
+        <td><icon src="warning.svg"/><sup>17</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>08</code>
-            <br/>Invalid octal. PHPStan accepts it
-        </td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>08</code></td>
+        <td><icon src="warning.svg"/><sup>17</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>1__000</code>
-            <br/>Doubled underscore. Psalm accepts it
-        </td>
+        <td><code>1__000</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>18</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>1._5</code>
-            <br/>Underscore after the dot. PHPStan accepts it
-        </td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>1._5</code></td>
+        <td><icon src="warning.svg"/><sup>17</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::BAR::class</code>
-            <br/>Psalm drops the second constant
-        </td>
+        <td><code>Foo::BAR::class</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>19</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>(Foo)::class</code>
-            <br/>Group before `::`. Psalm drops the constant
-        </td>
+        <td><code>(Foo)::class</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>20</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo::BAR-BAZ</code>
-            <br/>Hyphen in a constant name. PHPStan accepts it
-        </td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>Foo::BAR-BAZ</code></td>
+        <td><icon src="warning.svg"/><sup>17</sup></td>
         <td><icon src="ok.svg"/></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;T of Bar&gt;</code>
-            <br/>Bound in a generic argument. Psalm reads a template map
-        </td>
+        <td><code>Foo&lt;T of Bar&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>21</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>Foo&lt;out T&gt;</code>
-            <br/>Psalm glues the words into `outT`
-        </td>
+        <td><code>Foo&lt;out T&gt;</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>22</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int, ...int}</code>
-            <br/>Unsealed tail without brackets. Psalm ignores it
-        </td>
+        <td><code>array{a: int, ...int}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>4</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{$a: int}</code>
-            <br/>Variable as a key. Psalm reads a string key
-        </td>
+        <td><code>array{$a: int}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>23</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{PHP_*: int}</code>
-            <br/>Mask as a key. Psalm reads a string key
-        </td>
+        <td><code>array{PHP_*: int}</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>23</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>array{a: int, a: string}</code>
-            <br/>Duplicate key. Psalm rejects it, PHPStan and TypeLang keep both
-        </td>
-        <td><icon src="warning.svg"/></td>
+        <td><code>array{a: int, a: string}</code></td>
+        <td><icon src="warning.svg"/><sup>24</sup></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>24</sup></td>
     </tr>
     <tr>
-        <td>
-            <code>(T is not not int ? A : B)</code>
-            <br/>Doubled `not`. Psalm glues the words
-        </td>
+        <td><code>(T is not not int ? A : B)</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>3</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>T is int ? A</code>
-            <br/>Condition without the else branch. Psalm drops the condition
-        </td>
+        <td><code>T is int ? A</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>25</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
     <tr>
-        <td>
-            <code>A is B ? C</code>
-            <br/>Condition without the else branch. Psalm reads `A`
-        </td>
+        <td><code>A is B ? C</code></td>
         <td><icon src="ok.svg"/></td>
-        <td><icon src="warning.svg"/></td>
+        <td><icon src="warning.svg"/><sup>26</sup></td>
         <td><icon src="ok.svg"/></td>
     </tr>
 </table>
+
+1. Psalm glues them into `intstring`.
+2. Psalm glues them.
+3. Psalm glues the words.
+4. Psalm ignores it.
+5. Psalm drops it.
+6. Psalm reads `A&B`.
+7. Psalm folds it.
+8. Psalm drops the mark and the brackets.
+9. Psalm ignores the tail.
+10. Psalm accepts a trailing `*`.
+11. Psalm glues it into `PHP_*`.
+12. Psalm reads `int`.
+13. Psalm accepts and truncates it.
+14. Psalm keeps the first.
+15. Psalm accepts and ignores it.
+16. Psalm reads it as `Foo\\Bar`.
+17. PHPStan accepts it.
+18. Psalm accepts it.
+19. Psalm drops the second constant.
+20. Psalm drops the constant.
+21. Psalm reads a template map.
+22. Psalm glues the words into `outT`.
+23. Psalm reads a string key.
+24. Psalm rejects it, PHPStan and TypeLang keep both.
+25. Psalm drops the condition.
+26. Psalm reads `A`.
 
