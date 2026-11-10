@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Type\Template;
 
+use TypeLang\Type\Identifier;
 use TypeLang\Type\Node;
-use TypeLang\Type\Template\TemplateBoundNode\BoundKind;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -26,10 +26,10 @@ final class TemplateBoundNode extends Node
     public function __construct(
         public TypeNode $type,
         /**
-         * The end of the bound: `of` and `as` bound from above, `super` from
-         * below.
+         * The word the bound is written with: `of` and `as` bound from
+         * above, `super` from below.
          */
-        public BoundKind $kind,
+        public Identifier $operator,
         int $offset = 0,
     ) {
         parent::__construct($offset);
@@ -38,5 +38,6 @@ final class TemplateBoundNode extends Node
     public function __clone()
     {
         $this->type = clone $this->type;
+        $this->operator = clone $this->operator;
     }
 }

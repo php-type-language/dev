@@ -20,6 +20,6 @@ final class TemplateBoundNodePrinter implements NodePrinterInterface
      */
     public function printNode(Node $node, PrinterContext $context): string
     {
-        return $node->kind->value . ' ' . $context->print($node->type);
+        return $node->operator->value . ' ' . $context->print($node->type);
     }
 }
