@@ -7,8 +7,7 @@ namespace TypeLang\Printer;
 use TypeLang\Printer\NodePrinter\Callable\CallableParameterNodePrinter;
 use TypeLang\Printer\NodePrinter\Callable\CallableTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Condition\ConditionalTypeNodePrinter;
-use TypeLang\Printer\NodePrinter\Condition\ConditionNodePrinter\EqualConditionNodePrinter;
-use TypeLang\Printer\NodePrinter\Condition\ConditionNodePrinter\NotEqualConditionNodePrinter;
+use TypeLang\Printer\NodePrinter\Condition\ConditionNodePrinter;
 use TypeLang\Printer\NodePrinter\Constant\ClassConstMaskTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Constant\ClassConstTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Constant\ConstMaskTypeNodePrinter;
@@ -35,8 +34,7 @@ use TypeLang\Printer\NodePrinter\VariableNodePrinter;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
 use TypeLang\Type\Condition\ConditionalTypeNode;
-use TypeLang\Type\Condition\EqualConditionNode;
-use TypeLang\Type\Condition\NotEqualConditionNode;
+use TypeLang\Type\Condition\ConditionNode;
 use TypeLang\Type\Constant\ClassConstMaskTypeNode;
 use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
@@ -93,8 +91,7 @@ final class PrettyTypePrinter implements TypePrinterInterface
             CallableTypeNode::class => new CallableTypeNodePrinter(),
             CallableParameterNode::class => new CallableParameterNodePrinter(),
             ConditionalTypeNode::class => new ConditionalTypeNodePrinter(),
-            EqualConditionNode::class => new EqualConditionNodePrinter(),
-            NotEqualConditionNode::class => new NotEqualConditionNodePrinter(),
+            ConditionNode::class => new ConditionNodePrinter(),
             UnionTypeNode::class => new UnionTypeNodePrinter(),
             IntersectionTypeNode::class => new IntersectionTypeNodePrinter(),
             NullableTypeNode::class => new NullableTypeNodePrinter(),

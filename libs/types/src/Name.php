@@ -38,6 +38,40 @@ final class Name extends SymbolNode implements
     private const DELIMITER = NamespaceName::DELIMITER;
 
     /**
+     * Words of a class that are not names of classes but stand for one.
+     *
+     * @var non-empty-array<non-empty-lowercase-string, true>
+     */
+    private const SPECIAL_CLASS_NAMES = [
+        'self' => true,
+        'parent' => true,
+        'static' => true,
+    ];
+
+    /**
+     * Words that PHP reserves for the types it has built in, so no class can
+     * be named by one of them.
+     *
+     * @var non-empty-array<non-empty-lowercase-string, true>
+     */
+    private const BUILTIN_TYPE_NAMES = [
+        'mixed' => true,
+        'string' => true,
+        'int' => true,
+        'float' => true,
+        'bool' => true,
+        'object' => true,
+        'array' => true,
+        'void' => true,
+        'never' => true,
+        'callable' => true,
+        'iterable' => true,
+        'null' => true,
+        'true' => true,
+        'false' => true,
+    ];
+
+    /**
      * @var non-empty-list<non-empty-string>
      *
      * @phpstan-ignore-next-line : PHPStan does not support lazy init
@@ -69,6 +103,28 @@ final class Name extends SymbolNode implements
 
         parent::__construct($offset);
     }
+
+    /**
+     * Whether the text is one of `self`, `parent` and `static`.
+     *
+     * @api
+     */
+    public function isSpecial(): bool
+    {
+        return isset(self::SPECIAL_CLASS_NAMES[$this->toLowerString()]);
+    }
+
+    /**
+     * Whether the text is the name of a type that PHP has built in, such as
+     * `int`, `array` or `callable`.
+     *
+     * @api
+     */
+    public function isBuiltin(): bool
+    {
+        return isset(self::BUILTIN_TYPE_NAMES[$this->toLowerString()]);
+    }
+
 
     /**
      * Whether a name is written with the leading separator that says it

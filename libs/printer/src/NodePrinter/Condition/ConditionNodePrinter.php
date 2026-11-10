@@ -14,17 +14,10 @@ use TypeLang\Type\Node;
  * Prints the condition of a conditional type: both its sides and the
  * operator between them.
  *
- * @template TCondition of ConditionNode
- *
- * @template-implements NodePrinterInterface<TCondition>
+ * @template-implements NodePrinterInterface<ConditionNode>
  */
-abstract class ConditionNodePrinter implements NodePrinterInterface
+final class ConditionNodePrinter implements NodePrinterInterface
 {
-    /**
-     * @return non-empty-string
-     */
-    abstract protected function getOperator(): string;
-
     /**
      * @throws PrinterExceptionInterface in case of a child node cannot be printed
      */
@@ -32,7 +25,7 @@ abstract class ConditionNodePrinter implements NodePrinterInterface
     {
         return \vsprintf('%s %s %s', [
             $context->print($node->subject),
-            $this->getOperator(),
+            $node->kind->value,
             $context->print($node->target),
         ]);
     }
