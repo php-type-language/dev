@@ -193,7 +193,13 @@ final class Name extends SymbolNode implements
             return self::DELIMITER . $this->value;
         }
 
-        return $this->namespace->toString() . self::DELIMITER . $this->value;
+        $namespace = $this->namespace->toString();
+
+        if ($namespace === '') {
+            return $this->value;
+        }
+
+        return $namespace . self::DELIMITER . $this->value;
     }
 
     /**
