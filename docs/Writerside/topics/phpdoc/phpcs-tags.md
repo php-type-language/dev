@@ -10,15 +10,15 @@ group in this section, these tags have nothing to do with types or
 documentation at all — they are coding-standard directives, telling the
 sniffer to skip a line, a block, or a whole file when checking style.
 
-They come in two spellings: the modern `@phpcs:` form and the older
-`@codingStandardsIgnore*` family kept for backward compatibility with rules
-written against earlier PHP_CodeSniffer releases.
+They are the tag-based forms that PHP_CodeSniffer used before it moved to its
+`phpcs:` comment directives. Only the tag spellings are parsed here: the
+`@codingStandardsIgnore*` family and `@phpcsSuppress`.
 
 ## What This Group Covers
 
-* **Scoped suppression (modern)** — [@phpcs:suppress](phpcs-suppress-tag.md),
-  disabling one or more named sniffs for the following statement.
-* **Region suppression (legacy)** —
+* **Scoped suppression** — [@phpcsSuppress](phpcs-suppress-tag.md),
+  disabling a named sniff for the element it decorates.
+* **Region suppression** —
   [@codingStandardsIgnoreStart](coding-standards-ignore-start-tag.md) and
   [@codingStandardsIgnoreEnd](coding-standards-ignore-end-tag.md) bracket a
   block the sniffer should skip, while
@@ -27,7 +27,7 @@ written against earlier PHP_CodeSniffer releases.
   [@codingStandardsIgnoreFile](coding-standards-ignore-file-tag.md) exempts
   the entire file.
 * **General marker** —
-  [@codingStandards](coding-standards-tag.md), the bare root of that legacy
+  [@codingStandards](coding-standards-tag.md), the bare root of that
   family.
 
 <note>
@@ -43,7 +43,7 @@ $parser = DocBlockParser::createDefault();
 Alternatively, pass <code>new PhpCodeSnifferPlatform()</code> to the parser
 constructor to add it on top of the standard tags. A bare
 <code>new DocBlockParser()</code> loads the standard platform only, so an
-unrecognized <code>@phpcs:*</code> or <code>@codingStandards*</code> tag then
+unrecognized <code>@phpcsSuppress</code> or <code>@codingStandards*</code> tag then
 falls back to a plain <a href="phpdoc.md#tag">Tag</a>.
 </note>
 

@@ -98,16 +98,22 @@ enum TagPlacement
 ```
 
 A definition that omits the argument defaults to `TagPlacement::Any`. A tag
-whose placement allows it inline may be used, in addition to standing on its own
-line, nested inside a description as a `{@tag ...}` sequence with balanced
-braces — parsing it there produces the exact same kind of tag object either way.
+may be used, in addition to standing on its own line, nested inside a
+description as a `{@tag ...}` sequence with balanced braces — parsing it there
+produces the exact same kind of tag object either way.
 
-Six built-in tags allow it: [`@see`](see-tag.md), [`@link`](link-tag.md),
-[`@internal`](internal-tag.md) and [`@example`](example-tag.md) are `Any`, while
-[`@inheritdoc`](inheritdoc-tag.md) and [`@source`](source-tag.md) are
-`Inline`-only. Every other tag, `@param` included, is declared `Block` and is
-never lifted out of running text: a `{@param}` written inside a sentence stays
-exactly as written, as plain text, rather than being parsed.
+Six built-in tags are declared to be used inline: [`@see`](see-tag.md),
+[`@link`](link-tag.md), [`@internal`](internal-tag.md) and
+[`@example`](example-tag.md) are `Any`, while [`@inheritdoc`](inheritdoc-tag.md)
+and [`@source`](source-tag.md) are `Inline`-only. Every other tag, `@param`
+included, is declared `Block`.
+
+<note>
+The placement is exposed as <code>$placement</code> on the definition, but the
+description parser does not consult it yet: any registered tag written as
+<code>{@name ...}</code> is parsed into a tag object, whatever its declared
+placement.
+</note>
 
 ## Where to Go Next
 

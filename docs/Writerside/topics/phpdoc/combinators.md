@@ -25,12 +25,11 @@ interface CombinatorInterface
 
 Given a `Cursor` positioned at the start of whatever text is still left to
 parse, a combinator either consumes the part that belongs to it and returns
-the value it read, or throws `NoMatchException` and leaves the cursor
-exactly where it found it. That second case matters: a combinator that
-partially consumes input before deciding it does not fit would corrupt
-whichever alternative the surrounding grammar tries next — see
-[`Spec::oneOf()`](grammar.md), which relies on being able to roll back
-cleanly.
+the value it read, or throws `NoMatchException`. The surrounding grammar
+takes a snapshot of the cursor before trying an alternative and rolls it
+back when the combinator does not match — see
+[`Spec::oneOf()`](grammar.md) — but a combinator that decides early, before
+consuming anything, is cheaper and easier to reason about.
 
 The `Cursor` itself offers the handful of reading operations most
 combinators need, so a combinator rarely has to touch its raw position by
@@ -38,12 +37,14 @@ hand: `peek()` and `read()` for a fixed number of bytes, `readWhile()` /
 `readUntil()` for a run of (or up to) a set of characters, `readWord()` for
 the next whitespace-delimited word, `readPhpIdentifier()` /
 `readPhpQualifiedName()` for a name (with or without namespace separators),
-`readLiteral()` for an exact piece of text, and `readRemainder()` for
-whatever is left entirely.
+`readLiteral()` for an exact piece of text (it returns `true` and moves on
+when the text is next, and `false` otherwise), `skipWhitespace()` to move
+past blanks, `isEof()` to check for the end of input, and `readRemainder()`
+for whatever is left entirely.
 
 ## Built-in Combinators
 
-Fifteen combinators cover every built-in tag's grammar between them:
+Sixteen combinators cover every built-in tag's grammar between them:
 
 <table style="both">
     <tr>
@@ -82,6 +83,13 @@ Fifteen combinators cover every built-in tag's grammar between them:
         <td><code>Email</code></td>
         <td><code>string</code></td>
         <td>An address, up to its closing <code>">"</code>.</td>
+    </tr>
+    <tr>
+        <td><code>FlowType</code></td>
+        <td><code>FlowType</code></td>
+        <td>A taint flow kind: <code>TaintSource</code>,
+            <code>TaintSink</code>, <code>TaintSpecialize</code> or
+            <code>TaintUnescape</code>.</td>
     </tr>
     <tr>
         <td><code>Integer</code></td>
@@ -130,10 +138,22 @@ Fifteen combinators cover every built-in tag's grammar between them:
     </tr>
 </table>
 
+<note>
+Combinators are registered by <a href="platforms.md">platforms</a>, like
+everything else. <code>StandardPlatform</code> provides <code>URI</code>,
+<code>URL</code>, <code>Reference</code>, <code>Type</code>,
+<code>CallableType</code>, <code>Variable</code>, <code>AssertSubject</code>,
+<code>Integer</code>, <code>IssueName</code>, <code>Version</code> and
+<code>Name</code>; <code>PhpDocumentorPlatform</code> adds
+<code>Visibility</code>, <code>AuthorName</code> and <code>Email</code>, and
+<code>PsalmPlatform</code> adds <code>FlowType</code>. <code>Description</code>
+is wired by the parser itself and cannot be redefined.
+</note>
+
 ## Writing One of Your Own
 
 A combinator that reads one of a fixed set of keywords looks much like the
-built-in `Access` combinator above. This one reads a `low` / `medium` /
+built-in `Visibility` combinator above. This one reads a `low` / `medium` /
 `high` priority level:
 
 ```php
@@ -144,7 +164,7 @@ enum Priority: string
     case High = 'high';
 }
 
-final readonly class PriorityCombinator implements CombinatorInterface
+final class PriorityCombinator implements CombinatorInterface
 {
     public const string NAME = 'Priority';
 

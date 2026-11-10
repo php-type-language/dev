@@ -47,9 +47,11 @@ its prefixed form.
 
 <note>
 Each of these tags still has a prefixed twin under a specific analyzer —
-<code>@psalm-param-out</code>, <code>@phpstan-pure</code>, and so on — listed
+<code>@psalm-param-out</code>, <code>@phpstan-param-out</code>,
+<code>@phpstan-pure-unless-callable-is-impure</code>, and so on — listed
 under that analyzer's own group in the sidebar. The bare spellings collected
-here are the ones both major analyzers agree to read without a prefix.
+here are the ones both major analyzers agree to read without a prefix, and
+they are recognized by the standard platform alone.
 </note>
 
 Like the standard set, every tag in this group is fully recognized: it

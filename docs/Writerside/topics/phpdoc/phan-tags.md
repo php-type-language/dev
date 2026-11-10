@@ -40,6 +40,10 @@ one Phan should trust.
   [@phan-side-effect-free](phan-side-effect-free-tag.md),
   [@phan-immutable](phan-immutable-tag.md),
   [@phan-constructor-used-for-side-effects](phan-constructor-used-for-side-effects-tag.md).
+* **Types and scope** — [@phan-type](phan-type-tag.md),
+  [@phan-closure-scope](phan-closure-scope-tag.md) (also spelled
+  `@phanClosureScope`), [@phan-transient](phan-transient-tag.md),
+  [@phan-output-reference](phan-output-reference-tag.md).
 * **Prefixed overrides** — [@phan-var](phan-var-tag.md),
   [@phan-param](phan-param-tag.md), [@phan-return](phan-return-tag.md),
   [@phan-property](phan-property-tag.md),

@@ -31,6 +31,11 @@ disagree.
   [@phpstan-immutable](phpstan-immutable-tag.md),
   [@phpstan-readonly](phpstan-readonly-tag.md),
   [@phpstan-pure-unless-callable-is-impure](phpstan-pure-unless-callable-is-impure-tag.md).
+* **Constructors and mutation** —
+  [@phpstan-consistent-constructor](phpstan-consistent-constructor-tag.md),
+  [@phpstan-allow-private-mutation](phpstan-allow-private-mutation-tag.md),
+  [@phpstan-readonly-allow-private-mutation](phpstan-readonly-allow-private-mutation-tag.md).
+* **Generators** — [@phpstan-yield](phpstan-yield-tag.md).
 * **Type aliases and generics** — [@phpstan-type](phpstan-type-tag.md),
   [@phpstan-import-type](phpstan-import-type-tag.md),
   [@phpstan-template](phpstan-template-tag.md) (with its

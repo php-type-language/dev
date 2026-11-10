@@ -10,23 +10,24 @@ sequence of parts, one of several alternatives, an optional group, a repeated
 group.
 
 ```php
-// an exact word or symbol, e.g. 'static'
-Spec::literal(string $value)
+// an exact word or symbol, e.g. 'static', optionally captured under an alias
+Spec::literal(string $value, ?string $alias = null)
 
-// a named building block — see Combinators
-Spec::rule(string $combinator)
+// a named building block — see Combinators; the alias captures its value,
+// $renderAs is how the rule is printed in the tag's grammar string
+Spec::rule(string $name, ?string $alias = null, ?string $renderAs = null)
 
 // every rule, one after another
-Spec::sequence(...$rules)
+Spec::sequence($rule, ...$other)
 
 // the first rule that applies
-Spec::oneOf(...$rules)
+Spec::oneOf($rule, ...$other)
 
 // the rule, or nothing at all
 Spec::maybe($rule)
 
-// the rule, as many times as it applies
-Spec::repeat($rule, $times = 0)
+// the rule, as many times as it applies, at least $times of them
+Spec::repeat($rule, int $times = 0)
 ```
 
 `Spec::rule()` is how a grammar reaches into the type parser, a variable, a URI,

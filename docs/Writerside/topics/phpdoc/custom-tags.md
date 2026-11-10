@@ -78,7 +78,7 @@ final class MoneyTagDefinition extends TagDefinition
     {
         parent::__construct(self::NAME, Spec::sequence(
             Spec::rule(IntegerCombinator::NAME, 'amount', 'Amount'),
-            Spec::rule(NameCombinator::NAME, 'currency', 'currency'),
+            Spec::rule(NameCombinator::NAME, 'currency', 'Currency'),
             Spec::maybe(
                 Spec::rule(DescriptionCombinator::NAME, 'description'),
             ),
@@ -112,16 +112,11 @@ Finally, the definition is registered by contributing a [platform](platforms.md)
 to the parser:
 
 ```php
-final class MoneyPlatform implements PlatformInterface
+final class MoneyPlatform extends Platform
 {
-    public string $name = 'money';
-
-    public iterable $aliases = [];
-
-    public iterable $combinators = [];
-
-    public iterable $tags {
-        get => [
+    public function getTags(): iterable
+    {
+        return [
             MoneyTagDefinition::NAME => new MoneyTagDefinition(),
         ];
     }
@@ -134,13 +129,17 @@ $parser = new DocBlockParser(platforms: [
 $block = $parser->parse('/** @money 100 USD */');
 ```
 
-A platform's four properties register the three kinds of thing the parser needs:
+A platform's three methods register the three kinds of thing the parser needs:
 
-* **`$tags`** registers the [definitions](definitions.md), keyed by each tag's
-  canonical (lower-case) name.
-* **`$combinators`** registers any [combinators](combinators.md) the
+* **`getTags()`** registers the [definitions](definitions.md), keyed by each
+  tag's canonical name.
+* **`getCombinators()`** registers any [combinators](combinators.md) the
   definitions reference that are not built in already (`@money` needs none).
-* **`$aliases`** maps an alternative spelling to a canonical tag name.
+* **`getAliases()`** maps an alternative spelling to a canonical tag name.
+
+`Platform` is an abstract base whose three methods return empty lists, so a
+platform overrides only the ones it needs; implementing `PlatformInterface`
+directly works just as well.
 
 <note>
 The built-in <code>StandardPlatform</code> is always loaded first, so every

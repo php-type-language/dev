@@ -22,19 +22,35 @@ Because they steer editor behavior, these tags have no vendor prefix in the
   that a string or heredoc contains another language (SQL, JSON, regexp)
   so it can be highlighted and analyzed accordingly.
 * **Test expectations** —
-  [@expected-exception](expected-exception-tag.md), recording the exception
+  [@expectedException](expected-exception-tag.md), recording the exception
   a test is expected to raise.
 * **Formatter control** — [@formatter:off](formatter-off-tag.md) and
   [@formatter:on](formatter-on-tag.md), bracketing a region the reformatter
   should leave untouched.
 
-<warning>
-The tags in this group are listed for reference only. They are catalogued so
-the vocabulary is documented in one place, but are <b>not yet recognized</b>
-by the parser — a docblock containing one currently falls back to a plain
-<a href="phpdoc.md#tag">Tag</a>. Their pages are marked work-in-progress in
-the sidebar.
-</warning>
+<note>
+Every tag in this group is recognized once the <b>PhpStorm</b> platform is
+enabled. It ships with the library as <code>PhpStormPlatform</code> and is
+loaded by the
+<a href="platforms.md"><code>DocBlockParser::createDefault()</code></a>
+factory:
+
+<code-block lang="php">
+$parser = DocBlockParser::createDefault();
+</code-block>
+
+Alternatively, pass <code>new PhpStormPlatform()</code> to the parser
+constructor to add it on top of the standard tags. A bare
+<code>new DocBlockParser()</code> loads the standard platform only, so an
+unrecognized <code>@noinspection</code> or <code>@language</code> tag then
+falls back to a plain <a href="phpdoc.md#tag">Tag</a>.
+</note>
+
+<note>
+<a href="expected-exception-tag.md">@expectedException</a> is not a PhpStorm
+directive in the strict sense: it is an old PHPUnit convention that the IDE
+happens to understand, and is registered by the same platform.
+</note>
 
 For the authoritative behavior, see
 [PhpStorm's documentation on suppressing inspections](https://www.jetbrains.com/help/phpstorm/disabling-and-enabling-inspections.html)

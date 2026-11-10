@@ -46,7 +46,26 @@ phpDocumentor 3's current reference. They are still parsed here so that
 docblocks written against the older toolchain keep working.
 </note>
 
+<note>
+Every implemented tag in this group is recognized once the
+<b>phpDocumentor</b> platform is enabled. It ships with the library as
+<code>PhpDocumentorPlatform</code> and is loaded by the
+<a href="platforms.md"><code>DocBlockParser::createDefault()</code></a>
+factory:
+
+<code-block lang="php">
+$parser = DocBlockParser::createDefault();
+</code-block>
+
+Alternatively, pass <code>new PhpDocumentorPlatform()</code> to the parser
+constructor to add it on top of the standard tags. A bare
+<code>new DocBlockParser()</code> loads the standard platform only, so an
+unrecognized <code>@author</code> or <code>@since</code> tag then falls back to
+a plain <a href="phpdoc.md#tag">Tag</a>.
+</note>
+
 The implemented tags in this group each parse into a dedicated object; a few
-entries (such as [@id](id-tag.md), [@toc](toc-tag.md), and
-[@tutorial](tutorial-tag.md)) are still marked work-in-progress. Open any
-entry in the sidebar for its exact grammar and behavior.
+entries ([@id](id-tag.md), [@toc](toc-tag.md), and
+[@tutorial](tutorial-tag.md)) are not implemented yet and fall back to a
+plain `Tag`. Open any entry in the sidebar for its exact grammar and
+behavior.

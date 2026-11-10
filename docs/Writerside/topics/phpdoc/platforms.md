@@ -7,32 +7,29 @@ A **platform** is a named bundle of [tag definitions](definitions.md), aliases
 and [combinators](combinators.md) — everything needed to teach the parser a
 family of tags.
 
-A platform implements `PlatformInterface`, four read-only properties:
+A platform implements `PlatformInterface`, three methods, each returning an
+`iterable`. The abstract `Platform` base class implements all three as empty,
+so a platform extends it and overrides only what it contributes:
 
 ```php
-final class MoneyPlatform implements PlatformInterface
+final class MoneyPlatform extends Platform
 {
-    public string $name = 'money';
-
-    public iterable $aliases = [];
-
-    public iterable $combinators = [];
-
-    public iterable $tags {
-        get => [
+    public function getTags(): iterable
+    {
+        return [
             MoneyTagDefinition::NAME => new MoneyTagDefinition(),
         ];
     }
 }
 ```
 
-* **`$name`** — a human-readable name for the platform.
-* **`$tags`** — [definitions](definitions.md), keyed by each tag's canonical
-  (lower-case) name.
-* **`$aliases`** — alternative-spelling to canonical-name pairs, both
+* **`getTags()`** — [definitions](definitions.md), keyed by each tag's
+  canonical name.
+* **`getAliases()`** — alternative-spelling to canonical-name pairs, both
   lower-case (this is how `@template-implements` is treated as `@implements`, for instance).
-* **`$combinators`** — any [combinator](combinators.md) the definitions
-  reference that is not built in already, keyed by name.
+* **`getCombinators()`** — any [combinator](combinators.md) the definitions
+  reference that is not built in already, keyed by name. A value is a
+  `CombinatorInterface` implementation or any `callable(Cursor): mixed`.
 
 <note>
 <code>MoneyTagDefinition</code> only leans on the built-in <code>Integer</code>
@@ -41,6 +38,51 @@ A platform adds combinators only when its tags introduce grammar the standard
 platform does not already provide — see
 <a href="combinators.md#writing-one-of-your-own">Writing One of Your Own</a>.
 </note>
+
+Tag names and aliases are matched case-insensitively: a definition registered
+as `inheritDoc` also answers to `@inheritdoc`.
+
+## Built-in Platforms
+
+<table style="both">
+    <tr>
+        <td width="220">Platform</td>
+        <td>Contributes</td>
+    </tr>
+    <tr>
+        <td><code>StandardPlatform</code></td>
+        <td>The <a href="standard-tags.md">Standard</a> and
+            <a href="advanced-tags.md">Advanced</a> tags, their aliases and
+            the core combinators. Always loaded.</td>
+    </tr>
+    <tr>
+        <td><code>PhpDocumentorPlatform</code></td>
+        <td>The <a href="phpdocumentor-tags.md">phpDocumentor</a> tags.</td>
+    </tr>
+    <tr>
+        <td><code>PhpStanPlatform</code></td>
+        <td>The <a href="phpstan-tags.md">PHPStan</a> tags and the
+            <code>@phpstan-</code> spellings of the shared ones.</td>
+    </tr>
+    <tr>
+        <td><code>PsalmPlatform</code></td>
+        <td>The <a href="psalm-tags.md">Psalm</a> tags and the
+            <code>@psalm-</code> spellings of the shared ones.</td>
+    </tr>
+    <tr>
+        <td><code>PhanPlatform</code></td>
+        <td>The <a href="phan-tags.md">Phan</a> tags and the
+            <code>@phan-</code> spellings of the shared ones.</td>
+    </tr>
+    <tr>
+        <td><code>PhpStormPlatform</code></td>
+        <td>The <a href="phpstorm-tags.md">PhpStorm</a> tags.</td>
+    </tr>
+    <tr>
+        <td><code>PhpCodeSnifferPlatform</code></td>
+        <td>The <a href="phpcs-tags.md">PHP CodeSniffer</a> tags.</td>
+    </tr>
+</table>
 
 ## Registering It
 

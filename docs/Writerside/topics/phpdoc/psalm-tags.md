@@ -35,6 +35,31 @@ The tags here span Psalm's full feature surface, including:
   [@psalm-taint-escape](psalm-taint-escape-tag.md),
   [@psalm-taint-specialize](psalm-taint-specialize-tag.md), and related
   [flow tags](psalm-flow-tag.md).
+* **Type checks and context** —
+  [@psalm-check-type](psalm-check-type-tag.md),
+  [@psalm-check-type-exact](psalm-check-type-exact-tag.md),
+  [@psalm-if-this-is](psalm-if-this-is-tag.md),
+  [@psalm-self-out](psalm-self-out-tag.md),
+  [@psalm-scope-this](psalm-scope-this-tag.md),
+  [@psalm-trace](psalm-trace-tag.md),
+  [@psalm-variadic](psalm-variadic-tag.md),
+  [@psalm-yield](psalm-yield-tag.md).
+* **Class design** — [@psalm-inheritors](psalm-inheritors-tag.md),
+  [@psalm-consistent-constructor](psalm-consistent-constructor-tag.md),
+  [@psalm-consistent-templates](psalm-consistent-templates-tag.md),
+  [@psalm-no-seal-methods](psalm-no-seal-methods-tag.md),
+  [@psalm-no-seal-properties](psalm-no-seal-properties-tag.md),
+  [@psalm-allow-private-mutation](psalm-allow-private-mutation-tag.md),
+  [@psalm-readonly-allow-private-mutation](psalm-readonly-allow-private-mutation-tag.md),
+  [@psalm-override-method-visibility](psalm-override-method-visibility-tag.md),
+  [@psalm-override-property-visibility](psalm-override-property-visibility-tag.md),
+  [@psalm-stub-override](psalm-stub-override-tag.md).
+* **Ignoring nullable and falsable results** —
+  [@psalm-ignore-nullable-return](psalm-ignore-nullable-return-tag.md),
+  [@psalm-ignore-falsable-return](psalm-ignore-falsable-return-tag.md),
+  [@psalm-ignore-var](psalm-ignore-var-tag.md),
+  [@psalm-ignore-variable-method](psalm-ignore-variable-method-tag.md),
+  [@psalm-ignore-variable-property](psalm-ignore-variable-property-tag.md).
 * **Type aliases and generics** — [@psalm-type](psalm-type-tag.md),
   [@psalm-import-type](psalm-import-type-tag.md),
   [@psalm-template](psalm-template-tag.md) (with its
