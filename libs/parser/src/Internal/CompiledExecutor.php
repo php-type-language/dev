@@ -3130,11 +3130,11 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
                 15 => $this->reduceFloatLiteral(...),
                 16 => $this->reduceIntLiteral(...),
                 22 => $this->reduceStringLiteral(...),
-                25 => self::reduceNamedType(...),
+                25 => $this->reduceNamedType(...),
                 26 => self::reduceName(...),
                 28 => self::reduceNamespace(...),
-                45 => self::reduceIdentifierMask(...),
-                46 => self::reduceWildcardMask(...),
+                45 => $this->reduceIdentifierMask(...),
+                46 => $this->reduceWildcardMask(...),
                 47 => self::reduceIdentifier(...),
                 49 => $this->reduceTemplateParameters(...),
                 52 => self::reduceTemplateParameter(...),
@@ -3342,13 +3342,18 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         };
     }
 
-    private static function reduceNamedType(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    private function reduceNamedType(\Phplrt\Parser\Context $ctx, mixed $children): mixed
     {
         // The variables below are declared by the compiler
         $offset = $ctx->begin;
 
         $name = $children[0];
         $second = $children[1] ?? null;
+
+        // Foo::BAR
+        if ($second instanceof Type\Identifier && !$this->features->constants) {
+            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('constants', $ctx);
+        }
 
         return match (true) {
             // Foo, \Foo\Bar
@@ -3396,10 +3401,14 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         return new Type\NamespaceName(\trim($children->value, Type\NamespaceName::DELIMITER), $kind, $offset);
     }
 
-    private static function reduceIdentifierMask(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    private function reduceIdentifierMask(\Phplrt\Parser\Context $ctx, mixed $children): mixed
     {
         // The variables below are declared by the compiler
         $offset = $ctx->begin;
+
+        if (!$this->features->masks) {
+            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('masks', $ctx);
+        }
 
         $items = [];
         $position = $offset;
@@ -3418,10 +3427,14 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         return new Type\Constant\MaskNode($items, $offset);
     }
 
-    private static function reduceWildcardMask(\Phplrt\Parser\Context $ctx, mixed $children): mixed
+    private function reduceWildcardMask(\Phplrt\Parser\Context $ctx, mixed $children): mixed
     {
         // The variables below are declared by the compiler
         $offset = $ctx->begin;
+
+        if (!$this->features->masks) {
+            throw Exception\FeatureNotEnabledException::becauseFeatureIsNotEnabledIn('masks', $ctx);
+        }
 
         return new Type\Constant\MaskNode([new Type\Constant\MaskNode\WildcardMaskNode($offset)], $offset);
     }
