@@ -144,7 +144,7 @@
 >>> ?Foo<int>
 <<< accepted WrappingTypeNode\NullableTypeNode@0(type: NamedTypeNode@1(name: Name@1(value: "Foo", namespace: null), arguments: Template\TemplateListNode@5(items: [Template\TypedTemplateArgumentNode@5(value: NamedTypeNode@5(name: Name@5(value: "int", namespace: null), arguments: null, fields: null), variance: null)]), fields: null))
 >>> Foo<int>[K]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: NamedTypeNode@4(name: Name@4(value: "int", namespace: null), arguments: null, fields: null), variance: null)]), fields: null), access: NamedTypeNode@9(name: Name@9(value: "K", namespace: null), arguments: null, fields: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: NamedTypeNode@4(name: Name@4(value: "int", namespace: null), arguments: null, fields: null), variance: null)]), fields: null), access: NamedTypeNode@9(name: Name@9(value: "K", namespace: null), arguments: null, fields: null))
 >>> Foo<int>::class
 <<< partial@8 NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: NamedTypeNode@4(name: Name@4(value: "int", namespace: null), arguments: null, fields: null), variance: null)]), fields: null)
 >>> Foo<int>::BAR

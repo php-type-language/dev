@@ -398,15 +398,15 @@
 
 # Parser tests: offset access type
 >>> T[Foo::A_*]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Constant\ClassConstMaskTypeNode@2(class: Name@2(value: "Foo", namespace: null), mask: Constant\MaskNode@7(items: [Identifier@7(value: "A_"), Constant\MaskNode\WildcardMaskNode@9()])))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Constant\ClassConstMaskTypeNode@2(class: Name@2(value: "Foo", namespace: null), mask: Constant\MaskNode@7(items: [Identifier@7(value: "A_"), Constant\MaskNode\WildcardMaskNode@9()])))
 >>> T[PHP_*]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Constant\ConstMaskTypeNode@2(mask: Constant\MaskNode@2(items: [Identifier@2(value: "PHP_"), Constant\MaskNode\WildcardMaskNode@6()]), namespace: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Constant\ConstMaskTypeNode@2(mask: Constant\MaskNode@2(items: [Identifier@2(value: "PHP_"), Constant\MaskNode\WildcardMaskNode@6()]), namespace: null))
 >>> Foo::BAR[K]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: Constant\ClassConstTypeNode@0(class: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")), access: NamedTypeNode@9(name: Name@9(value: "K", namespace: null), arguments: null, fields: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: Constant\ClassConstTypeNode@0(class: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")), access: NamedTypeNode@9(name: Name@9(value: "K", namespace: null), arguments: null, fields: null))
 >>> Foo::*[K]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: Constant\ClassConstMaskTypeNode@0(class: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Constant\MaskNode\WildcardMaskNode@5()])), access: NamedTypeNode@7(name: Name@7(value: "K", namespace: null), arguments: null, fields: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: Constant\ClassConstMaskTypeNode@0(class: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Constant\MaskNode\WildcardMaskNode@5()])), access: NamedTypeNode@7(name: Name@7(value: "K", namespace: null), arguments: null, fields: null))
 >>> PHP_*[K]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: Constant\ConstMaskTypeNode@0(mask: Constant\MaskNode@0(items: [Identifier@0(value: "PHP_"), Constant\MaskNode\WildcardMaskNode@4()]), namespace: null), access: NamedTypeNode@6(name: Name@6(value: "K", namespace: null), arguments: null, fields: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: Constant\ConstMaskTypeNode@0(mask: Constant\MaskNode@0(items: [Identifier@0(value: "PHP_"), Constant\MaskNode\WildcardMaskNode@4()]), namespace: null), access: NamedTypeNode@6(name: Name@6(value: "K", namespace: null), arguments: null, fields: null))
 >>> T[*]
 <<< partial@1 NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null)
 >>> T[::]

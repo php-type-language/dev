@@ -22,7 +22,7 @@
 >>> non-empty-string $name
 <<< partial@17 NamedTypeNode@0(name: Name@0(value: "non-empty-string", namespace: null), arguments: null, fields: null)
 >>> T[K] $value
-<<< partial@5 WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: NamedTypeNode@2(name: Name@2(value: "K", namespace: null), arguments: null, fields: null))
+<<< partial@5 TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: NamedTypeNode@2(name: Name@2(value: "K", namespace: null), arguments: null, fields: null))
 >>> int ...$values
 <<< partial@4 NamedTypeNode@0(name: Name@0(value: "int", namespace: null), arguments: null, fields: null)
 >>> int &$value

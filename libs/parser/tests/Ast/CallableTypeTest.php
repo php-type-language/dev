@@ -22,8 +22,8 @@ use TypeLang\Type\Template\TypedTemplateArgumentNode;
 use TypeLang\Type\Template\VarianceNode\VarianceKind;
 use TypeLang\Type\ThisTypeNode;
 use TypeLang\Type\TypeNode;
+use TypeLang\Type\TypeOffsetAccessTypeNode;
 use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
-use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
 use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 /**

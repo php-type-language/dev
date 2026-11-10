@@ -392,4 +392,4 @@
 >>> Some</* a */int/* b */,/* c */string>
 <<< accepted NamedTypeNode@0(name: Name@0(value: "Some", namespace: null), arguments: Template\TemplateListNode@12(items: [Template\TypedTemplateArgumentNode@12(value: NamedTypeNode@12(name: Name@12(value: "int", namespace: null), arguments: null, fields: null), variance: null), Template\TypedTemplateArgumentNode@30(value: NamedTypeNode@30(name: Name@30(value: "string", namespace: null), arguments: null, fields: null), variance: null)]), fields: null)
 >>> T /* c */ [ K ]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: NamedTypeNode@12(name: Name@12(value: "K", namespace: null), arguments: null, fields: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: NamedTypeNode@12(name: Name@12(value: "K", namespace: null), arguments: null, fields: null))

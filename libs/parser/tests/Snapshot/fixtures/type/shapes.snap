@@ -286,9 +286,9 @@
 >>> Foo<array{a: int}, list{int}>
 <<< accepted NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: NamedTypeNode@4(name: Name@4(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@10(items: [Shape\NamedFieldNode@10(type: NamedTypeNode@13(name: Name@13(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@10(value: "a"), isOptional: false)], isSealed: true)), variance: null), Template\TypedTemplateArgumentNode@19(value: NamedTypeNode@19(name: Name@19(value: "list", namespace: null), arguments: null, fields: Shape\FieldListNode@24(items: [Shape\ImplicitFieldNode@24(type: NamedTypeNode@24(name: Name@24(value: "int", namespace: null), arguments: null, fields: null))], isSealed: true)), variance: null)]), fields: null)
 >>> array{a: int}[K]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true)), access: NamedTypeNode@14(name: Name@14(value: "K", namespace: null), arguments: null, fields: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true)), access: NamedTypeNode@14(name: Name@14(value: "K", namespace: null), arguments: null, fields: null))
 >>> array{a: int}['a']
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true)), access: Literal\StringLiteralNode@14(value: "a", raw: "'a'", kind: Literal\StringLiteralKind::SingleQuoted))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true)), access: Literal\StringLiteralNode@14(value: "a", raw: "'a'", kind: Literal\StringLiteralKind::SingleQuoted))
 >>> array{a: int}|null
 <<< accepted LogicalTypeNode\UnionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true)), Literal\NullLiteralNode@14(value: null, raw: "null")])
 
@@ -306,7 +306,7 @@
 >>> array{a: int}|array{b: string}
 <<< accepted LogicalTypeNode\UnionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true)), NamedTypeNode@14(name: Name@14(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@20(items: [Shape\NamedFieldNode@20(type: NamedTypeNode@23(name: Name@23(value: "string", namespace: null), arguments: null, fields: null), key: Identifier@20(value: "b"), isOptional: false)], isSealed: true))])
 >>> array{a: int}["a"]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true)), access: Literal\StringLiteralNode@14(value: "a", raw: "\"a\"", kind: Literal\StringLiteralKind::DoubleQuoted))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true)), access: Literal\StringLiteralNode@14(value: "a", raw: "\"a\"", kind: Literal\StringLiteralKind::DoubleQuoted))
 
 # Parser tests: malformed input
 >>> array{a:
@@ -316,7 +316,7 @@
 
 # Parser tests: named type
 >>> array{a: int}[][K]
-<<< accepted WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: WrappingTypeNode\TypesListTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true))), access: NamedTypeNode@16(name: Name@16(value: "K", namespace: null), arguments: null, fields: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: WrappingTypeNode\TypesListTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: null, fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: true))), access: NamedTypeNode@16(name: Name@16(value: "K", namespace: null), arguments: null, fields: null))
 >>> array{a: int, ...<K, V>}[]
 <<< accepted WrappingTypeNode\TypesListTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "array", namespace: null), arguments: Template\TemplateListNode@18(items: [Template\TypedTemplateArgumentNode@18(value: NamedTypeNode@18(name: Name@18(value: "K", namespace: null), arguments: null, fields: null), variance: null), Template\TypedTemplateArgumentNode@21(value: NamedTypeNode@21(name: Name@21(value: "V", namespace: null), arguments: null, fields: null), variance: null)]), fields: Shape\FieldListNode@6(items: [Shape\NamedFieldNode@6(type: NamedTypeNode@9(name: Name@9(value: "int", namespace: null), arguments: null, fields: null), key: Identifier@6(value: "a"), isOptional: false)], isSealed: false)))
 >>> array{a: int}|B
@@ -394,7 +394,7 @@
 
 # Parser tests: offset access type
 >>> T['a']{a: int}
-<<< partial@6 WrappingTypeNode\TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Literal\StringLiteralNode@2(value: "a", raw: "'a'", kind: Literal\StringLiteralKind::SingleQuoted))
+<<< partial@6 TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Literal\StringLiteralNode@2(value: "a", raw: "'a'", kind: Literal\StringLiteralKind::SingleQuoted))
 
 # Parser tests: shapes
 >>> array {}

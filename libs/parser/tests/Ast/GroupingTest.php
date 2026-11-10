@@ -7,7 +7,7 @@ namespace TypeLang\Parser\Tests\Ast;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\WrappingTypeNode\TypeOffsetAccessTypeNode;
+use TypeLang\Type\TypeOffsetAccessTypeNode;
 use TypeLang\Type\WrappingTypeNode\TypesListTypeNode;
 
 /**
@@ -127,11 +127,11 @@ final class GroupingTest extends AstTestCase
     {
         self::assertSame(<<<'AST'
             WrappingTypeNode\TypesListTypeNode
-              WrappingTypeNode\TypeOffsetAccessTypeNode
-                NamedTypeNode
-                  Name(K)
+              TypeOffsetAccessTypeNode
                 NamedTypeNode
                   Name(T)
+                NamedTypeNode
+                  Name(K)
             AST, $this->parseAndPrint('T[K][]'));
 
         $node = $this->parse('T[K][]');
