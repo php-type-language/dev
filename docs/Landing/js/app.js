@@ -8,13 +8,14 @@
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const KEYWORDS = new Set(['is', 'not', 'of', 'as', 'super']);
+  const KEYWORDS = new Set(['is', 'not', 'of', 'as', 'super', 'covariant', 'contravariant', 'invariant']);
   const LABELS = {
-    named: 'named', union: 'union', intersection: 'inter', nullable: 'nullable', list: 'list', offset: 'offset',
+    type: 'type', union: 'union', intersection: 'inter', nullable: 'nullable', list: 'list', offset: 'offset',
     int: 'literal', float: 'literal', string: 'literal', bool: 'literal', null: 'literal',
-    const: 'const', classMask: 'mask', mask: 'mask', callable: 'callable', param: 'param', tparam: 'template',
-    arg: 'arg', wildcard: 'wildcard', field: 'field', implicit: 'field', unsealed: 'unsealed',
-    cond: 'conditional', this: '$this', var: 'variable',
+    const: 'const', classMask: 'mask', mask: 'mask', callable: 'callable', params: 'params', param: 'param',
+    default: 'default', tparams: 'templates', tparam: 'template', bound: 'bound', args: 'args', arg: 'arg',
+    wildcard: 'wildcard', fields: 'fields', field: 'field', sfield: 'field', cfield: 'field', implicit: 'field',
+    ident: 'key', cond: 'conditional', eq: 'is', neq: 'is not', this: '$this', var: 'variable',
   };
 
   // ───────────────────────── Tooltip ─────────────────────────
@@ -154,12 +155,14 @@
         if (t.type === 'T_EOI') break;
         if (t.start > pos) html += esc(text.slice(pos, t.start));
         let cls = 'tok';
-        if (/LITERAL|STRING/.test(t.type)) cls += ' t-lit';
-        else if (t.type === 'T_NAME') {
+        if (/^T_(FLOAT|INT_|SQ_STRING|DQ_STRING)/.test(t.type)) cls += ' t-lit';
+        else if (t.type === 'T_IDENTIFIER') {
           const v = t.value.toLowerCase();
           if (v === 'true' || v === 'false' || v === 'null') cls += ' t-lit';
           else if (KEYWORDS.has(t.value)) cls += ' t-kw';
-        } else if (t.type === 'T_VARIABLE') cls += ' t-var';
+        } else if (t.type === 'T_IS_NOT') cls += ' t-kw';
+        else if (t.type === 'T_IDENTIFIER_MASK' || t.type === 'T_VIRTUAL_NAME') cls += '';
+        else if (t.type === 'T_VARIABLE' || t.type === 'T_THIS') cls += ' t-var';
         else if (t.type === 'T_UNKNOWN') cls += error ? ' t-err' : ' t-punct';
         else cls += ' t-punct';
         if (error && t.start < errE && t.end > errS) cls += ' t-err';
@@ -250,8 +253,8 @@
   }
 
   /* Close whatever brackets are open after the first `k` tokens and try to parse; longest prefix wins. */
-  const CLOSERS = { T_ANGLE_BRACKET_OPEN: '>', T_BRACE_OPEN: '}', T_PARENTHESIS_OPEN: ')', T_SQUARE_BRACKET_OPEN: ']' };
-  const OPENERS = { '>': 'T_ANGLE_BRACKET_OPEN', '}': 'T_BRACE_OPEN', ')': 'T_PARENTHESIS_OPEN', ']': 'T_SQUARE_BRACKET_OPEN' };
+  const CLOSERS = { T_ANGLE_OPEN: '>', T_BRACE_OPEN: '}', T_PAREN_OPEN: ')', T_BRACKET_OPEN: ']' };
+  const OPENERS = { '>': 'T_ANGLE_OPEN', '}': 'T_BRACE_OPEN', ')': 'T_PAREN_OPEN', ']': 'T_BRACKET_OPEN' };
   function ghostParse(text, tokens, features) {
     const toks = tokens.filter(t => t.type !== 'T_EOI');
     if (!toks.length) return null;
@@ -393,9 +396,12 @@
   }
 
   // ───────────────────────── § 03 Features ─────────────────────────
+  // Mirrors the flags of TypeParserFeatures, in the order of its constructor
   const FLAGS = [
-    ['literals', '42, "str", null'], ['generics', 'T<U>'], ['hints', 'T<out U>'], ['lists', 'T[]'], ['offsets', 'T[K]'],
-    ['callables', 'fn(): T'], ['shapes', 'T{k: U}'], ['unions', 'T|U'], ['intersections', 'T&U'], ['conditions', 'T is U ? A : B'],
+    ['unions', 'T|U'], ['intersections', 'T&U'], ['nullables', '?T'], ['lists', 'T[]'], ['offsets', 'T[K]'],
+    ['conditions', 'T is U ? A : B'], ['generics', 'T<U>'], ['wildcards', 'T<*>'], ['hints', 'T<covariant U>'],
+    ['callables', 'fn(T): U'], ['templates', 'fn<T>(T): T'], ['defaults', 'fn(T $a = U)'], ['shapes', 'T{k: U}'],
+    ['constants', 'T::U'], ['masks', 'T::U_*'], ['literals', '42, "str", null'],
   ];
   const switches = $('#switches');
   const featuresPhp = $('#features-php');

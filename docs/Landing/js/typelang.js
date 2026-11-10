@@ -1,57 +1,78 @@
 /*
- * TypeLang — a browser port of the reference parser (type-lang/parser).
+ * TypeLang - a browser port of the reference parser (type-lang/parser).
  *
- * The grammar follows "Appendix B — Grammar Summary" of the TypeLang
- * specification. Every AST node carries `start`/`end` byte offsets so the
- * landing can draw the tree right under the source text.
+ * The grammar follows libs/parser/resources/grammar*.pp3. Every AST node
+ * carries `start`/`end` offsets so the landing can draw the tree right under
+ * the source text. Like the PHP parser, a disabled feature is reported only
+ * after the whole source has been read successfully.
  *
- * Exposes `window.TypeLang = { tokenize, parse, print, Features, NODE_CLASSES }`.
+ * Exposes `window.TypeLang = { tokenize, parse, print, walk, count, Features, NODE_CLASSES, ParseError }`.
  */
 (function (global) {
   'use strict';
 
   // ───────────────────────────── Lexer ─────────────────────────────
 
+  const NS = 'A-Za-z_\\u0080-\\uffff';
+  const NC = 'A-Za-z0-9_\\u0080-\\uffff';
+  // The end of a word: no name character, hyphen or "\Name" follows
+  const WE = `(?![${NC}]|-|\\\\[${NS}])`;
+  const D = '[0-9](?:_?[0-9])*';
+  const E = `[eE][+-]?${D}`;
+  const SIGN = '(?:[+-]\\s*)?';
+  const TRIVIA = '(?:\\s+|\\/\\*[\\s\\S]*?\\*\\/|(?:\\/\\/|#)[^\\r\\n]*)';
+
+  // [type, pattern, skip]. The order matters: the first match wins.
   const RULES = [
     ['T_WHITESPACE', /\s+/y, true],
-    ['T_COMMENT', /\/\/[^\n]*|#[^\n]*|\/\*[\s\S]*?\*\//y, true],
-    ['T_VARIABLE', /\$[A-Za-z_\u0080-\uffff][A-Za-z0-9_\u0080-\uffff]*/y],
-    ['T_FLOAT_LITERAL', /[+-]?(?:\d(?:_?\d)*\.(?:\d(?:_?\d)*)?(?:[eE][+-]?\d(?:_?\d)*)?|\.\d(?:_?\d)*(?:[eE][+-]?\d(?:_?\d)*)?|\d(?:_?\d)*[eE][+-]?\d(?:_?\d)*)/y],
-    ['T_BIN_INT_LITERAL', /[+-]?0[bB][01](?:_?[01])*/y],
-    ['T_HEX_INT_LITERAL', /[+-]?0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*/y],
-    ['T_OCT_INT_LITERAL', /[+-]?0[oO][0-7](?:_?[0-7])*|[+-]?0(?:_?[0-7])+/y],
-    ['T_DEC_INT_LITERAL', /[+-]?(?:[1-9](?:_?\d)*|0)/y],
-    ['T_SINGLE_QUOTED_STRING', /'(?:[^'\\]|\\[\s\S])*'/y],
-    ['T_DOUBLE_QUOTED_STRING', /"(?:[^"\\]|\\[\s\S])*"/y],
-    ['T_NAME', /[A-Za-z_\u0080-\uffff][A-Za-z0-9_\u0080-\uffff-]*/y],
-    ['T_DOUBLE_COLON', /::/y],
-    ['T_ELLIPSIS', /\.\.\./y],
+    ['T_COMMENT', /(?:\/\/|#)[^\r\n]*/y, true],
+    ['T_DOC_COMMENT', /\/\*[\s\S]*?\*\//y, true],
+    ['T_IS_NOT', new RegExp(`is${WE}${TRIVIA}+not${WE}`, 'y')],
+    ['T_THIS', new RegExp(`\\$this${WE}`, 'y')],
+    ['T_VARIABLE', new RegExp(`\\$[${NS}][${NC}]*`, 'y')],
+    ['T_FLOAT', new RegExp(`${SIGN}(?:${D}\\.(?:${D})?(?:${E})?|\\.${D}(?:${E})?|${D}${E})`, 'y')],
+    ['T_INT_HEX', new RegExp(`${SIGN}0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*`, 'y')],
+    ['T_INT_BIN', new RegExp(`${SIGN}0[bB][01](?:_?[01])*`, 'y')],
+    ['T_INT_OCT', new RegExp(`${SIGN}0[oO][0-7](?:_?[0-7])*`, 'y')],
+    ['T_INT_OCT_LEGACY', new RegExp(`${SIGN}0(?:_?[0-7])*`, 'y')],
+    ['T_INT_DEC', new RegExp(`${SIGN}[1-9](?:_?[0-9])*`, 'y')],
+    ['T_SQ_STRING', /'(?:[^'\\]|\\[\s\S])*'/y],
+    ['T_DQ_STRING', /"(?:[^"\\]|\\[\s\S])*"/y],
+    // PHP_*, *_SUFFIX, A*B*C. A lone star is a wildcard
+    ['T_IDENTIFIER_MASK', new RegExp(`(?!\\*(?![${NC}]))(?:[${NS}][${NC}]*\\*|\\*)(?:[${NC}]+\\*)*[${NC}]*`, 'y')],
+    // non-empty-string
+    ['T_VIRTUAL_NAME', new RegExp(`[${NS}][${NC}]*(?:-[${NC}]+)+`, 'y')],
+    // Foo, PHP_EOL
+    ['T_IDENTIFIER', new RegExp(`[${NS}][${NC}]*`, 'y')],
     ['T_NS_DELIMITER', /\\/y],
-    ['T_NULLABLE', /\?/y],
-    ['T_OR', /\|/y],
-    ['T_AMP', /&/y],
-    ['T_ASTERISK', /\*/y],
-    ['T_COMMA', /,/y],
+    ['T_WILDCARD', /\*/y],
+    ['T_DOUBLE_COLON', /::/y],
     ['T_COLON', /:/y],
+    ['T_ELLIPSIS', /\.\.\./y],
     ['T_ASSIGN', /=/y],
-    ['T_PARENTHESIS_OPEN', /\(/y],
-    ['T_PARENTHESIS_CLOSE', /\)/y],
-    ['T_SQUARE_BRACKET_OPEN', /\[/y],
-    ['T_SQUARE_BRACKET_CLOSE', /\]/y],
+    ['T_UNION', /\|/y],
+    ['T_AMPERSAND', /&/y],
+    ['T_QUESTION', /\?/y],
+    ['T_COMMA', /,/y],
+    ['T_PAREN_OPEN', /\(/y],
+    ['T_PAREN_CLOSE', /\)/y],
+    ['T_ANGLE_OPEN', /</y],
+    ['T_ANGLE_CLOSE', />/y],
+    ['T_BRACKET_OPEN', /\[/y],
+    ['T_BRACKET_CLOSE', /\]/y],
     ['T_BRACE_OPEN', /\{/y],
     ['T_BRACE_CLOSE', /\}/y],
-    ['T_ANGLE_BRACKET_OPEN', /</y],
-    ['T_ANGLE_BRACKET_CLOSE', />/y],
   ];
 
-  const INT_TOKENS = new Set(['T_BIN_INT_LITERAL', 'T_HEX_INT_LITERAL', 'T_OCT_INT_LITERAL', 'T_DEC_INT_LITERAL']);
-  const STRING_TOKENS = new Set(['T_SINGLE_QUOTED_STRING', 'T_DOUBLE_QUOTED_STRING']);
-  const LITERAL_TOKENS = new Set([...INT_TOKENS, ...STRING_TOKENS, 'T_FLOAT_LITERAL']);
+  const INT_TOKENS = new Set(['T_INT_HEX', 'T_INT_BIN', 'T_INT_OCT', 'T_INT_OCT_LEGACY', 'T_INT_DEC']);
+  const STRING_TOKENS = new Set(['T_SQ_STRING', 'T_DQ_STRING']);
+  const LITERAL_TOKENS = new Set([...INT_TOKENS, ...STRING_TOKENS, 'T_FLOAT']);
+  const VARIANCES = new Set(['covariant', 'contravariant', 'invariant']);
 
   class ParseError extends Error {
     constructor(message, offset, length, kind) {
       super(message);
-      this.name = kind || 'ParsingException';
+      this.name = kind || 'UnexpectedTokenException';
       this.offset = offset;
       this.length = length || 1;
     }
@@ -70,10 +91,9 @@
           continue outer;
         }
       }
-      // Unrecognized: swallow up to the next whitespace so the message reads like the PHP one.
       const rest = /\S+/y; rest.lastIndex = pos;
       const bad = rest.exec(source)[0];
-      throw new ParseError(`Syntax error, unexpected ${quote(bad)} (unknown token)`, pos, bad.length, 'UnrecognizedTokenException');
+      throw new ParseError(`Unrecognized syntax ${quote(bad)}`, pos, bad.length, 'UnrecognizedSyntaxException');
     }
     tokens.push({ type: 'T_EOI', value: '', start: source.length, end: source.length });
     return tokens;
@@ -83,51 +103,49 @@
 
   // ─────────────────────────── Features ────────────────────────────
 
+  // Mirrors TypeLang\Parser\TypeParserFeatures
   const Features = {
-    literals: true, generics: true, hints: true, lists: true, offsets: true,
-    callables: true, shapes: true, unions: true, intersections: true, conditions: true,
+    unions: true, intersections: true, nullables: true, lists: true, offsets: true, conditions: true,
+    generics: true, wildcards: true, hints: true, callables: true, templates: true, defaults: true,
+    shapes: true, constants: true, masks: true, literals: true,
   };
 
-  const FEATURE_MESSAGES = {
-    literals: 'Literal values not allowed',
-    generics: 'Template arguments not allowed',
-    templateParameters: 'Template parameters not allowed',
-    hints: 'Template argument hints not allowed',
-    lists: 'Square bracket list types not allowed',
-    offsets: 'Type offsets not allowed',
-    callables: 'Callable types not allowed',
-    shapes: 'Shape fields not allowed',
-    unions: 'Union types not allowed',
-    intersections: 'Intersection types not allowed',
-    conditions: 'Conditional expressions not allowed',
-  };
-
-  // PHP class names behind every node kind — shown in the tree tooltips.
+  // PHP class names behind every node kind - shown in the tree tooltips.
   const NODE_CLASSES = {
-    named: 'TypeLang\\Type\\NamedTypeNode',
-    union: 'TypeLang\\Type\\UnionTypeNode',
-    intersection: 'TypeLang\\Type\\IntersectionTypeNode',
-    nullable: 'TypeLang\\Type\\NullableTypeNode',
-    list: 'TypeLang\\Type\\TypesListNode',
-    offset: 'TypeLang\\Type\\TypeOffsetAccessNode',
+    type: 'TypeLang\\Type\\NamedTypeNode',
+    union: 'TypeLang\\Type\\LogicalTypeNode\\UnionTypeNode',
+    intersection: 'TypeLang\\Type\\LogicalTypeNode\\IntersectionTypeNode',
+    nullable: 'TypeLang\\Type\\WrappingTypeNode\\NullableTypeNode',
+    list: 'TypeLang\\Type\\WrappingTypeNode\\TypesListTypeNode',
+    offset: 'TypeLang\\Type\\WrappingTypeNode\\TypeOffsetAccessTypeNode',
     int: 'TypeLang\\Type\\Literal\\IntLiteralNode',
     float: 'TypeLang\\Type\\Literal\\FloatLiteralNode',
     string: 'TypeLang\\Type\\Literal\\StringLiteralNode',
     bool: 'TypeLang\\Type\\Literal\\BoolLiteralNode',
     null: 'TypeLang\\Type\\Literal\\NullLiteralNode',
-    const: 'TypeLang\\Type\\ClassConstNode',
-    classMask: 'TypeLang\\Type\\ClassConstMaskNode',
-    mask: 'TypeLang\\Type\\ConstMaskNode',
-    callable: 'TypeLang\\Type\\CallableTypeNode',
+    const: 'TypeLang\\Type\\Constant\\ClassConstTypeNode',
+    classMask: 'TypeLang\\Type\\Constant\\ClassConstMaskTypeNode',
+    mask: 'TypeLang\\Type\\Constant\\ConstMaskTypeNode',
+    callable: 'TypeLang\\Type\\Callable\\CallableTypeNode',
+    params: 'TypeLang\\Type\\Callable\\CallableParameterListNode',
     param: 'TypeLang\\Type\\Callable\\CallableParameterNode',
+    default: 'TypeLang\\Type\\Callable\\DefaultValueNode',
+    tparams: 'TypeLang\\Type\\Template\\TemplateParameterListNode',
     tparam: 'TypeLang\\Type\\Template\\TemplateParameterNode',
-    arg: 'TypeLang\\Type\\Template\\TemplateArgumentNode',
-    wildcard: 'TypeLang\\Type\\WildcardNode',
-    field: 'TypeLang\\Type\\Shape\\ExplicitFieldNode',
+    bound: 'TypeLang\\Type\\Template\\TemplateBoundNode',
+    args: 'TypeLang\\Type\\Template\\TemplateListNode',
+    arg: 'TypeLang\\Type\\Template\\TypedTemplateArgumentNode',
+    wildcard: 'TypeLang\\Type\\Template\\WildcardTemplateArgumentNode',
+    fields: 'TypeLang\\Type\\Shape\\FieldListNode',
+    field: 'TypeLang\\Type\\Shape\\NamedFieldNode',
+    sfield: 'TypeLang\\Type\\Shape\\ScalarFieldNode',
+    cfield: 'TypeLang\\Type\\Shape\\ComplexFieldNode',
     implicit: 'TypeLang\\Type\\Shape\\ImplicitFieldNode',
-    unsealed: 'TypeLang\\Type\\Shape\\FieldsListNode',
-    cond: 'TypeLang\\Type\\TernaryExpressionNode',
-    this: 'TypeLang\\Type\\ThisNode',
+    ident: 'TypeLang\\Type\\Identifier',
+    cond: 'TypeLang\\Type\\Condition\\ConditionalTypeNode',
+    eq: 'TypeLang\\Type\\Condition\\EqualConditionNode',
+    neq: 'TypeLang\\Type\\Condition\\NotEqualConditionNode',
+    this: 'TypeLang\\Type\\ThisTypeNode',
     var: 'TypeLang\\Type\\VariableNode',
   };
 
@@ -139,494 +157,484 @@
       this.features = Object.assign({}, Features, features || {});
       this.tokens = tokenize(source);
       this.i = 0;
+      // The first disabled feature met: thrown once the source is read
+      this.violation = null;
     }
 
     // token helpers
     get tok() { return this.tokens[this.i]; }
     peek(n = 1) { return this.tokens[Math.min(this.i + n, this.tokens.length - 1)]; }
-    is(type, value) { const t = this.tok; return t.type === type && (value === undefined || t.value === value); }
-    isName(value) { return this.is('T_NAME', value); }
+    is(type) { return this.tok.type === type; }
     next() { return this.tokens[this.i++]; }
-    accept(type, value) { if (this.is(type, value)) return this.next(); return null; }
+    accept(type) { return this.is(type) ? this.next() : null; }
+    prev() { return this.tokens[this.i - 1]; }
+    adjacent(a, b) { return a.end === b.start; }
+    mark() { return { i: this.i, v: this.violation }; }
+    reset(m) { this.i = m.i; this.violation = m.v; }
 
-    expect(type, hint) {
+    // A word is not a keyword when a "\Name" follows it: "is\Foo" is a name
+    wordAt(n, value) {
+      const t = this.peek(n);
+      if (t.type !== 'T_IDENTIFIER' || (value !== undefined && t.value !== value)) return false;
+      const bs = this.peek(n + 1), nx = this.peek(n + 2);
+      return !(bs.type === 'T_NS_DELIMITER' && bs.start === t.end && nx.start === bs.end
+        && (nx.type === 'T_IDENTIFIER' || (nx.type === 'T_IDENTIFIER_MASK' && nx.value[0] !== '*')));
+    }
+    isWord(value) { return this.wordAt(0, value); }
+
+    expect(type, message) {
       if (this.is(type)) return this.next();
-      throw this.unexpected(hint || `${type} expected`);
+      throw message ? this.malformed(message) : this.unexpected();
     }
 
-    unexpected(hint, token) {
+    unexpected(expected, token) {
       const t = token || this.tok;
-      const what = t.type === 'T_EOI' ? 'end of input' : `${quote(t.value)} (${t.type})`;
-      return new ParseError(`Syntax error, unexpected ${what}, ${hint}`, t.start, Math.max(1, t.end - t.start), 'UnexpectedTokenException');
+      const what = t.type === 'T_EOI' ? 'end of input' : quote(t.value);
+      return new ParseError(`Unexpected ${what}${expected ? `, expected ${expected}` : ''}`,
+        t.start, Math.max(1, t.end - t.start), 'UnexpectedTokenException');
     }
 
-    semantic(message, node, kind) {
-      return new ParseError(message, node.start, Math.max(1, node.end - node.start), kind || 'SemanticException');
+    // A construct with a message of its own in the grammar (@error)
+    malformed(message, token) {
+      const t = token || this.tok;
+      return new ParseError(message, t.start, Math.max(1, t.end - t.start), 'MalformedSyntaxException');
     }
 
-    feature(flag, node, key) {
-      if (this.features[flag] === false) {
-        throw this.semantic(FEATURE_MESSAGES[key || flag], node, 'FeatureNotAllowedException');
+    feature(flag, node) {
+      if (this.features[flag] === false && !this.violation) {
+        this.violation = new ParseError(`${flag[0].toUpperCase()}${flag.slice(1)} feature is not allowed`,
+          node.start, Math.max(1, node.end - node.start), 'FeatureNotEnabledException');
       }
     }
 
-    node(kind, start, end, props) {
-      return Object.assign({ kind, start, end, children: [] }, props || {});
+    // A piece of the source with no whitespaces and comments inside: `Foo :: /* c */ BAR` is `Foo::BAR`
+    text(start, end) {
+      return this.source.slice(start, end).replace(/\/\*[\s\S]*?\*\/|(?:\/\/|#)[^\r\n]*|\s+/g, '');
     }
 
-    // Document : Type
+    node(kind, start, end, props, children) {
+      return Object.assign({ kind, start, end, children: children || [] }, props || {});
+    }
+
+    // Type
     parseDocument() {
       const type = this.parseType();
-      if (!this.is('T_EOI')) {
-        throw this.unexpected('end of input expected');
-      }
+      if (!this.is('T_EOI')) throw this.unexpected();
+      if (this.violation) throw this.violation;
       return type;
     }
 
     parseType() { return this.parseConditional(); }
 
-    // ConditionalType : LogicalType ConditionalSuffix? | Variable ConditionalSuffix
+    // Type starts: everything an atom starts with, a nullable mark or a variable
+    canStartNullable(t) {
+      t = t || this.tok;
+      switch (t.type) {
+        case 'T_IDENTIFIER': case 'T_VIRTUAL_NAME': case 'T_IDENTIFIER_MASK': case 'T_NS_DELIMITER': case 'T_QUESTION':
+        case 'T_PAREN_OPEN': case 'T_THIS': case 'T_FLOAT':
+          return true;
+        default:
+          return LITERAL_TOKENS.has(t.type);
+      }
+    }
+    canStartType(t) {
+      t = t || this.tok;
+      return this.canStartNullable(t) || t.type === 'T_VARIABLE';
+    }
+
+    // ConditionalType : UnionType ConditionTail? | Variable ConditionTail
     parseConditional() {
       let subject;
-      if (this.is('T_VARIABLE') && this.tok.value !== '$this') {
-        const t = this.next();
-        subject = this.node('var', t.start, t.end, { name: t.value });
-        if (!this.isName('is')) {
-          throw this.unexpected('a variable can only be the subject of a conditional type, for example "$var is T ? A : B"');
-        }
+      if (this.is('T_VARIABLE')) {
+        subject = this.parseVariable();
+        if (!this.is('T_IS_NOT') && !this.isWord('is')) throw this.unexpected('"is" or "is not"');
       } else {
-        subject = this.parseLogical();
+        subject = this.parseUnion();
+        if (!this.is('T_IS_NOT') && !this.isWord('is')) return subject;
       }
-      if (!this.isName('is')) return subject;
 
-      const isTok = this.next();
-      let negated = false;
-      if (this.isName('not')) { this.next(); negated = true; }
-      if (this.is('T_EOI') || this.is('T_NULLABLE')) {
-        throw this.unexpected('a conditional type must carry the type to compare with after "is", for example "T is U ? A : B"');
-      }
-      let operand;
-      if (this.is('T_VARIABLE') && this.tok.value !== '$this') {
-        const t = this.next();
-        operand = this.node('var', t.start, t.end, { name: t.value });
-      } else {
-        operand = this.parseLogical();
-      }
-      this.expect('T_NULLABLE', 'a conditional type must carry a question mark "?" after the condition, for example "T is U ? A : B"');
+      const negated = this.next().type === 'T_IS_NOT';
+      const operand = this.is('T_VARIABLE') ? this.parseVariable() : this.parseUnion();
+      const test = this.node(negated ? 'neq' : 'eq', subject.start, operand.end, { subject, operand },
+        [subject, operand]);
+      test.label = negated ? 'is not' : 'is';
+
+      this.expect('T_QUESTION', 'A "?" is expected after the target of the condition');
       const then = this.parseType();
-      this.expect('T_COLON', 'a conditional type must carry a colon ":" between the branches, for example "T is U ? A : B"');
+      this.expect('T_COLON', 'The condition requires an else branch, ":" expected');
       const otherwise = this.parseType();
-      const node = this.node('cond', subject.start, otherwise.end, {
-        negated, subject, operand, then, else: otherwise,
-        children: [subject, operand, then, otherwise],
-        label: negated ? 'is not' : 'is',
-      });
+
+      const node = this.node('cond', subject.start, otherwise.end, { negated, test, then, else: otherwise },
+        [test, then, otherwise]);
       this.feature('conditions', node);
       return node;
     }
 
-    // UnionType : IntersectionType (`|` UnionType)?
-    parseLogical() {
+    parseVariable() {
+      const t = this.next();
+      return this.node('var', t.start, t.end, { name: t.value });
+    }
+
+    // UnionType : IntersectionType (`|` IntersectionType)*
+    parseUnion() {
       const first = this.parseIntersection();
-      if (!this.is('T_OR')) return first;
+      if (!this.is('T_UNION')) return first;
       const items = [first];
-      while (this.accept('T_OR')) {
-        if (!this.canStartType()) {
-          throw this.unexpected('a union type must carry a type after the vertical bar "|", for example "T|U"');
-        }
-        items.push(this.parseIntersection());
-      }
-      const node = this.node('union', first.start, items[items.length - 1].end, { children: items });
+      while (this.accept('T_UNION')) items.push(this.parseIntersection());
+      const node = this.node('union', first.start, items[items.length - 1].end, null, items);
       this.feature('unions', node);
       return node;
     }
 
-    // IntersectionType : UnaryType (`&` IntersectionType)?
+    // IntersectionType : NullableType (`&` NullableType)*
     parseIntersection() {
       const first = this.parseNullable();
       // `&` followed by something that cannot start a type belongs to a
       // callable parameter (`Type &$name`), not to an intersection.
-      if (!(this.is('T_AMP') && this.canStartType(this.peek()))) return first;
+      const more = () => this.is('T_AMPERSAND') && this.canStartNullable(this.peek());
+      if (!more()) return first;
       const items = [first];
-      while (this.is('T_AMP') && this.canStartType(this.peek())) {
+      while (more()) {
         this.next();
         items.push(this.parseNullable());
       }
-      const node = this.node('intersection', first.start, items[items.length - 1].end, { children: items });
+      const node = this.node('intersection', first.start, items[items.length - 1].end, null, items);
       this.feature('intersections', node);
       return node;
     }
 
-    canStartType(t) {
-      t = t || this.tok;
-      switch (t.type) {
-        case 'T_NAME': case 'T_NS_DELIMITER': case 'T_NULLABLE': case 'T_PARENTHESIS_OPEN':
-        case 'T_ASTERISK': case 'T_FLOAT_LITERAL': case 'T_SINGLE_QUOTED_STRING': case 'T_DOUBLE_QUOTED_STRING':
-        case 'T_BIN_INT_LITERAL': case 'T_HEX_INT_LITERAL': case 'T_OCT_INT_LITERAL': case 'T_DEC_INT_LITERAL':
-          return true;
-        case 'T_VARIABLE':
-          return t.value === '$this';
-        default:
-          return false;
-      }
-    }
-
-    // NullableType : `?`? PostfixType
+    // NullableType : `?` ListTypeOrOffsetAccess | ListTypeOrOffsetAccess
     parseNullable() {
-      const q = this.accept('T_NULLABLE');
-      if (!q) return this.parsePostfix();
-      if (!this.canStartType()) {
-        throw this.unexpected('a nullable type must carry the type it makes nullable, for example "?T"');
-      }
-      const inner = this.parsePostfix();
-      return this.node('nullable', q.start, inner.end, { children: [inner] });
+      const q = this.accept('T_QUESTION');
+      if (!q) return this.parseSuffixed();
+      const inner = this.parseSuffixed();
+      const node = this.node('nullable', q.start, inner.end, null, [inner]);
+      this.feature('nullables', node);
+      return node;
     }
 
-    // PostfixType : PrimaryType TypeSuffix*
-    parsePostfix() {
-      let type = this.parsePrimary();
-      while (this.is('T_SQUARE_BRACKET_OPEN')) {
-        const open = this.next();
-        if (this.accept('T_SQUARE_BRACKET_CLOSE')) {
-          type = this.node('list', type.start, open.end + 1, { children: [type] });
+    // ListTypeOrOffsetAccess : Atom (`[` `]` | `[` Type `]`)*
+    parseSuffixed() {
+      let type = this.parseAtom();
+      while (this.is('T_BRACKET_OPEN')) {
+        this.next();
+        if (this.is('T_BRACKET_CLOSE')) {
+          const close = this.next();
+          type = this.node('list', type.start, close.end, null, [type]);
           this.feature('lists', type);
           continue;
         }
-        if (!this.canStartType()) {
-          throw this.unexpected('a list type must be closed with a bracket "]", for example "T[]"');
-        }
+        if (!this.canStartType()) throw this.malformed('A type or "]" is expected after "["');
         const key = this.parseType();
-        const close = this.expect('T_SQUARE_BRACKET_CLOSE', 'a type offset must be closed with a bracket "]", for example "T[K]"');
-        type = this.node('offset', type.start, close.end, { children: [type, key], subject: type, key });
+        const close = this.expect('T_BRACKET_CLOSE', 'The offset is not closed properly, "]" expected');
+        type = this.node('offset', type.start, close.end, { subject: type, key }, [type, key]);
         this.feature('offsets', type);
       }
       return type;
     }
 
-    // PrimaryType : `(` Type `)` | ThisVariable | LiteralType | CallableType | NamedType
-    parsePrimary() {
+    // Atom : Literal | NamedType | ThisType | ConstMaskType | Group
+    parseAtom() {
       const t = this.tok;
 
-      if (t.type === 'T_PARENTHESIS_OPEN') {
+      if (t.type === 'T_PAREN_OPEN') {
         this.next();
+        if (!this.canStartType()) throw this.malformed('A type is expected after "("');
         const inner = this.parseType();
-        this.expect('T_PARENTHESIS_CLOSE', 'a group must be closed with a parenthesis ")", for example "(T|U)"');
+        this.expect('T_PAREN_CLOSE', 'The group is not closed properly, ")" expected');
         return inner;
       }
 
-      if (t.type === 'T_VARIABLE') {
-        if (t.value === '$this') { this.next(); return this.node('this', t.start, t.end); }
-        throw this.unexpected('a variable can only be the subject of a conditional type, for example "$var is T ? A : B"');
+      if (t.type === 'T_THIS') {
+        this.next();
+        return this.node('this', t.start, t.end);
       }
 
       if (LITERAL_TOKENS.has(t.type)) {
         this.next();
-        const kind = STRING_TOKENS.has(t.type) ? 'string' : t.type === 'T_FLOAT_LITERAL' ? 'float' : 'int';
-        const node = this.node(kind, t.start, t.end, { value: t.value });
-        this.feature('literals', node);
-        return node;
+        return this.literal(t, true);
       }
 
-      if (t.type === 'T_ASTERISK') {
-        // LeadingMask : `*` Identifier MaskTail?
-        this.next();
-        if (!this.is('T_NAME')) {
-          throw this.unexpected('a constant mask must carry a name next to the asterisk, for example "*_SUFFIX"', t);
-        }
-        const end = this.parseMaskTail();
-        return this.node('mask', t.start, end, { value: this.source.slice(t.start, end) });
-      }
+      if (t.type === 'T_IDENTIFIER_MASK') return this.mask(t.start);
 
-      if (t.type === 'T_NAME' || t.type === 'T_NS_DELIMITER') {
+      if (t.type === 'T_IDENTIFIER' || t.type === 'T_VIRTUAL_NAME' || t.type === 'T_NS_DELIMITER') {
         return this.parseNamed();
       }
 
-      throw this.unexpected('a type expected');
+      throw this.unexpected();
     }
 
-    // Name : FullyQualifiedName | RelativeName
+    literal(t, check) {
+      const kind = STRING_TOKENS.has(t.type) ? 'string' : t.type === 'T_FLOAT' ? 'float' : 'int';
+      const node = this.node(kind, t.start, t.end, { value: t.value });
+      if (check) this.feature('literals', node);
+      return node;
+    }
+
+    // PHP_*, \PHP_*, Foo\BAR_*, Foo\*, \*  (the namespace is consumed already)
+    mask(start) {
+      const t = this.next();
+      const node = this.node('mask', start, t.end, { value: this.text(start, t.end) });
+      this.feature('masks', node);
+      return node;
+    }
+
+    isMaskToken(t) { return t.type === 'T_IDENTIFIER_MASK' || t.type === 'T_WILDCARD'; }
+
+    // Name : Namespace Word | VirtualName | Word. A hyphenated name stands alone
     parseName() {
       const start = this.tok.start;
       const parts = [];
       let fq = false;
-      if (this.accept('T_NS_DELIMITER')) fq = true;
-      if (!this.is('T_NAME')) {
-        throw this.unexpected('a name must follow the namespace delimiter "\\", for example "\\Foo\\Bar"');
+      if (this.is('T_VIRTUAL_NAME')) {
+        const t = this.next();
+        return { start, end: t.end, parts: [t.value], fq, text: t.value };
       }
+      if (this.accept('T_NS_DELIMITER')) fq = true;
+      if (!this.is('T_IDENTIFIER') || (fq && !this.adjacent(this.prev(), this.tok))) throw this.unexpected();
       parts.push(this.next().value);
-      let end = this.tokens[this.i - 1].end;
-      while (this.is('T_NS_DELIMITER') && this.peek().type === 'T_NAME') {
+      while (this.is('T_NS_DELIMITER') && this.adjacent(this.prev(), this.tok)
+        && this.peek().type === 'T_IDENTIFIER' && this.adjacent(this.tok, this.peek())) {
         this.next();
         parts.push(this.next().value);
-        end = this.tokens[this.i - 1].end;
       }
-      return { start, end, parts, fq, text: (fq ? '\\' : '') + parts.join('\\') };
+      return { start, end: this.prev().end, parts, fq, text: (fq ? '\\' : '') + parts.join('\\') };
     }
 
-    // MaskTail : Wildcard (Identifier Wildcard)* Identifier?   (the leading `*` already consumed, or not)
-    // Returns the end offset. Accepts an optional leading identifier already consumed by the caller.
-    parseMaskTail() {
-      let end = this.tokens[this.i - 1].end;
-      let expectName = this.is('T_NAME');
-      for (;;) {
-        if (expectName) {
-          if (this.is('T_NAME')) { end = this.next().end; }
-          else break;
-          expectName = false;
-        } else if (this.is('T_ASTERISK')) {
-          end = this.next().end;
-          expectName = true;
-        } else break;
-      }
-      return end;
-    }
-
+    // NamedType : Name (`::` ConstantMask | TemplateParameters CallableSignature | TemplateArguments
+    //                   | ShapeFields | CallableSignature)?
     parseNamed() {
+      // \PHP_*, \*
+      if (this.is('T_NS_DELIMITER') && this.isMaskToken(this.peek()) && this.adjacent(this.tok, this.peek())) {
+        const start = this.next().start;
+        return this.mask(start);
+      }
+
+      // null, true, false
+      const lower = this.tok.value.toLowerCase();
+      if (this.tok.type === 'T_IDENTIFIER' && (lower === 'true' || lower === 'false' || lower === 'null')
+        && this.wordAt(0)) {
+        const t = this.next();
+        const node = this.node(lower === 'null' ? 'null' : 'bool', t.start, t.end, { value: t.value });
+        this.feature('literals', node);
+        return node;
+      }
+
       const name = this.parseName();
-      const lower = name.text.toLowerCase();
 
-      // Reserved literals
-      if (!name.fq && name.parts.length === 1) {
-        if (lower === 'true' || lower === 'false') {
-          const node = this.node('bool', name.start, name.end, { value: name.text });
-          this.feature('literals', node);
-          return node;
-        }
-        if (lower === 'null') {
-          const node = this.node('null', name.start, name.end, { value: name.text });
-          this.feature('literals', node);
-          return node;
-        }
+      // Foo\BAR_*, Foo\*
+      if (this.is('T_NS_DELIMITER') && this.adjacent(this.prev(), this.tok) && this.prev().type !== 'T_VIRTUAL_NAME'
+        && this.isMaskToken(this.peek()) && this.adjacent(this.tok, this.peek())) {
+        this.next();
+        return this.mask(name.start);
       }
 
-      // GlobalConstantMask : Name MaskTail | Name `\` MaskTail
-      if (this.is('T_ASTERISK') || (this.is('T_NS_DELIMITER') && this.peek().type === 'T_ASTERISK')) {
-        if (this.is('T_NS_DELIMITER')) this.next();
-        const end = this.parseMaskTail();
-        return this.node('mask', name.start, end, { value: this.source.slice(name.start, end) });
-      }
-
-      // ClassConstant / ClassConstantMask : Name `::` ...
+      // Foo::BAR, Foo::BAR_*, Foo::*
       if (this.is('T_DOUBLE_COLON')) {
         this.next();
-        if (this.is('T_ASTERISK')) {
-          const end = this.parseMaskTail();
-          return this.node('classMask', name.start, end, { value: this.source.slice(name.start, end) });
+        if (this.isMaskToken(this.tok)) {
+          const t = this.next();
+          const node = this.node('classMask', name.start, t.end, { value: this.text(name.start, t.end) });
+          this.feature('masks', node);
+          return node;
         }
-        if (!this.is('T_NAME')) {
-          throw this.unexpected('a class constant must carry a name after the double colon, for example "Some::CONST"');
-        }
+        if (!this.is('T_IDENTIFIER')) throw this.unexpected();
         const id = this.next();
-        if (this.is('T_ASTERISK')) {
-          const end = this.parseMaskTail();
-          return this.node('classMask', name.start, end, { value: this.source.slice(name.start, end) });
-        }
-        return this.node('const', name.start, id.end, { value: this.source.slice(name.start, id.end), class: name.text, constant: id.value });
+        const node = this.node('const', name.start, id.end,
+          { value: this.text(name.start, id.end), class: name.text, constant: id.value });
+        this.feature('constants', node);
+        return node;
       }
 
-      // CallableType : Name TemplateParameters? `(` CallableParameters? `)` CallableReturnType?
-      if (this.is('T_ANGLE_BRACKET_OPEN')) {
-        const saved = this.i;
-        let tparams = null;
+      // Foo<T of U>(T): T
+      if (this.is('T_ANGLE_OPEN')) {
+        const m = this.mark();
         try {
-          tparams = this.parseTemplateParameters();
-          if (!this.is('T_PARENTHESIS_OPEN')) throw new ParseError('backtrack', 0, 0);
+          const tparams = this.parseTemplateParameters();
+          if (this.is('T_PAREN_OPEN')) return this.parseCallable(name, tparams);
         } catch (e) {
           if (!(e instanceof ParseError)) throw e;
-          this.i = saved;
-          tparams = null;
         }
-        if (tparams) return this.parseCallable(name, tparams);
-      }
-      if (this.is('T_PARENTHESIS_OPEN')) {
-        return this.parseCallable(name, null);
+        this.reset(m);
       }
 
-      const node = this.node('named', name.start, name.end, { name: name.text });
+      // Foo(int): void
+      if (this.is('T_PAREN_OPEN')) return this.parseCallable(name, null);
 
-      // NamedType : Name (TemplateArguments | ShapeFields)?
-      if (this.is('T_ANGLE_BRACKET_OPEN')) {
-        const args = this.parseTemplateArguments();
-        node.end = args.end;
-        node.args = args;
-        node.children = args.children;
-        this.feature('generics', node);
-        for (const a of args.children) if (a.hint) this.feature('hints', node);
+      const node = this.node('type', name.start, name.end, { name: name.text });
+
+      if (this.is('T_ANGLE_OPEN')) {
+        // Foo<T>
+        node.args = this.parseTemplateArguments();
+        node.end = node.args.end;
+        node.children.push(node.args);
       } else if (this.is('T_BRACE_OPEN')) {
-        const fields = this.parseShapeFields();
-        node.end = fields.end;
-        node.fields = fields;
-        node.children = fields.children;
-        this.feature('shapes', node);
+        // Foo{...}
+        node.fields = this.parseShapeFields();
+        node.end = node.fields.end;
+        node.children.push(node.fields);
       }
       return node;
     }
 
     // TemplateArguments : `<` TemplateArgument (`,` TemplateArgument)* `,`? `>`
     parseTemplateArguments() {
-      const open = this.expect('T_ANGLE_BRACKET_OPEN');
+      const open = this.expect('T_ANGLE_OPEN');
       const args = [];
-      if (this.is('T_ANGLE_BRACKET_CLOSE') || this.is('T_EOI')) {
-        throw this.unexpected('an argument list must carry at least one argument');
-      }
-      for (;;) {
+      if (!this.canStartArgument()) throw this.malformed('A template argument is expected after "<"');
+      args.push(this.parseTemplateArgument());
+      while (this.accept('T_COMMA')) {
+        if (this.is('T_ANGLE_CLOSE')) break;
         args.push(this.parseTemplateArgument());
-        if (this.accept('T_COMMA')) {
-          if (this.is('T_ANGLE_BRACKET_CLOSE')) break; // trailing comma
-          continue;
-        }
-        break;
       }
-      const close = this.expect('T_ANGLE_BRACKET_CLOSE', 'an argument list must be closed with a bracket ">"');
-      return { start: open.start, end: close.end, children: args };
+      const close = this.expect('T_ANGLE_CLOSE', 'Invalid template arguments, "," or ">" is expected');
+      const node = this.node('args', open.start, close.end, null, args);
+      this.feature('generics', node);
+      return node;
     }
 
-    // TemplateArgument : TemplateArgumentHint | TemplateArgumentValue
+    canStartArgument() {
+      return this.canStartType() || this.is('T_WILDCARD');
+    }
+
+    // TemplateArgument : `*` | Variance Type | Type
     parseTemplateArgument() {
       const start = this.tok.start;
-      let hint = null;
-      if (this.is('T_NAME') && this.canStartType(this.peek()) && this.peek().value !== 'is'
-          && this.peek().type !== 'T_NS_DELIMITER') {
-        hint = this.next().value;
-      }
-      let value;
-      if (this.is('T_ASTERISK')) {
+      if (this.is('T_WILDCARD')) {
         const t = this.next();
-        value = this.node('wildcard', t.start, t.end);
-      } else {
-        if (!this.canStartType()) throw this.unexpected('an argument list must carry a type as its argument');
-        value = hint ? this.parseType() : this.parseLogical();
+        const node = this.node('wildcard', t.start, t.end);
+        this.feature('wildcards', node);
+        return node;
       }
-      return this.node('arg', start, value.end, { hint, value, children: [value], label: hint ? `arg · ${hint}` : 'arg' });
+      let variance = null;
+      if (this.tok.type === 'T_IDENTIFIER' && VARIANCES.has(this.tok.value) && this.wordAt(0)
+        && this.canStartType(this.peek())) {
+        variance = this.next().value;
+      }
+      const type = this.parseType();
+      const node = this.node('arg', start, type.end, { variance, value: type }, [type]);
+      node.label = variance ? `arg · ${variance}` : 'arg';
+      if (variance) this.feature('hints', node);
+      return node;
     }
 
-    // ShapeFields : `{` ShapeBody? `,`? `}`
+    // ShapeFields : `{` (ShapeFieldList ShapeTail? | ShapeUnsealed)? `}`
     parseShapeFields() {
       const open = this.expect('T_BRACE_OPEN');
-      const fields = [];
-      let unsealed = null;
-      this.accept('T_COMMA'); // ShapeFields : `{` ShapeBody? `,`? `}`
+      const items = [];
+      let unsealed = false, args = null;
 
-      while (!this.is('T_BRACE_CLOSE')) {
-        if (this.is('T_EOI')) throw this.unexpected('a shape must be closed with a brace "}"');
-        if (this.is('T_ELLIPSIS')) {
-          const dots = this.next();
-          let end = dots.end, args = null;
-          if (this.is('T_ANGLE_BRACKET_OPEN')) { args = this.parseTemplateArguments(); end = args.end; }
-          unsealed = this.node('unsealed', dots.start, end, { children: args ? args.children : [], label: '...' });
-          this.accept('T_COMMA');
-          if (!this.is('T_BRACE_CLOSE')) {
-            throw this.unexpected('an unsealed shape marker "..." must be the last field of the shape');
-          }
-          break;
-        }
-        const field = this.parseShapeField();
-        // Fields are read as written: explicit and implicit ones may stand
-        // together, and a key may repeat — "array{int, a: string, a: bool}"
-        fields.push(field);
-        if (!this.accept('T_COMMA')) {
-          if (!this.is('T_BRACE_CLOSE')) throw this.unexpected('a shape must be closed with a brace "}"');
+      const readUnsealed = () => {
+        this.next();
+        unsealed = true;
+        if (this.is('T_ANGLE_OPEN')) args = this.parseTemplateArguments();
+        this.accept('T_COMMA');
+      };
+
+      if (this.is('T_ELLIPSIS')) {
+        readUnsealed();
+      } else if (!this.is('T_BRACE_CLOSE')) {
+        items.push(this.parseShapeField());
+        while (this.accept('T_COMMA')) {
+          if (this.is('T_BRACE_CLOSE')) break;
+          if (this.is('T_ELLIPSIS')) { readUnsealed(); break; }
+          items.push(this.parseShapeField());
         }
       }
-      const close = this.next();
-      const children = unsealed ? [...fields, unsealed] : fields;
-      return { start: open.start, end: close.end, children, fields, unsealed };
+      const close = this.expect('T_BRACE_CLOSE', 'Invalid shape, a field, "," or "}" is expected');
+
+      // The arguments of "..." sit inside the braces, so they are drawn as a part of the list
+      const node = this.node('fields', open.start, close.end, { sealed: !unsealed, items, args },
+        args ? [...items, args] : items);
+      node.label = unsealed ? 'fields · unsealed' : 'fields';
+      this.feature('shapes', node);
+      return node;
     }
 
-    // ShapeField : ExplicitField | ImplicitField
+    // ShapeField : ShapeKey `?`? `:` Type | Type
     parseShapeField() {
       const start = this.tok.start;
-      const saved = this.i;
+      const m = this.mark();
       const key = this.tryParseShapeKey();
       if (key) {
-        const optional = !!this.accept('T_NULLABLE');
+        const optional = !!this.accept('T_QUESTION');
         if (this.accept('T_COLON')) {
-          if (!this.canStartType()) throw this.unexpected('a shape field must carry a type after the colon ":", for example "array{key: T}"');
+          if (!this.canStartType()) throw this.malformed('A type is expected after ":"');
           const value = this.parseType();
-          return this.node('field', start, value.end, {
-            key, optional, value, children: [value],
-            keyText: key.norm, keyName: key.name, label: optional ? 'field?' : 'field',
-          });
+          const kind = key.kind === 'ident' ? 'field' : key.kind === 'const' ? 'cfield' : 'sfield';
+          const node = this.node(kind, start, value.end, { key, optional, value }, [key, value]);
+          node.label = optional ? 'field?' : 'field';
+          return node;
         }
-        this.i = saved;
+        this.reset(m);
       }
-      if (!this.canStartType()) throw this.unexpected('a shape field must carry a type, for example "array{T}"');
       const value = this.parseType();
-      return this.node('implicit', start, value.end, { value, children: [value], label: 'field' });
+      return this.node('implicit', start, value.end, { value }, [value]);
     }
 
-    // ShapeKey : Identifier | IntLiteral | StringLiteral | ConstantMask | ClassConstant
+    // ShapeKey : Name `::` Identifier | Name | IntLiteral | StringLiteral
     tryParseShapeKey() {
       const t = this.tok;
-      if (INT_TOKENS.has(t.type)) { this.next(); return { start: t.start, end: t.end, name: t.value, raw: t.value, norm: 'i:' + t.value }; }
-      if (STRING_TOKENS.has(t.type)) { const v = t.value.slice(1, -1); this.next(); return { start: t.start, end: t.end, name: v, raw: t.value, norm: (/^\d+$/.test(v) ? 'i:' : 's:') + v }; }
-      if (t.type === 'T_NAME' || t.type === 'T_NS_DELIMITER' || t.type === 'T_ASTERISK') {
-        try {
-          const saved = this.i;
-          if (t.type === 'T_ASTERISK') {
-            this.next();
-            if (!this.is('T_NAME')) { this.i = saved; return null; }
-            const end = this.parseMaskTail();
-            const text = this.source.slice(t.start, end); return { start: t.start, end, name: text, raw: text, norm: 'm:' + text };
-          }
-          const name = this.parseName();
-          let end = name.end;
-          if (this.is('T_DOUBLE_COLON')) {
-            this.next();
-            if (this.is('T_NAME')) end = this.next().end;
-            if (this.is('T_ASTERISK')) end = this.parseMaskTail();
-          } else if (this.is('T_ASTERISK')) {
-            end = this.parseMaskTail();
-          } else if (name.parts.length > 1 || name.fq) {
-            return null;
-          }
-          const text = this.source.slice(t.start, end);
-          return { start: t.start, end, name: text, raw: text, norm: 's:' + text };
-        } catch (e) {
-          if (!(e instanceof ParseError)) throw e;
-          return null;
-        }
+      if (INT_TOKENS.has(t.type) || STRING_TOKENS.has(t.type)) {
+        this.next();
+        return this.literal(t, false);
       }
-      return null;
+      if (t.type !== 'T_IDENTIFIER' && t.type !== 'T_VIRTUAL_NAME' && t.type !== 'T_NS_DELIMITER') return null;
+      const m = this.mark();
+      try {
+        const name = this.parseName();
+        if (this.is('T_DOUBLE_COLON') && this.peek().type === 'T_IDENTIFIER') {
+          this.next();
+          const id = this.next();
+          return this.node('const', name.start, id.end,
+            { value: this.text(name.start, id.end), class: name.text, constant: id.value });
+        }
+        return this.node('ident', name.start, name.end, { value: name.text });
+      } catch (e) {
+        if (!(e instanceof ParseError)) throw e;
+        this.reset(m);
+        return null;
+      }
     }
 
     // TemplateParameters : `<` TemplateParameter (`,` TemplateParameter)* `,`? `>`
     parseTemplateParameters() {
-      const open = this.expect('T_ANGLE_BRACKET_OPEN');
+      const open = this.expect('T_ANGLE_OPEN');
       const params = [];
-      if (this.is('T_ANGLE_BRACKET_CLOSE')) throw this.unexpected('a template parameter list must carry at least one parameter');
-      for (;;) {
+      if (!this.is('T_IDENTIFIER')) throw this.malformed('A template argument is expected after "<"');
+      params.push(this.parseTemplateParameter());
+      while (this.accept('T_COMMA')) {
+        if (this.is('T_ANGLE_CLOSE')) break;
         params.push(this.parseTemplateParameter());
-        if (this.accept('T_COMMA')) {
-          if (this.is('T_ANGLE_BRACKET_CLOSE')) break;
-          continue;
-        }
-        break;
       }
-      const close = this.expect('T_ANGLE_BRACKET_CLOSE', 'a template parameter list must be closed with a bracket ">"');
-      return { start: open.start, end: close.end, children: params };
+      const close = this.expect('T_ANGLE_CLOSE', 'Invalid template arguments, "," or ">" is expected');
+      const node = this.node('tparams', open.start, close.end, null, params);
+      node.label = 'templates';
+      this.feature('templates', node);
+      return node;
     }
 
-    // TemplateParameter : Identifier TemplateBound* TemplateDefault?
+    // TemplateParameter : Variance? Identifier TemplateUpperBound? TemplateLowerBound? (`=` Type)?
     parseTemplateParameter() {
-      const id = this.expect('T_NAME', 'a template parameter must carry a name');
-      const node = this.node('tparam', id.start, id.end, { name: id.value, upper: null, lower: null, default: null });
-      for (;;) {
-        if (this.isName('of') || this.isName('as')) {
-          const kw = this.next();
-          node.upperKeyword = kw.value;
-          if (node.upper) throw this.semantic('Template parameter cannot have more than one upper bound', { start: kw.start, end: kw.end }, 'TemplateBoundException');
-          node.upper = this.parseType();
-          node.children.push(node.upper);
-          node.end = node.upper.end;
-        } else if (this.isName('super')) {
-          const kw = this.next();
-          if (node.lower) throw this.semantic('Template parameter cannot have more than one lower bound', { start: kw.start, end: kw.end }, 'TemplateBoundException');
-          node.lower = this.parseType();
-          node.children.push(node.lower);
-          node.end = node.lower.end;
-        } else break;
+      const start = this.tok.start;
+      let variance = null;
+      if (VARIANCES.has(this.tok.value) && this.wordAt(0) && this.peek().type === 'T_IDENTIFIER') {
+        variance = this.next().value;
       }
+      const id = this.expect('T_IDENTIFIER');
+      const node = this.node('tparam', start, id.end, { name: id.value, variance, upper: null, lower: null, default: null });
+      node.label = variance ? `template · ${variance}` : 'template';
+      const bound = () => {
+        const k = this.next();
+        const type = this.parseType();
+        const b = this.node('bound', k.start, type.end, { type }, [type]);
+        b.label = k.value;
+        node.children.push(b);
+        node.end = b.end;
+        return b;
+      };
+      if (this.isWord('of') || this.isWord('as')) node.upper = bound();
+      if (this.isWord('super')) node.lower = bound();
       if (this.accept('T_ASSIGN')) {
         node.default = this.parseType();
         node.children.push(node.default);
@@ -635,46 +643,102 @@
       return node;
     }
 
-    // CallableType : Name TemplateParameters? `(` CallableParameters? `)` CallableReturnType?
+    // CallableType : Name TemplateParameters? CallableParameters (`:` NullableType)?
     parseCallable(name, tparams) {
-      this.expect('T_PARENTHESIS_OPEN');
+      const open = this.expect('T_PAREN_OPEN');
       const params = [];
-      while (!this.is('T_PARENTHESIS_CLOSE')) {
-        if (!this.canStartType()) {
-          throw this.unexpected('a parameter list must be closed with a bracket ")"');
-        }
+      if (!this.is('T_PAREN_CLOSE')) {
         params.push(this.parseCallableParameter());
-        if (!this.accept('T_COMMA')) break;
+        while (this.accept('T_COMMA')) {
+          if (this.is('T_PAREN_CLOSE')) break;
+          params.push(this.parseCallableParameter());
+        }
       }
-      const close = this.expect('T_PARENTHESIS_CLOSE', 'a parameter list must be closed with a bracket ")"');
-      let ret = null, end = close.end;
+      const close = this.expect('T_PAREN_CLOSE', 'Invalid callable parameters, a parameter, "," or ")" is expected');
+      const list = this.node('params', open.start, close.end, null, params);
+      this.feature('callables', list);
+
+      let returns = null, end = close.end;
       if (this.accept('T_COLON')) {
-        if (!this.canStartType()) throw this.unexpected('a callable must carry a return type after the colon ":", for example "callable(): T"');
-        // CallableReturnType : `:` UnaryType — a union, an intersection or a
-        // condition behind it belongs to the type the callable is a part of
-        ret = this.parseNullable();
-        end = ret.end;
+        returns = this.parseNullable();
+        end = returns.end;
       }
-      const children = [...(tparams ? tparams.children : []), ...params, ...(ret ? [ret] : [])];
-      const node = this.node('callable', name.start, end, { name: name.text, tparams, params, returns: ret, children });
-      this.feature('callables', node);
-      if (tparams) this.feature('generics', node, 'templateParameters');
+      const children = [...(tparams ? [tparams] : []), list, ...(returns ? [returns] : [])];
+      return this.node('callable', name.start, end, { name: name.text, tparams, params: list, returns }, children);
+    }
+
+    // CallableParameter : Type `&`? (`...` Variable? | Variable? Default?) | `...` Type | `&`? (`...` Variable | Variable Default?)
+    parseCallableParameter() {
+      const start = this.tok.start;
+      const node = this.node('param', start, start, { type: null, name: null, byRef: false, variadic: false, default: null });
+      const add = (child) => { node.children.push(child); node.end = child.end; };
+      const mark = (t) => { node.end = t.end; };
+
+      if (this.is('T_ELLIPSIS') && this.peek().type !== 'T_VARIABLE') {
+        // ...int
+        mark(this.next());
+        node.variadic = true;
+        node.type = this.parseType();
+        add(node.type);
+        return node;
+      }
+
+      // "$a" alone is a name of a parameter, "$a is T ? A : B" is its type
+      const bareVariable = this.is('T_VARIABLE') && !this.wordAt(1, 'is') && this.peek().type !== 'T_IS_NOT';
+      if (!this.is('T_ELLIPSIS') && !this.is('T_AMPERSAND') && !bareVariable) {
+        node.type = this.parseType();
+        add(node.type);
+        if (this.is('T_AMPERSAND')) { mark(this.next()); node.byRef = true; }
+      } else if (this.is('T_AMPERSAND')) {
+        mark(this.next());
+        node.byRef = true;
+      }
+
+      if (this.is('T_ELLIPSIS')) {
+        mark(this.next());
+        node.variadic = true;
+        if (this.is('T_VARIABLE')) { node.name = this.parseVariable(); add(node.name); }
+        else if (!node.type) throw this.unexpected();
+        return node;
+      }
+
+      if (this.is('T_VARIABLE')) { node.name = this.parseVariable(); add(node.name); }
+      else if (!node.type) throw this.unexpected();
+
+      if (this.is('T_ASSIGN')) {
+        const eq = this.next();
+        const def = this.node('default', eq.start, eq.end, { value: null });
+        if (LITERAL_TOKENS.has(this.tok.type)) {
+          def.value = this.literal(this.next(), true);
+        } else if (this.is('T_IDENTIFIER') || this.is('T_VIRTUAL_NAME') || this.is('T_NS_DELIMITER')) {
+          def.value = this.parseDefaultConstant();
+        }
+        if (def.value) { def.children.push(def.value); def.end = def.value.end; }
+        this.feature('defaults', def);
+        node.default = def;
+        add(def);
+      }
       return node;
     }
 
-    // CallableParameter : Type `&`? `...`? Variable? `=`?
-    parseCallableParameter() {
-      const type = this.parseType();
-      const node = this.node('param', type.start, type.end, { type, children: [type], byRef: false, variadic: false, name: null, optional: false });
-      let t;
-      if ((t = this.accept('T_AMP'))) { node.byRef = true; node.end = t.end; }
-      if ((t = this.accept('T_ELLIPSIS'))) { node.variadic = true; node.end = t.end; }
-      if (this.is('T_VARIABLE')) { t = this.next(); node.name = t.value; node.end = t.end; }
-      if ((t = this.accept('T_ASSIGN'))) {
-        node.optional = true; node.end = t.end;
-        if (node.variadic) throw this.semantic('Cannot have variadic param with a default', node, 'VariadicWithDefaultException');
+    // CallableConstant : null | true | false | FOO | \PHP_EOL | Foo::BAR
+    parseDefaultConstant() {
+      const lower = this.tok.value.toLowerCase();
+      if (this.tok.type === 'T_IDENTIFIER' && (lower === 'true' || lower === 'false' || lower === 'null')
+        && this.wordAt(0)) {
+        const t = this.next();
+        const node = this.node(lower === 'null' ? 'null' : 'bool', t.start, t.end, { value: t.value });
+        this.feature('literals', node);
+        return node;
       }
-      return node;
+      const name = this.parseName();
+      if (this.accept('T_DOUBLE_COLON')) {
+        if (!this.is('T_IDENTIFIER')) throw this.unexpected();
+        const id = this.next();
+        return this.node('const', name.start, id.end,
+          { value: this.text(name.start, id.end), class: name.text, constant: id.value });
+      }
+      return this.node('type', name.start, name.end, { name: name.text });
     }
   }
 
@@ -698,65 +762,89 @@
     const indent = (opts && opts.indent) || '    ';
     const nl = (opts && opts.newLine) || '\n';
 
-    const wrap = (child, parentKind) => {
-      const s = go(child, 0);
-      const needs = (child.kind === 'union' || child.kind === 'intersection' || child.kind === 'cond')
-        && (parentKind === 'nullable' || parentKind === 'list' || parentKind === 'offset' || parentKind === 'intersection'
-          || parentKind === 'callable'
-          || (parentKind === 'union' && child.kind === 'cond'));
-      return needs ? `(${s})` : s;
+    // Whether a child needs parentheses to stay what it is inside its parent
+    const needs = (child, parent) => {
+      switch (child.kind) {
+        case 'union': case 'intersection':
+          // The members of a flat list of the same kind are not wrapped
+          return ['nullable', 'list', 'offset', 'callable'].includes(parent) || (parent !== child.kind
+            && (parent === 'union' || parent === 'intersection'));
+        case 'nullable':
+          return ['nullable', 'list', 'offset'].includes(parent);
+        case 'callable':
+          return child.returns !== null && ['union', 'intersection', 'list', 'offset'].includes(parent);
+        default:
+          return false;
+      }
+    };
+    const wrap = (child, parent, depth) => {
+      const s = go(child, depth || 0);
+      return needs(child, parent) ? `(${s})` : s;
     };
 
     const go = (n, depth) => {
       const pad = indent.repeat(depth);
       switch (n.kind) {
-        case 'named': {
+        case 'type': {
           let s = n.name;
-          if (n.args) s += `<${n.args.children.map(a => go(a, depth)).join(', ')}>`;
-          if (n.fields) {
-            const items = n.fields.children.map(f => go(f, depth + 1));
-            if (items.length === 0) s += '{}';
-            else if (items.length === 1) s += `{${items[0]}}`;
-            else s += `{${nl}${items.map(i => pad + indent + i).join(',' + nl)}${nl}${pad}}`;
-          }
+          if (n.args) s += go(n.args, depth);
+          if (n.fields) s += go(n.fields, depth);
           return s;
         }
-        case 'arg': return (n.hint ? n.hint + ' ' : '') + go(n.value, depth);
+        case 'args': return `<${n.children.map(a => go(a, depth)).join(', ')}>`;
+        case 'arg': return (n.variance ? n.variance + ' ' : '') + go(n.value, depth);
         case 'wildcard': return '*';
-        case 'field': return `${n.key.raw}${n.optional ? '?' : ''}: ${go(n.value, depth)}`;
+        case 'fields': {
+          const items = n.items.map(f => go(f, depth + 1));
+          if (n.sealed === false) items.push('...' + (n.args ? go(n.args, depth) : ''));
+          if (items.length === 0) return '{}';
+          if (items.length === 1) return `{${items[0]}}`;
+          return `{${nl}${items.map(i => pad + indent + i).join(',' + nl)}${nl}${pad}}`;
+        }
+        case 'field': case 'sfield': case 'cfield':
+          return `${go(n.key, depth)}${n.optional ? '?' : ''}: ${go(n.value, depth)}`;
         case 'implicit': return go(n.value, depth);
-        case 'unsealed': return '...' + (n.children.length ? `<${n.children.map(a => go(a, depth)).join(', ')}>` : '');
-        case 'union': return n.children.map(c => wrap(c, 'union')).join('|');
-        case 'intersection': return n.children.map(c => wrap(c, 'intersection')).join('&');
-        case 'nullable': return '?' + wrap(n.children[0], 'nullable');
-        case 'list': return wrap(n.children[0], 'list') + '[]';
-        case 'offset': return wrap(n.subject, 'offset') + '[' + go(n.key, depth) + ']';
+        case 'ident': return n.value;
+        case 'union': case 'intersection': {
+          // Nested lists of the same kind are one list, a repeated member is printed once
+          const flat = (x) => (x.kind === n.kind ? x.children.flatMap(flat) : [x]);
+          const parts = [...new Set(flat(n).map(c => wrap(c, n.kind, depth)))];
+          return parts.length === 1 ? parts[0] : parts.join(n.kind === 'union' ? '|' : ' & ');
+        }
+        case 'nullable': return '?' + wrap(n.children[0], 'nullable', depth);
+        case 'list': return wrap(n.children[0], 'list', depth) + '[]';
+        case 'offset': return wrap(n.subject, 'offset', depth) + '[' + go(n.key, depth) + ']';
         case 'int': case 'float': case 'string': case 'bool': case 'null': case 'const': case 'classMask': case 'mask':
           return n.value;
         case 'this': return '$this';
         case 'var': return n.name;
-        case 'cond':
-          return `${go(n.subject, depth)} ${n.negated ? 'is not' : 'is'} ${go(n.operand, depth)} ? ${go(n.then, depth)} : ${go(n.else, depth)}`;
+        case 'cond': {
+          const t = n.test;
+          // A condition is always parenthesized, like the PHP printer does
+          return `(${go(t.subject, depth)} ${n.negated ? 'is not' : 'is'} ${go(t.operand, depth)}`
+            + ` ? ${go(n.then, depth)} : ${go(n.else, depth)})`;
+        }
         case 'callable': {
           let s = n.name;
           if (n.tparams) s += `<${n.tparams.children.map(p => go(p, depth)).join(', ')}>`;
-          s += `(${n.params.map(p => go(p, depth)).join(', ')})`;
-          if (n.returns) s += `: ${wrap(n.returns, 'callable')}`;
+          s += `(${n.params.children.map(p => go(p, depth)).join(', ')})`;
+          if (n.returns) s += `: ${wrap(n.returns, 'callable', depth)}`;
           return s;
         }
         case 'tparam': {
-          let s = n.name;
-          if (n.upper) s += ` ${n.upperKeyword} ${go(n.upper, depth)}`;
-          if (n.lower) s += ` super ${go(n.lower, depth)}`;
+          let s = (n.variance ? n.variance + ' ' : '') + n.name;
+          if (n.upper) s += ` ${n.upper.label} ${go(n.upper.type, depth)}`;
+          if (n.lower) s += ` super ${go(n.lower.type, depth)}`;
           if (n.default) s += ` = ${go(n.default, depth)}`;
           return s;
         }
         case 'param': {
-          let s = go(n.type, depth);
-          if (n.byRef) s += ' &';
-          if (n.variadic) s += (n.byRef ? '' : ' ') + '...';
-          if (n.name) s += (n.byRef || n.variadic ? '' : ' ') + n.name;
-          if (n.optional) s += '=';
+          let s = n.type ? go(n.type, depth) : '';
+          if (n.type && n.name) s += ' ';
+          if (n.byRef) s += '&';
+          if (n.variadic) s += '...';
+          if (n.name) s += n.name.name;
+          if (n.default) s += n.default.value ? ` = ${go(n.default.value, depth)}` : '=';
           return s;
         }
         default: return '?';
