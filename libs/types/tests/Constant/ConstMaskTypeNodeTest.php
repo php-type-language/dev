@@ -45,25 +45,6 @@ final class ConstMaskTypeNodeTest extends TestCase
         $node = new ConstMaskTypeNode(new NamespaceName('', NamespaceKind::FullyQualified), self::mask());
 
         self::assertTrue($node->owner instanceof NamespaceName && $node->owner->isRoot());
-        self::assertTrue($node->isFullyQualified());
-    }
-
-    #[Test]
-    public function aMaskIsNotFullyQualifiedByDefault(): void
-    {
-        self::assertFalse((new ConstMaskTypeNode(null, self::mask()))->isFullyQualified());
-    }
-
-    #[Test]
-    public function aNamespaceTellsWhetherTheMaskIsFullyQualified(): void
-    {
-        $relative = new ConstMaskTypeNode(new NamespaceName('Some\Any'), self::mask());
-        $current = new ConstMaskTypeNode(new NamespaceName('namespace\Some\Any'), self::mask());
-        $absolute = new ConstMaskTypeNode(new NamespaceName('Some\Any', NamespaceKind::FullyQualified), self::mask());
-
-        self::assertFalse($relative->isFullyQualified());
-        self::assertFalse($current->isFullyQualified());
-        self::assertTrue($absolute->isFullyQualified());
     }
 
     #[Test]
@@ -91,6 +72,5 @@ final class ConstMaskTypeNodeTest extends TestCase
 
         self::assertSame($class, $node->owner);
         self::assertSame([], $node->mask->getSegments());
-        self::assertTrue($node->isFullyQualified());
     }
 }

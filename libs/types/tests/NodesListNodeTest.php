@@ -36,7 +36,7 @@ final class NodesListNodeTest extends TestCase
         $list = $this->list();
 
         self::assertCount(0, $list);
-        self::assertSame([], $list->items);
+        self::assertSame([], $list->children);
     }
 
     #[Test]
@@ -51,8 +51,8 @@ final class NodesListNodeTest extends TestCase
         $list = new class ($generator) extends NodesListNode {};
 
         self::assertCount(2, $list);
-        self::assertEquals(new Name('A'), $list->items[0]);
-        self::assertEquals(new Name('B'), $list->items[1]);
+        self::assertEquals(new Name('A'), $list->children[0]);
+        self::assertEquals(new Name('B'), $list->children[1]);
     }
 
     #[Test]
@@ -63,7 +63,7 @@ final class NodesListNodeTest extends TestCase
 
         $list = new class ([7 => $a, 42 => $b]) extends NodesListNode {};
 
-        self::assertSame([$a, $b], $list->items);
+        self::assertSame([$a, $b], $list->children);
     }
 
     #[Test]
@@ -106,7 +106,7 @@ final class NodesListNodeTest extends TestCase
         $b = $this->node('B');
         $list = $this->list([$a]);
 
-        $list->items[] = $b;
+        $list->children[] = $b;
 
         self::assertSame($b, $list->last(), 'The $last property must be recalculated on each access');
     }
@@ -179,7 +179,7 @@ final class NodesListNodeTest extends TestCase
 
         $list[5] = $this->node('B');
 
-        self::assertSame([0, 1], \array_keys($list->items));
+        self::assertSame([0, 1], \array_keys($list->children));
     }
 
     #[Test]
@@ -206,7 +206,7 @@ final class NodesListNodeTest extends TestCase
         unset($list[1]);
 
         self::assertCount(2, $list);
-        self::assertSame([$a, $c], $list->items);
+        self::assertSame([$a, $c], $list->children);
     }
 
     #[Test]
@@ -217,7 +217,7 @@ final class NodesListNodeTest extends TestCase
 
         unset($list[42]);
 
-        self::assertSame([$a], $list->items);
+        self::assertSame([$a], $list->children);
     }
 
     #[Test]
@@ -307,6 +307,6 @@ final class NodesListNodeTest extends TestCase
 
         $list[5] = $b;
 
-        self::assertSame([$a, $b], $list->items);
+        self::assertSame([$a, $b], $list->children);
     }
 }

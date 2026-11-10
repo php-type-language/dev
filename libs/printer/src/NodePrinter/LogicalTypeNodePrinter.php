@@ -77,7 +77,7 @@ abstract class LogicalTypeNodePrinter implements NodePrinterInterface
      */
     private function unwrap(LogicalTypeNode $logical): iterable
     {
-        foreach ($logical->types as $type) {
+        foreach ($logical->children as $type) {
             if ($type instanceof $logical) {
                 yield from $this->unwrap($type);
             } else {

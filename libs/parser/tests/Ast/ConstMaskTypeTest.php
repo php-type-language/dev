@@ -10,6 +10,7 @@ use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\NamespaceName\NamespaceKind;
 
 /**
  * A mask of global constants, with a namespace or with none.
@@ -53,7 +54,7 @@ final class ConstMaskTypeTest extends TestCase
 
         self::assertInstanceOf(ConstMaskTypeNode::class, $type);
         self::assertSame($namespace, $type->owner?->toString());
-        self::assertSame($isFullyQualified, $type->isFullyQualified());
+        self::assertSame($isFullyQualified, $type->owner?->kind === NamespaceKind::FullyQualified);
         self::assertSame($mask, $type->mask->toString());
     }
 
@@ -64,7 +65,7 @@ final class ConstMaskTypeTest extends TestCase
         self::assertInstanceOf(ConstMaskTypeNode::class, $type);
         self::assertSame(
             [Identifier::class, WildcardMaskNode::class, Identifier::class, WildcardMaskNode::class],
-            \array_map(static fn(object $item): string => $item::class, $type->mask->items),
+            \array_map(static fn(object $item): string => $item::class, $type->mask->children),
         );
         self::assertSame(['A', 'B'], $type->mask->getSegmentsAsStrings());
     }
@@ -105,7 +106,7 @@ final class ConstMaskTypeTest extends TestCase
         self::assertSame($parts[0][1], $type->mask->offset);
         self::assertSame(
             $parts,
-            \array_map(static fn(object $item): array => [$item->toString(), $item->offset], $type->mask->items),
+            \array_map(static fn(object $item): array => [$item->toString(), $item->offset], $type->mask->children),
         );
     }
 

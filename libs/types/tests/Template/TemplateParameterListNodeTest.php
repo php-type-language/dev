@@ -40,7 +40,7 @@ final class TemplateParameterListNodeTest extends TestCase
 
             self::fail('The parameter must not be removed');
         } catch (\UnderflowException) {
-            self::assertSame([$parameter], $list->items);
+            self::assertSame([$parameter], $list->children);
         }
     }
 }

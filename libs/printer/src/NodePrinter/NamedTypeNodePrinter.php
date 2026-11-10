@@ -42,7 +42,7 @@ final class NamedTypeNodePrinter implements NodePrinterInterface
         $fields = static function () use ($node, $shape, $context): array {
             $result = [];
 
-            foreach ($shape->items as $field) {
+            foreach ($shape->children as $field) {
                 $result[] = $context->print($field);
             }
 
@@ -59,7 +59,7 @@ final class NamedTypeNodePrinter implements NodePrinterInterface
             return $result;
         };
 
-        $count = \count($shape->items);
+        $count = \count($shape->children);
         $maxInline = $context->options->maxInlineShapeFields;
 
         return '{' . $context->printItems($fields, $count, $maxInline) . '}';

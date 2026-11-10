@@ -73,14 +73,14 @@ final class NullableTypeTest extends TestCase
         $union = $this->parse('?A|B');
 
         self::assertInstanceOf(UnionTypeNode::class, $union);
-        self::assertInstanceOf(NullableTypeNode::class, $union->types[0]);
-        self::assertInstanceOf(NamedTypeNode::class, $union->types[1]);
+        self::assertInstanceOf(NullableTypeNode::class, $union->children[0]);
+        self::assertInstanceOf(NamedTypeNode::class, $union->children[1]);
 
         $intersection = $this->parse('?A&B');
 
         self::assertInstanceOf(IntersectionTypeNode::class, $intersection);
-        self::assertInstanceOf(NullableTypeNode::class, $intersection->types[0]);
-        self::assertInstanceOf(NamedTypeNode::class, $intersection->types[1]);
+        self::assertInstanceOf(NullableTypeNode::class, $intersection->children[0]);
+        self::assertInstanceOf(NamedTypeNode::class, $intersection->children[1]);
     }
 
     public function testTypeWithNoMarkIsNotNullable(): void

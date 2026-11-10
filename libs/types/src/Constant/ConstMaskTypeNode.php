@@ -6,7 +6,6 @@ namespace TypeLang\Type\Constant;
 
 use TypeLang\Type\Name;
 use TypeLang\Type\NamespaceName;
-use TypeLang\Type\NamespaceName\NamespaceKind;
 use TypeLang\Type\TypeNode;
 
 /**
@@ -55,29 +54,6 @@ final class ConstMaskTypeNode extends TypeNode
         int $offset = 0,
     ) {
         parent::__construct($offset);
-    }
-
-    /**
-     * Whether the reference is read from the root namespace, that is, written
-     * with the leading separator.
-     *
-     * ```
-     *  \SOME_*           // true
-     *  \Some\Any\SOME_*  // true
-     *  \Some\Any::SOME_* // true
-     *  Some\Any\SOME_*   // false
-     *  SOME_*            // false
-     * ```
-     *
-     * @api
-     */
-    public function isFullyQualified(): bool
-    {
-        if ($this->owner instanceof Name) {
-            return $this->owner->isFullyQualified();
-        }
-
-        return $this->owner?->kind === NamespaceKind::FullyQualified;
     }
 
     public function __clone()

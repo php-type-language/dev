@@ -289,7 +289,7 @@ final class NodeCloneTest extends TestCase
         $tree = self::tree();
         $expected = self::collect($tree);
 
-        $clone = clone $tree->types[1];
+        $clone = clone $tree->children[1];
 
         self::assertSame([], \array_intersect_key($expected, self::collect($clone)));
         self::assertSame($expected, self::collect($tree));

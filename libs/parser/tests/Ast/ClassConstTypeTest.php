@@ -79,7 +79,7 @@ final class ClassConstTypeTest extends TestCase
         self::assertInstanceOf(ConstMaskTypeNode::class, $type);
         self::assertSame('Foo', $type->owner->toString());
         self::assertSame($mask, $type->mask->toString());
-        self::assertSame($classes, \array_map(static fn(object $item): string => $item::class, $type->mask->items));
+        self::assertSame($classes, \array_map(static fn(object $item): string => $item::class, $type->mask->children));
     }
 
     public function testSegmentsOfAMaskAreTheWordsAlone(): void
@@ -128,8 +128,8 @@ final class ClassConstTypeTest extends TestCase
         self::assertInstanceOf(ConstMaskTypeNode::class, $node);
         self::assertSame(2, $node->offset);
         self::assertSame(7, $node->mask->offset);
-        self::assertSame(7, $node->mask->items[0]->offset);
-        self::assertSame(11, $node->mask->items[1]->offset);
+        self::assertSame(7, $node->mask->children[0]->offset);
+        self::assertSame(11, $node->mask->children[1]->offset);
     }
 
     public function testTriviaAroundIsIgnored(): void

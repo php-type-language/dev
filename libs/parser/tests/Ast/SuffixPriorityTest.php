@@ -33,8 +33,8 @@ final class SuffixPriorityTest extends TestCase
         return match (true) {
             $node instanceof NamedTypeNode => $node->name->toString(),
             $node instanceof ThisTypeNode => '$this',
-            $node instanceof UnionTypeNode => '[' . \implode('|', \array_map(self::render(...), $node->types)) . ']',
-            $node instanceof IntersectionTypeNode => '{' . \implode('&', \array_map(self::render(...), $node->types)) . '}',
+            $node instanceof UnionTypeNode => '[' . \implode('|', \array_map(self::render(...), $node->children)) . ']',
+            $node instanceof IntersectionTypeNode => '{' . \implode('&', \array_map(self::render(...), $node->children)) . '}',
             $node instanceof NullableTypeNode => '?(' . self::render($node->type) . ')',
             $node instanceof TypesListTypeNode => '(' . self::render($node->type) . ')[]',
             $node instanceof TypeOffsetAccessTypeNode => '('

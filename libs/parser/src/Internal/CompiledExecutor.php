@@ -3584,7 +3584,7 @@ abstract class CompiledExecutor implements \Phplrt\Contracts\Parser\ParserInterf
         foreach ($children as $child) {
             switch (true) {
                 case $child instanceof Type\Shape\FieldNode:
-                    $fields->items[] = $child;
+                    $fields->children[] = $child;
                     break;
 
                 case $child instanceof Type\Template\TemplateListNode:

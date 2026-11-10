@@ -38,7 +38,7 @@ final class LogicalTypeNodeTest extends TestCase
         $node = new $class([$this->type('A'), $this->type('B')]);
 
         self::assertCount(2, $node);
-        self::assertCount(2, $node->types);
+        self::assertCount(2, $node->children);
     }
 
     #[Test]
@@ -65,7 +65,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         $node = new $class([$a, $b, $c]);
 
-        self::assertSame([$a, $b, $c], $node->types);
+        self::assertSame([$a, $b, $c], $node->children);
     }
 
     #[Test]
@@ -77,7 +77,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         $node = new $class(new \ArrayIterator([$a, $b]));
 
-        self::assertSame([$a, $b], $node->types);
+        self::assertSame([$a, $b], $node->children);
     }
 
     #[Test]
@@ -92,7 +92,7 @@ final class LogicalTypeNodeTest extends TestCase
             yield $b;
         })());
 
-        self::assertSame([$a, $b], $node->types);
+        self::assertSame([$a, $b], $node->children);
     }
 
     #[Test]
@@ -104,7 +104,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         $node = new $class([7 => $a, 42 => $b]);
 
-        self::assertSame([$a, $b], $node->types);
+        self::assertSame([$a, $b], $node->children);
     }
 
     #[Test]
@@ -138,7 +138,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         $node = new $class([new $class([$a, $b])]);
 
-        self::assertSame([$a, $b], $node->types);
+        self::assertSame([$a, $b], $node->children);
     }
 
     /**
@@ -150,7 +150,7 @@ final class LogicalTypeNodeTest extends TestCase
     public function aStatementFlattenedIntoASingleTypeIsRejected(string $class): void
     {
         $node = new $class([$this->type('A'), $this->type('B')]);
-        $node->types = [$this->type('C')];
+        $node->children = [$this->type('C')];
 
         $this->expectException(\LogicException::class);
 
@@ -167,7 +167,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         $node = new $class([new $class([$a, $b]), $c]);
 
-        self::assertSame([$a, $b, $c], $node->types);
+        self::assertSame([$a, $b, $c], $node->children);
     }
 
     #[Test]
@@ -181,7 +181,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         $node = new $class([new $class([new $class([$a, $b]), $c]), $d]);
 
-        self::assertSame([$a, $b, $c, $d], $node->types);
+        self::assertSame([$a, $b, $c, $d], $node->children);
     }
 
     #[Test]
@@ -194,7 +194,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         $node = new $class([$a, new $class([$b, $c])]);
 
-        self::assertSame([$a, $b, $c], $node->types);
+        self::assertSame([$a, $b, $c], $node->children);
     }
 
     #[Test]
@@ -205,7 +205,7 @@ final class LogicalTypeNodeTest extends TestCase
         $node = new UnionTypeNode([$intersection, $this->type('C')]);
 
         self::assertCount(2, $node);
-        self::assertSame($intersection, $node->types[0]);
+        self::assertSame($intersection, $node->children[0]);
     }
 
     #[Test]
@@ -216,7 +216,7 @@ final class LogicalTypeNodeTest extends TestCase
         $node = new IntersectionTypeNode([$union, $this->type('C')]);
 
         self::assertCount(2, $node);
-        self::assertSame($union, $node->types[0]);
+        self::assertSame($union, $node->children[0]);
     }
 
     #[Test]
@@ -243,8 +243,8 @@ final class LogicalTypeNodeTest extends TestCase
         self::assertInstanceOf($class, $restored);
         self::assertSame(13, $restored->offset);
         self::assertCount(2, $restored);
-        self::assertSame('A', $restored->types[0]->name->toString());
-        self::assertSame('B', $restored->types[1]->name->toString());
+        self::assertSame('A', $restored->children[0]->name->toString());
+        self::assertSame('B', $restored->children[1]->name->toString());
     }
 
     /**
@@ -264,7 +264,7 @@ final class LogicalTypeNodeTest extends TestCase
         $node = new $class($types);
 
         self::assertCount(1000, $node);
-        self::assertSame($types, $node->types);
+        self::assertSame($types, $node->children);
     }
 
     /**
@@ -304,7 +304,7 @@ final class LogicalTypeNodeTest extends TestCase
         $node[0] = $c;
         $node[] = $d;
 
-        self::assertSame([$c, $b, $d], $node->types);
+        self::assertSame([$c, $b, $d], $node->children);
     }
 
     #[Test]
@@ -318,7 +318,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         $node[7] = $c;
 
-        self::assertSame([$a, $b, $c], $node->types);
+        self::assertSame([$a, $b, $c], $node->children);
     }
 
     #[Test]
@@ -331,7 +331,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         unset($node[1]);
 
-        self::assertSame([$a, $c], $node->types);
+        self::assertSame([$a, $c], $node->children);
     }
 
     #[Test]
@@ -356,7 +356,7 @@ final class LogicalTypeNodeTest extends TestCase
 
             self::fail('The type must not be removed');
         } catch (\InvalidArgumentException) {
-            self::assertSame([$a, $b], $node->types);
+            self::assertSame([$a, $b], $node->children);
         }
     }
 
@@ -368,7 +368,7 @@ final class LogicalTypeNodeTest extends TestCase
 
         unset($node[42]);
 
-        self::assertSame([$a, $b], $node->types);
+        self::assertSame([$a, $b], $node->children);
     }
 
     #[Test]

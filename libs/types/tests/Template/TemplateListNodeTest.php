@@ -61,7 +61,7 @@ final class TemplateListNodeTest extends TestCase
 
             self::fail('The item must not be removed');
         } catch (\UnderflowException) {
-            self::assertSame([$argument], $list->items);
+            self::assertSame([$argument], $list->children);
         }
     }
 }

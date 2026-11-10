@@ -18,16 +18,20 @@ namespace TypeLang\Type;
  *
  * @template-implements \IteratorAggregate<array-key, T>
  * @template-implements \ArrayAccess<int<0, max>, T>
+ *
+ * @property list{T, T, ...<T>} $children
+ *
+ * @method int<2, max> count()
  */
 abstract class LogicalTypeNode extends TypeNode implements
     \IteratorAggregate,
     \ArrayAccess,
     \Countable
 {
-    /**
-     * @var list{T, T, ...<T>}
-     */
-    public array $types;
+    /** @template-use NodeListTrait<T, true> */
+    use NodeListTrait {
+        offsetUnset as private unsetNode;
+    }
 
     /**
      * @param iterable<mixed, T> $types
@@ -45,7 +49,7 @@ abstract class LogicalTypeNode extends TypeNode implements
         }
 
         // @phpstan-ignore-next-line : The list contains at least 2 types, checked above
-        $this->types = $types;
+        $this->children = $types;
 
         parent::__construct($offset);
     }
@@ -62,7 +66,7 @@ abstract class LogicalTypeNode extends TypeNode implements
 
         foreach ($types as $type) {
             if ($type instanceof static) {
-                foreach (self::unwrap($type->types) as $child) {
+                foreach (self::unwrap($type->children) as $child) {
                     $result[] = $child;
                 }
 
@@ -75,95 +79,23 @@ abstract class LogicalTypeNode extends TypeNode implements
         return $result;
     }
 
-    public function offsetExists(mixed $offset): bool
-    {
-        if (!\is_int($offset) || $offset < 0) {
-            throw new \InvalidArgumentException(
-                \sprintf('A %s::offsetExists($offset) must be an int<0, max>', static::class),
-            );
-        }
-
-        return isset($this->types[$offset]);
-    }
-
-    public function offsetGet(mixed $offset): ?Node
-    {
-        if (!\is_int($offset) || $offset < 0) {
-            throw new \InvalidArgumentException(
-                \sprintf('A %s::offsetGet($offset) must be an int<0, max>', static::class),
-            );
-        }
-
-        return $this->types[$offset] ?? null;
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        if (!$value instanceof Node) {
-            throw new \InvalidArgumentException(
-                \sprintf('A %s::offsetSet(..., $value) must be instance of %s', static::class, Node::class),
-            );
-        }
-
-        if ($offset === null) {
-            $this->types[] = $value;
-
-            return;
-        }
-
-        if (!\is_int($offset) || $offset < 0) {
-            throw new \InvalidArgumentException(
-                \sprintf('A %s::offsetSet($offset, ...) must be an int<0, max>|null', static::class),
-            );
-        }
-
-        // @phpstan-ignore-next-line : An offset beyond the end leaves a gap, the list is renumbered below
-        $this->types[$offset] = $value;
-
-        if (!\array_is_list($this->types)) {
-            $this->types = \array_values($this->types);
-        }
-    }
-
     public function offsetUnset(mixed $offset): void
     {
-        if (!\is_int($offset) || $offset < 0) {
-            throw new \InvalidArgumentException(
-                \sprintf('A %s::offsetUnset($offset) must be an int<0, max>', static::class),
-            );
-        }
+        $previous = $this->children;
 
-        if (isset($this->types[$offset]) && \count($this->types) < 3) {
+        $this->unsetNode($offset);
+
+        if (\count($this->children) < 2) {
+            $this->children = $previous;
+
             throw new \InvalidArgumentException('A logical type must contain at least 2 types');
         }
-
-        // @phpstan-ignore-next-line : Unset leaves a gap, the list is renumbered below
-        unset($this->types[$offset]);
-
-        if (!\array_is_list($this->types)) {
-            // @phpstan-ignore-next-line : The size is checked above, renumbering keeps it
-            $this->types = \array_values($this->types);
-        }
-    }
-
-    public function getIterator(): \Traversable
-    {
-        return new \ArrayIterator($this->types);
-    }
-
-    /**
-     * @return int<2, max> a logical type must contain at least 2 types
-     */
-    public function count(): int
-    {
-        /** @var int<2, max> */
-        return \count($this->types);
     }
 
     public function __clone()
     {
-        foreach ($this->types as $index => $node) {
-            $this->types[$index] = clone $node;
+        foreach ($this->children as $index => $node) {
+            $this->children[$index] = clone $node;
         }
     }
 }

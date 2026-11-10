@@ -30,7 +30,7 @@ final class TemplateListNode extends NodesListNode
     {
         parent::__construct($items, $offset);
 
-        if (\count($this->items) < 1) {
+        if (\count($this->children) < 1) {
             throw new \InvalidArgumentException('Template arguments must have at least one item');
         }
     }
@@ -38,12 +38,12 @@ final class TemplateListNode extends NodesListNode
     #[\Override]
     public function offsetUnset(mixed $offset): void
     {
-        $previous = $this->items;
+        $previous = $this->children;
 
         parent::offsetUnset($offset);
 
-        if (\count($this->items) < 1) {
-            $this->items = $previous;
+        if (\count($this->children) < 1) {
+            $this->children = $previous;
 
             throw new \UnderflowException('Template arguments must have at least one item');
         }

@@ -244,21 +244,21 @@
 >>> Null
 <<< accepted Literal\NullLiteralNode@0(value: null, raw: "Null")
 >>> true|false
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Literal\BoolLiteralNode@0(value: true, raw: "true"), Literal\BoolLiteralNode@5(value: false, raw: "false")])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(children: [Literal\BoolLiteralNode@0(value: true, raw: "true"), Literal\BoolLiteralNode@5(value: false, raw: "false")])
 >>> true&false
-<<< accepted LogicalTypeNode\IntersectionTypeNode@0(types: [Literal\BoolLiteralNode@0(value: true, raw: "true"), Literal\BoolLiteralNode@5(value: false, raw: "false")])
+<<< accepted LogicalTypeNode\IntersectionTypeNode@0(children: [Literal\BoolLiteralNode@0(value: true, raw: "true"), Literal\BoolLiteralNode@5(value: false, raw: "false")])
 >>> ?true
 <<< accepted WrappingTypeNode\NullableTypeNode@0(type: Literal\BoolLiteralNode@1(value: true, raw: "true"))
 >>> ?null
 <<< accepted WrappingTypeNode\NullableTypeNode@0(type: Literal\NullLiteralNode@1(value: null, raw: "null"))
 >>> null|int
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Literal\NullLiteralNode@0(value: null, raw: "null"), NamedTypeNode@5(name: Name@5(value: "int", namespace: null), arguments: null, fields: null)])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(children: [Literal\NullLiteralNode@0(value: null, raw: "null"), NamedTypeNode@5(name: Name@5(value: "int", namespace: null), arguments: null, fields: null)])
 >>> int|null
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "int", namespace: null), arguments: null, fields: null), Literal\NullLiteralNode@4(value: null, raw: "null")])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(children: [NamedTypeNode@0(name: Name@0(value: "int", namespace: null), arguments: null, fields: null), Literal\NullLiteralNode@4(value: null, raw: "null")])
 >>> null|null
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Literal\NullLiteralNode@0(value: null, raw: "null"), Literal\NullLiteralNode@5(value: null, raw: "null")])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(children: [Literal\NullLiteralNode@0(value: null, raw: "null"), Literal\NullLiteralNode@5(value: null, raw: "null")])
 >>> void|null
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "void", namespace: null), arguments: null, fields: null), Literal\NullLiteralNode@5(value: null, raw: "null")])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(children: [NamedTypeNode@0(name: Name@0(value: "void", namespace: null), arguments: null, fields: null), Literal\NullLiteralNode@5(value: null, raw: "null")])
 >>> true[]
 <<< accepted WrappingTypeNode\TypesListTypeNode@0(type: Literal\BoolLiteralNode@0(value: true, raw: "true"))
 >>> null[]
@@ -296,23 +296,23 @@
 >>> Foo::
 <<< partial@3 NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: null, fields: null)
 >>> Foo::*
-<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Constant\MaskNode\WildcardMaskNode@5()]))
+<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(children: [Constant\MaskNode\WildcardMaskNode@5()]))
 >>> Foo::BAR_*
-<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Identifier@5(value: "BAR_"), Constant\MaskNode\WildcardMaskNode@9()]))
+<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(children: [Identifier@5(value: "BAR_"), Constant\MaskNode\WildcardMaskNode@9()]))
 >>> Foo::*_BAZ
-<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Constant\MaskNode\WildcardMaskNode@5(), Identifier@6(value: "_BAZ")]))
+<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(children: [Constant\MaskNode\WildcardMaskNode@5(), Identifier@6(value: "_BAZ")]))
 >>> Foo::BAR*
-<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Identifier@5(value: "BAR"), Constant\MaskNode\WildcardMaskNode@8()]))
+<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(children: [Identifier@5(value: "BAR"), Constant\MaskNode\WildcardMaskNode@8()]))
 >>> Foo::B*R
-<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Identifier@5(value: "B"), Constant\MaskNode\WildcardMaskNode@6(), Identifier@7(value: "R")]))
+<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(children: [Identifier@5(value: "B"), Constant\MaskNode\WildcardMaskNode@6(), Identifier@7(value: "R")]))
 >>> Foo::**
-<<< partial@6 Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Constant\MaskNode\WildcardMaskNode@5()]))
+<<< partial@6 Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(children: [Constant\MaskNode\WildcardMaskNode@5()]))
 >>> \\Foo::*
-<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: NamespaceName@0(value: "", kind: NamespaceName\NamespaceKind::FullyQualified)), mask: Constant\MaskNode@6(items: [Constant\MaskNode\WildcardMaskNode@6()]))
+<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: NamespaceName@0(value: "", kind: NamespaceName\NamespaceKind::FullyQualified)), mask: Constant\MaskNode@6(children: [Constant\MaskNode\WildcardMaskNode@6()]))
 >>> self::*
-<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "self", namespace: null), mask: Constant\MaskNode@6(items: [Constant\MaskNode\WildcardMaskNode@6()]))
+<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "self", namespace: null), mask: Constant\MaskNode@6(children: [Constant\MaskNode\WildcardMaskNode@6()]))
 >>> static::*
-<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "static", namespace: null), mask: Constant\MaskNode@8(items: [Constant\MaskNode\WildcardMaskNode@8()]))
+<<< accepted Constant\ConstMaskTypeNode@0(owner: Name@0(value: "static", namespace: null), mask: Constant\MaskNode@8(children: [Constant\MaskNode\WildcardMaskNode@8()]))
 >>> Foo::class
 <<< accepted Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "class"))
 >>> \\Foo::class
@@ -334,9 +334,9 @@
 >>> Foo::BAR[]
 <<< accepted WrappingTypeNode\TypesListTypeNode@0(type: Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")))
 >>> Foo::BAR|Foo::BAZ
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")), Constant\ConstTypeNode@9(owner: Name@9(value: "Foo", namespace: null), constant: Identifier@14(value: "BAZ"))])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(children: [Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")), Constant\ConstTypeNode@9(owner: Name@9(value: "Foo", namespace: null), constant: Identifier@14(value: "BAZ"))])
 >>> Foo::BAR&Foo::BAZ
-<<< accepted LogicalTypeNode\IntersectionTypeNode@0(types: [Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")), Constant\ConstTypeNode@9(owner: Name@9(value: "Foo", namespace: null), constant: Identifier@14(value: "BAZ"))])
+<<< accepted LogicalTypeNode\IntersectionTypeNode@0(children: [Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")), Constant\ConstTypeNode@9(owner: Name@9(value: "Foo", namespace: null), constant: Identifier@14(value: "BAZ"))])
 >>> Foo::{BAR}
 <<< partial@3 NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: null, fields: null)
 >>> Foo::{BAR}|Foo::{BAZ}

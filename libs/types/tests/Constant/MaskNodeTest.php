@@ -89,9 +89,9 @@ final class MaskNodeTest extends TestCase
         $mask = self::mask(['A', '*', 'B']);
 
         self::assertCount(3, $mask);
-        self::assertInstanceOf(Identifier::class, $mask->items[0]);
-        self::assertInstanceOf(WildcardMaskNode::class, $mask->items[1]);
-        self::assertInstanceOf(Identifier::class, $mask->items[2]);
+        self::assertInstanceOf(Identifier::class, $mask->children[0]);
+        self::assertInstanceOf(WildcardMaskNode::class, $mask->children[1]);
+        self::assertInstanceOf(Identifier::class, $mask->children[2]);
     }
 
     #[Test]

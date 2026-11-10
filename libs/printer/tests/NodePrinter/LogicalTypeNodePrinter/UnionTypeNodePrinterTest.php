@@ -102,7 +102,7 @@ final class UnionTypeNodePrinterTest extends NodePrinterTestCase
     public function testUnionAddedToAUnionAfterwardsIsFlattened(): void
     {
         $type = self::union(self::named('A'), self::named('B'));
-        $type->types[] = self::union(self::named('C'), self::named('D'));
+        $type->children[] = self::union(self::named('C'), self::named('D'));
 
         self::assertSame('A|B|C|D', self::pretty($type));
     }

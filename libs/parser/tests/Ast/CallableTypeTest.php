@@ -273,9 +273,9 @@ final class CallableTypeTest extends TestCase
         $node = $this->parse('callable(): int|string');
 
         self::assertInstanceOf(UnionTypeNode::class, $node);
-        self::assertInstanceOf(CallableTypeNode::class, $node->types[0]);
-        self::assertInstanceOf(NamedTypeNode::class, $node->types[0]->type);
-        self::assertInstanceOf(NamedTypeNode::class, $node->types[1]);
+        self::assertInstanceOf(CallableTypeNode::class, $node->children[0]);
+        self::assertInstanceOf(NamedTypeNode::class, $node->children[0]->type);
+        self::assertInstanceOf(NamedTypeNode::class, $node->children[1]);
     }
 
     public function testIntersectionBehindTheReturnTypeIsOutsideOfTheCallable(): void
@@ -283,8 +283,8 @@ final class CallableTypeTest extends TestCase
         $node = $this->parse('callable(): A&B');
 
         self::assertInstanceOf(IntersectionTypeNode::class, $node);
-        self::assertInstanceOf(CallableTypeNode::class, $node->types[0]);
-        self::assertInstanceOf(NamedTypeNode::class, $node->types[1]);
+        self::assertInstanceOf(CallableTypeNode::class, $node->children[0]);
+        self::assertInstanceOf(NamedTypeNode::class, $node->children[1]);
     }
 
     public function testSuffixesBehindTheReturnTypeAreItsOwn(): void

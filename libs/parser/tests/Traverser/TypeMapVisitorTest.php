@@ -164,7 +164,7 @@ final class TypeMapVisitorTest extends TestCase
             ['Aliased', 'Aliased'],
             \array_map(
                 static fn(NamedTypeNode $type): string => $type->name->toString(),
-                $node->types,
+                $node->children,
             ),
         );
     }

@@ -38,7 +38,7 @@ final class MaskNode extends NodesListNode implements \Stringable
     {
         parent::__construct($items, $offset);
 
-        if (\count($this->items) < 1) {
+        if (\count($this->children) < 1) {
             throw new \InvalidArgumentException('A mask must have at least one item');
         }
     }
@@ -46,12 +46,12 @@ final class MaskNode extends NodesListNode implements \Stringable
     #[\Override]
     public function offsetUnset(mixed $offset): void
     {
-        $previous = $this->items;
+        $previous = $this->children;
 
         parent::offsetUnset($offset);
 
-        if (\count($this->items) < 1) {
-            $this->items = $previous;
+        if (\count($this->children) < 1) {
+            $this->children = $previous;
 
             throw new \UnderflowException('A mask must have at least one item');
         }
@@ -74,7 +74,7 @@ final class MaskNode extends NodesListNode implements \Stringable
     {
         $result = [];
 
-        foreach ($this->items as $item) {
+        foreach ($this->children as $item) {
             if ($item instanceof Identifier) {
                 $result[] = $item;
             }
@@ -90,7 +90,7 @@ final class MaskNode extends NodesListNode implements \Stringable
     {
         $result = [];
 
-        foreach ($this->items as $item) {
+        foreach ($this->children as $item) {
             if ($item instanceof Identifier) {
                 $result[] = $item->value;
             }
@@ -106,7 +106,7 @@ final class MaskNode extends NodesListNode implements \Stringable
     {
         $result = '';
 
-        foreach ($this->items as $item) {
+        foreach ($this->children as $item) {
             $result .= $item->toString();
         }
 
