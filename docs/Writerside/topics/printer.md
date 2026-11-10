@@ -62,7 +62,7 @@ echo new PrettyTypePrinter()->print($type);
 
 > Renders the type exactly as written, only normalizing whitespace.
 > ```
-> non-empty-list<positive-int> | null
+> non-empty-list<positive-int>|null
 > ```
 
 </tab>
@@ -105,6 +105,7 @@ Both printers accept the same AST; they differ only in what they render.
 | `Foo::BAR`             | `Foo::BAR`                  | `mixed`                     |
 | `int<0, max>`          | `int<0, max>`               | `int`                       |
 | `$arg is null ? A : B` | `($arg is null ? A : B)`    | `A│B`                       |
+| `?int`                 | `?int`                      | `int│null`                  |
 
 Reach for the **pretty** printer to display a type to a human — an error
 message, a generated docblock, a diff — where every detail matters. Reach for
@@ -113,32 +114,38 @@ type, a parameter hint, generated code.
 
 ## Formatting
 
-Both printers share two constructor arguments, declared on the common
-`TypeLang\Printer\TypePrinter` base:
+All formatting is described by a single immutable
+`TypeLang\Printer\PrinterOptions` object, which both printers accept. Among
+others, it holds:
 
 <deflist>
     <def title="newLine">
         The line-break string inserted between the lines of a multi-line
         rendering. Defaults to <code>"\n"</code>.
     </def>
-    <def title="indention">
+    <def title="indentation">
         The string used for a single indentation level. Defaults to four
         spaces.
     </def>
 </deflist>
 
+Spacing, nullable and list style, and the number of items that fit one line
+are covered in [](pretty-printer.md#options).
+
 ```php
-$printer = new PrettyTypePrinter(
+use TypeLang\Printer\PrettyTypePrinter;
+use TypeLang\Printer\PrinterOptions;
+
+$printer = new PrettyTypePrinter(new PrinterOptions(
     newLine: "\r\n",
-    indention: "\t",
-);
+    indentation: "\t",
+));
 ```
 
 <note>
 The <code>NativeTypePrinter</code> takes its type aliases as the
-<b>first</b> constructor argument, so pass <code>newLine</code> and
-<code>indention</code> by name — see <a href="native-printer.md">Native
-Printer</a>.
+<b>first</b> constructor argument and the options as the <b>second</b>, so
+pass them by name — see <a href="native-printer.md">Native Printer</a>.
 </note>
 
 ## Error Handling
@@ -164,8 +171,8 @@ becomes a concern when constructing or rewriting the node graph by hand.
 <deflist>
 <def title="Pretty Printer">
 
-The high-fidelity renderer and its formatting options — union and
-intersection spacing, callable return types, and multi-line shapes. See
+The high-fidelity renderer and its formatting options — spacing, nullable and
+list style, and multi-line shapes, templates and callables. See
 [](pretty-printer.md).
 
 </def>
