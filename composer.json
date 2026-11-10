@@ -32,6 +32,7 @@
         "psr-4": {
             "TypeLang\\Bench\\": "bench",
             "TypeLang\\Mapper\\Tests\\": "libs/mapper/tests",
+            "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/mapper/libs/property-accessor/tests",
             "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
             "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
             "TypeLang\\PhpDoc\\Tests\\": "libs/phpdoc/tests",
