@@ -67,7 +67,7 @@ type name is **unacceptable**.
 >
 > An error similar to the one below should occur
 > ```
-> UnexpectedTokenException: Unexpected "type"
+> Error: Unexpected "type"
 > ```
 > {style="warning"}
 
@@ -78,7 +78,7 @@ type name is **unacceptable**.
 >
 > An error similar to the one below should occur
 > ```
-> UnrecognizedSyntaxException: Unrecognized syntax "-"
+> Error: Unrecognized syntax "-"
 > ```
 > {style="warning"}
 
@@ -124,7 +124,7 @@ The namespace delimiter can be used in conjunction with keywords such as `true`,
 >
 > An error similar to the one below should occur
 > ```
-> UnrecognizedSyntaxException: Unrecognized syntax "\name\"
+> Error: Unrecognized syntax "\name\"
 > ```
 > {style="warning"}
 
@@ -171,7 +171,7 @@ behind a question mark, or as the type a
 >
 > An error similar to the one below should occur
 > ```
-> UnexpectedTokenException: Unexpected end of input, expected "is not", "is"
+> Error: Unexpected end of input, expected "is not", "is"
 > ```
 > {style="warning"}
 
@@ -217,7 +217,7 @@ including the next `*/`.
 >
 > An error similar to the one below should occur
 > ```
-> UnexpectedTokenException: Unexpected end of input, expected a type name, an
+> Error: Unexpected end of input, expected a type name, an
 > identifier, "true", "false" and other
 > ```
 > {style="warning"}
