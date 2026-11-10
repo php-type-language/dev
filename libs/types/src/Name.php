@@ -27,25 +27,15 @@ use TypeLang\Type\NamespaceName\NamespaceKind;
  * @template-implements \IteratorAggregate<int<0, max>, non-empty-string>
  * @template-implements \ArrayAccess<int<0, max>, non-empty-string>
  */
-final class Name extends Node implements
+final class Name extends SymbolNode implements
     \IteratorAggregate,
     \ArrayAccess,
-    \Stringable,
     \Countable
 {
     /**
      * @var non-empty-string
      */
     private const DELIMITER = NamespaceName::DELIMITER;
-
-    /**
-     * @var non-empty-array<non-empty-string, true>
-     */
-    private const SPECIAL_CLASS_NAME = [
-        'self' => true,
-        'parent' => true,
-        'static' => true,
-    ];
 
     /**
      * @var non-empty-list<non-empty-string>
@@ -110,28 +100,23 @@ final class Name extends Node implements
     }
 
     /**
-     * Whether the name is the name of a "virtual" type, which cannot be
-     * defined in PHP.
+     * Returns the name that is made of the last word alone, with no namespace.
      *
-     * - `SomeClass`, `false` - not virtual.
-     * - `non-empty-array`, `empty-string` - virtual.
+     * ```
+     *  \Some\Any  // Any
+     *  Some\Any   // Any
+     *  Any        // Any
+     * ```
      *
      * @api
      */
-    public function isVirtual(): bool
+    public function toUnqualified(): self
     {
-        return \str_contains($this->toString(), '-');
-    }
+        if ($this->namespace === null) {
+            return $this;
+        }
 
-    /**
-     * Whether the name is one of `self`, `parent` and `static`.
-     *
-     * @api
-     */
-    public function isSpecial(): bool
-    {
-        return $this->namespace === null
-            && isset(self::SPECIAL_CLASS_NAME[\strtolower($this->value)]);
+        return new self($this->value, null, $this->offset);
     }
 
     /**
@@ -212,18 +197,6 @@ final class Name extends Node implements
     }
 
     /**
-     * Returns the name as it is written, in lower case.
-     *
-     * @api
-     *
-     * @return non-empty-lowercase-string
-     */
-    public function toLowerString(): string
-    {
-        return \strtolower($this->toString());
-    }
-
-    /**
      * Iterates the segments of the name.
      *
      * @return \Traversable<int<0, max>, non-empty-string>
@@ -273,10 +246,5 @@ final class Name extends Node implements
         assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
 
         throw new \LogicException('Cannot modify name parts');
-    }
-
-    public function __toString(): string
-    {
-        return $this->toString();
     }
 }

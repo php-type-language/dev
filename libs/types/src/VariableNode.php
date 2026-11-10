@@ -15,8 +15,13 @@ namespace TypeLang\Type;
  *  //^^^^^ stands as the subject of a condition
  * ```
  */
-final class VariableNode extends Node
+final class VariableNode extends SymbolNode
 {
+    /**
+     * @var non-empty-string
+     */
+    private const PREFIX = '$';
+
     /**
      * @param int<0, max> $offset
      * @throws \InvalidArgumentException in case of the name is empty
@@ -35,5 +40,17 @@ final class VariableNode extends Node
         }
 
         parent::__construct($offset);
+    }
+
+    /**
+     * Returns the variable as it is written, with the leading `$`.
+     *
+     * ```
+     *  $value  // $value
+     * ```
+     */
+    public function toString(): string
+    {
+        return self::PREFIX . $this->name;
     }
 }

@@ -15,7 +15,7 @@ namespace TypeLang\Type;
  *            ^^^ ^^^ two single words
  * ```
  */
-final class Identifier extends Node implements \Stringable
+final class Identifier extends SymbolNode
 {
     /**
      * @param int<0, max> $offset
@@ -35,20 +35,7 @@ final class Identifier extends Node implements \Stringable
         parent::__construct($offset);
     }
 
-    /**
-     * @api
-     *
-     * @return non-empty-string
-     */
     public function toString(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    public function __toString(): string
     {
         return $this->value;
     }

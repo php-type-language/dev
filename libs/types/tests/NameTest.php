@@ -190,6 +190,41 @@ final class NameTest extends TestCase
         self::assertSame($expected, self::nameOf($text)->isSpecial());
     }
 
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string}>
+     */
+    public static function unqualifiedDataProvider(): iterable
+    {
+        yield 'a simple name' => ['Any', 'Any'];
+        yield 'a qualified name' => ['Some\Any', 'Any'];
+        yield 'a fully qualified name' => ['\Some\Any', 'Any'];
+        yield 'a root name' => ['\Any', 'Any'];
+        yield 'a name of the current namespace' => ['namespace\Any', 'Any'];
+    }
+
+    /**
+     * @param non-empty-string $text
+     * @param non-empty-string $expected
+     */
+    #[Test]
+    #[DataProvider('unqualifiedDataProvider')]
+    public function unqualifiedNameIsTheLastWordAlone(string $text, string $expected): void
+    {
+        $name = self::nameOf($text, 5)->toUnqualified();
+
+        self::assertSame($expected, $name->toString());
+        self::assertNull($name->namespace);
+        self::assertSame(5, $name->offset);
+    }
+
+    #[Test]
+    public function unqualifiedNameOfASimpleNameIsTheSameNode(): void
+    {
+        $name = new Name('Any');
+
+        self::assertSame($name, $name->toUnqualified());
+    }
+
     #[Test]
     public function virtualNameHasAHyphen(): void
     {
