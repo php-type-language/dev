@@ -102,5 +102,8 @@ Variable -> {
 
 // (int), ((int))
 Group
-  : ::T_PAREN_OPEN:: Type() ::T_PAREN_CLOSE::
+  : ::T_PAREN_OPEN::
+      Type() @error("A type is expected after \"(\"")
+    ::T_PAREN_CLOSE::
+    @error("The group is not closed properly, \")\" expected")
   ;
