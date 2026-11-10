@@ -739,11 +739,11 @@ implementation, and the reference implementation emits U+FFFD.
 {EscapeSequence} is kept in the denoted value together with the character
 behind it, exactly as PHP does. That covers an unknown letter (`"\q"` denotes
 `\q`), a `\x` with no hexadecimal digit behind it (`"\xZ"`), a `\u` with no
-braces or no digits in them (`"é"`, `"\u{}"`), and so on. Such a string is
+braces or no digits in them (`"\u41"`, `"\u{}"`), and so on. Such a string is
 a well-formed document.
 
 ```typescript
-"\q \xZ é"
+"\q \xZ \u41"
 ```
 
 Note: None of the escape, hexadecimal, or Unicode sequences are interpreted
