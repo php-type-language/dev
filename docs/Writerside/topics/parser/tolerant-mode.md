@@ -73,8 +73,7 @@ var_dump($remainder); // string(13) "and more text"
 > ```php
 > $parser->parse('int and more text');
 > // TypeLang\Parser\Exception\UnexpectedTokenException:
-> //   Syntax error, unexpected "and " (T_NAME_WITH_SPACE),
-> //   T_NS_DELIMITER expected in "int and more text"
+> //   Unexpected "and"
 > ```
 > {style="note"}
 
@@ -104,7 +103,7 @@ var_dump($result->type);
 TypeLang\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Type\Name { ... "Example" ... }
-  +arguments: TypeLang\Type\Template\TemplateArgumentListNode {
+  +arguments: TypeLang\Type\Template\TemplateListNode {
     +items: array:1 [
       0 => TypeLang\Type\Template\TemplateArgumentNode {
         +value: TypeLang\Type\NamedTypeNode { ... "T" ... }
@@ -133,7 +132,7 @@ last point where a complete sub-rule was matched and treats everything past
 it as trailing content, however implausible that trailing content looks.
 
 ```php
-$result = $parser->partial('array{');
+$result = $result->partial('array{');
 
 var_dump($result->type->name->toString()); // string(5) "array"
 var_dump($result->offset);                 // int(5)

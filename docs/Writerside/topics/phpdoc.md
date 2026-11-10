@@ -148,7 +148,7 @@ expected for its name, is not thrown as an exception — it is returned as an
 well-formed tags around it are still parsed normally:
 
 ```php
-$block = $parser->parse(<<<'PHPDOC'
+$block = $result->parse(<<<'PHPDOC'
     /**
      * @param int $wellFormed
      * @param not a valid type here $because

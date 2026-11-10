@@ -44,7 +44,7 @@ ConditionalSuffix : ConditionalOperator ConditionalOperand `?` Type `:` Type
 
 ConditionalOperand :
 
-- Type
+- LogicalType
 - Variable
 
 ConditionalOperator : one of `is` `is not`
@@ -58,15 +58,16 @@ condition holds, a `:`, and the type chosen otherwise.
 T is string ? int : bool
 ```
 
-The negative-equality operator is spelled `is not`. The two words are separate
-tokens, so whitespace and comments MAY stand between them the way they MAY
-stand between any other two tokens.
+The negative-equality operator is spelled `is not`. It is a single token
+(see [Reserved Words](#sec-Reserved-Words)), so whitespace and comments MAY
+stand between its two words, but nothing else is needed to tell it from a lone
+`is`.
 
 ```typescript
 T is not string ? int : bool
 ```
 
-Either the subject or the comparand MAY be a {Variable} instead of a {Type},
+Either the subject or the comparand MAY be a {Variable} instead of a type,
 including in "Yoda" order, where the variable appears on the right:
 
 ```typescript
@@ -75,6 +76,30 @@ $value is array ? non-empty-array : null
 
 ```typescript
 array is $value ? non-empty-array : null
+```
+
+The subject and the comparand are each a {LogicalType}, that is a union or
+anything that binds more tightly. A conditional type is not one, so it MUST be
+grouped with parentheses to stand in either place. The two branches, on the
+contrary, are full {Type}s: a conditional type written as the else branch
+needs no parentheses, and nests to the right.
+
+```typescript
+T is string ? int : T is bool ? float : null
+```
+
+```typescript
+(T is string ? int : bool) is int ? A : B
+```
+
+**Counter-example.** The comparand is not a conditional type.
+
+```typescript counter-example
+T is U is V ? A : B
+```
+
+```
+ParseException: A "?" is expected after the target of the condition
 ```
 
 Note: A bare {Variable} is only a valid type when it carries a
@@ -92,7 +117,7 @@ _intersection_ — together with a _nullable_ shorthand.
 
 LogicalType : UnionType
 
-UnionType : IntersectionType (`|` UnionType)?
+UnionType : IntersectionType (`|` IntersectionType)\*
 
 A _union type_ is a sequence of two or more member types separated by the pipe
 character (`|`). It denotes a value that satisfies at least one of its
@@ -107,7 +132,7 @@ union node is produced unless at least two members are present.
 
 ### Intersection Types
 
-IntersectionType : UnaryType (`&` IntersectionType)?
+IntersectionType : UnaryType (`&` UnaryType)\*
 
 An _intersection type_ is a sequence of two or more member types separated by
 the ampersand character (`&`). It denotes a value that simultaneously
@@ -151,7 +176,7 @@ Example?
 ```
 
 ```
-ParseException: Syntax error, unexpected "?"
+ParseException: Unexpected "?"
 ```
 
 ## List and Offset Access Types
@@ -226,7 +251,7 @@ Collection[[Some]]
 ```
 
 ```
-ParseException: Syntax error, unexpected "["
+ParseException: A type or "]" is expected after "["
 ```
 
 ## Primary Types
@@ -258,43 +283,50 @@ $this
 ```
 
 Note: Each of {CallableType}, {NamedType}, and the {ClassConstant} and
-{ConstantMask} forms of {LiteralType} begins with a {Name}. Once a complete
-{Name} has been recognized, these four are distinguished by the single token
-that immediately follows it: `*` selects a
-[constant mask](#sec-Constant-Masks); `::` selects a
-[class constant](#sec-Class-Constants); `(` selects a
-[callable type](#sec-Callable-Types); `<` or `{` selects a
-[generic or shape](#sec-Generic-Types) named type; any other following token
-(or the end of the document) leaves a plain named type.
+{ClassConstantMask} forms of {LiteralType} begins with a {Name}. Once a
+complete {Name} has been recognized, these are distinguished by what
+immediately follows it: `::` selects a [class constant](#sec-Class-Constants)
+or a class constant mask; `(` selects a [callable type](#sec-Callable-Types);
+`{` selects a [shape](#sec-Shape-Types) named type; `<` selects a callable
+type when the angle-bracket list is a list of
+[template parameters](#sec-Template-Parameters) that a `(` follows, and a
+[generic](#sec-Generic-Types) named type otherwise; any other following token
+(or the end of the document) leaves a plain named type. A global
+{ConstantMask} begins with a {NamespacePrefix} or an {IdentifierMask}, neither
+of which is a {Name}, and is told apart by that token alone.
 
-Note: A bare {ReservedWord} is likewise both a {LiteralType} and, through
-{Identifier}, a {Name} of a single segment (see
-[Reserved Words](#sec-Reserved-Words)). Where one source could be read as
-either, the {LiteralType} is the one taken, so a `true` denotes the boolean
-literal and never a type named `true`. An `is` and a `not` denote no literal
-of their own, and nothing is therefore left to shadow the named type each of
-them is.
+Note: A bare `true`, `false` or `null` is likewise both a {LiteralType} and,
+through {Identifier}, a {Name} of a single segment (see
+[Reserved Words](#sec-Reserved-Words)). Where a primary type begins with such
+an unqualified word, the {LiteralType} is the one taken, so a `true` denotes
+the boolean literal and never a type named `true`, and what follows it is not
+read as a continuation of a name: `null<int>`, `true{a: int}`, `null(int)` and
+`true::X` are rejected. A name that must begin with such a word is written
+qualified (`\null<int>`). The other reserved words denote no literal of their
+own, and nothing is therefore left to shadow the named type each of them is.
 
 ## Names and Namespaces
 
 Name :
 
-- FullyQualifiedName
-- RelativeName
-
-FullyQualifiedName : `\` Identifier (`\` Identifier)\*
-
-RelativeName : Identifier (`\` Identifier)\*
+- NamespacePrefix Identifier
+- VirtualName
+- Identifier
 
 Identifier :
 
 - NameToken
 - ReservedWord
 
-A {Name} is a sequence of one or more {Identifier} segments joined by the
-namespace separator (`\`), mirroring
+A {Name} is a sequence of one or more segments joined by the namespace
+separator (`\`), mirroring
 [PHP namespaces](https://www.php.net/manual/en/language.namespaces.rationale.php).
-A _fully-qualified_ name additionally begins with a leading separator.
+The segments that precede the last one, together with the separators behind
+them, are a single {NamespacePrefix} token (see
+[Namespace Prefixes](#sec-Namespace-Prefixes)), and the last segment is an
+{Identifier}. A _fully-qualified_ name additionally begins with a leading
+separator. A name of dashes, such as `non-empty-string`, is a {VirtualName}
+and stands alone: it has no namespace.
 
 ```typescript
 Example\Name
@@ -304,16 +336,22 @@ Example\Name
 \Absolute\Type\Name
 ```
 
+```typescript
+non-empty-string
+```
+
 A separator MAY appear at the start of a name or between two segments, but
-MUST NOT appear at the end.
+MUST NOT appear at the end. Neither does {Ignored} stand within a name, around
+a separator or anywhere else.
 
 **Reserved words within names.** Every reserved word — `true`, `false`,
-`null`, `is` and `not` (see [Reserved Words](#sec-Reserved-Words)) — MAY
-appear as an {Identifier} segment of a {Name}. In a qualified position —
-following a separator or another segment, or followed by a separator — such
-a word is a name segment and nothing besides. This makes `\null` a reference
-to a type named `null`, distinct from the `null` literal, and `null\Some` a
-name in a namespace that begins with the word, the way PHP lets one begin.
+`null`, `is`, `not`, `of`, `as`, `super`, `covariant`, `contravariant` and
+`invariant` (see [Reserved Words](#sec-Reserved-Words)) — MAY appear as an
+{Identifier} segment of a {Name}. In a qualified position — following a
+separator or another segment, or followed by a separator — such a word is a
+name segment and nothing besides. This makes `\null` a reference to a type
+named `null`, distinct from the `null` literal, and `null\Some` a name in a
+namespace that begins with the word, the way PHP lets one begin.
 
 ```typescript
 null\Some
@@ -326,7 +364,27 @@ Example\Name\
 ```
 
 ```
-ParseException: Syntax error, unexpected end of input
+ParseException: Unrecognized syntax "\Name\"
+```
+
+**Counter-example.** No gap stands between the segments of a name.
+
+```typescript counter-example
+Example \ Name
+```
+
+```
+ParseException: Unrecognized syntax "\"
+```
+
+**Counter-example.** A {VirtualName} does not take a namespace.
+
+```typescript counter-example
+Example\non-empty-string
+```
+
+```
+ParseException: Unexpected "non-empty-string", expected "true", "false", "null", an identifier
 ```
 
 ## Named Types
@@ -352,14 +410,18 @@ implementation and is outside the scope of this specification.
 
 TemplateArguments : `<` TemplateArgument (`,` TemplateArgument)\* `,`? `>`
 
-TemplateArgument : TemplateArgumentHint | TemplateArgumentValue
+TemplateArgument :
 
-TemplateArgumentValue : Wildcard | Type
+- Wildcard
+- Variance? Type
+
+Variance : one of `covariant` `contravariant` `invariant`
 
 Wildcard : `*`
 
 A _generic type_ supplies a named type with one or more _template arguments_,
-each of which is itself a {Type} or a {Wildcard}. Arguments are enclosed in
+each of which is itself a {Type} or a {Wildcard}, and a {Type} MAY be
+preceded by a {Variance}. Arguments are enclosed in
 angle brackets (`<` and `>`) and separated by commas. A trailing comma is
 permitted.
 
@@ -387,67 +449,71 @@ example<>
 ```
 
 ```
-ParseException: Syntax error, unexpected ">"
+ParseException: A template argument is expected after "<"
 ```
 
 Note: Throughout this document, the term _template argument_ refers to a
 value supplied at a use site, such as the `int<0, max>` in
 `iterable<int<0, max>, …>`. This is distinct from a _template parameter_,
-which would be part of a type's (hypothetical) declaration. TypeLang
-describes only use sites, and therefore only template arguments.
+which is part of a callable's declaration (see
+[Template Parameters](#sec-Template-Parameters)).
 
-### Template Argument Hints
+### Template Argument Variance
 
-TemplateArgumentHint : NameToken TemplateArgumentValue
-
-A template argument MAY carry a single leading _hint_: a {NameToken} placed
-before the argument's type. Hints are used by tooling — for example, to
-express [call-site variance](https://phpstan.org/blog/guide-to-call-site-generic-variance#call-site-variance)
-with identifiers such as `in`, `out`, `covariant`, or `contravariant`.
+A template argument MAY carry a single leading _variance_: one of the
+keywords `covariant`, `contravariant` and `invariant` placed before the
+argument's type. A variance is used to express
+[call-site variance](https://phpstan.org/blog/guide-to-call-site-generic-variance#call-site-variance).
 
 ```typescript
 HashMap<array-key, covariant Request>
 ```
 
-At the lexical level, {Whitespace} MUST stand directly behind the hint; this
-separation is what distinguishes a hint from the start of the argument's own
-type, and a {Comment} does not stand in its place (see
-[Ignored Tokens](#sec-Ignored-Tokens)). Each argument may carry at most one
-hint.
+```typescript
+Handler<contravariant Request, invariant Response>
+```
 
-A hint is read only where the argument ends right after the type it hints,
-at a `,` or at the closing `>`. Anywhere else the {NameToken} opens the
-argument's own type, so the `T` below is the subject of a
-[condition](#sec-Conditional-Types) rather than the hint of an `is`:
+The three words are keywords (see [Reserved Words](#sec-Reserved-Words)) and
+are matched the one way they are spelled. A variance is read only where a type
+goes on behind it. Anywhere else the word is itself the argument's type, so
+the `covariant` below is a type of that name, and a word of any other kind,
+like `in` or `out`, is never a variance:
 
 ```typescript
-Some<T is U ? A : B>
+Some<covariant>
 ```
 
-**Counter-example.** A hint is a single {NameToken}. A second one reads as
-the bound of a [template parameter](#sec-Callable-Types), and a parameter
-list belongs to a callable, so the statement is refused where the `(` it
-would go on with is missing.
-
-```typescript counter-example
-HashMap<array-key, some covariant Request>
+```typescript
+Some<covariant, T>
 ```
 
-```
-ParseException: Syntax error, unexpected end of input
+Each argument may carry at most one variance, and a {Wildcard} carries none.
+A variance followed by a parenthesis reads as the variance of a grouped type,
+and not as a callable type of that name.
+
+```typescript
+Some<covariant (A|B)>
 ```
 
-**Counter-example.** A hint cannot be a reserved word: `true`, `false`,
-`null`, `is` and `not` are always scanned as the corresponding literal or
-operator token (see [Reserved Words](#sec-Reserved-Words)) and never as a
-{NameToken}.
+**Counter-example.** A word that is not a variance cannot stand in front of a
+type.
 
 ```typescript counter-example
-HashMap<is Request>
+HashMap<array-key, in Request>
 ```
 
 ```
-ParseException: Syntax error, unexpected ">"
+ParseException: Invalid template arguments, "," or ">" is expected
+```
+
+**Counter-example.** A variance does not go together with a wildcard.
+
+```typescript counter-example
+HashMap<array-key, covariant *>
+```
+
+```
+ParseException: Invalid template arguments, "," or ">" is expected
 ```
 
 ## Literal Types
@@ -496,9 +562,12 @@ _constant type_ loosely to refer to all three collectively; only
 grammar.
 
 Note: Because the grammar of a class or global constant name is identical to
-that of a {Name}, constant names share its restrictions: they may not be one
-of the bare reserved words `true`, `false` or `null`. Unlike a conventional
-type name, however, a constant is conventionally written without a dash.
+that of a {Name}, constant names share its rules. The class of a
+{ClassConstant} is a {Name}, so it cannot be one of the bare words `true`,
+`false` or `null` (see [Primary Types](#sec-Primary-Types)), while the constant
+itself is an {Identifier} and MAY be any reserved word, `A::true` included.
+Unlike a conventional type name, a constant is conventionally written without
+a dash.
 
 ### Global Constants
 
@@ -541,7 +610,7 @@ ClassName::SOME\ANY
 ```
 
 ```
-ParseException: Syntax error, unexpected "\"
+ParseException: Unexpected "SOME\", expected an identifier, "true", "false", "null" and other
 ```
 
 ### Constant Masks
@@ -553,24 +622,18 @@ ConstantMask :
 
 GlobalConstantMask :
 
-- Name MaskTail
-- Name `\` MaskTail
-- LeadingMask
+- IdentifierMask
+- NamespacePrefix IdentifierMask
+- NamespacePrefix Wildcard
 
-ClassConstantMask :
-
-- Name `::` Identifier MaskTail?
-- Name `::` MaskTail
-
-MaskTail : Wildcard (Identifier Wildcard)\* Identifier?
-
-LeadingMask : Wildcard Identifier MaskTail?
+ClassConstantMask : Name `::` (IdentifierMask | Wildcard)
 
 A _constant mask_ denotes a family of constants whose names are written of the
-same segments, in the same order, with a {Wildcard} standing wherever the name
-is left unsaid. A mask MUST contain at least one {Wildcard}, and its segments
-and wildcards alternate, so two wildcards in a row denote nothing a single one
-does not.
+same segments, in the same order, with a `*` standing wherever the name is
+left unsaid. The name part of a mask is the single token {IdentifierMask} (see
+[Mask Tokens](#sec-Mask-Tokens)), so it holds at least one `*`, no gap stands
+inside it, and its segments and wildcards alternate: two wildcards in a row
+denote nothing a single one does not.
 
 A global constant mask matches every global constant the segments describe:
 
@@ -578,14 +641,18 @@ A global constant mask matches every global constant the segments describe:
 JSON_*
 ```
 
-The name of a global constant MAY be left unsaid from its very beginning, and
-the namespace it belongs to MAY be written in front of it. A {Name} standing in
-front of a {MaskTail} carries the namespace and, in its last segment, the
-leading segment of the mask; a {Name} separated from the mask by a `\` is a
-namespace whole, and the mask then matches every constant that namespace holds:
+The name of a global constant MAY be left unsaid from its very beginning, or
+in its middle, and the namespace it belongs to MAY be written in front of it
+as a {NamespacePrefix}. A prefix standing alone in front of a {Wildcard} is a
+namespace whole, and the mask then matches every constant that namespace
+holds:
 
 ```typescript
 *_SUFFIX
+```
+
+```typescript
+JSON_*_FLAG
 ```
 
 ```typescript
@@ -597,8 +664,8 @@ Path\To\*
 ```
 
 A class constant mask matches every constant of a class the segments describe;
-the leading segment MAY be omitted entirely, in which case the mask matches
-every constant of the class:
+the name of the constant MAY be omitted entirely, in which case the mask
+matches every constant of the class:
 
 ```typescript
 Path\To\ClassName::PREFIX_*
@@ -625,7 +692,7 @@ would match every constant there is, is not a type.
 ```
 
 ```
-ParseException: Syntax error, unexpected end of input
+ParseException: Unexpected "*", expected a type name, an identifier, "true", "false" and other
 ```
 
 **Counter-example.** Two wildcards in a row are not a mask.
@@ -635,5 +702,15 @@ Path\To\ClassName::PREFIX_**
 ```
 
 ```
-ParseException: Syntax error, unexpected "*"
+ParseException: Unexpected "*"
+```
+
+**Counter-example.** A mask is a single token, and no gap stands inside it.
+
+```typescript counter-example
+JSON_ *
+```
+
+```
+ParseException: Unexpected "*", expected a type name, an identifier, "true", "false" and other
 ```

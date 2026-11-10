@@ -55,7 +55,7 @@ union type.
 ```php
 $printer = new PrettyTypePrinter(wrapUnionType: false);
 
-echo $printer->print($parser->parse('int|string|null'));
+echo $printer->print($result->parse('int|string|null'));
 // int|string|null
 ```
 
@@ -65,7 +65,7 @@ echo $printer->print($parser->parse('int|string|null'));
 ```php
 $printer = new PrettyTypePrinter(wrapUnionType: true);
 
-echo $printer->print($parser->parse('int|string|null'));
+echo $printer->print($result->parse('int|string|null'));
 // int | string | null
 ```
 
@@ -83,7 +83,7 @@ intersection type.
 ```php
 $printer = new PrettyTypePrinter(wrapIntersectionType: true);
 
-echo $printer->print($parser->parse('Countable&Traversable'));
+echo $printer->print($result->parse('Countable&Traversable'));
 // Countable & Traversable
 ```
 
@@ -93,7 +93,7 @@ echo $printer->print($parser->parse('Countable&Traversable'));
 ```php
 $printer = new PrettyTypePrinter(wrapIntersectionType: false);
 
-echo $printer->print($parser->parse('Countable&Traversable'));
+echo $printer->print($result->parse('Countable&Traversable'));
 // Countable&Traversable
 ```
 
@@ -111,7 +111,7 @@ colon before a callable's return type.
 ```php
 $printer = new PrettyTypePrinter(wrapCallableReturnType: true);
 
-echo $printer->print($parser->parse('callable(int):void'));
+echo $printer->print($result->parse('callable(int):void'));
 // callable(int): void
 ```
 
@@ -121,7 +121,7 @@ echo $printer->print($parser->parse('callable(int):void'));
 ```php
 $printer = new PrettyTypePrinter(wrapCallableReturnType: false);
 
-echo $printer->print($parser->parse('callable(int):void'));
+echo $printer->print($result->parse('callable(int):void'));
 // callable(int):void
 ```
 
@@ -141,8 +141,8 @@ anything at or below it stays on a single line.
 ```php
 $printer = new PrettyTypePrinter(multilineShape: 0);
 
-echo $printer->print($parser->parse('array{id: int}'));
-echo $printer->print($parser->parse('array{id: int, name: string}'));
+echo $printer->print($result->parse('array{id: int}'));
+echo $printer->print($result->parse('array{id: int, name: string}'));
 ```
 
 ```
@@ -162,8 +162,8 @@ array{
 ```php
 $printer = new PrettyTypePrinter(multilineShape: 1);
 
-echo $printer->print($parser->parse('array{id: int}'));
-echo $printer->print($parser->parse('array{id: int, name: string}'));
+echo $printer->print($result->parse('array{id: int}'));
+echo $printer->print($result->parse('array{id: int, name: string}'));
 ```
 
 ```
@@ -181,8 +181,8 @@ array{
 ```php
 $printer = new PrettyTypePrinter(multilineShape: 2);
 
-echo $printer->print($parser->parse('array{id: int}'));
-echo $printer->print($parser->parse('array{id: int, name: string}'));
+echo $printer->print($result->parse('array{id: int}'));
+echo $printer->print($result->parse('array{id: int, name: string}'));
 ```
 
 ```
@@ -199,7 +199,7 @@ how each of those lines is broken and indented:
 ```php
 $printer = new PrettyTypePrinter(indention: '  '); // two spaces
 
-echo $printer->print($parser->parse('array{id: int, name: string}'));
+echo $printer->print($result->parse('array{id: int, name: string}'));
 ```
 
 ```
@@ -217,7 +217,7 @@ meaning, so the output stays readable while parsing back into the same tree.
 * A **nested logical type** is wrapped when it sits inside another one:
 
   ```php
-  echo $printer->print($parser->parse('A&(B|C)'));
+  echo $printer->print($result->parse('A&(B|C)'));
   // A & (B | C)
   ```
 
@@ -225,14 +225,14 @@ meaning, so the output stays readable while parsing back into the same tree.
   so it is not mistaken for a continuation of the outer type:
 
   ```php
-  echo $printer->print($parser->parse('callable(): (A|B)'));
+  echo $printer->print($result->parse('callable(): (A|B)'));
   // callable(): (A | B)
   ```
 
 * A **conditional (ternary) type** is always wrapped:
 
   ```php
-  echo $printer->print($parser->parse('$arg is null ? int : string'));
+  echo $printer->print($result->parse('$arg is null ? int : string'));
   // ($arg is null ? int : string)
   ```
 
@@ -240,7 +240,7 @@ Everything else — generics, offset access, list suffixes, class constants —
 is rendered verbatim:
 
 ```php
-echo $printer->print($parser->parse('Collection<int, User>[]'));
+echo $printer->print($result->parse('Collection<int, User>[]'));
 // Collection<int, User>[]
 ```
 

@@ -106,10 +106,20 @@ NameToken :: NameStart NameContinue\* [lookahead != NameContinue]
 makes explicit that a {NameToken} is always the longest possible sequence,
 and cannot be followed by another {NameContinue} character.
 
+A restriction of the form `[lookahead {X, Y}]` states the opposite: the
+production must be followed by one of the listed terminals or non-terminals.
+For example:
+
+NamespacePrefix :: (NameToken `\`)+ [lookahead {NameStart, `*`}]
+
+makes explicit that a namespace prefix is always followed at once by the
+segment it qualifies or by a wildcard. A lookahead is never consumed: it takes
+no part in the token itself.
+
 **Overlapping Alternatives.** The order in which a production's alternatives
 are written carries no meaning by itself. Some alternatives, however, cannot
 be told apart by their first symbol alone — for example, {ClassConstant},
-{ConstantMask}, {CallableType} and {NamedType} (see
+{ClassConstantMask}, {CallableType} and {NamedType} (see
 [Primary Types](#sec-Primary-Types)) all begin with a {Name}. In every such
 case, this specification identifies, either through an explicit lookahead
 restriction or through an accompanying Note, the further input that

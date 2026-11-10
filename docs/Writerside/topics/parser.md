@@ -101,7 +101,7 @@ All three methods accept the source code in any of the following forms:
   <tab title="string">
 
   ```php
-  $type = $parser->parse(<<<'CODE'
+  $type = $result->parse(<<<'CODE'
       object{ key?: int<0, max> }
   CODE);
   ```
@@ -109,7 +109,7 @@ All three methods accept the source code in any of the following forms:
   <tab title="resource (stream)">
 
   ```php
-  $type = $parser->parse(
+  $type = $result->parse(
       fopen(__DIR__ . '/source.txt', 'rb'),
   );
   ```
@@ -117,7 +117,7 @@ All three methods accept the source code in any of the following forms:
   <tab title="SplFileInfo">
 
   ```php
-  $type = $parser->parse(
+  $type = $result->parse(
       new SplFileInfo(__DIR__ . '/source.txt'),
   );
   ```
@@ -125,7 +125,7 @@ All three methods accept the source code in any of the following forms:
   <tab title="ReadableInterface">
 
   ```php
-  $type = $parser->parse(
+  $type = $result->parse(
       Phplrt\Source\File::fromPathname(__DIR__ . '/source.txt'),
   );
   ```

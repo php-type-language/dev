@@ -52,7 +52,7 @@ array{,}
 ```
 
 ```
-ParseException: Syntax error, unexpected ","
+ParseException: Invalid shape, a field, "," or "}" is expected
 ```
 
 ### Shape Fields
@@ -65,24 +65,25 @@ ImplicitField : ShapeValue
 
 ShapeKey :
 
-- Identifier
+- ClassConstant
+- Name
 - IntLiteral
 - StringLiteral
-- ConstantMask
-- ClassConstant
 
 ShapeValue : Type
 
 A shape field is either _explicit_ (a key, a colon, and a value type) or
 _implicit_ (a value type alone, whose key is assigned positionally). A shape
-key may be a bare identifier, an integer literal, a string literal, or a
-[constant](#sec-Constant-Types) reference — that is, a {ClassConstant} or a
-{ConstantMask}.
+key may be a bare name, an integer literal, a string literal, or a
+[class constant](#sec-Class-Constants) reference. A bare name is any {Name},
+and may be qualified or carry dashes, so `Path\To\KEY` and `some-key` are both
+keys.
 
-Note: An {Identifier}, a {ClassConstant} and a {ConstantMask} may each begin
-with the same {Name}. As in [Primary Types](#sec-Primary-Types), these are
-distinguished by what follows: a bare {Identifier} key is one not followed by
-`::` or a trailing `*`.
+A [constant mask](#sec-Constant-Masks) is not a shape key.
+
+Note: A {Name} and a {ClassConstant} begin with the same {Name}. As in
+[Primary Types](#sec-Primary-Types), these are distinguished by what follows:
+a bare {Name} key is one not followed by `::`.
 
 ```typescript
 array{ name: First, count: Second }
@@ -101,7 +102,17 @@ array{ First, Second }
 ```
 
 ```typescript
-array{ Path\To\ClassName::CONSTANT_NAME: First, JSON_*: Second }
+array{ Path\To\ClassName::CONSTANT_NAME: First, \Path\To\CONSTANT_NAME: Second }
+```
+
+**Counter-example.** A mask denotes a family of constants, not one key.
+
+```typescript counter-example
+array{ JSON_*: Type }
+```
+
+```
+ParseException: Invalid shape, a field, "," or "}" is expected
 ```
 
 **Mixed keys are permitted.** A single shape MAY contain both explicit and
@@ -195,12 +206,7 @@ callable(): (A|B)
 
 TemplateParameters : `<` TemplateParameter (`,` TemplateParameter)\* `,`? `>`
 
-TemplateParameter : Identifier TemplateBound\* TemplateDefault?
-
-TemplateBound :
-
-- UpperBound
-- LowerBound
+TemplateParameter : Variance? Identifier UpperBound? LowerBound? TemplateDefault?
 
 UpperBound : UpperBoundOperator Type
 
@@ -212,12 +218,15 @@ TemplateDefault : `=` Type
 
 A callable type MAY declare the _template parameters_ it introduces, written
 as a `<...>` list between the name and the parameter list. Each parameter is
-an {Identifier} followed by as many _bounds_ as are put on it.
+an {Identifier}, optionally preceded by a {Variance} (see
+[Template Argument Variance](#sec-Template-Argument-Variance)), followed by
+the _bounds_ that are put on it.
 
 A parameter accepts three kinds of limit, each of which MUST be written at
-most once. The two bounds MAY be written in either order, while a
-{TemplateDefault} MUST be written last: a bound standing behind it belongs to
-the {Type} of the default rather than to the parameter.
+most once and in the order of the grammar above: the upper bound, then the
+lower bound, then the default. A bound standing behind a {TemplateDefault}
+belongs to the {Type} of the default rather than to the parameter, and is
+refused.
 
 - An {UpperBound} narrows the parameter from above: the argument is to be a
   subtype of the given {Type}. Its two operators denote the same thing, and a
@@ -246,6 +255,10 @@ Closure<T of Some, U super Any, V = int>(T, U): V
 callable<T of Some super Any = int>(T): void
 ```
 
+```typescript
+callable<covariant T>(T): void
+```
+
 **Counter-example.** A word that bounds nothing is not an operator.
 
 ```typescript counter-example
@@ -253,7 +266,7 @@ callable<T whatever Some>(): void
 ```
 
 ```
-ParseException: Template parameter cannot be bounded with "whatever", expected one of "of", "as" or "super"
+ParseException: Invalid template arguments, "," or ">" is expected
 ```
 
 **Counter-example.** Neither is a word that is spelled the way an operator is
@@ -264,7 +277,7 @@ callable<T OF Some>(): void
 ```
 
 ```
-ParseException: Template parameter cannot be bounded with "OF", expected one of "of", "as" or "super"
+ParseException: Invalid template arguments, "," or ">" is expected
 ```
 
 **Counter-example.** Each kind of limit is written at most once.
@@ -274,7 +287,17 @@ callable<T of Some as Any>(): void
 ```
 
 ```
-ParseException: Template parameter cannot have more than one upper bound
+ParseException: Invalid template arguments, "," or ">" is expected
+```
+
+**Counter-example.** The upper bound is written before the lower one.
+
+```typescript counter-example
+callable<T super Any of Some>(): void
+```
+
+```
+ParseException: Invalid template arguments, "," or ">" is expected
 ```
 
 **Counter-example.** A bound does not stand behind a default.
@@ -284,7 +307,7 @@ callable<T = int of Some>(): void
 ```
 
 ```
-ParseException: Template parameter default must be written last, since a bound behind it reads as a bound of the default itself
+ParseException: Invalid template arguments, "," or ">" is expected
 ```
 
 A `<...>` list is written the same way whether it declares template parameters
@@ -299,15 +322,35 @@ Collection<T of Some>
 ```
 
 ```
-ParseException: Syntax error, unexpected end of input
+ParseException: Invalid template arguments, "," or ">" is expected
 ```
+
 ### Callable Parameters
 
-CallableParameter : Type `&`? `...`? Variable? `=`?
+CallableParameter :
+
+- Type `&`? `...` Variable?
+- Type `&`? Variable? DefaultValue?
+- `...` Type
+- `&`? `...` Variable
+- `&`? Variable DefaultValue?
+
+DefaultValue : `=` DefaultOperand?
+
+DefaultOperand :
+
+- BoolLiteral
+- NullLiteral
+- IntLiteral
+- FloatLiteral
+- StringLiteral
+- Name
+- ClassConstant
 
 A parameter is described by its type, optionally followed by the reference
-and the variadic markers, by a name and by the default marker — in that
-order and in no other. The type is the only required part.
+and the variadic markers, by a name and by the default value — in that order
+and in no other. A parameter MAY also be given by its name alone, without a
+type, and a variadic parameter MAY be given by the type behind the ellipsis.
 
 ```typescript
 callable(Type)
@@ -317,15 +360,8 @@ callable(Type)
 callable(Type $name)
 ```
 
-**Counter-example.** A parameter given by name alone, without a type, is
-not permitted.
-
-```typescript counter-example
+```typescript
 callable($name)
-```
-
-```
-ParseException: Syntax error, unexpected ")"
 ```
 
 **Named Parameters.** A name beginning with `$` MAY follow the parameter's
@@ -337,7 +373,8 @@ callable(A $a, B, C)
 ```
 
 **Output Parameters.** An ampersand (`&`) placed _after_ the parameter type
-marks the parameter as passed by reference (an _output_ parameter).
+marks the parameter as passed by reference (an _output_ parameter). A
+parameter given by its name alone carries the ampersand in front of that name.
 
 ```typescript
 callable(T&)
@@ -345,6 +382,10 @@ callable(T&)
 
 ```typescript
 callable(T &$name)
+```
+
+```typescript
+callable(&$name)
 ```
 
 **Counter-example.** The ampersand must follow the type; it must not precede
@@ -355,11 +396,15 @@ callable(&T)
 ```
 
 ```
-ParseException: Syntax error, unexpected "&"
+ParseException: Invalid callable parameters, a parameter, "," or ")" is expected
 ```
 
 **Optional Parameters.** A trailing `=` marks a parameter as optional: the
-caller MAY omit the corresponding argument.
+caller MAY omit the corresponding argument. The `=` MAY be followed by the
+default value the parameter takes: a literal, the name of a global constant
+or a {ClassConstant}. A default value is not an expression, and carries no
+type of its own. As everywhere else, a `true`, `false` or `null` is the
+literal, and not a constant of that name.
 
 ```typescript
 callable(T=)
@@ -369,9 +414,42 @@ callable(T=)
 callable(T &$name=)
 ```
 
-**Variadic Parameters.** An ellipsis (`...`) placed after the parameter type
-marks the parameter as variadic. Where a parameter carries both markers, the
-ampersand comes first.
+```typescript
+callable(T $name = 42)
+```
+
+```typescript
+callable(T $name = null)
+```
+
+```typescript
+callable(T $name = Path\To\CONSTANT_NAME)
+```
+
+```typescript
+callable(T $name = ClassName::CONSTANT_NAME)
+```
+
+```typescript
+callable($name = 'text')
+```
+
+**Counter-example.** A default value is a literal or a constant, and a mask
+of constants is neither.
+
+```typescript counter-example
+callable(T $name = ClassName::*)
+```
+
+```
+ParseException: Invalid callable parameters, a parameter, "," or ")" is expected
+```
+
+**Variadic Parameters.** An ellipsis (`...`) marks the parameter as variadic.
+It is written after the parameter type, or, for a parameter given by its name
+alone, in front of the name. A type MAY also stand behind the ellipsis. Where
+a parameter carries both the ampersand and the ellipsis, the ampersand comes
+first.
 
 ```typescript
 callable(T ...$name)
@@ -381,24 +459,36 @@ callable(T ...$name)
 callable(T &...$name)
 ```
 
-**Counter-example.** The ellipsis must follow the type; it must not precede
-it.
+```typescript
+callable(T ...)
+```
 
-```typescript counter-example
+```typescript
 callable(...T)
 ```
 
+```typescript
+callable(...$name)
 ```
-ParseException: Syntax error, unexpected "..."
+
+**Counter-example.** An ellipsis is followed by a type or a name, or follows
+the type; it does not stand alone.
+
+```typescript counter-example
+callable(...)
+```
+
+```
+ParseException: Invalid callable parameters, a parameter, "," or ")" is expected
 ```
 
 **Counter-example.** A variadic parameter is already optional and therefore
-must not additionally carry a default marker.
+must not additionally carry a default value.
 
 ```typescript counter-example
 callable(T ...$name=)
 ```
 
 ```
-ParseException: Cannot have variadic param with a default
+ParseException: Invalid callable parameters, a parameter, "," or ")" is expected
 ```

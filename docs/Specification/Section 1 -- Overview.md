@@ -102,9 +102,13 @@ others:
   integer literals.
 - Escape, hexadecimal and Unicode sequences inside double-quoted string
   literals.
-- Global constant masks such as `JSON_*`.
+- Global constant masks such as `JSON_*` and `Path\To\*`.
 - A uniform conditional (ternary) type syntax that also permits comparison
   operators and Yoda-style operands.
+- Template parameters of callable types with variance, upper and lower
+  bounds and defaults, such as `callable<T of Some super Any = int>(T): T`.
+- Callable parameters given by name alone (`callable($name)`) or by a type
+  behind the ellipsis (`callable(...Type)`), and with default values.
 
 A detailed feature-by-feature comparison is maintained alongside the project
 documentation and is out of scope for this specification.

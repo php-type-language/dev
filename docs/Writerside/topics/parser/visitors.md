@@ -42,7 +42,7 @@ Traverser::new([$visitor])
  - TypeLang\Type\NamedTypeNode
  - TypeLang\Type\Name
  - TypeLang\Type\Identifier
- - TypeLang\Type\Template\TemplateArgumentListNode
+ - TypeLang\Type\Template\TemplateListNode
  - TypeLang\Type\Template\TemplateArgumentNode
  - TypeLang\Type\NamedTypeNode
  - TypeLang\Type\Name
@@ -57,7 +57,7 @@ Traverser::new([$visitor])
  - TypeLang\Type\NamedTypeNode
  - TypeLang\Type\Name
  - TypeLang\Type\Identifier
- - TypeLang\Type\Template\TemplateArgumentListNode
+ - TypeLang\Type\Template\TemplateListNode
  - TypeLang\Type\Template\TemplateArgumentNode
  - TypeLang\Type\Literal\IntLiteralNode
  - TypeLang\Type\Template\TemplateArgumentNode

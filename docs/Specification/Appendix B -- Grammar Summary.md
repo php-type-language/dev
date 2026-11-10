@@ -58,8 +58,14 @@ BlockCommentChar :: SourceCharacter but not `*/`
 Token ::
 
 - Punctuator
+- NamespacePrefix
+- IdentifierMask
+- VirtualName
 - NameToken
+- ReservedWord
+- IsNotOperator
 - Variable
+- ThisVariable
 - IntLiteral
 - FloatLiteral
 - StringLiteral
@@ -71,7 +77,7 @@ Punctuator :: one of
 - `?` `|` `&` `*` `,` `:` `=`
 - `(` `)` `[` `]` `{` `}`
 - `<` `>`
-- `::` `\` `...`
+- `::` `...`
 
 NameToken :: NameStart NameContinue\* [lookahead != NameContinue]
 
@@ -85,25 +91,47 @@ NameContinue ::
 - Letter
 - Digit
 - `_`
-- `-`
 
-ReservedWord :: one of `true` `false` `null` `is` `not`
+VirtualName :: NameStart NameContinue\* (`-` NameContinue+)+
 
-Variable :: `$` NameStart VariableContinue\*
+NamespacePrefix ::
 
-VariableContinue :: NameContinue but not `-`
+- `\` (NameToken `\`)\* [lookahead {NameStart, `*`}]
+- (NameToken `\`)+ [lookahead {NameStart, `*`}]
 
-ThisVariable :: `$this` [lookahead != VariableContinue]
+IdentifierMask :: MaskHead MaskRest
+
+MaskHead ::
+
+- NameStart NameContinue\* `*`
+- `*` [lookahead NameContinue]
+
+MaskRest :: (NameContinue+ `*`)\* NameContinue\*
+
+ReservedWord :: one of `true` `false` `null` `is` `not` `of` `as` `super` `covariant` `contravariant` `invariant`
+
+IsNotOperator :: `is` Trivia+ `not`
+
+Trivia ::
+
+- Whitespace
+- Comment
+
+Variable :: `$` NameStart NameContinue\*
+
+ThisVariable :: `$this` [lookahead != NameContinue]
 
 **Literal Tokens**
 
-BoolLiteral :: one of `true` `false` [lookahead != NameContinue] [lookahead != `\`]
+BoolLiteral :: one of `true` `false` [lookahead != NameContinue] [lookahead != `-`] [lookahead != `\`]
 
-NullLiteral :: `null` [lookahead != NameContinue] [lookahead != `\`]
+NullLiteral :: `null` [lookahead != NameContinue] [lookahead != `-`] [lookahead != `\`]
 
 NegativeSign :: `-`
 
-Sign :: one of `-` `+`
+Sign :: SignCharacter Whitespace\*
+
+SignCharacter :: one of `-` `+`
 
 DigitSeparator :: `_`
 
@@ -166,7 +194,7 @@ TrailingFloatLiteral :: Sign? `.` Digits ExponentPart?
 
 ExponentFloatLiteral :: Sign? Digits ExponentPart
 
-ExponentPart :: ExponentIndicator Sign? Digits
+ExponentPart :: ExponentIndicator SignCharacter? Digits
 
 ExponentIndicator :: one of `e` `E`
 
@@ -187,17 +215,20 @@ DoubleQuotedString :: `"` DoubleStringChar\* `"`
 DoubleStringChar ::
 
 - SourceCharacter but not `"` or `\`
-- `\` EscapeSequence
+- `\` SourceCharacter
 
 EscapeSequence ::
 
 - SimpleEscape
 - HexEscape
+- OctalEscape
 - UnicodeEscape
 
 SimpleEscape :: one of `n` `r` `t` `v` `e` `f` `$` `"` `\`
 
-HexEscape :: `x` HexDigit HexDigit?
+HexEscape :: HexIndicator HexDigit HexDigit?
+
+OctalEscape :: OctalDigit OctalDigit? OctalDigit?
 
 UnicodeEscape :: `u` `{` HexDigit+ `}`
 
@@ -218,7 +249,7 @@ ConditionalSuffix : ConditionalOperator ConditionalOperand `?` Type `:` Type
 
 ConditionalOperand :
 
-- Type
+- LogicalType
 - Variable
 
 ConditionalOperator : one of `is` `is not`
@@ -227,9 +258,9 @@ ConditionalOperator : one of `is` `is not`
 
 LogicalType : UnionType
 
-UnionType : IntersectionType (`|` UnionType)?
+UnionType : IntersectionType (`|` IntersectionType)\*
 
-IntersectionType : UnaryType (`&` IntersectionType)?
+IntersectionType : UnaryType (`&` UnaryType)\*
 
 UnaryType : NullableType
 
@@ -262,12 +293,9 @@ PrimaryType :
 
 Name :
 
-- FullyQualifiedName
-- RelativeName
-
-FullyQualifiedName : `\` Identifier (`\` Identifier)\*
-
-RelativeName : Identifier (`\` Identifier)\*
+- NamespacePrefix Identifier
+- VirtualName
+- Identifier
 
 Identifier :
 
@@ -280,11 +308,12 @@ NamedType : Name (TemplateArguments | ShapeFields)?
 
 TemplateArguments : `<` TemplateArgument (`,` TemplateArgument)\* `,`? `>`
 
-TemplateArgument : TemplateArgumentHint | TemplateArgumentValue
+TemplateArgument :
 
-TemplateArgumentHint : NameToken TemplateArgumentValue
+- Wildcard
+- Variance? Type
 
-TemplateArgumentValue : Wildcard | Type
+Variance : one of `covariant` `contravariant` `invariant`
 
 Wildcard : `*`
 
@@ -309,18 +338,11 @@ ConstantMask :
 
 GlobalConstantMask :
 
-- Name MaskTail
-- Name `\` MaskTail
-- LeadingMask
+- IdentifierMask
+- NamespacePrefix IdentifierMask
+- NamespacePrefix Wildcard
 
-ClassConstantMask :
-
-- Name `::` Identifier MaskTail?
-- Name `::` MaskTail
-
-MaskTail : Wildcard (Identifier Wildcard)\* Identifier?
-
-LeadingMask : Wildcard Identifier MaskTail?
+ClassConstantMask : Name `::` (IdentifierMask | Wildcard)
 
 **Shape Types**
 
@@ -341,11 +363,10 @@ ImplicitField : ShapeValue
 
 ShapeKey :
 
-- Identifier
+- ClassConstant
+- Name
 - IntLiteral
 - StringLiteral
-- ConstantMask
-- ClassConstant
 
 ShapeValue : Type
 
@@ -357,12 +378,7 @@ CallableType : Name TemplateParameters? `(` CallableParameters? `)` CallableRetu
 
 TemplateParameters : `<` TemplateParameter (`,` TemplateParameter)\* `,`? `>`
 
-TemplateParameter : Identifier TemplateBound\* TemplateDefault?
-
-TemplateBound :
-
-- UpperBound
-- LowerBound
+TemplateParameter : Variance? Identifier UpperBound? LowerBound? TemplateDefault?
 
 UpperBound : UpperBoundOperator Type
 
@@ -376,4 +392,22 @@ CallableParameters : CallableParameter (`,` CallableParameter)\* `,`?
 
 CallableReturnType : `:` UnaryType
 
-CallableParameter : Type `&`? `...`? Variable? `=`?
+CallableParameter :
+
+- Type `&`? `...` Variable?
+- Type `&`? Variable? DefaultValue?
+- `...` Type
+- `&`? `...` Variable
+- `&`? Variable DefaultValue?
+
+DefaultValue : `=` DefaultOperand?
+
+DefaultOperand :
+
+- BoolLiteral
+- NullLiteral
+- IntLiteral
+- FloatLiteral
+- StringLiteral
+- Name
+- ClassConstant

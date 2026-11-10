@@ -50,196 +50,80 @@ $strict = $parser->withFeatures(
 feature set from an existing one, keeping every flag not explicitly passed:
 
 ```php
-$features = new TypeParserFeatures()
+$features = (new TypeParserFeatures())
     ->with(unions: false);
 ```
 
 ## Available Features
 
-| Flag             | Enables syntax                     | Error message fragment                   |
-|------------------|------------------------------------|------------------------------------------|
-| `literals`       | `42`, `"foo"`, `true`, `null`, ... | `Literal values not allowed`             |
-| `generics`       | `Example<T>`, `callable<T>(T): T`  | `Template arguments not allowed`         |
-| `hints`          | `Example<out T, in U>`             | `Template argument hints not allowed`    |
-| `lists`          | `Example[]`                        | `Square bracket list types not allowed`  |
-| `offsets`        | `Example[Type]`                    | `Type offsets not allowed`               |
-| `callables`      | `fn(): void`                       | `Callable types not allowed`             |
-| `shapes`         | `array{ key: T }`                  | `Shape fields not allowed`               |
-| `unions`         | `T\|U`                             | `Union types not allowed`                |
-| `intersections`  | `T&U`                              | `Intersection types not allowed`         |
-| `conditions`     | `T is U ? A : B`                   | `Conditional expressions not allowed`    |
+| Flag            | Enables syntax                              |
+|-----------------|---------------------------------------------|
+| `unions`        | `T\|U`                                      |
+| `intersections` | `T&U`                                       |
+| `nullables`     | `?T`                                        |
+| `lists`         | `T[]`                                       |
+| `offsets`       | `T[K]`                                      |
+| `conditions`    | `T is U ? A : B`                            |
+| `generics`      | `Example<T>`                                |
+| `wildcards`     | `Example<*>`                                |
+| `hints`         | `Example<out T, in U>`                      |
+| `callables`     | `fn(): void`                                |
+| `templates`     | `callable<T of U = V>(T): T`                |
+| `defaults`      | `callable(T $a = U): V`                     |
+| `shapes`        | `array{ key: T }`                           |
+| `constants`     | `Example::CONSTANT`                         |
+| `masks`         | `Example::PREFIX_*`, `Path\To\*`            |
+| `literals`      | `42`, `"foo"`, `0.23`, `true`, `null`, ...  |
 
-### Literals
+A flag turns off exactly one language feature. Flags do not depend on each
+other: when `generics` is disabled, `Example<T>` is rejected and `wildcards`
+and `hints` have nothing to apply to.
 
-[Literals are concrete values](literal-types.md) such as `42`, `0xDEAD`,
-`"string"`, `0.23`, etc.
+### Composite types
 
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    literals: false,
-));
-
-$parser->parse('42');
-```
-
-```
-Literal values not allowed in "42"
-```
-
-### Generics
-
-Template arguments (generics), i.e. the angle-bracket argument list of a
-named type.
-
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    generics: false,
-));
-
-$parser->parse('Example<T>');
-```
-
-```
-Template arguments not allowed in "Example<T>"
-```
-
-The same flag closes the other side of the angle brackets: the
-[template parameters](callable-types.md#template-parameters) a callable
-declares.
-
-```php
-$parser->parse('callable<T>(T): T');
-```
-
-```
-Template parameters not allowed in "callable<T>(T): T"
-```
-
-### Hints
-
-Template argument hints (variance modifiers) such as `out`/`in`.
-
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    hints: false,
-));
-
-$parser->parse('Example<out T, U>');
-```
-
-```
-Template argument hints not allowed in "Example<out T, U>"
-```
-
-### Lists
-
-The legacy square-bracket shorthand for iterable types.
-
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    lists: false,
-));
-
-$parser->parse('Example[]');
-```
-
-```
-Square bracket list types not allowed in "Example[]"
-```
-
-### Offsets
-
-<secondary-label ref="tl1.4"/>
-
-Type offset access, i.e. reading the value type of key out of another type.
-
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    offsets: false,
-));
-
-$parser->parse('Example[Type]');
-```
-
-```
-Type offsets not allowed in "Example[Type]"
-```
-
-### Callables
-
-Callable (delegate) type declarations.
-
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    callables: false,
-));
-
-$parser->parse('fn(): void');
-```
-
-```
-Callable types not allowed in "fn(): void"
-```
-
-### Shapes
-
-Array/object shape fields.
-
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    shapes: false,
-));
-
-$parser->parse(<<<'PHP'
-    array{foo: T}
-    PHP);
-```
-
-```
-Shape fields not allowed in "array{foo: T}"
-```
-
-### Unions
+`unions`, `intersections`, `nullables`, `lists`, `offsets` and `conditions`
+control the operators that build a type out of other types.
 
 ```php
 $parser = new TypeParser(new TypeParserFeatures(
     unions: false,
 ));
 
-$parser->parse('T|U');
+$parser->parse('T|U'); // rejected
+$parser->parse('?T');   // still allowed
 ```
 
-```
-Union types not allowed in "T|U"
-```
-
-### Intersections
-
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    intersections: false,
-));
-
-$parser->parse('T&U');
-```
-
-```
-Intersection types not allowed in "T&U"
-```
-
-### Conditions
-
-[Conditional (ternary) type expressions](conditional-types.md), i.e.
+[Conditional (ternary) type expressions](conditional-types.md) are
 `T is U ? A : B`.
 
-```php
-$parser = new TypeParser(new TypeParserFeatures(
-    conditions: false,
-));
+### Generics
 
-$parser->parse('T is U ? 23 : 42');
-```
+`generics` is the angle-bracket argument list of a named type. Two flags
+refine what an argument may be:
 
-```
-Conditional expressions not allowed in "T is U ? 23 : 42"
-```
+- `wildcards` allows `*` in place of the type: `Example<*>`;
+- `hints` allows a [variance modifier](generic-types.md#call-site-hints)
+  before the type: `Example<out T, in U>`.
+
+### Callables
+
+`callables` is the callable (delegate) type declaration. Two flags refine it:
+
+- `templates` allows the [template parameters](callable-types.md#template-parameters)
+  of the callable: `callable<T of U>(T): T`;
+- `defaults` allows a default value of a parameter: `callable(int $a = 42): void`.
+
+### Shapes
+
+`shapes` is the array/object shape fields: `array{ key: T }`.
+
+### Constants
+
+- `constants` allows a class constant as a type: `Example::CONSTANT`;
+- `masks` allows a `*` in place of a part of the constant name:
+  `Example::PREFIX_*`.
+
+### Literals
+
+[Literals are concrete values](literal-types.md) such as `42`, `0xDEAD`,
+`"string"`, `0.23`, etc.

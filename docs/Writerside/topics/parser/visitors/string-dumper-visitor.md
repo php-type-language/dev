@@ -32,7 +32,7 @@ You can see the following text as the output result:
 NamedTypeNode
   Name(array)
     Identifier(array)
-  Template\TemplateArgumentListNode
+  Template\TemplateListNode
     Template\TemplateArgumentNode
       NamedTypeNode
         Name(array-key)
@@ -47,7 +47,7 @@ NamedTypeNode
             NamedTypeNode
               Name(int)
                 Identifier(int)
-              Template\TemplateArgumentListNode
+              Template\TemplateListNode
                 Template\TemplateArgumentNode
                   Literal\IntLiteralNode(0)
                 Template\TemplateArgumentNode

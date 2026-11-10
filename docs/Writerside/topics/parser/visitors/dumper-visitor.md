@@ -84,7 +84,7 @@ $visitor = new LineCollectorDumperVisitor(
 ```
 
 ```
-TypeLang\Type\UnionTypeNode
+TypeLang\Type\LogicalTypeNode\UnionTypeNode
   TypeLang\Type\NamedTypeNode
     TypeLang\Type\Name(int)
       TypeLang\Type\Identifier(int)

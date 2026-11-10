@@ -74,9 +74,9 @@ analyzers, so their custom scalar and collection types resolve out of the box:
 ```php
 $printer = new NativeTypePrinter();
 
-echo $printer->print($parser->parse('positive-int'));   // int
-echo $printer->print($parser->parse('class-string'));   // string
-echo $printer->print($parser->parse('non-empty-list')); // array
+echo $printer->print($result->parse('positive-int'));   // int
+echo $printer->print($result->parse('class-string'));   // string
+echo $printer->print($result->parse('non-empty-list')); // array
 ```
 
 <tip>
@@ -97,10 +97,10 @@ $printer = new NativeTypePrinter(aliases: [
 ]);
 
 // int
-echo $printer->print($parser->parse('Money'));
+echo $printer->print($result->parse('Money'));
 
 // string
-echo $printer->print($parser->parse('custom-uuid'));
+echo $printer->print($result->parse('custom-uuid'));
 ```
 
 <warning>
@@ -132,7 +132,7 @@ $printer = new NativeTypePrinter();
 $printer->addTypeAlias('Money', 'int');
 
 // int
-echo $printer->print($parser->parse('Money'));
+echo $printer->print($result->parse('Money'));
 
 
 $printer->addUnionTypeAlias('numeric-string', [
@@ -141,7 +141,7 @@ $printer->addUnionTypeAlias('numeric-string', [
 ]);
 
 // int|string
-echo $printer->print($parser->parse('numeric-string'));
+echo $printer->print($result->parse('numeric-string'));
 
 
 $printer->addIntersectionTypeAlias('Collection', [
@@ -150,7 +150,7 @@ $printer->addIntersectionTypeAlias('Collection', [
 ]);
 
 // Countable&Traversable
-echo $printer->print($parser->parse('Collection'));
+echo $printer->print($result->parse('Collection'));
 ```
 
 ## See Also
