@@ -15,28 +15,23 @@ use TypeLang\Parser\Traverser;
 use TypeLang\Parser\Traverser\ClassNameMatcherVisitor;
 use TypeLang\Type\Name;
 
-$type = new TypeLang\Parser\TypeParser()
+$type = (new TypeLang\Parser\TypeParser())
     ->parse('array<array-key, mixed>');
 
 $finder = Traverser::through(
-    visitor: new ClassNameMatcherVisitor(Name::class), 
+    visitor: new ClassNameMatcherVisitor(Name::class),
     nodes: [$type],
 );
 
-var_dump($finder->isFound); // bool(true)
+var_dump($finder->hasMatches()); // bool(true)
 var_dump($finder->node);
 ```
 
 ```php
 object(TypeLang\Type\Name)#1 (3) {
   ["offset"]=> int(0)
-  ["segments"]=> array(1) {
-    [0]=> object(TypeLang\Type\Identifier)#2 (2) {
-      ["offset"]=> int(0)
-      ["value"]=> string(5) "array"
-    }
-  }
-  ["isFullyQualified"]=> bool(false)
+  ["value"]=> string(5) "array"
+  ["namespace"]=> NULL
 }
 ```
 {collapsible="true" collapsed-title="Result"}
@@ -49,11 +44,11 @@ operand:
 ```php
 use TypeLang\Type\NamedTypeNode;
 
-$type = new TypeLang\Parser\TypeParser()
+$type = (new TypeLang\Parser\TypeParser())
     ->parse('int|string');
 
 $finder = Traverser::through(
-    visitor: new ClassNameMatcherVisitor(NamedTypeNode::class), 
+    visitor: new ClassNameMatcherVisitor(NamedTypeNode::class),
     nodes: [$type],
 );
 
@@ -61,17 +56,17 @@ $finder = Traverser::through(
 var_dump($finder->node->name->toString());
 ```
 
-If nothing matches, `$finder->node` stays `null` and `$finder->isFound` 
-is `false`:
+If nothing matches, `$finder->node` stays `null` and
+`$finder->hasMatches()` returns `false`:
 
 ```php
 use TypeLang\Type\Literal\BoolLiteralNode;
 
 $finder = Traverser::through(
-    visitor: new ClassNameMatcherVisitor(BoolLiteralNode::class), 
+    visitor: new ClassNameMatcherVisitor(BoolLiteralNode::class),
     nodes: [$type],
 );
 
-var_dump($finder->isFound); // bool(false)
-var_dump($finder->node);   // NULL
+var_dump($finder->hasMatches()); // bool(false)
+var_dump($finder->node);         // NULL
 ```

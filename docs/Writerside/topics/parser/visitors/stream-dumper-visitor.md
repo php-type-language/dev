@@ -27,29 +27,24 @@ You can see the following text printed to `STDERR`:
 ```yaml
 NamedTypeNode
   Name(array)
-    Identifier(array)
   Template\TemplateListNode
-    Template\TemplateArgumentNode
+    Template\TypedTemplateArgumentNode
       NamedTypeNode
         Name(array-key)
-          Identifier(array-key)
-    Template\TemplateArgumentNode
+    Template\TypedTemplateArgumentNode
       NamedTypeNode
         Name(object)
-          Identifier(object)
-        Shape\FieldsListNode(sealed)
-          Shape\NamedFieldNode(optional)
+        Shape\FieldListNode(isSealed=true)
+          Shape\NamedFieldNode(isOptional=true)
             Identifier(key)
             NamedTypeNode
               Name(int)
-                Identifier(int)
               Template\TemplateListNode
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   Literal\IntLiteralNode(0)
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(max)
-                      Identifier(max)
 ```
 
 ## Writing Elsewhere

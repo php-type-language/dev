@@ -15,7 +15,7 @@ a [`DumperVisitor`](dumper-visitor.md) that buffers into an internal
 use TypeLang\Parser\Traverser;
 use TypeLang\Parser\Traverser\StringDumperVisitor;
 
-$type = new TypeLang\Parser\TypeParser()
+$type = (new TypeLang\Parser\TypeParser())
     ->parse('array<array-key, object{ key?: int<0, max> }>');
 
 $visitor = new StringDumperVisitor();
@@ -31,29 +31,24 @@ You can see the following text as the output result:
 ```yaml
 NamedTypeNode
   Name(array)
-    Identifier(array)
   Template\TemplateListNode
-    Template\TemplateArgumentNode
+    Template\TypedTemplateArgumentNode
       NamedTypeNode
         Name(array-key)
-          Identifier(array-key)
-    Template\TemplateArgumentNode
+    Template\TypedTemplateArgumentNode
       NamedTypeNode
         Name(object)
-          Identifier(object)
-        Shape\FieldsListNode(sealed)
-          Shape\NamedFieldNode(optional)
+        Shape\FieldListNode(isSealed=true)
+          Shape\NamedFieldNode(isOptional=true)
             Identifier(key)
             NamedTypeNode
               Name(int)
-                Identifier(int)
               Template\TemplateListNode
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   Literal\IntLiteralNode(0)
-                Template\TemplateArgumentNode
+                Template\TypedTemplateArgumentNode
                   NamedTypeNode
                     Name(max)
-                      Identifier(max)
 ```
 
 This is convenient for snapshot-style unit tests: parse a type, dump it, and
@@ -66,20 +61,21 @@ public function testExampleType(): void
 
     Traverser::new([$visitor])
         ->traverse([
-            new TypeLang\Parser\TypeParser()
+            (new TypeLang\Parser\TypeParser())
                 ->parse('int|null'),
         ]);
 
     self::assertSame(<<<'AST'
-        UnionTypeNode
+        LogicalTypeNode\UnionTypeNode
           NamedTypeNode
             Name(int)
-              Identifier(int)
           Literal\NullLiteralNode(null)
-        AST, $visitor->output);
+        AST . "\n", $visitor->output);
 }
 ```
 
 The visitor is reusable across multiple `traverse()` calls — call
-`$visitor->reset()` (or just let the next `traverse()` call `before()`
-implicitly) to clear `$output` in between.
+`$visitor->reset()` to clear `$output` manually (the next `traverse()` call
+does it implicitly in `before()`).
+
+Every line, including the last one, ends with `"\n"`.

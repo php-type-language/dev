@@ -22,7 +22,7 @@ use TypeLang\Parser\Traverser\Command;
 use TypeLang\Parser\Traverser\Visitor;
 use TypeLang\Type\Node;
 
-$type = new TypeLang\Parser\TypeParser()
+$type = (new TypeLang\Parser\TypeParser())
     ->parse('array<array-key, object{ key?: int<0, max> }>');
 
 $visitor = new class extends Visitor {
@@ -41,29 +41,24 @@ Traverser::new([$visitor])
 ```
  - TypeLang\Type\NamedTypeNode
  - TypeLang\Type\Name
- - TypeLang\Type\Identifier
  - TypeLang\Type\Template\TemplateListNode
- - TypeLang\Type\Template\TemplateArgumentNode
+ - TypeLang\Type\Template\TypedTemplateArgumentNode
  - TypeLang\Type\NamedTypeNode
  - TypeLang\Type\Name
- - TypeLang\Type\Identifier
- - TypeLang\Type\Template\TemplateArgumentNode
+ - TypeLang\Type\Template\TypedTemplateArgumentNode
  - TypeLang\Type\NamedTypeNode
  - TypeLang\Type\Name
- - TypeLang\Type\Identifier
- - TypeLang\Type\Shape\FieldsListNode
+ - TypeLang\Type\Shape\FieldListNode
  - TypeLang\Type\Shape\NamedFieldNode
  - TypeLang\Type\Identifier
  - TypeLang\Type\NamedTypeNode
  - TypeLang\Type\Name
- - TypeLang\Type\Identifier
  - TypeLang\Type\Template\TemplateListNode
- - TypeLang\Type\Template\TemplateArgumentNode
+ - TypeLang\Type\Template\TypedTemplateArgumentNode
  - TypeLang\Type\Literal\IntLiteralNode
- - TypeLang\Type\Template\TemplateArgumentNode
+ - TypeLang\Type\Template\TypedTemplateArgumentNode
  - TypeLang\Type\NamedTypeNode
  - TypeLang\Type\Name
- - TypeLang\Type\Identifier
 ```
 {collapsible="true" collapsed-title="Output"}
 
@@ -95,12 +90,12 @@ prevent the traverser from descending into that node's children — `leave()`
 is still called for the node itself, just not for anything beneath it.
 
 ```php
-use TypeLang\Type\Template\TemplateArgumentNode;
+use TypeLang\Type\Template\TypedTemplateArgumentNode;
 
-$visitor =  new class extends Visitor {
+$visitor = new class extends Visitor {
     public function enter(Node $node): ?Command
     {
-        if ($node instanceof TemplateArgumentNode) {
+        if ($node instanceof TypedTemplateArgumentNode) {
             return Command::SkipChildren;
         }
 
@@ -114,16 +109,23 @@ Traverser::new([$visitor])
     ->traverse([$type]);
 ```
 
+```
+ - TypeLang\Type\NamedTypeNode
+ - TypeLang\Type\Name
+ - TypeLang\Type\Template\TemplateListNode
+```
+
 ## Traverser API
 
-* `new Traverser(iterable $visitors = [])` — construct directly from a list
-  of visitors, or use the equivalent static `Traverser::new($visitors)`.
+* `new Traverser(iterable $visitors = [], PropertyAccessorInterface $propertyAccessor = new SimplePropertyAccessor())`
+  — construct directly from a list of visitors, or use the equivalent static
+  `Traverser::new($visitors)`.
 * `Traverser::through(VisitorInterface $visitor, iterable $nodes)` — shortcut
   for the common "one visitor, traverse once, give it back to me" pattern —
   wraps the visitor in a new traverser, runs it, and returns the same
   visitor instance so you can immediately read state off it:
   ```php
-  // Find & collect all "Name" nodes
+  // Find the first "Name" node
   $find = Traverser::through(new ClassNameMatcherVisitor(Name::class), [
     $type
   ]);
@@ -139,8 +141,10 @@ Traverser::new([$visitor])
 
 By default, the traverser discovers a node's children via
 `Traverser\PropertyAccessor\SimplePropertyAccessor`, which reflects over
-every non-static, non-hooked public and non-public property and descends
-into whichever ones hold a `Node` or an iterable of them. You can supply
+every non-static, non-readonly (and non-hooked, on PHP 8.4+) property and
+descends into whichever ones hold a `Node` or an iterable of them. Readonly
+properties (such as the `Name` parts or literal values) are never visited.
+You can supply
 your own `PropertyAccessorInterface` implementation (e.g. to only look at a
 specific subset of properties, for performance or for a custom node
 hierarchy) via `Traverser::withPropertyAccessor()`.

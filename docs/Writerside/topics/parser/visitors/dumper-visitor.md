@@ -16,11 +16,10 @@ leaves only the sink itself abstract:
 ```php
 abstract class DumperVisitor extends Visitor
 {
-    public const string DEFAULT_SIMPLIFIED_NODE_NAMESPACE 
-        = 'TypeLang\\Type\\';
+    public const DEFAULT_SIMPLIFIED_NODE_NAMESPACE = 'TypeLang\\Type\\';
 
     public function __construct(
-        string $simplifyNodeNamespace 
+        string $simplifyNodeNamespace
             = self::DEFAULT_SIMPLIFIED_NODE_NAMESPACE,
     ) {}
 
@@ -28,10 +27,16 @@ abstract class DumperVisitor extends Visitor
 }
 ```
 
-Each visited node is rendered as `<indent><ShortClassName>[(value)]`, one
+Each visited node is rendered as `<indent><ShortClassName>[(suffix)]`, one
 line per node: the class name has `$simplifyNodeNamespace` stripped off its
-front, and if the node implements `\Stringable`, its string representation
-is appended in parentheses.
+front, and a suffix in parentheses is appended:
+
+* if the node implements `\Stringable`, its string representation
+  (`Name(int)`, `Literal\NullLiteralNode(null)`);
+* otherwise the node's mutable scalar properties (`prop=value`, `offset` and
+  readonly properties excluded), if there are any
+  (`Shape\FieldListNode(isSealed=true)`,
+  `Shape\NamedFieldNode(isOptional=false)`).
 
 ## Writing a Custom Sink
 
@@ -53,7 +58,7 @@ final class LineCollectorDumperVisitor extends DumperVisitor
     }
 }
 
-$type = new TypeLang\Parser\TypeParser()
+$type = (new TypeLang\Parser\TypeParser())
     ->parse('int|null');
 
 $visitor = new LineCollectorDumperVisitor();
@@ -63,12 +68,11 @@ var_dump($visitor->lines);
 ```
 
 ```php
-array(5) {
-  [0]=> string(13) "UnionTypeNode"
+array(4) {
+  [0]=> string(29) "LogicalTypeNode\UnionTypeNode"
   [1]=> string(15) "  NamedTypeNode"
   [2]=> string(13) "    Name(int)"
-  [3]=> string(21) "      Identifier(int)"
-  [4]=> string(31) "  Literal\NullLiteralNode(null)"
+  [3]=> string(31) "  Literal\NullLiteralNode(null)"
 }
 ```
 
@@ -87,6 +91,5 @@ $visitor = new LineCollectorDumperVisitor(
 TypeLang\Type\LogicalTypeNode\UnionTypeNode
   TypeLang\Type\NamedTypeNode
     TypeLang\Type\Name(int)
-      TypeLang\Type\Identifier(int)
   TypeLang\Type\Literal\NullLiteralNode(null)
 ```

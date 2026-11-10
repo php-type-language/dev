@@ -28,7 +28,7 @@ public function __construct(
   `node` as `null`) without visiting the rest of the tree.
 
 After a `traverse()` call, `$matcher->node` holds the matched node (or
-`null`), and `$matcher->isFound` is a convenience boolean for the same.
+`null`), and `$matcher->hasMatches()` is a convenience boolean for the same.
 
 ## Example
 
@@ -40,7 +40,7 @@ use TypeLang\Parser\Traverser\MatcherVisitor;
 use TypeLang\Type\NamedTypeNode;
 use TypeLang\Type\Node;
 
-$type = new TypeLang\Parser\TypeParser()
+$type = (new TypeLang\Parser\TypeParser())
     ->parse('int|non-empty-string|bool');
 
 $finder = Traverser::through(new MatcherVisitor(
@@ -59,16 +59,16 @@ some other condition is met — useful when you know the node you're looking
 for can't possibly occur past a certain point:
 
 ```php
-use TypeLang\Type\Shape\FieldsListNode;
+use TypeLang\Type\Shape\FieldListNode;
 use TypeLang\Type\Literal\BoolLiteralNode;
 
 $finder = Traverser::through(
     new MatcherVisitor(
-        matcher: static fn(Node $node): bool 
+        matcher: static fn(Node $node): bool
             => $node instanceof BoolLiteralNode,
         // give up as soon as we step into a shape's field list
-        break: static fn(Node $node): bool 
-            => $node instanceof FieldsListNode,
+        break: static fn(Node $node): bool
+            => $node instanceof FieldListNode,
     ),
     [$type],
 );
