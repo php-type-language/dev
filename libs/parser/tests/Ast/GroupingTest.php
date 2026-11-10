@@ -207,13 +207,13 @@ final class GroupingTest extends AstTestCase
     {
         self::assertSame(<<<'AST'
             Condition\ConditionalTypeNode
-              Condition\EqualConditionNode
+              Condition\ConditionNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode
                   Name(B)
               Condition\ConditionalTypeNode
-                Condition\EqualConditionNode
+                Condition\ConditionNode
                   NamedTypeNode
                     Name(C)
                   NamedTypeNode
@@ -231,7 +231,7 @@ final class GroupingTest extends AstTestCase
     {
         self::assertSame(<<<'AST'
             Condition\ConditionalTypeNode
-              Condition\EqualConditionNode
+              Condition\ConditionNode
                 NamedTypeNode
                   Name(A)
                 NamedTypeNode
@@ -250,7 +250,7 @@ final class GroupingTest extends AstTestCase
     {
         self::assertSame(<<<'AST'
             Condition\ConditionalTypeNode
-              Condition\EqualConditionNode
+              Condition\ConditionNode
                 LogicalTypeNode\UnionTypeNode
                   NamedTypeNode
                     Name(int)

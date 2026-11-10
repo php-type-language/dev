@@ -316,7 +316,7 @@ final class TypeResolverTest extends TypeResolverTestCase
 
         self::assertSame(<<<'AST'
             Condition\ConditionalTypeNode
-              Condition\EqualConditionNode
+              Condition\ConditionNode
                 NamedTypeNode
                   Name(App\Node)
                 NamedTypeNode

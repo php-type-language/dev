@@ -94,7 +94,7 @@
 >>> Foo is Bar ? the description
 <<< partial@4 NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: null, fields: null)
 >>> Foo is Bar ? A : B the description
-<<< partial@19 Condition\ConditionalTypeNode@0(condition: Condition\EqualConditionNode@0(subject: NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: null, fields: null), target: NamedTypeNode@7(name: Name@7(value: "Bar", namespace: null), arguments: null, fields: null)), then: NamedTypeNode@13(name: Name@13(value: "A", namespace: null), arguments: null, fields: null), else: NamedTypeNode@17(name: Name@17(value: "B", namespace: null), arguments: null, fields: null))
+<<< partial@19 Condition\ConditionalTypeNode@0(condition: Condition\ConditionNode@0(subject: NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: null, fields: null), target: NamedTypeNode@7(name: Name@7(value: "Bar", namespace: null), arguments: null, fields: null), kind: Condition\ConditionNode\ConditionKind::Equal), then: NamedTypeNode@13(name: Name@13(value: "A", namespace: null), arguments: null, fields: null), else: NamedTypeNode@17(name: Name@17(value: "B", namespace: null), arguments: null, fields: null))
 >>> int 42
 <<< partial@4 NamedTypeNode@0(name: Name@0(value: "int", namespace: null), arguments: null, fields: null)
 >>> int 'text'
