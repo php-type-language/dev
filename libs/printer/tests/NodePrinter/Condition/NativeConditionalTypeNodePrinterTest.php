@@ -8,14 +8,15 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\Condition\NativeConditionalTypeNodePrinter;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Condition\ConditionalTypeNode;
-use TypeLang\Type\Condition\EqualConditionNode;
+use TypeLang\Type\Condition\ConditionNode;
+use TypeLang\Type\Condition\ConditionNode\ConditionKind;
 
 #[CoversClass(NativeConditionalTypeNodePrinter::class)]
 final class NativeConditionalTypeNodePrinterTest extends NodePrinterTestCase
 {
-    private static function condition(): EqualConditionNode
+    private static function condition(): ConditionNode
     {
-        return new EqualConditionNode(self::named('T'), self::named('int'));
+        return new ConditionNode(self::named('T'), self::named('int'), ConditionKind::Equal);
     }
 
     public function testResultsAreJoinedIntoUnion(): void

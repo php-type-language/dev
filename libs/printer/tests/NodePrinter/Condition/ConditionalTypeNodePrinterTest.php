@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\Condition\ConditionalTypeNodePrinter;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
 use TypeLang\Type\Condition\ConditionalTypeNode;
-use TypeLang\Type\Condition\EqualConditionNode;
-use TypeLang\Type\Condition\NotEqualConditionNode;
+use TypeLang\Type\Condition\ConditionNode;
+use TypeLang\Type\Condition\ConditionNode\ConditionKind;
 use TypeLang\Type\VariableNode;
 
 #[CoversClass(ConditionalTypeNodePrinter::class)]
@@ -18,7 +18,7 @@ final class ConditionalTypeNodePrinterTest extends NodePrinterTestCase
     public function testConditionAndBothResultsAreWrittenInBrackets(): void
     {
         $type = new ConditionalTypeNode(
-            new EqualConditionNode(new VariableNode('x'), self::named('int')),
+            new ConditionNode(new VariableNode('x'), self::named('int'), ConditionKind::Equal),
             self::named('A'),
             self::named('B'),
         );
@@ -29,10 +29,10 @@ final class ConditionalTypeNodePrinterTest extends NodePrinterTestCase
     public function testNestedConditionalTypeIsKeptInItsBrackets(): void
     {
         $type = new ConditionalTypeNode(
-            new NotEqualConditionNode(self::named('T'), self::named('int')),
+            new ConditionNode(self::named('T'), self::named('int'), ConditionKind::NotEqual),
             self::named('A'),
             new ConditionalTypeNode(
-                new EqualConditionNode(self::named('T'), self::named('string')),
+                new ConditionNode(self::named('T'), self::named('string'), ConditionKind::Equal),
                 self::named('B'),
                 self::named('C'),
             ),
@@ -44,7 +44,7 @@ final class ConditionalTypeNodePrinterTest extends NodePrinterTestCase
     public function testUnionsInsideNeedNoBrackets(): void
     {
         $type = new ConditionalTypeNode(
-            new EqualConditionNode(self::named('T'), self::union(self::named('int'), self::named('string'))),
+            new ConditionNode(self::named('T'), self::union(self::named('int'), self::named('string')), ConditionKind::Equal),
             self::union(self::named('A'), self::named('B')),
             self::named('C'),
         );
