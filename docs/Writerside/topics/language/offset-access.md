@@ -43,7 +43,7 @@ The type of specific element, enclosed in square `[]` brackets.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "["
+> Error: A type or "]" is expected after "["
 > ```
 > {style="warning"}
 
@@ -55,12 +55,19 @@ The type of specific element, enclosed in square `[]` brackets.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "{"
+> Error: Unexpected "{"
 > ```
 > {style="warning"}
 
 </tab>
 </tabs>
+
+Offsets can be chained with each other and with the [list syntax](generic-types.md#list-syntax):
+each next suffix applies to the result of the previous one.
+
+> ```typescript
+> T['a'][]['b']
+> ```
 
 <note>
 Note that since this is a type description language, any key type is allowed, 
