@@ -34,8 +34,8 @@ Parsing a `@mixin` tag produces a `MixinTag` instance:
 ```php
 final class MixinTag extends TypedTag
 {
-    // adds a computed $type getter on top of
-    // TypedTag/Tag; nothing else.
+    // adds nothing of its own: `$type`, `$name`
+    // and `$description` are inherited.
 }
 ```
 

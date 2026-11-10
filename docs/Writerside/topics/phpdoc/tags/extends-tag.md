@@ -35,18 +35,13 @@ Parsing an `@extends` tag produces a tag exposing `$type` — the parsed
 `$name` and `$description` every tag carries.
 
 ```php
-final class ExtendsTag extends TypedTag
+final class ExtendsTag extends InheritanceTag
 {
-    // adds nothing of its own: $type is inherited
-    // from TypedTag as a computed getter:
-    //
-    //     public TypeNode $type {
-    //         get => $this->statement->type;
-    //     }
-    //
-    // backed by a protected TypeReference
-    // $statement, which is not itself part
-    // of the public shape.
+    // adds nothing of its own: the
+    // `public readonly TypeNode $type` is
+    // inherited from TypedTag, which in turn
+    // keeps the protected TypeReference
+    // $statement it was built from.
 }
 ```
 

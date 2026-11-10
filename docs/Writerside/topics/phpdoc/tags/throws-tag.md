@@ -33,9 +33,7 @@ every tag has.
 ```php
 abstract class TypedTag extends Tag
 {
-    public TypeNode $type {
-        get => $this->statement->type;
-    }
+    public readonly TypeNode $type;
 
     public function __construct(
         string $name,

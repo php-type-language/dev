@@ -33,15 +33,16 @@ Parsing a `@return` tag produces a `ReturnTag` instance exposing
 ```php
 abstract class TypedTag extends Tag
 {
-    public TypeNode $type {
-        get => $this->statement->type;
-    }
+    public readonly TypeNode $type;
+
+    // the constructor takes a TypeReference and
+    // stores its type node in $type
 }
 
 final class ReturnTag extends TypedTag
 {
     // inherits $name, $description, and the
-    // computed $type property from TypedTag;
+    // $type property from TypedTag;
     // adds nothing of its own.
 }
 ```
@@ -54,7 +55,11 @@ fairly common typo in code — and it parses into the exact same
 PHPStan and Psalm additionally recognize a vendor-prefixed
 <code>@phpstan-return</code> / <code>@psalm-return</code> spelling, typically
 used to state a more precise type than a plain <code>@return</code> above it
-already does. This component parses only the plain <code>@return</code> tag.
+already does. Both are registered as aliases (see
+<a href="phpstan-return-tag.md">@phpstan-return</a> and
+<a href="psalm-return-tag.md">@psalm-return</a>) once the PHPStan or Psalm
+<a href="platforms.md">platform</a> is loaded, and parse into the same
+<code>ReturnTag</code>.
 </note>
 
 Defined by the [PSR-19 draft `@return`

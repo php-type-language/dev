@@ -17,7 +17,7 @@ struggle to tell apart.
 > Giving a global configuration array a clearer alias.
 > ```php
 > /**
->  * @global array $GLOBALS['config']
+>  * @global array $config
 >  * @name config
 >  */
 > ```

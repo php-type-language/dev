@@ -55,10 +55,8 @@ final class StaticVarTag extends TypedTag
     }
 }
 
-// TypedTag exposes a computed getter:
-//     public TypeNode $type {
-//         get => $this->statement->type;
-//     }
+// TypedTag exposes the parsed type:
+//     public readonly TypeNode $type;
 ```
 
 `@staticvar` is part of the original phpDocumentor tag vocabulary, but

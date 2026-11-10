@@ -45,7 +45,7 @@ Parsing a `@param` tag produces a `ParamTag` instance exposing:
 ```php
 final class ParamTag extends TypedVariableTag
 {
-    // Inherits a computed `TypeNode $type` getter and
+    // Inherits `public readonly TypeNode $type` and
     // `string $variable` from TypedVariableTag, plus
     // `$name` and `$description` from the base `Tag`
     // class; adds nothing of its own.
@@ -60,8 +60,11 @@ match the order of the arguments in the signature.
 PHPStan and Psalm additionally recognize a vendor-prefixed
 <code>@phpstan-param</code> / <code>@psalm-param</code> spelling, typically
 used to narrow a type beyond what a plain <code>@param</code> above it
-already states. This component parses only the plain <code>@param</code>
-tag.
+already states. Both are registered as aliases (see
+<a href="phpstan-param-tag.md">@phpstan-param</a> and
+<a href="psalm-param-tag.md">@psalm-param</a>) once the PHPStan or Psalm
+<a href="platforms.md">platform</a> is loaded, and parse into the same
+<code>ParamTag</code>.
 </note>
 
 Defined by [PSR-19 §5.10](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md#510-param)

@@ -36,7 +36,8 @@ analyzers are stuck assuming the same type applies in both directions.
 > function findAll(string $pattern, array &$matches): bool
 > ```
 
-Parsing a `@param-out` tag produces a `TypedVariableTag` instance exposing:
+Parsing a `@param-out` tag produces a `ParamOutTag` instance (a
+`TypedVariableTag`) exposing:
 
 * `$type` — the documented `TypeNode` the reference holds after the call.
 * `$variable` — the parameter's name, without the leading `$`.
@@ -48,9 +49,7 @@ final class ParamOutTag extends TypedVariableTag
     // properties below are inherited from
     // TypedVariableTag (and its parent TypedTag):
 
-    public TypeNode $type {
-        get => $this->statement->type;
-    }
+    public readonly TypeNode $type;
 
     public readonly string $variable;
 }

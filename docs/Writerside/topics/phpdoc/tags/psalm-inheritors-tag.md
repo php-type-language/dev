@@ -7,7 +7,7 @@ extend or implement the described type, letting Psalm flag any
 subclass or implementation outside the listed set.
 
 ```
-"@psalm-inheritors" <Type>
+"@psalm-inheritors" <Type> [ <Description> ]
 ```
 
 Parsing a `@psalm-inheritors` tag produces a `PsalmInheritorsTag` instance, carrying the

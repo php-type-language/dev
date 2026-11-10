@@ -7,7 +7,7 @@ The `@phan-closure-scope` tag binds the type of `$this` inside a
 bound to an instance of the given class.
 
 ```
-"@phan-closure-scope" <Type>
+"@phan-closure-scope" <Type> [ <Description> ]
 ```
 
 Parsing a `@phan-closure-scope` tag produces a `PhanClosureScopeTag` instance, carrying the

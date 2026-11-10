@@ -49,7 +49,7 @@ Parsing a `@suppress` tag produces a `SuppressTag` instance exposing
 were written (always at least one).
 
 ```php
-final class SuppressTag extends Tag
+abstract class IssueListTag extends Tag
 {
     public function __construct(
         string $name,
@@ -62,6 +62,8 @@ final class SuppressTag extends Tag
         parent::__construct($name, $description);
     }
 }
+
+final class SuppressTag extends IssueListTag {}
 ```
 
 <note>

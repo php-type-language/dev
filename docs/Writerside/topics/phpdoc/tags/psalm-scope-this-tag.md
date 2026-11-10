@@ -7,7 +7,7 @@ The `@psalm-scope-this` tag binds the type of `$this` inside a
 a method of the given class.
 
 ```
-"@psalm-scope-this" <Type>
+"@psalm-scope-this" <Type> [ <Description> ]
 ```
 
 Parsing a `@psalm-scope-this` tag produces a `PsalmScopeThisTag` instance, carrying the

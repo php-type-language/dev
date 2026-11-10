@@ -7,7 +7,7 @@ method when the given type matches. It is defined by the static
 analyzer Psalm, alongside [@psalm-assert](psalm-assert-tag.md).
 
 ```
-"@psalm-if-this-is" <Type>
+"@psalm-if-this-is" <Type> [ <Description> ]
 ```
 
 Parsing a `@psalm-if-this-is` tag produces a `PsalmIfThisIsTag` instance, carrying the

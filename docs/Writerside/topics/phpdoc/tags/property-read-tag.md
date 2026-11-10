@@ -42,7 +42,7 @@ exposing:
 ```php
 final class PropertyReadTag extends MagicPropertyTag
 {
-    // Inherits `$type` (computed `TypeNode` getter)
+    // Inherits `$type` (a `TypeNode`)
     // and `string $variable` (required, non-null)
     // from MagicPropertyTag; adds nothing of its own.
 }

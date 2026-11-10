@@ -68,8 +68,11 @@ final class VarTag extends TypedTag
 
 <note>
 PHPStan and Psalm additionally recognize a vendor-prefixed
-<code>@phpstan-var</code> / <code>@psalm-var</code> spelling. This
-component parses only the plain <code>@var</code> tag.
+<code>@phpstan-var</code> / <code>@psalm-var</code> spelling. Both are
+registered as aliases (see <a href="phpstan-var-tag.md">@phpstan-var</a> and
+<a href="psalm-var-tag.md">@psalm-var</a>) once the PHPStan or Psalm
+<a href="platforms.md">platform</a> is loaded, and parse into the same
+<code>VarTag</code>.
 </note>
 
 Defined by the PSR-19 draft

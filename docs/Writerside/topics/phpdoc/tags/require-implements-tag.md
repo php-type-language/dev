@@ -36,8 +36,8 @@ abstract class RequireInheritanceTag extends TypedTag {}
 
 final class RequireImplementsTag extends RequireInheritanceTag
 {
-    // inherits the computed TypeNode $type
-    // getter from TypedTag; adds nothing.
+    // inherits the `public readonly TypeNode $type`
+    // from TypedTag; adds nothing.
 }
 ```
 

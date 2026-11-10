@@ -6,8 +6,8 @@ The `@phan-suppress-current-line` tag silences the listed
 issue types reported on the current line.
 
 ```
-"@phan-suppress-current-line" <Name>
-    { "," <Name> } [ <Description> ]
+"@phan-suppress-current-line" <IssueName>
+    { "," <IssueName> } [ <Description> ]
 ```
 
 Parsing a `@phan-suppress-current-line` tag produces a `PhanSuppressCurrentLineTag` instance, carrying the

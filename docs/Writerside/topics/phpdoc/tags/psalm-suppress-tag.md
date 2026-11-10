@@ -9,7 +9,7 @@ element. It is Psalm's vendor-prefixed spelling of
 recognizes bare.
 
 ```
-"@psalm-suppress" <Name> { "," <Name> } [ <Description> ]
+"@psalm-suppress" <IssueName> { "," <IssueName> } [ <Description> ]
 ```
 
 This library recognizes it as an alias: it parses identically to the

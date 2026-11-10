@@ -7,7 +7,7 @@ the whole file it appears in, rather than just a single element or
 line.
 
 ```
-"@phan-file-suppress" <Name> { "," <Name> } [ <Description> ]
+"@phan-file-suppress" <IssueName> { "," <IssueName> } [ <Description> ]
 ```
 
 Parsing a `@phan-file-suppress` tag produces a `PhanFileSuppressTag` instance, carrying the

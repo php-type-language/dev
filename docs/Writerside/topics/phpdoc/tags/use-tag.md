@@ -37,9 +37,8 @@ the trait with its type arguments — along with the inherited `$name` and
 ```php
 final class UseTag extends InheritanceTag
 {
-    // extends TypedTag; adds a computed
-    // TypeNode $type getter on top of
-    // $name and $description.
+    // adds nothing of its own: `$type`, `$name`
+    // and `$description` are inherited.
 }
 ```
 

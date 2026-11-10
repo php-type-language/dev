@@ -6,7 +6,7 @@ The `@phpstan-ignore` tag silences the listed error identifiers reported
 on the current line, defined by PHPStan.
 
 ```
-"@phpstan-ignore" <Name> { "," <Name> }
+"@phpstan-ignore" <IssueName> { "," <IssueName> }
     [ <Description> ]
 ```
 

@@ -43,11 +43,12 @@ instance exposing `$variable`: the parameter's name, without the leading
 [@param](param-tag.md) already declares.
 
 ```php
-final class ParamImmediatelyInvokedCallableTag extends VariableTag
+abstract class ParamInvokedCallableTag extends VariableTag {}
+
+final class ParamImmediatelyInvokedCallableTag extends ParamInvokedCallableTag
 {
     // Adds nothing of its own; $variable is
     // declared on the parent VariableTag.
-    public readonly string $variable;
 }
 ```
 

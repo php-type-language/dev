@@ -8,8 +8,11 @@ namespace rather than to the whole package, a narrower scope than
 this library's already-implemented [@internal](internal-tag.md) tag.
 
 ```
-"@psalm-internal" [ <Name> ] [ <Description> ]
+"@psalm-internal" [ <Description> ]
 ```
+
+The namespace Psalm expects after the tag is not parsed separately: it ends
+up in `$description`, exactly as it does for `@internal`.
 
 This library recognizes it as an alias: it parses identically to the
 canonical tag above and produces the exact same tag instance, keeping the

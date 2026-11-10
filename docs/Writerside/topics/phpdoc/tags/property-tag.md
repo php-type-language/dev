@@ -51,7 +51,7 @@ Parsing a `@property` tag produces a `TypedVariableTag` instance exposing:
 ```php
 final class PropertyTag extends MagicPropertyTag
 {
-    // Inherits `$type` (computed `TypeNode` getter)
+    // Inherits `$type` (a `TypeNode`)
     // and `string $variable` from MagicPropertyTag
     // (itself a TypedVariableTag), plus `$name` and
     // `$description` from the base `Tag` class; adds

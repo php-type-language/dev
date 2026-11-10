@@ -33,18 +33,13 @@ naming the interface together with its type arguments — plus the `$name` and
 `$description` common to every tag.
 
 ```php
-final class ImplementsTag extends TypedTag
+final class ImplementsTag extends InheritanceTag
 {
-    // adds nothing of its own: $type is inherited
-    // from TypedTag as a computed getter:
-    //
-    //     public TypeNode $type {
-    //         get => $this->statement->type;
-    //     }
-    //
-    // backed by a protected TypeReference
-    // $statement, which is not itself part
-    // of the public shape.
+    // adds nothing of its own: the
+    // `public readonly TypeNode $type` is
+    // inherited from TypedTag, which in turn
+    // keeps the protected TypeReference
+    // $statement it was built from.
 }
 ```
 

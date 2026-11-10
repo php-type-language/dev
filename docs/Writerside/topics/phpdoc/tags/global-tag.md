@@ -55,10 +55,8 @@ abstract class TypedVariableTag extends TypedTag
     }
 }
 
-// TypedTag exposes a computed getter:
-//     public TypeNode $type {
-//         get => $this->statement->type;
-//     }
+// TypedTag exposes the parsed type:
+//     public readonly TypeNode $type;
 
 final class GlobalTag extends TypedVariableTag
 {

@@ -35,8 +35,8 @@ closure that reads `$this` has no documented type to check against.
 > function onConnect(Closure $callback): void
 > ```
 
-Parsing a `@param-closure-this` tag produces a `TypedVariableTag` instance
-exposing:
+Parsing a `@param-closure-this` tag produces a `ParamClosureThisTag` instance
+(a `TypedVariableTag`) exposing:
 
 * `$type` — the documented `TypeNode` that `$this` is bound to.
 * `$variable` — the closure parameter's name, without the leading `$`.
@@ -48,9 +48,7 @@ final class ParamClosureThisTag extends TypedVariableTag
     // properties below are inherited from
     // TypedVariableTag (and its parent TypedTag):
 
-    public TypeNode $type {
-        get => $this->statement->type;
-    }
+    public readonly TypeNode $type;
 
     public readonly string $variable;
 }
