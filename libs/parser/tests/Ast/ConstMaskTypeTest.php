@@ -52,7 +52,7 @@ final class ConstMaskTypeTest extends TestCase
         $type = $this->parse($source);
 
         self::assertInstanceOf(ConstMaskTypeNode::class, $type);
-        self::assertSame($namespace, $type->namespace?->toString());
+        self::assertSame($namespace, $type->owner?->toString());
         self::assertSame($isFullyQualified, $type->isFullyQualified());
         self::assertSame($mask, $type->mask->toString());
     }
@@ -114,7 +114,7 @@ final class ConstMaskTypeTest extends TestCase
         $type = $this->parse('  Foo\\Bar\\BAZ_*');
 
         self::assertInstanceOf(ConstMaskTypeNode::class, $type);
-        self::assertSame(2, $type->namespace?->offset);
+        self::assertSame(2, $type->owner?->offset);
     }
 
     public function testTriviaAroundIsIgnored(): void

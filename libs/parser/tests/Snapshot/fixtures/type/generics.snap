@@ -90,9 +90,9 @@
 >>> Foo<1, 2.5, true, null>
 <<< accepted NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: Literal\IntLiteralNode@4(value: 1, raw: "1", decimal: "1", kind: Literal\IntLiteralKind::Decimal), variance: null), Template\TypedTemplateArgumentNode@7(value: Literal\FloatLiteralNode@7(value: 2.5, raw: "2.5", mantissa: "2.5", exponent: "0"), variance: null), Template\TypedTemplateArgumentNode@12(value: Literal\BoolLiteralNode@12(value: true, raw: "true"), variance: null), Template\TypedTemplateArgumentNode@18(value: Literal\NullLiteralNode@18(value: null, raw: "null"), variance: null)]), fields: null)
 >>> Foo<Bar::BAZ>
-<<< accepted NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: Constant\ClassConstTypeNode@4(class: Name@4(value: "Bar", namespace: null), constant: Identifier@9(value: "BAZ")), variance: null)]), fields: null)
+<<< accepted NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: Constant\ConstTypeNode@4(owner: Name@4(value: "Bar", namespace: null), constant: Identifier@9(value: "BAZ")), variance: null)]), fields: null)
 >>> Foo<Bar::*>
-<<< accepted NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: Constant\ClassConstMaskTypeNode@4(class: Name@4(value: "Bar", namespace: null), mask: Constant\MaskNode@9(items: [Constant\MaskNode\WildcardMaskNode@9()])), variance: null)]), fields: null)
+<<< accepted NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: Constant\ConstMaskTypeNode@4(owner: Name@4(value: "Bar", namespace: null), mask: Constant\MaskNode@9(items: [Constant\MaskNode\WildcardMaskNode@9()])), variance: null)]), fields: null)
 >>> Foo<$this>
 <<< accepted NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: ThisTypeNode@4(), variance: null)]), fields: null)
 >>> Foo<static>

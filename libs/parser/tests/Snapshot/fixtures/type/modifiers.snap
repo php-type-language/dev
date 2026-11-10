@@ -72,9 +72,9 @@
 >>> ?1
 <<< accepted WrappingTypeNode\NullableTypeNode@0(type: Literal\IntLiteralNode@1(value: 1, raw: "1", decimal: "1", kind: Literal\IntLiteralKind::Decimal))
 >>> ?Foo::BAR
-<<< accepted WrappingTypeNode\NullableTypeNode@0(type: Constant\ClassConstTypeNode@1(class: Name@1(value: "Foo", namespace: null), constant: Identifier@6(value: "BAR")))
+<<< accepted WrappingTypeNode\NullableTypeNode@0(type: Constant\ConstTypeNode@1(owner: Name@1(value: "Foo", namespace: null), constant: Identifier@6(value: "BAR")))
 >>> ?Foo::class
-<<< accepted WrappingTypeNode\NullableTypeNode@0(type: Constant\ClassConstTypeNode@1(class: Name@1(value: "Foo", namespace: null), constant: Identifier@6(value: "class")))
+<<< accepted WrappingTypeNode\NullableTypeNode@0(type: Constant\ConstTypeNode@1(owner: Name@1(value: "Foo", namespace: null), constant: Identifier@6(value: "class")))
 
 # Array suffix
 >>> int[]
@@ -138,9 +138,9 @@
 >>> true[]
 <<< accepted WrappingTypeNode\TypesListTypeNode@0(type: Literal\BoolLiteralNode@0(value: true, raw: "true"))
 >>> Foo::BAR[]
-<<< accepted WrappingTypeNode\TypesListTypeNode@0(type: Constant\ClassConstTypeNode@0(class: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")))
+<<< accepted WrappingTypeNode\TypesListTypeNode@0(type: Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "BAR")))
 >>> Foo::class[]
-<<< accepted WrappingTypeNode\TypesListTypeNode@0(type: Constant\ClassConstTypeNode@0(class: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "class")))
+<<< accepted WrappingTypeNode\TypesListTypeNode@0(type: Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "class")))
 >>> int[]|null
 <<< accepted LogicalTypeNode\UnionTypeNode@0(types: [WrappingTypeNode\TypesListTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "int", namespace: null), arguments: null, fields: null)), Literal\NullLiteralNode@6(value: null, raw: "null")])
 >>> int[]?
@@ -166,9 +166,9 @@
 >>> T[null]
 <<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Literal\NullLiteralNode@2(value: null, raw: "null"))
 >>> T[Foo::BAR]
-<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Constant\ClassConstTypeNode@2(class: Name@2(value: "Foo", namespace: null), constant: Identifier@7(value: "BAR")))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Constant\ConstTypeNode@2(owner: Name@2(value: "Foo", namespace: null), constant: Identifier@7(value: "BAR")))
 >>> T[Foo::class]
-<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Constant\ClassConstTypeNode@2(class: Name@2(value: "Foo", namespace: null), constant: Identifier@7(value: "class")))
+<<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: Constant\ConstTypeNode@2(owner: Name@2(value: "Foo", namespace: null), constant: Identifier@7(value: "class")))
 >>> T[K][K2]
 <<< accepted TypeOffsetAccessTypeNode@0(type: TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), access: NamedTypeNode@2(name: Name@2(value: "K", namespace: null), arguments: null, fields: null)), access: NamedTypeNode@5(name: Name@5(value: "K2", namespace: null), arguments: null, fields: null))
 >>> T[K][]
@@ -214,7 +214,7 @@
 >>> T|U[K]
 <<< accepted LogicalTypeNode\UnionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "T", namespace: null), arguments: null, fields: null), TypeOffsetAccessTypeNode@2(type: NamedTypeNode@2(name: Name@2(value: "U", namespace: null), arguments: null, fields: null), access: NamedTypeNode@4(name: Name@4(value: "K", namespace: null), arguments: null, fields: null))])
 >>> T::BAR[K]
-<<< accepted TypeOffsetAccessTypeNode@0(type: Constant\ClassConstTypeNode@0(class: Name@0(value: "T", namespace: null), constant: Identifier@3(value: "BAR")), access: NamedTypeNode@7(name: Name@7(value: "K", namespace: null), arguments: null, fields: null))
+<<< accepted TypeOffsetAccessTypeNode@0(type: Constant\ConstTypeNode@0(owner: Name@0(value: "T", namespace: null), constant: Identifier@3(value: "BAR")), access: NamedTypeNode@7(name: Name@7(value: "K", namespace: null), arguments: null, fields: null))
 >>> list<int>[0]
 <<< accepted TypeOffsetAccessTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "list", namespace: null), arguments: Template\TemplateListNode@5(items: [Template\TypedTemplateArgumentNode@5(value: NamedTypeNode@5(name: Name@5(value: "int", namespace: null), arguments: null, fields: null), variance: null)]), fields: null), access: Literal\IntLiteralNode@10(value: 0, raw: "0", decimal: "0", kind: Literal\IntLiteralKind::Decimal))
 >>> array{a: int}['a']
@@ -312,11 +312,11 @@
 >>> true|false
 <<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Literal\BoolLiteralNode@0(value: true, raw: "true"), Literal\BoolLiteralNode@5(value: false, raw: "false")])
 >>> Foo::A|Foo::B
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Constant\ClassConstTypeNode@0(class: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "A")), Constant\ClassConstTypeNode@7(class: Name@7(value: "Foo", namespace: null), constant: Identifier@12(value: "B"))])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@5(value: "A")), Constant\ConstTypeNode@7(owner: Name@7(value: "Foo", namespace: null), constant: Identifier@12(value: "B"))])
 >>> Foo::*|Bar::*
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Constant\ClassConstMaskTypeNode@0(class: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Constant\MaskNode\WildcardMaskNode@5()])), Constant\ClassConstMaskTypeNode@7(class: Name@7(value: "Bar", namespace: null), mask: Constant\MaskNode@12(items: [Constant\MaskNode\WildcardMaskNode@12()]))])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [Constant\ConstMaskTypeNode@0(owner: Name@0(value: "Foo", namespace: null), mask: Constant\MaskNode@5(items: [Constant\MaskNode\WildcardMaskNode@5()])), Constant\ConstMaskTypeNode@7(owner: Name@7(value: "Bar", namespace: null), mask: Constant\MaskNode@12(items: [Constant\MaskNode\WildcardMaskNode@12()]))])
 >>> int|Foo::*
-<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "int", namespace: null), arguments: null, fields: null), Constant\ClassConstMaskTypeNode@4(class: Name@4(value: "Foo", namespace: null), mask: Constant\MaskNode@9(items: [Constant\MaskNode\WildcardMaskNode@9()]))])
+<<< accepted LogicalTypeNode\UnionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "int", namespace: null), arguments: null, fields: null), Constant\ConstMaskTypeNode@4(owner: Name@4(value: "Foo", namespace: null), mask: Constant\MaskNode@9(items: [Constant\MaskNode\WildcardMaskNode@9()]))])
 >>> Foo<int>|Bar<string>
 <<< accepted LogicalTypeNode\UnionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: Template\TemplateListNode@4(items: [Template\TypedTemplateArgumentNode@4(value: NamedTypeNode@4(name: Name@4(value: "int", namespace: null), arguments: null, fields: null), variance: null)]), fields: null), NamedTypeNode@9(name: Name@9(value: "Bar", namespace: null), arguments: Template\TemplateListNode@13(items: [Template\TypedTemplateArgumentNode@13(value: NamedTypeNode@13(name: Name@13(value: "string", namespace: null), arguments: null, fields: null), variance: null)]), fields: null)])
 >>> callable(): int|string
@@ -406,7 +406,7 @@
 >>> A&1
 <<< accepted LogicalTypeNode\IntersectionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "A", namespace: null), arguments: null, fields: null), Literal\IntLiteralNode@2(value: 1, raw: "1", decimal: "1", kind: Literal\IntLiteralKind::Decimal)])
 >>> A&Foo::BAR
-<<< accepted LogicalTypeNode\IntersectionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "A", namespace: null), arguments: null, fields: null), Constant\ClassConstTypeNode@2(class: Name@2(value: "Foo", namespace: null), constant: Identifier@7(value: "BAR"))])
+<<< accepted LogicalTypeNode\IntersectionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "A", namespace: null), arguments: null, fields: null), Constant\ConstTypeNode@2(owner: Name@2(value: "Foo", namespace: null), constant: Identifier@7(value: "BAR"))])
 >>> A&static
 <<< accepted LogicalTypeNode\IntersectionTypeNode@0(types: [NamedTypeNode@0(name: Name@0(value: "A", namespace: null), arguments: null, fields: null), NamedTypeNode@2(name: Name@2(value: "static", namespace: null), arguments: null, fields: null)])
 >>> A&$this

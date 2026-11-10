@@ -9,7 +9,7 @@ use TypeLang\Parser\Exception\FeatureNotEnabledException;
 use TypeLang\Parser\Tests\TestCase;
 use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
-use TypeLang\Type\Constant\ClassConstTypeNode;
+use TypeLang\Type\Constant\ConstTypeNode;
 use TypeLang\Type\Literal\BoolLiteralNode;
 use TypeLang\Type\Literal\FloatLiteralNode;
 use TypeLang\Type\Literal\IntLiteralNode;
@@ -173,9 +173,9 @@ final class CallableTypeTest extends TestCase
         yield 'true' => ['callable(bool $a = true)', BoolLiteralNode::class];
         yield 'false' => ['callable(bool $a = false)', BoolLiteralNode::class];
         yield 'null' => ['callable(?int $a = null)', NullLiteralNode::class];
-        yield 'class constant' => ['callable(int $a = Foo::BAR)', ClassConstTypeNode::class];
-        yield 'class constant of a qualified class' => ['callable(int $a = \\Foo\\Bar::BAZ)', ClassConstTypeNode::class];
-        yield 'class name' => ['callable(string $a = Foo::class)', ClassConstTypeNode::class];
+        yield 'class constant' => ['callable(int $a = Foo::BAR)', ConstTypeNode::class];
+        yield 'class constant of a qualified class' => ['callable(int $a = \\Foo\\Bar::BAZ)', ConstTypeNode::class];
+        yield 'class name' => ['callable(string $a = Foo::class)', ConstTypeNode::class];
         yield 'global constant' => ['callable(int $a = PHP_INT_MAX)', NamedTypeNode::class];
         yield 'fully qualified constant' => ['callable(string $a = \\PHP_EOL)', NamedTypeNode::class];
         yield 'with no type' => ['callable($a = 42)', IntLiteralNode::class];
@@ -211,8 +211,8 @@ final class CallableTypeTest extends TestCase
         self::assertInstanceOf(IntLiteralNode::class, $int);
         self::assertSame(-42, $int->value);
 
-        self::assertInstanceOf(ClassConstTypeNode::class, $constant);
-        self::assertSame('Foo', $constant->class->toString());
+        self::assertInstanceOf(ConstTypeNode::class, $constant);
+        self::assertSame('Foo', $constant->owner->toString());
         self::assertSame('BAR', $constant->constant->value);
 
         self::assertInstanceOf(NamedTypeNode::class, $global);
@@ -233,7 +233,7 @@ final class CallableTypeTest extends TestCase
         yield 'shape' => ['callable(): array{a: int}', NamedTypeNode::class];
         yield 'this' => ['callable(): $this', ThisTypeNode::class];
         yield 'literal' => ['callable(): 42', IntLiteralNode::class];
-        yield 'class constant' => ['callable(): Foo::BAR', ClassConstTypeNode::class];
+        yield 'class constant' => ['callable(): Foo::BAR', ConstTypeNode::class];
         yield 'group of a union' => ['callable(): (int|string)', UnionTypeNode::class];
         yield 'callable' => ['callable(): callable(): void', CallableTypeNode::class];
         yield 'gap around the colon' => ["callable(int) /* c */ :\n void", NamedTypeNode::class];

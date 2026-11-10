@@ -274,7 +274,7 @@ final class TypeResolverTest extends TypeResolverTestCase
             ->withTypeImport('App\Node');
 
         self::assertSame(<<<'AST'
-            Constant\ClassConstTypeNode
+            Constant\ConstTypeNode
               Name(App\Node)
               Identifier(FOO)
             AST, $this->print($resolver->resolve($this->parse('Node::FOO'))));
@@ -286,7 +286,7 @@ final class TypeResolverTest extends TypeResolverTestCase
             ->withTypeImport('App\Node');
 
         self::assertSame(<<<'AST'
-            Constant\ClassConstMaskTypeNode
+            Constant\ConstMaskTypeNode
               Name(App\Node)
               Constant\MaskNode(*)
                 Constant\MaskNode\WildcardMaskNode(*)

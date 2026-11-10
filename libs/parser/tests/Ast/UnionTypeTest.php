@@ -6,7 +6,7 @@ namespace TypeLang\Parser\Tests\Ast;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Parser\Tests\TestCase;
-use TypeLang\Type\Constant\ClassConstTypeNode;
+use TypeLang\Type\Constant\ConstTypeNode;
 use TypeLang\Type\Literal\IntLiteralNode;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
@@ -31,7 +31,7 @@ final class UnionTypeTest extends TestCase
         yield 'three names' => ['A|B|C', [NamedTypeNode::class, NamedTypeNode::class, NamedTypeNode::class]];
         yield 'literals' => ['1|2', [IntLiteralNode::class, IntLiteralNode::class]];
         yield 'this and a name' => ['$this|A', [ThisTypeNode::class, NamedTypeNode::class]];
-        yield 'constants' => ['Foo::A|Foo::B', [ClassConstTypeNode::class, ClassConstTypeNode::class]];
+        yield 'constants' => ['Foo::A|Foo::B', [ConstTypeNode::class, ConstTypeNode::class]];
         yield 'lists' => ['A[]|B[]', [TypesListTypeNode::class, TypesListTypeNode::class]];
         yield 'list and name' => ['A[]|B', [TypesListTypeNode::class, NamedTypeNode::class]];
         yield 'name and list' => ['A|B[]', [NamedTypeNode::class, TypesListTypeNode::class]];

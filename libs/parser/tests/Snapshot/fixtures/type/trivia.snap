@@ -82,11 +82,11 @@
 >>> int []
 <<< accepted WrappingTypeNode\TypesListTypeNode@0(type: NamedTypeNode@0(name: Name@0(value: "int", namespace: null), arguments: null, fields: null))
 >>> Foo\n::\nBAR
-<<< accepted Constant\ClassConstTypeNode@0(class: Name@0(value: "Foo", namespace: null), constant: Identifier@7(value: "BAR"))
+<<< accepted Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@7(value: "BAR"))
 >>> Foo ::BAR
-<<< accepted Constant\ClassConstTypeNode@0(class: Name@0(value: "Foo", namespace: null), constant: Identifier@6(value: "BAR"))
+<<< accepted Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@6(value: "BAR"))
 >>> Foo:: BAR
-<<< accepted Constant\ClassConstTypeNode@0(class: Name@0(value: "Foo", namespace: null), constant: Identifier@6(value: "BAR"))
+<<< accepted Constant\ConstTypeNode@0(owner: Name@0(value: "Foo", namespace: null), constant: Identifier@6(value: "BAR"))
 >>> Foo\n\\Bar
 <<< partial@4 NamedTypeNode@0(name: Name@0(value: "Foo", namespace: null), arguments: null, fields: null)
 >>> Foo\\ Bar
