@@ -3,6 +3,7 @@ includes:
   - vendor/phpstan/phpstan-deprecation-rules/rules.neon
   - vendor/phpstan/phpstan-strict-rules/rules.neon
   # Components
+  - libs/mapper/phpstan.neon
   - libs/parser/phpstan.neon
   - libs/phpdoc/phpstan.neon
   - libs/printer/phpstan.neon

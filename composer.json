@@ -8,6 +8,7 @@
     ],
     "require": {
         "php": "^8.1",
+        "type-lang/mapper": "^2.0",
         "type-lang/parser": "^2.0",
         "type-lang/phpdoc": "^2.0",
         "type-lang/printer": "^2.0",
@@ -30,6 +31,7 @@
     "autoload-dev": {
         "psr-4": {
             "TypeLang\\Bench\\": "bench",
+            "TypeLang\\Mapper\\Tests\\": "libs/mapper/tests",
             "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
             "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
             "TypeLang\\PhpDoc\\Tests\\": "libs/phpdoc/tests",

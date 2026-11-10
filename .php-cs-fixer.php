@@ -5,6 +5,7 @@ use PhpCsFixer\Finder;
 use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
 const PHPCS_DIRECTORIES = [
+    __DIR__ . '/libs/mapper/src',
     __DIR__ . '/libs/parser/src',
     __DIR__ . '/libs/phpdoc/src',
     __DIR__ . '/libs/printer/src',
