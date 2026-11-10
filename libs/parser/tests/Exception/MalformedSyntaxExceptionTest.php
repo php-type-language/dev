@@ -28,7 +28,7 @@ final class MalformedSyntaxExceptionTest extends TestCase
 
         yield 'an empty argument list' => ['Foo<>', 'A template argument is expected after "<"'];
         yield 'an argument list of a comma' => ['Foo<,>', 'A template argument is expected after "<"'];
-        yield 'an argument list with a doubled comma' => ['Foo<int,,string>', 'A template argument or ">" is expected after ","'];
+        yield 'an argument list with a doubled comma' => ['Foo<int,,string>', 'Invalid template arguments, "," or ">" is expected'];
         yield 'an argument list with a missing comma' => ['Foo<A B>', 'Invalid template arguments, "," or ">" is expected'];
         yield 'an unclosed argument list' => ['Foo<int', 'Invalid template arguments, "," or ">" is expected'];
         yield 'an empty template parameter list' => ['callable<>(): T', 'A template argument is expected after "<"'];
