@@ -71,11 +71,23 @@ and is written as `?T.`
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "?"
+> Error: Unexpected "?"
 > ```
 > {style="warning"}
 </tab>
 </tabs>
+
+### Precedence
+
+An intersection binds tighter than a union, and a nullable marker binds tighter
+than both of them, so the parentheses are needed only to change the order.
+
+| Written    | Read as       |
+|------------|---------------|
+| `A\|B&C`   | `A\|(B&C)`    |
+| `?A\|B`    | `(?A)\|B`     |
+| `?A&B`     | `(?A)&B`      |
+| `?A[]`     | `?(A[])`      |
 
 ### Parentheses
 
