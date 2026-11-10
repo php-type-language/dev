@@ -30,17 +30,17 @@ $parser->parse('42');
 ```
 
 ```
-TypeLang\Parser\Exception\SemanticParseException:
-Literal values not allowed in "42"
+TypeLang\Parser\Exception\FeatureNotEnabledException:
+Literals feature is not allowed
 ```
 
-To override one or more flags on an *existing* parser, use `TypeParser::withFeatures()`
+To override one or more flags on an *existing* parser, use `TypeParser::with()`
 instead — it returns a new parser sharing everything else with the original one:
 
 ```php
 $parser = new TypeParser();
 
-$strict = $parser->withFeatures(
+$strict = $parser->with(
     generics: false,
     shapes: false,
 );
@@ -66,7 +66,7 @@ $features = (new TypeParserFeatures())
 | `conditions`    | `T is U ? A : B`                            |
 | `generics`      | `Example<T>`                                |
 | `wildcards`     | `Example<*>`                                |
-| `hints`         | `Example<out T, in U>`                      |
+| `hints`         | `Example<covariant T, contravariant U>`     |
 | `callables`     | `fn(): void`                                |
 | `templates`     | `callable<T of U = V>(T): T`                |
 | `defaults`      | `callable(T $a = U): V`                     |
@@ -103,7 +103,7 @@ refine what an argument may be:
 
 - `wildcards` allows `*` in place of the type: `Example<*>`;
 - `hints` allows a [variance modifier](generic-types.md#call-site-hints)
-  before the type: `Example<out T, in U>`.
+  (any identifier) before the type: `Example<covariant T>`.
 
 ### Callables
 
@@ -127,3 +127,21 @@ refine what an argument may be:
 
 [Literals are concrete values](literal-types.md) such as `42`, `0xDEAD`,
 `"string"`, `0.23`, etc.
+
+## Behavior of Disabled Features
+
+A disabled feature is reported as a
+`TypeLang\Parser\Exception\FeatureNotEnabledException` (a `ParsingException`)
+by both `parse()` and `partial()`:
+
+```php
+$parser = new TypeParser(new TypeParserFeatures(unions: false));
+
+$parser->partial('T|U');
+// FeatureNotEnabledException: Unions feature is not allowed
+```
+
+> `validate()` only checks the grammar and builds nothing, so it does **not**
+> take the feature flags into account: `validate('T|U')` is a
+> `SuccessfulCheckResult` even when `unions` is disabled.
+> {style="warning"}
