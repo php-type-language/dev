@@ -41,22 +41,32 @@ final class TypeMapVisitor extends Visitor
             return $namespace;
         }
 
-        $words = $namespace->toArray();
-        $last = \array_pop($words);
+        $parts = $namespace->toArray();
+        $namePart = \array_pop($parts);
 
-        if ($last === null) {
+        if ($namePart === null) {
             return $namespace;
         }
 
-        $name = new Name(
-            $last,
-            $words === [] ? null : new NamespaceName(\implode(NamespaceName::DELIMITER, $words)),
-            $namespace->offset,
-        );
-
-        $mapped = $this->map($name);
+        $mapped = $this->map(new Name(
+            value: $namePart,
+            namespace: $this->getMappedNamespace($parts),
+            offset: $namespace->offset,
+        ));
 
         return new NamespaceName($mapped->toString(), NamespaceKind::Qualified, $namespace->offset);
+    }
+
+    /**
+     * @param list<non-empty-string> $parts
+     */
+    private function getMappedNamespace(array $parts): ?NamespaceName
+    {
+        if (\count($parts) === 0) {
+            return null;
+        }
+
+        return new NamespaceName(\implode(NamespaceName::DELIMITER, $parts));
     }
 
     public function enter(Node $node): ?Command
