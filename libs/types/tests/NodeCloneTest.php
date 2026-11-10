@@ -10,8 +10,8 @@ use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
 use TypeLang\Type\Callable\DefaultValueNode;
 use TypeLang\Type\Condition\ConditionalTypeNode;
-use TypeLang\Type\Condition\EqualConditionNode;
-use TypeLang\Type\Condition\NotEqualConditionNode;
+use TypeLang\Type\Condition\ConditionNode;
+use TypeLang\Type\Condition\ConditionNode\ConditionKind;
 use TypeLang\Type\Constant\ClassConstMaskTypeNode;
 use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
@@ -118,9 +118,9 @@ final class NodeCloneTest extends TestCase
         );
 
         $condition = new ConditionalTypeNode(
-            condition: new EqualConditionNode(new VariableNode('value'), self::type('int')),
+            condition: new ConditionNode(new VariableNode('value'), self::type('int'), ConditionKind::Equal),
             then: new ConditionalTypeNode(
-                condition: new NotEqualConditionNode(self::type('A'), self::type('B')),
+                condition: new ConditionNode(self::type('A'), self::type('B'), ConditionKind::NotEqual),
                 then: self::type('C'),
                 else: self::type('D'),
             ),

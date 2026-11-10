@@ -191,6 +191,32 @@ final class NameTest extends TestCase
     }
 
     /**
+     * @return iterable<non-empty-string, array{non-empty-string, bool}>
+     */
+    public static function builtinDataProvider(): iterable
+    {
+        foreach (['mixed', 'string', 'int', 'float', 'bool', 'object', 'array', 'void', 'never', 'callable', 'iterable', 'null', 'true', 'false'] as $word) {
+            yield $word => [$word, true];
+        }
+
+        yield 'in upper case' => ['INT', true];
+        yield 'other word' => ['Foo', false];
+        yield 'special word' => ['self', false];
+        yield 'qualified' => ['Foo\int', false];
+        yield 'fully qualified' => ['\int', false];
+    }
+
+    /**
+     * @param non-empty-string $text
+     */
+    #[Test]
+    #[DataProvider('builtinDataProvider')]
+    public function builtinNameIsRecognized(string $text, bool $expected): void
+    {
+        self::assertSame($expected, self::nameOf($text)->isBuiltin());
+    }
+
+    /**
      * @return iterable<non-empty-string, array{non-empty-string, non-empty-string}>
      */
     public static function unqualifiedDataProvider(): iterable

@@ -54,27 +54,6 @@ final class SymbolNodeTest extends TestCase
     /**
      * @return iterable<non-empty-string, array{SymbolNode, bool}>
      */
-    public static function specialDataProvider(): iterable
-    {
-        yield 'self' => [new Identifier('self'), true];
-        yield 'parent in upper case' => [new Name('PARENT'), true];
-        yield 'static' => [new Identifier('static'), true];
-        yield 'a regular word' => [new Identifier('Foo'), false];
-        yield 'a built-in word' => [new Name('int'), false];
-        yield 'a qualified special word' => [new Name('self', new NamespaceName('Foo')), false];
-        yield 'a variable of a special word' => [new VariableNode('self'), false];
-    }
-
-    #[Test]
-    #[DataProvider('specialDataProvider')]
-    public function specialWordsAreRecognized(SymbolNode $node, bool $expected): void
-    {
-        self::assertSame($expected, $node->isSpecial());
-    }
-
-    /**
-     * @return iterable<non-empty-string, array{SymbolNode, bool}>
-     */
     public static function virtualDataProvider(): iterable
     {
         yield 'a regular identifier' => [new Identifier('Foo'), false];
@@ -90,30 +69,5 @@ final class SymbolNodeTest extends TestCase
     public function virtualWordsAreRecognized(SymbolNode $node, bool $expected): void
     {
         self::assertSame($expected, $node->isVirtual());
-    }
-
-    /**
-     * @return iterable<non-empty-string, array{SymbolNode, bool}>
-     */
-    public static function builtinDataProvider(): iterable
-    {
-        foreach (['mixed', 'string', 'int', 'float', 'bool', 'object', 'array', 'void', 'never', 'callable', 'iterable', 'null', 'true', 'false'] as $word) {
-            yield $word . ' as an identifier' => [new Identifier($word), true];
-            yield $word . ' as a name' => [new Name($word), true];
-        }
-
-        yield 'in upper case' => [new Name('INT'), true];
-        yield 'a regular word' => [new Identifier('Foo'), false];
-        yield 'a special word' => [new Name('self'), false];
-        yield 'a qualified built-in word' => [new Name('int', new NamespaceName('Foo')), false];
-        yield 'a fully qualified built-in word' => [new Name('int', new NamespaceName('', NamespaceName\NamespaceKind::FullyQualified)), false];
-        yield 'a variable of a built-in word' => [new VariableNode('int'), false];
-    }
-
-    #[Test]
-    #[DataProvider('builtinDataProvider')]
-    public function builtinWordsAreRecognized(SymbolNode $node, bool $expected): void
-    {
-        self::assertSame($expected, $node->isBuiltin());
     }
 }

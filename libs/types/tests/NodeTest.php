@@ -12,8 +12,8 @@ use TypeLang\Type\Callable\CallableTypeNode;
 use TypeLang\Type\Callable\DefaultValueNode;
 use TypeLang\Type\Constant\ClassConstMaskTypeNode;
 use TypeLang\Type\Constant\ClassConstTypeNode;
-use TypeLang\Type\Condition\EqualConditionNode;
-use TypeLang\Type\Condition\NotEqualConditionNode;
+use TypeLang\Type\Condition\ConditionNode;
+use TypeLang\Type\Condition\ConditionNode\ConditionKind;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
@@ -82,7 +82,7 @@ final class NodeTest extends TestCase
         yield NullableTypeNode::class => [new NullableTypeNode(self::type())];
         yield ConditionalTypeNode::class => [
             new ConditionalTypeNode(
-                new EqualConditionNode(self::type('A'), self::type('B')),
+                new ConditionNode(self::type('A'), self::type('B'), ConditionKind::Equal),
                 self::type('C'),
                 self::type('D'),
             ),
@@ -96,8 +96,7 @@ final class NodeTest extends TestCase
         yield CallableParameterNode::class => [new CallableParameterNode(self::type())];
         yield DefaultValueNode::class => [new DefaultValueNode()];
 
-        yield EqualConditionNode::class => [new EqualConditionNode(self::type('A'), self::type('B'))];
-        yield NotEqualConditionNode::class => [new NotEqualConditionNode(self::type('A'), self::type('B'))];
+        yield ConditionNode::class => [new ConditionNode(self::type('A'), self::type('B'), ConditionKind::Equal)];
 
         yield BoolLiteralNode::class => [new BoolLiteralNode(true)];
         yield FloatLiteralNode::class => [new FloatLiteralNode(0.1)];
@@ -174,7 +173,7 @@ final class NodeTest extends TestCase
         yield NullableTypeNode::class => [new NullableTypeNode(self::type(), 42)];
         yield ConditionalTypeNode::class => [
             new ConditionalTypeNode(
-                new EqualConditionNode(self::type('A'), self::type('B')),
+                new ConditionNode(self::type('A'), self::type('B'), ConditionKind::Equal),
                 self::type('C'),
                 self::type('D'),
                 42,
@@ -190,9 +189,8 @@ final class NodeTest extends TestCase
         yield CallableParameterNode::class => [new CallableParameterNode(self::type(), offset: 42)];
         yield DefaultValueNode::class => [new DefaultValueNode(offset: 42)];
 
-        yield EqualConditionNode::class => [new EqualConditionNode(self::type('A'), self::type('B'), 42)];
-        yield NotEqualConditionNode::class => [
-            new NotEqualConditionNode(self::type('A'), self::type('B'), 42),
+        yield ConditionNode::class => [
+            new ConditionNode(self::type('A'), self::type('B'), ConditionKind::Equal, 42),
         ];
 
         yield BoolLiteralNode::class => [new BoolLiteralNode(true, offset: 42)];
