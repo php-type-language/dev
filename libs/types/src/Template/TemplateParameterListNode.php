@@ -39,9 +39,13 @@ final class TemplateParameterListNode extends NodesListNode
     #[\Override]
     public function offsetUnset(mixed $offset): void
     {
+        $previous = $this->items;
+
         parent::offsetUnset($offset);
 
         if (\count($this->items) < 1) {
+            $this->items = $previous;
+
             throw new \UnderflowException('Template parameters must have at least one item');
         }
     }
