@@ -16,7 +16,7 @@ and contain **implicit** keys, **explicit** keys, or both.
 array{
     a: First,
     42: Second,
-    OTHER_*: Third,
+    Other::KEY: Third,
 }
 ```
 
@@ -59,7 +59,9 @@ field's position within the shape determines its (numeric) index.
 
 An explicit field is prefixed with a key, followed by a colon (`:`) and then
 the field's type: `key: Type`. The simplest form of a key is an
-[identifier](basic-types.md), the same as used for a type name.
+[identifier](basic-types.md), the same as used for a type name: it may contain
+dashes, a namespace, and the words `true`, `false` and `null` are not
+literals here, but ordinary names.
 
 > ```php
 > array{
@@ -68,10 +70,19 @@ the field's type: `key: Type`. The simplest form of a key is an
 > }
 > ```
 
+> ```php
+> array{
+>     some-key: First,
+>     Some\Name: Second,
+>     null: Third,
+> }
+> ```
+
 
 ### Numeric Keys
 
-An explicit key may also be an [integer literal](literal-types.md#integer).
+An explicit key may also be an [integer literal](literal-types.md#integer) in
+any notation, including the signed ones (`-1`, `0x1F`). A float cannot be a key.
 
 > ```php
 > array{
@@ -112,28 +123,21 @@ In addition to identifiers, numbers and strings, a field key may also be a
 </tab>
 </tabs>
 
-### Constant Mask Keys
-
-A field key may also be a [class constant mask or global constant
-mask](const-types.md#constant-masks), referring to a whole set of constants
-sharing a common prefix.
-
 <tabs>
-<tab title="Examples">
+<tab title="Counterexamples">
 
-> A [class constant mask](const-types.md#constant-masks) as a field key.
+> A [constant mask](const-types.md#constant-masks) cannot be a field key.
 > ```php
 > array{
 >     Path\To\ClassName::PREFIX_*: string,
 > }
 > ```
-
-> A [global constant mask](const-types.md#constant-masks) as a field key.
-> ```php
-> array{
->     JSON_*: string,
-> }
+>
+> An error similar to the one below should occur
 > ```
+> Error: Invalid shape, a field, "," or "}" is expected
+> ```
+> {style="warning"}
 
 </tab>
 </tabs>
@@ -204,3 +208,47 @@ array{
 }
 ```
 </compare>
+
+The ellipsis is always the last element of a shape, and a trailing comma is
+allowed after any last element. A shape may consist of the ellipsis alone, and
+may be empty.
+
+> ```php
+> array{...<string, object>}
+> ```
+
+> ```php
+> array{}
+> ```
+
+<tabs>
+<tab title="Counterexamples">
+
+> The ellipsis must be the last.
+> ```php
+> array{
+>     ...<string, object>,
+>     user: User,
+> }
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> Error: Invalid shape, a field, "," or "}" is expected
+> ```
+> {style="warning"}
+
+> A shape and template arguments cannot be written together on a named type:
+> the arguments of the shape are written after the ellipsis.
+> ```php
+> array<int>{user: User}
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> Error: Unexpected "{"
+> ```
+> {style="warning"}
+
+</tab>
+</tabs>
