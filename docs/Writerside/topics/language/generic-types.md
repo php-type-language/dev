@@ -56,7 +56,7 @@ and the reference to the type:
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected ">"
+> Error: A template argument is expected after "<"
 > ```
 > {style="warning"}
 
@@ -67,7 +67,7 @@ and the reference to the type:
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected ","
+> Error: A template argument is expected after "<"
 > ```
 > {style="warning"}
 
@@ -81,40 +81,56 @@ Each template argument allows you to define an additional hint, which can be
 used, for example, in static analyzers to indicate the
 [call-site variance](https://phpstan.org/blog/guide-to-call-site-generic-variance#call-site-variance).
 
+The hint is one of the words `covariant`, `contravariant` or `invariant`
+written in lower case before the type of the argument.
+
 > One template argument can contain only one hint.
 > {style="warning"}
+
+> The hint words are ordinary names outside of this place: `Foo<covariant>` is
+> a reference to the type named `covariant`.
+> {style="note"}
 
 <tabs>
 <tab title="Examples">
 
-> Any identifier (in this case "`covariant`") before the template argument`s 
-> type is acceptable.
+> The `covariant` hint before the template argument`s type.
 > ```typescript
 > HashMap<array-key, covariant Request>
+> ```
+
+> Hints of different arguments are independent of each other.
+> ```typescript
+> Handler<contravariant Request, invariant Response>
+> ```
+
+> The hint applies to the whole type that follows it.
+> ```typescript
+> Collection<covariant Foo|Bar>
 > ```
 
 </tab>
 <tab title="Counterexamples">
 
-> Only valid identifiers are allowed.
+> Only the three hint words are allowed.
 > ```typescript
-> Collection<42 User>
+> Collection<out User>
 > ```
 > 
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "User"
+> Error: Invalid template arguments, "," or ">" is expected
 > ```
 > {style="warning"}
 
 > Multiple hints are not allowed.
 > ```typescript
->  HashMap<array-key, some covariant Request>
+> HashMap<array-key, covariant covariant Request>
 > ```
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected end of input
+> Error: Invalid template arguments, "," or ">" is expected
 > ```
 > {style="warning"}
 
@@ -125,8 +141,7 @@ used, for example, in static analyzers to indicate the
 ## Wildcard Arguments
 
 A template argument may be left unsaid, written as an asterisk (`*`) in the
-place of the type. A wildcard argument accepts a [hint](#call-site-hints)
-the same way any other argument does.
+place of the type. A wildcard argument does not accept a [hint](#call-site-hints).
 
 <tabs>
 <tab title="Examples">
@@ -141,9 +156,9 @@ the same way any other argument does.
 > HashMap<array-key, *>
 > ```
 
-> A wildcard carrying a hint.
+> Several wildcards.
 > ```typescript
-> Collection<out *>
+> HashMap<*, *>
 > ```
 
 </tab>
@@ -156,7 +171,19 @@ the same way any other argument does.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "*"
+> Error: Unexpected "*", expected a type name, an
+> identifier, "true", "false" and other
+> ```
+> {style="warning"}
+
+> A wildcard cannot carry a hint.
+> ```typescript
+> Collection<covariant *>
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> Error: Invalid template arguments, "," or ">" is expected
 > ```
 > {style="warning"}
 
@@ -185,14 +212,11 @@ In addition to modern list declarations such as `list<int>` or
 </tab>
 <tab title="Counterexamples">
 
-> Incorrect syntax (was [used in the PSR](https://github.com/php-fig/event-dispatcher/blob/1.0.0/src/ListenerProviderInterface.php#L14) by mistake).
+> Square brackets with a type inside are not a list, but an
+> [offset access](offset-access.md): `User[int]` is the type of the element of
+> `User` at the `int` key (was [used in the PSR](https://github.com/php-fig/event-dispatcher/blob/1.0.0/src/ListenerProviderInterface.php#L14) by mistake as a list).
 > ```typescript
 > User[int]
-> ```
->
-> An error similar to the one below should occur
-> ```
-> ParseException: Syntax error, unexpected "int"
 > ```
 > {style="warning"}
 
