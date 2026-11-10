@@ -27,7 +27,8 @@ out of it, checking the grammar along the way.
 
 The `TypeLang\Parser\TypeParser` class is the entry point of the component.
 Its `parse()` method turns a type declaration string into a
-`TypeLang\Type\TypeNode` instance.
+`TypeLang\Type\TypeNode` instance (a `NamedTypeNode`, `UnionTypeNode`, etc.,
+depending on the source).
 
 ```php
 $parser = new TypeLang\Parser\TypeParser();
@@ -40,23 +41,16 @@ var_dump($type);
 ```php
 object(TypeLang\Type\NamedTypeNode)#1 (4) {
   ["offset"]=> int(0)
-  ["name"]=> object(TypeLang\Type\Name)#2 (5) {
+  ["name"]=> object(TypeLang\Type\Name)#2 (3) {
     ["offset"]=> int(0)
-    ["parts"]=> array(1) {
-      [0]=> object(TypeLang\Type\Identifier)#3 (2) {
-        ["offset"]=> int(0)
-        ["value"]=> string(5) "array"
-      }
-    }
-    ["first"]=> object(TypeLang\Type\Identifier)#3 { ... }
-    ["last"]=> object(TypeLang\Type\Identifier)#3 { ... }
-    ["isFullyQualified"]=> bool(false)
+    ["value"]=> string(5) "array"
+    ["namespace"]=> NULL
   }
   ["arguments"]=> NULL
-  ["fields"]=> object(TypeLang\Type\Shape\FieldsListNode)#4 (3) {
+  ["fields"]=> object(TypeLang\Type\Shape\FieldListNode)#3 (3) {
     ["offset"]=> int(7)
     ["items"]=> array(1) {
-      [0]=> object(TypeLang\Type\Shape\NamedFieldNode)#5 (4) { ... }
+      [0]=> object(TypeLang\Type\Shape\NamedFieldNode)#4 (4) { ... }
     }
     ["isSealed"]=> bool(true)
   }
@@ -101,7 +95,7 @@ All three methods accept the source code in any of the following forms:
   <tab title="string">
 
   ```php
-  $type = $result->parse(<<<'CODE'
+  $type = $parser->parse(<<<'CODE'
       object{ key?: int<0, max> }
   CODE);
   ```
@@ -109,7 +103,7 @@ All three methods accept the source code in any of the following forms:
   <tab title="resource (stream)">
 
   ```php
-  $type = $result->parse(
+  $type = $parser->parse(
       fopen(__DIR__ . '/source.txt', 'rb'),
   );
   ```
@@ -117,7 +111,7 @@ All three methods accept the source code in any of the following forms:
   <tab title="SplFileInfo">
 
   ```php
-  $type = $result->parse(
+  $type = $parser->parse(
       new SplFileInfo(__DIR__ . '/source.txt'),
   );
   ```
@@ -125,12 +119,46 @@ All three methods accept the source code in any of the following forms:
   <tab title="ReadableInterface">
 
   ```php
-  $type = $result->parse(
+  $type = $parser->parse(
       Phplrt\Source\File::fromPathname(__DIR__ . '/source.txt'),
   );
   ```
   </tab>
 </tabs>
+
+## Parsing Other Constructs
+
+By default the parser reads a whole type. Two context methods return a new
+parser that starts from another grammar rule:
+
+```php
+use TypeLang\Parser\TypeParser;
+
+$parser = new TypeParser();
+
+// TypeLang\Type\TypeNode
+$type = $parser->forType()->parse('Type<U, V>');
+
+// TypeLang\Type\Template\TemplateParameterNode
+$template = $parser->forTemplateParameter()->parse('T of U<V> = Default<Z>');
+```
+
+## Errors
+
+Every exception thrown by the parser implements
+`TypeLang\Parser\Exception\ParserExceptionInterface` and carries the
+`$source` and the `$range` (`ParsingErrorRange` with `$offset` and `$length`)
+of the problematic fragment.
+
+| Exception                    | Thrown when                                            |
+|------------------------------|--------------------------------------------------------|
+| `UnexpectedTokenException`   | a token (or the end of input) stands where another one is expected: `Unexpected "and"` |
+| `MalformedSyntaxException`   | a construct is broken: `The group is not closed properly, ")" expected` (extends `UnexpectedTokenException`) |
+| `UnrecognizedSyntaxException`| a fragment is not a part of the syntax at all: `Unrecognized syntax "~"` |
+| `FeatureNotEnabledException` | the syntax is [disabled](features.md): `Unions feature is not allowed` |
+
+The first three extend `SyntaxErrorException`, and all of them extend
+`ParsingException`.
 
 ## What's Next
 
