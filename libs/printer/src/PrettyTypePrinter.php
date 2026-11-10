@@ -8,9 +8,8 @@ use TypeLang\Printer\NodePrinter\Callable\CallableParameterNodePrinter;
 use TypeLang\Printer\NodePrinter\Callable\CallableTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Condition\ConditionalTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Condition\ConditionNodePrinter;
-use TypeLang\Printer\NodePrinter\Constant\ClassConstMaskTypeNodePrinter;
-use TypeLang\Printer\NodePrinter\Constant\ClassConstTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Constant\ConstMaskTypeNodePrinter;
+use TypeLang\Printer\NodePrinter\Constant\ConstTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\LiteralNodePrinter;
 use TypeLang\Printer\NodePrinter\LogicalTypeNodePrinter\IntersectionTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\LogicalTypeNodePrinter\UnionTypeNodePrinter;
@@ -35,9 +34,8 @@ use TypeLang\Type\Callable\CallableParameterNode;
 use TypeLang\Type\Callable\CallableTypeNode;
 use TypeLang\Type\Condition\ConditionalTypeNode;
 use TypeLang\Type\Condition\ConditionNode;
-use TypeLang\Type\Constant\ClassConstMaskTypeNode;
-use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
+use TypeLang\Type\Constant\ConstTypeNode;
 use TypeLang\Type\Literal\LiteralNode;
 use TypeLang\Type\LogicalTypeNode\IntersectionTypeNode;
 use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
@@ -97,8 +95,7 @@ final class PrettyTypePrinter implements TypePrinterInterface
             NullableTypeNode::class => new NullableTypeNodePrinter(),
             TypesListTypeNode::class => new TypesListTypeNodePrinter(),
             TypeOffsetAccessTypeNode::class => new TypeOffsetAccessTypeNodePrinter(),
-            ClassConstTypeNode::class => new ClassConstTypeNodePrinter(),
-            ClassConstMaskTypeNode::class => new ClassConstMaskTypeNodePrinter(),
+            ConstTypeNode::class => new ConstTypeNodePrinter(),
             ConstMaskTypeNode::class => new ConstMaskTypeNodePrinter(),
             NamedFieldNode::class => new NamedFieldNodePrinter(),
             ScalarFieldNode::class => new ScalarFieldNodePrinter(),

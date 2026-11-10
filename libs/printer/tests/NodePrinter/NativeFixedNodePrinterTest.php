@@ -7,9 +7,8 @@ namespace TypeLang\Printer\Tests\NodePrinter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Printer\NodePrinter\NativeFixedNodePrinter;
-use TypeLang\Type\Constant\ClassConstMaskTypeNode;
-use TypeLang\Type\Constant\ClassConstTypeNode;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
+use TypeLang\Type\Constant\ConstTypeNode;
 use TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Constant\MaskNode\WildcardMaskNode;
 use TypeLang\Type\Identifier;
@@ -32,9 +31,9 @@ final class NativeFixedNodePrinterTest extends NodePrinterTestCase
         yield 'this' => [new ThisTypeNode(), 'self'];
         yield 'list' => [new TypesListTypeNode(self::named('int')), 'iterable'];
         yield 'offset' => [new TypeOffsetAccessTypeNode(self::named('Foo'), self::named('K')), 'mixed'];
-        yield 'class constant' => [new ClassConstTypeNode(new Name('Some'), new Identifier('FOO')), 'mixed'];
-        yield 'class constant mask' => [new ClassConstMaskTypeNode(new Name('Some'), $mask), 'mixed'];
-        yield 'constant mask' => [new ConstMaskTypeNode($mask), 'mixed'];
+        yield 'class constant' => [new ConstTypeNode(new Name('Some'), new Identifier('FOO')), 'mixed'];
+        yield 'class constant mask' => [new ConstMaskTypeNode(new Name('Some'), $mask), 'mixed'];
+        yield 'constant mask' => [new ConstMaskTypeNode(null, $mask), 'mixed'];
     }
 
     #[DataProvider('nodesDataProvider')]

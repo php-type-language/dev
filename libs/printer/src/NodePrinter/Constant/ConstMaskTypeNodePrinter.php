@@ -7,6 +7,7 @@ namespace TypeLang\Printer\NodePrinter\Constant;
 use TypeLang\Printer\NodePrinterInterface;
 use TypeLang\Printer\PrinterContext;
 use TypeLang\Type\Constant\ConstMaskTypeNode;
+use TypeLang\Type\Name;
 use TypeLang\Type\Node;
 
 /**
@@ -16,17 +17,24 @@ final class ConstMaskTypeNodePrinter implements NodePrinterInterface
 {
     public function printNode(Node $node, PrinterContext $context): string
     {
-        $result = $node->mask->toString();
+        $mask = $node->mask->toString();
 
-        if ($node->namespace === null) {
-            return $result;
+        // SOME_*
+        if ($node->owner === null) {
+            return $mask;
         }
 
-        // The root namespace is the separator alone
-        if ($node->namespace->isRoot()) {
-            return '\\' . $result;
+        // Some\Any::SOME_*
+        if ($node->owner instanceof Name) {
+            return $node->owner->toString() . '::' . $mask;
         }
 
-        return $node->namespace->toString() . '\\' . $result;
+        // \SOME_*
+        if ($node->owner->isRoot()) {
+            return '\\' . $mask;
+        }
+
+        // Some\Any\SOME_*
+        return $node->owner->toString() . '\\' . $mask;
     }
 }

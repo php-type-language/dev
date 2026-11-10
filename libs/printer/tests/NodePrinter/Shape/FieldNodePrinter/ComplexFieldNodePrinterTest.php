@@ -7,7 +7,7 @@ namespace TypeLang\Printer\Tests\NodePrinter\Shape\FieldNodePrinter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use TypeLang\Printer\NodePrinter\Shape\FieldNodePrinter\ComplexFieldNodePrinter;
 use TypeLang\Printer\Tests\NodePrinter\NodePrinterTestCase;
-use TypeLang\Type\Constant\ClassConstTypeNode;
+use TypeLang\Type\Constant\ConstTypeNode;
 use TypeLang\Type\Identifier;
 use TypeLang\Type\Name;
 use TypeLang\Type\Shape\ComplexFieldNode;
@@ -24,7 +24,7 @@ final class ComplexFieldNodePrinterTest extends NodePrinterTestCase
 
     public function testKeyOfAConstantIsPrintedAsTheConstant(): void
     {
-        $field = new ComplexFieldNode(new ClassConstTypeNode(new Name('Some'), new Identifier('FOO')), self::named('int'), true);
+        $field = new ComplexFieldNode(new ConstTypeNode(new Name('Some'), new Identifier('FOO')), self::named('int'), true);
 
         self::assertSame('Some::FOO?: int', self::pretty($field));
     }
