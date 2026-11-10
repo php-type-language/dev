@@ -41,11 +41,12 @@ The syntax of string types is similar to that in PHP: The string allows single
 
 > Double-quoted string wrapped by `"` symbol.
 > ```typescript
-> "I am double-quoted string wrapped by \" symbol"'
+> "I am double-quoted string wrapped by \" symbol"
 > ```
 
-Strings in single quotes are processed "as is", strings in double quotes allow
-insertion of special sequences.
+Strings in single quotes are processed "as is" (the only escape sequences are
+`\'` and `\\`, any other backslash is kept as it is), strings in double quotes
+allow insertion of special sequences.
 
 ### Escape Sequences
 
@@ -59,6 +60,11 @@ All control sequences are similar to the PHP language:
 * `\e` — Escape (`0x1B` code)
 * `\f` — Form Feed (`0x0C` code)
 * `\$` — Dollar Sign (`0x24` code)
+* `\"` — Double Quote (`0x22` code)
+* `\\` — Backslash (`0x5C` code)
+
+A backslash that does not begin any known sequence is kept in the string
+together with the next character, the way PHP does it: `"\q"` is `\q`.
 
 > Double-quoted string with new line (`0x0A`) escape sequence.
 > ```typescript
@@ -80,7 +86,7 @@ All control sequences are similar to the PHP language:
 ### Hexadecimal Sequences
 
 The sequence of characters matching the regular expression `[0-9A-Fa-f]{1,2}` 
-is a character in hexadecimal notation (e.g. `"\x41" === "A"`).
+after `\x` (or `\X`) is a character in hexadecimal notation (e.g. `"\x41" === "A"`).
 
 > `"Hello World"` string equivalent in hexadecimal sequences format.
 > ```typescript
@@ -98,9 +104,23 @@ is a character in hexadecimal notation (e.g. `"\x41" === "A"`).
 > \x48\x65\x6c\x6c\x6f\x20\x57\x6f\x72\x6c\x64
 > ```
 
+### Octal Sequences
+
+A backslash followed by one to three octal digits is a character with that
+byte value (e.g. `"\101" === "A"`). As in PHP, a value above `\377` wraps
+around to its low eight bits.
+
+> `"A"` in octal sequence format.
+> ```typescript
+> "\101"
+> ```
+> ```
+> A
+> ```
+
 ### Unicode Sequences
 
-the sequence of characters matching the regular expression `[0-9A-Fa-f]+` is a
+The sequence of characters matching the regular expression `[0-9A-Fa-f]+` is a
 Unicode codepoint, which will be output to the string as that codepoint's UTF-8
 representation. The braces are required in the sequence. E.g. `"\u{41}" === "A"`
 
@@ -120,6 +140,10 @@ representation. The braces are required in the sequence. E.g. `"\u{41}" === "A"`
 > \u{1F60A}
 > ```
 
+A `\u` without braces or digits inside them is not a sequence and is kept as it
+is (`"\u41"` is `\u41`). A value above `10FFFF` is not a code point and is
+replaced with the replacement character (`U+FFFD`).
+
 ## Integer
 
 The syntax of integer numbers is similar to the PHP language. Binary, octal,
@@ -134,7 +158,8 @@ Decimal numbers can contain any digits from `0` to `9` (leading `0` not allowed)
 and must match the regular expression `[1-9][0-9]*`. For any other numbers,
 a special prefixed format is used, described below. A value may be prefixed by
 a sign: a minus (`-`) makes it negative, and a plus (`+`) says what the absence
-of a sign already says.
+of a sign already says. Whitespace is allowed between the sign and the number
+(`- 1` is `-1`).
 
 > A number is kept whole, however large it is. The node carries both the
 > native `$value`, which a platform limit applies to, and the `$decimal`
@@ -160,7 +185,7 @@ of a sign already says.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "_"
+> Error: Unexpected "_"
 > ```
 > {style="warning"}
 
@@ -171,7 +196,7 @@ of a sign already says.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "__2"
+> Error: Unexpected "__2"
 > ```
 > {style="warning"}
 
@@ -217,7 +242,7 @@ numbers `1` and `0` and must match the regular expression `0b[0-1]+`.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "42"
+> Error: Unexpected "42"
 > ```
 > {style="warning"}
 
@@ -272,7 +297,7 @@ numbers between `0` and `7` and must match the regular expression
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "81"
+> Error: Unexpected "81"
 > ```
 > {style="warning"}
 
@@ -284,7 +309,7 @@ numbers between `0` and `7` and must match the regular expression
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "8"
+> Error: Unexpected "8"
 > ```
 > {style="warning"}
 
@@ -323,6 +348,11 @@ the numbers between `0` and `F` and must match the regular expression
 > Hexadecimal numbers can only contain digits between `0` and `F`.
 > ```typescript
 > 0xHELL
+> ```
+>
+> An error similar to the one below should occur
+> ```
+> Error: Unexpected "xHELL"
 > ```
 > {style="warning"}
 
@@ -392,7 +422,7 @@ the same rule an integer does.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "."
+> Error: Unrecognized syntax "."
 > ```
 > {style="warning"}
 
@@ -403,7 +433,7 @@ the same rule an integer does.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "A"
+> Error: Unexpected "A"
 > ```
 > {style="warning"}
 
@@ -438,12 +468,6 @@ writing out an inconveniently long string of digits.
 
 > Also number `1000.0` in scientific notation: The exponent takes a sign of
 > its own, and a plus says what the absence of a sign already says.
-
-> A number is kept whole, however large it is. The node carries both the
-> native `$value`, which a platform limit applies to, and the `$decimal`
-> beside it — the value written out in base 10 as a string, so a number too
-> large for an `int` is still readable in full.
-> {style="note"}
 > ```typescript
 > 10e+2
 > ```
@@ -458,7 +482,7 @@ writing out an inconveniently long string of digits.
 >
 > An error similar to the one below should occur
 > ```
-> ParseException: Syntax error, unexpected "e-F"
+> Error: Unexpected "e-F"
 > ```
 > {style="warning"}
 
