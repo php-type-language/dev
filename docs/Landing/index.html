@@ -209,19 +209,19 @@
     <p class="num">§ 04</p>
     <h2>Coverage.</h2>
     <p class="sub">
-      153 syntactic constructs on which PHPStan, Psalm and TypeLang disagree, each fed to the tool's own parser.
+      241 syntactic constructs, the basic ones and those on which PHPStan, Psalm and TypeLang disagree, each fed to the tool's own parser.
       A construct counts when the parser returns a node carrying what was written, not a silently truncated one.
     </p>
   </div>
   <div class="rulers" id="rulers">
-    <div class="ruler" data-value="150"><span class="who">TypeLang <small>type-lang/parser 2.0</small></span><span class="bar"><i></i></span><span class="val">150<small>/153</small></span></div>
-    <div class="ruler" data-value="98"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.4</small></span><span class="bar"><i></i></span><span class="val">98<small>/153</small></span></div>
-    <div class="ruler" data-value="25"><span class="who">Psalm <small>vimeo/psalm 7.0</small></span><span class="bar"><i></i></span><span class="val">25<small>/153</small></span></div>
+    <div class="ruler" data-value="238"><span class="who">TypeLang <small>type-lang/parser 2.0</small></span><span class="bar"><i></i></span><span class="val">238<small>/241</small></span></div>
+    <div class="ruler" data-value="177"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.4</small></span><span class="bar"><i></i></span><span class="val">177<small>/241</small></span></div>
+    <div class="ruler" data-value="107"><span class="who">Psalm <small>vimeo/psalm 7.0</small></span><span class="bar"><i></i></span><span class="val">107<small>/241</small></span></div>
   </div>
   <p class="foot-note">
     Full table with the verdict for every construct, per tool, in the
     <a href="https://typelang.dev/comparison.html" target="_blank" rel="noopener">syntax comparison ↗</a>.
-    The table also lists 33 malformed inputs that must be rejected: TypeLang rejects 32, PHPStan 28 and Psalm 5.
+    The table also lists 34 malformed inputs that must be rejected: TypeLang rejects 33, PHPStan 29 and Psalm 5.
     Psalm answers even where it did not understand the question; the comparison explains how those answers are told apart.
   </p>
 </section>
