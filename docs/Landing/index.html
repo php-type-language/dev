@@ -92,7 +92,7 @@
     <ol class="steps" id="steps">
       <li class="step" data-type="int">
         <h3>A name</h3>
-        <p>Any identifier is a type: a built-in, a class, an alias. TypeLang checks that a type is well-formed, not that it exists — resolution is a separate concern.</p>
+        <p>Any identifier is a type: a built-in, a class, an alias, even a hyphenated <code>non-empty-string</code>. The parser reads it as a <code>NamedTypeNode</code>. It checks that a type is well-formed, not that it exists — resolution is a separate concern.</p>
         <a href="https://typelang.dev/basic-types.html" target="_blank" rel="noopener">Basic types ↗</a>
       </li>
       <li class="step" data-type="?int">
@@ -102,7 +102,7 @@
       </li>
       <li class="step" data-type="list<?int>">
         <h3>Template arguments</h3>
-        <p>Angle brackets carry generics. Any type goes inside, trailing commas are fine, and <code>*</code> stands for “whatever”.</p>
+        <p>Angle brackets carry generics. Any type goes inside, trailing commas are fine, <code>*</code> stands for “whatever”, and <code>covariant</code>, <code>contravariant</code> or <code>invariant</code> may precede an argument.</p>
         <a href="https://typelang.dev/generic-types.html" target="_blank" rel="noopener">Generic types ↗</a>
       </li>
       <li class="step" data-type="list<User|null>">
@@ -117,12 +117,12 @@
       </li>
       <li class="step" data-type="array{id: int, user: User|null}">
         <h3>Shape</h3>
-        <p>Braces turn a name into a shape: named fields, each with its own type. Keys can be identifiers, numbers, quoted strings or class constants.</p>
+        <p>Braces turn a name into a shape: a list of fields, each with its own type. Keys can be identifiers, numbers, quoted strings or class constants; a field with no key is implicit.</p>
         <a href="https://typelang.dev/shape-types.html" target="_blank" rel="noopener">Shape types ↗</a>
       </li>
       <li class="step" data-type="array{id: int<1, max>, user: User|null, ...}">
         <h3>Ranges and unsealed shapes</h3>
-        <p><code>int&lt;1, max&gt;</code> is just a generic with two literal-ish arguments. The trailing <code>...</code> says “more keys may follow”.</p>
+        <p><code>int&lt;1, max&gt;</code> is just a generic with two literal-ish arguments. The trailing <code>...</code> says “more keys may follow”, and may even describe them: <code>...&lt;string, mixed&gt;</code>.</p>
         <a href="https://typelang.dev/shape-types.html" target="_blank" rel="noopener">Shape types ↗</a>
       </li>
       <li class="step" data-type="array{id: int<1, max>, user?: User|null, ...}">
@@ -132,12 +132,12 @@
       </li>
       <li class="step" data-type="callable(array{id: int<1, max>, user?: User|null, ...}): bool">
         <h3>Callable</h3>
-        <p>Any name followed by parentheses is a callable type. Parameters may be named, variadic, by-reference or optional; the return type follows a colon.</p>
+        <p>Any name followed by parentheses is a callable type. Parameters may be named, variadic, by-reference or carry a default; the return type follows a colon and binds tightly: <code>callable(): A|B</code> is <code>(callable(): A)|B</code>.</p>
         <a href="https://typelang.dev/callable-types.html" target="_blank" rel="noopener">Callable types ↗</a>
       </li>
       <li class="step" data-type="Closure<T of Order>(T): (T is Paid ? Receipt : null)">
         <h3>Generic callables and conditions</h3>
-        <p>Callables can declare template parameters with <code>of</code>, <code>super</code> and defaults. The return type here is conditional: <code>T is Paid ? Receipt : null</code>.</p>
+        <p>Callables can declare template parameters with variance, <code>of</code> / <code>as</code> and <code>super</code> bounds, and defaults. The return type here is conditional: <code>T is Paid ? Receipt : null</code>, or <code>T is not Paid ? …</code> to negate it.</p>
         <a href="https://typelang.dev/conditional-types.html" target="_blank" rel="noopener">Conditional types ↗</a>
       </li>
     </ol>
@@ -157,7 +157,7 @@
     <article class="card" data-type="T|U|V" data-href="logical-types.html"><h3>Union</h3></article>
     <article class="card" data-type="T&U" data-href="logical-types.html"><h3>Intersection</h3></article>
     <article class="card" data-type="Collection<array-key, User>" data-href="generic-types.html"><h3>Generics</h3></article>
-    <article class="card" data-type="Collection<in K, out V>" data-href="generic-types.html"><h3>Variance hints</h3></article>
+    <article class="card" data-type="Collection<covariant K, contravariant V>" data-href="generic-types.html"><h3>Variance hints</h3></article>
     <article class="card" data-type="Collection<*>" data-href="generic-types.html"><h3>Wildcard argument</h3></article>
     <article class="card" data-type="User[]" data-href="generic-types.html"><h3>Legacy list</h3></article>
     <article class="card" data-type="Shape['key']" data-href="offset-access.html"><h3>Offset access</h3></article>
@@ -165,7 +165,9 @@
     <article class="card wide" data-type="Foo::BAR|Foo::PREFIX_*|*_SUFFIX" data-href="const-types.html"><h3>Constants and masks</h3></article>
     <article class="card wide" data-type="array{id: int, name?: string, ...}" data-href="shape-types.html"><h3>Shapes</h3></article>
     <article class="card wide" data-type="callable(int $x, string ...$rest): void" data-href="callable-types.html"><h3>Callables</h3></article>
-    <article class="card wide" data-type="Closure<T of Some, U super Any, V = int>(T, U): V" data-href="callable-types.html"><h3>Generic callables</h3></article>
+    <article class="card wide" data-type="Closure<covariant T of Some, U super Any, V = int>(T, U): V" data-href="callable-types.html"><h3>Generic callables</h3></article>
+    <article class="card" data-type="callable(int $x = 42): void" data-href="callable-types.html"><h3>Defaults</h3></article>
+    <article class="card" data-type="array{id: int, ...&lt;string, mixed&gt;}" data-href="shape-types.html"><h3>Unsealed shapes</h3></article>
     <article class="card" data-type="T is not U ? A : B" data-href="conditional-types.html"><h3>Conditional</h3></article>
     <article class="card" data-type="callable(): $this" data-href="basic-types.html"><h3>$this</h3></article>
   </div>
@@ -189,7 +191,7 @@
         <div class="stage-scroll">
           <div class="line">
             <pre class="mirror" aria-hidden="true"></pre>
-            <input class="src" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Type declaration" value="callable(Foo<in T>|array{id: int[]}, $this): (42 is int ? T&U : Foo['k'])">
+            <input class="src" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Type declaration" value="callable(Foo<covariant T>|array{id: int[]}, $this): (42 is int ? T&U : Foo['k'])">
             <div class="hl" hidden></div>
           </div>
           <div class="tree"></div>
@@ -207,21 +209,20 @@
     <p class="num">§ 04</p>
     <h2>Coverage.</h2>
     <p class="sub">
-      83 syntactic constructs, each fed to every tool's own parser. A construct counts when the parser
-      returns a node carrying what was written — not a silently truncated one.
+      153 syntactic constructs on which PHPStan, Psalm and TypeLang disagree, each fed to the tool's own parser.
+      A construct counts when the parser returns a node carrying what was written, not a silently truncated one.
     </p>
   </div>
   <div class="rulers" id="rulers">
-    <div class="ruler" data-value="82"><span class="who">TypeLang <small>type-lang/parser 2.x</small></span><span class="bar"><i></i></span><span class="val">82<small>/83</small></span></div>
-    <div class="ruler" data-value="69"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.3</small></span><span class="bar"><i></i></span><span class="val">69<small>/83</small></span></div>
-    <div class="ruler" data-value="62"><span class="who">phpDocumentor <small>type-resolver 2.0</small></span><span class="bar"><i></i></span><span class="val">62<small>/83</small></span></div>
-    <div class="ruler" data-value="40"><span class="who">Psalm <small>vimeo/psalm 6.5</small></span><span class="bar"><i></i></span><span class="val">40<small>/83</small></span></div>
-    <div class="ruler" data-value="31"><span class="who">Phan <small>phan/phan 5.5</small></span><span class="bar"><i></i></span><span class="val">31<small>/83</small></span></div>
+    <div class="ruler" data-value="150"><span class="who">TypeLang <small>type-lang/parser 2.0</small></span><span class="bar"><i></i></span><span class="val">150<small>/153</small></span></div>
+    <div class="ruler" data-value="98"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.4</small></span><span class="bar"><i></i></span><span class="val">98<small>/153</small></span></div>
+    <div class="ruler" data-value="25"><span class="who">Psalm <small>vimeo/psalm 7.0</small></span><span class="bar"><i></i></span><span class="val">25<small>/153</small></span></div>
   </div>
   <p class="foot-note">
     Full table with the verdict for every construct, per tool, in the
     <a href="https://typelang.dev/comparison.html" target="_blank" rel="noopener">syntax comparison ↗</a>.
-    Two tools answer even where they did not understand the question; the comparison explains how those are told apart.
+    The table also lists 33 malformed inputs that must be rejected: TypeLang rejects 32, PHPStan 28 and Psalm 5.
+    Psalm answers even where it did not understand the question; the comparison explains how those answers are told apart.
   </p>
 </section>
 
