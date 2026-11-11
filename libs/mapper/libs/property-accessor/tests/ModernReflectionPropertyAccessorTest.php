@@ -10,7 +10,7 @@ use TypeLang\Mapper\PropertyAccessor\ModernReflectionPropertyAccessor;
 use TypeLang\Mapper\PropertyAccessor\PropertyAccessor;
 use TypeLang\Mapper\PropertyAccessor\Tests\Stub\HookStub;
 
-#[RequiresPhp('>= 8.4')]
+#[RequiresPhp('>= 8.4.0')]
 final class ModernReflectionPropertyAccessorTest extends ReflectionPropertyAccessorTestCase
 {
     protected static function createPrototype(\ReflectionClass $class): PropertyAccessor

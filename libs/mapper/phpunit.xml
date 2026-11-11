@@ -12,6 +12,7 @@
     <testsuites>
         <testsuite name="Component Tests">
             <directory>tests</directory>
+            <directory>libs/property-accessor/tests</directory>
         </testsuite>
     </testsuites>
 
@@ -20,6 +21,7 @@
     <source>
         <include>
             <directory suffix=".php">src</directory>
+            <directory suffix=".php">libs/property-accessor/src</directory>
         </include>
     </source>
 

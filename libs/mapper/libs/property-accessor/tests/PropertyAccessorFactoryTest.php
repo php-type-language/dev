@@ -13,7 +13,7 @@ use TypeLang\Mapper\PropertyAccessor\Tests\Stub\VisibilityStub;
 
 final class PropertyAccessorFactoryTest extends PropertyAccessorTestCase
 {
-    #[RequiresPhp('< 8.4')]
+    #[RequiresPhp('< 8.4.0')]
     public function testCreatesReflectionAccessorBeforePhp84(): void
     {
         $accessor = (new PropertyAccessorFactory())->create(new VisibilityStub());
@@ -21,7 +21,7 @@ final class PropertyAccessorFactoryTest extends PropertyAccessorTestCase
         self::assertInstanceOf(ReflectionPropertyAccessor::class, $accessor);
     }
 
-    #[RequiresPhp('>= 8.4')]
+    #[RequiresPhp('>= 8.4.0')]
     public function testCreatesModernAccessorOnPhp84(): void
     {
         $accessor = (new PropertyAccessorFactory())->create(new VisibilityStub());
