@@ -21,7 +21,7 @@
         "phpbench/phpbench": "^1.4",
         "phpdocumentor/reflection-docblock": "^6.0",
         "phplrt/compiler": "^4.2.3",
-        "phpstan/phpdoc-parser": "^2.3",
+        "phpstan/phpdoc-parser": "^2.4",
         "phpstan/phpstan": "^2.3",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
@@ -61,7 +61,6 @@
     },
     "scripts": {
         "bench": "phpbench run ./bench --report=compare",
-        "bench:census": "php bench/PhpDoc/bin/census",
         "test:unit": "phpunit --testdox",
         "linter:check": "phpstan analyse --configuration phpstan.neon --memory-limit 256M",
         "linter:baseline": "@linter:check --generate-baseline",
