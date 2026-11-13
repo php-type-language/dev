@@ -1,4 +1,9 @@
 includes:
+  - libs/coercer/phpstan.neon
+  - libs/diagnostics/phpstan.neon
+  - libs/instantiator/phpstan.neon
+  - libs/mapping/phpstan.neon
+  - libs/naming/phpstan.neon
   - libs/property-accessor/phpstan.neon
 
 parameters:

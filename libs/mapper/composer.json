@@ -10,22 +10,47 @@
     },
     "require": {
         "php": "^8.1",
-        "type-lang/parser": "^2.0"
+        "type-lang/parser": "^2.0",
+        "type-lang/reader": "^2.0",
+        "type-lang/types": "^2.0"
     },
     "autoload": {
         "psr-4": {
             "TypeLang\\Mapper\\": "src",
+            "TypeLang\\Mapper\\Coercer\\": "libs/coercer/src",
+            "TypeLang\\Mapper\\Diagnostics\\": "libs/diagnostics/src",
+            "TypeLang\\Mapper\\Instantiator\\": "libs/instantiator/src",
+            "TypeLang\\Mapper\\Mapping\\": "libs/mapping/src",
+            "TypeLang\\Mapper\\Naming\\": "libs/naming/src",
             "TypeLang\\Mapper\\PropertyAccessor\\": "libs/property-accessor/src"
         }
     },
     "require-dev": {
         "jetbrains/phpstorm-attributes": "^1.3",
+        "nette/neon": "^3.4",
         "phpstan/phpstan": "^2.3",
-        "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0"
+        "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0",
+        "psr/cache": "^2.0|^3.0",
+        "psr/simple-cache": "^2.0|^3.0",
+        "symfony/yaml": "^6.4|^7.0|^8.0",
+        "type-lang/phpdoc": "^2.0"
+    },
+    "suggest": {
+        "ext-json": "(*) Allows reading mapping configuration from JSON files",
+        "nette/neon": "(^3.4) Allows reading mapping configuration from NEON files",
+        "psr/cache": "(^2.0|^3.0) Allows caching metadata in a PSR-6 pool",
+        "psr/simple-cache": "(^2.0|^3.0) Allows caching metadata in a PSR-16 cache",
+        "symfony/yaml": "(^6.4|^7.0|^8.0) Allows reading mapping configuration from YAML files",
+        "type-lang/phpdoc": "(^2.0) Allows reading property types from PHPDoc"
     },
     "autoload-dev": {
         "psr-4": {
             "TypeLang\\Mapper\\Tests\\": "tests",
+            "TypeLang\\Mapper\\Coercer\\Tests\\": "libs/coercer/tests",
+            "TypeLang\\Mapper\\Diagnostics\\Tests\\": "libs/diagnostics/tests",
+            "TypeLang\\Mapper\\Instantiator\\Tests\\": "libs/instantiator/tests",
+            "TypeLang\\Mapper\\Mapping\\Tests\\": "libs/mapping/tests",
+            "TypeLang\\Mapper\\Naming\\Tests\\": "libs/naming/tests",
             "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/property-accessor/tests"
         }
     },

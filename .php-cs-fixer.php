@@ -6,6 +6,11 @@ use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
 const PHPCS_DIRECTORIES = [
     __DIR__ . '/libs/mapper/src',
+    __DIR__ . '/libs/mapper/libs/coercer/src',
+    __DIR__ . '/libs/mapper/libs/diagnostics/src',
+    __DIR__ . '/libs/mapper/libs/instantiator/src',
+    __DIR__ . '/libs/mapper/libs/mapping/src',
+    __DIR__ . '/libs/mapper/libs/naming/src',
     __DIR__ . '/libs/mapper/libs/property-accessor/src',
     __DIR__ . '/libs/parser/src',
     __DIR__ . '/libs/phpdoc/src',

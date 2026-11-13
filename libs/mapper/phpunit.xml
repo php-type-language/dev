@@ -12,6 +12,11 @@
     <testsuites>
         <testsuite name="Component Tests">
             <directory>tests</directory>
+            <directory>libs/coercer/tests</directory>
+            <directory>libs/diagnostics/tests</directory>
+            <directory>libs/instantiator/tests</directory>
+            <directory>libs/mapping/tests</directory>
+            <directory>libs/naming/tests</directory>
             <directory>libs/property-accessor/tests</directory>
         </testsuite>
     </testsuites>
@@ -21,6 +26,11 @@
     <source>
         <include>
             <directory suffix=".php">src</directory>
+            <directory suffix=".php">libs/coercer/src</directory>
+            <directory suffix=".php">libs/diagnostics/src</directory>
+            <directory suffix=".php">libs/instantiator/src</directory>
+            <directory suffix=".php">libs/mapping/src</directory>
+            <directory suffix=".php">libs/naming/src</directory>
             <directory suffix=".php">libs/property-accessor/src</directory>
         </include>
     </source>
