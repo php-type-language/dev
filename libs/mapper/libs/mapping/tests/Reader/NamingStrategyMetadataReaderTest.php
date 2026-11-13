@@ -27,8 +27,7 @@ final class NamingStrategyMetadataReaderTest extends TestCase
 
     public function testFirstReaderAddsNoProperties(): void
     {
-        $result = (new NamingStrategyMetadataReader(NamingStrategy::SnakeCase))
-            ->read(new \ReflectionClass(\stdClass::class));
+        $result = self::readAsFirst(new NamingStrategyMetadataReader(NamingStrategy::SnakeCase), \stdClass::class);
 
         self::assertSame(\stdClass::class, $result->name);
         self::assertSame([], $result->properties);

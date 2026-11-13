@@ -56,7 +56,21 @@ abstract class TestCase extends BaseTestCase
     {
         $reflection = new \ReflectionClass($class);
 
-        return $reader->read($reflection, (new ReflectionMetadataReader())->read($reflection));
+        return $reader->read($reflection, self::readAsFirst(new ReflectionMetadataReader(), $class));
+    }
+
+    /**
+     * Reads the class by the reader over empty metadata of the class, as the
+     * first reader of a chain.
+     *
+     * @template T of object
+     * @param class-string<T> $class
+     * @return ClassMetadata<T>
+     * @throws \Throwable
+     */
+    protected static function readAsFirst(MetadataReaderInterface $reader, string $class): ClassMetadata
+    {
+        return $reader->read(new \ReflectionClass($class), new ClassMetadata($class));
     }
 
     /**

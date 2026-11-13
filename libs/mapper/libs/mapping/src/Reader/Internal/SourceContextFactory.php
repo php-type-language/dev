@@ -78,16 +78,6 @@ final class SourceContextFactory
     }
 
     /**
-     * Creates the place of a config key, the types are kept as written.
-     *
-     * @param non-empty-string $target
-     */
-    public function createFromConfig(string $target, SourceInfo $source): SourceContext
-    {
-        return new SourceContext($target, $source);
-    }
-
-    /**
      * @param \ReflectionClass<object> $class
      * @return non-empty-string|null
      */

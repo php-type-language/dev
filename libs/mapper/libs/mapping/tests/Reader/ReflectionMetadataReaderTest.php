@@ -148,18 +148,16 @@ final class ReflectionMetadataReaderTest extends TestCase
 
     public function testSelectorDecidesWhichPropertiesAreAdded(): void
     {
-        $metadata = (new ReflectionMetadataReader(self::createNonPublicSelector()))
-            ->read(new \ReflectionClass(UserStub::class));
+        $metadata = self::readAsFirst(new ReflectionMetadataReader(self::createNonPublicSelector()), UserStub::class);
 
         self::assertSame(['secret', 'hidden'], \array_keys($metadata->properties));
     }
 
     public function testGivenMetadataGetsMissingPropertiesAndKeepsOtherOnes(): void
     {
-        $class = new \ReflectionClass(UserStub::class);
-        $lower = (new ReflectionMetadataReader(self::createNonPublicSelector()))->read($class);
+        $lower = self::readAsFirst(new ReflectionMetadataReader(self::createNonPublicSelector()), UserStub::class);
 
-        $metadata = (new ReflectionMetadataReader())->read($class, $lower);
+        $metadata = (new ReflectionMetadataReader())->read(new \ReflectionClass(UserStub::class), $lower);
 
         self::assertSame(
             ['secret', 'hidden', 'id', 'email', 'untyped', 'friend', 'displayName'],
@@ -186,7 +184,7 @@ final class ReflectionMetadataReaderTest extends TestCase
      */
     private static function readReflection(string $class): ClassMetadata
     {
-        return (new ReflectionMetadataReader())->read(new \ReflectionClass($class));
+        return self::readAsFirst(new ReflectionMetadataReader(), $class);
     }
 
     private static function createNonPublicSelector(): PropertySelectorInterface

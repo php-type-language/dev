@@ -18,7 +18,7 @@ final class PhpDocMetadataReaderTest extends TestCase
 {
     public function testFirstReaderReturnsNoProperties(): void
     {
-        $metadata = (new PhpDocMetadataReader())->read(new \ReflectionClass(DocBlockStub::class));
+        $metadata = self::readAsFirst(new PhpDocMetadataReader(), DocBlockStub::class);
 
         self::assertSame(DocBlockStub::class, $metadata->name);
         self::assertSame([], $metadata->properties);

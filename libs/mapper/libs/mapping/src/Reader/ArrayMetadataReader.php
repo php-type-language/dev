@@ -14,14 +14,13 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\ClassIndex;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\ConfigPath;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\DefaultKeyLoader;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\KeyLoaderInterface;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\NameKeyLoader;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeKeyLoader;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeKeyLoader\TypeDirection;
+use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\DefaultConfigLoader;
+use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\NameConfigLoader;
+use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\PropertyConfig;
+use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\PropertyConfigLoaderInterface;
+use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader;
+use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader\TypeDirection;
 use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
-use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
-use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserInterface;
 use TypeLang\Type\TypeNode;
@@ -49,14 +48,17 @@ final class ArrayMetadataReader implements MetadataReaderInterface
 {
     private const PROPERTIES_KEY = 'properties';
 
-    private const STRICT_KEY = 'strict';
-
     /**
-     * @var array<non-empty-string, KeyLoaderInterface>
+     * @var non-empty-list<PropertyConfigLoaderInterface>
      */
     private readonly array $loaders;
 
-    private readonly SourceContextFactory $contexts;
+    /**
+     * Keys of a property config read by the loaders
+     *
+     * @var array<non-empty-string, true>
+     */
+    private readonly array $keys;
 
     private ?ClassIndex $index = null;
 
@@ -78,14 +80,21 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         private readonly ?string $file = null,
         TypeParserInterface $parser = new TypeParser(),
     ) {
-        $this->contexts = new SourceContextFactory();
         $this->loaders = [
-            TypeDirection::Both->value => new TypeKeyLoader(TypeDirection::Both, $parser),
-            TypeDirection::Read->value => new TypeKeyLoader(TypeDirection::Read, $parser),
-            TypeDirection::Write->value => new TypeKeyLoader(TypeDirection::Write, $parser),
-            'name' => new NameKeyLoader(),
-            'default' => new DefaultKeyLoader(),
+            new TypeConfigLoader($parser),
+            new NameConfigLoader(),
+            new DefaultConfigLoader(),
         ];
+
+        $keys = [];
+
+        foreach ($this->loaders as $loader) {
+            foreach ($loader->getKeys() as $key) {
+                $keys[$key] = true;
+            }
+        }
+
+        $this->keys = $keys;
     }
 
     /**
@@ -188,15 +197,11 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             $name = (string) $name;
             $target = MetadataException::formatPropertyTarget($class->name, $name);
             $propertyPath = $path->withKey($name);
-            $context = $this->contexts->createFromConfig(
-                $target,
-                $propertyPath->createSource($this->file),
-            );
 
             if ($name === '' || !$class->hasProperty($name)) {
                 $errors->addError(UnknownPropertyException::becausePropertyDoesNotExist(
                     $target,
-                    $context->source,
+                    $propertyPath->createSource($this->file),
                 ));
 
                 continue;
@@ -207,13 +212,13 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             if ($property === null) {
                 $errors->addError(UnknownPropertyException::becausePropertyIsNotMapped(
                     $target,
-                    $context->source,
+                    $propertyPath->createSource($this->file),
                 ));
 
                 continue;
             }
 
-            $property = $this->readProperty($config, $property, $propertyPath, $context, $errors);
+            $property = $this->readProperty($config, $property, $target, $propertyPath, $errors);
 
             $metadata = $metadata->withProperty($property);
         }
@@ -221,42 +226,44 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         return $metadata;
     }
 
+    /**
+     * @param non-empty-string $target property reference: `App\User::$id`
+     * @param ConfigPath $path path of the property
+     */
     private function readProperty(
         mixed $config,
         PropertyMetadata $property,
+        string $target,
         ConfigPath $path,
-        SourceContext $context,
         ErrorCollector $errors,
     ): PropertyMetadata {
         // id: int
         if (\is_string($config)) {
-            return $this->loadKey(TypeDirection::Both->value, $config, $property, $path, $context, $errors);
+            $config = PropertyConfig::createFromValue($target, TypeDirection::Both->value, $config, $path, $this->file);
+
+            return $this->loadProperty($config, $property, $errors);
         }
 
         if (!\is_array($config)) {
             $errors->addError(InvalidValueException::becausePropertyConfigIsNotStringOrMap(
-                $context->target,
-                $context->source,
+                $target,
+                $path->createSource($this->file),
             ));
 
             return $property;
         }
 
-        foreach ($this->loaders as $key => $_) {
-            if (\array_key_exists($key, $config)) {
-                $property = $this->loadKey($key, $config[$key], $property, $path->withKey($key), $context, $errors);
-            }
-        }
-
-        if (\array_key_exists(self::STRICT_KEY, $config)) {
-            $property = $this->loadStrict($config, $property, $path->withKey(self::STRICT_KEY), $context, $errors);
-        }
+        $property = $this->loadProperty(
+            config: PropertyConfig::createFromMap($target, $config, $path, $this->file),
+            property: $property,
+            errors: $errors,
+        );
 
         foreach ($config as $key => $_) {
-            if (!isset($this->loaders[$key]) && $key !== self::STRICT_KEY) {
+            if (!isset($this->keys[$key])) {
                 $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
                     $key,
-                    $context->target,
+                    $target,
                     $path->withKey($key)->createSource($this->file),
                 ));
             }
@@ -266,80 +273,20 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     }
 
     /**
-     * @param non-empty-string $key
-     * @param ConfigPath $path path of the value
+     * Applies each loader to the config, an error of a loader is collected
+     * and the other loaders go on.
      */
-    private function loadKey(
-        string $key,
-        mixed $value,
+    private function loadProperty(
+        PropertyConfig $config,
         PropertyMetadata $property,
-        ConfigPath $path,
-        SourceContext $context,
         ErrorCollector $errors,
     ): PropertyMetadata {
-        $source = $path->createSource($this->file);
-
-        try {
-            return $this->loaders[$key]->load(
-                $value,
-                $property,
-                $this->contexts->createFromConfig($context->target, $source),
-            );
-        } catch (MetadataException $e) {
-            $errors->addError($e);
-        }
-
-        return $property;
-    }
-
-    /**
-     * Applies the `strict` key to the types the config sets, or to the types
-     * of the lower readers in case of the config sets no type.
-     *
-     * @param array<array-key, mixed> $config
-     * @param ConfigPath $path path of the value
-     */
-    private function loadStrict(
-        array $config,
-        PropertyMetadata $property,
-        ConfigPath $path,
-        SourceContext $context,
-        ErrorCollector $errors,
-    ): PropertyMetadata {
-        $isStrict = $config[self::STRICT_KEY];
-
-        if (!\is_bool($isStrict)) {
-            $errors->addError(InvalidValueException::becauseValueIsNotBoolean(
-                self::STRICT_KEY,
-                $context->target,
-                $path->createSource($this->file),
-            ));
-
-            return $property;
-        }
-
-        $isRead = false;
-        $isWrite = false;
-
-        foreach (TypeDirection::cases() as $direction) {
-            if (\array_key_exists($direction->value, $config)) {
-                $isRead = $isRead || $direction->isRead();
-                $isWrite = $isWrite || $direction->isWrite();
+        foreach ($this->loaders as $loader) {
+            try {
+                $property = $loader->load($config, $property);
+            } catch (MetadataException $e) {
+                $errors->addError($e);
             }
-        }
-
-        // strict: true
-        if (!$isRead && !$isWrite) {
-            $isRead = true;
-            $isWrite = true;
-        }
-
-        if ($isRead && $property->read !== null) {
-            $property = $property->withReadType($property->read->withStrict($isStrict));
-        }
-
-        if ($isWrite && $property->write !== null) {
-            $property = $property->withWriteType($property->write->withStrict($isStrict));
         }
 
         return $property;

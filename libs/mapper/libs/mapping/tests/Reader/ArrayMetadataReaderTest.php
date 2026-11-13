@@ -155,7 +155,7 @@ final class ArrayMetadataReaderTest extends TestCase
     {
         $reader = new JsonFileMetadataReader(self::FIXTURES . 'config.json');
 
-        self::assertSame([], $reader->read(new \ReflectionClass(PromotedStub::class))->properties);
+        self::assertSame([], self::readAsFirst($reader, PromotedStub::class)->properties);
     }
 
     public function testErrorsAreThrownTogetherWithFileAndPathInConfig(): void
@@ -244,7 +244,7 @@ final class ArrayMetadataReaderTest extends TestCase
         $reader = new ArrayMetadataReader([UserStub::class => ['properties' => ['id' => 'int']]]);
         $class = UserStub::class;
 
-        $errors = self::getErrors(static fn() => $reader->read(new \ReflectionClass(UserStub::class)));
+        $errors = self::getErrors(static fn() => self::readAsFirst($reader, UserStub::class));
 
         self::assertSame(["{$class}::\$id: property is not mapped in \$['{$class}'].properties.id"], $errors);
     }
@@ -345,7 +345,7 @@ final class ArrayMetadataReaderTest extends TestCase
         $this->expectException(ConfigLoadingException::class);
         $this->expectExceptionMessage($message);
 
-        $reader->read(new \ReflectionClass(PromotedStub::class));
+        self::readAsFirst($reader, PromotedStub::class);
     }
 
     /**

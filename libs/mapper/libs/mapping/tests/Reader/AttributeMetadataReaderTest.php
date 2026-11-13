@@ -154,7 +154,7 @@ final class AttributeMetadataReaderTest extends TestCase
     public function testFirstReaderMapsNoPropertiesSoEveryAttributeIsThrown(): void
     {
         $reader = new AttributeMetadataReader();
-        $errors = self::getErrors(static fn() => $reader->read(new \ReflectionClass(AttributeStub::class)));
+        $errors = self::getErrors(static fn() => self::readAsFirst($reader, AttributeStub::class));
         $class = AttributeStub::class;
 
         self::assertSame([
@@ -167,7 +167,7 @@ final class AttributeMetadataReaderTest extends TestCase
 
     public function testFirstReaderOfClassWithoutAttributesReturnsNoProperties(): void
     {
-        $metadata = (new AttributeMetadataReader())->read(new \ReflectionClass(UserStub::class));
+        $metadata = self::readAsFirst(new AttributeMetadataReader(), UserStub::class);
 
         self::assertSame(UserStub::class, $metadata->name);
         self::assertSame([], $metadata->properties);
