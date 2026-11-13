@@ -7,6 +7,9 @@ namespace TypeLang\Mapper\Mapping\Reader;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeParserInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * Overrides values of the given properties with a config stored in a file,
@@ -21,6 +24,12 @@ abstract class FileMetadataReader implements MetadataReaderInterface
          * @var non-empty-string
          */
         protected readonly string $path,
+        /**
+         * Parser of the types of the config
+         *
+         * @var TypeParserInterface<TypeNode, string>
+         */
+        private readonly TypeParserInterface $parser = new TypeParser(),
     ) {}
 
     /**
@@ -31,7 +40,7 @@ abstract class FileMetadataReader implements MetadataReaderInterface
      */
     public function read(\ReflectionClass $class, ?ClassMetadata $metadata = null): ClassMetadata
     {
-        $this->reader ??= new ArrayMetadataReader($this->load(), $this->path);
+        $this->reader ??= new ArrayMetadataReader($this->load(), $this->path, $this->parser);
 
         return $this->reader->read($class, $metadata);
     }

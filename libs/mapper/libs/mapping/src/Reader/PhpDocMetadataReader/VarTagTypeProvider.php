@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
 
+use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTag;
+
 /**
  * Reads the type of both directions from `@var` of the property.
  *
@@ -12,18 +14,11 @@ namespace TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
  */
 final class VarTagTypeProvider implements PropertyTypeProviderInterface
 {
-    public function __construct(
-        /**
-         * @var list<non-empty-lowercase-string>
-         */
-        private readonly array $varTags,
-    ) {}
-
     public function readTypes(PropertyContext $property): PropertyTypes
     {
-        $tag = $property->docBlocks->findTag(
+        $tag = $property->findTag(
             docComment: $property->reflection->getDocComment(),
-            names: $this->varTags,
+            class: VarTag::class,
             variable: $property->reflection->name,
         );
 

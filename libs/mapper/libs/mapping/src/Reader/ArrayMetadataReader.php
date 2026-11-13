@@ -22,6 +22,9 @@ use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeKeyLoader\TypeDirecti
 use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeParserInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * Overrides values of the given properties with a config: a map of class
@@ -57,6 +60,10 @@ final class ArrayMetadataReader implements MetadataReaderInterface
 
     private ?ClassIndex $index = null;
 
+    /**
+     * @param TypeParserInterface<TypeNode, string> $parser parser of the
+     *        types of the config
+     */
     public function __construct(
         /**
          * @var array<array-key, mixed>
@@ -69,12 +76,13 @@ final class ArrayMetadataReader implements MetadataReaderInterface
          * @var non-empty-string|null
          */
         private readonly ?string $file = null,
+        TypeParserInterface $parser = new TypeParser(),
     ) {
         $this->contexts = new SourceContextFactory();
         $this->loaders = [
-            TypeDirection::Both->value => new TypeKeyLoader(TypeDirection::Both),
-            TypeDirection::Read->value => new TypeKeyLoader(TypeDirection::Read),
-            TypeDirection::Write->value => new TypeKeyLoader(TypeDirection::Write),
+            TypeDirection::Both->value => new TypeKeyLoader(TypeDirection::Both, $parser),
+            TypeDirection::Read->value => new TypeKeyLoader(TypeDirection::Read, $parser),
+            TypeDirection::Write->value => new TypeKeyLoader(TypeDirection::Write, $parser),
             'name' => new NameKeyLoader(),
             'default' => new DefaultKeyLoader(),
         ];

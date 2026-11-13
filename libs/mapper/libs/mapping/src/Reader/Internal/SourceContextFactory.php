@@ -6,7 +6,6 @@ namespace TypeLang\Mapper\Mapping\Reader\Internal;
 
 use TypeLang\Mapper\Mapping\Exception\MetadataException;
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
-use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeResolver;
 
 /**
@@ -17,8 +16,6 @@ use TypeLang\Parser\TypeResolver;
  */
 final class SourceContextFactory
 {
-    private readonly TypeParser $parser;
-
     /**
      * Resolvers of the names written in a class or trait body by the name of
      * the class or trait, each one knows the imports of its file
@@ -26,11 +23,6 @@ final class SourceContextFactory
      * @var array<string, TypeResolver>
      */
     private array $resolvers = [];
-
-    public function __construct()
-    {
-        $this->parser = new TypeParser();
-    }
 
     /**
      * Returns the class or trait whose body declares the property.
@@ -70,7 +62,6 @@ final class SourceContextFactory
         return new SourceContext(
             target: MetadataException::formatPropertyTarget($class->name, $property->name),
             source: new SourceInfo(self::findFile($scope)),
-            parser: $this->parser,
             resolver: $this->getResolver($scope),
             namespace: self::findNamespace($scope),
         );
@@ -93,7 +84,7 @@ final class SourceContextFactory
      */
     public function createFromConfig(string $target, SourceInfo $source): SourceContext
     {
-        return new SourceContext($target, $source, $this->parser);
+        return new SourceContext($target, $source);
     }
 
     /**

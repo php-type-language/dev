@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
 
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTag;
+use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTag;
 
 /**
  * Reads the read type from `@return` of the `get` hook and the write type
@@ -16,17 +18,6 @@ use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
  */
 final class HookTypeProvider implements PropertyTypeProviderInterface
 {
-    public function __construct(
-        /**
-         * @var list<non-empty-lowercase-string>
-         */
-        private readonly array $paramTags,
-        /**
-         * @var list<non-empty-lowercase-string>
-         */
-        private readonly array $returnTags,
-    ) {}
-
     public function readTypes(PropertyContext $property): PropertyTypes
     {
         /** @var \ReflectionMethod|null */
@@ -37,28 +28,28 @@ final class HookTypeProvider implements PropertyTypeProviderInterface
         $set = $property->reflection->getHook(\PropertyHookType::Set);
 
         return new PropertyTypes(
-            readType: $this->findReadType($property, $get),
-            writeType: $this->findWriteType($property, $set),
+            readType: self::findReadType($property, $get),
+            writeType: self::findWriteType($property, $set),
             isWriteTypeClosed: $set !== null,
         );
     }
 
-    private function findReadType(PropertyContext $property, ?\ReflectionMethod $get): ?TypeMetadata
+    private static function findReadType(PropertyContext $property, ?\ReflectionMethod $get): ?TypeMetadata
     {
         if ($get === null) {
             return null;
         }
 
-        $tag = $property->docBlocks->findTag(
+        $tag = $property->findTag(
             docComment: $get->getDocComment(),
-            names: $this->returnTags,
+            class: ReturnTag::class,
             variable: $property->reflection->name,
         );
 
         return $property->createType($tag);
     }
 
-    private function findWriteType(PropertyContext $property, ?\ReflectionMethod $set): ?TypeMetadata
+    private static function findWriteType(PropertyContext $property, ?\ReflectionMethod $set): ?TypeMetadata
     {
         if ($set === null) {
             return null;
@@ -70,9 +61,9 @@ final class HookTypeProvider implements PropertyTypeProviderInterface
             return null;
         }
 
-        $tag = $property->docBlocks->findVariableTag(
+        $tag = $property->findTag(
             docComment: $set->getDocComment(),
-            names: $this->paramTags,
+            class: ParamTag::class,
             variable: $parameter,
         );
 

@@ -17,6 +17,9 @@ use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
 use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeParserInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * Overrides values of the given properties with {@see MapName} and
@@ -30,8 +33,13 @@ final class AttributeMetadataReader implements MetadataReaderInterface
 {
     private readonly SourceContextFactory $contexts;
 
-    public function __construct()
-    {
+    /**
+     * @param TypeParserInterface<TypeNode, string> $parser parser of the
+     *        types of {@see MapType}
+     */
+    public function __construct(
+        private readonly TypeParserInterface $parser = new TypeParser(),
+    ) {
         $this->contexts = new SourceContextFactory();
     }
 
@@ -135,7 +143,7 @@ final class AttributeMetadataReader implements MetadataReaderInterface
             }
 
             if ($instance instanceof MapType) {
-                $property = $property->withType(self::createType($instance, $context));
+                $property = $property->withType($this->createType($instance, $context));
             }
         }
 
@@ -143,7 +151,7 @@ final class AttributeMetadataReader implements MetadataReaderInterface
             $instance = self::createAttribute($attribute, $context, $errors);
 
             if ($instance instanceof MapType) {
-                $property = $property->withReadType(self::createType($instance, $context));
+                $property = $property->withReadType($this->createType($instance, $context));
             }
         }
 
@@ -151,7 +159,7 @@ final class AttributeMetadataReader implements MetadataReaderInterface
             $instance = self::createAttribute($attribute, $context, $errors);
 
             if ($instance instanceof MapType) {
-                $property = $property->withWriteType(self::createType($instance, $context));
+                $property = $property->withWriteType($this->createType($instance, $context));
             }
         }
 
@@ -215,9 +223,9 @@ final class AttributeMetadataReader implements MetadataReaderInterface
         return $property->withExternalName($attribute->name);
     }
 
-    private static function createType(MapType $attribute, SourceContext $context): TypeMetadata
+    private function createType(MapType $attribute, SourceContext $context): TypeMetadata
     {
-        $type = $context->createTypeFromString($attribute->type);
+        $type = $context->parseType($this->parser, $attribute->type);
 
         if ($attribute->strict === null) {
             return $type;

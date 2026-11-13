@@ -7,7 +7,7 @@ namespace TypeLang\Mapper\Mapping\Reader\Internal;
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
-use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeParserInterface;
 use TypeLang\Parser\TypeResolver;
 use TypeLang\Type\TypeNode;
 
@@ -32,7 +32,6 @@ final class SourceContext
          * Source of the values of this place
          */
         public readonly SourceInfo $source,
-        private readonly TypeParser $parser,
         /**
          * Resolver of the names of the types, the names are kept as
          * written in case of {@see null}
@@ -64,13 +63,15 @@ final class SourceContext
     }
 
     /**
-     * Parses the type and resolves its names, returns a type with an error
-     * in case of the type cannot be parsed.
+     * Parses the type by the parser and resolves its names, returns a type
+     * with an error in case of the type cannot be parsed.
+     *
+     * @param TypeParserInterface<TypeNode, string> $parser
      */
-    public function createTypeFromString(string $definition): TypeMetadata
+    public function parseType(TypeParserInterface $parser, string $definition): TypeMetadata
     {
         try {
-            $type = $this->parser->parse($definition);
+            $type = $parser->parse($definition);
         } catch (ParserExceptionInterface $e) {
             return $this->createInvalidType($e);
         }

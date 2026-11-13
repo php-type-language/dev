@@ -17,8 +17,11 @@ use TypeLang\Mapper\Mapping\Reader\ChainMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\MetadataReaderInterface;
 use TypeLang\Mapper\Mapping\Reader\NamingStrategyMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
+use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\MapperPlatform;
 use TypeLang\Mapper\Mapping\Reader\ReflectionMetadataReader;
 use TypeLang\Mapper\Naming\NamingStrategyInterface;
+use TypeLang\Parser\TypeParser;
+use TypeLang\PhpDoc\DocBlockParser;
 
 /**
  * Creates the default provider stack.
@@ -40,6 +43,7 @@ final class MetadataProviderFactory
         ?NamingStrategyInterface $strategy = null,
         CacheItemPoolInterface|CacheInterface|null $cache = null,
         string $prefix = CacheMetadataProvider::DEFAULT_PREFIX,
+        TypeParser $parser = new TypeParser(),
     ): MetadataProviderInterface {
         $result = [];
 
@@ -50,7 +54,7 @@ final class MetadataProviderFactory
         $provider = self::readersToProvider([
             ...$result,
             ...$readers,
-            ...self::getDefaultReaders(),
+            ...self::getDefaultReaders($parser->forType()),
         ]);
 
         return new InMemoryMetadataProvider(
@@ -71,14 +75,22 @@ final class MetadataProviderFactory
     /**
      * @return non-empty-list<MetadataReaderInterface>
      */
-    private static function getDefaultReaders(): array
+    private static function getDefaultReaders(TypeParser $parser): array
     {
-        $result = [
-            new AttributeMetadataReader(),
-        ];
+        $result = [new AttributeMetadataReader($parser)];
 
         if (PhpDocMetadataReader::isAvailable()) {
-            $result[] = new PhpDocMetadataReader();
+            // parses `type-lang-*` prefixes
+            $result[] = new PhpDocMetadataReader(new DocBlockParser(
+                platforms: [MapperPlatform::createWithSpecialTagNames()],
+                typeParser: $parser,
+            ));
+
+            // parses general definitions
+            $result[] = new PhpDocMetadataReader(new DocBlockParser(
+                platforms: [MapperPlatform::createWithDefaultTagNames()],
+                typeParser: $parser,
+            ));
         }
 
         $result[] = new ReflectionMetadataReader();

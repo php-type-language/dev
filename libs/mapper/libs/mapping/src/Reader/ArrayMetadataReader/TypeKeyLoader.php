@@ -8,6 +8,8 @@ use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeKeyLoader\TypeDirection;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
+use TypeLang\Parser\TypeParserInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * Sets the read type, the write type or both from a config key: `type`,
@@ -20,6 +22,10 @@ final class TypeKeyLoader implements KeyLoaderInterface
 {
     public function __construct(
         private readonly TypeDirection $direction,
+        /**
+         * @var TypeParserInterface<TypeNode, string>
+         */
+        private readonly TypeParserInterface $parser,
     ) {}
 
     /**
@@ -36,7 +42,7 @@ final class TypeKeyLoader implements KeyLoaderInterface
             );
         }
 
-        $type = $context->createTypeFromString($value);
+        $type = $context->parseType($this->parser, $value);
 
         if ($this->direction->isRead()) {
             $property = $property->withReadType($type);

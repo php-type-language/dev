@@ -17,6 +17,7 @@ use TypeLang\Mapper\Mapping\Reader\Reflection\PropertySelectorInterface;
 use TypeLang\Mapper\Mapping\Reader\Reflection\PublicPropertySelector;
 use TypeLang\Reader\Exception\ReaderExceptionInterface;
 use TypeLang\Reader\PropertyAccessDirection;
+use TypeLang\Reader\PropertyReaderInterface;
 use TypeLang\Reader\ReflectionReader;
 
 /**
@@ -29,14 +30,15 @@ use TypeLang\Reader\ReflectionReader;
  */
 final class ReflectionMetadataReader implements MetadataReaderInterface
 {
-    private readonly ReflectionReader $nativeTypeReader;
-
     private readonly SourceContextFactory $contexts;
 
     public function __construct(
         private readonly PropertySelectorInterface $selector = new PublicPropertySelector(),
+        /**
+         * Reader of the native types of the properties
+         */
+        private readonly PropertyReaderInterface $nativeTypeReader = new ReflectionReader(),
     ) {
-        $this->nativeTypeReader = new ReflectionReader();
         $this->contexts = new SourceContextFactory();
     }
 

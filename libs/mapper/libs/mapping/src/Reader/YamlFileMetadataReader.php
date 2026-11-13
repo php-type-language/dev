@@ -8,6 +8,9 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeParserInterface;
+use TypeLang\Type\TypeNode;
 
 /**
  * Overrides values of the given properties with a config stored in a YAML
@@ -17,16 +20,18 @@ final class YamlFileMetadataReader extends FileMetadataReader
 {
     /**
      * @param non-empty-string $path
+     * @param TypeParserInterface<TypeNode, string> $parser parser of the
+     *        types of the config
      * @throws MissingDependencyException in case of the `symfony/yaml`
      *         package is not installed
      */
-    public function __construct(string $path)
+    public function __construct(string $path, TypeParserInterface $parser = new TypeParser())
     {
         if (!\class_exists(Yaml::class)) {
             throw MissingDependencyException::becausePackageIsNotInstalled('symfony/yaml', 'YAML config');
         }
 
-        parent::__construct($path);
+        parent::__construct($path, $parser);
     }
 
     protected function decode(): mixed
