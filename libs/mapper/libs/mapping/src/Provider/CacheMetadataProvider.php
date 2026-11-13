@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Provider;
 
+use TypeLang\Mapper\Mapping\Exception\InvalidCacheKeyException;
 use TypeLang\Mapper\Mapping\Exception\ReaderException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 
@@ -32,6 +33,7 @@ abstract class CacheMetadataProvider implements MetadataProviderInterface
      * @template T of object
      * @param \ReflectionClass<T> $class
      * @return ClassMetadata<T>
+     * @throws InvalidCacheKeyException in case of the cache rejects the key
      * @throws ReaderException in case of the delegate cannot provide the
      *         metadata
      */
@@ -39,32 +41,38 @@ abstract class CacheMetadataProvider implements MetadataProviderInterface
     {
         $key = $this->prefix . 'v' . ClassMetadata::FORMAT_VERSION . '_' . \hash('xxh128', $class->name);
 
-        $metadata = $this->fetch($key);
-
-        if ($metadata instanceof ClassMetadata && $metadata->name === $class->name) {
-            /** @var ClassMetadata<T> */
-            return $metadata;
-        }
-
-        $metadata = $this->delegate->read($class);
-
-        $this->store($key, $metadata);
-
-        return $metadata;
+        /** @var ClassMetadata<T> */
+        return $this->remember($key, $class->name, fn(): ClassMetadata => $this->delegate->read($class));
     }
 
     /**
-     * Returns the value stored by the key, {@see null} in case of a miss.
+     * Returns the metadata of the class stored by the key, in case of a miss
+     * reads it by the callback and stores it. A failure of the cache is a
+     * miss on reading and is skipped on writing.
      *
      * @param non-empty-string $key valid for PSR-6 and PSR-16 in case of the
      *        prefix is
+     * @param class-string $class
+     * @param \Closure(): ClassMetadata<object> $read
+     * @return ClassMetadata<object>
+     * @throws InvalidCacheKeyException in case of the cache rejects the key
+     * @throws ReaderException in case of the callback cannot read the
+     *         metadata
      */
-    abstract protected function fetch(string $key): mixed;
+    abstract protected function remember(string $key, string $class, \Closure $read): ClassMetadata;
 
     /**
-     * @param non-empty-string $key valid for PSR-6 and PSR-16 in case of the
-     *        prefix is
-     * @param ClassMetadata<object> $metadata
+     * Returns {@see true} in case of the stored value is the metadata of the
+     * class, any other value is a miss.
+     *
+     * @template TArgClass of object
+     * @param class-string<TArgClass> $class
+     *
+     * @phpstan-assert-if-true ClassMetadata<TArgClass> $value
      */
-    abstract protected function store(string $key, ClassMetadata $metadata): void;
+    protected static function isMetadataOf(mixed $value, string $class): bool
+    {
+        return $value instanceof ClassMetadata
+            && $value->name === $class;
+    }
 }
