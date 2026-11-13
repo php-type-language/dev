@@ -8,6 +8,7 @@ use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
+use TypeLang\Mapper\Mapping\Reader\Internal\PropertyHooks;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\MapperPlatform;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PropertyContext;
@@ -81,7 +82,7 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
      */
     private function readProperty(PropertyContext $context, PropertyMetadata $property): PropertyMetadata
     {
-        $set = self::findSetHook($context->reflection);
+        $set = PropertyHooks::findSet($context->reflection);
         $read = self::findGetHookType($context);
         $write = null;
 
@@ -136,7 +137,7 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
 
     private static function findGetHookType(PropertyContext $context): ?TypeMetadata
     {
-        $get = self::findGetHook($context->reflection);
+        $get = PropertyHooks::findGet($context->reflection);
 
         if ($get === null) {
             return null;
@@ -162,35 +163,5 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
             class: ParamTag::class,
             variable: $parameter,
         ));
-    }
-
-    /**
-     * Returns the `get` hook of the property, {@see null} in case of there is
-     * none or before PHP 8.4.
-     */
-    private static function findGetHook(\ReflectionProperty $property): ?\ReflectionMethod
-    {
-        if (\PHP_VERSION_ID < 80400) {
-            return null;
-        }
-
-        /** @var \ReflectionMethod|null */
-        // @phpstan-ignore-next-line PHP 8.4 API is unknown for PHP 8.1
-        return $property->getHook(\PropertyHookType::Get);
-    }
-
-    /**
-     * Returns the `set` hook of the property, {@see null} in case of there is
-     * none or before PHP 8.4.
-     */
-    private static function findSetHook(\ReflectionProperty $property): ?\ReflectionMethod
-    {
-        if (\PHP_VERSION_ID < 80400) {
-            return null;
-        }
-
-        /** @var \ReflectionMethod|null */
-        // @phpstan-ignore-next-line PHP 8.4 API is unknown for PHP 8.1
-        return $property->getHook(\PropertyHookType::Set);
     }
 }

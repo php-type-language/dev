@@ -15,7 +15,7 @@ abstract class MetadataException extends ReaderException
      * @param string $message reason of the error, the message is
      *        `target: reason in place`
      */
-    public function __construct(
+    protected function __construct(
         /**
          * Property or class the wrong value belongs to: `App\User::$id`,
          * `App\User`

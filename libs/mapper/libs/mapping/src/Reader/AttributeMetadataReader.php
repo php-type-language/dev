@@ -15,6 +15,7 @@ use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
 use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
+use TypeLang\Mapper\Mapping\Reader\Internal\PropertyHooks;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
 use TypeLang\Parser\TypeParser;
@@ -108,8 +109,8 @@ final class AttributeMetadataReader implements MetadataReaderInterface
         $name = $reflection->name;
         $nameAttributes = $reflection->getAttributes(MapName::class);
         $typeAttributes = $reflection->getAttributes(MapType::class);
-        $getAttributes = self::getGetHookAttributes($reflection);
-        $setAttributes = self::getSetHookAttributes($reflection);
+        $getAttributes = self::getHookAttributes(PropertyHooks::findGet($reflection));
+        $setAttributes = self::getHookAttributes(PropertyHooks::findSet($reflection));
 
         if ($name === '' || [...$nameAttributes, ...$typeAttributes, ...$getAttributes, ...$setAttributes] === []) {
             return $metadata;
@@ -179,40 +180,13 @@ final class AttributeMetadataReader implements MetadataReaderInterface
     }
 
     /**
-     * Returns {@see MapType} attributes of the `get` hook of the property, an
-     * empty list before PHP 8.4.
+     * Returns {@see MapType} attributes of the hook, an empty list in case
+     * of there is no hook.
      *
      * @return list<\ReflectionAttribute<MapType>>
      */
-    private static function getGetHookAttributes(\ReflectionProperty $property): array
+    private static function getHookAttributes(?\ReflectionMethod $hook): array
     {
-        if (\PHP_VERSION_ID < 80400) {
-            return [];
-        }
-
-        /** @var \ReflectionMethod|null */
-        // @phpstan-ignore-next-line PHP 8.4 API is unknown for PHP 8.1
-        $hook = $property->getHook(\PropertyHookType::Get);
-
-        return $hook?->getAttributes(MapType::class) ?? [];
-    }
-
-    /**
-     * Returns {@see MapType} attributes of the `set` hook of the property, an
-     * empty list before PHP 8.4.
-     *
-     * @return list<\ReflectionAttribute<MapType>>
-     */
-    private static function getSetHookAttributes(\ReflectionProperty $property): array
-    {
-        if (\PHP_VERSION_ID < 80400) {
-            return [];
-        }
-
-        /** @var \ReflectionMethod|null */
-        // @phpstan-ignore-next-line PHP 8.4 API is unknown for PHP 8.1
-        $hook = $property->getHook(\PropertyHookType::Set);
-
         return $hook?->getAttributes(MapType::class) ?? [];
     }
 

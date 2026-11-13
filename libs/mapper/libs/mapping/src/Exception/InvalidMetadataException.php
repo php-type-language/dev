@@ -11,7 +11,7 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
  */
 final class InvalidMetadataException extends ReaderException
 {
-    public function __construct(
+    private function __construct(
         /**
          * Metadata read despite the errors: wrong values are left out,
          * types with a failure are kept
