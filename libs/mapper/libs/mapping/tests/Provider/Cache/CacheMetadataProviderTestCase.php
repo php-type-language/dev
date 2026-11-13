@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Tests\Provider\Cache;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use TypeLang\Mapper\Mapping\Exception\InvalidCacheKeyException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
-use TypeLang\Mapper\Mapping\Provider\MetadataProviderInterface;
 use TypeLang\Mapper\Mapping\Provider\CacheMetadataProvider;
+use TypeLang\Mapper\Mapping\Provider\MetadataProviderInterface;
 use TypeLang\Mapper\Mapping\Tests\Stub\ArrayCache;
 use TypeLang\Mapper\Mapping\Tests\Stub\ArrayCachePool;
+use TypeLang\Mapper\Mapping\Tests\Stub\CacheFailureExceptionStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\CacheKeyExceptionStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\CountingMetadataProvider;
 use TypeLang\Mapper\Mapping\Tests\Stub\ReaderExceptionStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
@@ -141,6 +144,36 @@ abstract class CacheMetadataProviderTestCase extends TestCase
 
         self::assertSame(1, $delegate->calls);
         self::assertSame(\stdClass::class, $metadata->name);
+    }
+
+    public function testRejectedKeyIsThrownAsReaderException(): void
+    {
+        $cache = $this->createCache();
+        $cache->exception = new CacheKeyExceptionStub('reserved character');
+
+        try {
+            $this->createProvider(new CountingMetadataProvider(), $cache, 'bad{')
+                ->read(new \ReflectionClass(\stdClass::class));
+
+            self::fail('The rejected key is expected to be thrown');
+        } catch (InvalidCacheKeyException $e) {
+            self::assertSame($cache->exception, $e->getPrevious());
+            self::assertStringStartsWith('Cache rejects the key "bad{v', $e->getMessage());
+        }
+    }
+
+    public function testCacheFailureIsMissAndIsNotThrown(): void
+    {
+        $cache = $this->createCache();
+        $cache->exception = new CacheFailureExceptionStub('storage is down');
+        $delegate = new CountingMetadataProvider();
+
+        $metadata = $this->createProvider($delegate, $cache)
+            ->read(new \ReflectionClass(\stdClass::class));
+
+        self::assertSame(1, $delegate->calls);
+        self::assertSame(\stdClass::class, $metadata->name);
+        self::assertSame([], $cache->values);
     }
 
     public function testDelegateExceptionIsNotCached(): void

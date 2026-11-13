@@ -17,8 +17,18 @@ final class ArrayCachePool implements CacheItemPoolInterface
      */
     public array $values = [];
 
+    /**
+     * Exception thrown by {@see getItem()} and {@see save()}, {@see null}
+     * in case of the pool works
+     */
+    public ?\Throwable $exception = null;
+
     public function getItem(string $key): CacheItemInterface
     {
+        if ($this->exception !== null) {
+            throw $this->exception;
+        }
+
         if (!isset($this->values[$key])) {
             return new ArrayCacheItem($key);
         }
@@ -74,6 +84,10 @@ final class ArrayCachePool implements CacheItemPoolInterface
 
     public function save(CacheItemInterface $item): bool
     {
+        if ($this->exception !== null) {
+            throw $this->exception;
+        }
+
         $this->values[$item->getKey()] = \serialize($item->get());
 
         return true;

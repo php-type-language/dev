@@ -16,8 +16,18 @@ final class ArrayCache implements CacheInterface
      */
     public array $values = [];
 
+    /**
+     * Exception thrown by {@see get()} and {@see set()}, {@see null} in
+     * case of the cache works
+     */
+    public ?\Throwable $exception = null;
+
     public function get(string $key, mixed $default = null): mixed
     {
+        if ($this->exception !== null) {
+            throw $this->exception;
+        }
+
         if (!isset($this->values[$key])) {
             return $default;
         }
@@ -27,6 +37,10 @@ final class ArrayCache implements CacheInterface
 
     public function set(string $key, mixed $value, \DateInterval|int|null $ttl = null): bool
     {
+        if ($this->exception !== null) {
+            throw $this->exception;
+        }
+
         $this->values[$key] = \serialize($value);
 
         return true;
