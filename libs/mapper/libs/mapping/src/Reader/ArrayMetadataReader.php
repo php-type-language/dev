@@ -136,12 +136,12 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         ErrorCollector $errors,
     ): ClassMetadata {
         $config = $this->config[$key];
-        $path = ConfigPath::createRoot()->withKey($key);
+        $path = ConfigPath::createRoot($this->file)->withKey($key);
 
         if (!\is_array($config)) {
             $errors->addError(InvalidValueException::becauseClassConfigIsNotMap(
                 $class->name,
-                $path->createSource($this->file),
+                $path->createSource(),
             ));
 
             return $metadata;
@@ -162,7 +162,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
                 $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
                     $name,
                     $class->name,
-                    $path->withKey($name)->createSource($this->file),
+                    $path->withKey($name)->createSource(),
                 ));
             }
         }
@@ -187,7 +187,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             $errors->addError(InvalidValueException::becauseValueIsNotMap(
                 self::PROPERTIES_KEY,
                 $class->name,
-                $path->createSource($this->file),
+                $path->createSource(),
             ));
 
             return $metadata;
@@ -201,7 +201,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             if ($name === '' || !$class->hasProperty($name)) {
                 $errors->addError(UnknownPropertyException::becausePropertyDoesNotExist(
                     $target,
-                    $propertyPath->createSource($this->file),
+                    $propertyPath->createSource(),
                 ));
 
                 continue;
@@ -212,7 +212,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             if ($property === null) {
                 $errors->addError(UnknownPropertyException::becausePropertyIsNotMapped(
                     $target,
-                    $propertyPath->createSource($this->file),
+                    $propertyPath->createSource(),
                 ));
 
                 continue;
@@ -239,7 +239,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     ): PropertyMetadata {
         // id: int
         if (\is_string($config)) {
-            $config = PropertyConfig::createFromValue($target, TypeDirection::Both->value, $config, $path, $this->file);
+            $config = PropertyConfig::createFromValue($target, TypeDirection::Both->value, $config, $path);
 
             return $this->loadProperty($config, $property, $errors);
         }
@@ -247,14 +247,14 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         if (!\is_array($config)) {
             $errors->addError(InvalidValueException::becausePropertyConfigIsNotStringOrMap(
                 $target,
-                $path->createSource($this->file),
+                $path->createSource(),
             ));
 
             return $property;
         }
 
         $property = $this->loadProperty(
-            config: PropertyConfig::createFromMap($target, $config, $path, $this->file),
+            config: PropertyConfig::createFromMap($target, $config, $path),
             property: $property,
             errors: $errors,
         );
@@ -264,7 +264,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
                 $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
                     $key,
                     $target,
-                    $path->withKey($key)->createSource($this->file),
+                    $path->withKey($key)->createSource(),
                 ));
             }
         }

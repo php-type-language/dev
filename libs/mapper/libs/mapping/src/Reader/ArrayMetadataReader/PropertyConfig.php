@@ -17,13 +17,11 @@ final class PropertyConfig
     /**
      * @param non-empty-string $target property reference: `App\User::$id`
      * @param array<array-key, mixed> $values
-     * @param non-empty-string|null $file
      */
     private function __construct(
         private readonly string $target,
         private readonly array $values,
         private readonly ConfigPath $path,
-        private readonly ?string $file,
         /**
          * Whether the config is one value written in place of the map, its
          * key has the place of the property
@@ -37,11 +35,10 @@ final class PropertyConfig
      * @param non-empty-string $target property reference: `App\User::$id`
      * @param array<array-key, mixed> $values
      * @param ConfigPath $path path of the property
-     * @param non-empty-string|null $file
      */
-    public static function createFromMap(string $target, array $values, ConfigPath $path, ?string $file): self
+    public static function createFromMap(string $target, array $values, ConfigPath $path): self
     {
-        return new self($target, $values, $path, $file, false);
+        return new self($target, $values, $path, false);
     }
 
     /**
@@ -50,16 +47,10 @@ final class PropertyConfig
      * @param non-empty-string $target property reference: `App\User::$id`
      * @param non-empty-string $key
      * @param ConfigPath $path path of the property
-     * @param non-empty-string|null $file
      */
-    public static function createFromValue(
-        string $target,
-        string $key,
-        mixed $value,
-        ConfigPath $path,
-        ?string $file,
-    ): self {
-        return new self($target, [$key => $value], $path, $file, true);
+    public static function createFromValue(string $target, string $key, mixed $value, ConfigPath $path): self
+    {
+        return new self($target, [$key => $value], $path, true);
     }
 
     public function has(string $key): bool
@@ -88,6 +79,6 @@ final class PropertyConfig
             $path = $path->withKey($key);
         }
 
-        return new SourceContext($this->target, $path->createSource($this->file));
+        return new SourceContext($this->target, $path->createSource());
     }
 }
