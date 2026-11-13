@@ -106,14 +106,12 @@ final class AttributeMetadataReader implements MetadataReaderInterface
         ErrorCollector $errors,
     ): ClassMetadata {
         $name = $reflection->name;
-        $attributes = [
-            ...$reflection->getAttributes(MapName::class),
-            ...$reflection->getAttributes(MapType::class),
-        ];
+        $nameAttributes = $reflection->getAttributes(MapName::class);
+        $typeAttributes = $reflection->getAttributes(MapType::class);
         $getAttributes = self::getGetHookAttributes($reflection);
         $setAttributes = self::getSetHookAttributes($reflection);
 
-        if (($attributes === [] && $getAttributes === [] && $setAttributes === []) || $name === '') {
+        if ($name === '' || [...$nameAttributes, ...$typeAttributes, ...$getAttributes, ...$setAttributes] === []) {
             return $metadata;
         }
 
@@ -130,35 +128,54 @@ final class AttributeMetadataReader implements MetadataReaderInterface
             return $metadata;
         }
 
-        foreach ($attributes as $attribute) {
+        foreach ($nameAttributes as $attribute) {
             $instance = self::createAttribute($attribute, $context, $errors);
 
             if ($instance instanceof MapName) {
                 $property = self::loadName($instance, $property, $context, $errors);
             }
-
-            if ($instance instanceof MapType) {
-                $property = $property->withType($this->createType($instance, $context));
-            }
         }
 
-        foreach ($getAttributes as $attribute) {
-            $instance = self::createAttribute($attribute, $context, $errors);
+        $type = $this->findType($typeAttributes, $context, $errors);
 
-            if ($instance instanceof MapType) {
-                $property = $property->withReadType($this->createType($instance, $context));
-            }
+        if ($type !== null) {
+            $property = $property->withType($type);
         }
 
-        foreach ($setAttributes as $attribute) {
-            $instance = self::createAttribute($attribute, $context, $errors);
+        $read = $this->findType($getAttributes, $context, $errors);
 
-            if ($instance instanceof MapType) {
-                $property = $property->withWriteType($this->createType($instance, $context));
-            }
+        if ($read !== null) {
+            $property = $property->withReadType($read);
+        }
+
+        $write = $this->findType($setAttributes, $context, $errors);
+
+        if ($write !== null) {
+            $property = $property->withWriteType($write);
         }
 
         return $metadata->withProperty($property);
+    }
+
+    /**
+     * Returns the type of the last {@see MapType} of the list, {@see null} in
+     * case of there is none or it cannot be created.
+     *
+     * @param list<\ReflectionAttribute<MapType>> $attributes
+     */
+    private function findType(array $attributes, SourceContext $context, ErrorCollector $errors): ?TypeMetadata
+    {
+        $type = null;
+
+        foreach ($attributes as $attribute) {
+            $instance = self::createAttribute($attribute, $context, $errors);
+
+            if ($instance instanceof MapType) {
+                $type = $this->createType($instance, $context);
+            }
+        }
+
+        return $type;
     }
 
     /**
