@@ -111,8 +111,7 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
             $properties[$property->getOutputName()][] = $property->name;
         }
 
-        $file = $class->getFileName();
-        $source = new SourceInfo($file === false || $file === '' ? null : $file);
+        $source = SourceInfo::createFromReflection($class);
         $errors = [];
 
         foreach ($properties as $name => $names) {

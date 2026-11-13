@@ -35,21 +35,6 @@ final class SourceContextFactory
     }
 
     /**
-     * @param \ReflectionClass<object> $class
-     * @return non-empty-string|null
-     */
-    private static function findFile(\ReflectionClass $class): ?string
-    {
-        $file = $class->getFileName();
-
-        if ($file === false || $file === '') {
-            return null;
-        }
-
-        return $file;
-    }
-
-    /**
      * Creates the place of a property declared in PHP code, the types are
      * resolved by the imports of the file declaring the property.
      *
@@ -61,7 +46,7 @@ final class SourceContextFactory
 
         return new SourceContext(
             target: MetadataException::formatPropertyTarget($class->name, $property->name),
-            source: new SourceInfo(self::findFile($scope)),
+            source: SourceInfo::createFromReflection($scope),
             resolver: $this->getResolver($scope),
             namespace: self::findNamespace($scope),
         );

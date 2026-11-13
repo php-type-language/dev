@@ -82,12 +82,7 @@ final class AttributeMetadataReader implements MetadataReaderInterface
             return;
         }
 
-        $source = new SourceInfo();
-        $file = $method->getFileName();
-
-        if ($file !== false && $file !== '') {
-            $source = new SourceInfo($file);
-        }
+        $source = SourceInfo::createFromReflection($method);
 
         foreach ($attributes as $attribute) {
             $errors->addError(InvalidAttributeException::becauseAttributeIsOnMethod(

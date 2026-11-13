@@ -53,11 +53,11 @@ final class MapperPlatform extends Platform
     public static function createWithDefaultTagNames(): self
     {
         return new self(
-            var: VarTagDefinition::NAME,
+            var: VarTagDefinition::getCanonicalName(),
             varAliases: ['phpstan-var', 'psalm-var', 'phan-var'],
-            return: ReturnTagDefinition::NAME,
+            return: ReturnTagDefinition::getCanonicalName(),
             returnAliases: ['phpstan-return', 'psalm-return', 'phan-return'],
-            param: ParamTagDefinition::NAME,
+            param: ParamTagDefinition::getCanonicalName(),
             paramAliases: ['phpstan-param', 'psalm-return', 'phan-return'],
         );
     }
