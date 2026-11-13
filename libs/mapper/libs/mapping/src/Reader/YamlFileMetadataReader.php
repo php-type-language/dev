@@ -16,7 +16,7 @@ use TypeLang\Type\TypeNode;
  * Overrides values of the given properties with a config stored in a YAML
  * file, see {@see FileMetadataReader}. Requires the `symfony/yaml` package.
  */
-final class YamlFileMetadataReader extends FileMetadataReader
+final class YamlFileMetadataReader extends FileMetadataReader implements OptionalMetadataReaderInterface
 {
     /**
      * @param non-empty-string $path
@@ -27,11 +27,16 @@ final class YamlFileMetadataReader extends FileMetadataReader
      */
     public function __construct(string $path, TypeParserInterface $parser = new TypeParser())
     {
-        if (!\class_exists(Yaml::class)) {
+        if (!self::isAvailable()) {
             throw MissingDependencyException::becausePackageIsNotInstalled('symfony/yaml', 'YAML config');
         }
 
         parent::__construct($path, $parser);
+    }
+
+    public static function isAvailable(): bool
+    {
+        return \class_exists(Yaml::class);
     }
 
     protected function decode(): mixed

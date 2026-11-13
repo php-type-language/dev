@@ -16,6 +16,8 @@ use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\ChainMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\JsonFileMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\MetadataReaderInterface;
+use TypeLang\Mapper\Mapping\Reader\NeonFileMetadataReader;
+use TypeLang\Mapper\Mapping\Reader\OptionalMetadataReaderInterface;
 use TypeLang\Mapper\Mapping\Reader\PhpFileMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\YamlFileMetadataReader;
 use TypeLang\Mapper\Mapping\Tests\Stub\PromotedStub;
@@ -43,6 +45,28 @@ final class ArrayMetadataReaderTest extends TestCase
         yield 'php file' => [new PhpFileMetadataReader(self::FIXTURES . 'config.php'), 'config.php'];
         yield 'json file' => [new JsonFileMetadataReader(self::FIXTURES . 'config.json'), 'config.json'];
         yield 'yaml file' => [new YamlFileMetadataReader(self::FIXTURES . 'config.yaml'), 'config.yaml'];
+        yield 'neon file' => [new NeonFileMetadataReader(self::FIXTURES . 'config.neon'), 'config.neon'];
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{
+     *     class-string<OptionalMetadataReaderInterface>,
+     * }>
+     */
+    public static function optionalReaderDataProvider(): iterable
+    {
+        yield 'json file' => [JsonFileMetadataReader::class];
+        yield 'yaml file' => [YamlFileMetadataReader::class];
+        yield 'neon file' => [NeonFileMetadataReader::class];
+    }
+
+    /**
+     * @param class-string<OptionalMetadataReaderInterface> $reader
+     */
+    #[DataProvider('optionalReaderDataProvider')]
+    public function testOptionalReaderIsAvailableWithItsDependency(string $reader): void
+    {
+        self::assertTrue($reader::isAvailable());
     }
 
     #[DataProvider('configDataProvider')]

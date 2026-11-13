@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader;
 
+use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\HookTypeProvider;
+use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\MapperPlatform;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PromotedParamTypeProvider;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PropertyContext;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PropertyTypeProviderInterface;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PropertyTypes;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\VarTagTypeProvider;
 use TypeLang\PhpDoc\DocBlockParser;
-use TypeLang\PhpDoc\Platform\StandardPlatform;
 
 /**
  * Overrides types of the given properties with types from docblocks and
@@ -22,8 +23,10 @@ use TypeLang\PhpDoc\Platform\StandardPlatform;
  *
  * Note: Requires the `type-lang/phpdoc` package.
  */
-final class PhpDocMetadataReader implements MetadataReaderInterface
+final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
 {
+    private readonly DocBlockParser $parser;
+
     /**
      * @var non-empty-list<PropertyTypeProviderInterface>
      */
@@ -32,12 +35,22 @@ final class PhpDocMetadataReader implements MetadataReaderInterface
     private readonly SourceContextFactory $contexts;
 
     public function __construct(
-        private readonly DocBlockParser $parser = new DocBlockParser([
-            new StandardPlatform(),
-        ]),
+        ?DocBlockParser $parser = null,
     ) {
+        if (!self::isAvailable()) {
+            throw MissingDependencyException::becausePackageIsNotInstalled('type-lang/phpdoc', 'PHPDoc tags');
+        }
+
+        $this->parser = $parser ?? $this->createDefaultDocBlockParser();
         $this->providers = self::createProviders();
         $this->contexts = new SourceContextFactory();
+    }
+
+    private function createDefaultDocBlockParser(): DocBlockParser
+    {
+        return new DocBlockParser([
+            MapperPlatform::createWithDefaultTagNames(),
+        ]);
     }
 
     /**
@@ -57,10 +70,6 @@ final class PhpDocMetadataReader implements MetadataReaderInterface
         return $providers;
     }
 
-    /**
-     * Returns {@see true} in case of the `type-lang/phpdoc` package is
-     * installed.
-     */
     public static function isAvailable(): bool
     {
         return \class_exists(DocBlockParser::class);
@@ -75,7 +84,12 @@ final class PhpDocMetadataReader implements MetadataReaderInterface
                 continue;
             }
 
-            $context = PropertyContext::create($class, $class->getProperty($name), $this->parser, $this->contexts);
+            $context = PropertyContext::create(
+                class: $class,
+                reflection: $class->getProperty($name),
+                parser: $this->parser,
+                contexts: $this->contexts,
+            );
 
             $metadata = $metadata->withProperty($this->readProperty($context, $property));
         }
