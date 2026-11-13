@@ -19,7 +19,10 @@ use TypeLang\Mapper\PropertyAccessor\Tests\Stub\VisibilityStub;
 final class PropertyAccessExceptionTest extends PropertyAccessorTestCase
 {
     /**
-     * @return iterable<non-empty-string, array{\Closure(object, string): PropertyAccessException, non-empty-string}>
+     * @return iterable<non-empty-string, array{
+     *     \Closure(object, string): PropertyAccessException,
+     *     non-empty-string,
+     * }>
      */
     public static function exceptionDataProvider(): iterable
     {

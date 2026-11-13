@@ -50,7 +50,7 @@ final class ModernReflectionPropertyAccessorTest extends ReflectionPropertyAcces
 
     public function testGetValueReadsRawValueBypassingGetHook(): void
     {
-        // The get hook returns 'via-get-hook', raw access reads the backing store.
+        // The get hook returns 'via-get-hook', the backing store holds 'raw-init'
         self::assertSame('raw-init', $this->accessor(new HookStub())->read('hooked'));
     }
 
@@ -60,9 +60,8 @@ final class ModernReflectionPropertyAccessorTest extends ReflectionPropertyAcces
 
         $this->accessor($object)->write('hooked', 'written');
 
-        // The set hook stores 'via-set-hook:written', raw access stores the value verbatim.
+        // The set hook stores 'via-set-hook:written'
         self::assertSame('written', (new \ReflectionProperty($object, 'hooked'))->getRawValue($object));
-        // Reading back through the accessor bypasses the get hook as well.
         self::assertSame('written', $this->accessor($object)->read('hooked'));
     }
 }

@@ -62,7 +62,10 @@ abstract class ReflectionPropertyAccessorTestCase extends PropertyAccessorTestCa
     // ---------------------------------------------------------------------
 
     /**
-     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string}>
+     * @return iterable<non-empty-string, array{
+     *     non-empty-string,
+     *     non-empty-string,
+     * }>
      */
     public static function visibilityProvider(): iterable
     {
@@ -248,12 +251,6 @@ abstract class ReflectionPropertyAccessorTestCase extends PropertyAccessorTestCa
         self::assertSame('base-protected', $this->accessor(new InheritedStub())->read('baseProtected'));
     }
 
-    /**
-     * A private property belongs to the scope of the class that declares it, so
-     * it is not visible by name from a derived class. The accessor must treat it
-     * as inaccessible through a child instance (as PHP itself does), rather than
-     * walking the hierarchy to reach it.
-     */
     public function testParentPrivatePropertyIsNotReadableThroughChildInstance(): void
     {
         self::assertFalse($this->accessor(new InheritedStub())->isReadable('basePrivate'));
