@@ -5,17 +5,11 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Diagnostics\Path\Segment;
 
 /**
- * Step into a property of an object of a known class.
+ * Step into a property of the object of the preceding {@see ObjectSegment}.
  */
-final class PropertySegment implements DataSegmentInterface
+final class PropertySegment implements SegmentInterface
 {
     public function __construct(
-        /**
-         * Class declaring the property
-         *
-         * @var class-string
-         */
-        public readonly string $class,
         /**
          * @var non-empty-string
          */

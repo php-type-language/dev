@@ -12,7 +12,7 @@ namespace TypeLang\Mapper\Diagnostics\Path\Segment;
  *            ^^^^^^^^^^^ the member at index 1
  * ```
  */
-final class IntersectionLeafSegment implements TypeSegmentInterface
+final class IntersectionLeafSegment implements SegmentInterface
 {
     public function __construct(
         /**

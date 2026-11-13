@@ -15,7 +15,7 @@ use TypeLang\Mapper\Diagnostics\Path\Segment\ConditionalBranchSegment\Conditiona
  *                            ^^^^  the Else branch
  * ```
  */
-final class ConditionalBranchSegment implements TypeSegmentInterface
+final class ConditionalBranchSegment implements SegmentInterface
 {
     public function __construct(
         public readonly ConditionalBranch $branch,

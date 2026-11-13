@@ -10,7 +10,6 @@ use TypeLang\Mapper\Diagnostics\Path\Segment\KeySegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\PropertySegment;
 use TypeLang\Mapper\Diagnostics\Printer\Path\PathPrinterInterface;
 use TypeLang\Mapper\Diagnostics\Tests\Stub\InvalidInputStubException;
-use TypeLang\Mapper\Diagnostics\Tests\Stub\UserStub;
 use TypeLang\Mapper\Diagnostics\Tests\TestCase;
 use TypeLang\Mapper\Diagnostics\Violation;
 use TypeLang\Mapper\Diagnostics\ViolationCode;
@@ -30,7 +29,7 @@ final class ViolationExceptionTest extends TestCase
         $path = new Path([
             new KeySegment('items'),
             new KeySegment(3),
-            new PropertySegment(UserStub::class, 'name'),
+            new PropertySegment('name'),
         ]);
 
         yield 'single violation' => [

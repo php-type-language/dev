@@ -12,7 +12,7 @@ namespace TypeLang\Mapper\Diagnostics\Path\Segment;
  *      ^^^^^^      the branch at index 1
  * ```
  */
-final class UnionLeafSegment implements TypeSegmentInterface
+final class UnionLeafSegment implements SegmentInterface
 {
     public function __construct(
         /**

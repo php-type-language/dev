@@ -10,6 +10,7 @@ use TypeLang\Mapper\Diagnostics\Path\Segment\ConditionalBranchSegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\ConditionalBranchSegment\ConditionalBranch;
 use TypeLang\Mapper\Diagnostics\Path\Segment\IntersectionLeafSegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\KeySegment;
+use TypeLang\Mapper\Diagnostics\Path\Segment\ObjectSegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\PropertySegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\UnionLeafSegment;
 use TypeLang\Mapper\Diagnostics\Printer\Path\JsonPathPrinter;
@@ -70,7 +71,7 @@ final class JsonPathPrinterTest extends TestCase
     #[DataProvider('propertyDataProvider')]
     public function testPropertyIsPrintedAsNameSelector(string $property, string $expected): void
     {
-        $path = new Path([new PropertySegment(UserStub::class, $property)]);
+        $path = new Path([new PropertySegment($property)]);
 
         self::assertSame($expected, (new JsonPathPrinter())->print($path));
     }
@@ -83,11 +84,11 @@ final class JsonPathPrinterTest extends TestCase
     public function testMixedSegmentsArePrintedInOrder(): void
     {
         $path = new Path([
-            new PropertySegment(UserStub::class, 'orders'),
+            new PropertySegment('orders'),
             new KeySegment(2),
             new KeySegment('line items'),
             new KeySegment(0),
-            new PropertySegment(UserStub::class, 'name'),
+            new PropertySegment('name'),
         ]);
 
         self::assertSame("\$.orders[2]['line items'][0].name", (new JsonPathPrinter())->print($path));
@@ -97,7 +98,8 @@ final class JsonPathPrinterTest extends TestCase
     {
         $path = new Path([
             new UnionLeafSegment(0),
-            new PropertySegment(UserStub::class, 'items'),
+            new ObjectSegment(UserStub::class),
+            new PropertySegment('items'),
             new KeySegment(0),
             new ConditionalBranchSegment(ConditionalBranch::Then),
             new IntersectionLeafSegment(1),

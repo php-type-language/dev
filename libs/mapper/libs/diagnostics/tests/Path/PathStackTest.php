@@ -9,7 +9,9 @@ use TypeLang\Mapper\Diagnostics\Path\Path;
 use TypeLang\Mapper\Diagnostics\Path\PathStack;
 use TypeLang\Mapper\Diagnostics\Path\Segment\ConditionalBranchSegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\ConditionalBranchSegment\ConditionalBranch;
+use TypeLang\Mapper\Diagnostics\Path\Segment\IntersectionLeafSegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\KeySegment;
+use TypeLang\Mapper\Diagnostics\Path\Segment\ObjectSegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\PropertySegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\UnionLeafSegment;
 use TypeLang\Mapper\Diagnostics\Tests\Stub\UserStub;
@@ -37,72 +39,39 @@ final class PathStackTest extends TestCase
         self::assertSame([], (new PathStack())->capture()->segments);
     }
 
-    public function testCaptureTurnsRawKeysIntoKeySegments(): void
+    public function testArrayIndexesBecomeKeySegments(): void
     {
         $stack = new PathStack();
 
-        $stack->enter('order');
-        $stack->enter('items');
-        $stack->enter(0);
+        $stack->enterIntoArrayIndex('order');
+        $stack->enterIntoArrayIndex('items');
+        $stack->enterIntoArrayIndex(0);
 
         self::assertSame(['order', 'items', 0], self::readKeys($stack->capture()));
-    }
-
-    public function testCaptureKeepsTheGivenSegmentInstance(): void
-    {
-        $property = new PropertySegment(UserStub::class, 'name');
-        $key = new KeySegment('name');
-        $stack = new PathStack();
-
-        $stack->enter($property);
-        $stack->enter($key);
-
-        $segments = $stack->capture()->segments;
-
-        self::assertCount(2, $segments);
-        self::assertSame($property, $segments[0]);
-        self::assertSame($key, $segments[1]);
-    }
-
-    public function testCaptureKeepsTheGivenTypeSegmentInstance(): void
-    {
-        $union = new UnionLeafSegment(1);
-        $branch = new ConditionalBranchSegment(ConditionalBranch::Then);
-        $stack = new PathStack();
-
-        $stack->enter('items');
-        $stack->enter($union);
-        $stack->enter($branch);
-
-        $segments = $stack->capture()->segments;
-
-        self::assertCount(3, $segments);
-        self::assertSame($union, $segments[1]);
-        self::assertSame($branch, $segments[2]);
     }
 
     public function testPropertyAndStringKeyWithTheSameNameDiffer(): void
     {
         $stack = new PathStack();
 
-        $stack->enter(new PropertySegment(UserStub::class, 'name'));
-        $stack->enter('name');
+        $stack->enterIntoObject(UserStub::class);
+        $stack->enterIntoObjectProperty('name');
+        $stack->enterIntoArrayIndex('name');
 
         $segments = $stack->capture()->segments;
 
-        self::assertCount(2, $segments);
-        self::assertInstanceOf(PropertySegment::class, $segments[0]);
-        self::assertSame('name', $segments[0]->property);
-        self::assertSame(UserStub::class, $segments[0]->class);
-        self::assertInstanceOf(KeySegment::class, $segments[1]);
-        self::assertSame('name', $segments[1]->key);
+        self::assertCount(3, $segments);
+        self::assertInstanceOf(PropertySegment::class, $segments[1]);
+        self::assertSame('name', $segments[1]->property);
+        self::assertInstanceOf(KeySegment::class, $segments[2]);
+        self::assertSame('name', $segments[2]->key);
     }
 
     public function testLeaveRemovesTheLastSegment(): void
     {
         $stack = new PathStack();
-        $stack->enter('items');
-        $stack->enter(0);
+        $stack->enterIntoArrayIndex('items');
+        $stack->enterIntoArrayIndex(0);
 
         $stack->leave();
 
@@ -112,13 +81,13 @@ final class PathStackTest extends TestCase
     public function testEnterAfterLeaveReusesTheSlot(): void
     {
         $stack = new PathStack();
-        $stack->enter('a');
-        $stack->enter('b');
-        $stack->enter('c');
+        $stack->enterIntoArrayIndex('a');
+        $stack->enterIntoArrayIndex('b');
+        $stack->enterIntoArrayIndex('c');
         $stack->leave();
         $stack->leave();
 
-        $stack->enter('x');
+        $stack->enterIntoArrayIndex('x');
 
         self::assertSame(['a', 'x'], self::readKeys($stack->capture()));
     }
@@ -126,16 +95,44 @@ final class PathStackTest extends TestCase
     public function testCapturedPathDoesNotChangeWithTheStack(): void
     {
         $stack = new PathStack();
-        $stack->enter('items');
-        $stack->enter(0);
+        $stack->enterIntoArrayIndex('items');
+        $stack->enterIntoArrayIndex(0);
 
         $captured = $stack->capture();
 
         $stack->leave();
-        $stack->enter(1);
-        $stack->enter('name');
+        $stack->enterIntoArrayIndex(1);
+        $stack->enterIntoArrayIndex('name');
 
         self::assertSame(['items', 0], self::readKeys($captured));
+    }
+
+    public function testNamedStepsCreateSegmentsOfTheirKind(): void
+    {
+        $stack = new PathStack();
+
+        $stack->enterIntoObject(UserStub::class);
+        $stack->enterIntoObjectProperty('items');
+        $stack->enterIntoArrayIndex(3);
+        $stack->enterIntoUnionLeaf(1);
+        $stack->enterIntoIntersectionLeaf(2);
+        $stack->enterIntoConditionalBranch(ConditionalBranch::Else);
+
+        $segments = $stack->capture()->segments;
+
+        self::assertCount(6, $segments);
+        self::assertInstanceOf(ObjectSegment::class, $segments[0]);
+        self::assertSame(UserStub::class, $segments[0]->class);
+        self::assertInstanceOf(PropertySegment::class, $segments[1]);
+        self::assertSame('items', $segments[1]->property);
+        self::assertInstanceOf(KeySegment::class, $segments[2]);
+        self::assertSame(3, $segments[2]->key);
+        self::assertInstanceOf(UnionLeafSegment::class, $segments[3]);
+        self::assertSame(1, $segments[3]->index);
+        self::assertInstanceOf(IntersectionLeafSegment::class, $segments[4]);
+        self::assertSame(2, $segments[4]->index);
+        self::assertInstanceOf(ConditionalBranchSegment::class, $segments[5]);
+        self::assertSame(ConditionalBranch::Else, $segments[5]->branch);
     }
 
     #[RequiresSetting('zend.assertions', '1')]
