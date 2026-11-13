@@ -7,14 +7,13 @@ namespace TypeLang\Mapper\Mapping\Reader;
 use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
+use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
-use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\HookTypeProvider;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\MapperPlatform;
-use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PromotedParamTypeProvider;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PropertyContext;
-use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PropertyTypeProviderInterface;
-use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PropertyTypes;
-use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\VarTagTypeProvider;
+use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTag;
+use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTag;
+use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTag;
 use TypeLang\PhpDoc\DocBlockParser;
 
 /**
@@ -27,11 +26,6 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
 {
     private readonly DocBlockParser $parser;
 
-    /**
-     * @var non-empty-list<PropertyTypeProviderInterface>
-     */
-    private readonly array $providers;
-
     private readonly SourceContextFactory $contexts;
 
     public function __construct(
@@ -42,7 +36,6 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
         }
 
         $this->parser = $parser ?? $this->createDefaultDocBlockParser();
-        $this->providers = self::createProviders();
         $this->contexts = new SourceContextFactory();
     }
 
@@ -51,23 +44,6 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
         return new DocBlockParser([
             MapperPlatform::createWithDefaultTagNames(),
         ]);
-    }
-
-    /**
-     * @return non-empty-list<PropertyTypeProviderInterface>
-     */
-    private static function createProviders(): array
-    {
-        $providers = [];
-
-        if (\PHP_VERSION_ID >= 80400) {
-            $providers[] = new HookTypeProvider();
-        }
-
-        $providers[] = new VarTagTypeProvider();
-        $providers[] = new PromotedParamTypeProvider();
-
-        return $providers;
     }
 
     public static function isAvailable(): bool
@@ -97,26 +73,124 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
         return $metadata;
     }
 
+    /**
+     * Reads the type from `@return` of the `get` hook and `@param` of the
+     * `set` hook, then from `@var` of the property, then from `@param` of the
+     * constructor for a promoted property. A property with the `set` hook
+     * takes the write type from this hook only.
+     */
     private function readProperty(PropertyContext $context, PropertyMetadata $property): PropertyMetadata
     {
-        $types = new PropertyTypes();
+        $set = self::findSetHook($context->reflection);
+        $read = self::findGetHookType($context);
+        $write = null;
 
-        foreach ($this->providers as $provider) {
-            $types = $types->withLower($provider->readTypes($context));
+        if ($set !== null) {
+            $write = self::findSetHookType($context, $set);
+        }
 
-            if ($types->isComplete()) {
-                break;
+        if ($read === null || $set === null) {
+            $type = self::findVarType($context) ?? self::findPromotedParamType($context);
+
+            $read ??= $type;
+
+            if ($set === null) {
+                $write = $type;
             }
         }
 
-        if ($types->readType !== null) {
-            $property = $property->withReadType($types->readType);
+        if ($read !== null) {
+            $property = $property->withReadType($read);
         }
 
-        if ($types->writeType !== null) {
-            $property = $property->withWriteType($types->writeType);
+        if ($write !== null) {
+            $property = $property->withWriteType($write);
         }
 
         return $property;
+    }
+
+    private static function findVarType(PropertyContext $context): ?TypeMetadata
+    {
+        return $context->createType($context->findTag(
+            docComment: $context->reflection->getDocComment(),
+            class: VarTag::class,
+            variable: $context->reflection->name,
+        ));
+    }
+
+    private static function findPromotedParamType(PropertyContext $context): ?TypeMetadata
+    {
+        $constructor = $context->scope->getConstructor();
+
+        if ($constructor === null || !$context->reflection->isPromoted()) {
+            return null;
+        }
+
+        return $context->createType($context->findTag(
+            docComment: $constructor->getDocComment(),
+            class: ParamTag::class,
+            variable: $context->reflection->name,
+        ));
+    }
+
+    private static function findGetHookType(PropertyContext $context): ?TypeMetadata
+    {
+        $get = self::findGetHook($context->reflection);
+
+        if ($get === null) {
+            return null;
+        }
+
+        return $context->createType($context->findTag(
+            docComment: $get->getDocComment(),
+            class: ReturnTag::class,
+            variable: $context->reflection->name,
+        ));
+    }
+
+    private static function findSetHookType(PropertyContext $context, \ReflectionMethod $set): ?TypeMetadata
+    {
+        $parameter = $set->getParameters()[0]->name ?? '';
+
+        if ($parameter === '') {
+            return null;
+        }
+
+        return $context->createType($context->findTag(
+            docComment: $set->getDocComment(),
+            class: ParamTag::class,
+            variable: $parameter,
+        ));
+    }
+
+    /**
+     * Returns the `get` hook of the property, {@see null} in case of there is
+     * none or before PHP 8.4.
+     */
+    private static function findGetHook(\ReflectionProperty $property): ?\ReflectionMethod
+    {
+        if (\PHP_VERSION_ID < 80400) {
+            return null;
+        }
+
+        /** @var \ReflectionMethod|null */
+        // @phpstan-ignore-next-line PHP 8.4 API is unknown for PHP 8.1
+        return $property->getHook(\PropertyHookType::Get);
+    }
+
+    /**
+     * Returns the `set` hook of the property, {@see null} in case of there is
+     * none or before PHP 8.4.
+     */
+    private static function findSetHook(\ReflectionProperty $property): ?\ReflectionMethod
+    {
+        if (\PHP_VERSION_ID < 80400) {
+            return null;
+        }
+
+        /** @var \ReflectionMethod|null */
+        // @phpstan-ignore-next-line PHP 8.4 API is unknown for PHP 8.1
+        return $property->getHook(\PropertyHookType::Set);
     }
 }
