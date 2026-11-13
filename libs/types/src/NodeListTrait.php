@@ -11,10 +11,10 @@ namespace TypeLang\Type;
  * @template TNode of Node
  * @template TNonEmpty of bool = false
  *
- * @phpstan-require-extends Node
  * @phpstan-require-implements \ArrayAccess
  * @phpstan-require-implements \IteratorAggregate
  * @phpstan-require-implements \Countable
+ * @phpstan-require-extends Node
  */
 trait NodeListTrait
 {
