@@ -94,7 +94,7 @@ final class ModelLinkerTest extends TestCase
         yield 'combinator of another package' => [
             self::model(
                 tags: [self::tag('flag', 'one', Spec::rule('Own'))],
-                combinators: [new Combinator('Own', DescriptionCombinator::class, 'two', 'test.xml')],
+                combinators: [new Combinator('Own', VariableCombinator::class, 'two', true, 'test.xml')],
             ),
             'combinator <Own> of "two" is not available in "one"',
         ];
@@ -157,6 +157,33 @@ final class ModelLinkerTest extends TestCase
             'optional capture "type" goes to non-nullable $statement',
         ];
 
+        yield 'name registered by two packages' => [
+            self::model(
+                tags: [self::tag('flag', 'one')],
+                aliases: [
+                    new Alias('shared', 'flag', 'one', [], 'test.xml'),
+                    new Alias('shared', 'flag', 'two', [], 'test.xml'),
+                ],
+            ),
+            '@shared is registered by "one", "two"',
+        ];
+
+        yield 'combinator of a package needing the type parser' => [
+            self::model(
+                tags: [self::tag('flag', 'one')],
+                combinators: [new Combinator('Own', TypeCombinator::class, 'one', true, 'test.xml')],
+            ),
+            'combinator <Own>: the generated code cannot pass $typeParser to the constructor',
+        ];
+
+        yield 'manual combinator of a package' => [
+            self::model(
+                tags: [self::tag('flag', 'one')],
+                combinators: [new Combinator('Own', VariableCombinator::class, 'one', false, 'test.xml')],
+            ),
+            'combinator <Own>: only a combinator of the parser is created manually',
+        ];
+
         yield 'literal capture in generated definition' => [
             self::model(tags: [self::tag('flag', 'one', Spec::literal('static', 'static'))]),
             'literal capture "static" needs a manual definition',
@@ -176,9 +203,9 @@ final class ModelLinkerTest extends TestCase
                 new Package('two', 'TwoPlatform', 'Two', '', 'test.xml'),
             ],
             combinators: [
-                new Combinator('Description', DescriptionCombinator::class, null, 'test.xml'),
-                new Combinator('Type', TypeCombinator::class, null, 'test.xml'),
-                new Combinator('Variable', VariableCombinator::class, null, 'test.xml'),
+                new Combinator('Description', DescriptionCombinator::class, null, false, 'test.xml'),
+                new Combinator('Type', TypeCombinator::class, null, true, 'test.xml'),
+                new Combinator('Variable', VariableCombinator::class, null, true, 'test.xml'),
                 ...$combinators,
             ],
             tags: $tags,

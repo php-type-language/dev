@@ -106,12 +106,24 @@
         <xs:annotation>
             <xs:documentation>
                 A named terminal of the grammar, implemented by hand. A combinator without a
-                package is provided by the parser itself.
+                package is provided by the parser itself to the tags of every package.
+
+                Its instance is created by the generated code: with no arguments, or with the
+                type parser for a combinator of the parser whose constructor asks for it. The
+                parser creates a combinator with "instance" set to "manual" itself.
             </xs:documentation>
         </xs:annotation>
         <xs:attribute name="name" type="CombinatorNameType" use="required"/>
         <xs:attribute name="class" type="ClassNameType" use="required"/>
         <xs:attribute name="package" type="IdentifierType"/>
+        <xs:attribute name="instance" default="generated">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="generated"/>
+                    <xs:enumeration value="manual"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="TagType">

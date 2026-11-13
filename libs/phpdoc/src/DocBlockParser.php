@@ -6,24 +6,15 @@ namespace TypeLang\PhpDoc;
 
 use JetBrains\PhpStorm\Language;
 use TypeLang\Parser\TypeParser;
-use TypeLang\PhpDoc\DocBlock\Combinator\AssertSubjectCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\CallableTypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\IssueNameCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\NameCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\UrlCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\VersionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
 use TypeLang\PhpDoc\Exception\TagParsingException;
+use TypeLang\PhpDoc\Internal\BaseCombinators;
+use TypeLang\PhpDoc\Internal\BuiltinPlatforms;
 use TypeLang\PhpDoc\Parser\Description\BalancedBraceAwareParser;
 use TypeLang\PhpDoc\Parser\Description\DescriptionParserInterface;
 use TypeLang\PhpDoc\Parser\DocBlockAnalyzer;
@@ -36,14 +27,7 @@ use TypeLang\PhpDoc\Parser\Tag\StringTagParser;
 use TypeLang\PhpDoc\Parser\Tag\TagParserInterface;
 use TypeLang\PhpDoc\Parser\TagFactory;
 use TypeLang\PhpDoc\Parser\TagRegistryBuilder;
-use TypeLang\PhpDoc\Platform\PhanPlatform;
-use TypeLang\PhpDoc\Platform\PhpCodeSnifferPlatform;
-use TypeLang\PhpDoc\Platform\PhpDocumentorPlatform;
-use TypeLang\PhpDoc\Platform\PhpStanPlatform;
-use TypeLang\PhpDoc\Platform\PhpStormPlatform;
 use TypeLang\PhpDoc\Platform\PlatformInterface;
-use TypeLang\PhpDoc\Platform\PsalmPlatform;
-use TypeLang\PhpDoc\Platform\StandardPlatform;
 
 /**
  * @phpstan-import-type CombinatorType from CombinatorInterface
@@ -83,11 +67,11 @@ final class DocBlockParser implements DocBlockParserInterface
     }
 
     /**
-     * Creates the parser with every platform shipped with the library, the
-     * {@see StandardPlatform} first.
+     * Creates the parser with every platform shipped with the library.
      *
      * @param iterable<mixed, PlatformInterface> $additionalPlatforms platforms
-     *        loaded after the built-in ones
+     *        loaded after the built-in ones, overriding their entries with the
+     *        same name
      * @param TypeParser $typeParser parser of the types inside tags
      */
     public static function createDefault(
@@ -95,13 +79,7 @@ final class DocBlockParser implements DocBlockParserInterface
         TypeParser $typeParser = new TypeParser(),
     ): self {
         return new self([
-            new StandardPlatform(),
-            new PhpDocumentorPlatform(),
-            new PhpStanPlatform(),
-            new PsalmPlatform(),
-            new PhanPlatform(),
-            new PhpStormPlatform(),
-            new PhpCodeSnifferPlatform(),
+            ...BuiltinPlatforms::create(),
             ...(\is_array($additionalPlatforms)
                 ? \array_values($additionalPlatforms)
                 : \iterator_to_array($additionalPlatforms, false)),
@@ -142,34 +120,12 @@ final class DocBlockParser implements DocBlockParserInterface
     }
 
     /**
-     * Combinators shared by the tags of every platform.
-     *
-     * @return array<non-empty-string, CombinatorType>
-     */
-    private function createBaseCombinators(TypeParser $typeParser): array
-    {
-        return [
-            UriCombinator::NAME => new UriCombinator(),
-            UrlCombinator::NAME => new UrlCombinator(),
-            ReferenceCombinator::NAME => new ReferenceCombinator(),
-            TypeCombinator::NAME => new TypeCombinator($typeParser),
-            CallableTypeCombinator::NAME => new CallableTypeCombinator($typeParser),
-            VariableCombinator::NAME => new VariableCombinator(),
-            AssertSubjectCombinator::NAME => new AssertSubjectCombinator(),
-            IntegerCombinator::NAME => new IntegerCombinator(),
-            IssueNameCombinator::NAME => new IssueNameCombinator(),
-            VersionCombinator::NAME => new VersionCombinator(),
-            NameCombinator::NAME => new NameCombinator(),
-        ];
-    }
-
-    /**
      * @param list<PlatformInterface> $platforms
      * @return array<non-empty-string, CombinatorType>
      */
     private function createCombinators(array $platforms, TypeParser $typeParser): array
     {
-        $combinators = $this->createBaseCombinators($typeParser);
+        $combinators = BaseCombinators::create($typeParser);
 
         // A platform combinator replaces the base one or the one of an earlier
         // platform with the same name for the tags of all platforms.

@@ -36,6 +36,8 @@ final class ModelLinker
             $linked[$name] = $this->linkPackage($package, $tags, $aliases, $combinators);
         }
 
+        $this->checkSharedNames($linked);
+
         $result = new LinkedModel($model, $linked, $tags, $combinators);
 
         foreach ($tags as $tag) {
@@ -92,6 +94,10 @@ final class ModelLinker
 
             if (!\class_exists($combinator->class)) {
                 $this->error($combinator->file, 'combinator <%s>: class %s not found', $combinator->name, $combinator->class);
+            } elseif ($combinator->isInstanceGenerated) {
+                $this->checkCombinatorConstructor($combinator);
+            } elseif ($combinator->package !== null) {
+                $this->error($combinator->file, 'combinator <%s>: only a combinator of the parser is created manually', $combinator->name);
             }
 
             $result[$combinator->name] = $combinator;
@@ -100,6 +106,34 @@ final class ModelLinker
         \ksort($result);
 
         return $result;
+    }
+
+    /**
+     * The generated code passes nothing to the constructor, or the type
+     * parser for a combinator of the parser.
+     */
+    private function checkCombinatorConstructor(Combinator $combinator): void
+    {
+        \assert(\class_exists($combinator->class));
+
+        $constructor = (new \ReflectionClass($combinator->class))->getConstructor();
+
+        foreach ($constructor?->getParameters() ?? [] as $parameter) {
+            if ($parameter->isOptional()) {
+                continue;
+            }
+
+            if ($combinator->package === null && CombinatorArguments::isTypeParser($parameter)) {
+                continue;
+            }
+
+            $this->error(
+                $combinator->file,
+                'combinator <%s>: the generated code cannot pass $%s to the constructor',
+                $combinator->name,
+                $parameter->name,
+            );
+        }
     }
 
     /**
@@ -220,6 +254,33 @@ final class ModelLinker
         \ksort($runtime, \SORT_STRING);
 
         return new LinkedPackage($package, $registered, $runtime, $own);
+    }
+
+    /**
+     * No name is registered by two packages, the built-in platforms are
+     * loaded in any order with the same result.
+     *
+     * @param array<non-empty-string, LinkedPackage> $packages
+     */
+    private function checkSharedNames(array $packages): void
+    {
+        $owners = [];
+
+        foreach ($packages as $name => $linked) {
+            foreach ([...\array_keys($linked->tags), ...\array_keys($linked->aliases)] as $key) {
+                $owners['@' . \strtolower((string) $key)][] = $name;
+            }
+
+            foreach ($linked->combinators as $combinator) {
+                $owners['<' . $combinator->name . '>'][] = $name;
+            }
+        }
+
+        foreach ($owners as $key => $names) {
+            if (\count($names) > 1) {
+                $this->error($packages[$names[0]]->package->file, '%s is registered by "%s"', $key, \implode('", "', $names));
+            }
+        }
     }
 
     /**

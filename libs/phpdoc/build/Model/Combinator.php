@@ -33,6 +33,11 @@ final class Combinator
          */
         public readonly ?string $package,
         /**
+         * Whether the generated code creates the instance, the parser creates
+         * the others itself.
+         */
+        public readonly bool $isInstanceGenerated,
+        /**
          * Model file the combinator is declared in.
          *
          * @var non-empty-string

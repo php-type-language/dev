@@ -124,6 +124,7 @@ final class ModelLoader
             name: $this->getAttribute($element, 'name'),
             class: $this->getAttribute($element, 'class'),
             package: $this->findAttribute($element, 'package'),
+            isInstanceGenerated: $this->findAttribute($element, 'instance') !== 'manual',
             file: $file,
         );
     }

@@ -3,7 +3,7 @@
        xsi:noNamespaceSchemaLocation="phpdoc.xsd">
     <combinator name="AssertSubject" class="TypeLang\PhpDoc\DocBlock\Combinator\AssertSubjectCombinator"/>
     <combinator name="CallableType" class="TypeLang\PhpDoc\DocBlock\Combinator\CallableTypeCombinator"/>
-    <combinator name="Description" class="TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator"/>
+    <combinator name="Description" class="TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator" instance="manual"/>
     <combinator name="Integer" class="TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator"/>
     <combinator name="IssueName" class="TypeLang\PhpDoc\DocBlock\Combinator\IssueNameCombinator"/>
     <combinator name="Name" class="TypeLang\PhpDoc\DocBlock\Combinator\NameCombinator"/>

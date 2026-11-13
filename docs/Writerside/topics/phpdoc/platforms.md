@@ -105,8 +105,9 @@ plain `Tag`).
 <note>
 <code>new DocBlockParser()</code> with no arguments loads <b>no</b> platform at
 all. To load every built-in one (Standard, phpDocumentor, Psalm, PHPStan, Phan,
-PhpStorm and PHP CodeSniffer, in that order), use the
-<code>DocBlockParser::createDefault()</code> factory:
+PhpStorm and PHP CodeSniffer), use the
+<code>DocBlockParser::createDefault()</code> factory. No tag name is shared by
+two built-in platforms, so the order they are loaded in does not matter:
 
 <code-block lang="php">
 $parser = DocBlockParser::createDefault();

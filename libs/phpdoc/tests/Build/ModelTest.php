@@ -54,36 +54,6 @@ final class ModelTest extends TestCase
         self::assertEquals($tag->grammar, $definition->spec);
     }
 
-    public function testBaseCombinatorsMatchParser(): void
-    {
-        $expected = [];
-
-        foreach (self::getModel()->getBaseCombinators() as $combinator) {
-            $expected[] = \sprintf('%s: %s', $combinator->name, $combinator->class);
-        }
-
-        $dump = (new RegistryDumper())->dump(new DocBlockParser());
-        $actual = [];
-
-        foreach (\explode("\n", $dump) as $line) {
-            if (\str_contains($line, ': ') && !\str_starts_with($line, ' ')) {
-                $actual[] = $line;
-            }
-        }
-
-        // Description is wired by the parser as a closure.
-        $expected = \array_values(\array_filter(
-            $expected,
-            static fn(string $line): bool => !\str_starts_with($line, 'Description: '),
-        ));
-        $actual = \array_values(\array_filter(
-            $actual,
-            static fn(string $line): bool => !\str_starts_with($line, 'Description: '),
-        ));
-
-        self::assertSame($expected, $actual);
-    }
-
     /**
      * @return iterable<non-empty-string, array{non-empty-string}>
      */

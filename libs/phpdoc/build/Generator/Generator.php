@@ -42,6 +42,11 @@ final class Generator
             $result[self::getPath($package->package->class)] = $platforms->emit($package);
         }
 
+        $builtin = new BuiltinEmitter();
+
+        $result[self::getPath(BuiltinEmitter::COMBINATORS_CLASS)] = $builtin->emitCombinators($model);
+        $result[self::getPath(BuiltinEmitter::PLATFORMS_CLASS)] = $builtin->emitPlatforms($model);
+
         \ksort($result, \SORT_STRING);
 
         return $result;
