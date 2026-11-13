@@ -11,6 +11,13 @@ namespace TypeLang\Mapper\Mapping\Metadata;
  */
 final class ClassMetadata
 {
+    /**
+     * Version of the format of the metadata classes of this namespace, it is
+     * raised on each change of their properties, a stored metadata of
+     * another version is not read
+     */
+    public const FORMAT_VERSION = 1;
+
     public function __construct(
         /**
          * @var class-string<T>

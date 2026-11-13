@@ -19,7 +19,7 @@ final class Psr16MetadataProviderTest extends CacheMetadataProviderTestCase
     protected function createProvider(
         MetadataProviderInterface $delegate,
         ArrayCachePool|ArrayCache $cache,
-        string $prefix = 'tlm_',
+        string $prefix = Psr16MetadataProvider::DEFAULT_PREFIX,
     ): MetadataProviderInterface {
         \assert($cache instanceof ArrayCache);
 

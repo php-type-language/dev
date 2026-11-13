@@ -7,6 +7,7 @@ namespace TypeLang\Mapper\Mapping\Tests\Provider\Cache;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Provider\MetadataProviderInterface;
+use TypeLang\Mapper\Mapping\Provider\CacheMetadataProvider;
 use TypeLang\Mapper\Mapping\Tests\Stub\ArrayCache;
 use TypeLang\Mapper\Mapping\Tests\Stub\ArrayCachePool;
 use TypeLang\Mapper\Mapping\Tests\Stub\CountingMetadataProvider;
@@ -23,7 +24,7 @@ abstract class CacheMetadataProviderTestCase extends TestCase
     abstract protected function createProvider(
         MetadataProviderInterface $delegate,
         ArrayCachePool|ArrayCache $cache,
-        string $prefix = 'tlm_',
+        string $prefix = CacheMetadataProvider::DEFAULT_PREFIX,
     ): MetadataProviderInterface;
 
     public function testMissCallsDelegateAndStoresMetadata(): void
@@ -64,6 +65,31 @@ abstract class CacheMetadataProviderTestCase extends TestCase
             ->read(new \ReflectionClass(\ArrayObject::class));
 
         self::assertMatchesRegularExpression('/^tlm_[A-Za-z0-9_.]+$/', (string) \array_key_first($cache->values));
+    }
+
+    public function testKeyContainsFormatVersion(): void
+    {
+        $cache = $this->createCache();
+
+        $this->createProvider(new CountingMetadataProvider(), $cache)
+            ->read(new \ReflectionClass(\stdClass::class));
+
+        self::assertStringStartsWith(
+            'tlm_v' . ClassMetadata::FORMAT_VERSION . '_',
+            (string) \array_key_first($cache->values),
+        );
+    }
+
+    public function testMetadataCachedWithoutFormatVersionIsMiss(): void
+    {
+        $cache = $this->createCache();
+        $cache->values['tlm_' . \hash('xxh128', \stdClass::class)] = \serialize(new ClassMetadata(\stdClass::class));
+        $delegate = new CountingMetadataProvider();
+
+        $this->createProvider($delegate, $cache)
+            ->read(new \ReflectionClass(\stdClass::class));
+
+        self::assertSame(1, $delegate->calls);
     }
 
     public function testDifferentPrefixesDoNotShareMetadata(): void

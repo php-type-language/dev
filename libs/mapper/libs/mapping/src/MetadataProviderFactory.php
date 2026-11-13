@@ -6,6 +6,7 @@ namespace TypeLang\Mapper\Mapping;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
+use TypeLang\Mapper\Mapping\Provider\CacheMetadataProvider;
 use TypeLang\Mapper\Mapping\Provider\InMemoryMetadataProvider;
 use TypeLang\Mapper\Mapping\Provider\MetadataProviderInterface;
 use TypeLang\Mapper\Mapping\Provider\Psr16MetadataProvider;
@@ -38,7 +39,7 @@ final class MetadataProviderFactory
         array $readers = [],
         ?NamingStrategyInterface $strategy = null,
         CacheItemPoolInterface|CacheInterface|null $cache = null,
-        string $prefix = 'tlm_',
+        string $prefix = CacheMetadataProvider::DEFAULT_PREFIX,
     ): MetadataProviderInterface {
         $result = [];
 
@@ -46,8 +47,35 @@ final class MetadataProviderFactory
             $result[] = new NamingStrategyMetadataReader($strategy);
         }
 
-        $result = [...$result, ...$readers];
-        $result[] = new AttributeMetadataReader();
+        $provider = self::readersToProvider([
+            ...$result,
+            ...$readers,
+            ...self::getDefaultReaders(),
+        ]);
+
+        return new InMemoryMetadataProvider(
+            self::extendProviderByCache($provider, $cache, $prefix),
+        );
+    }
+
+    /**
+     * @param list<MetadataReaderInterface> $readers
+     */
+    private static function readersToProvider(array $readers): MetadataProviderInterface
+    {
+        return new ValidatingMetadataProvider(
+            new ChainMetadataReader($readers),
+        );
+    }
+
+    /**
+     * @return non-empty-list<MetadataReaderInterface>
+     */
+    private static function getDefaultReaders(): array
+    {
+        $result = [
+            new AttributeMetadataReader(),
+        ];
 
         if (PhpDocMetadataReader::isAvailable()) {
             $result[] = new PhpDocMetadataReader();
@@ -55,18 +83,22 @@ final class MetadataProviderFactory
 
         $result[] = new ReflectionMetadataReader();
 
-        $provider = new ValidatingMetadataProvider(
-            new ChainMetadataReader($result)
-        );
+        return $result;
+    }
 
+    private static function extendProviderByCache(
+        MetadataProviderInterface $provider,
+        CacheItemPoolInterface|CacheInterface|null $cache,
+        string $prefix,
+    ): MetadataProviderInterface {
         if ($cache instanceof CacheItemPoolInterface) {
-            $provider = new Psr6MetadataProvider($provider, $cache, $prefix);
+            return new Psr6MetadataProvider($provider, $cache, $prefix);
         }
 
         if ($cache instanceof CacheInterface) {
-            $provider = new Psr16MetadataProvider($provider, $cache, $prefix);
+            return new Psr16MetadataProvider($provider, $cache, $prefix);
         }
 
-        return new InMemoryMetadataProvider($provider);
+        return $provider;
     }
 }
