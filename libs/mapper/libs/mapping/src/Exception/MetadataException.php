@@ -34,6 +34,9 @@ abstract class MetadataException extends ReaderException
     /**
      * Returns the property reference used as {@see $target}: `App\User::$id`.
      *
+     * @internal this is an internal library method, please do not use it in your code
+     * @psalm-internal TypeLang\Mapper\Mapping
+     *
      * @return non-empty-string
      */
     public static function formatPropertyTarget(string $class, string $property): string

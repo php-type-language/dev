@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Metadata;
 
-use TypeLang\Type\Name;
-use TypeLang\Type\NamedTypeNode;
-
 /**
  * Mapping of one property of a class.
  */
@@ -40,33 +37,14 @@ final class PropertyMetadata
     ) {}
 
     /**
+     * Returns the name of the property in mapped data, in both directions:
+     * the external name or the PHP name in case of there is none.
+     *
      * @return non-empty-string
      */
     public function getOutputName(): string
     {
         return $this->externalName ?? $this->name;
-    }
-
-    /**
-     * Returns the read type, the write type in case of the read one is not
-     * set, or `mixed` in case of none is set.
-     */
-    public function getReadType(): TypeMetadata
-    {
-        return $this->read
-            ?? $this->write
-            ?? self::createMixedType();
-    }
-
-    /**
-     * Returns the write type, the read type in case of the write one is not
-     * set, or `mixed` in case of none is set.
-     */
-    public function getWriteType(): TypeMetadata
-    {
-        return $this->write
-            ?? $this->read
-            ?? self::createMixedType();
     }
 
     /**
@@ -124,14 +102,6 @@ final class PropertyMetadata
             read: $this->read,
             write: $this->write,
             default: $value,
-        );
-    }
-
-    private static function createMixedType(): TypeMetadata
-    {
-        return TypeMetadata::createFromType(
-            type: new NamedTypeNode(new Name('mixed')),
-            source: new SourceInfo(),
         );
     }
 }

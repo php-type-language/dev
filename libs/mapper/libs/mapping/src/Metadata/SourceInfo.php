@@ -12,7 +12,7 @@ final class SourceInfo
     public function __construct(
         /**
          * File of the source, {@see null} in case of the source has none
-         * (an array config, an internal class, a derived value)
+         * (an array config, an internal class)
          *
          * @var non-empty-string|null
          */

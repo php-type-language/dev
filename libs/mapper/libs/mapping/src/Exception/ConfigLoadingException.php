@@ -36,31 +36,32 @@ final class ConfigLoadingException extends ReaderException
 
     public static function becauseKeyIsNotClassName(int|string $key, ?string $file): self
     {
-        $message = \sprintf('Key "%s" of config is not a class name', \addcslashes((string) $key, '"'));
-
-        if ($file !== null) {
-            $message = \sprintf(
-                'Key "%s" of file "%s" is not a class name',
-                \addcslashes((string) $key, '"'),
-                \addcslashes($file, '"'),
-            );
-        }
+        $message = \sprintf(
+            'Key "%s" of %s is not a class name',
+            \addcslashes((string) $key, '"'),
+            self::formatConfig($file),
+        );
 
         return new self($message);
     }
 
     public static function becauseClassIsDescribedMoreThanOnce(string $class, ?string $file): self
     {
-        $message = \sprintf('Class "%s" of config is described more than once', \addcslashes($class, '"'));
-
-        if ($file !== null) {
-            $message = \sprintf(
-                'Class "%s" of file "%s" is described more than once',
-                \addcslashes($class, '"'),
-                \addcslashes($file, '"'),
-            );
-        }
+        $message = \sprintf(
+            'Class "%s" of %s is described more than once',
+            \addcslashes($class, '"'),
+            self::formatConfig($file),
+        );
 
         return new self($message);
+    }
+
+    private static function formatConfig(?string $file): string
+    {
+        if ($file === null) {
+            return 'config';
+        }
+
+        return \sprintf('file "%s"', \addcslashes($file, '"'));
     }
 }
