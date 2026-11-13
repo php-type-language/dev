@@ -35,6 +35,7 @@
             "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/mapper/libs/property-accessor/tests",
             "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
             "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
+            "TypeLang\\PhpDoc\\Build\\": "libs/phpdoc/build",
             "TypeLang\\PhpDoc\\Tests\\": "libs/phpdoc/tests",
             "TypeLang\\Reader\\Tests\\": "libs/reader/tests",
             "TypeLang\\Type\\Tests\\": "libs/types/tests"
