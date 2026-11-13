@@ -22,7 +22,6 @@ interface DenormalizerInterface
      * ```
      *
      * @param non-empty-string $type
-     *
      * @throws \Throwable in case of any internal error occurs
      */
     public function denormalize(mixed $value, #[Language('PHP')] string $type): mixed;
@@ -31,7 +30,6 @@ interface DenormalizerInterface
      * Returns {@see true} if the value can be denormalized for the given type.
      *
      * @param non-empty-string $type
-     *
      * @throws \Throwable in case of any internal error occurs
      */
     public function isDenormalizable(mixed $value, #[Language('PHP')] string $type): bool;

@@ -25,7 +25,6 @@ interface NormalizerInterface
      * ```
      *
      * @param non-empty-string|null $type
-     *
      * @throws \Throwable in case of any internal error occurs
      */
     public function normalize(mixed $value, #[Language('PHP')] ?string $type = null): mixed;
@@ -37,7 +36,6 @@ interface NormalizerInterface
      * inferred from the passed value.
      *
      * @param non-empty-string|null $type
-     *
      * @throws \Throwable in case of any internal error occurs
      */
     public function isNormalizable(mixed $value, #[Language('PHP')] ?string $type = null): bool;
