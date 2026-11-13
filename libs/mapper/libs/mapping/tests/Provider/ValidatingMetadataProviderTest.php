@@ -21,10 +21,8 @@ use TypeLang\Mapper\Mapping\Reader\AttributeMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\ChainMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\MetadataReaderInterface;
 use TypeLang\Mapper\Mapping\Reader\NamingStrategyMetadataReader;
-use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\ReflectionMetadataReader;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenAttributeStub;
-use TypeLang\Mapper\Mapping\Tests\Stub\BrokenDocBlockStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\DuplicateNameStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\NamingCollisionStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UnparsableTypeStub;
@@ -134,19 +132,6 @@ final class ValidatingMetadataProviderTest extends TestCase
         }
 
         self::fail('Metadata is expected to be invalid');
-    }
-
-    public function testUnparsableDocBlockTypeOverReflectionIsErrorAtDocBlock(): void
-    {
-        $errors = self::getErrors(static fn() => self::provide(
-            BrokenDocBlockStub::class,
-            new PhpDocMetadataReader(varTags: ['broken-var']),
-            new ReflectionMetadataReader(),
-        ));
-
-        self::assertCount(1, $errors);
-        self::assertStringStartsWith(BrokenDocBlockStub::class . '::$value: ', $errors[0]);
-        self::assertStringEndsWith(' in BrokenDocBlockStub.php', $errors[0]);
     }
 
     public function testSameFailureOfReadAndWriteTypesIsReportedOnce(): void

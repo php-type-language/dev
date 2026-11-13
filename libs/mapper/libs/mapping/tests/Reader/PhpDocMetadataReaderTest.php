@@ -52,12 +52,30 @@ final class PhpDocMetadataReaderTest extends TestCase
         );
     }
 
-    public function testEarlierTagNameWinsAndTagOfOtherVariableIsSkipped(): void
+    public function testTagUnknownToParserIsIgnoredAndTagOfOtherVariableIsSkipped(): void
     {
         $metadata = self::readPhpDoc(DocBlockStub::class);
 
-        self::assertType('non-empty-list<int>', self::getProperty($metadata, 'prefixed')->read);
+        self::assertType('array', self::getProperty($metadata, 'prefixed')->read);
         self::assertType('mixed', self::getProperty($metadata, 'foreign')->read);
+    }
+
+    public function testFirstTagOfKindWinsAmongAliases(): void
+    {
+        $reader = self::createPhpDocReader(['phpstan-var' => 'var']);
+
+        $metadata = self::readOverReflection($reader, DocBlockStub::class);
+
+        self::assertType('array', self::getProperty($metadata, 'prefixed')->read);
+    }
+
+    public function testAliasOfParserPlatformIsReadAsItsTag(): void
+    {
+        $reader = self::createPhpDocReader(['type-lang-var' => 'var']);
+
+        $metadata = self::readOverReflection($reader, BrokenDocBlockStub::class);
+
+        self::assertType('positive-int', self::getProperty($metadata, 'value')->read);
     }
 
     public function testPromotedPropertyIsReadFromVarThenFromConstructorParam(): void
@@ -70,12 +88,12 @@ final class PhpDocMetadataReaderTest extends TestCase
         self::assertType('string', self::getProperty($metadata, 'required')->read);
     }
 
-    public function testUnparsableConstructorParamIsErrorOfPromotedPropertiesWithoutOwnTag(): void
+    public function testUnparsableConstructorParamIsNotRead(): void
     {
         $metadata = self::readPhpDoc(BrokenPromotedStub::class);
 
-        self::assertNotNull(self::getProperty($metadata, 'users')->read?->error);
-        self::assertNotNull(self::getProperty($metadata, 'nullable')->read?->error);
+        self::assertType('array', self::getProperty($metadata, 'users')->read);
+        self::assertType('?int', self::getProperty($metadata, 'nullable')->read);
         self::assertType('positive-int', self::getProperty($metadata, 'count')->read);
         self::assertType('non-empty-string', self::getProperty($metadata, 'name')->read);
     }
@@ -91,11 +109,11 @@ final class PhpDocMetadataReaderTest extends TestCase
     public function testHigherPhpDocReaderOverridesLowerOne(): void
     {
         $class = new \ReflectionClass(BrokenDocBlockStub::class);
-        $lower = self::readOverReflection(new PhpDocMetadataReader(varTags: ['broken-var']), $class->name);
+        $lower = self::readOverReflection(self::createPhpDocReader(['broken-var' => 'var']), $class->name);
 
-        $metadata = (new PhpDocMetadataReader(varTags: ['type-lang-var']))->read($class, $lower);
+        $metadata = self::createPhpDocReader(['type-lang-var' => 'var'])->read($class, $lower);
 
-        self::assertNotNull(self::getProperty($lower, 'value')->read?->error);
+        self::assertType('int', self::getProperty($lower, 'value')->read);
         self::assertType('positive-int', self::getProperty($metadata, 'value')->read);
     }
 

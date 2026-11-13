@@ -155,7 +155,7 @@ final class ChainMetadataReaderTest extends TestCase
         $metadata = self::provide(
             AttributeStub::class,
             new AttributeMetadataReader(),
-            new PhpDocMetadataReader(varTags: ['broken-var']),
+            self::createPhpDocReader(['broken-var' => 'var']),
             new ReflectionMetadataReader(),
         );
 

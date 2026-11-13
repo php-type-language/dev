@@ -21,6 +21,8 @@ use TypeLang\Mapper\Mapping\Tests\Stub\UnparsableTypeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UnselectedAttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeParserFeatures;
 
 final class AttributeMetadataReaderTest extends TestCase
 {
@@ -93,6 +95,16 @@ final class AttributeMetadataReaderTest extends TestCase
             ),
             $errors[1],
         );
+    }
+
+    public function testTypesAreParsedByGivenParser(): void
+    {
+        $reader = new AttributeMetadataReader(new TypeParser(new TypeParserFeatures(generics: false)));
+
+        $metadata = self::readOverReflection($reader, AttributeStub::class);
+
+        self::assertNotNull(self::getProperty($metadata, 'accounts')->read?->error);
+        self::assertType('positive-int', self::getProperty($metadata, 'count')->read);
     }
 
     public function testUnparsableTypeIsTypeWithErrorAndIsNotThrown(): void

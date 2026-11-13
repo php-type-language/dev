@@ -14,10 +14,14 @@ use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
 use TypeLang\Mapper\Mapping\Provider\ValidatingMetadataProvider;
 use TypeLang\Mapper\Mapping\Reader\ChainMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\MetadataReaderInterface;
+use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\ReflectionMetadataReader;
+use TypeLang\Mapper\Mapping\Tests\Stub\AliasPlatformStub;
 use TypeLang\Parser\Traverser;
 use TypeLang\Parser\Traverser\StringDumperVisitor;
 use TypeLang\Parser\TypeParser;
+use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\PhpDoc\Platform\StandardPlatform;
 use TypeLang\Type\TypeNode;
 
 #[Group('unit'), Group('type-lang/mapper')]
@@ -53,6 +57,20 @@ abstract class TestCase extends BaseTestCase
         $reflection = new \ReflectionClass($class);
 
         return $reader->read($reflection, (new ReflectionMetadataReader())->read($reflection));
+    }
+
+    /**
+     * Creates the phpdoc reader whose parser reads the given names as the
+     * standard tags: `['broken-var' => 'var']`.
+     *
+     * @param array<non-empty-lowercase-string, non-empty-lowercase-string> $aliases
+     */
+    protected static function createPhpDocReader(array $aliases = []): PhpDocMetadataReader
+    {
+        return new PhpDocMetadataReader(new DocBlockParser([
+            new StandardPlatform(),
+            new AliasPlatformStub($aliases),
+        ]));
     }
 
     /**

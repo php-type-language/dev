@@ -30,12 +30,12 @@ final class HookPhpDocMetadataReaderTest extends TestCase
         self::assertType('positive-int|non-empty-string', $property->write);
     }
 
-    public function testUnparsableSetHookParamIsErrorOfWriteType(): void
+    public function testUnparsableSetHookParamIsNotRead(): void
     {
         $property = self::readHookProperty('title', BrokenHookStub::class);
 
         self::assertType('non-empty-string', $property->read);
-        self::assertNotNull($property->write?->error);
+        self::assertType('string', $property->write);
     }
 
     /**

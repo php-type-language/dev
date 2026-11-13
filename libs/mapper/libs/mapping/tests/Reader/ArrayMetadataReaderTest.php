@@ -22,6 +22,8 @@ use TypeLang\Mapper\Mapping\Tests\Stub\PromotedStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\StatusStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Parser\TypeParserFeatures;
 
 final class ArrayMetadataReaderTest extends TestCase
 {
@@ -181,6 +183,16 @@ final class ArrayMetadataReaderTest extends TestCase
             self::assertNull(self::getProperty($e->metadata, 'email')->default?->value);
             self::assertSame([StatusStub::Active], self::getProperty($e->metadata, 'displayName')->default?->value);
         }
+    }
+
+    public function testTypesAreParsedByGivenParser(): void
+    {
+        $parser = new TypeParser(new TypeParserFeatures(unions: false));
+        $reader = new ArrayMetadataReader([UserStub::class => ['properties' => ['id' => 'int|string']]], null, $parser);
+
+        $id = self::getProperty(self::readOverReflection($reader, UserStub::class), 'id');
+
+        self::assertNotNull($id->read?->error);
     }
 
     public function testUnparsableTypeIsTypeWithErrorAndIsNotThrown(): void

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Tests\Provider;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
-use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\MetadataProviderFactory;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
@@ -121,10 +120,6 @@ final class MetadataProviderFactoryTest extends TestCase
         $metadata = MetadataProviderFactory::create()->read(new \ReflectionClass(DocBlockStub::class));
 
         self::assertType('array', self::getProperty($metadata, 'accounts')->read);
-
-        $this->expectException(MissingDependencyException::class);
-
-        new PhpDocMetadataReader();
     }
 
     /**
