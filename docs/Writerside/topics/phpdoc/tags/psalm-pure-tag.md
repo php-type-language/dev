@@ -7,9 +7,11 @@ it is free of side effects: calling it repeatedly with the same
 arguments always produces the same result, without observably
 mutating any state.
 
+<!-- generated:grammar -->
 ```
 "@psalm-pure" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-pure` tag produces a `PureTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

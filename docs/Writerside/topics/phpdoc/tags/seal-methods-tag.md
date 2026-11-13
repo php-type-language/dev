@@ -12,10 +12,13 @@ might answer to other, undocumented method names too; writing
 so a call to any magic method not already listed can be reported as an
 error instead of silently allowed through.
 
+<!-- generated:grammar -->
 ```
 "@seal-methods" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Closing the magic method surface of a fluent builder.
 > ```php
 > /**
@@ -34,6 +37,7 @@ error instead of silently allowed through.
 >  */
 > class ReadOnlyModel {}
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@seal-methods` tag produces a `FlagTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

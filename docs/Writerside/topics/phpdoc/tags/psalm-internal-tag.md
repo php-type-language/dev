@@ -7,9 +7,11 @@ The `@psalm-internal` tag marks an element as internal to a given
 namespace rather than to the whole package, a narrower scope than
 this library's already-implemented [@internal](internal-tag.md) tag.
 
+<!-- generated:grammar -->
 ```
 "@psalm-internal" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 The namespace Psalm expects after the tag is not parsed separately: it ends
 up in `$description`, exactly as it does for `@internal`.

@@ -6,10 +6,13 @@ The `@psalm-assert-untainted` tag asserts that the given variable holds no
 tainted data from this point on. It is part of Psalm's taint-analysis
 assertion family, alongside [@psalm-assert](psalm-assert-tag.md).
 
+<!-- generated:grammar -->
 ```
 "@psalm-assert-untainted" <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Asserting that a value is safe after sanitization.
 > ```php
 > /**
@@ -17,6 +20,7 @@ assertion family, alongside [@psalm-assert](psalm-assert-tag.md).
 >  */
 > function sanitize(string $input): string {}
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@psalm-assert-untainted` tag produces a
 `PsalmAssertUntaintedTag` instance, carrying the asserted `$variable`

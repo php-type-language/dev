@@ -8,10 +8,13 @@ the interface but cannot supply its type parameters. `@implements` documents
 those type arguments, e.g. an `ArrayAccess` implementation that is actually
 keyed and valued with specific types rather than `mixed`.
 
+<!-- generated:grammar -->
 ```
 "@implements" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Documenting the key and value types of an `ArrayAccess` implementation.
 > ```php
 > /**
@@ -27,6 +30,7 @@ keyed and valued with specific types rather than `mixed`.
 >  */
 > final class OrderRepository implements RepositoryInterface {}
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@implements` tag produces a tag exposing `$type` — the `TypeNode`
 naming the interface together with its type arguments — plus the `$name` and

@@ -5,9 +5,11 @@
 
 The `@toc` tag generates a table of contents for a tutorial.
 
+<!-- generated:grammar -->
 ```
 "@toc" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing

@@ -17,12 +17,15 @@ Take the [`@param`](param-tag.md) tag, whose line is
 ```php
 final class ParamTagDefinition extends TagDefinition
 {
-    public const string NAME = 'param';
+    public static function getCanonicalName(): string
+    {
+        return 'param';
+    }
 
     public function __construct()
     {
         parent::__construct(
-            name: self::NAME,
+            name: self::getCanonicalName(),
             spec: Spec::sequence(
                 Spec::rule(TypeCombinator::NAME, 'type'),
                 Spec::rule(VariableCombinator::NAME, 'variable'),
@@ -51,6 +54,17 @@ The constructor hands the base class three things:
 * **`name`** — the canonical tag name, without the leading `@`.
 * **`spec`** — the grammar of the line's body.
 * **`placement`** — where the tag may appear (see [below](#inline-tags)).
+
+The static `getCanonicalName()` is a convention, not a part of the
+interface: it lets the name be referenced by the class
+(`ParamTagDefinition::getCanonicalName()`) without creating the definition.
+The contract is the `name` property, so a definition whose name is known only
+at runtime (one class serving several tags) needs no static method.
+
+A tag missing from the registry is read by a definition created for its name,
+`GenericTagDefinition` by default: the whole body becomes the description of a
+plain `Tag`. Pass `createUnknownTagDefinition` to `TagFactory` to read such
+tags differently.
 
 <tip>
 The <code>spec</code> is written with the <code>Spec</code> grammar DSL —

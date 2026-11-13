@@ -7,10 +7,13 @@ warns consumers that the element may be removed in a future release, and
 optionally names the version starting from which it should be considered
 deprecated and what to use in its place.
 
+<!-- generated:grammar -->
 ```
 "@deprecated" [ <Version> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Naming the version and pointing to a replacement.
 > ```php
 > /**
@@ -27,6 +30,7 @@ deprecated and what to use in its place.
 >  */
 > public function withTransport(Transport $transport): static
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@deprecated` tag produces a `DeprecatedTag` instance exposing
 `$version` — the version since which the element is deprecated, or `null`

@@ -5,9 +5,11 @@
 The `@phan-side-effect-free` tag declares a function or method
 as free of side effects.
 
+<!-- generated:grammar -->
 ```
 "@phan-side-effect-free" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-side-effect-free` tag produces a `PhanSideEffectFreeTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

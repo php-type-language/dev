@@ -6,9 +6,11 @@ The `@expectedException` tag declares the `Throwable` a test method is
 expected to throw. It is an old PHPUnit-era convention that predates the
 `expectException()` method call and is unrelated to PhpStorm itself.
 
+<!-- generated:grammar -->
 ```
 "@expectedException" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@expectedException` tag produces a `ExpectedExceptionTag` instance, carrying the
 parsed `$type` alongside the `$name` and optional `$description` every

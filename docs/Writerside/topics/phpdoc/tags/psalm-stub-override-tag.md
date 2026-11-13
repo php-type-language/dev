@@ -6,9 +6,11 @@ The `@psalm-stub-override` tag marks a stub declaration as
 intentionally overriding the real signature, telling Psalm not to
 flag the mismatch between the two.
 
+<!-- generated:grammar -->
 ```
 "@psalm-stub-override" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-stub-override` tag produces a `PsalmStubOverrideTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

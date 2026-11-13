@@ -5,10 +5,11 @@
 The `@phpstan-import-type` tag imports a `@phpstan-type` alias declared
 in another class, defined by PHPStan.
 
+<!-- generated:grammar -->
 ```
-"@phpstan-import-type" <Name> "from" <Type>
-    [ "as" <Name> ]
+"@phpstan-import-type" <Name> "from" <Type> [ "as" <Name> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-import-type` tag produces an `ImportTypeAliasTag` instance,
 carrying the imported `$alias`, the `$type` it is imported from, and the

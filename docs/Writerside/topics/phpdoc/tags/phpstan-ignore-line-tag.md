@@ -6,9 +6,11 @@ The `@phpstan-ignore-line` tag silences any error reported on the current
 line, defined by PHPStan. Unlike [@phpstan-ignore](phpstan-ignore-tag.md),
 it does not name specific error identifiers.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-ignore-line" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `phpstan-ignore-line` tag produces a `PhpStanIgnoreLineTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

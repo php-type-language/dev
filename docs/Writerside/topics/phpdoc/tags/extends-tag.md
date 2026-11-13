@@ -9,10 +9,13 @@ that gap by supplying the concrete (or still-generic) type arguments for the
 parent, so that a static analyzer can follow the type all the way down the
 hierarchy.
 
+<!-- generated:grammar -->
 ```
 "@extends" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Binding a generic collection's item type to a concrete class.
 > ```php
 > /**
@@ -29,6 +32,7 @@ hierarchy.
 >  */
 > abstract class BaseRepository extends Repository {}
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@extends` tag produces a tag exposing `$type` — the parsed
 `TypeNode` describing the parent with its type arguments — alongside the

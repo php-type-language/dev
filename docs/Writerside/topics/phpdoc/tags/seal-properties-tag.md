@@ -13,10 +13,13 @@ docblock; `@seal-properties` removes that uncertainty, so access to an
 undocumented magic property can be flagged as an error instead of passing
 silently.
 
+<!-- generated:grammar -->
 ```
 "@seal-properties" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Closing the magic property surface of a data object.
 > ```php
 > /**
@@ -36,6 +39,7 @@ silently.
 >  */
 > class Entry {}
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@seal-properties` tag produces a `FlagTag` instance. Being a
 pure marker, it adds nothing beyond the `$name` and optional

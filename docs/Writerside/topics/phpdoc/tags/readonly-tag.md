@@ -9,10 +9,13 @@ used where the native modifier cannot be applied — most commonly on magic
 or virtual properties exposed through `__get`/`__set` and documented with
 [@property](property-tag.md) rather than declared as real class members.
 
+<!-- generated:grammar -->
 ```
 "@readonly" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A magic property that is only ever set once, from the constructor.
 > ```php
 > /**
@@ -30,6 +33,7 @@ or virtual properties exposed through `__get`/`__set` and documented with
 >  */
 > public $identifier;
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@readonly` tag produces a `ReadonlyTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

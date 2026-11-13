@@ -9,10 +9,13 @@ actually be written. This matters most for magic members declared through
 [@method](method-tag.md) already has its own inline `"static"` keyword for
 magic methods, so a standalone `@static` tag is mostly relevant elsewhere.
 
+<!-- generated:grammar -->
 ```
 "@static" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Declaring a magic property as static.
 > ```php
 > /**
@@ -28,6 +31,7 @@ magic methods, so a standalone `@static` tag is mostly relevant elsewhere.
 >  * @static Shared across all instances of the registry.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@static` tag produces a `StaticTag` instance. Being a pure marker,
 it adds nothing beyond the `$name` and optional `$description` every

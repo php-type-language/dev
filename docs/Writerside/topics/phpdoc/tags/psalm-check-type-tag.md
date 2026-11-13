@@ -6,9 +6,11 @@ The `@psalm-check-type` tag asserts, for debugging purposes, that a
 variable resolves to a given type. It is defined by the static
 analyzer Psalm.
 
+<!-- generated:grammar -->
 ```
 "@psalm-check-type" <Variable> "=" <Type>
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-check-type` tag produces a `PsalmCheckTypeTag` instance,
 carrying the checked `$variable` and its expected `$type` alongside the

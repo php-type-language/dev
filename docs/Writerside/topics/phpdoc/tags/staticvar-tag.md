@@ -8,11 +8,13 @@ a variable has no visible type annotation anywhere in the code, since PHP
 has no native syntax for typing it, so without this tag its type would only
 be discoverable by reading the initializer and tracing every assignment.
 
+<!-- generated:grammar -->
 ```
-"@staticvar" <Type> [ <Variable> ]
-    [ <Description> ]
+"@staticvar" <Type> [ <Variable> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Documenting a static counter's type.
 > ```php
 > /**
@@ -32,6 +34,7 @@ be discoverable by reading the initializer and tracing every assignment.
 >  * @staticvar array Memoized results, keyed by input hash.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@staticvar` tag produces a `StaticVarTag` instance exposing
 `$type` — the documented `TypeNode` — and `$variable`, the variable's name

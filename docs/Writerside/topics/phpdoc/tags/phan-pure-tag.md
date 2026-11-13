@@ -6,9 +6,11 @@ The `@phan-pure` tag declares a function or method as pure —
 free of side effects, with a return value that depends only on
 its arguments.
 
+<!-- generated:grammar -->
 ```
 "@phan-pure" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-pure` tag produces a `PureTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

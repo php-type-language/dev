@@ -9,10 +9,13 @@ reject it (or simply doesn't exist). It is otherwise identical to
 property — and exists so that IDEs and static analyzers can flag an
 accidental assignment to a value that the class was never meant to accept.
 
+<!-- generated:grammar -->
 ```
 "@property-read" <Type> <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A computed value with no corresponding setter.
 > ```php
 > /**
@@ -32,6 +35,7 @@ accidental assignment to a value that the class was never meant to accept.
 >  */
 > class Record {}
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@property-read` tag produces a `TypedVariableTag` instance
 exposing:

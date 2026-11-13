@@ -7,9 +7,11 @@ constructor's return value is intentionally discarded by callers,
 suppressing the issue Phan would otherwise raise for an unused `new`
 expression.
 
+<!-- generated:grammar -->
 ```
 "@phan-constructor-used-for-side-effects" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-constructor-used-for-side-effects` tag produces a `PhanConstructorUsedForSideEffectsTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

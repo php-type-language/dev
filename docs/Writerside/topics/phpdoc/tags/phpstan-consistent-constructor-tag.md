@@ -5,9 +5,11 @@
 The `@phpstan-consistent-constructor` tag requires that all subclasses
 declare a constructor compatible with the parent's, defined by PHPStan.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-consistent-constructor" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-consistent-constructor` tag produces a `ConsistentConstructorTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

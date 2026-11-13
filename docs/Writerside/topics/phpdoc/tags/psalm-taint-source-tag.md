@@ -6,9 +6,11 @@ The `@psalm-taint-source` tag marks the return value as a taint
 source of the given type. It is part of Psalm's taint-analysis
 annotations.
 
+<!-- generated:grammar -->
 ```
 "@psalm-taint-source" <Name> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-taint-source` tag produces a `PsalmTaintSourceTag` instance, carrying the
 parsed `$identifier` alongside the `$name` and optional `$description`

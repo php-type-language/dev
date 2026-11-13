@@ -8,9 +8,11 @@ mutating method narrows the object's own type. It is defined by the
 static analyzer PHPStan, which also accepts the alias
 `@phpstan-this-out` (see [phpstan-this-out-tag.md](phpstan-this-out-tag.md)).
 
+<!-- generated:grammar -->
 ```
 "@phpstan-self-out" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-self-out` tag produces a `SelfOutTag` instance, carrying the
 parsed `$type` alongside the `$name` and optional `$description` every

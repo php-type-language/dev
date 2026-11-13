@@ -9,11 +9,14 @@ and produce the exact same `ImplementsTag` instance. The longer,
 `template-` prefixed spelling makes the connection to the interface's
 own `@template` parameters explicit, which some codebases prefer.
 
+<!-- generated:grammar -->
 ```
 "@implements" <Type> [ <Description> ]
 "@template-implements" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 <tabs>
 <tab title="Canonical">
 
@@ -36,6 +39,7 @@ own `@template` parameters explicit, which some codebases prefer.
 
 </tab>
 </tabs>
+<!-- /generated:examples -->
 
 Both snippets above parse to the same `ImplementsTag`, exposing the
 same `$type` property. See [@implements](implements-tag.md) for the

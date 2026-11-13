@@ -10,12 +10,15 @@ the class. `@mixin` tells it to also treat every public method and property
 of the referenced type as available, restoring autocomplete and type
 checking for code that would otherwise only work by accident at runtime.
 
+<!-- generated:grammar -->
 ```
 "@mixin" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
-> A query builder that forwards undefined method calls to
-> its underlying connection.
+<!-- generated:examples -->
+> A query builder that forwards undefined method calls to its underlying
+> connection.
 > ```php
 > /**
 >  * @mixin Connection
@@ -28,6 +31,7 @@ checking for code that would otherwise only work by accident at runtime.
 >     }
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@mixin` tag produces a `MixinTag` instance:
 

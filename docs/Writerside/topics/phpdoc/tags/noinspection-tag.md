@@ -6,9 +6,11 @@ The `@noinspection` tag suppresses one or more named IDE inspections for
 the element that follows it, so PhpStorm stops flagging a specific,
 intentional pattern in that spot.
 
+<!-- generated:grammar -->
 ```
 "@noinspection" <Name> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@noinspection` tag produces a `NoinspectionTag` instance, carrying the
 parsed `$identifier` alongside the `$name` and optional `$description`

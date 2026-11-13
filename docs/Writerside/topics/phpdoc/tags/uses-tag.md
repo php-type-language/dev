@@ -10,10 +10,13 @@ referenced element changes behavior, the element carrying `@uses` may
 break. This makes the relationship visible from the dependent side, even
 when the referenced element carries no annotation of its own.
 
+<!-- generated:grammar -->
 ```
 "@uses" <Reference> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A method documenting the helper it relies on.
 > ```php
 > /**
@@ -31,11 +34,12 @@ when the referenced element carries no annotation of its own.
 >  * @uses Config::DEFAULT_TIMEOUT Falls back to this when none is
 >  *       given.
 >  */
-> function connect(?int $timeout = null): void 
+> function connect(?int $timeout = null): void
 > {
 >     /* ... */
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@uses` tag produces a `ReferenceTag` instance narrowed to a
 `CodeReference` (a class, function, method, constant, property, or

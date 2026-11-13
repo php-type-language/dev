@@ -6,9 +6,11 @@ The `@psalm-override-property-visibility` tag allows a subclass to
 override an inherited property with a different visibility than the
 parent declares, without Psalm flagging the change as a violation.
 
+<!-- generated:grammar -->
 ```
 "@psalm-override-property-visibility" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-override-property-visibility` tag produces a `PsalmOverridePropertyVisibilityTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

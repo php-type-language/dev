@@ -9,10 +9,13 @@ itself cannot reach — for example, to tell consumers that a method behaves
 as final by convention in a class that isn't itself declared `final`, or in
 generated stubs and interfaces where the native modifier does not apply.
 
+<!-- generated:grammar -->
 ```
 "@final" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Marking a method as final without declaring the whole class final.
 > ```php
 > /**
@@ -29,6 +32,7 @@ generated stubs and interfaces where the native modifier does not apply.
 >  */
 > class Money {}
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@final` tag produces a `FinalTag` instance. Being a pure marker,
 it adds nothing beyond the `$name` and optional `$description` every

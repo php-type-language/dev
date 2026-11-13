@@ -7,9 +7,11 @@ following it from being used by Psalm for type inference, telling the
 analyzer to fall back to its own inferred type instead of trusting the
 declared one.
 
+<!-- generated:grammar -->
 ```
 "@psalm-ignore-var" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-ignore-var` tag produces a `PsalmIgnoreVarTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

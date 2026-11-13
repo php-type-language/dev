@@ -8,10 +8,14 @@ distinct tag. It exists because dropping the trailing "s" is a fairly
 common typo in code, and this component's own source registers it as an
 alias for that reason rather than as a separate convention.
 
+<!-- generated:grammar -->
 ```
+"@throws" <Type> [ <Description> ]
 "@throw" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 <tabs>
 <tab title="Canonical">
 
@@ -40,6 +44,7 @@ alias for that reason rather than as a separate convention.
 
 </tab>
 </tabs>
+<!-- /generated:examples -->
 
 Both spellings above parse to the exact same `ThrowsTag` instance. See
 [@throws](throws-tag.md) for the full grammar and the `$type` property it

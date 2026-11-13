@@ -9,15 +9,18 @@ form is especially useful for narrowing a variable's type where PHP or a
 static analyzer would otherwise infer something too broad, such as
 right after decoding JSON or pulling a value out of an untyped array.
 
+<!-- generated:grammar -->
 ```
 "@var" <Type> [ <Variable> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 The variable name is optional and mainly exists to disambiguate which of
 several variables mentioned on the same line the type applies to; on a
 property or constant, where there is only ever one target, it is normally
 left out entirely.
 
+<!-- generated:examples -->
 > Documenting a property's type.
 > ```php
 > class Model
@@ -39,6 +42,7 @@ left out entirely.
 > [$user, $token] = $authenticator
 >     ->resolve();
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@var` tag produces a `VarTag` instance exposing:
 

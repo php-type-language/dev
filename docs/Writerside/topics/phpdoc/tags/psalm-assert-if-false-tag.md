@@ -7,9 +7,11 @@ argument or variable when the function returns `false`. It is
 defined by the static analyzer Psalm, alongside
 [@psalm-assert](psalm-assert-tag.md).
 
+<!-- generated:grammar -->
 ```
-"@psalm-assert-if-false" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
+"@psalm-assert-if-false" [ ( "!=" | "!" | "=" ) ] <Type> <AssertSubject> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-assert-if-false` tag produces an `AssertIfFalseTag` instance, carrying the
 asserted `$type`, the `$subject` it is asserted of and the `$operator`

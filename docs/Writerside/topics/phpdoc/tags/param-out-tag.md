@@ -13,10 +13,13 @@ that accepts `?string` but is guaranteed to hold a non-null `string` once
 the call succeeds. Without a separate tag for the outgoing type, callers and
 analyzers are stuck assuming the same type applies in both directions.
 
+<!-- generated:grammar -->
 ```
 "@param-out" <Type> <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A reference parameter that starts nullable but ends up always set.
 > ```php
 > /**
@@ -35,6 +38,7 @@ analyzers are stuck assuming the same type applies in both directions.
 >  */
 > function findAll(string $pattern, array &$matches): bool
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@param-out` tag produces a `ParamOutTag` instance (a
 `TypedVariableTag`) exposing:

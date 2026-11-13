@@ -8,10 +8,13 @@ invisible: it does not appear in the signature, so without this tag a reader
 would have no way of knowing the function's behavior depends on something
 outside its own parameters.
 
+<!-- generated:grammar -->
 ```
 "@global" <Type> <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Documenting a global relied upon inside the function body.
 > ```php
 > /**
@@ -33,6 +36,7 @@ outside its own parameters.
 >  * @global Config $config Read for the current retry policy.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@global` tag produces a `GlobalTag` instance exposing `$type` —
 the documented `TypeNode` — and `$variable`, the global's name without the

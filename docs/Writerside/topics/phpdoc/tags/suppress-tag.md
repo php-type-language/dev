@@ -7,14 +7,16 @@ The `@suppress` tag silences one or more named diagnostics that a static
 analyzer would otherwise report for the described element, without disabling
 analysis of the element altogether.
 
+<!-- generated:grammar -->
 ```
-"@suppress" <IssueName> { "," <IssueName> }
-    [ <Description> ]
+"@suppress" <IssueName> [ "," <IssueName> ... ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 <tabs>
 <tab title="Examples">
 
+<!-- generated:examples -->
 > Silencing a single diagnostic.
 > ```php
 > /**
@@ -29,6 +31,7 @@ analysis of the element altogether.
 >  *           tests.
 >  */
 > ```
+<!-- /generated:examples -->
 
 </tab>
 <tab title="Counterexamples">

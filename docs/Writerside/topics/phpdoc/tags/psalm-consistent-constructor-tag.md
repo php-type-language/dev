@@ -6,9 +6,11 @@ The `@psalm-consistent-constructor` tag requires that all subclasses
 declare a constructor compatible with the parent's. It is defined
 by the static analyzer Psalm.
 
+<!-- generated:grammar -->
 ```
 "@psalm-consistent-constructor" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-consistent-constructor` tag produces a `ConsistentConstructorTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

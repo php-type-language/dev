@@ -6,9 +6,11 @@ The `@phan-output-reference` tag marks a by-reference argument as
 output-only — Phan's own counterpart to
 [@param-out](param-out-tag.md).
 
+<!-- generated:grammar -->
 ```
 "@phan-output-reference" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-output-reference` tag produces a `PhanOutputReferenceTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

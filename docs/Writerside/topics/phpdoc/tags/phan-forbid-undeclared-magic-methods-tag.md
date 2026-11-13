@@ -7,9 +7,11 @@ undeclared magic methods on the class it decorates, so only the
 methods actually documented via [@method](method-tag.md) may be
 called.
 
+<!-- generated:grammar -->
 ```
 "@phan-forbid-undeclared-magic-methods" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-forbid-undeclared-magic-methods` tag produces a `PhanForbidUndeclaredMagicMethodsTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

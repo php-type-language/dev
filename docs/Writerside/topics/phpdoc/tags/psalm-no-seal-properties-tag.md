@@ -7,9 +7,11 @@ properties beyond those already documented — the inverse of
 [@seal-properties](seal-properties-tag.md), which this library
 already recognizes bare.
 
+<!-- generated:grammar -->
 ```
 "@psalm-no-seal-properties" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-no-seal-properties` tag produces a `PsalmNoSealPropertiesTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

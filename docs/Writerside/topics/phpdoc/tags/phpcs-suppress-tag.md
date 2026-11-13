@@ -7,9 +7,11 @@ suppressing named coding-standard checks; current PHP_CodeSniffer prefers
 the `phpcs:*` comment syntax instead, but still understands the older
 tag-based forms.
 
+<!-- generated:grammar -->
 ```
 "@phpcsSuppress" <Name> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpcsSuppress` tag produces a `PhpcsSuppressTag` instance, carrying the
 parsed `$identifier` alongside the `$name` and optional `$description`

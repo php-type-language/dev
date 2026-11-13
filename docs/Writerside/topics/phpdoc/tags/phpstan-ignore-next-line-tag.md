@@ -6,9 +6,11 @@ The `@phpstan-ignore-next-line` tag silences any error reported on the
 next line, defined by PHPStan. It behaves like
 [@phpstan-ignore-line](phpstan-ignore-line-tag.md), aimed one line ahead.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-ignore-next-line" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `phpstan-ignore-next-line` tag produces a `PhpStanIgnoreNextLineTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

@@ -10,10 +10,13 @@ no native declaration to modify. It also sees occasional use on a real
 abstract class or method simply to make the fact more visible in generated
 documentation.
 
+<!-- generated:grammar -->
 ```
 "@abstract" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Flagging a magic method as one subclasses are expected to implement.
 > ```php
 > /**
@@ -30,6 +33,7 @@ documentation.
 >  */
 > protected function makeStorage(): Storage
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@abstract` tag produces an `AbstractTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description` every

@@ -6,9 +6,11 @@ The `@phpstan-assert-if-false` tag asserts the given type when the
 function returns `false`, defined by PHPStan. It is one of the
 [@phpstan-assert](phpstan-assert-tag.md) family of narrowing tags.
 
+<!-- generated:grammar -->
 ```
-"@phpstan-assert-if-false" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
+"@phpstan-assert-if-false" [ ( "!=" | "!" | "=" ) ] <Type> <AssertSubject> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-assert-if-false` tag produces an `AssertIfFalseTag` instance, carrying the
 asserted `$type`, the `$subject` it is asserted of and the `$operator`

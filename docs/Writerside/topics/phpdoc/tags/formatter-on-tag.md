@@ -6,9 +6,11 @@ The `@formatter:on` tag re-enables PhpStorm's automatic code formatting
 from this point on, pairing with an earlier
 [@formatter:off](formatter-off-tag.md).
 
+<!-- generated:grammar -->
 ```
 "@formatter:on" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@formatter:on` tag produces a `FormatterOnTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

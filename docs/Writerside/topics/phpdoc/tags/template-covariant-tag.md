@@ -11,14 +11,14 @@ subtype of `Animal`, a substitution an ordinary invariant `@template`
 parameter does not permit, since the analyzer cannot otherwise rule out the
 parameter being consumed somewhere in a way that substitution would break.
 
+<!-- generated:grammar -->
 ```
-"@template-covariant" <Name>
-    [ "of" <Type> ] [ "=" <Type> ]
-    [ <Description> ]
+"@template-covariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
-> A read-only collection whose item type only ever comes out, never
-> goes in.
+<!-- generated:examples -->
+> A read-only collection whose item type only ever comes out, never goes in.
 > ```php
 > /**
 >  * @template-covariant T
@@ -35,6 +35,7 @@ parameter being consumed somewhere in a way that substitution would break.
 >     }
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@template-covariant` tag produces the same kind of tag as
 `@template`, exposing `$parameter`, `$bound`, and `$default`; see

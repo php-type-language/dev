@@ -10,11 +10,14 @@ the concrete type arguments for a generic trait pulled in with PHP's
 and in practice it is the spelling seen more often in real-world
 PHPStan and Psalm documentation than the bare `@use` form.
 
+<!-- generated:grammar -->
 ```
 "@use" <Type> [ <Description> ]
 "@template-use" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 <tabs>
 <tab title="Canonical">
 
@@ -39,6 +42,7 @@ PHPStan and Psalm documentation than the bare `@use` form.
 
 </tab>
 </tabs>
+<!-- /generated:examples -->
 
 Both examples above produce an identical `UseTag`, exposing the same
 `$type` — the `TypeNode` naming the trait with its type arguments —

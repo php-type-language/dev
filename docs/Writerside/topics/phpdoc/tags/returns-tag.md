@@ -9,10 +9,14 @@ it as "a fairly common typo in code," so rather than rejecting it,
 the parser accepts `@returns` and produces the exact same tag that
 `@return` would.
 
+<!-- generated:grammar -->
 ```
+"@return" <Type> [ <Description> ]
 "@returns" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 <tabs>
 <tab title="Canonical">
 
@@ -33,6 +37,7 @@ the parser accepts `@returns` and produces the exact same tag that
 
 </tab>
 </tabs>
+<!-- /generated:examples -->
 
 Both spellings above parse into an identical `ReturnTag` instance,
 exposing the same `$type` and `$description`. See

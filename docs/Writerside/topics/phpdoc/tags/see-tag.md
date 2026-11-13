@@ -9,10 +9,13 @@ page. It is the most general of the reference tags — where
 [`@uses`](uses-tag.md) and [`@used-by`](used-by-tag.md) specifically describe
 a dependency relationship, `@see` only says "read also".
 
+<!-- generated:grammar -->
 ```
 "@see" ( <Reference> | <URI> ) [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A reference to another method.
 > ```php
 > /**
@@ -33,6 +36,7 @@ a dependency relationship, `@see` only says "read also".
 >  * @see https://example.com/docs/delivery
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@see` tag produces a `SeeTag` instance exposing
 `$reference`: a `CodeReference` (for a class, function, method,

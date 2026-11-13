@@ -6,10 +6,13 @@ The `@not-deprecated` tag marks an element as explicitly not deprecated,
 overriding a `@deprecated` tag it would otherwise inherit from a parent
 class or interface.
 
+<!-- generated:grammar -->
 ```
 "@not-deprecated" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A method that stays supported even though the interface it implements is
 > deprecated.
 > ```php
@@ -25,6 +28,7 @@ class or interface.
 >  * @not-deprecated Still the recommended entry point.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@not-deprecated` tag produces a `NotDeprecatedTag` instance.
 Being a pure marker, it adds nothing beyond the `$name` and optional

@@ -7,9 +7,11 @@ types reported on the next line, mirroring
 [@phan-suppress-current-line](phan-suppress-current-line-tag.md)
 but targeting the line that follows.
 
+<!-- generated:grammar -->
 ```
-"@phan-suppress-next-line" <IssueName> { "," <IssueName> } [ <Description> ]
+"@phan-suppress-next-line" <IssueName> [ "," <IssueName> ... ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-suppress-next-line` tag produces a `PhanSuppressNextLineTag` instance, carrying the
 listed `$issues` alongside the `$name` and optional `$description` every

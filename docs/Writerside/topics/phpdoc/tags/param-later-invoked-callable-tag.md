@@ -14,11 +14,13 @@ to hold any particular value once the outer call returns, since the
 callback body has not actually run yet, and the function storing it cannot
 be assumed pure just because the callback itself might be.
 
+<!-- generated:grammar -->
 ```
-"@param-later-invoked-callable" <Variable>
-    [ <Description> ]
+"@param-later-invoked-callable" <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A plain marker on a listener registration.
 > ```php
 > /**
@@ -37,6 +39,7 @@ be assumed pure just because the callback itself might be.
 >  */
 > function then(callable $callback): static
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@param-later-invoked-callable` tag produces a `VariableTag`
 instance exposing `$variable`: the parameter's name, without the leading

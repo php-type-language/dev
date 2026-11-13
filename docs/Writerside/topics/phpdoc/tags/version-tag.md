@@ -8,10 +8,13 @@ release it corresponds to. This differs from [@since](since-tag.md), which
 records when a particular feature was first introduced: `@version` names
 what the element currently is, not when any part of it arrived.
 
+<!-- generated:grammar -->
 ```
 "@version" [ <Version> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Tagging a class with the release it ships in.
 > ```php
 > /**
@@ -26,6 +29,7 @@ what the element currently is, not when any part of it arrived.
 >  * @version 2.0.0-beta.1 Transport negotiation is not yet finalized.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@version` tag produces a `VersionTag` instance exposing
 `$version` — the current version of the element, or `null` when none was

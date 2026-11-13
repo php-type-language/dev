@@ -11,14 +11,17 @@ Without a `@template` declaration first introducing `T`, those tags would
 have no way to know that `T` names a type variable rather than an unresolved
 class reference.
 
+<!-- generated:grammar -->
 ```
 "@template" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 The optional `"of"` clause constrains what the parameter is allowed to be —
 an upper bound — and the optional `"="` clause supplies a default type to
 use when a use site omits the parameter entirely.
 
+<!-- generated:examples -->
 > A bare, unconstrained type parameter.
 > ```php
 > /**
@@ -43,6 +46,7 @@ use when a use site omits the parameter entirely.
 >  */
 > class Renderer {}
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@template` tag produces a `TemplateTag` instance exposing:
 

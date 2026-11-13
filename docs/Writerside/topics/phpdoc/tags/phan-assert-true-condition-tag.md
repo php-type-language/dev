@@ -9,9 +9,11 @@ assertion family as [@phan-assert](phan-assert-tag.md) and its
 counterpart
 [@phan-assert-false-condition](phan-assert-false-condition-tag.md).
 
+<!-- generated:grammar -->
 ```
 "@phan-assert-true-condition" <Expression>
 ```
+<!-- /generated:grammar -->
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing

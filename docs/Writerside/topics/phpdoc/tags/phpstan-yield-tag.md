@@ -6,9 +6,11 @@ The `@phpstan-yield` tag documents the type yielded by a
 `Generator`, distinct from the type it returns on completion. It is
 defined by the static analyzer PHPStan.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-yield" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-yield` tag produces a `YieldTag` instance, carrying the
 parsed `$type` alongside the `$name` and optional `$description` every

@@ -7,9 +7,11 @@ The `@phan-assert-false-condition` tag asserts that a given
 expression evaluates to `false` at the point of the call. It belongs
 to the same assertion family as [@phan-assert](phan-assert-tag.md).
 
+<!-- generated:grammar -->
 ```
 "@phan-assert-false-condition" <Expression>
 ```
+<!-- /generated:grammar -->
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing

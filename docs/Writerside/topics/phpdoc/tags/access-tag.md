@@ -10,12 +10,13 @@ made it largely redundant for ordinary methods and properties, but it still
 turns up to describe a magic member or to override how visible an element
 appears in generated documentation.
 
+<!-- generated:grammar -->
 ```
-"@access"
-    ( "public" | "protected" | "private" )
-    [ <Description> ]
+"@access" <AccessVisibility> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Documenting a magic property as effectively private.
 > ```php
 > /**
@@ -31,6 +32,7 @@ appears in generated documentation.
 >  * @access protected Only subclasses should read the raw buffer.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@access` tag produces an `AccessTag` instance exposing
 `$access`, one of the `Visibility::Public`, `Visibility::Protected`, or

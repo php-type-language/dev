@@ -10,12 +10,14 @@ sign of a mistake, but that warning is a false positive whenever the
 parameter is unused on purpose; rather than disabling the check for the
 whole function, this tag suppresses it for exactly the one parameter named.
 
+<!-- generated:grammar -->
 ```
 "@unused-param" <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
-> Silencing the warning for an interface parameter the implementation
-> ignores.
+<!-- generated:examples -->
+> Silencing the warning for an interface parameter the implementation ignores.
 > ```php
 > /**
 >  * @unused-param $ctx
@@ -30,6 +32,7 @@ whole function, this tag suppresses it for exactly the one parameter named.
 >  */
 > function onChange(mixed $current, mixed $previous): void
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@unused-param` tag produces a `VariableTag` instance exposing
 `$variable`: the parameter's name, without the leading `$`.

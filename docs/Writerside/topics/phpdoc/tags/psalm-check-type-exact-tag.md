@@ -7,9 +7,11 @@ to exactly the given type, disallowing narrower or wider matches.
 It is defined by the static analyzer Psalm, alongside the looser
 [@psalm-check-type](psalm-check-type-tag.md).
 
+<!-- generated:grammar -->
 ```
 "@psalm-check-type-exact" <Variable> "=" <Type>
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-check-type-exact` tag produces a `PsalmCheckTypeExactTag`
 instance, carrying the checked `$variable` and its expected `$type` alongside

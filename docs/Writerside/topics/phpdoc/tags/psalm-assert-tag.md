@@ -6,9 +6,11 @@ The `@psalm-assert` tag asserts that an argument or variable is
 narrowed to a given type after the call returns. It is defined by
 the static analyzer Psalm.
 
+<!-- generated:grammar -->
 ```
-"@psalm-assert" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
+"@psalm-assert" [ ( "!=" | "!" | "=" ) ] <Type> <AssertSubject> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-assert` tag produces an `AssertTag` instance, carrying the
 asserted `$type`, the `$subject` it is asserted of and the `$operator`

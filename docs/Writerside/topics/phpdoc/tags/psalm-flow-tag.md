@@ -6,9 +6,11 @@ The `@psalm-flow` tag is part of Psalm's taint-analysis annotations,
 used to describe how tainted data flows through a function's
 parameters and return value.
 
+<!-- generated:grammar -->
 ```
 "@psalm-flow" <FlowType> [ <Variable> ]
 ```
+<!-- /generated:grammar -->
 
 The `<FlowType>` is a keyword — one of `TaintSource`, `TaintSink`,
 `TaintSpecialize` or `TaintUnescape` — captured into a `FlowType` enum.

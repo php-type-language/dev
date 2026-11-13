@@ -11,10 +11,13 @@ hold — unless the class itself documents them. `@property` is written on
 the class docblock, not on any property or method, typically with one line
 per magic property the class exposes.
 
+<!-- generated:grammar -->
 ```
 "@property" <Type> <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A single magic property on a value object.
 > ```php
 > /**
@@ -42,6 +45,7 @@ per magic property the class exposes.
 >  */
 > class Record {}
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@property` tag produces a `TypedVariableTag` instance exposing:
 

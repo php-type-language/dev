@@ -6,9 +6,11 @@ The `@phpstan-type` tag declares a local alias for a complex type,
 so it can be referenced by name in later `@param`, `@return`, and
 `@var` tags. It is defined by the static analyzer PHPStan.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-type" <Name> [ "=" ] <Type>
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-type` tag produces a `TypeAliasTag` instance, carrying the
 parsed `$alias` name and its `$type` alongside the `$name` every

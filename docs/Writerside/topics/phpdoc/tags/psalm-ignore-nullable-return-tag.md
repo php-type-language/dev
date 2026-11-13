@@ -6,9 +6,11 @@ The `@psalm-ignore-nullable-return` tag tells Psalm to ignore a
 possible `null` value in the return type. It is defined by the
 static analyzer Psalm.
 
+<!-- generated:grammar -->
 ```
 "@psalm-ignore-nullable-return" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-ignore-nullable-return` tag produces a `PsalmIgnoreNullableReturnTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

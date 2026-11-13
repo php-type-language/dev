@@ -11,10 +11,13 @@ portion of text as meant only for the package's own maintainers, letting
 documentation generators strip that portion from public-facing output while
 keeping the rest of the description intact.
 
+<!-- generated:grammar -->
 ```
 "@internal" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > An entire method excluded from the public API.
 > ```php
 > /**
@@ -32,6 +35,7 @@ keeping the rest of the description intact.
 >  */
 > public function format(Message $message): string
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@internal` tag produces an `InternalTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

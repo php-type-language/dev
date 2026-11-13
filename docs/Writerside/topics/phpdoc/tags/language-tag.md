@@ -6,9 +6,11 @@ The `@language` tag injects a foreign-language grammar — SQL, HTML,
 regular expressions, and the like — into a string literal, so PhpStorm can
 apply the right syntax highlighting and completion inside it.
 
+<!-- generated:grammar -->
 ```
 "@language" <Name> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@language` tag produces a `LanguageTag` instance, carrying the
 parsed `$identifier` alongside the `$name` and optional `$description`

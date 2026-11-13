@@ -5,9 +5,11 @@
 The `@phan-transient` tag marks a property as excluded from
 serialization.
 
+<!-- generated:grammar -->
 ```
 "@phan-transient" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-transient` tag produces a `PhanTransientTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

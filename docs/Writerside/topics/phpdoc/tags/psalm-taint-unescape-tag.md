@@ -7,9 +7,11 @@ passing through the described element, reversing an earlier
 [@psalm-taint-escape](psalm-taint-escape-tag.md). It is part of
 Psalm's taint-analysis annotations.
 
+<!-- generated:grammar -->
 ```
 "@psalm-taint-unescape" <Name> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-taint-unescape` tag produces a `PsalmTaintUnescapeTag` instance, carrying the
 parsed `$identifier` alongside the `$name` and optional `$description`

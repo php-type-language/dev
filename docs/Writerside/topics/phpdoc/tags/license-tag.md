@@ -9,10 +9,13 @@ license page, a link to the project's own `LICENSE` file — but some
 licenses are commonly identified by name alone, in which case the tag
 carries only a description such as `MIT` or `Proprietary`.
 
+<!-- generated:grammar -->
 ```
 "@license" ( <URL> [ <Description> ] | <Description> )
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Pointing at the canonical license text.
 > ```php
 > /**
@@ -26,6 +29,7 @@ carries only a description such as `MIT` or `Proprietary`.
 >  * @license MIT
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@license` tag produces a `LicenseTag`
 instance:

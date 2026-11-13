@@ -8,10 +8,13 @@ file-level docblock or on the class that anchors a file, so that generated
 documentation and license-checking tools can surface ownership information
 without having to parse a separate license header.
 
+<!-- generated:grammar -->
 ```
 "@copyright" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A copyright notice naming the holder and year.
 > ```php
 > /**
@@ -26,6 +29,7 @@ without having to parse a separate license header.
 >  * @copyright 2018-2024 Acme Corp. All rights reserved.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@copyright` tag produces a `CopyrightTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description` every

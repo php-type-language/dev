@@ -5,10 +5,11 @@
 The `@phpstan-ignore` tag silences the listed error identifiers reported
 on the current line, defined by PHPStan.
 
+<!-- generated:grammar -->
 ```
-"@phpstan-ignore" <IssueName> { "," <IssueName> }
-    [ <Description> ]
+"@phpstan-ignore" <IssueName> [ "," <IssueName> ... ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-ignore` tag produces a `PhpStanIgnoreTag` instance, carrying the
 listed `$issues` alongside the `$name` and optional `$description` every

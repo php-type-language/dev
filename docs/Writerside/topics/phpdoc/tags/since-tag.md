@@ -8,10 +8,13 @@ where that tag marks the end of an element's life, `@since` marks its
 beginning, letting consumers check whether a given feature exists in the
 version they depend on.
 
+<!-- generated:grammar -->
 ```
 "@since" [ <Version> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A method added in a later minor release.
 > ```php
 > /**
@@ -26,6 +29,7 @@ version they depend on.
 >  * @since 1.0
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@since` tag produces a `SinceTag` instance exposing
 `$version` — the version at which the element became available, or

@@ -9,9 +9,11 @@ siblings — see [@phan-assert-if-true](phan-assert-if-true-tag.md) and
 [@phan-assert-if-false](phan-assert-if-false-tag.md) — as part of the
 same assertion family.
 
+<!-- generated:grammar -->
 ```
-"@phan-assert" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
+"@phan-assert" [ ( "!=" | "!" | "=" ) ] <Type> <AssertSubject> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-assert` tag produces an `AssertTag` instance, carrying the
 asserted `$type`, the `$subject` it is asserted of and the `$operator`

@@ -5,9 +5,11 @@
 The `@psalm-yield` tag documents the type yielded by a `Generator`.
 It is defined by the static analyzer Psalm.
 
+<!-- generated:grammar -->
 ```
 "@psalm-yield" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-yield` tag produces a `YieldTag` instance, carrying the
 parsed `$type` alongside the `$name` and optional `$description` every

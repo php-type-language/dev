@@ -7,10 +7,13 @@ it annotates, so that it can be tracked and picked up later instead of being
 forgotten as a stray code comment. Documentation generators and IDEs can
 collect every `@todo` across a codebase into a single worklist.
 
+<!-- generated:grammar -->
 ```
 "@todo" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Describing the outstanding work directly.
 > ```php
 > /**
@@ -26,6 +29,7 @@ collect every `@todo` across a codebase into a single worklist.
 >  *       ISSUE-482).
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@todo` tag produces a `TodoTag` instance. Being a pure marker, it
 adds nothing beyond the `$name` and optional `$description` every

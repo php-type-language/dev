@@ -17,7 +17,7 @@ final class MoneyPlatform extends Platform
     public function getTags(): iterable
     {
         return [
-            MoneyTagDefinition::NAME => new MoneyTagDefinition(),
+            MoneyTagDefinition::getCanonicalName() => new MoneyTagDefinition(),
         ];
     }
 }
@@ -34,8 +34,8 @@ final class MoneyPlatform extends Platform
 <note>
 <code>MoneyTagDefinition</code> only leans on the built-in <code>Integer</code>
 and <code>Name</code> combinators, so its platform contributes none of its own.
-A platform adds combinators only when its tags introduce grammar the standard
-platform does not already provide — see
+A platform adds combinators only when its tags introduce grammar the parser
+does not already provide — see
 <a href="combinators.md#writing-one-of-your-own">Writing One of Your Own</a>.
 </note>
 
@@ -52,8 +52,8 @@ as `inheritDoc` also answers to `@inheritdoc`.
     <tr>
         <td><code>StandardPlatform</code></td>
         <td>The <a href="standard-tags.md">Standard</a> and
-            <a href="advanced-tags.md">Advanced</a> tags, their aliases and
-            the core combinators. Always loaded.</td>
+            <a href="advanced-tags.md">Advanced</a> tags and their
+            aliases.</td>
     </tr>
     <tr>
         <td><code>PhpDocumentorPlatform</code></td>
@@ -96,16 +96,17 @@ $parser = new DocBlockParser(platforms: [
 $block = $parser->parse('/** @money 100 USD */');
 ```
 
-The `StandardPlatform` is always loaded first, so every standard tag stays
-available; the platforms passed in extend it, each overriding an entry only when
-it reuses the same tag, alias or combinator name.
+The parser loads exactly the platforms it is given, in order: a later platform
+overrides an entry of an earlier one only when it reuses the same tag, alias or
+combinator name. Every platform is self-contained, so `MoneyPlatform` alone
+yields a parser that knows `@money` and nothing else (any other tag is read as a
+plain `Tag`).
 
 <note>
-<code>new DocBlockParser()</code> with no arguments loads <b>only</b> the
-<code>StandardPlatform</code> — the standard tags, and nothing else. To load
-every built-in platform as well (phpDocumentor, Psalm, PHPStan, Phan, PhpStorm
-and PHP CodeSniffer), use the <code>DocBlockParser::createDefault()</code>
-factory:
+<code>new DocBlockParser()</code> with no arguments loads <b>no</b> platform at
+all. To load every built-in one (Standard, phpDocumentor, Psalm, PHPStan, Phan,
+PhpStorm and PHP CodeSniffer, in that order), use the
+<code>DocBlockParser::createDefault()</code> factory:
 
 <code-block lang="php">
 $parser = DocBlockParser::createDefault();

@@ -9,10 +9,13 @@ undifferentiated group. It is meaningful only alongside a `@package` tag on
 the same element, naming a subdivision of the package that tag already
 identifies.
 
+<!-- generated:grammar -->
 ```
 "@subpackage" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Narrowing a package into a specific subsection.
 > ```php
 > /**
@@ -29,6 +32,7 @@ identifies.
 >  *             mail.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@subpackage` tag produces a `SubpackageTag` instance. Being a
 pure marker, it adds nothing beyond the `$name` and optional `$description`

@@ -7,9 +7,11 @@ narrowed to a given type after the call, defined by PHPStan. It has
 `-if-true` and `-if-false` siblings for assertions that only hold when a
 boolean-returning function returns a particular value.
 
+<!-- generated:grammar -->
 ```
-"@phpstan-assert" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
+"@phpstan-assert" [ ( "!=" | "!" | "=" ) ] <Type> <AssertSubject> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-assert` tag produces an `AssertTag` instance, carrying the
 asserted `$type`, the `$subject` it is asserted of and the `$operator`

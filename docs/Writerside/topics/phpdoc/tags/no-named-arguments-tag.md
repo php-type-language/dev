@@ -12,10 +12,13 @@ change even when the type and position stay the same; this tag tells
 callers and analyzers to rely only on positional calls, so the maintainer
 stays free to rename parameters without it counting as a break.
 
+<!-- generated:grammar -->
 ```
 "@no-named-arguments" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A plain marker on a method whose argument names are still in flux.
 > ```php
 > /**
@@ -32,6 +35,7 @@ stays free to rename parameters without it counting as a break.
 >  */
 > function connect(string $dsn, ?string $user, ?string $password): PDO
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@no-named-arguments` tag produces a `FlagTag` instance. Being a
 pure marker, it adds nothing beyond the `$name` and optional `$description`

@@ -14,10 +14,13 @@ unconditionally impure (too pessimistic, since most callbacks passed to it
 are pure), this tag lets purity analysis defer to the callback actually
 supplied at each call site.
 
+<!-- generated:grammar -->
 ```
 "@pure-unless-callable-is-impure" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A plain marker on a mapping helper.
 > ```php
 > /**
@@ -38,6 +41,7 @@ supplied at each call site.
 >     mixed $initial,
 > ): mixed
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@pure-unless-callable-is-impure` tag produces a `FlagTag`
 instance. Being a pure marker, it adds nothing beyond the `$name` and

@@ -9,9 +9,11 @@ coding-standard checks, without needing a paired
 This is pre-3.2.0 PHP_CodeSniffer syntax; current PHP_CodeSniffer prefers
 the `phpcs:*` comment syntax instead, but still understands it.
 
+<!-- generated:grammar -->
 ```
 "@codingStandardsIgnoreLine" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@codingStandardsIgnoreLine` tag produces a `CodingStandardsIgnoreLineTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

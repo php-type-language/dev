@@ -10,10 +10,13 @@ element but flags it as an implementation detail not meant for consumers:
 useful for scaffolding, deprecated leftovers, or helpers that would only
 confuse readers of the public reference.
 
+<!-- generated:grammar -->
 ```
 "@ignore" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Hiding a helper method from generated documentation.
 > ```php
 > /**
@@ -29,6 +32,7 @@ confuse readers of the public reference.
 >  *         removed.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@ignore` tag produces an `IgnoreTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

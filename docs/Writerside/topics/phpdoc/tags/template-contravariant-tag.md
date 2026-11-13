@@ -12,12 +12,13 @@ expected, because anything that can compare animals in general can compare
 dogs in particular. Ordinary invariant `@template` parameters, and covariant
 ones, do not allow that substitution.
 
+<!-- generated:grammar -->
 ```
-"@template-contravariant" <Name>
-    [ "of" <Type> ] [ "=" <Type> ]
-    [ <Description> ]
+"@template-contravariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A comparator whose type parameter only ever appears as an argument.
 > ```php
 > /**
@@ -32,6 +33,7 @@ ones, do not allow that substitution.
 >     public function compare(mixed $a, mixed $b): int;
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@template-contravariant` tag produces the same kind of tag as
 `@template`, exposing `$parameter`, `$bound`, and `$default`; see

@@ -8,10 +8,13 @@ documentation generated for it. It is typically placed once, in the
 file-level docblock near the top of the file, rather than repeated on
 individual elements.
 
+<!-- generated:grammar -->
 ```
 "@filesource" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Requesting the source listing for an entire file.
 > ```php
 > /**
@@ -28,6 +31,7 @@ individual elements.
 >  *             interface.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@filesource` tag produces a `FilesourceTag` instance. Being a
 pure marker, it adds nothing beyond the `$name` and optional `$description`

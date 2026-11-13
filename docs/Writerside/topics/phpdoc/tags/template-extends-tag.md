@@ -9,11 +9,14 @@ produce the exact same `ExtendsTag` instance. The longer, `template-`
 prefixed spelling makes the connection to the class's own
 `@template` parameters explicit, which some codebases prefer.
 
+<!-- generated:grammar -->
 ```
 "@extends" <Type> [ <Description> ]
 "@template-extends" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 <tabs>
 <tab title="Canonical">
 
@@ -38,6 +41,7 @@ prefixed spelling makes the connection to the class's own
 
 </tab>
 </tabs>
+<!-- /generated:examples -->
 
 Both snippets above parse to the same `ExtendsTag`, exposing the same
 `$type` property. See [@extends](extends-tag.md) for the canonical

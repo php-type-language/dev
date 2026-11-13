@@ -7,10 +7,13 @@ state can change after construction. Real enforcement exists independently
 in Psalm (`@psalm-immutable`), PHPStan (`@phpstan-immutable`) and Phan
 (`@phan-immutable`).
 
+<!-- generated:grammar -->
 ```
 "@immutable" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A value object whose state is fixed once built.
 > ```php
 > /**
@@ -25,6 +28,7 @@ in Psalm (`@psalm-immutable`), PHPStan (`@phpstan-immutable`) and Phan
 >  * @immutable Every "with*" method returns a new instance.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@immutable` tag produces an `ImmutableTag` instance. Being a
 pure marker, it adds nothing beyond the `$name` and optional `$description`

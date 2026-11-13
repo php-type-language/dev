@@ -7,9 +7,11 @@ separately per call site, rather than merging taint information from
 all callers together. It is part of Psalm's taint-analysis
 annotations.
 
+<!-- generated:grammar -->
 ```
 "@psalm-taint-specialize" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-taint-specialize` tag produces a `PsalmTaintSpecializeTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

@@ -9,10 +9,13 @@ instead of repeating them. It saves an overriding method from having to
 restate a parent's contract word for word when it isn't changing that
 contract, only its implementation.
 
+<!-- generated:grammar -->
 ```
 "@inheritDoc" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > As a standalone tag, inheriting the parent docblock wholesale.
 > ```php
 > /**
@@ -21,8 +24,7 @@ contract, only its implementation.
 > public function send(Message $message): bool
 > ```
 
-> Used inline, to graft an addition onto the inherited
-> text.
+> Used inline, to graft an addition onto the inherited text.
 > ```php
 > /**
 >  * {@inheritDoc} Also flushes the queue before
@@ -30,6 +32,7 @@ contract, only its implementation.
 >  */
 > public function send(Message $message): bool
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@inheritDoc` tag produces an `InheritDocTag`
 instance:

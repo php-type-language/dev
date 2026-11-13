@@ -6,9 +6,11 @@ The `@psalm-type` tag declares a local alias for a complex type,
 which can then be reused across the codebase. It is defined by the
 static analyzer Psalm.
 
+<!-- generated:grammar -->
 ```
 "@psalm-type" <Name> [ "=" ] <Type>
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-type` tag produces a `TypeAliasTag` instance, carrying the
 parsed `$alias` name and its `$type` alongside the `$name` every

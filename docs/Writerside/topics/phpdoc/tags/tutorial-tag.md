@@ -6,9 +6,11 @@
 The `@tutorial` tag associates a tutorial or other extended documentation
 resource with an element, pointing to it by URI.
 
+<!-- generated:grammar -->
 ```
 "@tutorial" <URI> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing

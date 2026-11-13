@@ -139,12 +139,14 @@ Sixteen combinators cover every built-in tag's grammar between them:
 </table>
 
 <note>
-Combinators are registered by <a href="platforms.md">platforms</a>, like
-everything else. <code>StandardPlatform</code> provides <code>URI</code>,
+The parser itself provides <code>URI</code>,
 <code>URL</code>, <code>Reference</code>, <code>Type</code>,
 <code>CallableType</code>, <code>Variable</code>, <code>AssertSubject</code>,
 <code>Integer</code>, <code>IssueName</code>, <code>Version</code> and
-<code>Name</code>; <code>PhpDocumentorPlatform</code> adds
+<code>Name</code> to every platform, <code>Type</code> and
+<code>CallableType</code> reading types with the <code>TypeParser</code>
+passed to <code>DocBlockParser</code>. <a href="platforms.md">Platforms</a> add
+the combinators only their own tags need: <code>PhpDocumentorPlatform</code> adds
 <code>Visibility</code>, <code>AuthorName</code> and <code>Email</code>, and
 <code>PsalmPlatform</code> adds <code>FlowType</code>. <code>Description</code>
 is wired by the parser itself and cannot be redefined.

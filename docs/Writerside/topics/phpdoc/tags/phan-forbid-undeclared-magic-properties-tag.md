@@ -7,9 +7,11 @@ undeclared magic properties on the class it decorates, so only the
 properties actually documented via
 [@property](property-tag.md) may be accessed.
 
+<!-- generated:grammar -->
 ```
 "@phan-forbid-undeclared-magic-properties" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-forbid-undeclared-magic-properties` tag produces a `PhanForbidUndeclaredMagicPropertiesTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

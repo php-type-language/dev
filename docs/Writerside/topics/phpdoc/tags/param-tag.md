@@ -7,15 +7,18 @@ type of value it accepts, and — since PHP's own type hints cannot express
 everything a docblock can (a shape, a generic, a literal, a conditional
 type) — often more precisely than the function's native signature does.
 
+<!-- generated:grammar -->
 ```
 "@param" <Type> <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 The type is parsed using the full [TypeLang grammar](introduction.md),
 so anything documented elsewhere in this reference — a
 [shape](shape-types.md), a [generic](generic-types.md), a
 [conditional type](conditional-types.md) — is equally valid here.
 
+<!-- generated:examples -->
 > A plain scalar type.
 > ```php
 > /**
@@ -36,6 +39,7 @@ so anything documented elsewhere in this reference — a
 >  * @param array{name: string, age: int<0, max>} $profile
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@param` tag produces a `ParamTag` instance exposing:
 

@@ -5,9 +5,11 @@
 The `@phan-suppress-next-next-line` tag silences the listed
 issue types reported two lines below the annotation.
 
+<!-- generated:grammar -->
 ```
-"@phan-suppress-next-next-line" <IssueName> { "," <IssueName> } [ <Description> ]
+"@phan-suppress-next-next-line" <IssueName> [ "," <IssueName> ... ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-suppress-next-next-line` tag produces a `PhanSuppressNextNextLineTag` instance, carrying the
 listed `$issues` alongside the `$name` and optional `$description` every

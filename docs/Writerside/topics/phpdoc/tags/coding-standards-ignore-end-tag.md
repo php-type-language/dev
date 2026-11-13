@@ -8,9 +8,11 @@ resuming coding-standard checks from this point on. This is pre-3.2.0
 PHP_CodeSniffer syntax; current PHP_CodeSniffer prefers the `phpcs:*`
 comment syntax instead, but still understands it.
 
+<!-- generated:grammar -->
 ```
 "@codingStandardsIgnoreEnd" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@codingStandardsIgnoreEnd` tag produces a `CodingStandardsIgnoreEndTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

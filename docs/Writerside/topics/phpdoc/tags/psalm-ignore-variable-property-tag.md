@@ -7,9 +7,11 @@ property" issues for properties accessed on the annotated variable,
 letting Psalm skip verification of a magic or dynamically resolved
 property access.
 
+<!-- generated:grammar -->
 ```
 "@psalm-ignore-variable-property" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-ignore-variable-property` tag produces a `PsalmIgnoreVariablePropertyTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

@@ -9,10 +9,13 @@ coarser-grained sibling of [@package](package-tag.md) and
 [@subpackage](subpackage-tag.md): where those two narrow down to a specific
 module, `@category` places that module within a wider organizational scheme.
 
+<!-- generated:grammar -->
 ```
 "@category" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Placing a package under a broad category.
 > ```php
 > /**
@@ -28,6 +31,7 @@ module, `@category` places that module within a wider organizational scheme.
 >  *           stores.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@category` tag produces a `CategoryTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description` every

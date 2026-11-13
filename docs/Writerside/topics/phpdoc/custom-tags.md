@@ -72,11 +72,14 @@ match into that tag object:
 ```php
 final class MoneyTagDefinition extends TagDefinition
 {
-    public const string NAME = 'money';
+    public static function getCanonicalName(): string
+    {
+        return 'money';
+    }
 
     public function __construct()
     {
-        parent::__construct(self::NAME, Spec::sequence(
+        parent::__construct(self::getCanonicalName(), Spec::sequence(
             Spec::rule(IntegerCombinator::NAME, 'amount', 'Amount'),
             Spec::rule(NameCombinator::NAME, 'currency', 'Currency'),
             Spec::maybe(
@@ -117,7 +120,7 @@ final class MoneyPlatform extends Platform
     public function getTags(): iterable
     {
         return [
-            MoneyTagDefinition::NAME => new MoneyTagDefinition(),
+            MoneyTagDefinition::getCanonicalName() => new MoneyTagDefinition(),
         ];
     }
 }

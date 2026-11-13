@@ -6,9 +6,11 @@ The `@psalm-self-out` tag documents the refined type of `$this`
 after the method call, letting callers see a narrower object type
 than the one they started with.
 
+<!-- generated:grammar -->
 ```
 "@psalm-self-out" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-self-out` tag produces a `SelfOutTag` instance, carrying the
 parsed `$type` alongside the `$name` and optional `$description` every

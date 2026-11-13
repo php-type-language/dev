@@ -9,10 +9,13 @@ render into sections, which is especially useful for a codebase whose
 namespace layout doesn't line up with how its documentation should be
 structured.
 
+<!-- generated:grammar -->
 ```
 "@package" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Grouping a class into a package.
 > ```php
 > /**
@@ -28,6 +31,7 @@ structured.
 >  *          messages.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@package` tag produces a `PackageTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

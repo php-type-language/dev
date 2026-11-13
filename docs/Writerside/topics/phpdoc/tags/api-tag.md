@@ -8,10 +8,13 @@ element is safe to depend on: unlike the rest of an internal or
 work-in-progress codebase, its signature is not expected to change between
 releases without a deprecation notice.
 
+<!-- generated:grammar -->
 ```
 "@api" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A class marked as part of the public API.
 > ```php
 > /**
@@ -27,6 +30,7 @@ releases without a deprecation notice.
 >  */
 > public function send(Message $message): bool
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@api` tag produces an `ApiTag` instance. Being a pure marker, it
 adds nothing beyond the `$name` and optional `$description` every

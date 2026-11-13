@@ -11,10 +11,13 @@ closure is eventually invoked through `Closure::bindTo()`, `Closure::call()`,
 or an equivalent internal rebinding. Without this tag, code inside the
 closure that reads `$this` has no documented type to check against.
 
+<!-- generated:grammar -->
 ```
 "@param-closure-this" <Type> <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Pinning `$this` for a closure evaluated in the context of a builder.
 > ```php
 > /**
@@ -34,6 +37,7 @@ closure that reads `$this` has no documented type to check against.
 >  */
 > function onConnect(Closure $callback): void
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@param-closure-this` tag produces a `ParamClosureThisTag` instance
 (a `TypedVariableTag`) exposing:

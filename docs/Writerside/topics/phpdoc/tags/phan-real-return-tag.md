@@ -6,9 +6,11 @@ The `@phan-real-return` tag documents the actual native return
 type of a function or method, kept distinct from the type
 documented via [@return](return-tag.md).
 
+<!-- generated:grammar -->
 ```
 "@phan-real-return" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-real-return` tag produces a `PhanRealReturnTag` instance, carrying the
 parsed `$type` alongside the `$name` and optional `$description` every

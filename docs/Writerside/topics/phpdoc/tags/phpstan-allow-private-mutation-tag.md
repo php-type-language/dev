@@ -5,9 +5,11 @@
 The `@phpstan-allow-private-mutation` tag allows a private-scope mutation
 of an otherwise immutable property, defined by PHPStan.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-allow-private-mutation" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-allow-private-mutation` tag produces a `AllowPrivateMutationTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

@@ -9,10 +9,13 @@ should reject it (or simply doesn't exist). It is the mirror image of
 such as a setter that stores a hashed or otherwise transformed value that
 the object never exposes in its original form.
 
+<!-- generated:grammar -->
 ```
 "@property-write" <Type> <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A setter with no corresponding getter.
 > ```php
 > /**
@@ -34,6 +37,7 @@ the object never exposes in its original form.
 >  */
 > class Service {}
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@property-write` tag produces a `TypedVariableTag` instance
 exposing:

@@ -6,9 +6,11 @@ The `@psalm-external-mutation-free` tag declares that a method never
 mutates state observable from outside the object. It is defined by
 the static analyzer Psalm.
 
+<!-- generated:grammar -->
 ```
 "@psalm-external-mutation-free" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-external-mutation-free` tag produces a `PsalmExternalMutationFreeTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

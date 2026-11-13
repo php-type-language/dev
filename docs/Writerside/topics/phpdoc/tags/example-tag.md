@@ -9,12 +9,13 @@ piece one together from the description alone. The reference can optionally
 be narrowed to a specific line range, letting a single illustrating file be
 reused across several tags that each highlight a different part of it.
 
+<!-- generated:grammar -->
 ```
-"@example" ( <URL> | <URI> )
-    [ <StartLine> [ <LinesCount> ] ]
-    [ <Description> ]
+"@example" ( <URL> | <URI> ) [ <StartLine> [ <LinesCount> ] ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Pointing at an entire example file.
 > ```php
 > /**
@@ -31,6 +32,7 @@ reused across several tags that each highlight a different part of it.
 >  */
 > public function withRetries(int $attempts): static
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@example` tag produces an `ExampleTag` instance exposing:
 

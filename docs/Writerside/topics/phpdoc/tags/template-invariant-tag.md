@@ -11,12 +11,14 @@ that want to say so explicitly, mirroring how
 [@template-contravariant](template-contravariant-tag.md) name their own
 variance.
 
+<!-- generated:grammar -->
 ```
-"@template-invariant" <Name>
-    [ "of" <Type> ] [ "=" <Type> ]
-    [ <Description> ]
+"@template" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]
+"@template-invariant" <Name> [ "of" <Type> ] [ "=" <Type> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 <tabs>
 <tab title="Canonical">
 
@@ -39,6 +41,7 @@ variance.
 
 </tab>
 </tabs>
+<!-- /generated:examples -->
 
 Both spellings above parse to the exact same `TemplateTag` instance. See
 [@template](template-tag.md) for the full grammar, the

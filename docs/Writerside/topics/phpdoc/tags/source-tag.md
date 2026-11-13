@@ -9,11 +9,13 @@ code clarifies behavior that prose alone would need many words to explain.
 Unlike [@example](example-tag.md), which references a separate illustrating
 file, `@source` always refers back to the element it is written on.
 
+<!-- generated:grammar -->
 ```
-"@source" <StartLine> [ <LinesCount> ]
-    [ <Description> ]
+"@source" <StartLine> [ <LinesCount> ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Excerpting a specific block of the method's own body.
 > ```php
 > /**
@@ -31,6 +33,7 @@ file, `@source` always refers back to the element it is written on.
 >  * @source 10 The core resolution algorithm starts here.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@source` tag produces a `SourceTag` instance exposing `$start` —
 the starting line of the excerpt, always given — and `$count`, the number of

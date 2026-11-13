@@ -6,9 +6,11 @@ The `@psalm-taint-escape` tag marks a value as no longer tainted
 after passing through the described element. It is part of Psalm's
 taint-analysis annotations.
 
+<!-- generated:grammar -->
 ```
 "@psalm-taint-escape" <Name> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-taint-escape` tag produces a `PsalmTaintEscapeTag` instance, carrying the
 parsed `$identifier` alongside the `$name` and optional `$description`

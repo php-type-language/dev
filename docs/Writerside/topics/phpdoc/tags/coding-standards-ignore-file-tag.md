@@ -7,9 +7,11 @@ coding-standard checks. This is pre-3.2.0 PHP_CodeSniffer syntax; current
 PHP_CodeSniffer prefers the `phpcs:*` comment syntax instead, but still
 understands it.
 
+<!-- generated:grammar -->
 ```
 "@codingStandardsIgnoreFile" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@codingStandardsIgnoreFile` tag produces a `CodingStandardsIgnoreFileTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

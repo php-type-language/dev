@@ -6,9 +6,11 @@ The `@phpstan-assert-if-true` tag asserts the given type when the
 function returns `true`, defined by PHPStan. It is one of the
 [@phpstan-assert](phpstan-assert-tag.md) family of narrowing tags.
 
+<!-- generated:grammar -->
 ```
-"@phpstan-assert-if-true" [ "!" | "=" | "!=" ] <Type> <Subject> [ <Description> ]
+"@phpstan-assert-if-true" [ ( "!=" | "!" | "=" ) ] <Type> <AssertSubject> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-assert-if-true` tag produces an `AssertIfTrueTag` instance, carrying the
 asserted `$type`, the `$subject` it is asserted of and the `$operator`

@@ -12,11 +12,13 @@ only ever invokes such a callback synchronously is easier to reason about as
 pure or side-effect-free. Without this tag, an analyzer has to assume the
 callable might be kept and invoked at some unrelated point in time.
 
+<!-- generated:grammar -->
 ```
-"@param-immediately-invoked-callable" <Variable>
-    [ <Description> ]
+"@param-immediately-invoked-callable" <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A plain marker on a mapping callback.
 > ```php
 > /**
@@ -36,6 +38,7 @@ callable might be kept and invoked at some unrelated point in time.
 >  */
 > function withLock(callable $callback): mixed
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@param-immediately-invoked-callable` tag produces a `VariableTag`
 instance exposing `$variable`: the parameter's name, without the leading

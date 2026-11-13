@@ -5,9 +5,11 @@
 The `@phpstan-impure` tag declares a function or method as impure — that
 is, having side effects — defined by PHPStan.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-impure" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-impure` tag produces a `PhpStanImpureTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

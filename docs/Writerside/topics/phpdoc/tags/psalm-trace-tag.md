@@ -5,16 +5,20 @@
 The `@psalm-trace` tag outputs the inferred type of the given variable, for
 debugging purposes.
 
+<!-- generated:grammar -->
 ```
 "@psalm-trace" <Variable> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Inspecting the type Psalm infers for a variable.
 > ```php
 > /**
 >  * @psalm-trace $result
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@psalm-trace` tag produces a `PsalmTraceTag` instance, carrying
 the traced `$variable` alongside the `$name` and optional `$description`

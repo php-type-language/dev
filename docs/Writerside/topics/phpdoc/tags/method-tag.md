@@ -8,11 +8,13 @@ declaration, and that therefore does not otherwise appear anywhere in the
 class's own source. It is written on the class itself, once per magic method,
 using the same syntax as a [callable type](callable-types.md).
 
+<!-- generated:grammar -->
 ```
-"@method" [ "static" ] [ <ReturnType> ]
-    <CallableType> [ <Description> ]
+"@method" [ "static" ] ( <Type> <CallableType> | <CallableType> ) [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A magic instance method with no return type.
 > ```php
 > /**
@@ -21,8 +23,7 @@ using the same syntax as a [callable type](callable-types.md).
 > class Model {}
 > ```
 
-> A magic static method, with its return type inside the
-> signature.
+> A magic static method, with its return type inside the signature.
 > ```php
 > /**
 >  * @method static static create(array $attributes)
@@ -30,14 +31,15 @@ using the same syntax as a [callable type](callable-types.md).
 > class Model {}
 > ```
 
-> The return type may instead be written before the
-> signature; the two forms are equivalent.
+> The return type may instead be written before the signature; the two forms
+> are equivalent.
 > ```php
 > /**
 >  * @method int getId()
 >  * @method getId(): int
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@method` tag produces a `MethodTag` instance:
 

@@ -4,9 +4,11 @@
 
 The `@phan-type` tag declares a local alias for a complex type.
 
+<!-- generated:grammar -->
 ```
 "@phan-type" <Name> [ "=" ] <Type>
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-type` tag produces a `TypeAliasTag` instance, carrying the
 parsed `$alias` name and its `$type` alongside the `$name` every

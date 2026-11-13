@@ -8,10 +8,13 @@ literal value, a generic, or a type that depends on one of the arguments.
 It is one of the most commonly written tags, since even a fully typed
 signature rarely captures the exact structure callers can rely on.
 
+<!-- generated:grammar -->
 ```
 "@return" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Narrowing a native `array` return type to its actual shape.
 > ```php
 > /**
@@ -25,6 +28,7 @@ signature rarely captures the exact structure callers can rely on.
 >  * @return list<User> All currently active users.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@return` tag produces a `ReturnTag` instance exposing
 `$type` — the parsed `TypeNode` — together with the `$name` and

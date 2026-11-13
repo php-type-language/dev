@@ -46,6 +46,8 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
  *
  * A prefixed tag that restates a common one gets the definition of that tag,
  * Phan's own marker tags are contributed as their own flag definitions.
+ *
+ * @generated from resources/model/phan.xml, edit the model instead
  */
 final class PhanPlatform extends Platform
 {
@@ -57,13 +59,20 @@ final class PhanPlatform extends Platform
         return [
             'phan-abstract' => new AbstractTagDefinition(),
             'phan-assert' => new AssertTagDefinition(),
-            'phan-assert-if-true' => new AssertIfTrueTagDefinition(),
             'phan-assert-if-false' => new AssertIfFalseTagDefinition(),
+            'phan-assert-if-true' => new AssertIfTrueTagDefinition(),
+            PhanClosureScopeTagDefinition::getCanonicalName() => new PhanClosureScopeTagDefinition(),
+            PhanConstructorUsedForSideEffectsTagDefinition::getCanonicalName() => new PhanConstructorUsedForSideEffectsTagDefinition(),
             'phan-extends' => new ExtendsTagDefinition(),
+            PhanFileSuppressTagDefinition::getCanonicalName() => new PhanFileSuppressTagDefinition(),
+            PhanForbidUndeclaredMagicMethodsTagDefinition::getCanonicalName() => new PhanForbidUndeclaredMagicMethodsTagDefinition(),
+            PhanForbidUndeclaredMagicPropertiesTagDefinition::getCanonicalName() => new PhanForbidUndeclaredMagicPropertiesTagDefinition(),
+            PhanHardcodeReturnTypeTagDefinition::getCanonicalName() => new PhanHardcodeReturnTypeTagDefinition(),
             'phan-immutable' => new ImmutableTagDefinition(),
             'phan-inherits' => new ExtendsTagDefinition(),
             'phan-method' => new MethodTagDefinition(),
             'phan-mixin' => new MixinTagDefinition(),
+            PhanOutputReferenceTagDefinition::getCanonicalName() => new PhanOutputReferenceTagDefinition(),
             'phan-override' => new OverrideTagDefinition(),
             'phan-param' => new ParamTagDefinition(),
             'phan-property' => new PropertyTagDefinition(),
@@ -71,26 +80,19 @@ final class PhanPlatform extends Platform
             'phan-property-write' => new PropertyWriteTagDefinition(),
             'phan-pure' => new PureTagDefinition(),
             'phan-read-only' => new ReadonlyTagDefinition(),
+            PhanRealReturnTagDefinition::getCanonicalName() => new PhanRealReturnTagDefinition(),
             'phan-return' => new ReturnTagDefinition(),
+            PhanSideEffectFreeTagDefinition::getCanonicalName() => new PhanSideEffectFreeTagDefinition(),
+            PhanSuppressCurrentLineTagDefinition::getCanonicalName() => new PhanSuppressCurrentLineTagDefinition(),
+            PhanSuppressNextLineTagDefinition::getCanonicalName() => new PhanSuppressNextLineTagDefinition(),
+            PhanSuppressNextNextLineTagDefinition::getCanonicalName() => new PhanSuppressNextNextLineTagDefinition(),
+            PhanSuppressPreviousLineTagDefinition::getCanonicalName() => new PhanSuppressPreviousLineTagDefinition(),
             'phan-template' => new TemplateTagDefinition(),
+            PhanTransientTagDefinition::getCanonicalName() => new PhanTransientTagDefinition(),
             'phan-type' => new TypeAliasTagDefinition(),
             'phan-unused-param' => new UnusedParamTagDefinition(),
             'phan-var' => new VarTagDefinition(),
-            PhanClosureScopeTagDefinition::NAME => new PhanClosureScopeTagDefinition(),
-            PhanConstructorUsedForSideEffectsTagDefinition::NAME => new PhanConstructorUsedForSideEffectsTagDefinition(),
-            PhanFileSuppressTagDefinition::NAME => new PhanFileSuppressTagDefinition(),
-            PhanSuppressCurrentLineTagDefinition::NAME => new PhanSuppressCurrentLineTagDefinition(),
-            PhanSuppressNextLineTagDefinition::NAME => new PhanSuppressNextLineTagDefinition(),
-            PhanSuppressNextNextLineTagDefinition::NAME => new PhanSuppressNextNextLineTagDefinition(),
-            PhanSuppressPreviousLineTagDefinition::NAME => new PhanSuppressPreviousLineTagDefinition(),
-            PhanHardcodeReturnTypeTagDefinition::NAME => new PhanHardcodeReturnTypeTagDefinition(),
-            PhanRealReturnTagDefinition::NAME => new PhanRealReturnTagDefinition(),
-            PhanForbidUndeclaredMagicMethodsTagDefinition::NAME => new PhanForbidUndeclaredMagicMethodsTagDefinition(),
-            PhanForbidUndeclaredMagicPropertiesTagDefinition::NAME => new PhanForbidUndeclaredMagicPropertiesTagDefinition(),
-            PhanSideEffectFreeTagDefinition::NAME => new PhanSideEffectFreeTagDefinition(),
-            PhanTransientTagDefinition::NAME => new PhanTransientTagDefinition(),
-            PhanWriteOnlyTagDefinition::NAME => new PhanWriteOnlyTagDefinition(),
-            PhanOutputReferenceTagDefinition::NAME => new PhanOutputReferenceTagDefinition(),
+            PhanWriteOnlyTagDefinition::getCanonicalName() => new PhanWriteOnlyTagDefinition(),
         ];
     }
 
@@ -100,7 +102,7 @@ final class PhanPlatform extends Platform
     public function getAliases(): iterable
     {
         return [
-            'phanclosurescope' => PhanClosureScopeTagDefinition::NAME,
+            'phanclosurescope' => 'phan-closure-scope',
         ];
     }
 }

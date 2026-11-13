@@ -10,10 +10,13 @@ algorithm, or a page in an external vendor's documentation. Unlike
 a URI, `@link` only ever points *outside* the codebase — its argument must
 be a well-formed URI, never a class, method, or constant reference.
 
+<!-- generated:grammar -->
 ```
 "@link" <URI> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A bare link to an external specification.
 > ```php
 > /**
@@ -21,14 +24,14 @@ be a well-formed URI, never a class, method, or constant reference.
 >  */
 > ```
 
-> A link with a description explaining why it's
-> relevant.
+> A link with a description explaining why it's relevant.
 > ```php
 > /**
 >  * @link https://example.com/docs/rate-limits Applies to all public
 >  *       endpoints.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@link` tag produces a `LinkTag` instance:
 

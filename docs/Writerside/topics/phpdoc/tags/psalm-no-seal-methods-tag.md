@@ -7,9 +7,11 @@ methods beyond those already documented — the inverse of
 [@seal-methods](seal-methods-tag.md), which this library already
 recognizes bare.
 
+<!-- generated:grammar -->
 ```
 "@psalm-no-seal-methods" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-no-seal-methods` tag produces a `PsalmNoSealMethodsTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

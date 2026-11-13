@@ -10,10 +10,13 @@ namespaces and classes were the norm, where two files might otherwise define
 identically-named globals or functions that generated documentation would
 struggle to tell apart.
 
+<!-- generated:grammar -->
 ```
 "@name" <Name> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Giving a global configuration array a clearer alias.
 > ```php
 > /**
@@ -28,6 +31,7 @@ struggle to tell apart.
 >  * @name legacy_mailer Superseded by Mailer::class; kept for BC.
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@name` tag produces a `NameTag` instance exposing `$alias`, the
 name assigned to the element, as a string.

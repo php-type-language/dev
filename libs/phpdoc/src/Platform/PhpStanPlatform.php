@@ -49,6 +49,8 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
  *
  * A prefixed tag that restates a common one gets the definition of that tag,
  * PHPStan's own marker tags are contributed as their own flag definitions.
+ *
+ * @generated from resources/model/phpstan.xml, edit the model instead
  */
 final class PhpStanPlatform extends Platform
 {
@@ -60,13 +62,17 @@ final class PhpStanPlatform extends Platform
         return [
             'phpstan-allow-private-mutation' => new AllowPrivateMutationTagDefinition(),
             'phpstan-assert' => new AssertTagDefinition(),
-            'phpstan-assert-if-true' => new AssertIfTrueTagDefinition(),
             'phpstan-assert-if-false' => new AssertIfFalseTagDefinition(),
+            'phpstan-assert-if-true' => new AssertIfTrueTagDefinition(),
             'phpstan-consistent-constructor' => new ConsistentConstructorTagDefinition(),
             'phpstan-extends' => new ExtendsTagDefinition(),
+            PhpStanIgnoreTagDefinition::getCanonicalName() => new PhpStanIgnoreTagDefinition(),
+            PhpStanIgnoreLineTagDefinition::getCanonicalName() => new PhpStanIgnoreLineTagDefinition(),
+            PhpStanIgnoreNextLineTagDefinition::getCanonicalName() => new PhpStanIgnoreNextLineTagDefinition(),
             'phpstan-immutable' => new ImmutableTagDefinition(),
             'phpstan-implements' => new ImplementsTagDefinition(),
             'phpstan-import-type' => new ImportTypeAliasTagDefinition(),
+            PhpStanImpureTagDefinition::getCanonicalName() => new PhpStanImpureTagDefinition(),
             'phpstan-method' => new MethodTagDefinition(),
             'phpstan-param' => new ParamTagDefinition(),
             'phpstan-param-closure-this' => new ParamClosureThisTagDefinition(),
@@ -92,10 +98,6 @@ final class PhpStanPlatform extends Platform
             'phpstan-use' => new UseTagDefinition(),
             'phpstan-var' => new VarTagDefinition(),
             'phpstan-yield' => new YieldTagDefinition(),
-            PhpStanImpureTagDefinition::NAME => new PhpStanImpureTagDefinition(),
-            PhpStanIgnoreTagDefinition::NAME => new PhpStanIgnoreTagDefinition(),
-            PhpStanIgnoreLineTagDefinition::NAME => new PhpStanIgnoreLineTagDefinition(),
-            PhpStanIgnoreNextLineTagDefinition::NAME => new PhpStanIgnoreNextLineTagDefinition(),
         ];
     }
 

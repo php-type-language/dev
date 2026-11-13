@@ -8,10 +8,13 @@ gives readers (and tooling that generates contributor listings or contact
 information) a place to find out who to ask about a class, method, or
 function.
 
+<!-- generated:grammar -->
 ```
 "@author" <AuthorName> [ "<" <Email> ">" ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Just a name, with no way to contact them directly.
 > ```php
 > /**
@@ -25,6 +28,7 @@ function.
 >  * @author Jane Doe <jane.doe@example.com>
 >  */
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@author` tag produces an `AuthorTag` instance exposing:
 

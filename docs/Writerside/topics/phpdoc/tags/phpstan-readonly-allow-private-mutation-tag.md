@@ -7,9 +7,11 @@ property to be mutated from within the declaring class, rather than
 only during initialization. It is defined by the static analyzer
 PHPStan.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-readonly-allow-private-mutation" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-readonly-allow-private-mutation` tag produces a `ReadonlyAllowPrivateMutationTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

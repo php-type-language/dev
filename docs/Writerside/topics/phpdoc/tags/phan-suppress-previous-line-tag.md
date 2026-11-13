@@ -5,9 +5,11 @@
 The `@phan-suppress-previous-line` tag silences the listed
 issue types reported on the previous line.
 
+<!-- generated:grammar -->
 ```
-"@phan-suppress-previous-line" <IssueName> { "," <IssueName> } [ <Description> ]
+"@phan-suppress-previous-line" <IssueName> [ "," <IssueName> ... ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-suppress-previous-line` tag produces a `PhanSuppressPreviousLineTag` instance, carrying the
 listed `$issues` alongside the `$name` and optional `$description` every

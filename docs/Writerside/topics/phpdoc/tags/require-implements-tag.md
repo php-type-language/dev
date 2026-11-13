@@ -8,12 +8,15 @@ mixed into a class that implements it. `@require-implements` declares that
 constraint, letting a static analyzer flag any class that uses the trait
 without also implementing the required interface.
 
+<!-- generated:grammar -->
 ```
 "@require-implements" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
-> A trait that provides a default implementation
-> on top of a required interface.
+<!-- generated:examples -->
+> A trait that provides a default implementation on top of a required
+> interface.
 > ```php
 > /**
 >  * @require-implements Comparable
@@ -26,6 +29,7 @@ without also implementing the required interface.
 >     }
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@require-implements` tag produces a `RequireImplementsTag`
 instance exposing `$type` — the `TypeNode` naming the required

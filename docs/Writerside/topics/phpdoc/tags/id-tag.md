@@ -6,9 +6,11 @@
 The `@id` tag assigns a unique identifier to a tutorial section, giving a
 [@tutorial](tutorial-tag.md) tag elsewhere a target to link into.
 
+<!-- generated:grammar -->
 ```
 "@id" <ID> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 <note>
 Not yet recognized by <code>TypeLang\PhpDoc\DocBlockParser</code> — parsing

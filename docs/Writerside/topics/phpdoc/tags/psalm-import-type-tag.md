@@ -5,10 +5,11 @@
 The `@psalm-import-type` tag imports a `@psalm-type` alias declared in
 another class, optionally binding it to a local alias name.
 
+<!-- generated:grammar -->
 ```
-"@psalm-import-type" <Name> "from" <Type>
-    [ "as" <Name> ]
+"@psalm-import-type" <Name> "from" <Type> [ "as" <Name> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-import-type` tag produces an `ImportTypeAliasTag` instance,
 carrying the imported `$alias`, the `$type` it is imported from, and the

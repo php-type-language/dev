@@ -6,9 +6,11 @@ The `@phan-write-only` tag, paired with
 [@phan-read-only](phan-read-only-tag.md), declares that a
 property may only ever be written, never read.
 
+<!-- generated:grammar -->
 ```
 "@phan-write-only" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-write-only` tag produces a `PhanWriteOnlyTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

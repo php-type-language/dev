@@ -9,12 +9,14 @@ the trait may only be used inside a class extending the given type, so a
 static analyzer can verify every such use site and let the trait reference
 the parent's members without redeclaring or stubbing them.
 
+<!-- generated:grammar -->
 ```
 "@require-extends" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
-> A trait that assumes it is only ever mixed into
-> an `Entity` subclass.
+<!-- generated:examples -->
+> A trait that assumes it is only ever mixed into an `Entity` subclass.
 > ```php
 > /**
 >  * @require-extends Entity
@@ -27,6 +29,7 @@ the parent's members without redeclaring or stubbing them.
 >     }
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@require-extends` tag produces a `RequireExtendsTag`
 instance exposing `$type` — the `TypeNode` naming the required

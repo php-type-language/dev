@@ -8,12 +8,14 @@ attribute, and covers the cases the attribute cannot: codebases that still
 support older PHP versions, and interfaces or traits, where the native
 attribute has no effect.
 
+<!-- generated:grammar -->
 ```
 "@override" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
-> Flagging an override on a codebase targeting PHP
-> versions before 8.3.
+<!-- generated:examples -->
+> Flagging an override on a codebase targeting PHP versions before 8.3.
 > ```php
 > /**
 >  * @override
@@ -21,14 +23,14 @@ attribute has no effect.
 > public function handle(Request $request): Response
 > ```
 
-> With a note about what changed relative to the parent
-> implementation.
+> With a note about what changed relative to the parent implementation.
 > ```php
 > /**
 >  * @override Adds retry handling on top of the base transport.
 >  */
 > public function send(Message $message): bool
 > ```
+<!-- /generated:examples -->
 
 Parsing an `@override` tag produces an `OverrideTag`
 instance:

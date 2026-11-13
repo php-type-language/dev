@@ -6,9 +6,11 @@ The `@phpstan-pure` tag declares a function or method as pure — free
 of side effects, always returning the same result for the same
 arguments. It is defined by the static analyzer PHPStan.
 
+<!-- generated:grammar -->
 ```
 "@phpstan-pure" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phpstan-pure` tag produces a `PureTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

@@ -6,9 +6,11 @@ The `@psalm-consistent-templates` tag requires that all subclasses
 use the same template parameters as the parent. It is defined by
 the static analyzer Psalm.
 
+<!-- generated:grammar -->
 ```
 "@psalm-consistent-templates" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-consistent-templates` tag produces a `PsalmConsistentTemplatesTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

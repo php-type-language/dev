@@ -8,11 +8,14 @@ two spellings parse identically and produce the exact same
 `ExtendsTag` instance. Some tools favor this plainer English word in
 place of the PHP keyword — this component accepts either.
 
+<!-- generated:grammar -->
 ```
 "@extends" <Type> [ <Description> ]
 "@inherits" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 <tabs>
 <tab title="Canonical">
 
@@ -35,6 +38,7 @@ place of the PHP keyword — this component accepts either.
 
 </tab>
 </tabs>
+<!-- /generated:examples -->
 
 Both snippets above parse to the same `ExtendsTag`, exposing the same
 `$type` property. See [@extends](extends-tag.md) for the canonical

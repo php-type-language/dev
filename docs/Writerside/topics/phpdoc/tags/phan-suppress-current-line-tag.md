@@ -5,10 +5,11 @@
 The `@phan-suppress-current-line` tag silences the listed
 issue types reported on the current line.
 
+<!-- generated:grammar -->
 ```
-"@phan-suppress-current-line" <IssueName>
-    { "," <IssueName> } [ <Description> ]
+"@phan-suppress-current-line" <IssueName> [ "," <IssueName> ... ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-suppress-current-line` tag produces a `PhanSuppressCurrentLineTag` instance, carrying the
 listed `$issues` alongside the `$name` and optional `$description` every

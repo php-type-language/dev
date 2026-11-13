@@ -6,9 +6,11 @@ The `@psalm-if-this-is` tag narrows the type of `$this` inside a
 method when the given type matches. It is defined by the static
 analyzer Psalm, alongside [@psalm-assert](psalm-assert-tag.md).
 
+<!-- generated:grammar -->
 ```
 "@psalm-if-this-is" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-if-this-is` tag produces a `PsalmIfThisIsTag` instance, carrying the
 parsed `$type` alongside the `$name` and optional `$description` every

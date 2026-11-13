@@ -8,12 +8,14 @@ might throw, so `@throws` is the only way to document it. Listing the
 catching, and lets a static analyzer flag a `catch` block that can never be
 reached or a thrown type that was never declared.
 
+<!-- generated:grammar -->
 ```
 "@throws" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
-> Documenting the exceptions raised by a single method, each with its
-> own tag.
+<!-- generated:examples -->
+> Documenting the exceptions raised by a single method, each with its own tag.
 > ```php
 > /**
 >  * @throws NotFoundException If the user does not exist.
@@ -25,6 +27,7 @@ reached or a thrown type that was never declared.
 >     // ...
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@throws` tag produces a tag exposing `$type` — the parsed
 `TypeNode` naming the thrown type — plus the `$name` and `$description`

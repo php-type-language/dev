@@ -6,9 +6,11 @@ The `@phan-closure-scope` tag binds the type of `$this` inside a
 `Closure`, letting Phan analyze the closure's body as though it were
 bound to an instance of the given class.
 
+<!-- generated:grammar -->
 ```
 "@phan-closure-scope" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-closure-scope` tag produces a `PhanClosureScopeTag` instance, carrying the
 parsed `$type` alongside the `$name` and optional `$description` every

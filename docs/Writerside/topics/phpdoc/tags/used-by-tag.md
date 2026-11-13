@@ -11,10 +11,13 @@ The two tags are typically used in pairs — if `A` is annotated `@uses B`,
 `B` is often annotated back with `@used-by A` — so the dependency is
 discoverable by reading either side.
 
+<!-- generated:grammar -->
 ```
 "@used-by" <Reference> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > A low-level helper documenting a caller it must stay compatible with.
 > ```php
 > /**
@@ -36,6 +39,7 @@ discoverable by reading either side.
 >     /* ... */
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@used-by` tag produces a `ReferenceTag` instance narrowed to a
 `CodeReference` (a class, function, method, constant, property, or

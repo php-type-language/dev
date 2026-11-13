@@ -5,9 +5,11 @@
 The `@psalm-variadic` tag declares that a class's magic
 `__call`/`__callStatic` methods accept a variadic list of arguments.
 
+<!-- generated:grammar -->
 ```
 "@psalm-variadic" [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-variadic` tag produces a `PsalmVariadicTag` instance. Being a pure
 marker, it adds nothing beyond the `$name` and optional `$description`

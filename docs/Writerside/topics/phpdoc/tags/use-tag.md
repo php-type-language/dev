@@ -8,10 +8,13 @@ what `@extends` does for parent classes and `@implements` does for
 interfaces — for example a caching trait that needs to know what kind of
 value it is caching.
 
+<!-- generated:grammar -->
 ```
 "@use" <Type> [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
+<!-- generated:examples -->
 > Binding a generic caching trait's value type.
 > ```php
 > final class ProductRepository
@@ -29,6 +32,7 @@ value it is caching.
 >     use ComparableTrait;
 > }
 > ```
+<!-- /generated:examples -->
 
 Parsing a `@use` tag produces a tag exposing `$type` — the `TypeNode` naming
 the trait with its type arguments — along with the inherited `$name` and

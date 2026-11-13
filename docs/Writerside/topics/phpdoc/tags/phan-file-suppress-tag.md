@@ -6,9 +6,11 @@ The `@phan-file-suppress` tag silences the listed issue types for
 the whole file it appears in, rather than just a single element or
 line.
 
+<!-- generated:grammar -->
 ```
-"@phan-file-suppress" <IssueName> { "," <IssueName> } [ <Description> ]
+"@phan-file-suppress" <IssueName> [ "," <IssueName> ... ] [ <Description> ]
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@phan-file-suppress` tag produces a `PhanFileSuppressTag` instance, carrying the
 listed `$issues` alongside the `$name` and optional `$description` every

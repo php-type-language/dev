@@ -6,9 +6,11 @@ The `@psalm-taint-sink` tag marks an argument as a taint sink for
 the given taint type. It is part of Psalm's taint-analysis
 annotations.
 
+<!-- generated:grammar -->
 ```
 "@psalm-taint-sink" <Name> <Variable>
 ```
+<!-- /generated:grammar -->
 
 Parsing a `@psalm-taint-sink` tag produces a `PsalmTaintSinkTag` instance,
 carrying the parsed `$taint` type and `$variable` alongside the `$name`
