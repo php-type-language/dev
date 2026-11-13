@@ -4,18 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\PhpDoc\Platform;
 
-use TypeLang\Parser\TypeParser;
-use TypeLang\PhpDoc\DocBlock\Combinator\AssertSubjectCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\CallableTypeCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\IssueNameCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\NameCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\UrlCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\VersionCombinator;
 use TypeLang\PhpDoc\DocBlock\Tag\AbstractTag\AbstractTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\ApiTag\ApiTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\DeprecatedTag\DeprecatedTagDefinition;
@@ -55,18 +43,12 @@ use TypeLang\PhpDoc\DocBlock\Tag\ThrowsTag\ThrowsTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\UnusedParamTag\UnusedParamTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
-use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 
 /**
- * The built-in platform: every tag, alias and combinator that ships with the
- * library. It is always loaded first, and additional platforms extend it.
- *
- * The description combinator is intentionally not provided here: it is wired by
- * the parser itself, since it depends on the parser's own description parser.
- *
- * @phpstan-import-type CombinatorType from CombinatorInterface
+ * The standard platform: the common tags, without a tool prefix, understood by
+ * most of the documentation and static analysis tools.
  */
-final class StandardPlatform implements PlatformInterface
+final class StandardPlatform extends Platform
 {
     /**
      * @return iterable<non-empty-lowercase-string, TagDefinitionInterface>
@@ -131,28 +113,4 @@ final class StandardPlatform implements PlatformInterface
             'throw' => ThrowsTagDefinition::NAME,
         ];
     }
-
-    /**
-     * @return iterable<non-empty-string, CombinatorType>
-     */
-    public function getCombinators(): iterable
-    {
-        return [
-            UriCombinator::NAME => new UriCombinator(),
-            UrlCombinator::NAME => new UrlCombinator(),
-            ReferenceCombinator::NAME => new ReferenceCombinator(),
-            TypeCombinator::NAME => new TypeCombinator($this->typeParser),
-            CallableTypeCombinator::NAME => new CallableTypeCombinator($this->typeParser),
-            VariableCombinator::NAME => new VariableCombinator(),
-            AssertSubjectCombinator::NAME => new AssertSubjectCombinator(),
-            IntegerCombinator::NAME => new IntegerCombinator(),
-            IssueNameCombinator::NAME => new IssueNameCombinator(),
-            VersionCombinator::NAME => new VersionCombinator(),
-            NameCombinator::NAME => new NameCombinator(),
-        ];
-    }
-
-    public function __construct(
-        private readonly TypeParser $typeParser = new TypeParser(),
-    ) {}
 }

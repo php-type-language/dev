@@ -5,7 +5,19 @@ declare(strict_types=1);
 namespace TypeLang\PhpDoc;
 
 use JetBrains\PhpStorm\Language;
+use TypeLang\Parser\TypeParser;
+use TypeLang\PhpDoc\DocBlock\Combinator\AssertSubjectCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\CallableTypeCombinator;
 use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\IssueNameCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\NameCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\ReferenceCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\TypeCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\UriCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\UrlCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\VariableCombinator;
+use TypeLang\PhpDoc\DocBlock\Combinator\VersionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
@@ -47,14 +59,23 @@ final class DocBlockParser implements DocBlockParserInterface
     private readonly DescriptionParserInterface $descriptionParser;
 
     /**
-     * @param iterable<mixed, PlatformInterface> $platforms additional tag platforms
+     * @param iterable<mixed, PlatformInterface> $platforms tag platforms, a
+     *        later one overrides an entry of an earlier one with the same name
+     * @param TypeParser $typeParser parser of the types inside tags
      */
-    public function __construct(iterable $platforms = [])
-    {
-        $platforms = $this->loadPlatforms($platforms);
+    public function __construct(
+        iterable $platforms = [],
+        TypeParser $typeParser = new TypeParser(),
+    ) {
+        $platforms = \is_array($platforms)
+            ? \array_values($platforms)
+            : \iterator_to_array($platforms, false);
 
         $this->tags = $this->createTagRegistry($platforms);
-        $this->factory = $this->createTagFactory($this->tags, $this->createCombinators($platforms));
+        $this->factory = $this->createTagFactory(
+            registry: $this->tags,
+            combinators: $this->createCombinators($platforms, $typeParser),
+        );
 
         $this->docBlockAnalyzer = $this->createAnalyzer($this->createDocBlockSplitter());
         $this->tagParser = $this->createTagParser($this->factory);
@@ -62,11 +83,19 @@ final class DocBlockParser implements DocBlockParserInterface
     }
 
     /**
-     * @param iterable<mixed, PlatformInterface> $additionalPlatforms
+     * Creates the parser with every platform shipped with the library, the
+     * {@see StandardPlatform} first.
+     *
+     * @param iterable<mixed, PlatformInterface> $additionalPlatforms platforms
+     *        loaded after the built-in ones
+     * @param TypeParser $typeParser parser of the types inside tags
      */
-    public static function createDefault(iterable $additionalPlatforms = []): self
-    {
+    public static function createDefault(
+        iterable $additionalPlatforms = [],
+        TypeParser $typeParser = new TypeParser(),
+    ): self {
         return new self([
+            new StandardPlatform(),
             new PhpDocumentorPlatform(),
             new PhpStanPlatform(),
             new PsalmPlatform(),
@@ -76,24 +105,7 @@ final class DocBlockParser implements DocBlockParserInterface
             ...(\is_array($additionalPlatforms)
                 ? \array_values($additionalPlatforms)
                 : \iterator_to_array($additionalPlatforms, false)),
-        ]);
-    }
-
-    /**
-     * @param iterable<mixed, PlatformInterface> $platforms
-     * @return non-empty-list<PlatformInterface>
-     */
-    private function loadPlatforms(iterable $platforms): array
-    {
-        // The standard platform is always loaded first, the caller's platforms
-        // extend it and override an entry with the same name.
-        $result = [new StandardPlatform()];
-
-        foreach ($platforms as $platform) {
-            $result[] = $platform;
-        }
-
-        return $result;
+        ], $typeParser);
     }
 
     private function createAnalyzer(SplitterInterface $splitter): DocBlockAnalyzer
@@ -130,13 +142,37 @@ final class DocBlockParser implements DocBlockParserInterface
     }
 
     /**
+     * Combinators shared by the tags of every platform.
+     *
+     * @return array<non-empty-string, CombinatorType>
+     */
+    private function createBaseCombinators(TypeParser $typeParser): array
+    {
+        return [
+            UriCombinator::NAME => new UriCombinator(),
+            UrlCombinator::NAME => new UrlCombinator(),
+            ReferenceCombinator::NAME => new ReferenceCombinator(),
+            TypeCombinator::NAME => new TypeCombinator($typeParser),
+            CallableTypeCombinator::NAME => new CallableTypeCombinator($typeParser),
+            VariableCombinator::NAME => new VariableCombinator(),
+            AssertSubjectCombinator::NAME => new AssertSubjectCombinator(),
+            IntegerCombinator::NAME => new IntegerCombinator(),
+            IssueNameCombinator::NAME => new IssueNameCombinator(),
+            VersionCombinator::NAME => new VersionCombinator(),
+            NameCombinator::NAME => new NameCombinator(),
+        ];
+    }
+
+    /**
      * @param list<PlatformInterface> $platforms
      * @return array<non-empty-string, CombinatorType>
      */
-    private function createCombinators(array $platforms): array
+    private function createCombinators(array $platforms, TypeParser $typeParser): array
     {
-        $combinators = [];
+        $combinators = $this->createBaseCombinators($typeParser);
 
+        // A platform combinator replaces the base one or the one of an earlier
+        // platform with the same name for the tags of all platforms.
         foreach ($platforms as $platform) {
             foreach ($platform->getCombinators() as $name => $combinator) {
                 $combinators[$name] = $combinator;

@@ -72,8 +72,8 @@ use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 /**
  * The Psalm platform: the `@psalm-*` tag family understood by Psalm.
  *
- * Tags that restate an existing one are wired as aliases onto it, Psalm's own
- * marker tags are contributed as their own flag definitions.
+ * A prefixed tag that restates a common one gets the definition of that tag,
+ * Psalm's own marker tags are contributed as their own flag definitions.
  *
  * @phpstan-import-type CombinatorType from CombinatorInterface
  */
@@ -86,15 +86,38 @@ final class PsalmPlatform extends Platform
     {
         return [
             'psalm-allow-private-mutation' => new AllowPrivateMutationTagDefinition(),
+            'psalm-api' => new ApiTagDefinition(),
             'psalm-assert' => new AssertTagDefinition(),
             'psalm-assert-if-true' => new AssertIfTrueTagDefinition(),
             'psalm-assert-if-false' => new AssertIfFalseTagDefinition(),
             'psalm-consistent-constructor' => new ConsistentConstructorTagDefinition(),
+            'psalm-extends' => new ExtendsTagDefinition(),
+            'psalm-immutable' => new ImmutableTagDefinition(),
+            'psalm-implements' => new ImplementsTagDefinition(),
             'psalm-import-type' => new ImportTypeAliasTagDefinition(),
+            'psalm-internal' => new InternalTagDefinition(),
+            'psalm-method' => new MethodTagDefinition(),
+            'psalm-param' => new ParamTagDefinition(),
+            'psalm-param-out' => new ParamOutTagDefinition(),
+            'psalm-property' => new PropertyTagDefinition(),
+            'psalm-property-read' => new PropertyReadTagDefinition(),
+            'psalm-property-write' => new PropertyWriteTagDefinition(),
             'psalm-pure' => new PureTagDefinition(),
+            'psalm-readonly' => new ReadonlyTagDefinition(),
             'psalm-readonly-allow-private-mutation' => new ReadonlyAllowPrivateMutationTagDefinition(),
+            'psalm-require-extends' => new RequireExtendsTagDefinition(),
+            'psalm-require-implements' => new RequireImplementsTagDefinition(),
+            'psalm-return' => new ReturnTagDefinition(),
+            'psalm-seal-methods' => new SealMethodsTagDefinition(),
+            'psalm-seal-properties' => new SealPropertiesTagDefinition(),
             'psalm-self-out' => new SelfOutTagDefinition(),
+            'psalm-suppress' => new SuppressTagDefinition(),
+            'psalm-template' => new TemplateTagDefinition(),
+            'psalm-template-contravariant' => new TemplateContravariantTagDefinition(),
+            'psalm-template-covariant' => new TemplateCovariantTagDefinition(),
             'psalm-type' => new TypeAliasTagDefinition(),
+            'psalm-use' => new UseTagDefinition(),
+            'psalm-var' => new VarTagDefinition(),
             'psalm-yield' => new YieldTagDefinition(),
             PsalmCheckTypeTagDefinition::NAME => new PsalmCheckTypeTagDefinition(),
             PsalmCheckTypeExactTagDefinition::NAME => new PsalmCheckTypeExactTagDefinition(),
@@ -132,30 +155,7 @@ final class PsalmPlatform extends Platform
     public function getAliases(): iterable
     {
         return [
-            'psalm-api' => ApiTagDefinition::NAME,
-            'psalm-extends' => ExtendsTagDefinition::NAME,
-            'psalm-immutable' => ImmutableTagDefinition::NAME,
-            'psalm-implements' => ImplementsTagDefinition::NAME,
-            'psalm-internal' => InternalTagDefinition::NAME,
-            'psalm-method' => MethodTagDefinition::NAME,
-            'psalm-param' => ParamTagDefinition::NAME,
-            'psalm-param-out' => ParamOutTagDefinition::NAME,
-            'psalm-property' => PropertyTagDefinition::NAME,
-            'psalm-property-read' => PropertyReadTagDefinition::NAME,
-            'psalm-property-write' => PropertyWriteTagDefinition::NAME,
-            'psalm-readonly' => ReadonlyTagDefinition::NAME,
-            'psalm-require-extends' => RequireExtendsTagDefinition::NAME,
-            'psalm-require-implements' => RequireImplementsTagDefinition::NAME,
-            'psalm-return' => ReturnTagDefinition::NAME,
-            'psalm-seal-methods' => SealMethodsTagDefinition::NAME,
-            'psalm-seal-properties' => SealPropertiesTagDefinition::NAME,
-            'psalm-suppress' => SuppressTagDefinition::NAME,
-            'psalm-template' => TemplateTagDefinition::NAME,
-            'psalm-template-contravariant' => TemplateContravariantTagDefinition::NAME,
-            'psalm-template-covariant' => TemplateCovariantTagDefinition::NAME,
             'psalm-this-out' => 'psalm-self-out',
-            'psalm-use' => UseTagDefinition::NAME,
-            'psalm-var' => VarTagDefinition::NAME,
         ];
     }
 

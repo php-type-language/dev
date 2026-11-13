@@ -35,8 +35,7 @@ use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
  * The phpDocumentor platform: the legacy tag family defined by phpDocumentor
  * that a modern, static-analysis-oriented docblock rarely uses.
  *
- * It extends the {@see StandardPlatform} with these older tags and the few
- * combinators only they rely on.
+ * It contributes these older tags and the few combinators only they rely on.
  *
  * @phpstan-import-type CombinatorType from CombinatorInterface
  */

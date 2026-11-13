@@ -44,8 +44,8 @@ use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinitionInterface;
 /**
  * The Phan platform: the `@phan-*` tag family understood by Phan.
  *
- * Tags that restate an existing one are wired as aliases onto it, Phan's own
- * marker tags are contributed as their own flag definitions.
+ * A prefixed tag that restates a common one gets the definition of that tag,
+ * Phan's own marker tags are contributed as their own flag definitions.
  */
 final class PhanPlatform extends Platform
 {
@@ -55,11 +55,27 @@ final class PhanPlatform extends Platform
     public function getTags(): iterable
     {
         return [
+            'phan-abstract' => new AbstractTagDefinition(),
             'phan-assert' => new AssertTagDefinition(),
             'phan-assert-if-true' => new AssertIfTrueTagDefinition(),
             'phan-assert-if-false' => new AssertIfFalseTagDefinition(),
+            'phan-extends' => new ExtendsTagDefinition(),
+            'phan-immutable' => new ImmutableTagDefinition(),
+            'phan-inherits' => new ExtendsTagDefinition(),
+            'phan-method' => new MethodTagDefinition(),
+            'phan-mixin' => new MixinTagDefinition(),
+            'phan-override' => new OverrideTagDefinition(),
+            'phan-param' => new ParamTagDefinition(),
+            'phan-property' => new PropertyTagDefinition(),
+            'phan-property-read' => new PropertyReadTagDefinition(),
+            'phan-property-write' => new PropertyWriteTagDefinition(),
             'phan-pure' => new PureTagDefinition(),
+            'phan-read-only' => new ReadonlyTagDefinition(),
+            'phan-return' => new ReturnTagDefinition(),
+            'phan-template' => new TemplateTagDefinition(),
             'phan-type' => new TypeAliasTagDefinition(),
+            'phan-unused-param' => new UnusedParamTagDefinition(),
+            'phan-var' => new VarTagDefinition(),
             PhanClosureScopeTagDefinition::NAME => new PhanClosureScopeTagDefinition(),
             PhanConstructorUsedForSideEffectsTagDefinition::NAME => new PhanConstructorUsedForSideEffectsTagDefinition(),
             PhanFileSuppressTagDefinition::NAME => new PhanFileSuppressTagDefinition(),
@@ -84,23 +100,7 @@ final class PhanPlatform extends Platform
     public function getAliases(): iterable
     {
         return [
-            'phan-abstract' => AbstractTagDefinition::NAME,
             'phanclosurescope' => PhanClosureScopeTagDefinition::NAME,
-            'phan-extends' => ExtendsTagDefinition::NAME,
-            'phan-immutable' => ImmutableTagDefinition::NAME,
-            'phan-inherits' => ExtendsTagDefinition::NAME,
-            'phan-method' => MethodTagDefinition::NAME,
-            'phan-mixin' => MixinTagDefinition::NAME,
-            'phan-override' => OverrideTagDefinition::NAME,
-            'phan-param' => ParamTagDefinition::NAME,
-            'phan-property' => PropertyTagDefinition::NAME,
-            'phan-property-read' => PropertyReadTagDefinition::NAME,
-            'phan-property-write' => PropertyWriteTagDefinition::NAME,
-            'phan-read-only' => ReadonlyTagDefinition::NAME,
-            'phan-return' => ReturnTagDefinition::NAME,
-            'phan-template' => TemplateTagDefinition::NAME,
-            'phan-unused-param' => UnusedParamTagDefinition::NAME,
-            'phan-var' => VarTagDefinition::NAME,
         ];
     }
 }
