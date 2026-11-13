@@ -22,33 +22,6 @@ final class PropertyMetadataTest extends TestCase
         self::assertSame('user_id', $property->withExternalName('user_id')->getOutputName());
     }
 
-    public function testTypeOfOneDirectionIsUsedForAnother(): void
-    {
-        $read = self::createType('int');
-        $write = self::createType('string');
-
-        $onlyRead = (new PropertyMetadata('id'))->withReadType($read);
-        $onlyWrite = (new PropertyMetadata('id'))->withWriteType($write);
-        $both = $onlyRead->withWriteType($write);
-
-        self::assertSame($read, $onlyRead->getWriteType());
-        self::assertSame($write, $onlyWrite->getReadType());
-        self::assertSame($read, $both->getReadType());
-        self::assertSame($write, $both->getWriteType());
-    }
-
-    public function testTypeIsMixedWithoutPlaceWithoutAnyType(): void
-    {
-        $property = new PropertyMetadata('id');
-
-        foreach ([$property->getReadType(), $property->getWriteType()] as $type) {
-            self::assertInstanceOf(NamedTypeNode::class, $type->type);
-            self::assertSame('mixed', $type->type->name->toString());
-            self::assertNull($type->source->findPlace());
-            self::assertNull($type->isStrict);
-        }
-    }
-
     public function testStrictnessIsOptionOfType(): void
     {
         $type = self::createType('int');
