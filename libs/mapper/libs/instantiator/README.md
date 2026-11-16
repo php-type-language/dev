@@ -1,13 +1,13 @@
 # Instantiator
 
-Creates objects of a class without the constructor, through the constructor
-or a static factory method.
+Creates new objects of a class, the way of creating is chosen once by the
+declaration of the class.
 
 ```php
 use TypeLang\Mapper\Instantiator\InstantiatorFactory;
 
-$factory = new InstantiatorFactory();
+$instantiator = (new InstantiatorFactory())
+    ->createInstantiator(new \ReflectionClass(User::class));
 
-$money = $factory->createFromConstructor(Money::class)
-    ->instantiate(['amount' => 100]);
+$user = $instantiator->instantiate();
 ```

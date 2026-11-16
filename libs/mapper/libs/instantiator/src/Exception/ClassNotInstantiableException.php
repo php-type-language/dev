@@ -37,13 +37,13 @@ final class ClassNotInstantiableException extends InstantiationException
         return new self($class, $message);
     }
 
-    public static function becauseClassIsInternalFinal(string $class): self
+    public static function becauseClassRequiresConstructor(string $class, ?\Throwable $previous = null): self
     {
         $message = \sprintf(
-            'Cannot instantiate internal final class "%s" without the constructor',
+            'Cannot instantiate class "%s" without the constructor',
             \addcslashes($class, '"'),
         );
 
-        return new self($class, $message);
+        return new self($class, $message, $previous);
     }
 }

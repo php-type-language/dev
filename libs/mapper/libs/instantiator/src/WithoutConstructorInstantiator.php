@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Instantiator;
 
 /**
- * Creates objects without calling the constructor.
+ * Creates objects without calling the constructor, the default values of
+ * the properties are set. The class is checked by
+ * {@see InstantiatorFactory}.
  *
  * @template T of object
  *
@@ -17,13 +19,15 @@ final class WithoutConstructorInstantiator implements InstantiatorInterface
         /**
          * @var \ReflectionClass<T>
          */
-        private readonly \ReflectionClass $reflection,
+        private readonly \ReflectionClass $class,
     ) {}
 
-    public function instantiate(array $arguments = []): object
+    /**
+     * @throws \ReflectionException in case of the class is an internal one
+     *         requiring the constructor
+     */
+    public function instantiate(): object
     {
-        \assert($arguments === [], 'An object created without the constructor accepts no arguments');
-
-        return $this->reflection->newInstanceWithoutConstructor();
+        return $this->class->newInstanceWithoutConstructor();
     }
 }
