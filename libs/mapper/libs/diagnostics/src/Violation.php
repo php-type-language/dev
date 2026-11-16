@@ -12,7 +12,7 @@ use TypeLang\Mapper\Diagnostics\Path\Path;
 final class Violation
 {
     public function __construct(
-        public readonly ViolationCode $code,
+        public readonly ViolationCodeInterface $code,
         /**
          * Values of the template placeholders
          *
@@ -24,5 +24,21 @@ final class Violation
          * Rejected value, {@see null} for a missing field
          */
         public readonly mixed $value = null,
+        /**
+         * Template of the message with the placeholders of the parameters,
+         * such as a text written by the user, the template of the code in
+         * case of {@see null}
+         *
+         * @var non-empty-string|null
+         */
+        public readonly ?string $template = null,
     ) {}
+
+    /**
+     * @param non-empty-string $template
+     */
+    public function withTemplate(string $template): self
+    {
+        return new self($this->code, $this->parameters, $this->path, $this->value, $template);
+    }
 }

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Diagnostics;
 
 /**
- * Stable machine-readable codes of mapping violations.
+ * Kinds of violations of the mapping itself.
  */
-enum ViolationCode: string
+enum ViolationCode: string implements ViolationCodeInterface
 {
     /**
      * Value is not of the expected type, including a union where no branch
@@ -35,10 +35,11 @@ enum ViolationCode: string
      */
     case InvalidValue = 'invalid_value';
 
-    /**
-     * Returns the text with `{{name}}` placeholders of the parameters and
-     * `{{value}}` of the rejected value.
-     */
+    public function getCode(): string
+    {
+        return $this->value;
+    }
+
     public function getTemplate(): string
     {
         return match ($this) {
