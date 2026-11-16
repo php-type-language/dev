@@ -37,6 +37,13 @@ final class IntCoercerTest extends TestCase
         yield 'min int string' => ['-9223372036854775808', \PHP_INT_MIN];
         yield 'max int string with leading zeros' => ['009223372036854775807', \PHP_INT_MAX];
         yield 'integer string above float precision' => ['9007199254740993', 9007199254740993];
+        yield 'integral decimal string' => ['42.0', 42];
+        yield 'decimal string with zeros fraction' => ['42.000', 42];
+        yield 'decimal string with trailing dot' => ['42.', 42];
+        yield 'negative integral decimal string' => ['-42.0', -42];
+        yield 'negative zero decimal string' => ['-0.0', 0];
+        yield 'max int decimal string' => ['9223372036854775807.0', \PHP_INT_MAX];
+        yield 'decimal string above float precision' => ['9007199254740993.0', 9007199254740993];
 
         yield 'integral float' => [42.0, 42];
         yield 'negative integral float' => [-42.0, -42];
@@ -57,9 +64,12 @@ final class IntCoercerTest extends TestCase
         yield 'string below min int' => ['-9223372036854775809'];
         yield 'long integer string' => [\str_repeat('9', 1000)];
         yield 'long negative integer string' => ['-' . \str_repeat('9', 1000)];
-        yield 'integral decimal string' => ['42.0'];
-        yield 'decimal string with trailing dot' => ['42.'];
+        yield 'decimal string above max int' => ['9223372036854775808.0'];
+        yield 'decimal string with non-zero fraction digit' => ['42.0001'];
+        yield 'decimal string rounded to integer float' => ['0.99999999999999999999'];
         yield 'decimal string with leading dot' => ['.5'];
+        yield 'zero decimal string with leading dot' => ['.0'];
+        yield 'integral exponent decimal string' => ['1.0e3'];
         yield 'exponent string' => ['1e3'];
         yield 'uppercase exponent string' => ['1E3'];
         yield 'fractional string' => ['1.5'];

@@ -52,7 +52,9 @@ final class FloatCoercerTest extends TestCase
         yield 'decimal string with trailing dot' => ['5.', 5.0];
         yield 'inexact decimal string' => ['0.1', 0.1];
         yield 'string above max int' => ['9223372036854775808', 9223372036854775808.0];
-        yield 'integer string above float precision' => ['9007199254740993', 9007199254740992.0];
+        yield 'exact integer string above float precision' => ['9007199254740994', 9007199254740994.0];
+        yield 'decimal string above float precision' => ['9007199254740993.0', 9007199254740992.0];
+        yield 'long integer string with leading zeros' => ['0000000000000000042', 42.0];
         yield 'long decimal string' => ['0.' . \str_repeat('3', 1000), 0.3333333333333333];
         yield 'max float string' => ['1.7976931348623157e308', \PHP_FLOAT_MAX];
         yield 'min subnormal float string' => ['4.9e-324', 5.0E-324];
@@ -73,6 +75,10 @@ final class FloatCoercerTest extends TestCase
         yield 'int below float precision' => [-(2 ** 53) - 1];
         yield 'max int' => [\PHP_INT_MAX];
         yield 'int rounded to int overflow' => [9223372036854775000];
+
+        yield 'integer string above float precision' => ['9007199254740993'];
+        yield 'negative integer string below float precision' => ['-9007199254740993'];
+        yield 'max int string' => ['9223372036854775807'];
 
         yield 'overflowing string' => ['1e400'];
         yield 'negative overflowing string' => ['-1e400'];

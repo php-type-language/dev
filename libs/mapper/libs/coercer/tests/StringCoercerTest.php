@@ -106,6 +106,26 @@ final class StringCoercerTest extends TestCase
         self::assertSame('0.30000000000000004', self::coerceWithPrecision('5', 0.1 + 0.2));
     }
 
+    public function testFloatNotationIsShortestWithHighPrecision(): void
+    {
+        self::assertSame('0.1', self::coerceWithPrecision('17', 0.1));
+    }
+
+    public function testFloatNotationRestoresPrecisionSetting(): void
+    {
+        $previous = \ini_set('serialize_precision', '17');
+
+        self::assertIsString($previous);
+
+        try {
+            (new StringCoercer())->coerce(0.1);
+
+            self::assertSame('17', \ini_get('serialize_precision'));
+        } finally {
+            \ini_set('serialize_precision', $previous);
+        }
+    }
+
     /**
      * @param non-empty-string $precision
      */

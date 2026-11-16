@@ -13,6 +13,12 @@ final class FloatCoercer implements CoercerInterface
 {
     private const FLOAT_UPPER_BOUND = \PHP_INT_MAX + 1;
 
+    /**
+     * Length of the longest integer string whose number always has an exact
+     * `float`: 15 digits are below `2 ** 53`
+     */
+    private const EXACT_INTEGER_STRING_LENGTH = 15;
+
     public function coerce(mixed $value): ?float
     {
         if (\is_float($value)) {
@@ -46,7 +52,33 @@ final class FloatCoercer implements CoercerInterface
             return null;
         }
 
+        if (!self::isExactInteger($value, $number)) {
+            return null;
+        }
+
         return $number;
+    }
+
+    /**
+     * Returns {@see false} for a string in integer notation whose number
+     * has no exact `float`, such as `'9007199254740993'`. Strings with a
+     * fraction or an exponent are rounded to the nearest `float`.
+     *
+     * @param numeric-string $value
+     */
+    private static function isExactInteger(string $value, float $number): bool
+    {
+        if (\strlen($value) <= self::EXACT_INTEGER_STRING_LENGTH || \strpbrk($value, '.eE') !== false) {
+            return true;
+        }
+
+        $digits = \ltrim($value, '+-0');
+
+        if ($digits === '') {
+            return true;
+        }
+
+        return \sprintf('%.0F', \abs($number)) === $digits;
     }
 
     /**
