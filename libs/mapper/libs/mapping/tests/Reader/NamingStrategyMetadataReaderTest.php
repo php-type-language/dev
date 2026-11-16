@@ -21,8 +21,8 @@ final class NamingStrategyMetadataReaderTest extends TestCase
         $result = (new NamingStrategyMetadataReader(NamingStrategy::SnakeCase))
             ->read(new \ReflectionClass(\stdClass::class), $metadata);
 
-        self::assertSame('display_name', $result->findProperty('displayName')?->getOutputName());
-        self::assertSame('id', $result->findProperty('userId')?->getOutputName());
+        self::assertSame('display_name', $result->findProperty('displayName')?->externalName);
+        self::assertSame('id', $result->findProperty('userId')?->externalName);
     }
 
     public function testFirstReaderAddsNoProperties(): void

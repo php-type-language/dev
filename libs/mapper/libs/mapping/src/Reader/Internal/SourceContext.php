@@ -33,10 +33,13 @@ final class SourceContext
          */
         public readonly SourceInfo $source,
         /**
-         * Resolver of the names of the types, the names are kept as
-         * written in case of {@see null}
+         * Returns the resolver of the names of the types, called on the
+         * first resolved type, the names are kept as written in case of
+         * {@see null}
+         *
+         * @var (\Closure(): TypeResolver)|null
          */
-        private readonly ?TypeResolver $resolver = null,
+        private readonly ?\Closure $resolver = null,
         /**
          * Namespace the types are written in
          *
@@ -54,7 +57,7 @@ final class SourceContext
             return $type;
         }
 
-        return $this->resolver->resolve($type);
+        return ($this->resolver)()->resolve($type);
     }
 
     public function createType(TypeNode $type): TypeMetadata

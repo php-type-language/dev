@@ -8,8 +8,8 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Naming\NamingStrategyInterface;
 
 /**
- * Names the given properties that have no external name by the naming
- * strategy and adds no properties.
+ * Names the given properties without an explicit external name by the
+ * naming strategy and adds no properties.
  */
 final class NamingStrategyMetadataReader implements MetadataReaderInterface
 {
@@ -22,7 +22,7 @@ final class NamingStrategyMetadataReader implements MetadataReaderInterface
         $metadata ??= new ClassMetadata($class->getName());
 
         foreach ($metadata->properties as $property) {
-            if ($property->externalName === null) {
+            if (!$property->isExternalNameExplicit) {
                 $metadata = $metadata->withProperty(
                     $property->withExternalName($this->strategy->rename($property->name)),
                 );

@@ -9,6 +9,13 @@ use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTagDefinition;
 use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTagDefinition;
 use TypeLang\PhpDoc\Platform\Platform;
 
+/**
+ * Tags of a docblock the mapper reads types from: `@var`, `@param` and
+ * `@return` under the given names and aliases.
+ *
+ * @internal this is an internal library class, please do not use it in your code
+ * @psalm-internal TypeLang\Mapper\Mapping
+ */
 final class MapperPlatform extends Platform
 {
     public function __construct(
@@ -58,7 +65,7 @@ final class MapperPlatform extends Platform
             return: ReturnTagDefinition::getCanonicalName(),
             returnAliases: ['phpstan-return', 'psalm-return', 'phan-return'],
             param: ParamTagDefinition::getCanonicalName(),
-            paramAliases: ['phpstan-param', 'psalm-return', 'phan-return'],
+            paramAliases: ['phpstan-param', 'psalm-param', 'phan-param'],
         );
     }
 

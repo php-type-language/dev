@@ -23,7 +23,8 @@ use TypeLang\Reader\ReflectionReader;
 /**
  * Base of the chain: adds the properties chosen by the selector with their
  * native types and default values, the default value of the property or of
- * the promoted constructor parameter. Over the given metadata it overrides
+ * the promoted constructor parameter. A virtual property takes part only in
+ * the directions it has a hook for. Over the given metadata it overrides
  * these values of the chosen properties, adds the chosen properties that
  * are missing and keeps the other ones. Other readers override the values
  * of the added properties only.
@@ -79,6 +80,10 @@ final class ReflectionMetadataReader implements MetadataReaderInterface
         ErrorCollector $errors,
     ): PropertyMetadata {
         $context = $this->contexts->createFromReflection($class, $reflection);
+        $property = $property
+            ->withReadable(!self::isVirtualWithoutHook($reflection, 'get'))
+            ->withWritable(!self::isVirtualWithoutHook($reflection, 'set'));
+
         $read = $this->findType($reflection, PropertyAccessDirection::Read, $context);
         $write = $this->findType($reflection, PropertyAccessDirection::Write, $context);
 
@@ -103,6 +108,23 @@ final class ReflectionMetadataReader implements MetadataReaderInterface
         }
 
         return $property;
+    }
+
+    /**
+     * Returns {@see true} in case of the property has no backing store and
+     * no hook of the direction: it has nothing to read or takes no value
+     * (PHP 8.4+).
+     *
+     * @param 'get'|'set' $hook
+     */
+    private static function isVirtualWithoutHook(\ReflectionProperty $reflection, string $hook): bool
+    {
+        if (\PHP_VERSION_ID < 80400) {
+            return false;
+        }
+
+        // @phpstan-ignore-next-line PHP 8.4 API, phpVersion.min is 8.1
+        return $reflection->isVirtual() && !$reflection->hasHook(\PropertyHookType::from($hook));
     }
 
     private function findType(

@@ -18,6 +18,8 @@ use TypeLang\Mapper\Mapping\Reader\MetadataReaderInterface;
 use TypeLang\Mapper\Mapping\Reader\NamingStrategyMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\MapperPlatform;
+use TypeLang\Mapper\Mapping\Reader\Reflection\PropertySelectorInterface;
+use TypeLang\Mapper\Mapping\Reader\Reflection\PublicPropertySelector;
 use TypeLang\Mapper\Mapping\Reader\ReflectionMetadataReader;
 use TypeLang\Mapper\Naming\NamingStrategyInterface;
 use TypeLang\Parser\TypeParser;
@@ -37,6 +39,8 @@ final class MetadataProviderFactory
      * @param list<MetadataReaderInterface> $readers readers above the
      *        default ones, from the highest priority to the lowest one
      * @param string $prefix prefix of the keys of the cache
+     * @param PropertySelectorInterface $selector rule choosing the mapped
+     *        properties of a class
      */
     public static function create(
         array $readers = [],
@@ -44,6 +48,7 @@ final class MetadataProviderFactory
         CacheItemPoolInterface|CacheInterface|null $cache = null,
         string $prefix = CacheMetadataProvider::DEFAULT_PREFIX,
         TypeParser $parser = new TypeParser(),
+        PropertySelectorInterface $selector = new PublicPropertySelector(),
     ): MetadataProviderInterface {
         $result = [];
 
@@ -54,7 +59,7 @@ final class MetadataProviderFactory
         $provider = self::readersToProvider([
             ...$result,
             ...$readers,
-            ...self::getDefaultReaders($parser->forType()),
+            ...self::getDefaultReaders($parser->forType(), $selector),
         ]);
 
         return new InMemoryMetadataProvider(
@@ -75,7 +80,7 @@ final class MetadataProviderFactory
     /**
      * @return non-empty-list<MetadataReaderInterface>
      */
-    private static function getDefaultReaders(TypeParser $parser): array
+    private static function getDefaultReaders(TypeParser $parser, PropertySelectorInterface $selector): array
     {
         $result = [new AttributeMetadataReader($parser)];
 
@@ -93,7 +98,7 @@ final class MetadataProviderFactory
             ));
         }
 
-        $result[] = new ReflectionMetadataReader();
+        $result[] = new ReflectionMetadataReader($selector);
 
         return $result;
     }

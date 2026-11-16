@@ -15,9 +15,11 @@ use TypeLang\Mapper\Mapping\Reader\ReflectionMetadataReader;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenDefaultStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\EnumDefaultStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\ObjectDefaultStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\Php84\VirtualHookStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\Php85\ClosureDefaultStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\PromotedStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\StatusStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\ThrowingDefaultStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\TraitUserStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
@@ -33,6 +35,32 @@ final class ReflectionMetadataReaderTest extends TestCase
         self::assertType('int', $id->write);
         self::assertType('?string', self::getProperty($metadata, 'email')->read);
         self::assertNull(self::getProperty($metadata, 'untyped')->read);
+    }
+
+    public function testPropertyTakesPartInBothDirections(): void
+    {
+        $id = self::getProperty(self::readReflection(UserStub::class), 'id');
+
+        self::assertTrue($id->isReadable);
+        self::assertTrue($id->isWritable);
+    }
+
+    #[RequiresPhp('>= 8.4.0')]
+    public function testVirtualPropertyTakesPartInDirectionsOfItsHooks(): void
+    {
+        $metadata = self::readReflection(VirtualHookStub::class);
+
+        $computed = self::getProperty($metadata, 'computed');
+        self::assertTrue($computed->isReadable);
+        self::assertFalse($computed->isWritable);
+
+        $alias = self::getProperty($metadata, 'alias');
+        self::assertFalse($alias->isReadable);
+        self::assertTrue($alias->isWritable);
+
+        $backed = self::getProperty($metadata, 'backed');
+        self::assertTrue($backed->isReadable);
+        self::assertTrue($backed->isWritable);
     }
 
     public function testTypeSourceIsFileOfDeclaration(): void
@@ -105,6 +133,15 @@ final class ReflectionMetadataReaderTest extends TestCase
             $errors[0],
         );
         self::assertStringEndsWith(' in BrokenDefaultStub.php', $errors[0]);
+    }
+
+    public function testExceptionOfDefaultValueIsThrownAsMetadataError(): void
+    {
+        $exceptions = self::getExceptions(static fn() => self::readReflection(ThrowingDefaultStub::class));
+
+        self::assertCount(1, $exceptions);
+        self::assertInstanceOf(InvalidDefaultValueException::class, $exceptions[0]);
+        self::assertInstanceOf(\DomainException::class, $exceptions[0]->getPrevious());
     }
 
     public function testObjectDefaultValuesAreThrownAndNotSet(): void

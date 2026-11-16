@@ -47,7 +47,7 @@ final class SourceContextFactory
         return new SourceContext(
             target: MetadataException::formatPropertyTarget($class->name, $property->name),
             source: SourceInfo::createFromReflection($scope),
-            resolver: $this->getResolver($scope),
+            resolver: fn(): TypeResolver => $this->getResolver($scope),
             namespace: self::findNamespace($scope),
         );
     }

@@ -146,6 +146,30 @@ abstract class CacheMetadataProviderTestCase extends TestCase
         self::assertSame(\stdClass::class, $metadata->name);
     }
 
+    public function testValueThatCannotBeRestoredIsMissAndIsOverwritten(): void
+    {
+        $class = new \ReflectionClass(\stdClass::class);
+        $cache = $this->createCache();
+
+        $this->createProvider(new CountingMetadataProvider(), $cache)
+            ->read($class);
+
+        $corrupted = \str_replace('s:8:"stdClass"', 'i:1', \serialize(new ClassMetadata(\stdClass::class)));
+
+        foreach (\array_keys($cache->values) as $key) {
+            $cache->values[$key] = $corrupted;
+        }
+
+        $delegate = new CountingMetadataProvider();
+        $provider = $this->createProvider($delegate, $cache);
+
+        $metadata = $provider->read($class);
+
+        self::assertSame(1, $delegate->calls);
+        self::assertSame(\stdClass::class, $metadata->name);
+        self::assertNotContains($corrupted, $cache->values);
+    }
+
     public function testRejectedKeyIsThrownAsReaderException(): void
     {
         $cache = $this->createCache();

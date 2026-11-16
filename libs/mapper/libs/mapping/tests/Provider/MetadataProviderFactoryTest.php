@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use TypeLang\Mapper\Mapping\MetadataProviderFactory;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
+use TypeLang\Mapper\Mapping\Reader\Reflection\PropertySelectorInterface;
 use TypeLang\Mapper\Mapping\Tests\Stub\ArrayCache;
 use TypeLang\Mapper\Mapping\Tests\Stub\ArrayCachePool;
 use TypeLang\Mapper\Mapping\Tests\Stub\AttributeStub;
@@ -62,12 +63,27 @@ final class MetadataProviderFactoryTest extends TestCase
         $metadata = MetadataProviderFactory::create(strategy: NamingStrategy::SnakeCase)
             ->read(new \ReflectionClass(AttributeStub::class));
 
-        self::assertSame('user_id', self::getProperty($metadata, 'id')->getOutputName());
+        self::assertSame('user_id', self::getProperty($metadata, 'id')->externalName);
 
         $metadata = MetadataProviderFactory::create(strategy: NamingStrategy::SnakeCase)
             ->read(new \ReflectionClass(UserStub::class));
 
-        self::assertSame('display_name', self::getProperty($metadata, 'displayName')->getOutputName());
+        self::assertSame('display_name', self::getProperty($metadata, 'displayName')->externalName);
+    }
+
+    public function testSelectorChoosesMappedProperties(): void
+    {
+        $selector = new class implements PropertySelectorInterface {
+            public function isSelected(\ReflectionProperty $property): bool
+            {
+                return $property->name === 'id';
+            }
+        };
+
+        $metadata = MetadataProviderFactory::create(selector: $selector)
+            ->read(new \ReflectionClass(UserStub::class));
+
+        self::assertSame(['id'], \array_keys($metadata->properties));
     }
 
     public function testDefaultStackChecksFinalMetadata(): void

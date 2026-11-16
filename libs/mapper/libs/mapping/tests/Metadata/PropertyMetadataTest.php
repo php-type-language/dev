@@ -14,12 +14,21 @@ use TypeLang\Type\NamedTypeNode;
 
 final class PropertyMetadataTest extends TestCase
 {
-    public function testOutputNameIsPhpNameWithoutExternalName(): void
+    public function testExternalNameIsPhpNameUnlessGiven(): void
     {
         $property = new PropertyMetadata('userId');
 
-        self::assertSame('userId', $property->getOutputName());
-        self::assertSame('user_id', $property->withExternalName('user_id')->getOutputName());
+        self::assertSame('userId', $property->externalName);
+        self::assertFalse($property->isExternalNameExplicit);
+    }
+
+    public function testGivenExternalNameIsExplicit(): void
+    {
+        $property = (new PropertyMetadata('userId'))->withExternalName('user_id');
+
+        self::assertSame('user_id', $property->externalName);
+        self::assertTrue($property->isExternalNameExplicit);
+        self::assertTrue((new PropertyMetadata('userId', externalName: 'user_id'))->isExternalNameExplicit);
     }
 
     public function testStrictnessIsOptionOfType(): void
@@ -69,7 +78,8 @@ final class PropertyMetadataTest extends TestCase
         $property->withExternalName('user_id');
         $property->withDefaultValue(new DefaultValueMetadata(1, new SourceInfo()));
 
-        self::assertNull($property->externalName);
+        self::assertSame('id', $property->externalName);
+        self::assertFalse($property->isExternalNameExplicit);
         self::assertNull($property->default);
     }
 

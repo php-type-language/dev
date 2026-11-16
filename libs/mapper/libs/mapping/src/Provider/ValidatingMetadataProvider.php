@@ -25,9 +25,9 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
     ) {}
 
     /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @return ClassMetadata<T>
+     * @template TArgObject of object
+     * @param \ReflectionClass<TArgObject> $class
+     * @return ClassMetadata<TArgObject>
      * @throws InvalidMetadataException in case of the delegate or the checks
      *         find wrong values
      * @throws ReaderException in case of the delegate cannot
@@ -40,7 +40,7 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
         try {
             $metadata = $this->delegate->read($class);
         } catch (InvalidMetadataException $e) {
-            /** @var ClassMetadata<T> */
+            /** @var ClassMetadata<TArgObject> */
             $metadata = $e->metadata;
             $errors = $e->errors;
         }
@@ -59,9 +59,9 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
     }
 
     /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @param ClassMetadata<T> $metadata
+     * @template TArgObject of object
+     * @param \ReflectionClass<TArgObject> $class
+     * @param ClassMetadata<TArgObject> $metadata
      * @return list<InvalidTypeException>
      */
     private static function getTypeErrors(\ReflectionClass $class, ClassMetadata $metadata): array
@@ -98,9 +98,9 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
     }
 
     /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @param ClassMetadata<T> $metadata
+     * @template TArgObject of object
+     * @param \ReflectionClass<TArgObject> $class
+     * @param ClassMetadata<TArgObject> $metadata
      * @return list<DuplicateExternalNameException>
      */
     private static function getExternalNameErrors(\ReflectionClass $class, ClassMetadata $metadata): array
@@ -108,7 +108,7 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
         $properties = [];
 
         foreach ($metadata->properties as $property) {
-            $properties[$property->getOutputName()][] = $property->name;
+            $properties[$property->externalName][] = $property->name;
         }
 
         $source = SourceInfo::createFromReflection($class);

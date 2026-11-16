@@ -5,46 +5,121 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Metadata;
 
 /**
- * Mapping of one property of a class.
+ * Mapping of one property of a class. The fields are read directly and
+ * changed by the `with*()` methods, each returning a changed copy.
  */
 final class PropertyMetadata
 {
+    /**
+     * Name of the property in mapped data, in both directions
+     *
+     * @var non-empty-string
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public string $externalName;
+
+    /**
+     * Whether {@see $externalName} is given by a reader, such as by an
+     * attribute, {@see false} in case of it is the PHP name
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public bool $isExternalNameExplicit;
+
+    /**
+     * Type of the value read from the property on normalization
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?TypeMetadata $read;
+
+    /**
+     * Type of the value written to the property on denormalization
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?TypeMetadata $write;
+
+    /**
+     * Value used when mapped data has none, {@see null} in case of the
+     * value is required
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?DefaultValueMetadata $default;
+
+    /**
+     * Whether the property takes part in normalization, {@see false} for a
+     * property that has no value to read, such as a virtual one without a
+     * get hook
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public bool $isReadable;
+
+    /**
+     * Whether the property takes part in denormalization, {@see false} for
+     * a property that takes no value, such as a virtual one without a set
+     * hook
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public bool $isWritable;
+
+    /**
+     * @param non-empty-string|null $externalName name of the property in
+     *        mapped data, the PHP name in case of {@see null}
+     */
     public function __construct(
         /**
          * @var non-empty-string
          */
         public readonly string $name,
-        /**
-         * Name of the property in mapped data, {@see null} in case of it
-         * matches the PHP name
-         *
-         * @var non-empty-string|null
-         */
-        public readonly ?string $externalName = null,
-        /**
-         * Type of the value read from the property on normalization
-         */
-        public readonly ?TypeMetadata $read = null,
-        /**
-         * Type of the value written to the property on denormalization
-         */
-        public readonly ?TypeMetadata $write = null,
-        /**
-         * Value used when mapped data has none, {@see null} in case of the
-         * value is required
-         */
-        public readonly ?DefaultValueMetadata $default = null,
-    ) {}
+        ?string $externalName = null,
+        ?TypeMetadata $read = null,
+        ?TypeMetadata $write = null,
+        ?DefaultValueMetadata $default = null,
+        bool $isReadable = true,
+        bool $isWritable = true,
+    ) {
+        $this->externalName = $externalName ?? $name;
+        $this->isExternalNameExplicit = $externalName !== null;
+        $this->read = $read;
+        $this->write = $write;
+        $this->default = $default;
+        $this->isReadable = $isReadable;
+        $this->isWritable = $isWritable;
+    }
 
-    /**
-     * Returns the name of the property in mapped data, in both directions:
-     * the external name or the PHP name in case of there is none.
-     *
-     * @return non-empty-string
-     */
-    public function getOutputName(): string
+    public function withReadable(bool $isReadable): self
     {
-        return $this->externalName ?? $this->name;
+        $self = clone $this;
+        $self->isReadable = $isReadable;
+
+        return $self;
+    }
+
+    public function withWritable(bool $isWritable): self
+    {
+        $self = clone $this;
+        $self->isWritable = $isWritable;
+
+        return $self;
     }
 
     /**
@@ -52,56 +127,43 @@ final class PropertyMetadata
      */
     public function withExternalName(string $name): self
     {
-        return new self(
-            name: $this->name,
-            externalName: $name,
-            read: $this->read,
-            write: $this->write,
-            default: $this->default,
-        );
+        $self = clone $this;
+        $self->externalName = $name;
+        $self->isExternalNameExplicit = true;
+
+        return $self;
     }
 
     public function withType(TypeMetadata $type): self
     {
-        return new self(
-            name: $this->name,
-            externalName: $this->externalName,
-            read: $type,
-            write: $type,
-            default: $this->default,
-        );
+        $self = clone $this;
+        $self->read = $type;
+        $self->write = $type;
+
+        return $self;
     }
 
     public function withReadType(TypeMetadata $type): self
     {
-        return new self(
-            name: $this->name,
-            externalName: $this->externalName,
-            read: $type,
-            write: $this->write,
-            default: $this->default,
-        );
+        $self = clone $this;
+        $self->read = $type;
+
+        return $self;
     }
 
     public function withWriteType(TypeMetadata $type): self
     {
-        return new self(
-            name: $this->name,
-            externalName: $this->externalName,
-            read: $this->read,
-            write: $type,
-            default: $this->default,
-        );
+        $self = clone $this;
+        $self->write = $type;
+
+        return $self;
     }
 
     public function withDefaultValue(DefaultValueMetadata $value): self
     {
-        return new self(
-            name: $this->name,
-            externalName: $this->externalName,
-            read: $this->read,
-            write: $this->write,
-            default: $value,
-        );
+        $self = clone $this;
+        $self->default = $value;
+
+        return $self;
     }
 }

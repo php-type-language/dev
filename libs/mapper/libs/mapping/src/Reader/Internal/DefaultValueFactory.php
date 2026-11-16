@@ -70,7 +70,7 @@ final class DefaultValueFactory
     {
         try {
             return $evaluate();
-        } catch (\Error $e) {
+        } catch (\Throwable $e) {
             throw InvalidDefaultValueException::becauseDefaultValueCannotBeEvaluated(
                 property: $context->target,
                 source: $context->source,
