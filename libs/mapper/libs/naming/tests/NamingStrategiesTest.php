@@ -5,13 +5,31 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Naming\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use TypeLang\Mapper\Naming\NamingStrategy;
+use TypeLang\Mapper\Naming\CamelCaseNamingStrategy;
+use TypeLang\Mapper\Naming\KebabCaseNamingStrategy;
+use TypeLang\Mapper\Naming\NamingStrategyInterface;
+use TypeLang\Mapper\Naming\PascalCaseNamingStrategy;
+use TypeLang\Mapper\Naming\ScreamingSnakeCaseNamingStrategy;
+use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 
-final class NamingStrategyTest extends TestCase
+final class NamingStrategiesTest extends TestCase
 {
     /**
+     * Columns of {@see self::KEYS}.
+     *
+     * @var list<class-string<NamingStrategyInterface>>
+     */
+    private const STRATEGIES = [
+        CamelCaseNamingStrategy::class,
+        PascalCaseNamingStrategy::class,
+        SnakeCaseNamingStrategy::class,
+        ScreamingSnakeCaseNamingStrategy::class,
+        KebabCaseNamingStrategy::class,
+    ];
+
+    /**
      * Expected keys of each property name in the order of
-     * {@see NamingStrategy::cases()}.
+     * {@see self::STRATEGIES}.
      *
      * @var array<non-empty-string, list<non-empty-string>>
      */
@@ -53,19 +71,37 @@ final class NamingStrategyTest extends TestCase
             'screaming-snake',
         ],
         'Content-Type' => ['contentType', 'ContentType', 'content_type', 'CONTENT_TYPE', 'content-type'],
-        '__private__name_' => ['privateName', 'PrivateName', 'private_name', 'PRIVATE_NAME', 'private-name'],
+        '__private__name_' => [
+            '__privateName_',
+            '__PrivateName_',
+            '__private_name_',
+            '__PRIVATE_NAME_',
+            '__private-name_',
+        ],
+        '_id' => ['_id', '_Id', '_id', '_ID', '_id'],
+        '__typename' => ['__typename', '__Typename', '__typename', '__TYPENAME', '__typename'],
+        '_embeddedItems' => [
+            '_embeddedItems',
+            '_EmbeddedItems',
+            '_embedded_items',
+            '_EMBEDDED_ITEMS',
+            '_embedded-items',
+        ],
+        'userIDs' => ['userIds', 'UserIds', 'user_ids', 'USER_IDS', 'user-ids'],
         'a' => ['a', 'A', 'a', 'A', 'a'],
         'A' => ['a', 'A', 'a', 'A', 'a'],
         'aB' => ['aB', 'AB', 'a_b', 'A_B', 'a-b'],
         '_' => ['_', '_', '_', '_', '_'],
         '_-.' => ['_-.', '_-.', '_-.', '_-.', '_-.'],
-        'listURLs' => ['listUrLs', 'ListUrLs', 'list_ur_ls', 'LIST_UR_LS', 'list-ur-ls'],
+        'listURLs' => ['listUrls', 'ListUrls', 'list_urls', 'LIST_URLS', 'list-urls'],
+        'getURLsCount' => ['getUrlsCount', 'GetUrlsCount', 'get_urls_count', 'GET_URLS_COUNT', 'get-urls-count'],
+        'HTTPServers' => ['httpServers', 'HttpServers', 'http_servers', 'HTTP_SERVERS', 'http-servers'],
         'größe' => ['größe', 'Größe', 'größe', 'GRößE', 'größe'],
     ];
 
     /**
-     * Names whose {@see NamingStrategy::ScreamingSnakeCase} key has a new
-     * word boundary after a digit or a non-ASCII letter.
+     * Names whose {@see ScreamingSnakeCaseNamingStrategy} key has a new word
+     * boundary after a digit or a non-ASCII letter.
      *
      * @var list<non-empty-string>
      */
@@ -73,7 +109,7 @@ final class NamingStrategyTest extends TestCase
 
     /**
      * @return iterable<non-empty-string, array{
-     *     NamingStrategy,
+     *     NamingStrategyInterface,
      *     non-empty-string,
      *     non-empty-string,
      * }>
@@ -81,8 +117,8 @@ final class NamingStrategyTest extends TestCase
     public static function renameDataProvider(): iterable
     {
         foreach (self::KEYS as $name => $keys) {
-            foreach (NamingStrategy::cases() as $index => $strategy) {
-                yield $strategy->value . ': ' . $name => [$strategy, $name, $keys[$index]];
+            foreach (self::STRATEGIES as $index => $class) {
+                yield self::getShortName($class) . ': ' . $name => [new $class(), $name, $keys[$index]];
             }
         }
     }
@@ -92,35 +128,35 @@ final class NamingStrategyTest extends TestCase
      * @param non-empty-string $expected
      */
     #[DataProvider('renameDataProvider')]
-    public function testRenamesPropertyIntoKey(NamingStrategy $strategy, string $name, string $expected): void
+    public function testRenamesPropertyIntoKey(NamingStrategyInterface $strategy, string $name, string $expected): void
     {
         self::assertSame($expected, $strategy->rename($name));
     }
 
     /**
      * @return iterable<non-empty-string, array{
-     *     NamingStrategy,
+     *     NamingStrategyInterface,
      *     non-empty-string,
      * }>
      */
     public static function separatedStrategyDataProvider(): iterable
     {
         $strategies = [
-            NamingStrategy::SnakeCase,
-            NamingStrategy::ScreamingSnakeCase,
-            NamingStrategy::KebabCase,
+            SnakeCaseNamingStrategy::class,
+            ScreamingSnakeCaseNamingStrategy::class,
+            KebabCaseNamingStrategy::class,
         ];
 
         foreach (\array_keys(self::KEYS) as $name) {
-            foreach ($strategies as $strategy) {
-                $isUnstable = $strategy === NamingStrategy::ScreamingSnakeCase
+            foreach ($strategies as $class) {
+                $isUnstable = $class === ScreamingSnakeCaseNamingStrategy::class
                     && \in_array($name, self::UNSTABLE_SCREAMING_NAMES, true);
 
                 if ($isUnstable) {
                     continue;
                 }
 
-                yield $strategy->value . ': ' . $name => [$strategy, $name];
+                yield self::getShortName($class) . ': ' . $name => [new $class(), $name];
             }
         }
     }
@@ -129,35 +165,11 @@ final class NamingStrategyTest extends TestCase
      * @param non-empty-string $name
      */
     #[DataProvider('separatedStrategyDataProvider')]
-    public function testSeparatedStrategyIsIdempotent(NamingStrategy $strategy, string $name): void
+    public function testSeparatedStrategyIsIdempotent(NamingStrategyInterface $strategy, string $name): void
     {
         $key = $strategy->rename($name);
 
         self::assertSame($key, $strategy->rename($key));
-    }
-
-    /**
-     * @return iterable<non-empty-string, array{
-     *     non-empty-string,
-     *     NamingStrategy,
-     * }>
-     */
-    public static function valueDataProvider(): iterable
-    {
-        yield 'camelCase' => ['camelCase', NamingStrategy::CamelCase];
-        yield 'PascalCase' => ['PascalCase', NamingStrategy::PascalCase];
-        yield 'snake_case' => ['snake_case', NamingStrategy::SnakeCase];
-        yield 'SCREAMING_SNAKE_CASE' => ['SCREAMING_SNAKE_CASE', NamingStrategy::ScreamingSnakeCase];
-        yield 'kebab-case' => ['kebab-case', NamingStrategy::KebabCase];
-    }
-
-    /**
-     * @param non-empty-string $value
-     */
-    #[DataProvider('valueDataProvider')]
-    public function testCreatesStrategyFromStyleName(string $value, NamingStrategy $expected): void
-    {
-        self::assertSame($expected, NamingStrategy::from($value));
     }
 
     public function testIgnoresLocale(): void
@@ -169,11 +181,20 @@ final class NamingStrategyTest extends TestCase
         }
 
         try {
-            self::assertSame('id', NamingStrategy::SnakeCase->rename('ID'));
-            self::assertSame('ID', NamingStrategy::ScreamingSnakeCase->rename('id'));
-            self::assertSame('Id', NamingStrategy::PascalCase->rename('id'));
+            self::assertSame('id', (new SnakeCaseNamingStrategy())->rename('ID'));
+            self::assertSame('ID', (new ScreamingSnakeCaseNamingStrategy())->rename('id'));
+            self::assertSame('Id', (new PascalCaseNamingStrategy())->rename('id'));
         } finally {
             \setlocale(\LC_CTYPE, (string) $previous);
         }
+    }
+
+    /**
+     * @param class-string $class
+     * @return non-empty-string
+     */
+    private static function getShortName(string $class): string
+    {
+        return (new \ReflectionClass($class))->getShortName();
     }
 }

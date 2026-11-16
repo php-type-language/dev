@@ -10,8 +10,7 @@ namespace TypeLang\Mapper\Naming;
 interface NamingStrategyInterface
 {
     /**
-     * Returns the key for the given property name. A name without letters
-     * and digits (such as `_`) is returned unchanged.
+     * Returns the key for the given property name.
      *
      * @param non-empty-string $name
      * @return non-empty-string
