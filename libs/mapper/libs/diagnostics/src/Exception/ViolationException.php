@@ -8,6 +8,7 @@ use TypeLang\Mapper\Diagnostics\Printer\Path\JsonPathPrinter;
 use TypeLang\Mapper\Diagnostics\Printer\Path\PathPrinterInterface;
 use TypeLang\Mapper\Diagnostics\Violation;
 use TypeLang\Mapper\Diagnostics\ViolationFormatter;
+use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
 
 /**
  * Mapping failure caused by invalid input.
@@ -35,7 +36,7 @@ abstract class ViolationException extends \RuntimeException
      */
     protected static function formatSummary(
         array $violations,
-        ViolationFormatter $formatter = new ViolationFormatter(),
+        ViolationFormatterInterface $formatter = new ViolationFormatter(),
         PathPrinterInterface $pathPrinter = new JsonPathPrinter(),
     ): string {
         $first = $violations[0];
