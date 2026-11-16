@@ -8,9 +8,10 @@ use TypeLang\Mapper\Diagnostics\Printer\Value\ShortValuePrinter;
 use TypeLang\Mapper\Diagnostics\Printer\Value\ValuePrinterInterface;
 
 /**
- * Renders the text of a violation without its path.
+ * Renders the template of the violation, or of its code, with the
+ * parameters and the rejected value.
  */
-final class ViolationFormatter
+final class ViolationFormatter implements ViolationFormatterInterface
 {
     public function __construct(
         private readonly ValuePrinterInterface $valuePrinter = new ShortValuePrinter(),
@@ -29,6 +30,6 @@ final class ViolationFormatter
 
         $replacements['{{value}}'] = $this->valuePrinter->print($violation->value);
 
-        return \strtr($violation->code->getTemplate(), $replacements);
+        return \strtr($violation->template ?? $violation->code->getTemplate(), $replacements);
     }
 }
