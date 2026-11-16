@@ -19,6 +19,7 @@ use TypeLang\Mapper\Mapping\Reader\MetadataReaderInterface;
 use TypeLang\Mapper\Mapping\Reader\NeonFileMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\OptionalMetadataReaderInterface;
 use TypeLang\Mapper\Mapping\Reader\PhpFileMetadataReader;
+use TypeLang\Mapper\Mapping\Reader\ReflectionMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\YamlFileMetadataReader;
 use TypeLang\Mapper\Mapping\Tests\Stub\PromotedStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\StatusStub;
@@ -227,6 +228,57 @@ final class ArrayMetadataReaderTest extends TestCase
 
         self::assertNotNull($friend->read?->error);
         self::assertSame('$[\'' . UserStub::class . '\'].properties.friend.type', $friend->read->source->path);
+    }
+
+    public function testDiscriminatorConfigSetsPolymorphism(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => [
+                'discriminator' => [
+                    'field' => 'kind',
+                    'map' => ['promoted' => PromotedStub::class, 7 => 'int'],
+                    'otherwise' => StatusStub::class,
+                ],
+            ],
+        ]);
+
+        $discriminator = self::readOverReflection($reader, UserStub::class)->discriminator;
+
+        self::assertNotNull($discriminator);
+        self::assertSame('kind', $discriminator->field);
+        self::assertType(PromotedStub::class, $discriminator->map['promoted']);
+        self::assertType('int', $discriminator->map[7]);
+        self::assertType(StatusStub::class, $discriminator->default);
+        self::assertSame('$[\'' . UserStub::class . '\'].discriminator', $discriminator->source->path);
+    }
+
+    public function testWrongDiscriminatorConfigIsThrown(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => ['discriminator' => ['field' => 'kind', 'map' => [], 'other' => 1]],
+        ]);
+        $class = UserStub::class;
+
+        self::assertSame(
+            [
+                "{$class}: unknown key \"other\" in \$['{$class}'].discriminator.other",
+                "{$class}: value of \"map\" must be a non-empty map in \$['{$class}'].discriminator",
+            ],
+            self::getErrors(static fn() => self::readOverReflection($reader, UserStub::class)),
+        );
+    }
+
+    public function testUnreadableTypeOfDiscriminatorIsThrownByValidation(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => ['discriminator' => ['field' => 'kind', 'map' => ['broken' => 'list<']]],
+        ]);
+
+        $errors = self::getErrors(static fn() => self::provide(UserStub::class, $reader, new ReflectionMetadataReader()));
+
+        self::assertCount(1, $errors);
+        self::assertStringStartsWith(UserStub::class . ': ', $errors[0]);
+        self::assertStringEndsWith(' in $[\'' . UserStub::class . '\'].discriminator', $errors[0]);
     }
 
     public function testConfigOfPropertyThatIsNotMappedIsThrown(): void

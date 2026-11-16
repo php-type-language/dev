@@ -14,7 +14,10 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Reader\AttributeMetadataReader;
 use TypeLang\Mapper\Mapping\Tests\Stub\AttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenAttributeStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\BrokenDiscriminatorStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\Concern\OwnerTrait;
 use TypeLang\Mapper\Mapping\Tests\Stub\MethodAttributeStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\ShapeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\StrictAttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\TraitUserStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UnparsableTypeStub;
@@ -171,6 +174,30 @@ final class AttributeMetadataReaderTest extends TestCase
 
         self::assertSame(UserStub::class, $metadata->name);
         self::assertSame([], $metadata->properties);
+    }
+
+    public function testDiscriminatorMapSetsPolymorphismWithTypesResolvedByImports(): void
+    {
+        $discriminator = self::readAttributes(ShapeStub::class)->discriminator;
+
+        self::assertNotNull($discriminator);
+        self::assertSame('type', $discriminator->field);
+        self::assertSame(['user', 'status'], \array_keys($discriminator->map));
+        self::assertType(UserStub::class, $discriminator->map['user']);
+        self::assertType('StatusStub', $discriminator->map['status']);
+        self::assertSame('TypeLang\Mapper\Mapping\Tests\Stub', $discriminator->map['status']->namespace);
+        self::assertType(OwnerTrait::class, $discriminator->default);
+        self::assertSame('ShapeStub.php', \basename((string) $discriminator->source->file));
+    }
+
+    public function testBrokenDiscriminatorMapIsThrown(): void
+    {
+        $class = BrokenDiscriminatorStub::class;
+
+        self::assertSame(
+            ["{$class}: value of \"field\" must be a non-empty string in BrokenDiscriminatorStub.php"],
+            self::getErrors(static fn() => self::readAttributes(BrokenDiscriminatorStub::class)),
+        );
     }
 
     /**

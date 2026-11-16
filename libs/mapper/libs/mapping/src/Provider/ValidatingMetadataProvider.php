@@ -88,6 +88,24 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
             }
         }
 
+        $discriminator = $metadata->discriminator;
+
+        if ($discriminator === null) {
+            return $errors;
+        }
+
+        foreach ([...\array_values($discriminator->map), $discriminator->default] as $type) {
+            if ($type?->error === null) {
+                continue;
+            }
+
+            $errors[] = InvalidTypeException::becauseTypeCannotBeRead(
+                property: $class->name,
+                reason: $type->error,
+                source: $type->source,
+            );
+        }
+
         return $errors;
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader;
 
+use TypeLang\Mapper\Mapping\DiscriminatorMap;
 use TypeLang\Mapper\Mapping\Exception\InvalidAttributeException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
@@ -14,6 +15,7 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
+use TypeLang\Mapper\Mapping\Reader\Internal\DiscriminatorFactory;
 use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
 use TypeLang\Mapper\Mapping\Reader\Internal\PropertyHooks;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
@@ -27,8 +29,9 @@ use TypeLang\Type\TypeNode;
  * {@see MapType}, an attribute of a property that is not given is an error.
  * {@see MapType} of the property sets both types, of its `get` hook the read
  * type, of its `set` hook the write type, of any other method is an error.
- * Names in the types are resolved by the imports of the file declaring the
- * property.
+ * {@see DiscriminatorMap} of the class sets its polymorphism. Names in the
+ * types are resolved by the imports of the file declaring the property or
+ * the class.
  */
 final class AttributeMetadataReader implements MetadataReaderInterface
 {
@@ -61,7 +64,52 @@ final class AttributeMetadataReader implements MetadataReaderInterface
             self::checkMethod($class, $method, $errors);
         }
 
+        $metadata = $this->readDiscriminator($class, $metadata, $errors);
+
         $errors->throwIfNotEmpty($metadata);
+
+        return $metadata;
+    }
+
+    /**
+     * @template T of object
+     * @param \ReflectionClass<T> $class
+     * @param ClassMetadata<T> $metadata
+     * @return ClassMetadata<T>
+     */
+    private function readDiscriminator(
+        \ReflectionClass $class,
+        ClassMetadata $metadata,
+        ErrorCollector $errors,
+    ): ClassMetadata {
+        $attributes = $class->getAttributes(DiscriminatorMap::class);
+
+        if ($attributes === []) {
+            return $metadata;
+        }
+
+        $context = $this->contexts->createFromClass($class);
+
+        foreach ($attributes as $attribute) {
+            $instance = self::createAttribute($attribute, $context, $errors);
+
+            if (!$instance instanceof DiscriminatorMap) {
+                continue;
+            }
+
+            $discriminator = DiscriminatorFactory::create(
+                field: $instance->field,
+                map: $instance->map,
+                otherwise: $instance->otherwise,
+                context: $context,
+                parser: $this->parser,
+                errors: $errors,
+            );
+
+            if ($discriminator !== null) {
+                $metadata = $metadata->withDiscriminator($discriminator);
+            }
+        }
 
         return $metadata;
     }

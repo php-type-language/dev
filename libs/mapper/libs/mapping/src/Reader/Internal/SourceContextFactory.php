@@ -53,6 +53,22 @@ final class SourceContextFactory
     }
 
     /**
+     * Creates the place of a value of the class itself, such as of its
+     * attribute, the types are resolved by the imports of its file.
+     *
+     * @param \ReflectionClass<object> $class
+     */
+    public function createFromClass(\ReflectionClass $class): SourceContext
+    {
+        return new SourceContext(
+            target: $class->name,
+            source: SourceInfo::createFromReflection($class),
+            resolver: fn(): TypeResolver => $this->getResolver($class),
+            namespace: self::findNamespace($class),
+        );
+    }
+
+    /**
      * @param \ReflectionClass<object> $scope class or trait whose file
      *        contains the type
      */

@@ -20,7 +20,9 @@ use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\PropertyConfig;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\PropertyConfigLoaderInterface;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader\TypeDirection;
+use TypeLang\Mapper\Mapping\Reader\Internal\DiscriminatorFactory;
 use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
+use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserInterface;
 use TypeLang\Type\TypeNode;
@@ -32,6 +34,11 @@ use TypeLang\Type\TypeNode;
  * Class names are case-insensitive, the leading `\` is optional.
  *
  * ```
+ * App\Shape:
+ *   discriminator:
+ *     field: type
+ *     map: { circle: App\Circle, square: App\Square }
+ *     otherwise: App\UnknownShape
  * App\User:
  *   properties:
  *     id: int
@@ -47,6 +54,18 @@ use TypeLang\Type\TypeNode;
 final class ArrayMetadataReader implements MetadataReaderInterface
 {
     private const PROPERTIES_KEY = 'properties';
+
+    private const DISCRIMINATOR_KEY = 'discriminator';
+
+    /**
+     * Keys of the config of {@see self::DISCRIMINATOR_KEY}
+     */
+    private const DISCRIMINATOR_KEYS = ['field', 'map', 'otherwise'];
+
+    /**
+     * @var TypeParserInterface<TypeNode, string>
+     */
+    private readonly TypeParserInterface $parser;
 
     /**
      * @var non-empty-list<PropertyConfigLoaderInterface>
@@ -80,6 +99,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         private readonly ?string $file = null,
         TypeParserInterface $parser = new TypeParser(),
     ) {
+        $this->parser = $parser;
         $this->loaders = [
             new TypeConfigLoader($parser),
             new NameConfigLoader(),
@@ -157,8 +177,18 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             );
         }
 
+        if (\array_key_exists(self::DISCRIMINATOR_KEY, $config)) {
+            $metadata = $this->readDiscriminator(
+                class: $class,
+                metadata: $metadata,
+                discriminator: $config[self::DISCRIMINATOR_KEY],
+                path: $path->withKey(self::DISCRIMINATOR_KEY),
+                errors: $errors,
+            );
+        }
+
         foreach ($config as $name => $_) {
-            if ($name !== self::PROPERTIES_KEY) {
+            if ($name !== self::PROPERTIES_KEY && $name !== self::DISCRIMINATOR_KEY) {
                 $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
                     $name,
                     $class->name,
@@ -168,6 +198,55 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         }
 
         return $metadata;
+    }
+
+    /**
+     * @template T of object
+     * @param \ReflectionClass<T> $class
+     * @param ClassMetadata<T> $metadata
+     * @return ClassMetadata<T>
+     */
+    private function readDiscriminator(
+        \ReflectionClass $class,
+        ClassMetadata $metadata,
+        mixed $discriminator,
+        ConfigPath $path,
+        ErrorCollector $errors,
+    ): ClassMetadata {
+        if (!\is_array($discriminator)) {
+            $errors->addError(InvalidValueException::becauseValueIsNotMap(
+                self::DISCRIMINATOR_KEY,
+                $class->name,
+                $path->createSource(),
+            ));
+
+            return $metadata;
+        }
+
+        foreach ($discriminator as $name => $_) {
+            if (!\in_array($name, self::DISCRIMINATOR_KEYS, true)) {
+                $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
+                    $name,
+                    $class->name,
+                    $path->withKey($name)->createSource(),
+                ));
+            }
+        }
+
+        $result = DiscriminatorFactory::create(
+            field: $discriminator['field'] ?? null,
+            map: $discriminator['map'] ?? null,
+            otherwise: $discriminator['otherwise'] ?? null,
+            context: new SourceContext($class->name, $path->createSource()),
+            parser: $this->parser,
+            errors: $errors,
+        );
+
+        if ($result === null) {
+            return $metadata;
+        }
+
+        return $metadata->withDiscriminator($result);
     }
 
     /**

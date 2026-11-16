@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Metadata;
 
 /**
- * Mapping of a class: its mapped properties.
+ * Mapping of a class: its mapped properties and its polymorphism.
  *
  * @template T of object
  */
@@ -29,6 +29,11 @@ final class ClassMetadata
          * @var array<non-empty-string, PropertyMetadata>
          */
         public readonly array $properties = [],
+        /**
+         * Types the data of the class is mapped to by its tag, {@see null}
+         * in case of the class is mapped by its own properties
+         */
+        public readonly ?DiscriminatorMetadata $discriminator = null,
     ) {}
 
     /**
@@ -50,6 +55,14 @@ final class ClassMetadata
         $properties = $this->properties;
         $properties[$property->name] = $property;
 
-        return new self($this->name, $properties);
+        return new self($this->name, $properties, $this->discriminator);
+    }
+
+    /**
+     * @return self<T>
+     */
+    public function withDiscriminator(DiscriminatorMetadata $discriminator): self
+    {
+        return new self($this->name, $this->properties, $discriminator);
     }
 }
