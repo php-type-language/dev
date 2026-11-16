@@ -11,13 +11,19 @@ use TypeLang\Mapper\Mapping\Exception\UnknownPropertyException;
 use TypeLang\Mapper\Mapping\MapName;
 use TypeLang\Mapper\Mapping\MapType;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\EmptySkipCondition;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\ExpressionSkipCondition;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\NullSkipCondition;
 use TypeLang\Mapper\Mapping\Reader\AttributeMetadataReader;
 use TypeLang\Mapper\Mapping\Tests\Stub\AttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenAttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenDiscriminatorStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\BrokenSkipStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\Concern\OwnerTrait;
+use TypeLang\Mapper\Mapping\Tests\Stub\MessageStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\MethodAttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\ShapeStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\SkipStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\StrictAttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\TraitUserStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UnparsableTypeStub;
@@ -188,6 +194,68 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertSame('TypeLang\Mapper\Mapping\Tests\Stub', $discriminator->map['status']->namespace);
         self::assertType(OwnerTrait::class, $discriminator->default);
         self::assertSame('ShapeStub.php', \basename((string) $discriminator->source->file));
+    }
+
+    public function testSkipAttributesSetConditionsWithParsedExpressions(): void
+    {
+        $metadata = self::readAttributes(SkipStub::class);
+        $object = new SkipStub();
+
+        $nickname = self::getProperty($metadata, 'nickname')->skip;
+        self::assertCount(1, $nickname);
+        self::assertInstanceOf(NullSkipCondition::class, $nickname[0]);
+
+        $tags = self::getProperty($metadata, 'tags')->skip;
+        self::assertCount(1, $tags);
+        self::assertInstanceOf(EmptySkipCondition::class, $tags[0]);
+
+        $email = self::getProperty($metadata, 'email')->skip;
+        self::assertCount(2, $email);
+        self::assertContainsOnlyInstancesOf(ExpressionSkipCondition::class, $email);
+        self::assertSame('owner', $email[1]->variable);
+
+        self::assertFalse($email[0]->isMatched($object, ''));
+        self::assertTrue($email[1]->isMatched($object, ''));
+
+        $object->isPrivate = true;
+        self::assertTrue($email[0]->isMatched($object, ''));
+
+        self::assertSame([], self::getProperty($metadata, 'isPrivate')->skip);
+    }
+
+    public function testMessageAttributesAndFormOfObjectsAreRead(): void
+    {
+        $class = MessageStub::class;
+        $read = static fn() => self::readAttributes(MessageStub::class);
+
+        self::assertSame(
+            ["{$class}::\$name: value of \"message\" must be a non-empty string in MessageStub.php"],
+            self::getErrors($read),
+        );
+
+        try {
+            $read();
+        } catch (InvalidMetadataException $e) {
+            $age = self::getProperty($e->metadata, 'age');
+
+            self::assertSame('Age must be a number', $age->typeErrorMessage);
+            self::assertSame('Age is required', $age->undefinedErrorMessage);
+            self::assertNull(self::getProperty($e->metadata, 'name')->typeErrorMessage);
+            self::assertSame('Person is expected', $e->metadata->typeErrorMessage);
+            self::assertFalse($e->metadata->isNormalizeAsArray);
+        }
+    }
+
+    public function testExpressionThatCannotBeParsedIsThrown(): void
+    {
+        $errors = self::getErrors(static fn() => self::readAttributes(BrokenSkipStub::class));
+
+        self::assertCount(1, $errors);
+        self::assertStringStartsWith(
+            BrokenSkipStub::class . '::$email: expression "this." is invalid (',
+            $errors[0],
+        );
+        self::assertStringEndsWith(' in BrokenSkipStub.php', $errors[0]);
     }
 
     public function testBrokenDiscriminatorMapIsThrown(): void

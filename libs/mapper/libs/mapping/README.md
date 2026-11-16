@@ -5,11 +5,11 @@ Mapping of classes: attributes, metadata model and its reading from configs, att
 ```php
 use TypeLang\Mapper\Mapping\MetadataProviderFactory;
 use TypeLang\Mapper\Mapping\Reader\YamlFileMetadataReader;
-use TypeLang\Mapper\Naming\NamingStrategy;
+use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 
 $provider = MetadataProviderFactory::create(
     readers: [new YamlFileMetadataReader(__DIR__ . '/mapping.yaml')],
-    strategy: NamingStrategy::SnakeCase,
+    strategy: new SnakeCaseNamingStrategy(),
 );
 
 $metadata = $provider->read(new \ReflectionClass(App\Model\User::class));

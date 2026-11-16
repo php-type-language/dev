@@ -12,6 +12,9 @@ use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
 use TypeLang\Mapper\Mapping\Exception\UnknownKeyException;
 use TypeLang\Mapper\Mapping\Exception\UnknownPropertyException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\EmptySkipCondition;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\ExpressionSkipCondition;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\NullSkipCondition;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\ChainMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\JsonFileMetadataReader;
@@ -228,6 +231,91 @@ final class ArrayMetadataReaderTest extends TestCase
 
         self::assertNotNull($friend->read?->error);
         self::assertSame('$[\'' . UserStub::class . '\'].properties.friend.type', $friend->read->source->path);
+    }
+
+    public function testMessageAndFormKeysAreRead(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => [
+                'type_error_message' => 'User is expected',
+                'normalize_as_array' => false,
+                'properties' => [
+                    'id' => ['type_error_message' => 'Id is a number', 'undefined_error_message' => 'Id is required'],
+                ],
+            ],
+        ]);
+
+        $metadata = self::readOverReflection($reader, UserStub::class);
+        $id = self::getProperty($metadata, 'id');
+
+        self::assertSame('User is expected', $metadata->typeErrorMessage);
+        self::assertFalse($metadata->isNormalizeAsArray);
+        self::assertSame('Id is a number', $id->typeErrorMessage);
+        self::assertSame('Id is required', $id->undefinedErrorMessage);
+    }
+
+    public function testWrongMessageAndFormKeysAreThrown(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => [
+                'type_error_message' => '',
+                'normalize_as_array' => 'no',
+                'properties' => ['id' => ['undefined_error_message' => 42]],
+            ],
+        ]);
+        $class = UserStub::class;
+
+        self::assertSame(
+            [
+                "{$class}::\$id: value of \"undefined_error_message\" must be a non-empty string"
+                    . " in \$['{$class}'].properties.id.undefined_error_message",
+                "{$class}: value of \"type_error_message\" must be a non-empty string"
+                    . " in \$['{$class}'].type_error_message",
+                "{$class}: value of \"normalize_as_array\" must be a boolean in \$['{$class}'].normalize_as_array",
+            ],
+            self::getErrors(static fn() => self::readOverReflection($reader, UserStub::class)),
+        );
+    }
+
+    public function testSkipConfigSetsConditions(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => [
+                'properties' => [
+                    'id' => ['skip' => 'null'],
+                    'email' => ['skip' => ['empty', 'this.id > 10']],
+                ],
+            ],
+        ]);
+
+        $metadata = self::readOverReflection($reader, UserStub::class);
+
+        $id = self::getProperty($metadata, 'id')->skip;
+        self::assertCount(1, $id);
+        self::assertInstanceOf(NullSkipCondition::class, $id[0]);
+
+        $email = self::getProperty($metadata, 'email')->skip;
+        self::assertCount(2, $email);
+        self::assertInstanceOf(EmptySkipCondition::class, $email[0]);
+        self::assertInstanceOf(ExpressionSkipCondition::class, $email[1]);
+        self::assertSame('this', $email[1]->variable);
+    }
+
+    public function testWrongSkipConfigIsThrown(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => ['properties' => ['id' => ['skip' => [42]], 'email' => ['skip' => 'this.']]],
+        ]);
+        $class = UserStub::class;
+
+        $errors = self::getErrors(static fn() => self::readOverReflection($reader, UserStub::class));
+
+        self::assertCount(2, $errors);
+        self::assertSame(
+            "{$class}::\$id: value of \"skip\" must be a non-empty string in \$['{$class}'].properties.id.skip",
+            $errors[0],
+        );
+        self::assertStringStartsWith("{$class}::\$email: expression \"this.\" is invalid (", $errors[1]);
     }
 
     public function testDiscriminatorConfigSetsPolymorphism(): void

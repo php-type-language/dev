@@ -16,7 +16,7 @@ use TypeLang\Mapper\Mapping\Tests\Stub\DocBlockStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\DuplicateNameStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
-use TypeLang\Mapper\Naming\NamingStrategy;
+use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 
 final class MetadataProviderFactoryTest extends TestCase
 {
@@ -60,12 +60,12 @@ final class MetadataProviderFactoryTest extends TestCase
 
     public function testStrategyNamesPropertiesWithoutExternalName(): void
     {
-        $metadata = MetadataProviderFactory::create(strategy: NamingStrategy::SnakeCase)
+        $metadata = MetadataProviderFactory::create(strategy: new SnakeCaseNamingStrategy())
             ->read(new \ReflectionClass(AttributeStub::class));
 
         self::assertSame('user_id', self::getProperty($metadata, 'id')->externalName);
 
-        $metadata = MetadataProviderFactory::create(strategy: NamingStrategy::SnakeCase)
+        $metadata = MetadataProviderFactory::create(strategy: new SnakeCaseNamingStrategy())
             ->read(new \ReflectionClass(UserStub::class));
 
         self::assertSame('display_name', self::getProperty($metadata, 'displayName')->externalName);

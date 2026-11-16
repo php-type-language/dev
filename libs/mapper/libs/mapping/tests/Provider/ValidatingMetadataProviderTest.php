@@ -28,7 +28,7 @@ use TypeLang\Mapper\Mapping\Tests\Stub\NamingCollisionStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UnparsableTypeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
-use TypeLang\Mapper\Naming\NamingStrategy;
+use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 
 final class ValidatingMetadataProviderTest extends TestCase
 {
@@ -59,7 +59,7 @@ final class ValidatingMetadataProviderTest extends TestCase
     {
         $read = static fn() => self::provide(
             NamingCollisionStub::class,
-            new NamingStrategyMetadataReader(NamingStrategy::SnakeCase),
+            new NamingStrategyMetadataReader(new SnakeCaseNamingStrategy()),
             new ReflectionMetadataReader(),
         );
 

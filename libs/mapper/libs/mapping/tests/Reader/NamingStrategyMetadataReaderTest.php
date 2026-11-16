@@ -8,7 +8,7 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Reader\NamingStrategyMetadataReader;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
-use TypeLang\Mapper\Naming\NamingStrategy;
+use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 
 final class NamingStrategyMetadataReaderTest extends TestCase
 {
@@ -18,7 +18,7 @@ final class NamingStrategyMetadataReaderTest extends TestCase
             ->withProperty(new PropertyMetadata('displayName'))
             ->withProperty((new PropertyMetadata('userId'))->withExternalName('id'));
 
-        $result = (new NamingStrategyMetadataReader(NamingStrategy::SnakeCase))
+        $result = (new NamingStrategyMetadataReader(new SnakeCaseNamingStrategy()))
             ->read(new \ReflectionClass(\stdClass::class), $metadata);
 
         self::assertSame('display_name', $result->findProperty('displayName')?->externalName);
@@ -27,7 +27,7 @@ final class NamingStrategyMetadataReaderTest extends TestCase
 
     public function testFirstReaderAddsNoProperties(): void
     {
-        $result = self::readAsFirst(new NamingStrategyMetadataReader(NamingStrategy::SnakeCase), \stdClass::class);
+        $result = self::readAsFirst(new NamingStrategyMetadataReader(new SnakeCaseNamingStrategy()), \stdClass::class);
 
         self::assertSame(\stdClass::class, $result->name);
         self::assertSame([], $result->properties);
