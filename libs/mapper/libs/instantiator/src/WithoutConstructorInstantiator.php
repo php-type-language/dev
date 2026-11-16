@@ -23,10 +23,12 @@ final class WithoutConstructorInstantiator implements InstantiatorInterface
     ) {}
 
     /**
+     * The data is not used, the object is always a new one.
+     *
      * @throws \ReflectionException in case of the class is an internal one
      *         requiring the constructor
      */
-    public function instantiate(): object
+    public function instantiate(array $data = []): object
     {
         return $this->class->newInstanceWithoutConstructor();
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Instantiator;
 
 use TypeLang\Mapper\Instantiator\Exception\ClassNotInstantiableException;
+use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 
 /**
  * Creates the objects of any class without calling the constructor.
@@ -16,7 +17,7 @@ final class InstantiatorFactory implements InstantiatorFactoryInterface
      *         abstract, an interface, a trait, an enum or an internal
      *         class requiring the constructor
      */
-    public function createInstantiator(\ReflectionClass $class): InstantiatorInterface
+    public function createInstantiator(\ReflectionClass $class, ClassMetadata $metadata): InstantiatorInterface
     {
         if ($class->isInterface()) {
             throw ClassNotInstantiableException::becauseClassIsInterface($class->name);
@@ -40,7 +41,7 @@ final class InstantiatorFactory implements InstantiatorFactoryInterface
         // constructor.
         if ($class->isInternal() && $class->isFinal()) {
             try {
-                $instantiator->instantiate();
+                $instantiator->instantiate([]);
             } catch (\ReflectionException $e) {
                 throw ClassNotInstantiableException::becauseClassRequiresConstructor($class->name, $e);
             }

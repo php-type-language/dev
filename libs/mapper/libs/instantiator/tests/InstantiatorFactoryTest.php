@@ -14,12 +14,13 @@ use TypeLang\Mapper\Instantiator\Tests\Stub\EmptyStub;
 use TypeLang\Mapper\Instantiator\Tests\Stub\EnumStub;
 use TypeLang\Mapper\Instantiator\Tests\Stub\InterfaceStub;
 use TypeLang\Mapper\Instantiator\Tests\Stub\TraitStub;
+use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 
 final class InstantiatorFactoryTest extends TestCase
 {
     public function testDoesNotCallConstructor(): void
     {
-        $object = self::createInstantiator(ConstructorStub::class)->instantiate();
+        $object = self::createInstantiator(ConstructorStub::class)->instantiate([]);
 
         self::assertInstanceOf(ConstructorStub::class, $object);
         self::assertFalse($object->isConstructed);
@@ -27,17 +28,17 @@ final class InstantiatorFactoryTest extends TestCase
 
     public function testInitializesDefaultPropertyValues(): void
     {
-        self::assertSame('default', self::createInstantiator(EmptyStub::class)->instantiate()->value);
+        self::assertSame('default', self::createInstantiator(EmptyStub::class)->instantiate([])->value);
     }
 
     public function testCreatesDistinctObjects(): void
     {
         $instantiator = self::createInstantiator(EmptyStub::class);
 
-        $first = $instantiator->instantiate();
+        $first = $instantiator->instantiate([]);
         $first->value = 'changed';
 
-        $second = $instantiator->instantiate();
+        $second = $instantiator->instantiate([]);
 
         self::assertNotSame($first, $second);
         self::assertSame('default', $second->value);
@@ -45,7 +46,7 @@ final class InstantiatorFactoryTest extends TestCase
 
     public function testCreatesInternalClassThatNeedsNoConstructor(): void
     {
-        self::assertInstanceOf(\stdClass::class, self::createInstantiator(\stdClass::class)->instantiate());
+        self::assertInstanceOf(\stdClass::class, self::createInstantiator(\stdClass::class)->instantiate([]));
     }
 
     /**
@@ -80,6 +81,7 @@ final class InstantiatorFactoryTest extends TestCase
      */
     private static function createInstantiator(string $class): InstantiatorInterface
     {
-        return (new InstantiatorFactory())->createInstantiator(new \ReflectionClass($class));
+        return (new InstantiatorFactory())
+            ->createInstantiator(new \ReflectionClass($class), new ClassMetadata($class));
     }
 }
