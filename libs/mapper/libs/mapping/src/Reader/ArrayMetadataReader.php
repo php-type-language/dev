@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader;
 
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
@@ -15,13 +16,16 @@ use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\ClassIndex;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\ConfigPath;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\DefaultConfigLoader;
+use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\MessageConfigLoader;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\NameConfigLoader;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\PropertyConfig;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\PropertyConfigLoaderInterface;
+use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\SkipConfigLoader;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader\TypeDirection;
 use TypeLang\Mapper\Mapping\Reader\Internal\DiscriminatorFactory;
 use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
+use TypeLang\Mapper\Mapping\Reader\Internal\SkipConditionFactory;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserInterface;
@@ -40,6 +44,8 @@ use TypeLang\Type\TypeNode;
  *     map: { circle: App\Circle, square: App\Square }
  *     otherwise: App\UnknownShape
  * App\User:
+ *   type_error_message: 'User must be an object'
+ *   normalize_as_array: false
  *   properties:
  *     id: int
  *     email:
@@ -49,6 +55,9 @@ use TypeLang\Type\TypeNode;
  *       write_type: non-empty-string
  *       strict: true
  *       default: null
+ *       skip: [null, 'this.isPrivate()']
+ *       type_error_message: 'Email must be a string'
+ *       undefined_error_message: 'Email is required'
  * ```
  */
 final class ArrayMetadataReader implements MetadataReaderInterface
@@ -56,6 +65,20 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     private const PROPERTIES_KEY = 'properties';
 
     private const DISCRIMINATOR_KEY = 'discriminator';
+
+    private const TYPE_ERROR_MESSAGE_KEY = 'type_error_message';
+
+    private const NORMALIZE_AS_ARRAY_KEY = 'normalize_as_array';
+
+    /**
+     * Keys of a class config
+     */
+    private const CLASS_KEYS = [
+        self::PROPERTIES_KEY,
+        self::DISCRIMINATOR_KEY,
+        self::TYPE_ERROR_MESSAGE_KEY,
+        self::NORMALIZE_AS_ARRAY_KEY,
+    ];
 
     /**
      * Keys of the config of {@see self::DISCRIMINATOR_KEY}
@@ -84,6 +107,8 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     /**
      * @param TypeParserInterface<TypeNode, string> $parser parser of the
      *        types of the config
+     * @param ExpressionLanguage|null $expressions parser of the expressions
+     *        of `skip`, created on the first one in case of {@see null}
      */
     public function __construct(
         /**
@@ -98,12 +123,15 @@ final class ArrayMetadataReader implements MetadataReaderInterface
          */
         private readonly ?string $file = null,
         TypeParserInterface $parser = new TypeParser(),
+        ?ExpressionLanguage $expressions = null,
     ) {
         $this->parser = $parser;
         $this->loaders = [
             new TypeConfigLoader($parser),
             new NameConfigLoader(),
             new DefaultConfigLoader(),
+            new SkipConfigLoader(new SkipConditionFactory($expressions)),
+            new MessageConfigLoader(),
         ];
 
         $keys = [];
@@ -187,14 +215,64 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             );
         }
 
+        $metadata = self::readClassOptions($class, $metadata, $config, $path, $errors);
+
         foreach ($config as $name => $_) {
-            if ($name !== self::PROPERTIES_KEY && $name !== self::DISCRIMINATOR_KEY) {
+            if (!\in_array($name, self::CLASS_KEYS, true)) {
                 $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
                     $name,
                     $class->name,
                     $path->withKey($name)->createSource(),
                 ));
             }
+        }
+
+        return $metadata;
+    }
+
+    /**
+     * Reads the `type_error_message` and `normalize_as_array` keys of the
+     * class.
+     *
+     * @template T of object
+     * @param \ReflectionClass<T> $class
+     * @param ClassMetadata<T> $metadata
+     * @param array<array-key, mixed> $config
+     * @return ClassMetadata<T>
+     */
+    private static function readClassOptions(
+        \ReflectionClass $class,
+        ClassMetadata $metadata,
+        array $config,
+        ConfigPath $path,
+        ErrorCollector $errors,
+    ): ClassMetadata {
+        $message = $config[self::TYPE_ERROR_MESSAGE_KEY] ?? null;
+
+        if (\is_string($message) && $message !== '') {
+            $metadata = $metadata->withTypeErrorMessage($message);
+        }
+
+        if ($message !== null && (!\is_string($message) || $message === '')) {
+            $errors->addError(InvalidValueException::becauseValueIsNotNonEmptyString(
+                self::TYPE_ERROR_MESSAGE_KEY,
+                $class->name,
+                $path->withKey(self::TYPE_ERROR_MESSAGE_KEY)->createSource(),
+            ));
+        }
+
+        $isNormalizeAsArray = $config[self::NORMALIZE_AS_ARRAY_KEY] ?? null;
+
+        if (\is_bool($isNormalizeAsArray)) {
+            $metadata = $metadata->withNormalizeAsArray($isNormalizeAsArray);
+        }
+
+        if ($isNormalizeAsArray !== null && !\is_bool($isNormalizeAsArray)) {
+            $errors->addError(InvalidValueException::becauseValueIsNotBoolean(
+                self::NORMALIZE_AS_ARRAY_KEY,
+                $class->name,
+                $path->withKey(self::NORMALIZE_AS_ARRAY_KEY)->createSource(),
+            ));
         }
 
         return $metadata;

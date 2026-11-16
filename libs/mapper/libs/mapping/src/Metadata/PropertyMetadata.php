@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Metadata;
 
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\SkipConditionInterface;
+
 /**
  * Mapping of one property of a class. The fields are read directly and
  * changed by the `with*()` methods, each returning a changed copy.
@@ -82,8 +84,45 @@ final class PropertyMetadata
     public bool $isWritable;
 
     /**
+     * Conditions the property is left out of the normalized data under, any
+     * of them is enough
+     *
+     * @var list<SkipConditionInterface>
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public array $skip;
+
+    /**
+     * Template of the message of an invalid value of the property,
+     * {@see null} in case of the message of the mapper
+     *
+     * @var non-empty-string|null
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?string $typeErrorMessage = null;
+
+    /**
+     * Template of the message of the missing field of the property,
+     * {@see null} in case of the message of the mapper
+     *
+     * @var non-empty-string|null
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?string $undefinedErrorMessage = null;
+
+    /**
      * @param non-empty-string|null $externalName name of the property in
      *        mapped data, the PHP name in case of {@see null}
+     * @param list<SkipConditionInterface> $skip
      */
     public function __construct(
         /**
@@ -96,6 +135,7 @@ final class PropertyMetadata
         ?DefaultValueMetadata $default = null,
         bool $isReadable = true,
         bool $isWritable = true,
+        array $skip = [],
     ) {
         $this->externalName = $externalName ?? $name;
         $this->isExternalNameExplicit = $externalName !== null;
@@ -104,6 +144,42 @@ final class PropertyMetadata
         $this->default = $default;
         $this->isReadable = $isReadable;
         $this->isWritable = $isWritable;
+        $this->skip = $skip;
+    }
+
+    /**
+     * Returns a copy with the conditions replacing the given ones.
+     *
+     * @param list<SkipConditionInterface> $conditions
+     */
+    public function withSkipConditions(array $conditions): self
+    {
+        $self = clone $this;
+        $self->skip = $conditions;
+
+        return $self;
+    }
+
+    /**
+     * @param non-empty-string $message
+     */
+    public function withTypeErrorMessage(string $message): self
+    {
+        $self = clone $this;
+        $self->typeErrorMessage = $message;
+
+        return $self;
+    }
+
+    /**
+     * @param non-empty-string $message
+     */
+    public function withUndefinedErrorMessage(string $message): self
+    {
+        $self = clone $this;
+        $self->undefinedErrorMessage = $message;
+
+        return $self;
     }
 
     public function withReadable(bool $isReadable): self

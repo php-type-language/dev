@@ -4,22 +4,34 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader;
 
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\DiscriminatorMap;
 use TypeLang\Mapper\Mapping\Exception\InvalidAttributeException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
+use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\Exception\UnknownPropertyException;
 use TypeLang\Mapper\Mapping\MapName;
 use TypeLang\Mapper\Mapping\MapType;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\EmptySkipCondition;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\NullSkipCondition;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\SkipConditionInterface;
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
+use TypeLang\Mapper\Mapping\NormalizeAsArray;
+use TypeLang\Mapper\Mapping\OnTypeError;
+use TypeLang\Mapper\Mapping\OnUndefinedError;
 use TypeLang\Mapper\Mapping\Reader\Internal\DiscriminatorFactory;
 use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
 use TypeLang\Mapper\Mapping\Reader\Internal\PropertyHooks;
+use TypeLang\Mapper\Mapping\Reader\Internal\SkipConditionFactory;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
 use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
+use TypeLang\Mapper\Mapping\SkipWhen;
+use TypeLang\Mapper\Mapping\SkipWhenEmpty;
+use TypeLang\Mapper\Mapping\SkipWhenNull;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserInterface;
 use TypeLang\Type\TypeNode;
@@ -29,7 +41,12 @@ use TypeLang\Type\TypeNode;
  * {@see MapType}, an attribute of a property that is not given is an error.
  * {@see MapType} of the property sets both types, of its `get` hook the read
  * type, of its `set` hook the write type, of any other method is an error.
- * {@see DiscriminatorMap} of the class sets its polymorphism. Names in the
+ * {@see SkipWhenNull}, {@see SkipWhenEmpty} and {@see SkipWhen} of the
+ * property set its skip conditions, an expression is parsed here.
+ * {@see OnTypeError} and {@see OnUndefinedError} set the messages of the
+ * property, {@see OnTypeError} of the class the message of the class.
+ * {@see DiscriminatorMap} of the class sets its polymorphism,
+ * {@see NormalizeAsArray} the form of its normalized objects. Names in the
  * types are resolved by the imports of the file declaring the property or
  * the class.
  */
@@ -41,15 +58,26 @@ final class AttributeMetadataReader implements MetadataReaderInterface
      * @param TypeParserInterface<TypeNode, string> $parser parser of the
      *        types of {@see MapType}
      */
+    private readonly SkipConditionFactory $conditions;
+
+    /**
+     * @param ExpressionLanguage|null $expressions parser of the expressions of
+     *        {@see SkipWhen}, created on the first one in case of {@see null}
+     */
     public function __construct(
         private readonly TypeParserInterface $parser = new TypeParser(),
+        ?ExpressionLanguage $expressions = null,
     ) {
         $this->contexts = new SourceContextFactory();
+        $this->conditions = new SkipConditionFactory($expressions);
     }
 
     /**
      * @throws InvalidMetadataException in case of an attribute is wrong,
      *         belongs to a property that is not given or to a method
+     * @throws MissingDependencyException in case of {@see SkipWhen} is
+     *         given, but the `symfony/expression-language` package is not
+     *         installed
      */
     public function read(\ReflectionClass $class, ?ClassMetadata $metadata = null): ClassMetadata
     {
@@ -65,6 +93,7 @@ final class AttributeMetadataReader implements MetadataReaderInterface
         }
 
         $metadata = $this->readDiscriminator($class, $metadata, $errors);
+        $metadata = $this->readClassOptions($class, $metadata, $errors);
 
         $errors->throwIfNotEmpty($metadata);
 
@@ -108,6 +137,46 @@ final class AttributeMetadataReader implements MetadataReaderInterface
 
             if ($discriminator !== null) {
                 $metadata = $metadata->withDiscriminator($discriminator);
+            }
+        }
+
+        return $metadata;
+    }
+
+    /**
+     * Reads {@see OnTypeError} and {@see NormalizeAsArray} of the class.
+     *
+     * @template T of object
+     * @param \ReflectionClass<T> $class
+     * @param ClassMetadata<T> $metadata
+     * @return ClassMetadata<T>
+     */
+    private function readClassOptions(
+        \ReflectionClass $class,
+        ClassMetadata $metadata,
+        ErrorCollector $errors,
+    ): ClassMetadata {
+        $attributes = [
+            ...$class->getAttributes(OnTypeError::class),
+            ...$class->getAttributes(NormalizeAsArray::class),
+        ];
+
+        if ($attributes === []) {
+            return $metadata;
+        }
+
+        $context = $this->contexts->createFromClass($class);
+
+        foreach ($attributes as $attribute) {
+            $instance = self::createAttribute($attribute, $context, $errors);
+            $message = self::findMessage($instance, $context, $errors);
+
+            if ($message !== null) {
+                $metadata = $metadata->withTypeErrorMessage($message);
+            }
+
+            if ($instance instanceof NormalizeAsArray) {
+                $metadata = $metadata->withNormalizeAsArray($instance->enabled);
             }
         }
 
@@ -159,8 +228,26 @@ final class AttributeMetadataReader implements MetadataReaderInterface
         $typeAttributes = $reflection->getAttributes(MapType::class);
         $getAttributes = self::getHookAttributes(PropertyHooks::findGet($reflection));
         $setAttributes = self::getHookAttributes(PropertyHooks::findSet($reflection));
+        $skipAttributes = [
+            ...$reflection->getAttributes(SkipWhenNull::class),
+            ...$reflection->getAttributes(SkipWhenEmpty::class),
+            ...$reflection->getAttributes(SkipWhen::class),
+        ];
+        $messageAttributes = [
+            ...$reflection->getAttributes(OnTypeError::class),
+            ...$reflection->getAttributes(OnUndefinedError::class),
+        ];
 
-        if ($name === '' || [...$nameAttributes, ...$typeAttributes, ...$getAttributes, ...$setAttributes] === []) {
+        $attributes = [
+            ...$nameAttributes,
+            ...$typeAttributes,
+            ...$getAttributes,
+            ...$setAttributes,
+            ...$skipAttributes,
+            ...$messageAttributes,
+        ];
+
+        if ($name === '' || $attributes === []) {
             return $metadata;
         }
 
@@ -203,7 +290,87 @@ final class AttributeMetadataReader implements MetadataReaderInterface
             $property = $property->withWriteType($write);
         }
 
+        if ($skipAttributes !== []) {
+            $property = $property->withSkipConditions($this->createConditions($skipAttributes, $context, $errors));
+        }
+
+        foreach ($messageAttributes as $attribute) {
+            $instance = self::createAttribute($attribute, $context, $errors);
+            $message = self::findMessage($instance, $context, $errors);
+
+            if ($message !== null && $instance instanceof OnTypeError) {
+                $property = $property->withTypeErrorMessage($message);
+            }
+
+            if ($message !== null && $instance instanceof OnUndefinedError) {
+                $property = $property->withUndefinedErrorMessage($message);
+            }
+        }
+
         return $metadata->withProperty($property);
+    }
+
+    /**
+     * Returns the message of {@see OnTypeError} or {@see OnUndefinedError},
+     * {@see null} in case of the attribute cannot be created or its message
+     * is empty, the error is added.
+     *
+     * @return non-empty-string|null
+     */
+    private static function findMessage(?object $attribute, SourceContext $context, ErrorCollector $errors): ?string
+    {
+        if (!$attribute instanceof OnTypeError && !$attribute instanceof OnUndefinedError) {
+            return null;
+        }
+
+        if ($attribute->message === '') {
+            $errors->addError(InvalidValueException::becauseValueIsNotNonEmptyString(
+                'message',
+                $context->target,
+                $context->source,
+            ));
+
+            return null;
+        }
+
+        return $attribute->message;
+    }
+
+    /**
+     * Returns the conditions of the attributes that can be created.
+     *
+     * @param list<\ReflectionAttribute<object>> $attributes
+     * @return list<SkipConditionInterface>
+     * @throws MissingDependencyException in case of an expression is given,
+     *         but the `symfony/expression-language` package is not installed
+     */
+    private function createConditions(array $attributes, SourceContext $context, ErrorCollector $errors): array
+    {
+        $conditions = [];
+
+        foreach ($attributes as $attribute) {
+            $instance = self::createAttribute($attribute, $context, $errors);
+
+            if ($instance instanceof SkipWhenNull) {
+                $conditions[] = new NullSkipCondition();
+            }
+
+            if ($instance instanceof SkipWhenEmpty) {
+                $conditions[] = new EmptySkipCondition();
+            }
+
+            if (!$instance instanceof SkipWhen) {
+                continue;
+            }
+
+            try {
+                $conditions[] = $this->conditions->createExpression($instance->expr, $instance->context, $context);
+            } catch (InvalidValueException $e) {
+                $errors->addError($e);
+            }
+        }
+
+        return $conditions;
     }
 
     /**

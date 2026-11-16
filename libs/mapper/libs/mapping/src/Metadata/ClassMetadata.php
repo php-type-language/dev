@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Metadata;
 
 /**
- * Mapping of a class: its mapped properties and its polymorphism.
+ * Mapping of a class: its mapped properties, its polymorphism and its
+ * options. The fields are read directly and changed by the `with*()`
+ * methods, each returning a changed copy.
  *
  * @template T of object
  */
@@ -18,23 +20,63 @@ final class ClassMetadata
      */
     public const FORMAT_VERSION = 1;
 
+    /**
+     * Mapped properties by PHP name, in order of the output keys
+     *
+     * @var array<non-empty-string, PropertyMetadata>
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public array $properties;
+
+    /**
+     * Types the data of the class is mapped to by its tag, {@see null} in
+     * case of the class is mapped by its own properties
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?DiscriminatorMetadata $discriminator = null;
+
+    /**
+     * Template of the message of a value that is not of the class as a
+     * whole, {@see null} in case of the message of the mapper
+     *
+     * @var non-empty-string|null
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?string $typeErrorMessage = null;
+
+    /**
+     * Whether an object is normalized to an array or to a {@see \stdClass},
+     * {@see null} in case of the configuration of the mapper
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?bool $isNormalizeAsArray = null;
+
+    /**
+     * @param array<non-empty-string, PropertyMetadata> $properties
+     */
     public function __construct(
         /**
          * @var class-string<T>
          */
         public readonly string $name,
-        /**
-         * Mapped properties by PHP name, in order of the output keys
-         *
-         * @var array<non-empty-string, PropertyMetadata>
-         */
-        public readonly array $properties = [],
-        /**
-         * Types the data of the class is mapped to by its tag, {@see null}
-         * in case of the class is mapped by its own properties
-         */
-        public readonly ?DiscriminatorMetadata $discriminator = null,
-    ) {}
+        array $properties = [],
+        ?DiscriminatorMetadata $discriminator = null,
+    ) {
+        $this->properties = $properties;
+        $this->discriminator = $discriminator;
+    }
 
     /**
      * @param non-empty-string $name
@@ -52,10 +94,10 @@ final class ClassMetadata
      */
     public function withProperty(PropertyMetadata $property): self
     {
-        $properties = $this->properties;
-        $properties[$property->name] = $property;
+        $self = clone $this;
+        $self->properties[$property->name] = $property;
 
-        return new self($this->name, $properties, $this->discriminator);
+        return $self;
     }
 
     /**
@@ -63,6 +105,32 @@ final class ClassMetadata
      */
     public function withDiscriminator(DiscriminatorMetadata $discriminator): self
     {
-        return new self($this->name, $this->properties, $discriminator);
+        $self = clone $this;
+        $self->discriminator = $discriminator;
+
+        return $self;
+    }
+
+    /**
+     * @param non-empty-string $message
+     * @return self<T>
+     */
+    public function withTypeErrorMessage(string $message): self
+    {
+        $self = clone $this;
+        $self->typeErrorMessage = $message;
+
+        return $self;
+    }
+
+    /**
+     * @return self<T>
+     */
+    public function withNormalizeAsArray(bool $isNormalizeAsArray): self
+    {
+        $self = clone $this;
+        $self->isNormalizeAsArray = $isNormalizeAsArray;
+
+        return $self;
     }
 }

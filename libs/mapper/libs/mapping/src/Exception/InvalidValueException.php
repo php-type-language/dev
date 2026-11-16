@@ -43,6 +43,24 @@ final class InvalidValueException extends MetadataException
         return new self($target, $source, self::formatValue($key, 'a non-empty map'));
     }
 
+    /**
+     * @param string $target property or class: `App\User::$id`, `App\User`
+     */
+    public static function becauseExpressionIsInvalid(
+        string $expression,
+        string $target,
+        SourceInfo $source,
+        \Throwable $previous,
+    ): self {
+        $message = \sprintf(
+            'expression "%s" is invalid (%s)',
+            \addcslashes($expression, '"'),
+            $previous->getMessage(),
+        );
+
+        return new self($target, $source, $message, $previous);
+    }
+
     public static function becauseClassConfigIsNotMap(string $class, SourceInfo $source): self
     {
         return new self($class, $source, 'config must be a map');
