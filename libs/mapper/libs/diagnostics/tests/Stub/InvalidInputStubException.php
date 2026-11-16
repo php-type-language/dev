@@ -9,6 +9,7 @@ use TypeLang\Mapper\Diagnostics\Printer\Path\JsonPathPrinter;
 use TypeLang\Mapper\Diagnostics\Printer\Path\PathPrinterInterface;
 use TypeLang\Mapper\Diagnostics\Violation;
 use TypeLang\Mapper\Diagnostics\ViolationFormatter;
+use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
 
 final class InvalidInputStubException extends ViolationException
 {
@@ -17,7 +18,7 @@ final class InvalidInputStubException extends ViolationException
      */
     public static function becauseInputIsInvalid(
         array $violations,
-        ViolationFormatter $formatter = new ViolationFormatter(),
+        ViolationFormatterInterface $formatter = new ViolationFormatter(),
         PathPrinterInterface $pathPrinter = new JsonPathPrinter(),
     ): self {
         return new self($violations, self::formatSummary($violations, $formatter, $pathPrinter));

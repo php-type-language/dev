@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Mapper\Diagnostics\Path\Path;
 use TypeLang\Mapper\Diagnostics\Path\Segment\KeySegment;
 use TypeLang\Mapper\Diagnostics\Printer\Value\ShortValuePrinter;
+use TypeLang\Mapper\Diagnostics\Tests\Stub\ExtensionViolationCodeStub;
 use TypeLang\Mapper\Diagnostics\Tests\Stub\StringableStub;
 use TypeLang\Mapper\Diagnostics\Violation;
 use TypeLang\Mapper\Diagnostics\ViolationCode;
@@ -23,6 +24,10 @@ final class ViolationFormatterTest extends TestCase
         yield 'invalid type' => [
             new Violation(ViolationCode::InvalidType, ['expected' => 'int'], new Path(), 'abc'),
             'Value must be of type int, but "abc" given',
+        ];
+        yield 'code of extension' => [
+            new Violation(ExtensionViolationCodeStub::TooShort, ['min' => '3'], new Path(), 'ab'),
+            'Value must be at least 3 characters long, "ab" given',
         ];
         yield 'invalid key' => [
             new Violation(ViolationCode::InvalidKey, ['expected' => 'int'], new Path(), [1]),
@@ -80,5 +85,13 @@ final class ViolationFormatterTest extends TestCase
         $text = (new ViolationFormatter(new ShortValuePrinter(0)))->format($violation);
 
         self::assertSame('Value must be of type int, but string(6) given', $text);
+    }
+
+    public function testTemplateOfViolationReplacesTemplateOfCode(): void
+    {
+        $violation = (new Violation(ViolationCode::InvalidType, ['expected' => 'int'], new Path(), 'x'))
+            ->withTemplate('Age is a number ({{expected}}), {{value}} is not');
+
+        self::assertSame('Age is a number (int), "x" is not', (new ViolationFormatter())->format($violation));
     }
 }
