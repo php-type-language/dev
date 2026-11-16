@@ -4,36 +4,32 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\PropertyAccessor\Exception;
 
-/**
- * @template TSubject of object = object
- *
- * @template-implements PropertyAccessorExceptionInterface<TSubject>
- */
 abstract class PropertyAccessException extends \RuntimeException implements
     PropertyAccessorExceptionInterface
 {
     public function __construct(
         /**
-         * Object whose property was accessed
+         * Class declaring the property
          *
-         * @var TSubject
+         * @var class-string
          */
-        public readonly object $object,
+        public readonly string $class,
         /**
-         * Name of the accessed property
+         * Name of the property
          */
         public readonly string $property,
         string $message,
-        ?\Throwable $previous = null,
     ) {
-        parent::__construct($message, 0, $previous);
+        parent::__construct($message);
     }
 
     /**
      * Returns the property reference for a message, such as `Foo::$bar`.
+     *
+     * @param class-string $class
      */
-    protected static function formatProperty(object $object, string $property): string
+    protected static function formatProperty(string $class, string $property): string
     {
-        return $object::class . '::$' . $property;
+        return $class . '::$' . $property;
     }
 }

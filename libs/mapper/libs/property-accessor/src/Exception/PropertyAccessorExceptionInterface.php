@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\PropertyAccessor\Exception;
 
 /**
- * Failure of reading or writing a property of an object.
+ * The property cannot be read or written by any reader or writer.
  *
- * @template TSubject of object = object
- *
- * @property-read TSubject $object
+ * @property-read class-string $class
  * @property-read string $property
  */
 interface PropertyAccessorExceptionInterface extends \Throwable {}

@@ -4,53 +4,272 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\PropertyAccessor\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhp;
-use TypeLang\Mapper\PropertyAccessor\DynamicPropertyAccessor;
-use TypeLang\Mapper\PropertyAccessor\ModernReflectionPropertyAccessor;
+use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotFoundException;
+use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotReadableException;
+use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotWritableException;
 use TypeLang\Mapper\PropertyAccessor\PropertyAccessorFactory;
-use TypeLang\Mapper\PropertyAccessor\ReflectionPropertyAccessor;
+use TypeLang\Mapper\PropertyAccessor\PropertyReaderInterface;
+use TypeLang\Mapper\PropertyAccessor\PropertyReader\DirectPropertyReader;
+use TypeLang\Mapper\PropertyAccessor\PropertyReader\RawPropertyReader;
+use TypeLang\Mapper\PropertyAccessor\PropertyReader\ReflectionPropertyReader;
+use TypeLang\Mapper\PropertyAccessor\PropertyWriterInterface;
+use TypeLang\Mapper\PropertyAccessor\PropertyWriter\DirectPropertyWriter;
+use TypeLang\Mapper\PropertyAccessor\PropertyWriter\RawPropertyWriter;
+use TypeLang\Mapper\PropertyAccessor\PropertyWriter\ReflectionPropertyWriter;
+use TypeLang\Mapper\PropertyAccessor\Tests\Stub\AsymmetricStub;
+use TypeLang\Mapper\PropertyAccessor\Tests\Stub\BaseStub;
+use TypeLang\Mapper\PropertyAccessor\Tests\Stub\HookStub;
+use TypeLang\Mapper\PropertyAccessor\Tests\Stub\InheritedStub;
+use TypeLang\Mapper\PropertyAccessor\Tests\Stub\ReadonlyStub;
+use TypeLang\Mapper\PropertyAccessor\Tests\Stub\StaticStub;
 use TypeLang\Mapper\PropertyAccessor\Tests\Stub\VisibilityStub;
 
-final class PropertyAccessorFactoryTest extends PropertyAccessorTestCase
+final class PropertyAccessorFactoryTest extends TestCase
 {
-    #[RequiresPhp('< 8.4.0')]
-    public function testCreatesReflectionAccessorBeforePhp84(): void
+    public function testWritesPublicPropertyDirectly(): void
     {
-        $accessor = (new PropertyAccessorFactory())->create(new VisibilityStub());
+        $object = new VisibilityStub();
+        $writer = self::createWriter(VisibilityStub::class, 'publicProperty');
 
-        self::assertInstanceOf(ReflectionPropertyAccessor::class, $accessor);
+        $writer->write($object, 'written');
+
+        self::assertInstanceOf(DirectPropertyWriter::class, $writer);
+        self::assertSame('written', $object->publicProperty);
+    }
+
+    public function testWritesPrivatePropertyByReflection(): void
+    {
+        $object = new VisibilityStub();
+        $writer = self::createWriter(VisibilityStub::class, 'privateProperty');
+
+        $writer->write($object, 'written');
+
+        self::assertInstanceOf(ReflectionPropertyWriter::class, $writer);
+        self::assertSame('written', $object->getPrivateProperty());
+    }
+
+    public function testWritesPrivatePropertyOfParentClass(): void
+    {
+        $object = new InheritedStub();
+
+        self::createWriter(BaseStub::class, 'basePrivate')->write($object, 'written');
+
+        self::assertSame('written', $object->getBasePrivate());
+    }
+
+    public function testInitializesReadonlyPropertyOutsideClass(): void
+    {
+        $object = (new \ReflectionClass(ReadonlyStub::class))->newInstanceWithoutConstructor();
+        $writer = self::createWriter(ReadonlyStub::class, 'readonlyProperty');
+
+        $writer->write($object, 'written');
+
+        self::assertInstanceOf(ReflectionPropertyWriter::class, $writer);
+        self::assertSame('written', $object->readonlyProperty);
+    }
+
+    public function testRewritingInitializedReadonlyPropertyFails(): void
+    {
+        $writer = self::createWriter(ReadonlyStub::class, 'readonlyProperty');
+
+        $this->expectException(\Error::class);
+
+        $writer->write(new ReadonlyStub(), 'written');
+    }
+
+    public function testValueOfWrongTypeIsNotConvertedForPublicProperty(): void
+    {
+        $writer = self::createWriter(VisibilityStub::class, 'publicProperty');
+
+        $this->expectException(\TypeError::class);
+
+        $writer->write(new VisibilityStub(), 42);
+    }
+
+    public function testWriterIsSharedBetweenObjects(): void
+    {
+        $first = new VisibilityStub();
+        $second = new VisibilityStub();
+        $writer = self::createWriter(VisibilityStub::class, 'privateProperty');
+
+        $writer->write($first, 'first');
+        $writer->write($second, 'second');
+
+        self::assertSame('first', $first->getPrivateProperty());
+        self::assertSame('second', $second->getPrivateProperty());
+    }
+
+    public function testReadsPublicPropertyDirectly(): void
+    {
+        $reader = self::createReader(VisibilityStub::class, 'publicProperty');
+
+        self::assertInstanceOf(DirectPropertyReader::class, $reader);
+        self::assertSame('public-value', $reader->read(new VisibilityStub()));
+    }
+
+    public function testReadsPrivatePropertyByReflection(): void
+    {
+        $reader = self::createReader(VisibilityStub::class, 'privateProperty');
+
+        self::assertInstanceOf(ReflectionPropertyReader::class, $reader);
+        self::assertSame('private-value', $reader->read(new VisibilityStub()));
+    }
+
+    public function testReadsPrivatePropertyOfParentClass(): void
+    {
+        $reader = self::createReader(BaseStub::class, 'basePrivate');
+
+        self::assertSame('base-private', $reader->read(new InheritedStub()));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function staticPropertyDataProvider(): iterable
+    {
+        yield 'public' => ['publicStatic'];
+        yield 'protected' => ['protectedStatic'];
+        yield 'private' => ['privateStatic'];
+    }
+
+    /**
+     * @param non-empty-string $name
+     */
+    #[DataProvider('staticPropertyDataProvider')]
+    public function testStaticPropertyIsNotWritten(string $name): void
+    {
+        $this->expectException(PropertyNotFoundException::class);
+        $this->expectExceptionMessage(\sprintf('Property %s::$%s is static', StaticStub::class, $name));
+
+        self::createWriter(StaticStub::class, $name);
+    }
+
+    /**
+     * @param non-empty-string $name
+     */
+    #[DataProvider('staticPropertyDataProvider')]
+    public function testStaticPropertyIsNotRead(string $name): void
+    {
+        $this->expectException(PropertyNotFoundException::class);
+
+        self::createReader(StaticStub::class, $name);
     }
 
     #[RequiresPhp('>= 8.4.0')]
-    public function testCreatesModernAccessorOnPhp84(): void
+    public function testReadsPropertyWithGetHookBypassingHook(): void
     {
-        $accessor = (new PropertyAccessorFactory())->create(new VisibilityStub());
+        $reader = self::createReader(HookStub::class, 'hooked');
 
-        self::assertInstanceOf(ModernReflectionPropertyAccessor::class, $accessor);
+        self::assertInstanceOf(RawPropertyReader::class, $reader);
+        self::assertSame('raw-init', $reader->read(new HookStub()));
     }
 
-    public function testCreatesDynamicAccessorForStdClass(): void
+    #[RequiresPhp('>= 8.4.0')]
+    public function testReadsVirtualPropertyThroughGetHook(): void
     {
-        $accessor = (new PropertyAccessorFactory())->create(new \stdClass());
+        $reader = self::createReader(HookStub::class, 'virtualReadOnly');
 
-        self::assertInstanceOf(DynamicPropertyAccessor::class, $accessor);
+        self::assertInstanceOf(DirectPropertyReader::class, $reader);
+        self::assertSame('computed', $reader->read(new HookStub()));
     }
 
-    public function testAccessorsOfSameClassAreBoundToTheirOwnObjects(): void
+    #[RequiresPhp('>= 8.4.0')]
+    public function testVirtualPropertyWithoutGetHookIsNotRead(): void
     {
-        $factory = new PropertyAccessorFactory();
+        $this->expectException(PropertyNotReadableException::class);
+        $this->expectExceptionMessage(\sprintf('Property %s::$virtualWriteOnly is write-only', HookStub::class));
 
-        $first = new VisibilityStub();
-        $second = new VisibilityStub();
+        self::createReader(HookStub::class, 'virtualWriteOnly');
+    }
 
-        $firstAccessor = $factory->create($first);
-        $secondAccessor = $factory->create($second);
+    #[RequiresPhp('>= 8.4.0')]
+    public function testWritesPropertyWithSetHookBypassingHook(): void
+    {
+        $object = new HookStub();
+        $property = new \ReflectionProperty(HookStub::class, 'hooked');
+        $writer = (new PropertyAccessorFactory())->createWriter($property);
 
-        $firstAccessor->write('privateProperty', 'first');
-        $secondAccessor->write('privateProperty', 'second');
+        $writer->write($object, 'written');
 
-        self::assertNotSame($firstAccessor, $secondAccessor);
-        self::assertSame('first', $first->getPrivateProperty());
-        self::assertSame('second', $second->getPrivateProperty());
+        self::assertInstanceOf(RawPropertyWriter::class, $writer);
+        // @phpstan-ignore-next-line PHP 8.4 API, phpVersion.min is 8.1
+        self::assertSame('written', $property->getRawValue($object));
+    }
+
+    #[RequiresPhp('>= 8.4.0')]
+    public function testVirtualPropertyWithoutSetHookIsNotWritten(): void
+    {
+        $this->expectException(PropertyNotWritableException::class);
+        $this->expectExceptionMessage(\sprintf('Property %s::$virtualReadOnly is read-only', HookStub::class));
+
+        self::createWriter(HookStub::class, 'virtualReadOnly');
+    }
+
+    #[RequiresPhp('>= 8.4.0')]
+    public function testExceptionOfSetHookIsThrownAsIs(): void
+    {
+        $writer = self::createWriter(HookStub::class, 'virtualWriteOnly');
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Rejected x');
+
+        $writer->write(new HookStub(), 'x');
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string}>
+     */
+    public static function asymmetricPropertyDataProvider(): iterable
+    {
+        yield 'private(set)' => ['privateSet'];
+        yield 'protected(set)' => ['protectedSet'];
+    }
+
+    /**
+     * @param non-empty-string $name
+     */
+    #[RequiresPhp('>= 8.4.0')]
+    #[DataProvider('asymmetricPropertyDataProvider')]
+    public function testWritesPropertyWithRestrictedSetByReflection(string $name): void
+    {
+        $object = new AsymmetricStub();
+        $writer = self::createWriter(AsymmetricStub::class, $name);
+
+        $writer->write($object, 'written');
+
+        self::assertInstanceOf(ReflectionPropertyWriter::class, $writer);
+        self::assertSame('written', $object->{$name});
+    }
+
+    /**
+     * @param non-empty-string $name
+     */
+    #[RequiresPhp('>= 8.4.0')]
+    #[DataProvider('asymmetricPropertyDataProvider')]
+    public function testReadsPropertyWithRestrictedSetDirectly(string $name): void
+    {
+        self::assertInstanceOf(DirectPropertyReader::class, self::createReader(AsymmetricStub::class, $name));
+    }
+
+    /**
+     * @param class-string $class
+     * @param non-empty-string $name
+     * @return PropertyWriterInterface<object, mixed>
+     */
+    private static function createWriter(string $class, string $name): PropertyWriterInterface
+    {
+        return (new PropertyAccessorFactory())->createWriter(new \ReflectionProperty($class, $name));
+    }
+
+    /**
+     * @param class-string $class
+     * @param non-empty-string $name
+     * @return PropertyReaderInterface<object, mixed>
+     */
+    private static function createReader(string $class, string $name): PropertyReaderInterface
+    {
+        return (new PropertyAccessorFactory())->createReader(new \ReflectionProperty($class, $name));
     }
 }

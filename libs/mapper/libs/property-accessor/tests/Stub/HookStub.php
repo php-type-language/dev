@@ -14,6 +14,15 @@ final class HookStub
     }
 
     /**
+     * Virtual, write-only property whose set hook rejects any value.
+     */
+    public string $virtualWriteOnly {
+        set (string $value) {
+            throw new \DomainException('Rejected ' . $value);
+        }
+    }
+
+    /**
      * Non-virtual property with hooks over its own backing store.
      */
     public string $hooked = 'raw-init' {
