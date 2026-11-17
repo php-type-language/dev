@@ -60,7 +60,15 @@ final class ShortValuePrinter implements ValuePrinterInterface
             return \sprintf('string(%d)', \strlen($value));
         }
 
-        $chars = \preg_split('//u', $value, $this->maxStringLength + 1, \PREG_SPLIT_NO_EMPTY);
+        $head = $value;
+        $headLength = ($this->maxStringLength + 2) * 4;
+
+        // the beginning enough for the shown characters, without a cut one
+        if (\strlen($value) > $headLength) {
+            $head = (string) \preg_replace('/[\xC0-\xF7][\x80-\xBF]*$/D', '', \substr($value, 0, $headLength));
+        }
+
+        $chars = \preg_split('//u', $head, $this->maxStringLength + 1, \PREG_SPLIT_NO_EMPTY);
 
         if ($chars === false) {
             return \sprintf('string(%d)', \strlen($value));
