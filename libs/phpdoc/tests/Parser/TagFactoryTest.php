@@ -51,7 +51,9 @@ final class TagFactoryTest extends TestCase
         $factory = new TagFactory(
             registry: new TagRegistry(['final' => new FinalTagDefinition()]),
             combinators: self::combinators(),
-            createUnknownTagDefinition: static fn(): never => throw new \LogicException('Must not be called'),
+            createUnknownTagDefinition: static function (): never {
+                throw new \LogicException('Must not be called');
+            },
         );
 
         self::assertInstanceOf(FinalTag::class, $factory->create('final', ''));
@@ -65,7 +67,9 @@ final class TagFactoryTest extends TestCase
     private static function combinators(): array
     {
         return [
-            DescriptionCombinator::NAME => static fn(): never => throw new NoMatchException('No description'),
+            DescriptionCombinator::NAME => static function (): never {
+                throw new NoMatchException('No description');
+            },
         ];
     }
 }
