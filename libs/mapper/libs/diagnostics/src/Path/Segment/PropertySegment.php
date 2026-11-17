@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Diagnostics\Path\Segment;
 
 /**
- * Step into a property of the object of the preceding {@see ObjectSegment}.
+ * Step into a property of an object or into a named field of its data.
  */
 final class PropertySegment implements SegmentInterface
 {

@@ -23,7 +23,7 @@ final class ViolationFormatterTest extends TestCase
     {
         yield 'invalid type' => [
             new Violation(ViolationCode::InvalidType, ['expected' => 'int'], new Path(), 'abc'),
-            'Value must be of type int, but "abc" given',
+            'Value must be of type "int", but "abc" given',
         ];
         yield 'code of extension' => [
             new Violation(ExtensionViolationCodeStub::TooShort, ['min' => '3'], new Path(), 'ab'),
@@ -31,15 +31,15 @@ final class ViolationFormatterTest extends TestCase
         ];
         yield 'invalid key' => [
             new Violation(ViolationCode::InvalidKey, ['expected' => 'int'], new Path(), [1]),
-            'Key must be of type int, but array(1) given',
+            'Key must be of type "int", but array(1) given',
         ];
         yield 'missing field' => [
             new Violation(ViolationCode::MissingField, ['field' => 'id'], new Path([new KeySegment('id')])),
-            'Required field id is missing',
+            'Required field "id" is missing',
         ];
         yield 'unexpected field' => [
             new Violation(ViolationCode::UnexpectedField, ['field' => 'x'], new Path([new KeySegment('x')]), 1),
-            'Unexpected field x',
+            'Unexpected field "x"',
         ];
         yield 'invalid value' => [
             new Violation(ViolationCode::InvalidValue, ['message' => 'Too short'], new Path(), 'a'),
@@ -47,11 +47,11 @@ final class ViolationFormatterTest extends TestCase
         ];
         yield 'unknown placeholder stays' => [
             new Violation(ViolationCode::InvalidType, [], new Path(), 1),
-            'Value must be of type {{expected}}, but 1 given',
+            'Value must be of type "{{expected}}", but 1 given',
         ];
         yield 'user input is not expanded' => [
             new Violation(ViolationCode::InvalidKey, ['expected' => 'int'], new Path(), '{{expected}}'),
-            'Key must be of type int, but "{{expected}}" given',
+            'Key must be of type "int", but "{{expected}}" given',
         ];
         yield 'exception text is not expanded' => [
             new Violation(ViolationCode::InvalidValue, ['message' => '{{value}}'], new Path(), 1),
@@ -72,7 +72,7 @@ final class ViolationFormatterTest extends TestCase
 
         self::assertSame(0, $expected->conversions);
         self::assertSame(
-            'Value must be of type list<int>, but 42 given',
+            'Value must be of type "list<int>", but 42 given',
             (new ViolationFormatter())->format($violation),
         );
         self::assertSame(1, $expected->conversions);
@@ -84,7 +84,7 @@ final class ViolationFormatterTest extends TestCase
 
         $text = (new ViolationFormatter(new ShortValuePrinter(0)))->format($violation);
 
-        self::assertSame('Value must be of type int, but string(6) given', $text);
+        self::assertSame('Value must be of type "int", but string(6) given', $text);
     }
 
     public function testTemplateOfViolationReplacesTemplateOfCode(): void

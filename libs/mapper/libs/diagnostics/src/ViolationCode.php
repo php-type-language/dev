@@ -31,6 +31,12 @@ enum ViolationCode: string implements ViolationCodeInterface
     case UnexpectedField = 'unexpected_field';
 
     /**
+     * Value of the expected type fails a check of its refinement, such as
+     * `positive-int`.
+     */
+    case FailedCheck = 'failed_check';
+
+    /**
      * Value of the expected type is rejected.
      */
     case InvalidValue = 'invalid_value';
@@ -43,10 +49,11 @@ enum ViolationCode: string implements ViolationCodeInterface
     public function getTemplate(): string
     {
         return match ($this) {
-            self::InvalidType => 'Value must be of type {{expected}}, but {{value}} given',
-            self::InvalidKey => 'Key must be of type {{expected}}, but {{value}} given',
-            self::MissingField => 'Required field {{field}} is missing',
-            self::UnexpectedField => 'Unexpected field {{field}}',
+            self::InvalidType => 'Value must be of type "{{expected}}", but {{value}} given',
+            self::InvalidKey => 'Key must be of type "{{expected}}", but {{value}} given',
+            self::MissingField => 'Required field "{{field}}" is missing',
+            self::UnexpectedField => 'Unexpected field "{{field}}"',
+            self::FailedCheck => 'Value must be of type "{{expected}}" ({{check}})',
             self::InvalidValue => '{{message}}',
         };
     }

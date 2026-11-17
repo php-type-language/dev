@@ -34,11 +34,11 @@ final class ViolationExceptionTest extends TestCase
 
         yield 'single violation' => [
             [new Violation($invalid, $int, $path, 'x')],
-            '$.items[3].name: Value must be of type int, but "x" given',
+            '$.items[3].name: Value must be of type "int", but "x" given',
         ];
         yield 'violation at the root' => [
             [new Violation($invalid, $int, new Path(), [])],
-            '$: Value must be of type int, but array(0) given',
+            '$: Value must be of type "int", but array(0) given',
         ];
         yield 'several violations' => [
             [
@@ -46,7 +46,7 @@ final class ViolationExceptionTest extends TestCase
                 new Violation($invalid, $int, new Path([new KeySegment('age')]), 'x'),
                 new Violation($invalid, $int, new Path([new KeySegment('size')]), 'y'),
             ],
-            '$.id: Required field id is missing (and 2 more)',
+            '$.id: Required field "id" is missing (and 2 more)',
         ];
     }
 
