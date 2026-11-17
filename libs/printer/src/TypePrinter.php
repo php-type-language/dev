@@ -29,6 +29,7 @@ final class TypePrinter implements TypePrinterInterface
      */
     public function print(TypeNode $stmt): string
     {
+        /** @var non-empty-string */
         return (new PrinterContext($this->options, $this->registry))
             ->print($stmt);
     }
