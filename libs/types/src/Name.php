@@ -105,6 +105,44 @@ final class Name extends SymbolNode implements
     }
 
     /**
+     * Creates the name from its text as it is written.
+     *
+     * ```
+     *  Name::from('Some\Any')   // Some\Any, a qualified namespace
+     *  Name::from('\Some\Any')  // \Some\Any, a fully qualified namespace
+     *  Name::from('int')        // int, there is no namespace
+     * ```
+     *
+     * @api
+     *
+     * @param non-empty-string $name
+     * @param int<0, max> $offset
+     * @throws \InvalidArgumentException in case of the text ends in a
+     *         separator
+     */
+    public static function from(string $name, int $offset = 0): self
+    {
+        $separator = \strrpos($name, self::DELIMITER);
+
+        if ($separator === false) {
+            return new self($name, null, $offset);
+        }
+
+        $kind = NamespaceKind::Qualified;
+        $namespace = \substr($name, 0, $separator);
+
+        if ($name[0] === self::DELIMITER) {
+            $kind = NamespaceKind::FullyQualified;
+            $namespace = \substr($namespace, 1);
+        }
+
+        /** @var non-empty-string */
+        $word = \substr($name, $separator + 1);
+
+        return new self($word, new NamespaceName($namespace, $kind, $offset), $offset);
+    }
+
+    /**
      * Whether the text is one of `self`, `parent` and `static`.
      *
      * @api

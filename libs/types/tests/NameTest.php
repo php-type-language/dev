@@ -20,24 +20,7 @@ final class NameTest extends TestCase
      */
     private static function nameOf(string $text, int $offset = 0): Name
     {
-        $separator = \strrpos($text, '\\');
-
-        if ($separator === false) {
-            return new Name($text, null, $offset);
-        }
-
-        /** @var non-empty-string $word */
-        $word = \substr($text, $separator + 1);
-
-        $kind = NamespaceKind::Qualified;
-        $namespace = \substr($text, 0, $separator);
-
-        if ($text[0] === '\\') {
-            $kind = NamespaceKind::FullyQualified;
-            $namespace = \substr($namespace, 1);
-        }
-
-        return new Name($word, new NamespaceName($namespace, $kind), $offset);
+        return Name::from($text, $offset);
     }
 
     #[Test]
@@ -91,6 +74,27 @@ final class NameTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         new Name('');
+    }
+
+    #[Test]
+    public function textIsCutIntoTheNamespaceAndTheLastWord(): void
+    {
+        $name = Name::from('\Some\Any\Name', 7);
+
+        self::assertSame('Name', $name->value);
+        self::assertSame('Some\Any', $name->namespace?->value);
+        self::assertSame(NamespaceKind::FullyQualified, $name->namespace->kind);
+        self::assertSame(7, $name->offset);
+        self::assertNull(Name::from('int')->namespace);
+        self::assertSame(NamespaceKind::Qualified, Name::from('Some\Any')->namespace?->kind);
+    }
+
+    #[Test]
+    public function textEndingInASeparatorIsRejected(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Name::from('Some\\');
     }
 
     /**
