@@ -61,6 +61,14 @@ final class ShortValuePrinterTest extends TestCase
         yield 'escaping after the cut' => [\str_repeat("\n", 41), '"' . \str_repeat('\n', 40) . '"...'];
         yield 'invalid utf-8' => ["ok\xff", 'string(3)'];
         yield 'invalid utf-8 behind the limit' => [\str_repeat('a', 100) . "\xff", 'string(101)'];
+        yield 'long string is cut before the check' => [
+            \str_repeat('a', 1000) . "\xff",
+            '"' . \str_repeat('a', 40) . '"...',
+        ];
+        yield 'character cut by the bytes is dropped' => [
+            'a' . \str_repeat('é', 1000),
+            '"a' . \str_repeat('é', 39) . '"...',
+        ];
     }
 
     #[DataProvider('stringDataProvider')]
