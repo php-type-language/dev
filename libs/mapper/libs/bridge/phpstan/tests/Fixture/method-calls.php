@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Tests\PHPStan\Fixture;
+namespace TypeLang\Mapper\Bridge\PHPStan\Tests\Fixture;
 
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\NormalizerInterface;

@@ -1,11 +1,12 @@
 includes:
-  - libs/coercer/phpstan.neon
-  - libs/diagnostics/phpstan.neon
-  - libs/instantiator/phpstan.neon
-  - libs/mapping/phpstan.neon
-  - libs/naming/phpstan.neon
-  - libs/property-accessor/phpstan.neon
-  - libs/type-matcher/phpstan.neon
+  - libs/bridge/phpstan/phpstan.neon
+  - libs/component/coercer/phpstan.neon
+  - libs/component/diagnostics/phpstan.neon
+  - libs/component/instantiator/phpstan.neon
+  - libs/component/mapping/phpstan.neon
+  - libs/component/naming/phpstan.neon
+  - libs/component/property-accessor/phpstan.neon
+  - libs/component/type-matcher/phpstan.neon
 
 parameters:
   level: max

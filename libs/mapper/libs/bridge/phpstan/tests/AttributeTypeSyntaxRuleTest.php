@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Tests\PHPStan;
+namespace TypeLang\Mapper\Bridge\PHPStan\Tests;
 
 use PHPStan\Analyser\Error;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 use PHPUnit\Framework\Attributes\Group;
-use TypeLang\Mapper\PHPStan\AttributeTypeSyntaxRule;
-use TypeLang\Mapper\PHPStan\TypeSyntaxChecker;
+use TypeLang\Mapper\Bridge\PHPStan\AttributeTypeSyntaxRule;
+use TypeLang\Mapper\Bridge\PHPStan\TypeSyntaxChecker;
 
 /**
  * @extends RuleTestCase<AttributeTypeSyntaxRule>

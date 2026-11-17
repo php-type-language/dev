@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Tests\PHPStan\Fixture;
+namespace TypeLang\Mapper\Bridge\PHPStan\Tests\Fixture;
 
 use TypeLang\Mapper\Mapping\MapName;
 use TypeLang\Mapper\Mapping\MapType;

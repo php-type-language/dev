@@ -13,26 +13,29 @@
         <testsuite name="libs/mapper">
             <directory>libs/mapper/tests</directory>
         </testsuite>
+        <testsuite name="libs/mapper/bridge/phpstan">
+            <directory>libs/mapper/libs/bridge/phpstan/tests</directory>
+        </testsuite>
         <testsuite name="libs/mapper/coercer">
-            <directory>libs/mapper/libs/coercer/tests</directory>
+            <directory>libs/mapper/libs/component/coercer/tests</directory>
         </testsuite>
         <testsuite name="libs/mapper/diagnostics">
-            <directory>libs/mapper/libs/diagnostics/tests</directory>
+            <directory>libs/mapper/libs/component/diagnostics/tests</directory>
         </testsuite>
         <testsuite name="libs/mapper/instantiator">
-            <directory>libs/mapper/libs/instantiator/tests</directory>
+            <directory>libs/mapper/libs/component/instantiator/tests</directory>
         </testsuite>
         <testsuite name="libs/mapper/mapping">
-            <directory>libs/mapper/libs/mapping/tests</directory>
+            <directory>libs/mapper/libs/component/mapping/tests</directory>
         </testsuite>
         <testsuite name="libs/mapper/naming">
-            <directory>libs/mapper/libs/naming/tests</directory>
+            <directory>libs/mapper/libs/component/naming/tests</directory>
         </testsuite>
         <testsuite name="libs/mapper/property-accessor">
-            <directory>libs/mapper/libs/property-accessor/tests</directory>
+            <directory>libs/mapper/libs/component/property-accessor/tests</directory>
         </testsuite>
         <testsuite name="libs/mapper/type-matcher">
-            <directory>libs/mapper/libs/type-matcher/tests</directory>
+            <directory>libs/mapper/libs/component/type-matcher/tests</directory>
         </testsuite>
         <testsuite name="libs/parser">
             <directory>libs/parser/tests</directory>
@@ -56,13 +59,14 @@
     <source>
         <include>
             <directory>libs/mapper/src</directory>
-            <directory>libs/mapper/libs/coercer/src</directory>
-            <directory>libs/mapper/libs/diagnostics/src</directory>
-            <directory>libs/mapper/libs/instantiator/src</directory>
-            <directory>libs/mapper/libs/mapping/src</directory>
-            <directory>libs/mapper/libs/naming/src</directory>
-            <directory>libs/mapper/libs/property-accessor/src</directory>
-            <directory>libs/mapper/libs/type-matcher/src</directory>
+            <directory>libs/mapper/libs/bridge/phpstan/src</directory>
+            <directory>libs/mapper/libs/component/coercer/src</directory>
+            <directory>libs/mapper/libs/component/diagnostics/src</directory>
+            <directory>libs/mapper/libs/component/instantiator/src</directory>
+            <directory>libs/mapper/libs/component/mapping/src</directory>
+            <directory>libs/mapper/libs/component/naming/src</directory>
+            <directory>libs/mapper/libs/component/property-accessor/src</directory>
+            <directory>libs/mapper/libs/component/type-matcher/src</directory>
             <directory>libs/parser/src</directory>
             <directory>libs/phpdoc/src</directory>
             <directory>libs/printer/src</directory>

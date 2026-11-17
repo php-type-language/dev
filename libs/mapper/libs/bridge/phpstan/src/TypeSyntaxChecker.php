@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\PHPStan;
+namespace TypeLang\Mapper\Bridge\PHPStan;
 
 use PhpParser\Node\Arg;
 use PHPStan\Analyser\Scope;
@@ -15,7 +15,7 @@ use TypeLang\Parser\TypeParser;
  * Checks the syntax of the types written as constant strings.
  *
  * @internal this is an internal library class, please do not use it in your code
- * @psalm-internal TypeLang\Mapper\PHPStan
+ * @psalm-internal TypeLang\Mapper\Bridge\PHPStan
  */
 final class TypeSyntaxChecker
 {

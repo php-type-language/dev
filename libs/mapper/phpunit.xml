@@ -12,13 +12,14 @@
     <testsuites>
         <testsuite name="Component Tests">
             <directory>tests</directory>
-            <directory>libs/coercer/tests</directory>
-            <directory>libs/diagnostics/tests</directory>
-            <directory>libs/instantiator/tests</directory>
-            <directory>libs/mapping/tests</directory>
-            <directory>libs/naming/tests</directory>
-            <directory>libs/property-accessor/tests</directory>
-            <directory>libs/type-matcher/tests</directory>
+            <directory>libs/bridge/phpstan/tests</directory>
+            <directory>libs/component/coercer/tests</directory>
+            <directory>libs/component/diagnostics/tests</directory>
+            <directory>libs/component/instantiator/tests</directory>
+            <directory>libs/component/mapping/tests</directory>
+            <directory>libs/component/naming/tests</directory>
+            <directory>libs/component/property-accessor/tests</directory>
+            <directory>libs/component/type-matcher/tests</directory>
         </testsuite>
     </testsuites>
 
@@ -27,13 +28,14 @@
     <source>
         <include>
             <directory suffix=".php">src</directory>
-            <directory suffix=".php">libs/coercer/src</directory>
-            <directory suffix=".php">libs/diagnostics/src</directory>
-            <directory suffix=".php">libs/instantiator/src</directory>
-            <directory suffix=".php">libs/mapping/src</directory>
-            <directory suffix=".php">libs/naming/src</directory>
-            <directory suffix=".php">libs/property-accessor/src</directory>
-            <directory suffix=".php">libs/type-matcher/src</directory>
+            <directory suffix=".php">libs/bridge/phpstan/src</directory>
+            <directory suffix=".php">libs/component/coercer/src</directory>
+            <directory suffix=".php">libs/component/diagnostics/src</directory>
+            <directory suffix=".php">libs/component/instantiator/src</directory>
+            <directory suffix=".php">libs/component/mapping/src</directory>
+            <directory suffix=".php">libs/component/naming/src</directory>
+            <directory suffix=".php">libs/component/property-accessor/src</directory>
+            <directory suffix=".php">libs/component/type-matcher/src</directory>
         </include>
     </source>
 

@@ -18,13 +18,14 @@
     "autoload": {
         "psr-4": {
             "TypeLang\\Mapper\\": "src",
-            "TypeLang\\Mapper\\Coercer\\": "libs/coercer/src",
-            "TypeLang\\Mapper\\Diagnostics\\": "libs/diagnostics/src",
-            "TypeLang\\Mapper\\Instantiator\\": "libs/instantiator/src",
-            "TypeLang\\Mapper\\Mapping\\": "libs/mapping/src",
-            "TypeLang\\Mapper\\Naming\\": "libs/naming/src",
-            "TypeLang\\Mapper\\PropertyAccessor\\": "libs/property-accessor/src",
-            "TypeLang\\Mapper\\TypeMatcher\\": "libs/type-matcher/src"
+            "TypeLang\\Mapper\\Bridge\\PHPStan\\": "libs/bridge/phpstan/src",
+            "TypeLang\\Mapper\\Coercer\\": "libs/component/coercer/src",
+            "TypeLang\\Mapper\\Diagnostics\\": "libs/component/diagnostics/src",
+            "TypeLang\\Mapper\\Instantiator\\": "libs/component/instantiator/src",
+            "TypeLang\\Mapper\\Mapping\\": "libs/component/mapping/src",
+            "TypeLang\\Mapper\\Naming\\": "libs/component/naming/src",
+            "TypeLang\\Mapper\\PropertyAccessor\\": "libs/component/property-accessor/src",
+            "TypeLang\\Mapper\\TypeMatcher\\": "libs/component/type-matcher/src"
         }
     },
     "require-dev": {
@@ -51,13 +52,14 @@
     "autoload-dev": {
         "psr-4": {
             "TypeLang\\Mapper\\Tests\\": "tests",
-            "TypeLang\\Mapper\\Coercer\\Tests\\": "libs/coercer/tests",
-            "TypeLang\\Mapper\\Diagnostics\\Tests\\": "libs/diagnostics/tests",
-            "TypeLang\\Mapper\\Instantiator\\Tests\\": "libs/instantiator/tests",
-            "TypeLang\\Mapper\\Mapping\\Tests\\": "libs/mapping/tests",
-            "TypeLang\\Mapper\\Naming\\Tests\\": "libs/naming/tests",
-            "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/property-accessor/tests",
-            "TypeLang\\Mapper\\TypeMatcher\\Tests\\": "libs/type-matcher/tests"
+            "TypeLang\\Mapper\\Bridge\\PHPStan\\Tests\\": "libs/bridge/phpstan/tests",
+            "TypeLang\\Mapper\\Coercer\\Tests\\": "libs/component/coercer/tests",
+            "TypeLang\\Mapper\\Diagnostics\\Tests\\": "libs/component/diagnostics/tests",
+            "TypeLang\\Mapper\\Instantiator\\Tests\\": "libs/component/instantiator/tests",
+            "TypeLang\\Mapper\\Mapping\\Tests\\": "libs/component/mapping/tests",
+            "TypeLang\\Mapper\\Naming\\Tests\\": "libs/component/naming/tests",
+            "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/component/property-accessor/tests",
+            "TypeLang\\Mapper\\TypeMatcher\\Tests\\": "libs/component/type-matcher/tests"
         }
     },
     "extra": {
@@ -67,7 +69,7 @@
         },
         "phpstan": {
             "includes": [
-                "extension.neon"
+                "libs/bridge/phpstan/extension.neon"
             ]
         }
     },

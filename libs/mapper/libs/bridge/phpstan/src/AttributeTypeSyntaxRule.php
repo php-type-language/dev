@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\PHPStan;
+namespace TypeLang\Mapper\Bridge\PHPStan;
 
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
