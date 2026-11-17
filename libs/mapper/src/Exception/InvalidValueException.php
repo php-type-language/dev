@@ -56,12 +56,28 @@ final class InvalidValueException extends ViolationException implements MapperEx
     }
 
     /**
-     * The path of the error points to the place of the field.
+     * The path of the error points to the place of the field. The name of
+     * the field comes from the data, its control characters, quotes and
+     * backslashes are escaped.
      */
     public static function becauseFieldIsUnexpected(string $field, SegmentInterface $segment, mixed $value): self
     {
+        $name = ['field' => \addcslashes($field, "\0..\37\"\\\177")];
+
         return self::fromViolation(
-            new Violation(ViolationCode::UnexpectedField, ['field' => $field], new Path([$segment]), $value),
+            new Violation(ViolationCode::UnexpectedField, $name, new Path([$segment]), $value),
+        );
+    }
+
+    /**
+     * The value is rejected by an error of another kind, such as an error
+     * of a hook of a class.
+     */
+    public static function becauseValueIsRejected(\Throwable $error, mixed $value): self
+    {
+        return self::fromViolation(
+            new Violation(ViolationCode::InvalidValue, ['message' => $error->getMessage()], new Path(), $value),
+            $error,
         );
     }
 
@@ -82,62 +98,97 @@ final class InvalidValueException extends ViolationException implements MapperEx
     /**
      * Returns the error with the segment prepended to the paths of its
      * violations. An error of another kind becomes one violation of the
-     * value at the segment.
+     * value at the segment. The template, such as a text of the user for a
+     * property, replaces the messages of the violations of the value itself,
+     * the violations of its nested values keep theirs.
+     *
+     * The trace of the returned error does not hold the given error, the
+     * memory of an error of nested data does not grow with its depth.
+     *
+     * @param non-empty-string|null $template
      */
-    public static function wrapWithPath(\Throwable $error, SegmentInterface $segment, mixed $value): self
-    {
+    public static function wrapWithPath(
+        \Throwable $error,
+        SegmentInterface $segment,
+        mixed $value,
+        ?string $template = null,
+    ): self {
         if (!$error instanceof self) {
-            $error = self::fromViolation(
-                new Violation(ViolationCode::InvalidValue, ['message' => $error->getMessage()], new Path(), $value),
-                $error,
-            );
+            $violations = [new Violation(
+                ViolationCode::InvalidValue,
+                ['message' => $error->getMessage()],
+                new Path([$segment]),
+                $value,
+                $template,
+            )];
+
+            return new self($violations, self::formatSummary($violations), $error);
         }
 
         $previous = $error->getPrevious();
-
         $violations = [];
 
         foreach ($error->violations as $violation) {
+            $own = $template;
+
+            if ($own === null || $violation->path->segments !== []) {
+                $own = $violation->template;
+            }
+
             $violations[] = new Violation(
                 $violation->code,
                 $violation->parameters,
                 new Path([$segment, ...$violation->path->segments]),
                 $violation->value,
-                $violation->template,
+                $own,
             );
         }
+
+        unset($error);
 
         return new self($violations, self::formatSummary($violations), $previous);
     }
 
     /**
-     * Returns the error of the violations of the collected error and then
-     * of the given one, for a composite type to go on with its other
-     * values.
+     * Adds the violations of the error to the violations a composite type
+     * collects to go on with its other values.
      *
+     * @param list<Violation> $violations
      * @param int<1, max> $limit
-     * @throws self in case of the limit of the violations is reached, with
-     *         the violations cut to the limit
+     * @throws self in case of the limit of the violations is reached: the
+     *         error as is in case of nothing was collected before, the
+     *         collected violations cut to the limit otherwise
      */
-    public static function collect(?self $collected, self $error, int $limit): self
+    public static function collect(array &$violations, self $error, int $limit): void
     {
-        if ($collected !== null) {
-            $violations = [...$collected->violations, ...$error->violations];
-            $error = new self($violations, self::formatSummary($violations), $collected->getPrevious());
-        }
-
-        if (\count($error->violations) < $limit) {
-            return $error;
-        }
-
-        if (\count($error->violations) === $limit) {
+        if ($violations === [] && \count($error->violations) === $limit) {
             throw $error;
         }
 
-        /** @var non-empty-list<Violation> */
-        $violations = \array_slice($error->violations, 0, $limit);
+        foreach ($error->violations as $violation) {
+            $violations[] = $violation;
+        }
 
-        throw new self($violations, self::formatSummary($violations), $error->getPrevious());
+        if (\count($violations) < $limit) {
+            return;
+        }
+
+        /** @var non-empty-list<Violation> */
+        $result = \array_slice($violations, 0, $limit);
+
+        unset($error);
+
+        throw new self($result, self::formatSummary($result));
+    }
+
+    /**
+     * Returns the error of the violations a composite type has collected.
+     *
+     * @param non-empty-list<Violation> $violations
+     */
+    public static function becauseViolationsAreCollected(array $violations): self
+    {
+        return new self($violations, self::formatSummary($violations));
     }
 
     /**
