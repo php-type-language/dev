@@ -316,13 +316,13 @@
     <toc-element toc-title="Data Mapper"
                  topic="data-mapper.md">
         <toc-element topic="mapper-configuration.md" />
+        <toc-element topic="mapper-metadata.md">
+            <toc-element topic="mapper-metadata-options.md" />
+            <toc-element topic="mapper-naming.md" />
+        </toc-element>
         <toc-element topic="mapper-types.md" />
-        <toc-element topic="mapper-classes.md" />
-        <toc-element topic="mapper-polymorphism.md" />
-        <toc-element topic="mapper-naming.md" />
         <toc-element topic="mapper-coercion.md" />
         <toc-element topic="mapper-errors.md" />
-        <toc-element topic="mapper-metadata.md" />
         <toc-element topic="mapper-extending.md" />
         <toc-element topic="mapper-phpstan.md" />
         <toc-element toc-title="GitHub" href="https://github.com/php-type-language/mapper" />

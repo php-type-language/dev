@@ -59,8 +59,10 @@
         <accepts>meta-clock.html</accepts>
         <accepts>meta-references.html</accepts>
     </rule>
-    <rule id="mapper-classes">
-        <description>Pages of the mapper 1.0 documentation</description>
+    <rule id="mapper-metadata-options">
+        <description>Pages of the mapper documentation merged into one</description>
         <accepts>meta-expressions.html</accepts>
+        <accepts>mapper-classes.html</accepts>
+        <accepts>mapper-polymorphism.html</accepts>
     </rule>
 </rules>
