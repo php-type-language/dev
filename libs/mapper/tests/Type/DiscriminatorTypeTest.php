@@ -8,6 +8,8 @@ use TypeLang\Mapper\Context\Configuration;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Exception\TypeDefinitionException;
 use TypeLang\Mapper\Tests\Stub\AddressStub;
+use TypeLang\Mapper\Tests\Stub\Animal\AnimalStub;
+use TypeLang\Mapper\Tests\Stub\Animal\PuppyStub;
 use TypeLang\Mapper\Tests\Stub\Shape\CircleStub;
 use TypeLang\Mapper\Tests\Stub\Shape\FallbackShapeStub;
 use TypeLang\Mapper\Tests\Stub\Shape\ForeignMapStub;
@@ -211,5 +213,18 @@ final class DiscriminatorTypeTest extends TestCase
         $square->side = $side;
 
         return $square;
+    }
+
+
+    public function testObjectOfUnmappedChildTakesTagOfNearestMappedParent(): void
+    {
+        $puppy = new PuppyStub();
+        $puppy->name = 'Rex';
+
+        self::assertNormalizes(
+            AnimalStub::class,
+            $puppy,
+            ['kind' => 'dog', 'barks' => true, 'name' => 'Rex'],
+        );
     }
 }

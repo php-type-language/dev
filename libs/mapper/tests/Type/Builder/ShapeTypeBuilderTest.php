@@ -37,6 +37,10 @@ final class ShapeTypeBuilderTest extends TestCase
      */
     public static function invalidDataProvider(): iterable
     {
+        yield 'implicit key after the highest one' => [
+            'array{9223372036854775807: int, string}',
+            'Type "array{9223372036854775807: int, string}" declares the key "9223372036854775807" more than once',
+        ];
         yield 'repeated key' => [
             'array{a: int, a: string}',
             'Type "array{a: int, a: string}" declares the key "a" more than once',

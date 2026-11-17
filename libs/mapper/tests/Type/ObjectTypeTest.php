@@ -18,7 +18,7 @@ final class ObjectTypeTest extends TestCase
 
     public function testRejectsValueThatIsNotData(): void
     {
-        self::assertDenormalizationFails('object', 'x', '$: Value must be of type "stdClass", but "x" given');
+        self::assertDenormalizationFails('object', 'x', '$: Value must be of type "object", but "x" given');
     }
 
     public function testNormalizesObjectByTypeOfItsClass(): void

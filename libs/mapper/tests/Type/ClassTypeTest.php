@@ -30,10 +30,12 @@ use TypeLang\Mapper\Tests\Stub\AbstractShapeStub;
 use TypeLang\Mapper\Tests\Stub\AddressStub;
 use TypeLang\Mapper\Tests\Stub\ComputedStub;
 use TypeLang\Mapper\Tests\Stub\HookStub;
+use TypeLang\Mapper\Tests\Stub\MessageOwnerStub;
 use TypeLang\Mapper\Tests\Stub\MessageStub;
 use TypeLang\Mapper\Tests\Stub\MismatchedTypeStub;
 use TypeLang\Mapper\Tests\Stub\NodeStub;
 use TypeLang\Mapper\Tests\Stub\ObjectFormStub;
+use TypeLang\Mapper\Tests\Stub\ReadonlyChildStub;
 use TypeLang\Mapper\Tests\Stub\ReadonlyStub;
 use TypeLang\Mapper\Tests\Stub\RelativeNameStub;
 use TypeLang\Mapper\Tests\Stub\RenamedStub;
@@ -727,5 +729,66 @@ final class ClassTypeTest extends TestCase
         $user->code = $code;
 
         return $user;
+    }
+
+
+    public function testWritesReadonlyPropertyDeclaredByParent(): void
+    {
+        $child = self::getType(ReadonlyChildStub::class)
+            ->denormalize(['id' => 1, 'name' => 'a'], self::getContext(self::createRepository()));
+
+        self::assertInstanceOf(ReadonlyChildStub::class, $child);
+        self::assertSame(1, $child->id);
+    }
+
+    public function testErrorOfHookIsViolationOfObject(): void
+    {
+        $hooks = [
+            new HookStub(AddressStub::class, beforeDenormalize: static function (): never {
+                throw new \DomainException('a');
+            }),
+            new HookStub(UserStub::class, afterDenormalize: static function (): never {
+                throw new \DomainException('b');
+            }),
+        ];
+        $repository = self::createRepository(hooks: $hooks);
+        $context = self::getContext($repository);
+        $address = self::getType(AddressStub::class, $repository);
+
+        self::assertFalse($address->isDenormalizable(['city' => 'Paris'], $context));
+
+        $error = self::captureThrowable(static fn(): mixed => $address->denormalize(['city' => 'Paris'], $context));
+
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame('$: a', $error->getMessage());
+        self::assertInstanceOf(\DomainException::class, $error->getPrevious());
+
+        $error = self::captureThrowable(static fn(): mixed => self::getType(UserStub::class, $repository)->denormalize(
+            ['id' => 7, 'name' => 'John', 'address' => null, 'code' => 5],
+            $context,
+        ));
+
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame('$: b', $error->getMessage());
+    }
+
+    public function testMessageOfPropertyReplacesMessagesOfItsValueOnly(): void
+    {
+        $repository = self::createRepository(config: new Configuration(maxViolations: 10));
+        $context = self::getContext($repository);
+        $type = self::getType(MessageOwnerStub::class, $repository);
+
+        $error = self::captureThrowable(static fn(): mixed => $type->denormalize(['person' => ['age' => 'x']], $context));
+
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame(
+            '$.person.age: Age must be a number, "x" given (and 1 more)',
+            $error->getMessage(),
+        );
+
+        $error = self::captureThrowable(static fn(): mixed => $type->denormalize(['person' => 5], $context));
+
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame('$.person: Person is invalid', $error->getMessage());
     }
 }

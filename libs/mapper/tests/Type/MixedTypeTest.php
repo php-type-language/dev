@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Tests\Type;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use TypeLang\Mapper\Context\Configuration;
 use TypeLang\Mapper\Exception\TypeDefinitionException;
 use TypeLang\Mapper\Tests\Stub\AddressStub;
 use TypeLang\Mapper\Tests\Stub\StatusStub;
@@ -79,5 +80,17 @@ final class MixedTypeTest extends TestCase
         self::assertInstanceOf(TypeDefinitionException::class, $conversion);
         self::assertSame('Type "Closure" is not supported', $check->getMessage());
         self::assertSame($check->getMessage(), $conversion->getMessage());
+    }
+
+
+    public function testDynamicObjectStaysObjectInCaseOfObjectsAreNotArrays(): void
+    {
+        $repository = self::createRepository(config: new Configuration(isObjectAsArray: false));
+
+        self::assertEquals(
+            (object) ['a' => (object) []],
+            self::getType('mixed', $repository)
+                ->normalize((object) ['a' => new \stdClass()], self::getContext($repository)),
+        );
     }
 }

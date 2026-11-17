@@ -51,6 +51,7 @@ final class DateTimeTypeTest extends TestCase
         yield 'not of the format' => ["DateTimeImmutable<'Y-m-d'>", '03.02.2021'];
         yield 'impossible date' => ["DateTimeImmutable<'Y-m-d'>", '2021-02-30'];
         yield 'trailing data' => ["DateTimeImmutable<'Y-m-d'>", '2021-02-03 04:05'];
+        yield 'empty string' => ['DateTimeImmutable', ''];
     }
 
     /**
@@ -64,6 +65,17 @@ final class DateTimeTypeTest extends TestCase
             $input,
             \sprintf('$: Value must be of type "%s", but "%s" given', $type, $input),
         );
+    }
+
+    public function testRejectsStringWithNulByte(): void
+    {
+        foreach (['DateTimeImmutable', "DateTimeImmutable<'Y-m-d'>"] as $type) {
+            self::assertDenormalizationFails(
+                $type,
+                "2021-02-03\0",
+                \sprintf('$: Value must be of type "%s", but "2021-02-03\000" given', $type),
+            );
+        }
     }
 
     public function testNormalizesDateByFormat(): void

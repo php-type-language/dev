@@ -7,6 +7,7 @@ namespace TypeLang\Mapper\Tests;
 use TypeLang\Mapper\Context\Coercers;
 use TypeLang\Mapper\Context\Configuration;
 use TypeLang\Mapper\Diagnostics\Printer\Path\JsonPathPrinter;
+use TypeLang\Mapper\Diagnostics\ViolationFormatter;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Exception\MapperExceptionInterface;
 use TypeLang\Mapper\Exception\TypeDefinitionException;
@@ -237,15 +238,16 @@ final class MapperTest extends TestCase
     public function testRejectsExtraFieldsOfClassesAndSealedShapes(): void
     {
         $mapper = new Mapper(new Configuration(maxViolations: 10, shouldRejectExtraFields: true));
-        $data = ['city' => 'Paris', 'zip' => 1, '' => 2];
+        $data = ['city' => 'Paris', 'zip' => 1, '' => 2, "a\nb" => 3];
 
         self::assertFalse($mapper->isDenormalizable($data, AddressStub::class));
 
         $error = self::captureThrowable(static fn(): mixed => $mapper->denormalize($data, AddressStub::class));
 
         self::assertInstanceOf(InvalidValueException::class, $error);
-        self::assertSame(['$.zip', "$['']"], self::printPaths($error));
+        self::assertSame(['$.zip', "$['']", "$['a\\nb']"], self::printPaths($error));
         self::assertStringStartsWith('$.zip: Unexpected field "zip"', $error->getMessage());
+        self::assertSame('Unexpected field "a\nb"', (new ViolationFormatter())->format($error->violations[2]));
 
         self::assertFalse($mapper->isDenormalizable(['a' => 1, 'b' => 2], 'array{a: int}'));
         self::assertTrue($mapper->isDenormalizable(['a' => 1, 'b' => 2], 'array{a: int, ...}'));
