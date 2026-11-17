@@ -7,6 +7,7 @@ use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 const PHPCS_DIRECTORIES = [
     __DIR__ . '/libs/mapper/src',
     __DIR__ . '/libs/mapper/libs/bridge/phpstan/src',
+    __DIR__ . '/libs/mapper/libs/bridge/symfony/src',
     __DIR__ . '/libs/mapper/libs/component/coercer/src',
     __DIR__ . '/libs/mapper/libs/component/diagnostics/src',
     __DIR__ . '/libs/mapper/libs/component/instantiator/src',

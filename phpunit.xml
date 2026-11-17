@@ -16,6 +16,9 @@
         <testsuite name="libs/mapper/bridge/phpstan">
             <directory>libs/mapper/libs/bridge/phpstan/tests</directory>
         </testsuite>
+        <testsuite name="libs/mapper/bridge/symfony">
+            <directory>libs/mapper/libs/bridge/symfony/tests</directory>
+        </testsuite>
         <testsuite name="libs/mapper/coercer">
             <directory>libs/mapper/libs/component/coercer/tests</directory>
         </testsuite>
@@ -60,6 +63,7 @@
         <include>
             <directory>libs/mapper/src</directory>
             <directory>libs/mapper/libs/bridge/phpstan/src</directory>
+            <directory>libs/mapper/libs/bridge/symfony/src</directory>
             <directory>libs/mapper/libs/component/coercer/src</directory>
             <directory>libs/mapper/libs/component/diagnostics/src</directory>
             <directory>libs/mapper/libs/component/instantiator/src</directory>

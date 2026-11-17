@@ -30,16 +30,24 @@
         "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0",
         "psr/cache": "^2.0|^3.0",
         "psr/simple-cache": "^2.0|^3.0",
+        "symfony/config": "^6.4|^7.0|^8.0",
         "symfony/console": "^6.4|^7.0|^8.0",
+        "symfony/dependency-injection": "^6.4|^7.0|^8.0",
         "symfony/expression-language": "^6.4|^7.0|^8.0",
+        "symfony/http-foundation": "^6.4|^7.0|^8.0",
+        "symfony/http-kernel": "^6.4|^7.0|^8.0",
+        "symfony/stopwatch": "^6.4|^7.0|^8.0",
+        "symfony/validator": "^6.4|^7.0|^8.0",
         "symfony/var-dumper": "^6.4|^7.0|^8.0",
-        "symfony/yaml": "^6.4|^7.0|^8.0"
+        "symfony/yaml": "^6.4|^7.0|^8.0",
+        "twig/twig": "^3.0"
     },
     "autoload-dev": {
         "psr-4": {
             "TypeLang\\Bench\\": "bench",
             "TypeLang\\Mapper\\Tests\\": "libs/mapper/tests",
             "TypeLang\\Mapper\\Bridge\\PHPStan\\Tests\\": "libs/mapper/libs/bridge/phpstan/tests",
+            "TypeLang\\Mapper\\Bridge\\Symfony\\Tests\\": "libs/mapper/libs/bridge/symfony/tests",
             "TypeLang\\Mapper\\Coercer\\Tests\\": "libs/mapper/libs/component/coercer/tests",
             "TypeLang\\Mapper\\Diagnostics\\Tests\\": "libs/mapper/libs/component/diagnostics/tests",
             "TypeLang\\Mapper\\Instantiator\\Tests\\": "libs/mapper/libs/component/instantiator/tests",

@@ -69,7 +69,7 @@ use TypeLang\Type\TypeNode;
  * Facade: parses the type string once, builds the type once and converts
  * values by it in both directions.
  */
-final class Mapper implements DenormalizerInterface, NormalizerInterface
+final class Mapper implements MapperInterface
 {
     private readonly TypeRepositoryInterface $repository;
 
