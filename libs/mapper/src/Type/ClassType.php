@@ -70,9 +70,9 @@ final class ClassType implements TypeInterface
          *
          * @var list<string>
          */
-        public readonly array $tags = [],
+        public readonly array $tagFields = [],
     ) {
-        $keys = \array_fill_keys($tags, true);
+        $keys = \array_fill_keys($tagFields, true);
 
         foreach ($writable as $property) {
             $keys[$property->metadata->externalName] = true;
@@ -83,8 +83,14 @@ final class ClassType implements TypeInterface
 
     public function isDenormalizable(mixed $value, Context $context): bool
     {
-        foreach ($context->accessors->get($this->metadata)->beforeDenormalization as $hook) {
-            $value = $hook->beforeDenormalize($this->metadata, $value, $context);
+        try {
+            foreach ($context->accessors->get($this->metadata)->beforeDenormalization as $hook) {
+                $value = $hook->beforeDenormalize($this->metadata, $value, $context);
+            }
+        } catch (NotInterceptableExceptionInterface $e) {
+            throw $e;
+        } catch (\Exception) {
+            return false;
         }
 
         $value = $context->coercers->array->coerce($value);
@@ -126,19 +132,27 @@ final class ClassType implements TypeInterface
     public function denormalize(mixed $value, Context $context): object
     {
         $accessor = $context->accessors->get($this->metadata);
+        $input = $value;
 
-        foreach ($accessor->beforeDenormalization as $hook) {
-            $value = $hook->beforeDenormalize($this->metadata, $value, $context);
+        try {
+            foreach ($accessor->beforeDenormalization as $hook) {
+                $value = $hook->beforeDenormalize($this->metadata, $value, $context);
+            }
+
+            $input = $value;
+            $value = $context->coercers->array->coerce($input)
+                ?? throw InvalidValueException::becauseInvalidType($this->metadata->name, $input)
+                    ->withTemplate($this->metadata->typeErrorMessage);
+
+            $object = $accessor->instantiator->instantiate($value);
+        } catch (NotInterceptableExceptionInterface|InvalidValueException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw InvalidValueException::becauseValueIsRejected($e, $input);
         }
 
-        $input = $value;
-        $value = $context->coercers->array->coerce($input)
-            ?? throw InvalidValueException::becauseInvalidType($this->metadata->name, $input)
-                ->withTemplate($this->metadata->typeErrorMessage);
-
         $limit = $context->config->maxViolations;
-        $object = $accessor->instantiator->instantiate($value);
-        $errors = null;
+        $violations = [];
 
         foreach ($this->writable as $property) {
             $name = $property->metadata->name;
@@ -148,8 +162,8 @@ final class ClassType implements TypeInterface
                 $default = $property->metadata->default;
 
                 if ($default === null) {
-                    $errors = InvalidValueException::collect(
-                        $errors,
+                    InvalidValueException::collect(
+                        $violations,
                         InvalidValueException::becauseFieldIsMissing($key, new PropertySegment($key))
                             ->withTemplate($property->metadata->undefinedErrorMessage),
                         $limit,
@@ -174,10 +188,14 @@ final class ClassType implements TypeInterface
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                $errors = InvalidValueException::collect(
-                    $errors,
-                    InvalidValueException::wrapWithPath($e, new PropertySegment($key), $field)
-                        ->withTemplate($property->metadata->typeErrorMessage),
+                InvalidValueException::collect(
+                    $violations,
+                    InvalidValueException::wrapWithPath(
+                        $e,
+                        new PropertySegment($key),
+                        $field,
+                        $property->metadata->typeErrorMessage,
+                    ),
                     $limit,
                 );
             }
@@ -185,20 +203,26 @@ final class ClassType implements TypeInterface
 
         if ($context->config->shouldRejectExtraFields) {
             foreach (\array_diff_key($value, $this->keys) as $key => $field) {
-                $errors = InvalidValueException::collect(
-                    $errors,
+                InvalidValueException::collect(
+                    $violations,
                     InvalidValueException::becauseFieldIsUnexpected((string) $key, new KeySegment($key), $field),
                     $limit,
                 );
             }
         }
 
-        if ($errors !== null) {
-            throw $errors;
+        if ($violations !== []) {
+            throw InvalidValueException::becauseViolationsAreCollected($violations);
         }
 
-        foreach ($accessor->afterDenormalization as $hook) {
-            $hook->afterDenormalize($this->metadata, $object, $input, $context);
+        try {
+            foreach ($accessor->afterDenormalization as $hook) {
+                $hook->afterDenormalize($this->metadata, $object, $input, $context);
+            }
+        } catch (NotInterceptableExceptionInterface|InvalidValueException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw InvalidValueException::becauseValueIsRejected($e, $input);
         }
 
         return $object;
@@ -219,8 +243,14 @@ final class ClassType implements TypeInterface
 
         $accessor = $context->accessors->get($this->metadata);
 
-        foreach ($accessor->beforeNormalization as $hook) {
-            $value = $hook->beforeNormalize($this->metadata, $value, $context);
+        try {
+            foreach ($accessor->beforeNormalization as $hook) {
+                $value = $hook->beforeNormalize($this->metadata, $value, $context);
+            }
+        } catch (NotInterceptableExceptionInterface $e) {
+            throw $e;
+        } catch (\Exception) {
+            return false;
         }
 
         foreach ($this->readable as $property) {
@@ -261,9 +291,16 @@ final class ClassType implements TypeInterface
         }
 
         $accessor = $context->accessors->get($this->metadata);
+        $object = $value;
 
-        foreach ($accessor->beforeNormalization as $hook) {
-            $value = $hook->beforeNormalize($this->metadata, $value, $context);
+        try {
+            foreach ($accessor->beforeNormalization as $hook) {
+                $value = $hook->beforeNormalize($this->metadata, $value, $context);
+            }
+        } catch (NotInterceptableExceptionInterface|InvalidValueException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw InvalidValueException::becauseValueIsRejected($e, $object);
         }
 
         $result = [];
@@ -286,13 +323,23 @@ final class ClassType implements TypeInterface
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                throw InvalidValueException::wrapWithPath($e, new PropertySegment($key), $field)
-                    ->withTemplate($property->metadata->typeErrorMessage);
+                throw InvalidValueException::wrapWithPath(
+                    $e,
+                    new PropertySegment($key),
+                    $field,
+                    $property->metadata->typeErrorMessage,
+                );
             }
         }
 
-        foreach ($accessor->afterNormalization as $hook) {
-            $result = $hook->afterNormalize($this->metadata, $value, $result, $context);
+        try {
+            foreach ($accessor->afterNormalization as $hook) {
+                $result = $hook->afterNormalize($this->metadata, $value, $result, $context);
+            }
+        } catch (NotInterceptableExceptionInterface|InvalidValueException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw InvalidValueException::becauseValueIsRejected($e, $object);
         }
 
         if ($this->metadata->isNormalizeAsArray ?? $context->config->isObjectAsArray) {

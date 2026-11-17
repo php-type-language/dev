@@ -175,13 +175,16 @@ final class DiscriminatorType implements TypeInterface
             return $tag;
         }
 
+        $nearest = null;
+
         foreach ($this->tags as $class => $candidate) {
-            if ($object instanceof $class) {
-                return $candidate;
+            if ($object instanceof $class && ($nearest === null || \is_subclass_of($class, $nearest))) {
+                $nearest = $class;
+                $tag = $candidate;
             }
         }
 
-        return null;
+        return $tag;
     }
 
     /**

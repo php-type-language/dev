@@ -63,25 +63,26 @@ final class ListType implements TypeInterface
         }
 
         $limit = $context->config->maxViolations;
+        $type = $this->type;
         $result = [];
-        $errors = null;
+        $violations = [];
 
         foreach ($input as $index => $item) {
             try {
-                $result[] = $this->type->denormalize($item, $context);
+                $result[] = $type->denormalize($item, $context);
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                $errors = InvalidValueException::collect(
-                    $errors,
+                InvalidValueException::collect(
+                    $violations,
                     InvalidValueException::wrapWithPath($e, new KeySegment($index), $item),
                     $limit,
                 );
             }
         }
 
-        if ($errors !== null) {
-            throw $errors;
+        if ($violations !== []) {
+            throw InvalidValueException::becauseViolationsAreCollected($violations);
         }
 
         return $result;
@@ -113,11 +114,13 @@ final class ListType implements TypeInterface
             throw InvalidValueException::becauseInvalidType($this->name, $value);
         }
 
+        $type = $this->type;
+
         $result = [];
 
         foreach ($value as $index => $item) {
             try {
-                $result[] = $this->type->normalize($item, $context);
+                $result[] = $type->normalize($item, $context);
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {

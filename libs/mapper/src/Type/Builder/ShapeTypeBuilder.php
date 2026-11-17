@@ -58,8 +58,12 @@ final class ShapeTypeBuilder implements TypeBuilderInterface
         foreach ($node->fields as $field) {
             $key = self::readKey($name, $field, $next);
 
-            if (\is_int($key)) {
-                $next = \max($next, $key + 1);
+            if (\is_int($key) && $key >= $next) {
+                $next = $key;
+
+                if ($key < \PHP_INT_MAX) {
+                    $next = $key + 1;
+                }
             }
 
             if (isset($fields[$key])) {

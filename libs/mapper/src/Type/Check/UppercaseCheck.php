@@ -21,6 +21,6 @@ final class UppercaseCheck implements CheckInterface
 
     public function isValid(mixed $value): bool
     {
-        return \is_string($value) && \strtoupper($value) === $value;
+        return \is_string($value) && \strpbrk($value, 'abcdefghijklmnopqrstuvwxyz') === false;
     }
 }

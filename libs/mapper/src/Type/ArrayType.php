@@ -75,17 +75,23 @@ final class ArrayType implements TypeInterface
 
         $limit = $context->config->maxViolations;
         $keys = $context->withStrictTypes(false);
+        $isAnyKey = $this->key instanceof ArrayKeyType;
         $result = [];
-        $errors = null;
+        $violations = [];
 
         foreach ($input as $key => $item) {
+            /** @var TKey */
+            $index = $key;
+
             try {
-                $index = $this->key->denormalize($key, $keys);
+                if (!$isAnyKey) {
+                    $index = $this->key->denormalize($key, $keys);
+                }
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception) {
-                $errors = InvalidValueException::collect(
-                    $errors,
+                InvalidValueException::collect(
+                    $violations,
                     InvalidValueException::becauseInvalidKey($this->keyName, $key),
                     $limit,
                 );
@@ -98,16 +104,16 @@ final class ArrayType implements TypeInterface
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                $errors = InvalidValueException::collect(
-                    $errors,
+                InvalidValueException::collect(
+                    $violations,
                     InvalidValueException::wrapWithPath($e, new KeySegment($key), $item),
                     $limit,
                 );
             }
         }
 
-        if ($errors !== null) {
-            throw $errors;
+        if ($violations !== []) {
+            throw InvalidValueException::becauseViolationsAreCollected($violations);
         }
 
         return $result;

@@ -14,6 +14,8 @@ use TypeLang\Mapper\Exception\TypeDefinitionException;
  * `mixed`: data is denormalized as is. On normalization an object is
  * normalized by the type of its class from {@see Context::$types}, an array
  * and a {@see \stdClass} element by element, other values are kept as is.
+ * A {@see \stdClass} gives an array or an object by the configuration, as
+ * an object of a class does.
  *
  * @template-implements TypeInterface<mixed>
  */
@@ -64,14 +66,30 @@ final class MixedType implements TypeInterface
      */
     public function normalize(mixed $value, Context $context): mixed
     {
+        if ($value === null || \is_scalar($value)) {
+            return $value;
+        }
+
         if (self::isDynamicObject($value)) {
-            $value = \get_object_vars($value);
+            $result = $this->normalize(\get_object_vars($value), $context);
+
+            if ($context->config->isObjectAsArray) {
+                return $result;
+            }
+
+            return (object) $result;
         }
 
         if (\is_array($value)) {
             $result = [];
 
             foreach ($value as $key => $item) {
+                if ($item === null || \is_scalar($item)) {
+                    $result[$key] = $item;
+
+                    continue;
+                }
+
                 try {
                     $result[$key] = $this->normalize($item, $context);
                 } catch (NotInterceptableExceptionInterface $e) {
@@ -86,10 +104,6 @@ final class MixedType implements TypeInterface
 
         if (\is_object($value)) {
             return $context->types->get($value::class)->normalize($value, $context);
-        }
-
-        if ($value === null || \is_scalar($value)) {
-            return $value;
         }
 
         throw InvalidValueException::becauseInvalidType('mixed', $value);

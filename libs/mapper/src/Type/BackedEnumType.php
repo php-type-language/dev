@@ -19,6 +19,13 @@ use TypeLang\Mapper\Exception\InvalidValueException;
  */
 final class BackedEnumType implements TypeInterface
 {
+    /**
+     * Cases by their values and by the aliases of the values
+     *
+     * @var array<array-key, T>
+     */
+    private readonly array $cases;
+
     public function __construct(
         /**
          * @var class-string<T>
@@ -37,7 +44,21 @@ final class BackedEnumType implements TypeInterface
          * @var array<array-key, int|string>
          */
         public readonly array $aliases = [],
-    ) {}
+    ) {
+        $cases = [];
+
+        foreach ($class::cases() as $case) {
+            $cases[$case->value] = $case;
+        }
+
+        foreach ($aliases as $alias => $target) {
+            if (isset($cases[$target])) {
+                $cases[$alias] = $cases[$target];
+            }
+        }
+
+        $this->cases = $cases;
+    }
 
     public function isDenormalizable(mixed $value, Context $context): bool
     {
@@ -45,9 +66,7 @@ final class BackedEnumType implements TypeInterface
             return false;
         }
 
-        $backing = $this->backing->denormalize($value, $context);
-
-        return $this->class::tryFrom($this->aliases[$backing] ?? $backing) !== null;
+        return isset($this->cases[$this->backing->denormalize($value, $context)]);
     }
 
     /**
@@ -58,9 +77,7 @@ final class BackedEnumType implements TypeInterface
      */
     public function denormalize(mixed $value, Context $context): \BackedEnum
     {
-        $backing = $this->backing->denormalize($value, $context);
-
-        return $this->class::tryFrom($this->aliases[$backing] ?? $backing)
+        return $this->cases[$this->backing->denormalize($value, $context)]
             ?? throw InvalidValueException::becauseInvalidType($this->class, $value);
     }
 

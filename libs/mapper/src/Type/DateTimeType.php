@@ -102,10 +102,15 @@ final class DateTimeType implements TypeInterface
     }
 
     /**
-     * Returns {@see null} in case of the string is not a date.
+     * Returns {@see null} in case of the string is not a date. An empty
+     * string and a string with a NUL byte are not dates.
      */
     private function parse(string $value): ?\DateTimeInterface
     {
+        if ($value === '' || \str_contains($value, "\0")) {
+            return null;
+        }
+
         if ($this->format === null) {
             try {
                 return new ($this->implementation)($value);

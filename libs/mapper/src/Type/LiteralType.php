@@ -53,6 +53,10 @@ final class LiteralType implements TypeInterface
      */
     public function denormalize(mixed $value, Context $context): int|float|string|bool|\UnitEnum
     {
+        if ($value === $this->value) {
+            return $this->value;
+        }
+
         if (!$this->isDenormalizable($value, $context)) {
             throw InvalidValueException::becauseInvalidType($this->name, $value);
         }

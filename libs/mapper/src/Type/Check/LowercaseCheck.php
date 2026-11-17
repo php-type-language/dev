@@ -21,6 +21,6 @@ final class LowercaseCheck implements CheckInterface
 
     public function isValid(mixed $value): bool
     {
-        return \is_string($value) && \strtolower($value) === $value;
+        return \is_string($value) && \strpbrk($value, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') === false;
     }
 }

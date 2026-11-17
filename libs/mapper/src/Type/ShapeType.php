@@ -181,15 +181,15 @@ final class ShapeType implements TypeInterface
     {
         $limit = $context->config->maxViolations;
         $result = [];
-        $errors = null;
+        $violations = [];
 
         foreach ($this->fields as $field) {
             $key = $field->key;
 
             if (!\array_key_exists($key, $input)) {
                 if (!$field->isOptional) {
-                    $errors = InvalidValueException::collect(
-                        $errors,
+                    InvalidValueException::collect(
+                        $violations,
                         InvalidValueException::becauseFieldIsMissing((string) $key, $this->createSegment($key)),
                         $limit,
                     );
@@ -203,8 +203,8 @@ final class ShapeType implements TypeInterface
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                $errors = InvalidValueException::collect(
-                    $errors,
+                InvalidValueException::collect(
+                    $violations,
                     InvalidValueException::wrapWithPath($e, $this->createSegment($key), $input[$key]),
                     $limit,
                 );
@@ -213,8 +213,8 @@ final class ShapeType implements TypeInterface
 
         if ($this->rest === null && $context->config->shouldRejectExtraFields) {
             foreach (\array_diff_key($input, $this->keys) as $key => $item) {
-                $errors = InvalidValueException::collect(
-                    $errors,
+                InvalidValueException::collect(
+                    $violations,
                     InvalidValueException::becauseFieldIsUnexpected((string) $key, $this->createSegment($key), $item),
                     $limit,
                 );
@@ -228,8 +228,8 @@ final class ShapeType implements TypeInterface
                 } catch (NotInterceptableExceptionInterface $e) {
                     throw $e;
                 } catch (\Exception $e) {
-                    $errors = InvalidValueException::collect(
-                        $errors,
+                    InvalidValueException::collect(
+                        $violations,
                         InvalidValueException::wrapWithPath($e, $this->createSegment($key), $item),
                         $limit,
                     );
@@ -237,8 +237,8 @@ final class ShapeType implements TypeInterface
             }
         }
 
-        if ($errors !== null) {
-            throw $errors;
+        if ($violations !== []) {
+            throw InvalidValueException::becauseViolationsAreCollected($violations);
         }
 
         return $result;
