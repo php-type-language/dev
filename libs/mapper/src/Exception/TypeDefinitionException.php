@@ -127,6 +127,17 @@ final class TypeDefinitionException extends \LogicException implements
     }
 
     /**
+     * @param string $type the type as written: `int-mask<1, 'a'>`
+     */
+    public static function becauseMaskValueIsInvalid(string $type): self
+    {
+        return new self(\sprintf(
+            'Type "%s" must be made of non-negative integers, their constants or unions of them',
+            \addcslashes($type, '"'),
+        ));
+    }
+
+    /**
      * @param string $type the type as written: `int<10, 1>`
      */
     public static function becauseRangeIsEmpty(string $type): self
@@ -173,16 +184,6 @@ final class TypeDefinitionException extends \LogicException implements
         string $error,
     ): self {
         return new self(\sprintf('%s is invalid: %s', self::describeDiscriminator($class, $tag), $error));
-    }
-
-    /**
-     * @param class-string $class
-     * @param int|string|null $tag tag of the map, {@see null} for the type
-     *        of the data with no known tag
-     */
-    public static function becauseDiscriminatorTypeIsNotDefined(string $class, int|string|null $tag): self
-    {
-        return new self(\sprintf('%s is not defined', self::describeDiscriminator($class, $tag)));
     }
 
     /**
