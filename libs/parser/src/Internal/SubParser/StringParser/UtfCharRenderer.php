@@ -18,7 +18,7 @@ final class UtfCharRenderer
     /**
      * @var non-empty-string
      */
-    private const REPLACEMENT_CHAR = "\u{FFFD}";
+    public const REPLACEMENT_CHAR = "\u{FFFD}";
 
     /**
      * Method for encoding an utf-8 character by its code.
