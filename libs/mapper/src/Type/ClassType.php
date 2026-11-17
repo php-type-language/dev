@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Type;
 
 use TypeLang\Mapper\Context\Context;
+use TypeLang\Mapper\Diagnostics\Path\Segment\KeySegment;
 use TypeLang\Mapper\Diagnostics\Path\Segment\PropertySegment;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Exception\NotInterceptableExceptionInterface;
@@ -35,6 +36,13 @@ use TypeLang\Mapper\Type\ClassType\Property;
  */
 final class ClassType implements TypeInterface
 {
+    /**
+     * Keys of the data the class takes, the other keys are extra
+     *
+     * @var array<array-key, true>
+     */
+    private readonly array $keys;
+
     public function __construct(
         /**
          * Description of the class the type is built from
@@ -56,7 +64,22 @@ final class ClassType implements TypeInterface
          * @var list<Property<mixed>>
          */
         public readonly array $readable,
-    ) {}
+        /**
+         * Keys of the data the class takes besides its properties: the
+         * fields of the tags of its bases with a discriminator
+         *
+         * @var list<string>
+         */
+        public readonly array $tags = [],
+    ) {
+        $keys = \array_fill_keys($tags, true);
+
+        foreach ($writable as $property) {
+            $keys[$property->metadata->externalName] = true;
+        }
+
+        $this->keys = $keys;
+    }
 
     public function isDenormalizable(mixed $value, Context $context): bool
     {
@@ -89,7 +112,8 @@ final class ClassType implements TypeInterface
             }
         }
 
-        return true;
+        return !$context->config->shouldRejectExtraFields
+            || \array_diff_key($value, $this->keys) === [];
     }
 
     /**
@@ -112,16 +136,27 @@ final class ClassType implements TypeInterface
             ?? throw InvalidValueException::becauseInvalidType($this->metadata->name, $input)
                 ->withTemplate($this->metadata->typeErrorMessage);
 
+        $limit = $context->config->maxViolations;
         $object = $accessor->instantiator->instantiate($value);
+        $errors = null;
 
         foreach ($this->writable as $property) {
             $name = $property->metadata->name;
             $key = $property->metadata->externalName;
 
             if (!\array_key_exists($key, $value)) {
-                $default = $property->metadata->default
-                    ?? throw InvalidValueException::becauseFieldIsMissing($key, new PropertySegment($key))
-                        ->withTemplate($property->metadata->undefinedErrorMessage);
+                $default = $property->metadata->default;
+
+                if ($default === null) {
+                    $errors = InvalidValueException::collect(
+                        $errors,
+                        InvalidValueException::becauseFieldIsMissing($key, new PropertySegment($key))
+                            ->withTemplate($property->metadata->undefinedErrorMessage),
+                        $limit,
+                    );
+
+                    continue;
+                }
 
                 $accessor->writers[$name]->write($object, $default->value);
 
@@ -139,9 +174,27 @@ final class ClassType implements TypeInterface
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                throw InvalidValueException::wrapWithPath($e, new PropertySegment($key), $field)
-                    ->withTemplate($property->metadata->typeErrorMessage);
+                $errors = InvalidValueException::collect(
+                    $errors,
+                    InvalidValueException::wrapWithPath($e, new PropertySegment($key), $field)
+                        ->withTemplate($property->metadata->typeErrorMessage),
+                    $limit,
+                );
             }
+        }
+
+        if ($context->config->shouldRejectExtraFields) {
+            foreach (\array_diff_key($value, $this->keys) as $key => $field) {
+                $errors = InvalidValueException::collect(
+                    $errors,
+                    InvalidValueException::becauseFieldIsUnexpected((string) $key, new KeySegment($key), $field),
+                    $limit,
+                );
+            }
+        }
+
+        if ($errors !== null) {
+            throw $errors;
         }
 
         foreach ($accessor->afterDenormalization as $hook) {

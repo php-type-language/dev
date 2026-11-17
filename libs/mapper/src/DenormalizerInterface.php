@@ -18,7 +18,9 @@ use TypeLang\Mapper\Exception\TypeDefinitionException;
 interface DenormalizerInterface
 {
     /**
-     * @param non-empty-string $type
+     * @template TArgObject of object
+     * @param class-string<TArgObject>|non-empty-string $type
+     * @return ($type is class-string<TArgObject> ? TArgObject : mixed)
      * @throws InvalidValueException in case of the data does not match the
      *         type, the message has the path of the wrong value
      * @throws TypeDefinitionException in case of the type is not supported,

@@ -65,7 +65,35 @@ final class ClassTypeBuilder implements TypeBuilderInterface
 
         $context->accessors->get($metadata);
 
-        return new ClassType($metadata, $writable, $readable);
+        return new ClassType($metadata, $writable, $readable, self::getTags($class, $context));
+    }
+
+    /**
+     * Returns the fields of the tags of the class and its bases with a
+     * discriminator: the data of the class given by a base has them.
+     *
+     * @param \ReflectionClass<object> $class
+     * @return list<string>
+     */
+    private static function getTags(\ReflectionClass $class, BuildContext $context): array
+    {
+        $tags = [];
+
+        foreach ([$class->name, ...\class_parents($class->name), ...\class_implements($class->name)] as $base) {
+            $reflection = new \ReflectionClass($base);
+
+            if ($reflection->isInternal()) {
+                continue;
+            }
+
+            $discriminator = $context->metadata->read($reflection)->discriminator;
+
+            if ($discriminator !== null) {
+                $tags[] = $discriminator->field;
+            }
+        }
+
+        return $tags;
     }
 
     /**

@@ -85,7 +85,8 @@ final class ShapeType implements TypeInterface
         }
 
         if ($this->rest === null) {
-            return true;
+            return !$context->config->shouldRejectExtraFields
+                || \array_diff_key($input, $this->keys) === [];
         }
 
         foreach (\array_diff_key($input, $this->keys) as $item) {
@@ -178,17 +179,23 @@ final class ShapeType implements TypeInterface
      */
     private function denormalizeFields(array $input, Context $context): array
     {
+        $limit = $context->config->maxViolations;
         $result = [];
+        $errors = null;
 
         foreach ($this->fields as $field) {
             $key = $field->key;
 
             if (!\array_key_exists($key, $input)) {
-                if ($field->isOptional) {
-                    continue;
+                if (!$field->isOptional) {
+                    $errors = InvalidValueException::collect(
+                        $errors,
+                        InvalidValueException::becauseFieldIsMissing((string) $key, $this->createSegment($key)),
+                        $limit,
+                    );
                 }
 
-                throw InvalidValueException::becauseFieldIsMissing((string) $key, $this->createSegment($key));
+                continue;
             }
 
             try {
@@ -196,22 +203,42 @@ final class ShapeType implements TypeInterface
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                throw InvalidValueException::wrapWithPath($e, $this->createSegment($key), $input[$key]);
+                $errors = InvalidValueException::collect(
+                    $errors,
+                    InvalidValueException::wrapWithPath($e, $this->createSegment($key), $input[$key]),
+                    $limit,
+                );
             }
         }
 
-        if ($this->rest === null) {
-            return $result;
+        if ($this->rest === null && $context->config->shouldRejectExtraFields) {
+            foreach (\array_diff_key($input, $this->keys) as $key => $item) {
+                $errors = InvalidValueException::collect(
+                    $errors,
+                    InvalidValueException::becauseFieldIsUnexpected((string) $key, $this->createSegment($key), $item),
+                    $limit,
+                );
+            }
         }
 
-        foreach (\array_diff_key($input, $this->keys) as $key => $item) {
-            try {
-                $result[$key] = $this->rest->denormalize($item, $context);
-            } catch (NotInterceptableExceptionInterface $e) {
-                throw $e;
-            } catch (\Exception $e) {
-                throw InvalidValueException::wrapWithPath($e, $this->createSegment($key), $item);
+        if ($this->rest !== null) {
+            foreach (\array_diff_key($input, $this->keys) as $key => $item) {
+                try {
+                    $result[$key] = $this->rest->denormalize($item, $context);
+                } catch (NotInterceptableExceptionInterface $e) {
+                    throw $e;
+                } catch (\Exception $e) {
+                    $errors = InvalidValueException::collect(
+                        $errors,
+                        InvalidValueException::wrapWithPath($e, $this->createSegment($key), $item),
+                        $limit,
+                    );
+                }
             }
+        }
+
+        if ($errors !== null) {
+            throw $errors;
         }
 
         return $result;

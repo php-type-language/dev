@@ -56,6 +56,16 @@ final class InvalidValueException extends ViolationException implements MapperEx
     }
 
     /**
+     * The path of the error points to the place of the field.
+     */
+    public static function becauseFieldIsUnexpected(string $field, SegmentInterface $segment, mixed $value): self
+    {
+        return self::fromViolation(
+            new Violation(ViolationCode::UnexpectedField, ['field' => $field], new Path([$segment]), $value),
+        );
+    }
+
+    /**
      * @param non-empty-string $expected
      * @param non-empty-string $check
      */
@@ -98,6 +108,36 @@ final class InvalidValueException extends ViolationException implements MapperEx
         }
 
         return new self($violations, self::formatSummary($violations), $previous);
+    }
+
+    /**
+     * Returns the error of the violations of the collected error and then
+     * of the given one, for a composite type to go on with its other
+     * values.
+     *
+     * @param int<1, max> $limit
+     * @throws self in case of the limit of the violations is reached, with
+     *         the violations cut to the limit
+     */
+    public static function collect(?self $collected, self $error, int $limit): self
+    {
+        if ($collected !== null) {
+            $violations = [...$collected->violations, ...$error->violations];
+            $error = new self($violations, self::formatSummary($violations), $collected->getPrevious());
+        }
+
+        if (\count($error->violations) < $limit) {
+            return $error;
+        }
+
+        if (\count($error->violations) === $limit) {
+            throw $error;
+        }
+
+        /** @var non-empty-list<Violation> */
+        $violations = \array_slice($error->violations, 0, $limit);
+
+        throw new self($violations, self::formatSummary($violations), $error->getPrevious());
     }
 
     /**

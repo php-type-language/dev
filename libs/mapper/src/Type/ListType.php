@@ -62,7 +62,9 @@ final class ListType implements TypeInterface
             throw InvalidValueException::becauseInvalidType($this->name, $value);
         }
 
+        $limit = $context->config->maxViolations;
         $result = [];
+        $errors = null;
 
         foreach ($input as $index => $item) {
             try {
@@ -70,8 +72,16 @@ final class ListType implements TypeInterface
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                throw InvalidValueException::wrapWithPath($e, new KeySegment($index), $item);
+                $errors = InvalidValueException::collect(
+                    $errors,
+                    InvalidValueException::wrapWithPath($e, new KeySegment($index), $item),
+                    $limit,
+                );
             }
+        }
+
+        if ($errors !== null) {
+            throw $errors;
         }
 
         return $result;

@@ -205,7 +205,7 @@ final class ConstantTypeBuilder implements TypeBuilderInterface
 
         if ($value instanceof \UnitEnum) {
             /** @var TypeInterface<\UnitEnum> */
-            $type = $context->types->getType(new NamedTypeNode(self::createClassName($value::class)));
+            $type = $context->types->getType(new NamedTypeNode(Name::from($value::class)));
 
             return new LiteralType($value, $type, $name);
         }
@@ -218,22 +218,5 @@ final class ConstantTypeBuilder implements TypeBuilderInterface
         }
 
         throw TypeDefinitionException::becauseConstantValueIsNotSupported($name, \get_debug_type($value));
-    }
-
-    /**
-     * @param class-string $class
-     */
-    private static function createClassName(string $class): Name
-    {
-        $words = \explode('\\', $class);
-        $last = \array_pop($words);
-
-        \assert($last !== null && $last !== '');
-
-        if ($words === []) {
-            return new Name($last);
-        }
-
-        return new Name($last, new NamespaceName(\implode('\\', $words)));
     }
 }

@@ -9,7 +9,6 @@ use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;
 use TypeLang\Mapper\Type\TypeInterface;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\NamespaceName;
 
 /**
  * Types of the classes of the values met at runtime, such as the type of an
@@ -39,28 +38,6 @@ final class ClassTypes
      */
     public function get(string $class): TypeInterface
     {
-        return $this->types[$class] ??= $this->repository->getType(self::createNode($class));
-    }
-
-    /**
-     * Returns the node of the class, named with its namespace.
-     *
-     * @param class-string $class
-     */
-    private static function createNode(string $class): NamedTypeNode
-    {
-        $words = \explode('\\', $class);
-
-        /** @var non-empty-string */
-        $last = \array_pop($words);
-
-        if ($words === []) {
-            return new NamedTypeNode(new Name($last));
-        }
-
-        return new NamedTypeNode(new Name(
-            $last,
-            new NamespaceName(\implode('\\', $words)),
-        ));
+        return $this->types[$class] ??= $this->repository->getType(new NamedTypeNode(Name::from($class)));
     }
 }

@@ -19,6 +19,19 @@ final class Configuration
          * {@see \stdClass}, a class may override it
          */
         public readonly bool $isObjectAsArray = true,
+        /**
+         * Number of violations a denormalization collects before it fails,
+         * the first one fails it by default
+         *
+         * @var int<1, max>
+         */
+        public readonly int $maxViolations = 1,
+        /**
+         * Whether a field of the data that no property of a class and no
+         * field of a sealed shape takes is a violation, such fields are
+         * dropped by default
+         */
+        public readonly bool $shouldRejectExtraFields = false,
     ) {}
 
     /**
@@ -30,6 +43,8 @@ final class Configuration
         return new self(
             isStrict: $isStrict,
             isObjectAsArray: $this->isObjectAsArray,
+            maxViolations: $this->maxViolations,
+            shouldRejectExtraFields: $this->shouldRejectExtraFields,
         );
     }
 }

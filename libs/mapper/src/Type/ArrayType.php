@@ -73,21 +73,41 @@ final class ArrayType implements TypeInterface
         $input = $context->coercers->array->coerce($value)
             ?? throw InvalidValueException::becauseInvalidType($this->name, $value);
 
+        $limit = $context->config->maxViolations;
         $keys = $context->withStrictTypes(false);
         $result = [];
+        $errors = null;
 
         foreach ($input as $key => $item) {
-            if (!$this->key->isDenormalizable($key, $keys)) {
-                throw InvalidValueException::becauseInvalidKey($this->keyName, $key);
+            try {
+                $index = $this->key->denormalize($key, $keys);
+            } catch (NotInterceptableExceptionInterface $e) {
+                throw $e;
+            } catch (\Exception) {
+                $errors = InvalidValueException::collect(
+                    $errors,
+                    InvalidValueException::becauseInvalidKey($this->keyName, $key),
+                    $limit,
+                );
+
+                continue;
             }
 
             try {
-                $result[$this->key->denormalize($key, $keys)] = $this->value->denormalize($item, $context);
+                $result[$index] = $this->value->denormalize($item, $context);
             } catch (NotInterceptableExceptionInterface $e) {
                 throw $e;
             } catch (\Exception $e) {
-                throw InvalidValueException::wrapWithPath($e, new KeySegment($key), $item);
+                $errors = InvalidValueException::collect(
+                    $errors,
+                    InvalidValueException::wrapWithPath($e, new KeySegment($key), $item),
+                    $limit,
+                );
             }
+        }
+
+        if ($errors !== null) {
+            throw $errors;
         }
 
         return $result;

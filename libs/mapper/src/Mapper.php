@@ -36,9 +36,13 @@ use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;
 use TypeLang\Mapper\Type\Builder\TypesListTypeBuilder;
 use TypeLang\Mapper\Type\Builder\UnionTypeBuilder;
 use TypeLang\Mapper\Type\Builder\UnitEnumTypeBuilder;
+use TypeLang\Mapper\Type\Check\DecimalIntCheck;
 use TypeLang\Mapper\Type\Check\IntRangeCheck;
+use TypeLang\Mapper\Type\Check\LowercaseCheck;
 use TypeLang\Mapper\Type\Check\NonEmptyCheck;
+use TypeLang\Mapper\Type\Check\NonFalsyCheck;
 use TypeLang\Mapper\Type\Check\NumericCheck;
+use TypeLang\Mapper\Type\Check\UppercaseCheck;
 use TypeLang\Mapper\Type\Decorator\TypeDecoratorInterface;
 use TypeLang\Mapper\Type\FloatType;
 use TypeLang\Mapper\Type\IntType;
@@ -48,6 +52,7 @@ use TypeLang\Mapper\Type\Repository\TypeRepository;
 use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;
 use TypeLang\Mapper\Type\StringType;
 use TypeLang\Mapper\Type\TypeInterface;
+use TypeLang\Mapper\Type\UnionType;
 use TypeLang\Mapper\TypeMatcher\Exception\InvalidPatternException;
 use TypeLang\Mapper\TypeMatcher\NamedTypePattern;
 use TypeLang\Parser\Exception\ParserExceptionInterface;
@@ -114,20 +119,87 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
     {
         $string = new StringType();
         $int = new IntType();
+        $float = new FloatType();
+        $nonEmpty = new NonEmptyCheck();
+        $bool = new BoolType();
+        $numericString = new RefinedType($string, [new NumericCheck()], 'numeric-string');
+        $scalar = new UnionType([$int, $float, $bool, $string], 'scalar');
 
         return [
-            new NamedTypeBuilder(new NamedTypePattern(['int', 'integer'], $parser), $int),
-            new NamedTypeBuilder(new NamedTypePattern(['float', 'double'], $parser), new FloatType()),
-            new NamedTypeBuilder(new NamedTypePattern(['bool', 'boolean'], $parser), new BoolType()),
+            new NamedTypeBuilder(new NamedTypePattern(['int', 'integer', 'literal-int'], $parser), $int),
+            new NamedTypeBuilder(new NamedTypePattern(['scalar'], $parser), $scalar),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-empty-scalar'], $parser),
+                new RefinedType($scalar, [new NonFalsyCheck()], 'non-empty-scalar'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['decimal-int-string'], $parser),
+                new RefinedType($string, [new DecimalIntCheck()], 'decimal-int-string'),
+            ),
+            new NamedTypeBuilder(new NamedTypePattern(['float', 'double', 'real'], $parser), $float),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['number'], $parser),
+                new UnionType([$int, $float], 'number'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['numeric'], $parser),
+                new UnionType([$int, $float, $numericString], 'numeric'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-zero-int'], $parser),
+                new RefinedType($int, [new NonFalsyCheck()], 'non-zero-int'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(
+                    [
+                        'literal-string',
+                        'callable-string',
+                        'class-string',
+                        'class-string<T>',
+                        'interface-string',
+                        'interface-string<T>',
+                        'trait-string',
+                        'enum-string',
+                        'enum-string<T>',
+                    ],
+                    $parser,
+                ),
+                $string,
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-empty-literal-string'], $parser),
+                new RefinedType($string, [$nonEmpty], 'non-empty-literal-string'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['truthy-string', 'non-falsy-string'], $parser),
+                new RefinedType($string, [new NonFalsyCheck()], 'non-falsy-string'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['lowercase-string'], $parser),
+                new RefinedType($string, [new LowercaseCheck()], 'lowercase-string'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-empty-lowercase-string'], $parser),
+                new RefinedType($string, [$nonEmpty, new LowercaseCheck()], 'non-empty-lowercase-string'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['uppercase-string'], $parser),
+                new RefinedType($string, [new UppercaseCheck()], 'uppercase-string'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-empty-uppercase-string'], $parser),
+                new RefinedType($string, [$nonEmpty, new UppercaseCheck()], 'non-empty-uppercase-string'),
+            ),
+            new NamedTypeBuilder(new NamedTypePattern(['bool', 'boolean'], $parser), $bool),
             new NamedTypeBuilder(new NamedTypePattern(['mixed'], $parser), new MixedType()),
             new NamedTypeBuilder(new NamedTypePattern(['string'], $parser), $string),
             new NamedTypeBuilder(
                 new NamedTypePattern(['non-empty-string'], $parser),
-                new RefinedType($string, [new NonEmptyCheck()], 'non-empty-string'),
+                new RefinedType($string, [$nonEmpty], 'non-empty-string'),
             ),
             new NamedTypeBuilder(
                 new NamedTypePattern(['numeric-string'], $parser),
-                new RefinedType($string, [new NumericCheck()], 'numeric-string'),
+                $numericString,
             ),
             new IntRangeTypeBuilder(new NamedTypePattern(['int<min, max>'], $parser), $int),
             new NamedTypeBuilder(
@@ -152,10 +224,30 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
                 new NamedTypePattern(['non-empty-list', 'non-empty-list<T>'], $parser),
                 [new NonEmptyCheck()],
             ),
-            new ArrayTypeBuilder(new NamedTypePattern(['array', 'array<V>', 'array<K, V>'], $parser)),
+            new ArrayTypeBuilder(new NamedTypePattern(
+                [
+                    'array',
+                    'array<V>',
+                    'array<K, V>',
+                    'associative-array',
+                    'associative-array<V>',
+                    'associative-array<K, V>',
+                ],
+                $parser,
+            )),
             new TypesListTypeBuilder(),
             new ArrayTypeBuilder(
-                new NamedTypePattern(['non-empty-array', 'non-empty-array<V>', 'non-empty-array<K, V>'], $parser),
+                new NamedTypePattern(
+                    [
+                        'non-empty-array',
+                        'non-empty-array<V>',
+                        'non-empty-array<K, V>',
+                        'non-empty-associative-array',
+                        'non-empty-associative-array<V>',
+                        'non-empty-associative-array<K, V>',
+                    ],
+                    $parser,
+                ),
                 [new NonEmptyCheck()],
             ),
             new IterableTypeBuilder(new NamedTypePattern(['iterable', 'iterable<V>', 'iterable<K, V>'], $parser)),
