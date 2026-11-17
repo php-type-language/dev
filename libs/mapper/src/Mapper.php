@@ -24,6 +24,7 @@ use TypeLang\Mapper\Type\Builder\ClassTypeBuilder;
 use TypeLang\Mapper\Type\Builder\ConstantTypeBuilder;
 use TypeLang\Mapper\Type\Builder\DateTimeTypeBuilder;
 use TypeLang\Mapper\Type\Builder\DiscriminatorTypeBuilder;
+use TypeLang\Mapper\Type\Builder\IntMaskTypeBuilder;
 use TypeLang\Mapper\Type\Builder\IntRangeTypeBuilder;
 use TypeLang\Mapper\Type\Builder\IterableTypeBuilder;
 use TypeLang\Mapper\Type\Builder\ListTypeBuilder;
@@ -36,11 +37,15 @@ use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;
 use TypeLang\Mapper\Type\Builder\TypesListTypeBuilder;
 use TypeLang\Mapper\Type\Builder\UnionTypeBuilder;
 use TypeLang\Mapper\Type\Builder\UnitEnumTypeBuilder;
+use TypeLang\Mapper\Type\Builder\ValueOfTypeBuilder;
 use TypeLang\Mapper\Type\Check\DecimalIntCheck;
+use TypeLang\Mapper\Type\Check\FalsyCheck;
+use TypeLang\Mapper\Type\Check\FloatRangeCheck;
 use TypeLang\Mapper\Type\Check\IntRangeCheck;
 use TypeLang\Mapper\Type\Check\LowercaseCheck;
 use TypeLang\Mapper\Type\Check\NonEmptyCheck;
 use TypeLang\Mapper\Type\Check\NonFalsyCheck;
+use TypeLang\Mapper\Type\Check\NonNullCheck;
 use TypeLang\Mapper\Type\Check\NumericCheck;
 use TypeLang\Mapper\Type\Check\UppercaseCheck;
 use TypeLang\Mapper\Type\Decorator\TypeDecoratorInterface;
@@ -124,6 +129,7 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
         $bool = new BoolType();
         $numericString = new RefinedType($string, [new NumericCheck()], 'numeric-string');
         $scalar = new UnionType([$int, $float, $bool, $string], 'scalar');
+        $mixed = new MixedType();
 
         return [
             new NamedTypeBuilder(new NamedTypePattern(['int', 'integer', 'literal-int'], $parser), $int),
@@ -133,8 +139,48 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
                 new RefinedType($scalar, [new NonFalsyCheck()], 'non-empty-scalar'),
             ),
             new NamedTypeBuilder(
+                new NamedTypePattern(['empty-scalar'], $parser),
+                new RefinedType($scalar, [new FalsyCheck()], 'empty-scalar'),
+            ),
+            new NamedTypeBuilder(
                 new NamedTypePattern(['decimal-int-string'], $parser),
                 new RefinedType($string, [new DecimalIntCheck()], 'decimal-int-string'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-decimal-int-string'], $parser),
+                new RefinedType($string, [new DecimalIntCheck(false)], 'non-decimal-int-string'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['positive-float'], $parser),
+                new RefinedType($float, [new FloatRangeCheck(4.9E-324, \INF, '> 0')], 'positive-float'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['negative-float'], $parser),
+                new RefinedType($float, [new FloatRangeCheck(-\INF, -4.9E-324, '< 0')], 'negative-float'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-positive-float'], $parser),
+                new RefinedType($float, [new FloatRangeCheck(-\INF, 0.0, '<= 0')], 'non-positive-float'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-negative-float'], $parser),
+                new RefinedType($float, [new FloatRangeCheck(0.0, \INF, '>= 0')], 'non-negative-float'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['finite-float'], $parser),
+                new RefinedType(
+                    $float,
+                    [new FloatRangeCheck(-\PHP_FLOAT_MAX, \PHP_FLOAT_MAX, 'finite')],
+                    'finite-float',
+                ),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-empty-mixed'], $parser),
+                new RefinedType($mixed, [new NonFalsyCheck()], 'non-empty-mixed'),
+            ),
+            new NamedTypeBuilder(
+                new NamedTypePattern(['non-null-mixed'], $parser),
+                new RefinedType($mixed, [new NonNullCheck()], 'non-null-mixed'),
             ),
             new NamedTypeBuilder(new NamedTypePattern(['float', 'double', 'real'], $parser), $float),
             new NamedTypeBuilder(
@@ -191,7 +237,7 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
                 new RefinedType($string, [$nonEmpty, new UppercaseCheck()], 'non-empty-uppercase-string'),
             ),
             new NamedTypeBuilder(new NamedTypePattern(['bool', 'boolean'], $parser), $bool),
-            new NamedTypeBuilder(new NamedTypePattern(['mixed'], $parser), new MixedType()),
+            new NamedTypeBuilder(new NamedTypePattern(['mixed'], $parser), $mixed),
             new NamedTypeBuilder(new NamedTypePattern(['string'], $parser), $string),
             new NamedTypeBuilder(
                 new NamedTypePattern(['non-empty-string'], $parser),
@@ -202,6 +248,8 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
                 $numericString,
             ),
             new IntRangeTypeBuilder(new NamedTypePattern(['int<min, max>'], $parser), $int),
+            new IntMaskTypeBuilder($int),
+            new ValueOfTypeBuilder(),
             new NamedTypeBuilder(
                 new NamedTypePattern(['positive-int'], $parser),
                 new RefinedType($int, [new IntRangeCheck(min: 1)], 'positive-int'),
