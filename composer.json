@@ -20,7 +20,6 @@
         "friendsofphp/php-cs-fixer": "^3.95",
         "jetbrains/phpstorm-attributes": "^1.3",
         "nette/neon": "^3.4",
-        "php-lsp/protocol": "^1.0@dev",
         "phpbench/phpbench": "^1.4",
         "phpdocumentor/reflection-docblock": "^6.0",
         "phplrt/compiler": "^4.2.3",
@@ -32,6 +31,7 @@
         "psr/cache": "^2.0|^3.0",
         "psr/simple-cache": "^2.0|^3.0",
         "symfony/console": "^6.4|^7.0|^8.0",
+        "symfony/expression-language": "^6.4|^7.0|^8.0",
         "symfony/var-dumper": "^6.4|^7.0|^8.0",
         "symfony/yaml": "^6.4|^7.0|^8.0"
     },
@@ -45,6 +45,7 @@
             "TypeLang\\Mapper\\Mapping\\Tests\\": "libs/mapper/libs/mapping/tests",
             "TypeLang\\Mapper\\Naming\\Tests\\": "libs/mapper/libs/naming/tests",
             "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/mapper/libs/property-accessor/tests",
+            "TypeLang\\Mapper\\TypeMatcher\\Tests\\": "libs/mapper/libs/type-matcher/tests",
             "TypeLang\\Parser\\Tests\\": "libs/parser/tests",
             "TypeLang\\Printer\\Tests\\": "libs/printer/tests",
             "TypeLang\\PhpDoc\\Build\\": "libs/phpdoc/build",

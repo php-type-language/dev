@@ -12,6 +12,7 @@ const PHPCS_DIRECTORIES = [
     __DIR__ . '/libs/mapper/libs/mapping/src',
     __DIR__ . '/libs/mapper/libs/naming/src',
     __DIR__ . '/libs/mapper/libs/property-accessor/src',
+    __DIR__ . '/libs/mapper/libs/type-matcher/src',
     __DIR__ . '/libs/parser/src',
     __DIR__ . '/libs/phpdoc/src',
     __DIR__ . '/libs/phpdoc/build',

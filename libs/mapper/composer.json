@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.1",
         "type-lang/parser": "^2.0",
+        "type-lang/printer": "^2.0",
         "type-lang/reader": "^2.0",
         "type-lang/types": "^2.0"
     },
@@ -22,7 +23,8 @@
             "TypeLang\\Mapper\\Instantiator\\": "libs/instantiator/src",
             "TypeLang\\Mapper\\Mapping\\": "libs/mapping/src",
             "TypeLang\\Mapper\\Naming\\": "libs/naming/src",
-            "TypeLang\\Mapper\\PropertyAccessor\\": "libs/property-accessor/src"
+            "TypeLang\\Mapper\\PropertyAccessor\\": "libs/property-accessor/src",
+            "TypeLang\\Mapper\\TypeMatcher\\": "libs/type-matcher/src"
         }
     },
     "require-dev": {
@@ -32,14 +34,17 @@
         "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0",
         "psr/cache": "^2.0|^3.0",
         "psr/simple-cache": "^2.0|^3.0",
+        "symfony/expression-language": "^6.4|^7.0|^8.0",
         "symfony/yaml": "^6.4|^7.0|^8.0",
         "type-lang/phpdoc": "^2.0"
     },
     "suggest": {
         "ext-json": "(*) Allows reading mapping configuration from JSON files",
         "nette/neon": "(^3.4) Allows reading mapping configuration from NEON files",
+        "phpstan/phpstan": "(^2.0) Allows checking the syntax of the types in mapper calls and attributes",
         "psr/cache": "(^2.0|^3.0) Allows caching metadata in a PSR-6 pool",
         "psr/simple-cache": "(^2.0|^3.0) Allows caching metadata in a PSR-16 cache",
+        "symfony/expression-language": "(^6.4|^7.0|^8.0) Allows skipping properties by an expression",
         "symfony/yaml": "(^6.4|^7.0|^8.0) Allows reading mapping configuration from YAML files",
         "type-lang/phpdoc": "(^2.0) Allows reading property types from PHPDoc"
     },
@@ -51,13 +56,19 @@
             "TypeLang\\Mapper\\Instantiator\\Tests\\": "libs/instantiator/tests",
             "TypeLang\\Mapper\\Mapping\\Tests\\": "libs/mapping/tests",
             "TypeLang\\Mapper\\Naming\\Tests\\": "libs/naming/tests",
-            "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/property-accessor/tests"
+            "TypeLang\\Mapper\\PropertyAccessor\\Tests\\": "libs/property-accessor/tests",
+            "TypeLang\\Mapper\\TypeMatcher\\Tests\\": "libs/type-matcher/tests"
         }
     },
     "extra": {
         "branch-alias": {
             "dev-master": "2.x-dev",
             "dev-main": "2.x-dev"
+        },
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
         }
     },
     "config": {

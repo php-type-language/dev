@@ -5,6 +5,7 @@ includes:
   - libs/mapping/phpstan.neon
   - libs/naming/phpstan.neon
   - libs/property-accessor/phpstan.neon
+  - libs/type-matcher/phpstan.neon
 
 parameters:
   level: max

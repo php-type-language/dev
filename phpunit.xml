@@ -31,6 +31,9 @@
         <testsuite name="libs/mapper/property-accessor">
             <directory>libs/mapper/libs/property-accessor/tests</directory>
         </testsuite>
+        <testsuite name="libs/mapper/type-matcher">
+            <directory>libs/mapper/libs/type-matcher/tests</directory>
+        </testsuite>
         <testsuite name="libs/parser">
             <directory>libs/parser/tests</directory>
         </testsuite>
@@ -59,6 +62,7 @@
             <directory>libs/mapper/libs/mapping/src</directory>
             <directory>libs/mapper/libs/naming/src</directory>
             <directory>libs/mapper/libs/property-accessor/src</directory>
+            <directory>libs/mapper/libs/type-matcher/src</directory>
             <directory>libs/parser/src</directory>
             <directory>libs/phpdoc/src</directory>
             <directory>libs/printer/src</directory>
