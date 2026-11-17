@@ -29,7 +29,8 @@ final class MoneyType implements TypeInterface
 {
     public function isDenormalizable(mixed $value, Context $context): bool
     {
-        return \is_string($value) && \preg_match('/^\d+\.\d{2} [A-Z]{3}$/', $value) === 1;
+        return \is_string($value)
+            && \preg_match('/^\d+\.\d{2} [A-Z]{3}$/', $value) === 1;
     }
 
     public function denormalize(mixed $value, Context $context): Money
@@ -54,7 +55,12 @@ final class MoneyType implements TypeInterface
             throw InvalidValueException::becauseInvalidType('money', $value);
         }
 
-        return \sprintf('%d.%02d %s', \intdiv($value->cents, 100), $value->cents % 100, $value->currency);
+        return \sprintf(
+            '%d.%02d %s',
+            \intdiv($value->cents, 100),
+            $value->cents % 100,
+            $value->currency,
+        );
     }
 }
 ```
@@ -70,10 +76,16 @@ $mapper = new Mapper(builders: [
     new NamedTypeBuilder(new NamedTypePattern(['money']), new MoneyType()),
 ]);
 
-$mapper->denormalize('10.50 USD', 'money');          // Money { cents: 1050, currency: 'USD' }
+$mapper->denormalize('10.50 USD', 'money');
+// Money { cents: 1050, currency: 'USD' }
+
 $mapper->normalize(new Money(1050, 'USD'), 'money'); // '10.50 USD'
-$mapper->denormalize('ten dollars', 'money');        // throws InvalidValueException: $: Value must be of type "money", but "ten dollars" given
-$mapper->denormalize(['10.50 USD'], 'list<money>');  // [Money { cents: 1050, currency: 'USD' }]
+$mapper->denormalize('ten dollars', 'money');
+// throws InvalidValueException: $: Value must be of type "money", but "ten
+// dollars" given
+
+$mapper->denormalize(['10.50 USD'], 'list<money>');
+// [Money { cents: 1050, currency: 'USD' }]
 ```
 
 <note>
@@ -108,8 +120,10 @@ final class CollectionTypeBuilder implements TypeBuilderInterface
         $this->pattern = new NamedTypePattern(['collection<T>']);
     }
 
-    public function tryBuild(TypeNode $node, BuildContext $context): ?TypeInterface
-    {
+    public function tryBuild(
+        TypeNode $node,
+        BuildContext $context,
+    ): ?TypeInterface {
         $arguments = $this->pattern->findArguments($node);
 
         if ($arguments === null) {
@@ -125,7 +139,8 @@ final class CollectionTypeBuilder implements TypeBuilderInterface
 
 $mapper = new Mapper(builders: [new CollectionTypeBuilder()]);
 
-$mapper->denormalize(['1', '2'], 'collection<int>'); // Collection { items: [1, 2] }
+$mapper->denormalize(['1', '2'], 'collection<int>');
+// Collection { items: [1, 2] }
 ```
 
 ## Type Decorators
@@ -140,8 +155,11 @@ use TypeLang\Type\TypeNode;
 
 final class LoggingDecorator implements TypeDecoratorInterface
 {
-    public function decorate(TypeInterface $type, TypeNode $node, BuildContext $context): TypeInterface
-    {
+    public function decorate(
+        TypeInterface $type,
+        TypeNode $node,
+        BuildContext $context,
+    ): TypeInterface {
         // a TypeInterface of your own around the built type
         return new LoggingType($type, $context->printer->print($node));
     }
@@ -181,8 +199,12 @@ final class PeriodHook implements AfterDenormalizationHookInterface
         return $metadata->name === Period::class;
     }
 
-    public function afterDenormalize(ClassMetadata $metadata, object $object, mixed $data, Context $context): void
-    {
+    public function afterDenormalize(
+        ClassMetadata $metadata,
+        object $object,
+        mixed $data,
+        Context $context,
+    ): void {
         if ($object->from > $object->to) {
             throw new \DomainException('The period ends before it starts');
         }
@@ -191,7 +213,8 @@ final class PeriodHook implements AfterDenormalizationHookInterface
 
 $mapper = new Mapper(hooks: [new PeriodHook()]);
 
-$mapper->denormalize(['from' => 5, 'to' => 1], Period::class); // throws InvalidValueException: $: The period ends before it starts
+$mapper->denormalize(['from' => 5, 'to' => 1], Period::class);
+// throws InvalidValueException: $: The period ends before it starts
 ```
 
 The exception of a hook becomes a violation of the object.
@@ -210,8 +233,10 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 
 final class EntityStrategy implements InstantiationStrategyInterface
 {
-    public function tryCreateInstantiator(\ReflectionClass $class, ClassMetadata $metadata): ?InstantiatorInterface
-    {
+    public function tryCreateInstantiator(
+        \ReflectionClass $class,
+        ClassMetadata $metadata,
+    ): ?InstantiatorInterface {
         if (!$class->implementsInterface(Entity::class)) {
             return null;
         }

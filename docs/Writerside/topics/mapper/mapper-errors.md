@@ -13,9 +13,16 @@ Both are in the `TypeLang\Mapper\Exception` namespace and implement
 `MapperExceptionInterface`.
 
 ```php
-$mapper->denormalize(['id' => 'abc'], User::class); // throws InvalidValueException: $.id: Value must be of type "int", but "abc" given
-$mapper->denormalize([], 'list<int');               // throws TypeDefinitionException: Type "list<int" is written wrong: Invalid template arguments, "," or ">" is expected
-$mapper->denormalize([], 'unknown');                // throws TypeDefinitionException: Type "unknown" is not supported
+$mapper->denormalize(['id' => 'abc'], User::class);
+// throws InvalidValueException: $.id: Value must be of type "int", but "abc"
+// given
+
+$mapper->denormalize([], 'list<int');
+// throws TypeDefinitionException: Type "list<int" is written wrong: Invalid
+// template arguments, "," or ">" is expected
+
+$mapper->denormalize([], 'unknown');
+// throws TypeDefinitionException: Type "unknown" is not supported
 ```
 
 ## Violations
@@ -52,7 +59,9 @@ The path of a violation is printed as JSONPath. Properties renamed by
 metadata have the names of the data.
 
 ```php
-$mapper->denormalize(['items' => [['id' => 1], ['id' => 'x']]], Order::class); // throws InvalidValueException: $.items[1].id: Value must be of type "int", but "x" given
+$mapper->denormalize(['items' => [['id' => 1], ['id' => 'x']]], Order::class);
+// throws InvalidValueException: $.items[1].id: Value must be of type "int", but
+// "x" given
 ```
 
 ## Collecting Violations
@@ -61,9 +70,18 @@ By default the first violation fails. To collect several of them, use the
 [max violations](mapper-configuration.md#max-violations) option.
 
 ```php
+use TypeLang\Mapper\Context\Configuration;
+use TypeLang\Mapper\Exception\InvalidValueException;
+use TypeLang\Mapper\Mapper;
+
+$mapper = new Mapper(new Configuration(maxViolations: 100));
+
 try {
     $mapper->denormalize(['id' => 'abc'], User::class);
 } catch (InvalidValueException $e) {
+    $e->getMessage();
+    // '$.id: Value must be of type "int", but "abc" given (and 1 more)'
+
     \count($e->violations); // 2
 }
 ```
@@ -71,7 +89,7 @@ try {
 ## Messages
 
 Every message is formatted by the template of the code. Custom templates are
-set by [metadata](mapper-metadata-options.md#type-error-message).
+set by [metadata](mapper-metadata-errors.md).
 
 To return errors from an API, format the violations yourself:
 
@@ -92,10 +110,13 @@ try {
     $errors = [];
 
     foreach ($e->violations as $violation) {
-        $errors[$paths->print($violation->path)] = $messages->format($violation);
+        $path = $paths->print($violation->path);
+        $errors[$path] = $messages->format($violation);
     }
 
-    $errors; // ['$.id' => 'Value must be of type "int", but "abc" given', '$.name' => 'Required field "name" is missing']
+    $errors;
+    // ['$.id' => 'Value must be of type "int", but "abc" given', '$.name' =>
+    // 'Required field "name" is missing']
 }
 ```
 

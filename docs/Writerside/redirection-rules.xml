@@ -59,10 +59,21 @@
         <accepts>meta-clock.html</accepts>
         <accepts>meta-references.html</accepts>
     </rule>
-    <rule id="mapper-metadata-options">
-        <description>Pages of the mapper documentation merged into one</description>
+    <rule id="mapper-metadata-skip">
+        <description>Pages of the mapper documentation moved</description>
         <accepts>meta-expressions.html</accepts>
-        <accepts>mapper-classes.html</accepts>
+    </rule>
+    <rule id="mapper-metadata-discriminator">
+        <description>Pages of the mapper documentation moved</description>
         <accepts>mapper-polymorphism.html</accepts>
+    </rule>
+    <rule id="mapper-metadata-naming">
+        <description>Pages of the mapper documentation moved</description>
+        <accepts>mapper-naming.html</accepts>
+    </rule>
+    <rule id="mapper-metadata-types">
+        <description>Pages of the mapper documentation moved</description>
+        <accepts>mapper-classes.html</accepts>
+        <accepts>mapper-metadata-options.html</accepts>
     </rule>
 </rules>

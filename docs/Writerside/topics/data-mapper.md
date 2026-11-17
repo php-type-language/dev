@@ -26,7 +26,21 @@ A mapper converts data by a [type](introduction.md) in both directions:
 ## Usage
 
 ```php
-$mapper = new TypeLang\Mapper\Mapper();
+use TypeLang\Mapper\Mapper;
+
+final class Address
+{
+    public string $city;
+}
+
+final class User
+{
+    public int $id;
+    public string $name;
+    public Address $address;
+}
+
+$mapper = new Mapper();
 
 $user = $mapper->denormalize([
     'id' => 42,
@@ -34,16 +48,25 @@ $user = $mapper->denormalize([
     'address' => ['city' => 'Paris'],
 ], User::class);
 
-$mapper->normalize($user); // ['id' => 42, 'name' => 'Alice', 'address' => ['city' => 'Paris']]
+$mapper->normalize($user);
+// ['id' => 42, 'name' => 'Alice', 'address' => ['city' => 'Paris']]
 ```
 
-The type is any [type of the language](introduction.md), not only a class:
+The type is not only a class, but any of the
+[supported types](mapper-types.md):
 
 ```php
-$mapper->denormalize('42', 'int');                                              // 42
-$mapper->denormalize([['id' => 1, 'name' => 'Alice']], 'list<User>');           // [User { id: 1, name: 'Alice' }]
-$mapper->denormalize(['page' => '2'], 'array{page: positive-int, size?: int}'); // ['page' => 2]
-$mapper->denormalize('auto', 'int|"auto"');                                     // 'auto'
+$mapper->denormalize('42', 'int');
+// 42
+
+$mapper->denormalize([['id' => 1, 'name' => 'Alice']], 'list<User>');
+// [User { id: 1, name: 'Alice' }]
+
+$mapper->denormalize(['page' => '2'], 'array{page: positive-int, size?: int}');
+// ['page' => 2]
+
+$mapper->denormalize('auto', 'int|"auto"');
+// 'auto'
 ```
 
 <note>
@@ -54,8 +77,8 @@ element).
 
 ## Validation
 
-`isDenormalizable()` and `isNormalizable()` check a value without converting
-it:
+`isDenormalizable()` and `isNormalizable()` return whether a value can be
+converted, without throwing on invalid data:
 
 ```php
 $mapper->isDenormalizable(['id' => 42], User::class);    // true
@@ -65,7 +88,9 @@ $mapper->isDenormalizable(['id' => 'abc'], User::class); // false
 Invalid data throws an exception with the path of the wrong value:
 
 ```php
-$mapper->denormalize(['id' => 'abc'], User::class); // throws InvalidValueException: $.id: Value must be of type "int", but "abc" given
+$mapper->denormalize(['id' => 'abc'], User::class);
+// throws InvalidValueException: $.id: Value must be of type "int", but "abc"
+// given
 ```
 
 See [errors](mapper-errors.md) for details.
