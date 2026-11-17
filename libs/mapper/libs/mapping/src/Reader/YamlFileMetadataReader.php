@@ -42,7 +42,7 @@ final class YamlFileMetadataReader extends FileMetadataReader implements Optiona
     protected function decode(): mixed
     {
         try {
-            return Yaml::parseFile($this->path);
+            return Yaml::parseFile($this->path, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
         } catch (ParseException $e) {
             throw ConfigLoadingException::becauseContentIsInvalid($this->path, $e);
         }
