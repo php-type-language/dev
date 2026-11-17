@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * List of builtin type aliases of phpstan ~2.2
+ * List of builtin type aliases of phpstan ~2.3
  */
 return [
     // int
@@ -37,6 +37,11 @@ return [
     'boolean' => 'bool',
     // float
     'double' => 'float',
+    'positive-float' => 'float',
+    'negative-float' => 'float',
+    'non-positive-float' => 'float',
+    'non-negative-float' => 'float',
+    'finite-float' => 'float',
     // array
     'associative-array' => 'array',
     'non-empty-array' => 'array',
@@ -48,6 +53,8 @@ return [
     // callable
     'pure-callable' => 'callable',
     'pure-closure' => '\Closure',
+    'static-closure' => '\Closure',
+    'static-pure-closure' => '\Closure',
     // mixed
     'resource' => 'mixed',
     'open-resource' => 'mixed',
@@ -70,4 +77,5 @@ return [
     'number' => 'float|int',
     'numeric' => 'float|int|string',
     '__stringandstringable' => 'string|\Stringable',
+    '__stringnotstringable' => 'string',
 ];

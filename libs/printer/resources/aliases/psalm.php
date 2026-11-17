@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * List of builtin type aliases of psalm ~6.x
+ * List of builtin type aliases of psalm ~7.0
  */
 return [
     // int
@@ -13,7 +13,6 @@ return [
     'negative-int' => 'int',
     'non-negative-int' => 'int',
     'literal-int' => 'int',
-    'int-range' => 'int',
     'int-mask' => 'int',
     'int-mask-of' => 'int',
     'numeric' => 'int|float|string',
@@ -23,6 +22,10 @@ return [
     'non-falsy-string' => 'string',
     'lowercase-string' => 'string',
     'non-empty-lowercase-string' => 'string',
+    'uppercase-string' => 'string',
+    'non-empty-uppercase-string' => 'string',
+    'decimal-int-string' => 'string',
+    'non-decimal-int-string' => 'string',
     'class-string' => 'string',
     'interface-string' => 'string',
     'enum-string' => 'string',
@@ -40,6 +43,7 @@ return [
     'associative-array' => 'array',
     'non-empty-array' => 'array',
     'callable-array' => 'array',
+    'callable-list' => 'array',
     'list' => 'array',
     'non-empty-list' => 'array',
     'class-string-map' => 'array',
@@ -50,12 +54,18 @@ return [
     // object
     'callable-object' => 'object',
     'stringable-object' => '\Stringable',
+    'arraylike-object' => 'object',
+    'non-empty-countable' => '\Countable',
     // callable
     'pure-callable' => 'callable',
+    'impure-callable' => 'callable',
+    'pure-closure' => '\Closure',
+    'impure-closure' => '\Closure',
     // mixed
     'resource' => 'mixed',
     'resource (closed)' => 'mixed',
     'closed-resource' => 'mixed',
+    'open-resource' => 'mixed',
     'non-empty-mixed' => 'mixed',
     'key-of' => 'mixed',
     'value-of' => 'mixed',
