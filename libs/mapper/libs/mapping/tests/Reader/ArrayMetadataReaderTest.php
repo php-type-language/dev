@@ -558,6 +558,10 @@ final class ArrayMetadataReaderTest extends TestCase
             new JsonFileMetadataReader(self::FIXTURES . 'invalid.json'),
             'File "' . self::FIXTURES . 'invalid.json" cannot be decoded: Syntax error',
         ];
+        yield 'yaml tag' => [
+            new YamlFileMetadataReader(self::FIXTURES . 'tagged.yaml'),
+            'File "' . self::FIXTURES . 'tagged.yaml" cannot be decoded: The string "!php/const PHP_VERSION"',
+        ];
         yield 'not a map of classes' => [
             new ArrayMetadataReader(['int']),
             'Key "0" of config is not a class name',
