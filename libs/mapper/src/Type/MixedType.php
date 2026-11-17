@@ -9,9 +9,6 @@ use TypeLang\Mapper\Diagnostics\Path\Segment\KeySegment;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Exception\NotInterceptableExceptionInterface;
 use TypeLang\Mapper\Exception\TypeDefinitionException;
-use TypeLang\Type\Name;
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\NamespaceName;
 
 /**
  * `mixed`: data is denormalized as is. On normalization an object is
@@ -56,7 +53,7 @@ final class MixedType implements TypeInterface
             return $value === null || \is_scalar($value);
         }
 
-        return $context->types->getType(self::createClassNode($value))->isNormalizable($value, $context);
+        return $context->types->get($value::class)->isNormalizable($value, $context);
     }
 
     /**
@@ -88,7 +85,7 @@ final class MixedType implements TypeInterface
         }
 
         if (\is_object($value)) {
-            return $context->types->getType(self::createClassNode($value))->normalize($value, $context);
+            return $context->types->get($value::class)->normalize($value, $context);
         }
 
         if ($value === null || \is_scalar($value)) {
@@ -106,26 +103,5 @@ final class MixedType implements TypeInterface
     private static function isDynamicObject(mixed $value): bool
     {
         return \is_object($value) && $value::class === \stdClass::class;
-    }
-
-    /**
-     * Returns the node of the class of the object, with a fully qualified
-     * name.
-     */
-    private static function createClassNode(object $value): NamedTypeNode
-    {
-        $words = \explode('\\', $value::class);
-
-        /** @var non-empty-string */
-        $last = \array_pop($words);
-
-        if ($words === []) {
-            return new NamedTypeNode(new Name($last));
-        }
-
-        return new NamedTypeNode(new Name(
-            $last,
-            new NamespaceName(\implode('\\', $words)),
-        ));
     }
 }

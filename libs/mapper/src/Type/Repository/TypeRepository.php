@@ -6,9 +6,6 @@ namespace TypeLang\Mapper\Type\Repository;
 
 use TypeLang\Mapper\Context\BuildContext;
 use TypeLang\Mapper\Context\ClassAccessors;
-use TypeLang\Mapper\Context\Coercers;
-use TypeLang\Mapper\Context\Configuration;
-use TypeLang\Mapper\Context\Context;
 use TypeLang\Mapper\Exception\NotInterceptableExceptionInterface;
 use TypeLang\Mapper\Exception\TypeDefinitionException;
 use TypeLang\Mapper\Mapping\Provider\MetadataProviderInterface;
@@ -26,8 +23,6 @@ use TypeLang\Type\TypeNode;
  */
 final class TypeRepository implements TypeRepositoryInterface
 {
-    public readonly Context $context;
-
     private readonly BuildContext $build;
 
     /**
@@ -56,7 +51,6 @@ final class TypeRepository implements TypeRepositoryInterface
          */
         private readonly array $builders,
         MetadataProviderInterface $metadata,
-        Configuration $config = new Configuration(),
         /**
          * Applied in the order of the list to each built type
          *
@@ -64,8 +58,8 @@ final class TypeRepository implements TypeRepositoryInterface
          */
         private readonly array $decorators = [],
         /**
-         * Runtime side of the classes, shared by the context of the
-         * conversion and the context of the building
+         * Runtime side of the classes, the same object as the one of the
+         * context of the conversion
          */
         ClassAccessors $accessors = new ClassAccessors(),
         /**
@@ -74,9 +68,7 @@ final class TypeRepository implements TypeRepositoryInterface
         private readonly TypePrinterInterface $printer = new PrettyTypePrinter(
             new PrinterOptions(maxInlineShapeFields: \PHP_INT_MAX),
         ),
-        Coercers $coercers = new Coercers(),
     ) {
-        $this->context = new Context($this, $config, $accessors, $coercers);
         $this->build = new BuildContext($this, $metadata, $accessors, $this->printer);
     }
 

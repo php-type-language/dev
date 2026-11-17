@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Context;
 
-use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;
-
 /**
  * State of the conversion, created once per mapper and passed to every
  * type.
@@ -20,11 +18,11 @@ final class Context
 
     public function __construct(
         /**
-         * Types resolved by the value at runtime, such as the type of an
-         * object in `mixed`. A type known on building is given to its
-         * composite type by the builder.
+         * Types resolved by the class of the value at runtime, such as the
+         * type of an object in `mixed`. A type known on building is given
+         * to its composite type by the builder.
          */
-        public readonly TypeRepositoryInterface $types,
+        public readonly ClassTypes $types,
         public readonly Configuration $config = new Configuration(),
         /**
          * Runtime side of the classes: their instantiators and the readers

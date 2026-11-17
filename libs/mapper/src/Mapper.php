@@ -6,8 +6,10 @@ namespace TypeLang\Mapper;
 
 use JetBrains\PhpStorm\Language;
 use TypeLang\Mapper\Context\ClassAccessors;
+use TypeLang\Mapper\Context\ClassTypes;
 use TypeLang\Mapper\Context\Coercers;
 use TypeLang\Mapper\Context\Configuration;
+use TypeLang\Mapper\Context\Context;
 use TypeLang\Mapper\Exception\TypeDefinitionException;
 use TypeLang\Mapper\Hook\ClassHookInterface;
 use TypeLang\Mapper\Instantiator\InstantiatorFactory;
@@ -43,6 +45,7 @@ use TypeLang\Mapper\Type\IntType;
 use TypeLang\Mapper\Type\MixedType;
 use TypeLang\Mapper\Type\RefinedType;
 use TypeLang\Mapper\Type\Repository\TypeRepository;
+use TypeLang\Mapper\Type\Repository\TypeRepositoryInterface;
 use TypeLang\Mapper\Type\StringType;
 use TypeLang\Mapper\Type\TypeInterface;
 use TypeLang\Mapper\TypeMatcher\Exception\InvalidPatternException;
@@ -58,7 +61,9 @@ use TypeLang\Type\TypeNode;
  */
 final class Mapper implements DenormalizerInterface, NormalizerInterface
 {
-    private readonly TypeRepository $repository;
+    private readonly TypeRepositoryInterface $repository;
+
+    private readonly Context $context;
 
     /**
      * @var array<non-empty-string, TypeInterface<mixed>>
@@ -89,14 +94,16 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
         array $hooks = [],
         Coercers $coercers = new Coercers(),
     ) {
+        $classes = new ClassAccessors($accessors, $instantiators, $hooks);
+
         $this->repository = new TypeRepository(
             builders: [...$builders, ...self::createDefaultBuilders($this->parser)],
             metadata: $metadata ?? MetadataProviderFactory::create(),
-            config: $config,
             decorators: $decorators,
-            accessors: new ClassAccessors($accessors, $instantiators, $hooks),
-            coercers: $coercers,
+            accessors: $classes,
         );
+
+        $this->context = new Context(new ClassTypes($this->repository), $config, $classes, $coercers);
     }
 
     /**
@@ -168,12 +175,12 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
 
     public function denormalize(mixed $value, #[Language('PHP')] string $type): mixed
     {
-        return $this->getType($type)->denormalize($value, $this->repository->context);
+        return $this->getType($type)->denormalize($value, $this->context);
     }
 
     public function isDenormalizable(mixed $value, #[Language('PHP')] string $type): bool
     {
-        return $this->getType($type)->isDenormalizable($value, $this->repository->context);
+        return $this->getType($type)->isDenormalizable($value, $this->context);
     }
 
     /**
@@ -182,12 +189,12 @@ final class Mapper implements DenormalizerInterface, NormalizerInterface
      */
     public function normalize(mixed $value, #[Language('PHP')] ?string $type = null): mixed
     {
-        return $this->getType($type ?? 'mixed')->normalize($value, $this->repository->context);
+        return $this->getType($type ?? 'mixed')->normalize($value, $this->context);
     }
 
     public function isNormalizable(mixed $value, #[Language('PHP')] ?string $type = null): bool
     {
-        return $this->getType($type ?? 'mixed')->isNormalizable($value, $this->repository->context);
+        return $this->getType($type ?? 'mixed')->isNormalizable($value, $this->context);
     }
 
     /**
