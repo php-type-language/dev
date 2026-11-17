@@ -145,12 +145,9 @@ platform overrides only the ones it needs; implementing `PlatformInterface`
 directly works just as well.
 
 <note>
-The built-in <code>StandardPlatform</code> is always loaded first, so every
-standard tag stays available; a platform passed in only adds to it, or overrides
-an entry when it reuses a name. The other built-in families (phpDocumentor,
-Psalm, PHPStan, Phan, PhpStorm, PHP CodeSniffer) are <b>not</b> loaded by the
-constructor. To get the full built-in set together with your own platform, pass
-it to
+The constructor loads only the platforms passed to it: no built-in platform,
+not even the <code>StandardPlatform</code>, is added on its own. To get the
+full built-in set together with your own platform, pass it to
 <a href="platforms.md"><code>DocBlockParser::createDefault()</code></a> via its
 <code>$additionalPlatforms</code> argument:
 

@@ -3,7 +3,7 @@
 <primary-label ref="phpdoc-component"/>
 <show-structure for="chapter" depth="2"/>
 
-A **platform** is a named bundle of [tag definitions](definitions.md), aliases
+A **platform** is a bundle of [tag definitions](definitions.md), aliases
 and [combinators](combinators.md) — everything needed to teach the parser a
 family of tags.
 

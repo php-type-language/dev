@@ -114,10 +114,9 @@ TypeLang\PhpDoc\DocBlock\DocBlock {
 <code>DocBlockParser::createDefault()</code> is the batteries-included entry
 point: it recognizes every built-in tag — the standard set plus the
 phpDocumentor, Psalm, PHPStan, Phan, PhpStorm and PHP CodeSniffer families.
-Construct <code>new DocBlockParser()</code> instead to load only the
-<code>StandardPlatform</code>, or pass your own
-<a href="platforms.md">platforms</a> to the constructor to extend that standard
-set with more tags.
+The constructor loads only the <a href="platforms.md">platforms</a> passed to
+it, so <code>new DocBlockParser()</code> with no arguments recognizes no tag
+at all.
 </note>
 
 The description — everything written before the first tag — is available as
@@ -126,7 +125,7 @@ iterable collection:
 
 ```php
 echo $block->description;
-// "Sends a notification to the given recipient."
+// "Sends a notification to the given recipient.\n"
 
 echo count($block); // 3
 

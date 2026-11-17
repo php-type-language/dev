@@ -23,7 +23,7 @@ node graph (via the same [`Traverser`](visitors.md) machinery used by
 `TypeLang\Type\Name` it finds **in place**.
 
 ```php
-final readonly class TypeResolver
+final class TypeResolver
 {
     public function withTypeImport(string $name): self;
 
@@ -55,7 +55,7 @@ in.
 Given PHP source that declares:
 
 ```php
-use TypeLang\Parser\Node;
+use TypeLang\Type\Name;
 use TypeLang\Parser\Exception as Error;
 ```
 
@@ -66,8 +66,8 @@ register the plain imports with `withTypeImport()` and the aliased ones with
 use TypeLang\Parser\TypeResolver;
 
 $resolver = new TypeResolver()
-    // use TypeLang\Parser\Node;
-    ->withTypeImport('TypeLang\Parser\Node')
+    // use TypeLang\Type\Name;
+    ->withTypeImport('TypeLang\Type\Name')
     // use TypeLang\Parser\Exception as Error;
     ->withTypeImportAs('TypeLang\Parser\Exception', 'Error');
 ```
@@ -84,24 +84,24 @@ use TypeLang\Parser\TypeResolver;
 $statement = new TypeParser()
     ->parse(<<<'PHP'
         array{
-            Node,
-            Error\SemanticException
+            Name,
+            Error\ParsingException
         }
         PHP);
 
 // resolve type names
 $statement = new TypeResolver()
-    ->withTypeImport('TypeLang\Parser\Node')
+    ->withTypeImport('TypeLang\Type\Name')
     ->withTypeImportAs('TypeLang\Parser\Exception', 'Error')
     ->resolve($statement);
 
-foreach ($statement->fields->items as $field) {
+foreach ($statement->fields as $field) {
     echo $field->type->name->toString(), "\n";
 }
 
 // Expected Output:
-//   TypeLang\Parser\Node
-//   TypeLang\Parser\Exception\SemanticException
+//   TypeLang\Type\Name
+//   TypeLang\Parser\Exception\ParsingException
 ```
 
 Because `TypeResolver` is immutable, `withTypeImport()` and
@@ -119,8 +119,8 @@ and aliased ones as `alias => target` pairs:
 use TypeLang\Parser\TypeResolver;
 
 $resolver = new TypeResolver([
-    // use TypeLang\Parser\Node;
-    'TypeLang\Parser\Node',
+    // use TypeLang\Type\Name;
+    'TypeLang\Type\Name',
     // use TypeLang\Parser\Exception as Error;
     'Error' => 'TypeLang\Parser\Exception',
 ]);
@@ -129,21 +129,22 @@ $statement = $resolver->resolve($statement);
 ```
 
 For a plain import the alias is inferred from the last segment of the name
-(`TypeLang\Parser\Node` becomes reachable as `Node`), which mirrors how a
+(`TypeLang\Type\Name` becomes reachable as `Name`), which mirrors how a
 `use` statement without an explicit `as` behaves.
 
 ## Reading Imports From Reflection
 
 Instead of listing imports by hand, `TypeResolver` can read them straight from
-the source file of a reflected class or function — resolving type names exactly
-as PHP would inside that element.
+the source file of a reflected class or function. Only the imports are read:
+the namespace and `self` are registered with `withNamespace()` and
+`withClasses()`, see below.
 
 Given a class whose file declares:
 
 ```php
 namespace App;
 
-use TypeLang\Parser\Node;
+use TypeLang\Type\Name;
 use TypeLang\Parser\Exception as Error;
 
 final class Example {}
@@ -156,19 +157,19 @@ use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeResolver;
 
 $statement = new TypeParser()
-    ->parse('Node|Error\SemanticException');
+    ->parse('Name|Error\ParsingException');
 
 $statement = new TypeResolver()
-    ->withTypeImportsFromClassnew ReflectionClass(App\Example::class)
+    ->withTypeImportsFromClass(new ReflectionClass(App\Example::class))
     ->resolve($statement);
 
-foreach ($statement->types as $type) {
+foreach ($statement as $type) {
     echo $type->name->toString(), "\n";
 }
 
 // Expected Output:
-//   TypeLang\Parser\Node
-//   TypeLang\Parser\Exception\SemanticException
+//   TypeLang\Type\Name
+//   TypeLang\Parser\Exception\ParsingException
 ```
 
 `withTypeImportsFromFunction()` does the same for a free function or a method —

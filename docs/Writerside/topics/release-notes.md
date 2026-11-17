@@ -32,7 +32,7 @@ named argument backward compatibility in minor releases.
 The components support at least the minimum
 [(active) supported version of PHP](https://www.php.net/supported-versions.php).
 
-- Requires `PHP 8.4.0` or higher.
+- Requires `PHP 8.1.0` or higher.
 
 The components do not require specific extensions. The entire set used is
 either included in the standard build, is used in the vast majority of
@@ -48,4 +48,4 @@ A major release approximately every ~2 years.
 | Version | PHP       | Release          | Support Until     |
 |---------|-----------|------------------|-------------------|
 | 1.x     | 8.1 - 8.5 | April 15th, 2024 | September 1, 2026 |
-| 2.x     | 8.4 - *   | ~2026            | ~2028             |
+| 2.x     | 8.1 - *   | ~2026            | ~2028             |

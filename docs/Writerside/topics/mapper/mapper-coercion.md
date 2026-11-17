@@ -100,12 +100,12 @@ PHP arrays are only <code>int</code> and <code>string</code>.
 
 ## Custom Coercers
 
-Replace the coercers of the mapper with `Coercers`:
+Replace a coercer of the mapper by the name of its type: `int`, `float`,
+`string`, `bool` or `array`.
 
 ```php
 use TypeLang\Mapper\Coercer\CoercerInterface;
 use TypeLang\Mapper\Coercer\FloatCoercer;
-use TypeLang\Mapper\Context\Coercers;
 use TypeLang\Mapper\Mapper;
 
 /**

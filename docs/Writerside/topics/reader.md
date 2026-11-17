@@ -36,7 +36,6 @@ phpdoc is the job of the <a href="phpdoc.md">PHPDoc parser</a>.
 
 **Requirements:**
 * `PHP >= 8.1`
-* `ext-mbstring` <sup>optional</sup>
 
 ## Quick Start
 
@@ -315,7 +314,8 @@ use TypeLang\Reader\Exception\ReaderExceptionInterface;
 try {
     $type = $reader->findParameterType($parameter);
 } catch (ReaderExceptionInterface $e) {
-    // Reading failed — inspect $e for the offending element.
+    // Reading failed: the message names the offending element,
+    // $e->getPrevious() holds the original error.
 }
 ```
 

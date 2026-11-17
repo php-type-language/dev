@@ -63,7 +63,7 @@ $type = new UnionTypeNode([
 ]);
 
 // Read the tree
-$type[0]->name->value;                    // 'array'
+$type[0]->name->value;                    // 'Example'
 $type[0]->arguments[1]->value->name->value; // 'int'
 
 // Change it: the tree is mutable, names and literals are immutable values

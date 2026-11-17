@@ -63,8 +63,9 @@ at runtime (one class serving several tags) needs no static method.
 
 A tag missing from the registry is read by a definition created for its name,
 `GenericTagDefinition` by default: the whole body becomes the description of a
-plain `Tag`. Pass `createUnknownTagDefinition` to `TagFactory` to read such
-tags differently.
+plain `Tag`. A `TagFactory` built by hand takes a `createUnknownTagDefinition`
+closure to read such tags differently; `DocBlockParser` creates its own factory
+and has no such option.
 
 <tip>
 The <code>spec</code> is written with the <code>Spec</code> grammar DSL —

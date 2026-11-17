@@ -464,6 +464,7 @@ $mapper->normalize(new User()); // ['first_name' => 'Ada']
 ### Custom Strategy
 
 ```php
+use TypeLang\Mapper\Mapping\NamingStrategy;
 use TypeLang\Mapper\Naming\NamingStrategyInterface;
 
 final class UpperNamingStrategy implements NamingStrategyInterface

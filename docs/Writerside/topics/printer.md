@@ -39,7 +39,6 @@ It ships with two printers that render the very same AST differently:
 
 **Requirements:**
 * `PHP >= 8.1`
-* `ext-mbstring` <sup>optional</sup>
 
 ## Quick Start
 
@@ -87,9 +86,12 @@ echo new NativeTypePrinter()->print($type);
 </tabs>
 
 <tip>
-A printer is stateless between calls and cheap to keep around. Construct it
-once — with whatever formatting options you need — and reuse the instance
-across the application rather than building a new one per type.
+A printer keeps no state between <code>print()</code> calls and is cheap to
+keep around. Construct it once — with whatever formatting options you need —
+and reuse the instance across the application rather than building a new one
+per type. The only thing that changes after construction is the alias list of
+the <code>NativeTypePrinter</code>, through its <code>add*Alias()</code>
+methods.
 </tip>
 
 ## Choosing a Printer
@@ -150,18 +152,20 @@ pass them by name — see <a href="native-printer.md">Native Printer</a>.
 
 ## Error Handling
 
-A printer only knows how to render the nodes that make up a valid type. If it
-is handed a node it cannot render — a malformed, hand-built AST, or a node
-kind it does not support — it throws a
+A printer renders the node classes it has a node printer for. A node of any
+other class, such as a hand-written subclass of your own, makes it throw a
 `TypeLang\Printer\Exception\NonPrintableNodeException`.
 
 ```php
 try {
     echo $printer->print($node);
 } catch (\TypeLang\Printer\Exception\PrinterExceptionInterface $e) {
-    // Every exception the component throws implements this interface.
+    // Every exception thrown while printing implements this interface.
 }
 ```
+
+Invalid `PrinterOptions`, such as a negative `maxInline*` limit, are rejected
+by its constructor with a plain `\InvalidArgumentException`.
 
 An AST produced by the [parser](parser.md) is always printable, so this only
 becomes a concern when constructing or rewriting the node graph by hand.

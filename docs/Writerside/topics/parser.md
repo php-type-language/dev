@@ -49,7 +49,7 @@ object(TypeLang\Type\NamedTypeNode)#1 (4) {
   ["arguments"]=> NULL
   ["fields"]=> object(TypeLang\Type\Shape\FieldListNode)#3 (3) {
     ["offset"]=> int(7)
-    ["items"]=> array(1) {
+    ["children"]=> array(1) {
       [0]=> object(TypeLang\Type\Shape\NamedFieldNode)#4 (4) { ... }
     }
     ["isSealed"]=> bool(true)

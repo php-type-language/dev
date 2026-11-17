@@ -104,7 +104,7 @@ TypeLang\Type\NamedTypeNode {
   +offset: 0
   +name: TypeLang\Type\Name { ... "Example" ... }
   +arguments: TypeLang\Type\Template\TemplateListNode {
-    +items: array:1 [
+    +children: array:1 [
       0 => TypeLang\Type\Template\TypedTemplateArgumentNode {
         +value: TypeLang\Type\NamedTypeNode { ... "T" ... }
         ...
@@ -193,7 +193,7 @@ var_dump($parser->validate(')')::class);
 $isType = $parser->validate($source) instanceof SuccessfulCheckResult;
 ```
 
-The `$position` is a `Phplrt\Position\PositionInterface`, its `line` and
+The `$position` is a `Phplrt\Contracts\Position\PositionInterface`, its `line` and
 `column` properties are 1-based:
 
 ```php

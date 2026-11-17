@@ -10,11 +10,10 @@ mechanism behind name resolution.
 To replace short names with their <tooltip term="FQN">FQN</tooltip>
 alternatives (or rewrite them any other way), use `TypeMapVisitor`. It calls
 your callback for every `Name` it finds on a `NamedTypeNode` or
-`CallableTypeNode` (via their `$name` property), on a
-`ClassConstTypeNode`/`ClassConstMaskTypeNode` (via their `$class` property),
-and on the namespace of a `ConstMaskTypeNode` (the last word of the namespace
-is passed as a `Name`) — and, if the callback returns a `Name`, replaces it
-**in place**.
+`CallableTypeNode` (via their `$name` property) and on a
+`ConstTypeNode`/`ConstMaskTypeNode` (via their `$owner` property; an owner
+that is a namespace is passed as a `Name` of its last word) — and, if the
+callback returns a `Name`, replaces it **in place**.
 
 ```php
 use TypeLang\Parser\Traverser;
@@ -38,16 +37,16 @@ Traverser::new([new TypeMapVisitor($replacement)])
     ->traverse([$type]);
 
 // App\Example\User
-echo $type->types[0]->name->toString(), "\n";
+echo $type[0]->name->toString(), "\n";
 // Admin
-echo $type->types[1]->name->toString(), "\n";
+echo $type[1]->name->toString(), "\n";
 ```
 
 Returning `null` from the callback leaves that particular `Name` untouched
 — as seen above for `Admin`, which doesn't match the condition.
 
 The same rewrite reaches class-constant references too, since
-`ClassConstTypeNode::$class` is also a `Name`:
+`ConstTypeNode::$owner` is also a `Name`:
 
 ```php
 $type = new TypeLang\Parser\TypeParser()
@@ -56,7 +55,7 @@ $type = new TypeLang\Parser\TypeParser()
 Traverser::new([new TypeMapVisitor($replacement)])
     ->traverse([$type]);
 
-echo $type->class->toString(); // App\Example\User
+echo $type->owner->toString(); // App\Example\User
 ```
 
 `TypeMapVisitor` is the visitor `TypeResolver` uses internally — reach for
