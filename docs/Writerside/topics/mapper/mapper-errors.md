@@ -13,6 +13,11 @@ Both are in the `TypeLang\Mapper\Exception` namespace and implement
 `MapperExceptionInterface`.
 
 ```php
+final class User
+{
+    public int $id;
+}
+
 $mapper->denormalize(['id' => 'abc'], User::class);
 // throws InvalidValueException: $.id: Value must be of type "int", but "abc"
 // given
@@ -50,8 +55,9 @@ try {
 | `invalid_key`    | `Key must be of type "{{expected}}", but {{value}} given`   |
 | `missing_field`  | `Required field "{{field}}" is missing`                 |
 | `unexpected_field` | `Unexpected field "{{field}}"`                        |
+| `duplicate_field` | `Field "{{field}}" duplicates the field "{{other}}"`, a property is given by its name and by an [alias](mapper-metadata-naming.md#field-aliases) |
 | `failed_check`   | `Value must be of type "{{expected}}" ({{check}})`      |
-| `invalid_value`  | `{{message}}`, the message of an exception of a hook or a custom type |
+| `invalid_value`  | `{{message}}`, the message of an exception of a hook, or of a custom type nested in a list, an array, a shape or a class |
 
 ## Paths
 
@@ -70,6 +76,12 @@ By default the first violation fails. To collect several of them, use the
 [max violations](mapper-configuration.md#max-violations) option.
 
 ```php
+final class User
+{
+    public int $id;
+    public string $name;
+}
+
 use TypeLang\Mapper\Context\Configuration;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Mapper;

@@ -153,7 +153,8 @@ $mapper->denormalize([], 'array{id: int}');
 ```
 
 - `name?:` — an optional field
-- `...` — other fields are kept, without it they are dropped
+- `...` — other fields are kept, without it they are dropped (or rejected by
+  [Reject Extra Fields](mapper-configuration.md#reject-extra-fields))
 - `object{...}` — gives `stdClass` on denormalization, takes the public
   properties of any object on normalization
 

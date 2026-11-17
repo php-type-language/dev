@@ -115,11 +115,8 @@ There is no PHPDoc tag for a default value: it is written in PHP, see the Reflec
 ```php
 final class User
 {
+    public string $name;
     public string $role = 'user';
-
-    public function __construct(
-        public string $lang = 'en',
-    ) {}
 }
 ```
 
@@ -188,7 +185,10 @@ $mapper->denormalize(['role' => 'admin'], User::class);
 
 <note>
 A promoted property takes the default value of its constructor parameter.
-<code>null</code> is a value, not a missing field: it must match the type.
+A default value is <code>null</code>, a scalar, an enum case or an array of
+them: an object, such as <code>new Address()</code> in an initializer, is an
+error of the metadata. <code>null</code> in the data is a value, not a
+missing field: it must match the type.
 </note>
 
 ## Value Aliases
@@ -204,7 +204,7 @@ use TypeLang\Mapper\Mapping\MapAlias;
 
 enum Status: string
 {
-    #[MapAlias('enabled', 'on')]
+    #[MapAlias(['enabled', 'on'])]
     case Active = 'active';
 
     case Blocked = 'blocked';

@@ -236,6 +236,16 @@ The tag of the class is written as the first field. A subclass that is not
 in the map, such as a proxy, takes the tag of its nearest parent in the map.
 
 ```php
+use TypeLang\Mapper\Mapping\DiscriminatorMap;
+
+#[DiscriminatorMap(field: 'type', map: ['circle' => Circle::class])]
+abstract class Shape {}
+
+class Circle extends Shape
+{
+    public float $radius = 1.5;
+}
+
 final class CircleProxy extends Circle {}
 
 $mapper->normalize(new Circle(), Shape::class);

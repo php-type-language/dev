@@ -90,7 +90,9 @@ $mapper->denormalize(['10.50 USD'], 'list<money>');
 
 <note>
 Builders of the user are tried before the built-in ones, so a builder can
-also replace a built-in type.
+also replace a built-in type. Only that name is replaced: refined types built
+on it, such as <code>positive-int</code> for <code>int</code>, keep the
+built-in type.
 </note>
 
 ## Type Builders
@@ -225,7 +227,6 @@ An instantiation strategy creates the objects of a class. By default an
 object is created without its constructor.
 
 ```php
-use TypeLang\Mapper\Instantiator\InstantiatorFactory;
 use TypeLang\Mapper\Instantiator\InstantiatorInterface;
 use TypeLang\Mapper\Instantiator\Strategy\InstantiationStrategyInterface;
 use TypeLang\Mapper\Mapper;
@@ -245,9 +246,7 @@ final class EntityStrategy implements InstantiationStrategyInterface
     }
 }
 
-$mapper = new Mapper(
-    instantiators: new InstantiatorFactory([new EntityStrategy()]),
-);
+$mapper = new Mapper(instantiators: [new EntityStrategy()]);
 ```
 
 <warning>
@@ -263,11 +262,8 @@ reflection for private and readonly properties.
 
 ```php
 use TypeLang\Mapper\Mapper;
-use TypeLang\Mapper\PropertyAccessor\PropertyAccessorFactory;
 
-$mapper = new Mapper(
-    accessors: new PropertyAccessorFactory([new MyAccessStrategy()]),
-);
+$mapper = new Mapper(accessors: [new MyAccessStrategy()]);
 ```
 
 A strategy implements `AccessStrategyInterface` and returns `null` for

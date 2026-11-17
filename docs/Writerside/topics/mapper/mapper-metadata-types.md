@@ -125,9 +125,14 @@ qualified.
 
 ### Read and Write Types
 
-Different types for normalization (read) and denormalization (write). In
-attributes, PHPDoc and reflection they are given on the `get` and `set` hooks
-of a property (PHP 8.4), on the property itself they set both types.
+Different types for normalization (read) and denormalization (write), given
+on the `get` and `set` hooks of a property (PHP 8.4):
+
+- attributes: a type on the property itself sets both types;
+- PHPDoc: `@var` sets both types, on a property with a `set` hook only the
+  read type;
+- reflection: the read type is the declared type of the property, the write
+  type is the parameter type of the `set` hook.
 
 <tabs group="metadata">
 <tab title="Attributes" group-key="attributes">

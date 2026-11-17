@@ -109,6 +109,234 @@ $mapper->denormalize(['e_mail' => 'bob@example.com'], User::class);
 // User { email: 'bob@example.com' }
 ```
 
+## Field Aliases
+
+Other names of the field accepted on denormalization, for example the
+former names. Normalization always writes the [field name](#field-name).
+
+<tabs group="metadata">
+<tab title="Attributes" group-key="attributes">
+
+```php
+use TypeLang\Mapper\Mapping\MapAlias;
+
+final class User
+{
+    #[MapAlias(['mail', 'e_mail'])]
+    public string $email;
+}
+```
+
+</tab>
+<tab title="PHPDoc" group-key="phpdoc">
+
+<warning>
+There is no PHPDoc tag for this option.
+</warning>
+
+</tab>
+<tab title="Reflection" group-key="reflection">
+
+<note>
+PHP has no such declaration: a property takes its field by the name only.
+</note>
+
+</tab>
+<tab title="PHP Config" group-key="php-config">
+
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'email' => [
+                'aliases' => [
+                    'mail',
+                    'e_mail',
+                ],
+            ],
+        ],
+    ],
+];
+```
+
+</tab>
+<tab title="JSON" group-key="json">
+
+```json
+{
+    "App\\User": {
+        "properties": {
+            "email": {
+                "aliases": [
+                    "mail",
+                    "e_mail"
+                ]
+            }
+        }
+    }
+}
+```
+
+</tab>
+<tab title="YAML" group-key="yaml">
+
+```yaml
+App\User:
+    properties:
+        email:
+            aliases:
+                - mail
+                - e_mail
+```
+
+</tab>
+<tab title="NEON" group-key="neon">
+
+```neon
+App\User:
+    properties:
+        email:
+            aliases:
+                - mail
+                - e_mail
+```
+
+</tab>
+</tabs>
+
+```php
+$user = $mapper->denormalize(['mail' => 'ada@example.com'], User::class);
+// User { email: 'ada@example.com' }
+
+$mapper->normalize($user);
+// ['email' => 'ada@example.com']
+```
+
+An alias is the exact name of the field: the
+[naming strategy](#naming-strategy) does not change it. An alias that is
+the name or the alias of another property is an error of the metadata.
+
+### Several Names in the Data
+
+By default, the data with more than one name of the property is a
+violation:
+
+```php
+$mapper->denormalize(['email' => 'a@b.c', 'mail' => 'x@y.z'], User::class);
+// throws InvalidValueException: $.mail: Field "mail" duplicates the field
+// "email"
+```
+
+Other values of the conflict:
+
+| Attribute        | Config          | The value is taken from                          |
+|------------------|-----------------|--------------------------------------------------|
+| `Fail`           | `fail`          | none, a violation (default)                      |
+| `UseFirst`       | `first`         | the name whose key comes first in the data       |
+| `UseLast`        | `last`          | the name whose key comes last in the data        |
+| `UseNameOrFirst` | `name_or_first` | the field name, else the first alias in the data |
+| `UseNameOrLast`  | `name_or_last`  | the field name, else the last alias in the data  |
+
+<tabs group="metadata">
+<tab title="Attributes" group-key="attributes">
+
+```php
+use TypeLang\Mapper\Mapping\MapAlias;
+use TypeLang\Mapper\Mapping\Metadata\AliasConflict;
+
+final class User
+{
+    #[MapAlias(['mail'], onConflict: AliasConflict::UseFirst)]
+    public string $email;
+}
+```
+
+</tab>
+<tab title="PHPDoc" group-key="phpdoc">
+
+<warning>
+There is no PHPDoc tag for this option.
+</warning>
+
+</tab>
+<tab title="Reflection" group-key="reflection">
+
+<note>
+PHP has no such declaration: the default <code>fail</code> is used.
+</note>
+
+</tab>
+<tab title="PHP Config" group-key="php-config">
+
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'email' => [
+                'aliases' => [
+                    'mail',
+                ],
+                'alias_conflict' => 'first',
+            ],
+        ],
+    ],
+];
+```
+
+</tab>
+<tab title="JSON" group-key="json">
+
+```json
+{
+    "App\\User": {
+        "properties": {
+            "email": {
+                "aliases": [
+                    "mail"
+                ],
+                "alias_conflict": "first"
+            }
+        }
+    }
+}
+```
+
+</tab>
+<tab title="YAML" group-key="yaml">
+
+```yaml
+App\User:
+    properties:
+        email:
+            aliases:
+                - mail
+            alias_conflict: first
+```
+
+</tab>
+<tab title="NEON" group-key="neon">
+
+```neon
+App\User:
+    properties:
+        email:
+            aliases:
+                - mail
+            alias_conflict: first
+```
+
+</tab>
+</tabs>
+
+```php
+$mapper->denormalize(['mail' => 'x@y.z', 'email' => 'a@b.c'], User::class);
+// User { email: 'x@y.z' }
+```
+
 ## Naming Strategy
 
 Renames the fields of all properties of the class by a rule, in both

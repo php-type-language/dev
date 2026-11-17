@@ -13,8 +13,9 @@ tab says what is used instead.
 
 ## Class Type Error
 
-Replaces the message of the error when the value is not an object of the
-class. Placeholders: `{{value}}`, `{{expected}}`.
+Replaces the message of the error when the value is not data of the class
+(denormalization) or not an object of the class (normalization).
+Placeholders: `{{value}}`, `{{expected}}`.
 
 <tabs group="metadata">
 <tab title="Attributes" group-key="attributes">
@@ -94,8 +95,9 @@ $mapper->denormalize(42, User::class);
 ## Property Type Error
 
 Replaces the message of the error of the property value. Errors of its
-nested values keep their own messages. Placeholders: `{{value}}`,
-`{{expected}}`.
+nested values keep their own messages. Placeholders: `{{value}}` and those
+of the replaced error: `{{expected}}` for a wrong type, plus `{{check}}` for
+a failed check such as `positive-int`.
 
 <tabs group="metadata">
 <tab title="Attributes" group-key="attributes">

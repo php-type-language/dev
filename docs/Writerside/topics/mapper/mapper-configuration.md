@@ -122,33 +122,32 @@ is not an extra field.
 ## Other Arguments
 
 ```php
-use TypeLang\Mapper\Context\Coercers;
 use TypeLang\Mapper\Context\Configuration;
-use TypeLang\Mapper\Instantiator\InstantiatorFactory;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\Mapping\MetadataProviderFactory;
-use TypeLang\Mapper\PropertyAccessor\PropertyAccessorFactory;
 use TypeLang\Parser\TypeParser;
+use TypeLang\Printer\PrettyTypePrinter;
 
 $mapper = new Mapper(
     config: new Configuration(),
-    metadata: MetadataProviderFactory::create(),
     builders: [/* TypeBuilderInterface */],
-    decorators: [/* TypeDecoratorInterface */],
-    parser: new TypeParser(),
-    accessors: new PropertyAccessorFactory([
-        /* AccessStrategyInterface */
-    ]),
-    instantiators: new InstantiatorFactory([
-        /* InstantiationStrategyInterface */
-    ]),
     hooks: [/* ClassHookInterface */],
-    coercers: new Coercers(),
+    decorators: [/* TypeDecoratorInterface */],
+    accessors: [/* AccessStrategyInterface */],
+    instantiators: [/* InstantiationStrategyInterface */],
+    coercers: [/* 'int' => CoercerInterface, ... */],
+    metadata: MetadataProviderFactory::create(),
+    printer: new PrettyTypePrinter(),
+    parser: new TypeParser(),
 );
 ```
 
+- `builders`, `hooks`, `decorators`, `accessors`, `instantiators` — see
+  [extending](mapper-extending.md), they are tried before the built-in ones
+- `coercers` — replace the built-in coercers by the type: `int`, `float`,
+  `string`, `bool`, `array`, see
+  [type coercion](mapper-coercion.md#custom-coercers)
 - `metadata` — sources of the class mapping, see [metadata](mapper-metadata.md)
+- `printer` — prints types: the key of the cache of built types and the type
+  in errors of its definition
 - `parser` — the parser of the type strings
-- `builders`, `decorators`, `accessors`, `instantiators`, `hooks` — see
-  [extending](mapper-extending.md)
-- `coercers` — see [type coercion](mapper-coercion.md#custom-coercers)

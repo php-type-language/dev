@@ -53,8 +53,8 @@ $mapper->denormalize(true, 'float');
 ```
 
 <note>
-An integer that cannot be stored in a <code>float</code> exactly (greater
-than <code>2 ** 53</code>) is rejected.
+An integer without an exact <code>float</code> value, such as
+<code>2 ** 53 + 1</code>, is rejected.
 </note>
 
 ## string
@@ -127,7 +127,7 @@ final class DecimalCommaCoercer implements CoercerInterface
     }
 }
 
-$mapper = new Mapper(coercers: new Coercers(float: new DecimalCommaCoercer()));
+$mapper = new Mapper(coercers: ['float' => new DecimalCommaCoercer()]);
 
 $mapper->denormalize('4,2', 'float'); // 4.2
 ```

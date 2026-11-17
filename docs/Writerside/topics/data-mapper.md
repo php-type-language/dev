@@ -81,6 +81,11 @@ element).
 converted, without throwing on invalid data:
 
 ```php
+final class User
+{
+    public int $id;
+}
+
 $mapper->isDenormalizable(['id' => 42], User::class);    // true
 $mapper->isDenormalizable(['id' => 'abc'], User::class); // false
 ```

@@ -36,7 +36,8 @@ Everything else is described with metadata:
 
 - [Property Types](mapper-metadata-types.md) — the type of a property, read
   and write types, strictness
-- [Naming](mapper-metadata-naming.md) — field names and naming strategies
+- [Naming](mapper-metadata-naming.md) — field names, aliases and naming
+  strategies
 - [Discriminator Map](mapper-metadata-discriminator.md) — choosing a class by
   a field of the data
 - [Error Messages](mapper-metadata-errors.md) — custom messages of errors
@@ -120,5 +121,6 @@ $mapper = new Mapper(
 ```
 
 <warning>
-The cache is not invalidated when a class changes: clear it on deploy.
+The cache is not invalidated when a class or a config file changes: clear
+it on deploy.
 </warning>

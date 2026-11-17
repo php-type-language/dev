@@ -100,8 +100,9 @@ $mapper->normalize(new User()); // []
 ```
 
 <warning>
-In YAML the condition is the string <code>'null'</code> in quotes: an
-unquoted <code>null</code> is not accepted.
+In config files the condition is the string <code>'null'</code>: an
+unquoted <code>null</code> of YAML and NEON, and <code>null</code> of PHP
+and JSON, are not accepted.
 </warning>
 
 ## When Empty

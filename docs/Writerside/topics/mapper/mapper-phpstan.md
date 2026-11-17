@@ -38,7 +38,11 @@ includes:
 
 ## Limitations
 
-- Only constant strings are checked, a type in a variable is not.
+- Only strings known to PHPStan as constants are checked: literals,
+  constants, variables holding a literal. A type built at runtime is not.
+- Calls are checked only on a value known to be a mapper
+  (`NormalizerInterface`, `DenormalizerInterface`), nullsafe calls are not.
+- Of attributes, only `#[MapType]` is checked, `#[DiscriminatorMap]` is not.
 - Only the syntax is checked: an unknown type such as `list<Itme>` is not
   reported.
 - Types in PHPDoc and config files are not checked.
