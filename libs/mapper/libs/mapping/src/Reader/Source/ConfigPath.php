@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader;
+namespace TypeLang\Mapper\Mapping\Reader\Source;
 
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
 

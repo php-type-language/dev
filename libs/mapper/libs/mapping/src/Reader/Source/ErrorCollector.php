@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Mapping\Reader\Internal;
+namespace TypeLang\Mapper\Mapping\Reader\Source;
 
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Exception\MetadataException;
@@ -30,8 +30,8 @@ final class ErrorCollector
      * Throws all collected errors with the metadata read despite them, does
      * nothing in case of there are none.
      *
-     * @template T of object
-     * @param ClassMetadata<T> $metadata
+     * @template TArg of object
+     * @param ClassMetadata<TArg> $metadata
      * @throws InvalidMetadataException in case of errors are collected
      */
     public function throwIfNotEmpty(ClassMetadata $metadata): void

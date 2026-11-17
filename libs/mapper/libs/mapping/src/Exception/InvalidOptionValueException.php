@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Exception;
 
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
+use TypeLang\Mapper\Naming\NamingStrategyInterface;
 
 /**
  * Value of an attribute argument or of a config key has a wrong type.
  */
-final class InvalidValueException extends MetadataException
+final class InvalidOptionValueException extends MetadataException
 {
     /**
      * @param string $target property or class: `App\User::$id`, `App\User`
@@ -25,6 +26,14 @@ final class InvalidValueException extends MetadataException
     public static function becauseValueIsNotBoolean(string $key, string $target, SourceInfo $source): self
     {
         return new self($target, $source, self::formatValue($key, 'a boolean'));
+    }
+
+    /**
+     * @param string $target property or class: `App\User::$id`, `App\User`
+     */
+    public static function becauseValueIsNotIntOrString(string $key, string $target, SourceInfo $source): self
+    {
+        return new self($target, $source, self::formatValue($key, 'an integer or a string'));
     }
 
     /**
@@ -59,6 +68,36 @@ final class InvalidValueException extends MetadataException
         );
 
         return new self($target, $source, $message, $previous);
+    }
+
+    /**
+     * @param string $target property or class: `App\User::$id`, `App\User`
+     */
+    public static function becauseNamingStrategyIsUnknown(string $name, string $target, SourceInfo $source): self
+    {
+        $message = \sprintf(
+            'naming strategy "%s" is neither a built-in one nor an instantiable class of "%s"',
+            \addcslashes($name, '"'),
+            NamingStrategyInterface::class,
+        );
+
+        return new self($target, $source, $message);
+    }
+
+    /**
+     * @param string $target property or class: `App\User::$id`, `App\User`
+     */
+    public static function becauseNamingStrategyRequiresArguments(
+        string $class,
+        string $target,
+        SourceInfo $source,
+    ): self {
+        $message = \sprintf(
+            'naming strategy "%s" requires constructor arguments, pass its instance to the attribute',
+            \addcslashes($class, '"'),
+        );
+
+        return new self($target, $source, $message);
     }
 
     public static function becauseClassConfigIsNotMap(string $class, SourceInfo $source): self

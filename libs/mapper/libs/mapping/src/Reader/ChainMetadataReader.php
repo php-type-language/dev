@@ -39,10 +39,10 @@ final class ChainMetadataReader implements MetadataReaderInterface
      * The next reader after a reader that throws
      * {@see InvalidMetadataException} gets the metadata of the exception.
      *
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @param ClassMetadata<T>|null $metadata metadata the lowest reader gets
-     * @return ClassMetadata<T>
+     * @template TArg of object
+     * @param \ReflectionClass<TArg> $class
+     * @param ClassMetadata<TArg>|null $metadata metadata the lowest reader gets
+     * @return ClassMetadata<TArg>
      * @throws InvalidMetadataException in case of the readers find wrong
      *         values
      * @throws ReaderException in case of a reader cannot be loaded
@@ -55,7 +55,7 @@ final class ChainMetadataReader implements MetadataReaderInterface
             try {
                 $metadata = $reader->read($class, $metadata);
             } catch (InvalidMetadataException $e) {
-                /** @var ClassMetadata<T> */
+                /** @var ClassMetadata<TArg> */
                 $metadata = $e->metadata;
                 $errors = [...$errors, ...$e->errors];
             }

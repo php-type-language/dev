@@ -20,11 +20,11 @@ interface MetadataReaderInterface extends MetadataProviderInterface
      * values of one call are thrown together with the metadata read without
      * them.
      *
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @param ClassMetadata<T>|null $metadata metadata read by the lower
+     * @template TArg of object
+     * @param \ReflectionClass<TArg> $class
+     * @param ClassMetadata<TArg>|null $metadata metadata read by the lower
      *        readers, {@see null} in case of the reader is the first one
-     * @return ClassMetadata<T>
+     * @return ClassMetadata<TArg>
      * @throws InvalidMetadataException in case of the reader finds wrong
      *         values
      * @throws ReaderException in case of the reader cannot be loaded

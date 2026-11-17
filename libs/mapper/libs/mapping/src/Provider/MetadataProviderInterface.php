@@ -14,9 +14,9 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 interface MetadataProviderInterface
 {
     /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @return ClassMetadata<T>
+     * @template TArg of object
+     * @param \ReflectionClass<TArg> $class
+     * @return ClassMetadata<TArg>
      * @throws InvalidMetadataException in case of the metadata has wrong
      *         values
      * @throws ReaderException in case of the metadata cannot be

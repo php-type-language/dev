@@ -6,7 +6,7 @@ namespace TypeLang\Mapper\Mapping\Tests\Reader;
 
 use TypeLang\Mapper\Mapping\Exception\InvalidAttributeException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
-use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
+use TypeLang\Mapper\Mapping\Exception\InvalidOptionValueException;
 use TypeLang\Mapper\Mapping\Exception\UnknownPropertyException;
 use TypeLang\Mapper\Mapping\MapName;
 use TypeLang\Mapper\Mapping\MapType;
@@ -15,21 +15,29 @@ use TypeLang\Mapper\Mapping\Metadata\SkipCondition\EmptySkipCondition;
 use TypeLang\Mapper\Mapping\Metadata\SkipCondition\ExpressionSkipCondition;
 use TypeLang\Mapper\Mapping\Metadata\SkipCondition\NullSkipCondition;
 use TypeLang\Mapper\Mapping\Reader\AttributeMetadataReader;
+use TypeLang\Mapper\Mapping\Tests\Stub\AliasConstantStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\AliasStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\AttributeStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\BrokenAliasStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenAttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenDiscriminatorStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\BrokenNamingStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenSkipStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\Concern\OwnerTrait;
 use TypeLang\Mapper\Mapping\Tests\Stub\MessageStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\MethodAttributeStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\NamingStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\ShapeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\SkipStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\StatusStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\StrictAttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\TraitUserStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UnparsableTypeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UnselectedAttributeStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
+use TypeLang\Mapper\Naming\NamingStrategyInterface;
+use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserFeatures;
 
@@ -46,7 +54,6 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertType('list<' . UserStub::class . '>', $accounts->read);
         self::assertType('list<' . UserStub::class . '>', $accounts->write);
         self::assertSame('AttributeStub.php', \basename((string) $accounts->read->source->file));
-        self::assertSame('TypeLang\Mapper\Mapping\Tests\Stub', $accounts->read->namespace);
         self::assertNull($accounts->read->isStrict);
 
         $value = self::getProperty($metadata, 'value');
@@ -74,13 +81,12 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertSame(0, $id->default?->value);
     }
 
-    public function testAttributeOfTraitPropertyUsesImportsOfTraitFile(): void
+    public function testAttributeOfTraitPropertyUsesImportsOfTraitFileAndSelfOfClass(): void
     {
         $type = self::getProperty(self::readAttributes(TraitUserStub::class), 'main')->read;
 
-        self::assertType(UserStub::class . '|self', $type);
+        self::assertType(UserStub::class . '|' . TraitUserStub::class, $type);
         self::assertSame('OwnerTrait.php', \basename((string) $type->source->file));
-        self::assertSame('TypeLang\Mapper\Mapping\Tests\Stub\Concern', $type->namespace);
     }
 
     public function testBrokenAttributesAreThrownTogether(): void
@@ -93,10 +99,10 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertInstanceOf(InvalidAttributeException::class, $exceptions[0]);
         self::assertInstanceOf(\Throwable::class, $exceptions[0]->getPrevious());
         self::assertStringStartsWith(
-            \sprintf('%s::$id: attribute %s cannot be created (', BrokenAttributeStub::class, MapName::class),
+            \sprintf('%s::$id: attribute "%s" cannot be created (', BrokenAttributeStub::class, MapName::class),
             $errors[0],
         );
-        self::assertInstanceOf(InvalidValueException::class, $exceptions[1]);
+        self::assertInstanceOf(InvalidOptionValueException::class, $exceptions[1]);
         self::assertSame(
             \sprintf(
                 '%s::$name: value of "name" must be a non-empty string in BrokenAttributeStub.php',
@@ -134,7 +140,7 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertInstanceOf(InvalidAttributeException::class, $exceptions[0]);
         self::assertSame([
             \sprintf(
-                '%s::getId(): attribute %s is allowed only on a property or its hook in MethodAttributeStub.php',
+                '%s::getId(): attribute "%s" is allowed only on a property or its hook in MethodAttributeStub.php',
                 MethodAttributeStub::class,
                 MapType::class,
             ),
@@ -182,7 +188,7 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertSame([], $metadata->properties);
     }
 
-    public function testDiscriminatorMapSetsPolymorphismWithTypesResolvedByImports(): void
+    public function testDiscriminatorMapSetsPolymorphismWithTypesResolvedByFile(): void
     {
         $discriminator = self::readAttributes(ShapeStub::class)->discriminator;
 
@@ -190,8 +196,7 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertSame('type', $discriminator->field);
         self::assertSame(['user', 'status'], \array_keys($discriminator->map));
         self::assertType(UserStub::class, $discriminator->map['user']);
-        self::assertType('StatusStub', $discriminator->map['status']);
-        self::assertSame('TypeLang\Mapper\Mapping\Tests\Stub', $discriminator->map['status']->namespace);
+        self::assertType(StatusStub::class, $discriminator->map['status']);
         self::assertType(OwnerTrait::class, $discriminator->default);
         self::assertSame('ShapeStub.php', \basename((string) $discriminator->source->file));
     }
@@ -221,6 +226,55 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertTrue($email[0]->isMatched($object, ''));
 
         self::assertSame([], self::getProperty($metadata, 'isPrivate')->skip);
+    }
+
+    public function testAliasesOfCasesAreRead(): void
+    {
+        self::assertSame(
+            ['on' => 'enabled', 'active' => 'enabled', 'enabled_v1' => 'enabled'],
+            self::readAttributes(AliasStub::class)->aliases,
+        );
+    }
+
+    public function testWrongAliasesAreThrown(): void
+    {
+        $case = BrokenAliasStub::class . '::';
+        $place = ' in BrokenAliasStub.php';
+
+        self::assertSame(
+            [
+                $case . 'A: alias "b" is already a value of a case' . $place,
+                $case . 'B: alias 1 must be of type "string"' . $place,
+                $case . 'B: alias "x" is given to more than one case' . $place,
+            ],
+            self::getErrors(static fn() => self::readAttributes(BrokenAliasStub::class)),
+        );
+        self::assertSame(
+            [
+                AliasConstantStub::class . '::A: aliases are allowed only for the cases of a backed enum'
+                    . ' in AliasConstantStub.php',
+            ],
+            self::getErrors(static fn() => self::readAttributes(AliasConstantStub::class)),
+        );
+    }
+
+    public function testNamingStrategyIsReadWithoutRenaming(): void
+    {
+        $metadata = self::readAttributes(NamingStub::class);
+
+        self::assertInstanceOf(SnakeCaseNamingStrategy::class, $metadata->namingStrategy);
+        self::assertSame('firstName', self::getProperty($metadata, 'firstName')->externalName);
+    }
+
+    public function testUnknownNamingStrategyIsThrown(): void
+    {
+        self::assertSame(
+            [
+                BrokenNamingStub::class . ': naming strategy "Snake_Case" is neither a built-in one nor an'
+                    . ' instantiable class of "' . NamingStrategyInterface::class . '" in BrokenNamingStub.php',
+            ],
+            self::getErrors(static fn() => self::readAttributes(BrokenNamingStub::class)),
+        );
     }
 
     public function testMessageAttributesAndFormOfObjectsAreRead(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Tests\Provider;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use TypeLang\Mapper\Mapping\MetadataProviderFactory;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader;
@@ -12,10 +13,15 @@ use TypeLang\Mapper\Mapping\Reader\Reflection\PropertySelectorInterface;
 use TypeLang\Mapper\Mapping\Tests\Stub\ArrayCache;
 use TypeLang\Mapper\Mapping\Tests\Stub\ArrayCachePool;
 use TypeLang\Mapper\Mapping\Tests\Stub\AttributeStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\ClassNamingStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\DocBlockStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\DuplicateNameStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\EnumNamingStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\InstanceNamingStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\NamingStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
+use TypeLang\Mapper\Naming\KebabCaseNamingStrategy;
 use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 
 final class MetadataProviderFactoryTest extends TestCase
@@ -69,6 +75,38 @@ final class MetadataProviderFactoryTest extends TestCase
             ->read(new \ReflectionClass(UserStub::class));
 
         self::assertSame('display_name', self::getProperty($metadata, 'displayName')->externalName);
+    }
+
+    public function testStrategyOfClassOverridesStrategyOfMapper(): void
+    {
+        $metadata = MetadataProviderFactory::create(strategy: new KebabCaseNamingStrategy())
+            ->read(new \ReflectionClass(NamingStub::class));
+
+        self::assertSame('first_name', self::getProperty($metadata, 'firstName')->externalName);
+        self::assertSame('ID', self::getProperty($metadata, 'userId')->externalName);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{class-string, non-empty-string}>
+     */
+    public static function strategyOfClassDataProvider(): iterable
+    {
+        yield 'name of built-in strategy' => [NamingStub::class, 'first_name'];
+        yield 'instance' => [InstanceNamingStub::class, 'first-name'];
+        yield 'case of enum' => [EnumNamingStub::class, 'FIRSTNAME'];
+        yield 'class' => [ClassNamingStub::class, 'FirstName'];
+    }
+
+    /**
+     * @param class-string $class
+     * @param non-empty-string $expected
+     */
+    #[DataProvider('strategyOfClassDataProvider')]
+    public function testStrategyOfClassNamesPropertiesWithoutStrategyOfMapper(string $class, string $expected): void
+    {
+        $metadata = MetadataProviderFactory::create()->read(new \ReflectionClass($class));
+
+        self::assertSame($expected, self::getProperty($metadata, 'firstName')->externalName);
     }
 
     public function testSelectorChoosesMappedProperties(): void

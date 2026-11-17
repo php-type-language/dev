@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
 
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
-use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
-use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
+use TypeLang\Mapper\Mapping\Reader\Source\SourceContext;
+use TypeLang\Mapper\Mapping\Reader\Source\SourceContextFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\TypedTag;
 use TypeLang\PhpDoc\DocBlock\Tag\VariableTagInterface;
@@ -84,7 +84,7 @@ final class PropertyContext
             return null;
         }
 
-        return $this->sourceContext->createType($this->sourceContext->resolve(clone $tag->type));
+        return $this->sourceContext->resolveType(clone $tag->type);
     }
 
     private static function findVariable(TagInterface $tag): ?string

@@ -33,11 +33,13 @@ final class MetadataProviderFactory
     /**
      * Creates the stack from the outer provider to the inner one: in-memory
      * cache, PSR cache (if any), final checks and the chain of the naming
-     * strategy (if any), the given readers, attributes, phpdoc (if the
+     * strategies, the given readers, attributes, phpdoc (if the
      * `type-lang/phpdoc` package is installed), reflection.
      *
      * @param list<MetadataReaderInterface> $readers readers above the
      *        default ones, from the highest priority to the lowest one
+     * @param NamingStrategyInterface|null $strategy strategy of the classes
+     *        without their own, the names are kept in case of {@see null}
      * @param string $prefix prefix of the keys of the cache
      * @param PropertySelectorInterface $selector rule choosing the mapped
      *        properties of a class
@@ -50,27 +52,21 @@ final class MetadataProviderFactory
         TypeParser $parser = new TypeParser(),
         PropertySelectorInterface $selector = new PublicPropertySelector(),
     ): MetadataProviderInterface {
-        $result = [];
-
-        if ($strategy !== null) {
-            $result[] = new NamingStrategyMetadataReader($strategy);
-        }
-
-        $provider = self::readersToProvider([
-            ...$result,
+        $provider = self::createValidatingProvider([
+            new NamingStrategyMetadataReader($strategy),
             ...$readers,
             ...self::getDefaultReaders($parser->forType(), $selector),
         ]);
 
         return new InMemoryMetadataProvider(
-            self::extendProviderByCache($provider, $cache, $prefix),
+            self::wrapWithCache($provider, $cache, $prefix),
         );
     }
 
     /**
      * @param list<MetadataReaderInterface> $readers
      */
-    private static function readersToProvider(array $readers): MetadataProviderInterface
+    private static function createValidatingProvider(array $readers): MetadataProviderInterface
     {
         return new ValidatingMetadataProvider(
             new ChainMetadataReader($readers),
@@ -103,7 +99,7 @@ final class MetadataProviderFactory
         return $result;
     }
 
-    private static function extendProviderByCache(
+    private static function wrapWithCache(
         MetadataProviderInterface $provider,
         CacheItemPoolInterface|CacheInterface|null $cache,
         string $prefix,

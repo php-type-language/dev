@@ -21,8 +21,8 @@ final class DuplicateExternalNameException extends MetadataException
         SourceInfo $source,
     ): self {
         $message = \sprintf(
-            'properties $%s have the same external name "%s"',
-            \implode(', $', $properties),
+            'properties "$%s" have the same external name "%s"',
+            \implode('", "$', $properties),
             \addcslashes($name, '"'),
         );
 

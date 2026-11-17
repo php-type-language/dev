@@ -22,15 +22,15 @@ final class InMemoryMetadataProvider implements MetadataProviderInterface
     ) {}
 
     /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @return ClassMetadata<T>
+     * @template TArg of object
+     * @param \ReflectionClass<TArg> $class
+     * @return ClassMetadata<TArg>
      * @throws ReaderException in case of the delegate cannot
      *         provide the metadata
      */
     public function read(\ReflectionClass $class): ClassMetadata
     {
-        /** @var ClassMetadata<T> */
+        /** @var ClassMetadata<TArg> */
         return $this->metadata[$class->name] ??= $this->delegate->read($class);
     }
 }

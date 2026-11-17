@@ -152,8 +152,8 @@ final class ReflectionMetadataReaderTest extends TestCase
 
         self::assertContainsOnlyInstancesOf(InvalidDefaultValueException::class, self::getExceptions($read));
         self::assertSame([
-            "{$class}::\$user: default value of type {$user} is not supported in ObjectDefaultStub.php",
-            "{$class}::\$users: default value of type {$user} is not supported in ObjectDefaultStub.php",
+            "{$class}::\$user: default value of type \"{$user}\" is not supported in ObjectDefaultStub.php",
+            "{$class}::\$users: default value of type \"{$user}\" is not supported in ObjectDefaultStub.php",
         ], self::getErrors($read));
 
         try {
@@ -170,7 +170,7 @@ final class ReflectionMetadataReaderTest extends TestCase
         $class = ClosureDefaultStub::class;
 
         self::assertSame(
-            ["{$class}::\$callback: default value of type Closure is not supported in ClosureDefaultStub.php"],
+            ["{$class}::\$callback: default value of type \"Closure\" is not supported in ClosureDefaultStub.php"],
             self::getErrors(static fn() => self::readReflection(ClosureDefaultStub::class)),
         );
     }

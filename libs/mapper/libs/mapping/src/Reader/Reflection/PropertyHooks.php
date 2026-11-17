@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Mapping\Reader\Internal;
+namespace TypeLang\Mapper\Mapping\Reader\Reflection;
 
 /**
  * Finds the hooks of a property, a property has no hooks before PHP 8.4.

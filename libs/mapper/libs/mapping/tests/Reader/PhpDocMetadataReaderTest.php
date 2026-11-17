@@ -9,7 +9,10 @@ use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenDocBlockStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenPromotedStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\DocBlockStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\OrphanParentStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\PromotedStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\SelfBaseStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\SelfChildStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\TraitUserStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
@@ -39,17 +42,35 @@ final class PhpDocMetadataReaderTest extends TestCase
         $metadata = self::readPhpDoc(DocBlockStub::class);
 
         self::assertType('T', self::getProperty($metadata, 'template')->read);
-        self::assertType('self<T>|null', self::getProperty($metadata, 'self')->read);
+        self::assertType(DocBlockStub::class . '<T>|null', self::getProperty($metadata, 'self')->read);
     }
 
-    public function testTypeKeepsNamespaceOfDeclaration(): void
+    public function testSelfIsDeclaringClassAndStaticIsReadClass(): void
+    {
+        $metadata = self::readPhpDoc(SelfChildStub::class);
+
+        self::assertType(SelfBaseStub::class . '|null', self::getProperty($metadata, 'self')->read);
+        self::assertType(SelfChildStub::class . '|null', self::getProperty($metadata, 'static')->read);
+        self::assertType(SelfBaseStub::class . '|null', self::getProperty($metadata, 'parent')->read);
+    }
+
+    public function testParentOfClassWithoutParentIsErrorOfType(): void
+    {
+        $type = self::getProperty(self::readPhpDoc(OrphanParentStub::class), 'parent')->read;
+
+        self::assertNotNull($type);
+        self::assertNull($type->type);
+        self::assertSame(
+            \sprintf('class "%s" has no parent, "parent" cannot be resolved', OrphanParentStub::class),
+            $type->error,
+        );
+    }
+
+    public function testClassOfNamespaceOfDeclarationIsResolvedWithoutImport(): void
     {
         $metadata = self::readPhpDoc(PromotedStub::class);
 
-        self::assertSame(
-            'TypeLang\Mapper\Mapping\Tests\Stub',
-            self::getProperty($metadata, 'users')->write?->namespace,
-        );
+        self::assertType('list<' . UserStub::class . '>', self::getProperty($metadata, 'users')->write);
     }
 
     public function testTagUnknownToParserIsIgnoredAndTagOfOtherVariableIsSkipped(): void
@@ -82,7 +103,7 @@ final class PhpDocMetadataReaderTest extends TestCase
     {
         $metadata = self::readPhpDoc(PromotedStub::class);
 
-        self::assertType('list<UserStub>', self::getProperty($metadata, 'users')->write);
+        self::assertType('list<' . UserStub::class . '>', self::getProperty($metadata, 'users')->write);
         self::assertType('positive-int', self::getProperty($metadata, 'count')->read);
         self::assertType('TItem', self::getProperty($metadata, 'item')->read);
         self::assertType('string', self::getProperty($metadata, 'required')->read);

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\InvalidDefaultValueException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
-use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
+use TypeLang\Mapper\Mapping\Exception\InvalidOptionValueException;
 use TypeLang\Mapper\Mapping\Exception\UnknownKeyException;
 use TypeLang\Mapper\Mapping\Exception\UnknownPropertyException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
@@ -24,10 +24,15 @@ use TypeLang\Mapper\Mapping\Reader\OptionalMetadataReaderInterface;
 use TypeLang\Mapper\Mapping\Reader\PhpFileMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\ReflectionMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\YamlFileMetadataReader;
+use TypeLang\Mapper\Mapping\Tests\Stub\NamingCaseStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\PrefixNamingStrategyStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\PromotedStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\StatusStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\UserStub;
 use TypeLang\Mapper\Mapping\Tests\TestCase;
+use TypeLang\Mapper\Naming\KebabCaseNamingStrategy;
+use TypeLang\Mapper\Naming\NamingStrategyInterface;
+use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserFeatures;
 
@@ -172,9 +177,9 @@ final class ArrayMetadataReaderTest extends TestCase
         self::assertSame([
             UnknownPropertyException::class,
             UnknownPropertyException::class,
-            InvalidValueException::class,
+            InvalidOptionValueException::class,
             UnknownKeyException::class,
-            InvalidValueException::class,
+            InvalidOptionValueException::class,
             UnknownKeyException::class,
         ], \array_map(static fn(\Throwable $error): string => $error::class, self::getExceptions($read)));
         self::assertSame([
@@ -202,7 +207,7 @@ final class ArrayMetadataReaderTest extends TestCase
 
         self::assertContainsOnlyInstancesOf(InvalidDefaultValueException::class, self::getExceptions($read));
         self::assertSame([
-            "{$class}::\$email: default value of type stdClass is not supported in \$['{$class}'].properties.email.default",
+            "{$class}::\$email: default value of type \"stdClass\" is not supported in \$['{$class}'].properties.email.default",
         ], self::getErrors($read));
 
         try {
@@ -252,6 +257,93 @@ final class ArrayMetadataReaderTest extends TestCase
         self::assertFalse($metadata->isNormalizeAsArray);
         self::assertSame('Id is a number', $id->typeErrorMessage);
         self::assertSame('Id is required', $id->undefinedErrorMessage);
+    }
+
+    public function testAliasesKeyIsRead(): void
+    {
+        $reader = new ArrayMetadataReader([
+            StatusStub::class => ['aliases' => ['on' => 'active', '10' => 'inactive']],
+        ]);
+
+        self::assertSame(
+            ['on' => 'active', '10' => 'inactive'],
+            self::readOverReflection($reader, StatusStub::class)->aliases,
+        );
+    }
+
+    public function testWrongAliasesKeyIsThrown(): void
+    {
+        $class = StatusStub::class;
+        $path = " in \$['{$class}'].aliases";
+
+        self::assertSame(
+            ["{$class}: value of \"aliases\" must be a map{$path}"],
+            self::getErrors(static fn() => self::readOverReflection(
+                new ArrayMetadataReader([$class => ['aliases' => 'on']]),
+                $class,
+            )),
+        );
+        self::assertSame(
+            [
+                "{$class}: value of \"aliases.on\" must be an integer or a string{$path}.on",
+                "{$class}: value \"deleted\" is not a value of a case{$path}.off",
+            ],
+            self::getErrors(static fn() => self::readOverReflection(
+                new ArrayMetadataReader([$class => ['aliases' => ['on' => [], 'off' => 'deleted']]]),
+                $class,
+            )),
+        );
+    }
+
+    public function testNamingStrategyKeyIsRead(): void
+    {
+        $reader = new ArrayMetadataReader([UserStub::class => ['naming_strategy' => 'kebab-case']]);
+
+        self::assertInstanceOf(
+            KebabCaseNamingStrategy::class,
+            self::readOverReflection($reader, UserStub::class)->namingStrategy,
+        );
+
+        $reader = new ArrayMetadataReader([UserStub::class => ['naming_strategy' => SnakeCaseNamingStrategy::class]]);
+
+        self::assertInstanceOf(
+            SnakeCaseNamingStrategy::class,
+            self::readOverReflection($reader, UserStub::class)->namingStrategy,
+        );
+    }
+
+    public function testWrongNamingStrategyKeyIsThrown(): void
+    {
+        $class = UserStub::class;
+        $source = " in \$['{$class}'].naming_strategy";
+
+        self::assertSame(
+            ["{$class}: value of \"naming_strategy\" must be a non-empty string{$source}"],
+            self::getErrors(static fn() => self::readOverReflection(
+                new ArrayMetadataReader([$class => ['naming_strategy' => 42]]),
+                $class,
+            )),
+        );
+        self::assertSame(
+            [
+                "{$class}: naming strategy \"" . PrefixNamingStrategyStub::class . '" requires constructor'
+                    . " arguments, pass its instance to the attribute{$source}",
+            ],
+            self::getErrors(static fn() => self::readOverReflection(
+                new ArrayMetadataReader([$class => ['naming_strategy' => PrefixNamingStrategyStub::class]]),
+                $class,
+            )),
+        );
+        self::assertSame(
+            [
+                "{$class}: naming strategy \"" . NamingCaseStub::class . '" is neither a built-in one nor an'
+                    . ' instantiable class of "' . NamingStrategyInterface::class . '"' . $source,
+            ],
+            self::getErrors(static fn() => self::readOverReflection(
+                new ArrayMetadataReader([$class => ['naming_strategy' => NamingCaseStub::class]]),
+                $class,
+            )),
+        );
     }
 
     public function testWrongMessageAndFormKeysAreThrown(): void
@@ -350,7 +442,7 @@ final class ArrayMetadataReaderTest extends TestCase
         self::assertSame(
             [
                 "{$class}: unknown key \"other\" in \$['{$class}'].discriminator.other",
-                "{$class}: value of \"map\" must be a non-empty map in \$['{$class}'].discriminator",
+                "{$class}: value of \"map\" must be a non-empty map in \$['{$class}'].discriminator.map",
             ],
             self::getErrors(static fn() => self::readOverReflection($reader, UserStub::class)),
         );

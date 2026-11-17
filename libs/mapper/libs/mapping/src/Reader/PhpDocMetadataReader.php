@@ -8,10 +8,10 @@ use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
-use TypeLang\Mapper\Mapping\Reader\Internal\PropertyHooks;
-use TypeLang\Mapper\Mapping\Reader\Internal\SourceContextFactory;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\MapperPlatform;
 use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\PropertyContext;
+use TypeLang\Mapper\Mapping\Reader\Reflection\PropertyHooks;
+use TypeLang\Mapper\Mapping\Reader\Source\SourceContextFactory;
 use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTag;
 use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTag;
 use TypeLang\PhpDoc\DocBlock\Tag\VarTag\VarTag;
@@ -36,15 +36,8 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
             throw MissingDependencyException::becausePackageIsNotInstalled('type-lang/phpdoc', 'PHPDoc tags');
         }
 
-        $this->parser = $parser ?? $this->createDefaultDocBlockParser();
+        $this->parser = $parser ?? self::createDefaultDocBlockParser();
         $this->contexts = new SourceContextFactory();
-    }
-
-    private function createDefaultDocBlockParser(): DocBlockParser
-    {
-        return new DocBlockParser([
-            MapperPlatform::createWithDefaultTagNames(),
-        ]);
     }
 
     public static function isAvailable(): bool
@@ -163,5 +156,12 @@ final class PhpDocMetadataReader implements OptionalMetadataReaderInterface
             class: ParamTag::class,
             variable: $parameter,
         ));
+    }
+
+    private static function createDefaultDocBlockParser(): DocBlockParser
+    {
+        return new DocBlockParser([
+            MapperPlatform::createWithDefaultTagNames(),
+        ]);
     }
 }

@@ -8,7 +8,7 @@ use TypeLang\Mapper\Mapping\Exception\DuplicateExternalNameException;
 use TypeLang\Mapper\Mapping\Exception\InvalidAttributeException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Exception\InvalidTypeException;
-use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
+use TypeLang\Mapper\Mapping\Exception\InvalidOptionValueException;
 use TypeLang\Mapper\Mapping\Exception\UnknownKeyException;
 use TypeLang\Mapper\Mapping\MapName;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
@@ -50,7 +50,7 @@ final class ValidatingMetadataProviderTest extends TestCase
 
         self::assertSame('id', self::getProperty($metadata, 'second')->externalName);
         self::assertSame([
-            DuplicateNameStub::class . ': properties $first, $second have the same external name "id"'
+            DuplicateNameStub::class . ': properties "$first", "$second" have the same external name "id"'
                 . ' in DuplicateNameStub.php',
         ], $errors);
     }
@@ -65,7 +65,7 @@ final class ValidatingMetadataProviderTest extends TestCase
 
         self::assertContainsOnlyInstancesOf(DuplicateExternalNameException::class, self::getExceptions($read));
         self::assertSame([
-            NamingCollisionStub::class . ': properties $userId, $user_id have the same external name "user_id"'
+            NamingCollisionStub::class . ': properties "$userId", "$user_id" have the same external name "user_id"'
                 . ' in NamingCollisionStub.php',
         ], self::getErrors($read));
     }
@@ -88,7 +88,7 @@ final class ValidatingMetadataProviderTest extends TestCase
         self::assertCount(2, $errors);
         self::assertStringStartsWith(DuplicateNameStub::class . ': unknown key "colour" in ', $errors[0]);
         self::assertStringStartsWith(
-            DuplicateNameStub::class . ': properties $first, $third have the same external name "first"',
+            DuplicateNameStub::class . ': properties "$first", "$third" have the same external name "first"',
             $errors[1],
         );
     }
@@ -112,18 +112,18 @@ final class ValidatingMetadataProviderTest extends TestCase
 
             self::assertSame([
                 InvalidAttributeException::class,
-                InvalidValueException::class,
+                InvalidOptionValueException::class,
                 UnknownKeyException::class,
                 InvalidTypeException::class,
                 InvalidTypeException::class,
             ], \array_map(static fn(\Throwable $error): string => $error::class, $e->errors));
-            self::assertStringStartsWith("{$class}::\$id: attribute " . MapName::class, $errors[0]);
+            self::assertStringStartsWith("{$class}::\$id: attribute \"" . MapName::class . '"', $errors[0]);
             self::assertStringStartsWith("{$class}::\$name: value of \"name\" ", $errors[1]);
             self::assertStringStartsWith("{$class}: unknown key \"colour\" in ", $errors[2]);
             self::assertStringStartsWith("{$class}::\$id: ", $errors[3]);
             self::assertStringStartsWith("{$class}::\$items: ", $errors[4]);
             self::assertSame(
-                "Cannot read metadata of {$class}:\n  - " . \implode("\n  - ", $errors),
+                "Cannot read metadata of \"{$class}\":\n  - " . \implode("\n  - ", $errors),
                 $e->getMessage(),
             );
             self::assertNotNull($e->metadata->findProperty('items')?->read?->error);

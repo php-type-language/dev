@@ -12,11 +12,11 @@ use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
 final class InvalidTypeException extends MetadataException
 {
     /**
-     * @param string $property property reference: `App\User::$id`
+     * @param string $target property or class: `App\User::$id`, `App\User`
      * @param non-empty-string $reason reason the type cannot be read
      */
-    public static function becauseTypeCannotBeRead(string $property, string $reason, SourceInfo $source): self
+    public static function becauseTypeCannotBeRead(string $target, string $reason, SourceInfo $source): self
     {
-        return new self($property, $source, $reason);
+        return new self($target, $source, $reason);
     }
 }

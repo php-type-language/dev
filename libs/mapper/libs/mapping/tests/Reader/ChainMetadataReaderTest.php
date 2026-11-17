@@ -6,7 +6,7 @@ namespace TypeLang\Mapper\Mapping\Tests\Reader;
 
 use TypeLang\Mapper\Mapping\Exception\InvalidAttributeException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
-use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
+use TypeLang\Mapper\Mapping\Exception\InvalidOptionValueException;
 use TypeLang\Mapper\Mapping\Exception\UnknownKeyException;
 use TypeLang\Mapper\Mapping\MapName;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
@@ -81,8 +81,8 @@ final class ChainMetadataReaderTest extends TestCase
         } catch (InvalidMetadataException $e) {
             self::assertCount(3, $e->errors);
             self::assertInstanceOf(InvalidAttributeException::class, $e->errors[0]);
-            self::assertStringContainsString(': attribute ' . MapName::class, $e->errors[0]->getMessage());
-            self::assertInstanceOf(InvalidValueException::class, $e->errors[1]);
+            self::assertStringContainsString(': attribute "' . MapName::class . '"', $e->errors[0]->getMessage());
+            self::assertInstanceOf(InvalidOptionValueException::class, $e->errors[1]);
             self::assertStringContainsString(': value of "name" ', $e->errors[1]->getMessage());
             self::assertInstanceOf(UnknownKeyException::class, $e->errors[2]);
             self::assertStringContainsString(': unknown key "colour"', $e->errors[2]->getMessage());
@@ -104,7 +104,7 @@ final class ChainMetadataReaderTest extends TestCase
         ]))->read(new \ReflectionClass(BrokenAttributeStub::class)));
 
         self::assertCount(3, $errors);
-        self::assertStringContainsString(': attribute ' . MapName::class, $errors[0]);
+        self::assertStringContainsString(': attribute "' . MapName::class . '"', $errors[0]);
         self::assertStringStartsWith(BrokenAttributeStub::class . ': unknown key "colour" in ', $errors[2]);
     }
 
@@ -220,7 +220,7 @@ final class ChainMetadataReaderTest extends TestCase
 
         self::assertCount(2, $errors);
         self::assertStringStartsWith(
-            \sprintf('%s::$id: attribute %s cannot be created (', BrokenAttributeStub::class, MapName::class),
+            \sprintf('%s::$id: attribute "%s" cannot be created (', BrokenAttributeStub::class, MapName::class),
             $errors[0],
         );
         self::assertStringStartsWith(

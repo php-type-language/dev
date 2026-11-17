@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader;
+namespace TypeLang\Mapper\Mapping\Reader\Option\TypeOption;
 
 /**
  * Direction of a mapping the type of a config key is set for. The value is

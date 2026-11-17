@@ -21,7 +21,8 @@ final class InvalidMetadataExceptionTest extends TestCase
         $e = InvalidMetadataException::becauseMetadataIsInvalid(new ClassMetadata(\stdClass::class), [$error]);
 
         self::assertSame(
-            "Cannot read metadata of stdClass:\n  - stdClass::\$id: property is not mapped in mapping.json at \$.id",
+            "Cannot read metadata of \"stdClass\":\n"
+                . "  - stdClass::\$id: property is not mapped in mapping.json at \$.id",
             $e->getMessage(),
         );
         self::assertSame([$error], $e->errors);
@@ -37,7 +38,7 @@ final class InvalidMetadataExceptionTest extends TestCase
         $e = InvalidMetadataException::becauseMetadataIsInvalid(new ClassMetadata(\stdClass::class), $errors);
 
         self::assertSame(
-            "Cannot read metadata of stdClass:\n"
+            "Cannot read metadata of \"stdClass\":\n"
                 . "  - stdClass: unknown key \"colour\"\n"
                 . '  - stdClass: unknown key "size" in a.php',
             $e->getMessage(),

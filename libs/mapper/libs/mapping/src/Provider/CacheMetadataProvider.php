@@ -30,9 +30,9 @@ abstract class CacheMetadataProvider implements MetadataProviderInterface
     ) {}
 
     /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @return ClassMetadata<T>
+     * @template TArg of object
+     * @param \ReflectionClass<TArg> $class
+     * @return ClassMetadata<TArg>
      * @throws InvalidCacheKeyException in case of the cache rejects the key
      * @throws ReaderException in case of the delegate cannot provide the
      *         metadata
@@ -41,7 +41,7 @@ abstract class CacheMetadataProvider implements MetadataProviderInterface
     {
         $key = $this->prefix . 'v' . ClassMetadata::FORMAT_VERSION . '_' . \hash('xxh128', $class->name);
 
-        /** @var ClassMetadata<T> */
+        /** @var ClassMetadata<TArg> */
         return $this->remember($key, $class->name, fn(): ClassMetadata => $this->delegate->read($class));
     }
 

@@ -14,8 +14,9 @@ final class TypeMetadata
 {
     private function __construct(
         /**
-         * Type with imported names resolved, read-only by contract,
-         * {@see null} in case of the type cannot be read
+         * Type with the imported names and the names of the classes of the
+         * namespace of the file resolved, read-only by contract, {@see null}
+         * in case of the type cannot be read
          */
         public readonly ?TypeNode $type,
         /**
@@ -27,30 +28,18 @@ final class TypeMetadata
         public readonly ?string $error,
         public readonly SourceInfo $source,
         /**
-         * Namespace the type is written in, simple names of classes belong
-         * to it, {@see null} in case of the global namespace or a type with
-         * fully qualified names only
-         *
-         * @var non-empty-string|null
-         */
-        public readonly ?string $namespace = null,
-        /**
          * Whether a value must match the type exactly, without coercion,
          * {@see null} means the mapper configuration
          */
         public readonly ?bool $isStrict = null,
     ) {}
 
-    /**
-     * @param non-empty-string|null $namespace
-     */
-    public static function createFromType(TypeNode $type, SourceInfo $source, ?string $namespace = null): self
+    public static function createFromType(TypeNode $type, SourceInfo $source): self
     {
         return new self(
             type: $type,
             error: null,
             source: $source,
-            namespace: $namespace,
         );
     }
 
@@ -72,7 +61,6 @@ final class TypeMetadata
             type: $this->type,
             error: $this->error,
             source: $this->source,
-            namespace: $this->namespace,
             isStrict: $isStrict,
         );
     }

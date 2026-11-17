@@ -7,35 +7,29 @@ namespace TypeLang\Mapper\Mapping\Reader;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
-use TypeLang\Mapper\Mapping\Exception\InvalidValueException;
+use TypeLang\Mapper\Mapping\Exception\InvalidOptionValueException;
 use TypeLang\Mapper\Mapping\Exception\MetadataException;
+use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\Exception\UnknownKeyException;
 use TypeLang\Mapper\Mapping\Exception\UnknownPropertyException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
 use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\ClassIndex;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\ConfigPath;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\DefaultConfigLoader;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\MessageConfigLoader;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\NameConfigLoader;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\PropertyConfig;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\PropertyConfigLoaderInterface;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\SkipConfigLoader;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader;
-use TypeLang\Mapper\Mapping\Reader\ArrayMetadataReader\TypeConfigLoader\TypeDirection;
-use TypeLang\Mapper\Mapping\Reader\Internal\DiscriminatorFactory;
-use TypeLang\Mapper\Mapping\Reader\Internal\ErrorCollector;
-use TypeLang\Mapper\Mapping\Reader\Internal\SkipConditionFactory;
-use TypeLang\Mapper\Mapping\Reader\Internal\SourceContext;
+use TypeLang\Mapper\Mapping\Reader\Option\Options;
+use TypeLang\Mapper\Mapping\Reader\Option\TypeOption\TypeDirection;
+use TypeLang\Mapper\Mapping\Reader\Source\ConfigPath;
+use TypeLang\Mapper\Mapping\Reader\Source\ConfigSection;
+use TypeLang\Mapper\Mapping\Reader\Source\ErrorCollector;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserInterface;
 use TypeLang\Type\TypeNode;
 
 /**
- * Overrides values of the given properties with a config: a map of class
- * names to class configs. A config of a property that is not given is an
- * error. Types are kept as written, names in them are fully qualified.
- * Class names are case-insensitive, the leading `\` is optional.
+ * Overrides values of the given properties and of the class with a config:
+ * a map of class names to class configs. A config of a property that is not
+ * given is an error, so is an unknown key. Each option reads its own keys.
+ * Types are kept as written, names in them are fully qualified. Class names
+ * are case-insensitive, the leading `\` is optional.
  *
  * ```
  * App\Shape:
@@ -43,9 +37,12 @@ use TypeLang\Type\TypeNode;
  *     field: type
  *     map: { circle: App\Circle, square: App\Square }
  *     otherwise: App\UnknownShape
+ * App\Status:
+ *   aliases: { active: enabled, on: enabled }
  * App\User:
  *   type_error_message: 'User must be an object'
  *   normalize_as_array: false
+ *   naming_strategy: snake_case
  *   properties:
  *     id: int
  *     email:
@@ -64,43 +61,21 @@ final class ArrayMetadataReader implements MetadataReaderInterface
 {
     private const PROPERTIES_KEY = 'properties';
 
-    private const DISCRIMINATOR_KEY = 'discriminator';
-
-    private const TYPE_ERROR_MESSAGE_KEY = 'type_error_message';
-
-    private const NORMALIZE_AS_ARRAY_KEY = 'normalize_as_array';
+    private readonly Options $options;
 
     /**
-     * Keys of a class config
-     */
-    private const CLASS_KEYS = [
-        self::PROPERTIES_KEY,
-        self::DISCRIMINATOR_KEY,
-        self::TYPE_ERROR_MESSAGE_KEY,
-        self::NORMALIZE_AS_ARRAY_KEY,
-    ];
-
-    /**
-     * Keys of the config of {@see self::DISCRIMINATOR_KEY}
-     */
-    private const DISCRIMINATOR_KEYS = ['field', 'map', 'otherwise'];
-
-    /**
-     * @var TypeParserInterface<TypeNode, string>
-     */
-    private readonly TypeParserInterface $parser;
-
-    /**
-     * @var non-empty-list<PropertyConfigLoaderInterface>
-     */
-    private readonly array $loaders;
-
-    /**
-     * Keys of a property config read by the loaders
+     * Keys of a class config: of the properties and of the options
      *
      * @var array<non-empty-string, true>
      */
-    private readonly array $keys;
+    private readonly array $classKeys;
+
+    /**
+     * Keys of a property config read by the options
+     *
+     * @var array<non-empty-string, true>
+     */
+    private readonly array $propertyKeys;
 
     private ?ClassIndex $index = null;
 
@@ -125,24 +100,26 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         TypeParserInterface $parser = new TypeParser(),
         ?ExpressionLanguage $expressions = null,
     ) {
-        $this->parser = $parser;
-        $this->loaders = [
-            new TypeConfigLoader($parser),
-            new NameConfigLoader(),
-            new DefaultConfigLoader(),
-            new SkipConfigLoader(new SkipConditionFactory($expressions)),
-            new MessageConfigLoader(),
-        ];
+        $this->options = Options::createDefault($parser, $expressions);
 
-        $keys = [];
+        $classKeys = [self::PROPERTIES_KEY => true];
 
-        foreach ($this->loaders as $loader) {
-            foreach ($loader->getKeys() as $key) {
-                $keys[$key] = true;
+        foreach ($this->options->classes as $option) {
+            foreach ($option->getClassKeys() as $key) {
+                $classKeys[$key] = true;
             }
         }
 
-        $this->keys = $keys;
+        $propertyKeys = [];
+
+        foreach ($this->options->properties as $option) {
+            foreach ($option->getPropertyKeys() as $key) {
+                $propertyKeys[$key] = true;
+            }
+        }
+
+        $this->classKeys = $classKeys;
+        $this->propertyKeys = $propertyKeys;
     }
 
     /**
@@ -150,6 +127,8 @@ final class ArrayMetadataReader implements MetadataReaderInterface
      *         classes
      * @throws InvalidMetadataException in case of the config of the class
      *         is wrong
+     * @throws MissingDependencyException in case of an expression is given,
+     *         but the `symfony/expression-language` package is not installed
      */
     public function read(\ReflectionClass $class, ?ClassMetadata $metadata = null): ClassMetadata
     {
@@ -171,11 +150,13 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     }
 
     /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @param ClassMetadata<T> $metadata
+     * @template TArg of object
+     * @param \ReflectionClass<TArg> $class
+     * @param ClassMetadata<TArg> $metadata
      * @param non-empty-string $key
-     * @return ClassMetadata<T>
+     * @return ClassMetadata<TArg>
+     * @throws MissingDependencyException in case of an expression is given,
+     *         but the `symfony/expression-language` package is not installed
      */
     private function readClass(
         \ReflectionClass $class,
@@ -187,7 +168,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         $path = ConfigPath::createRoot($this->file)->withKey($key);
 
         if (!\is_array($config)) {
-            $errors->addError(InvalidValueException::becauseClassConfigIsNotMap(
+            $errors->addError(InvalidOptionValueException::becauseClassConfigIsNotMap(
                 $class->name,
                 $path->createSource(),
             ));
@@ -205,20 +186,14 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             );
         }
 
-        if (\array_key_exists(self::DISCRIMINATOR_KEY, $config)) {
-            $metadata = $this->readDiscriminator(
-                class: $class,
-                metadata: $metadata,
-                discriminator: $config[self::DISCRIMINATOR_KEY],
-                path: $path->withKey(self::DISCRIMINATOR_KEY),
-                errors: $errors,
-            );
-        }
+        $section = ConfigSection::createFromMap($class->name, $config, $path);
 
-        $metadata = self::readClassOptions($class, $metadata, $config, $path, $errors);
+        foreach ($this->options->classes as $option) {
+            $metadata = $option->readClassConfig($class, $section, $metadata, $errors);
+        }
 
         foreach ($config as $name => $_) {
-            if (!\in_array($name, self::CLASS_KEYS, true)) {
+            if (!isset($this->classKeys[$name])) {
                 $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
                     $name,
                     $class->name,
@@ -231,107 +206,12 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     }
 
     /**
-     * Reads the `type_error_message` and `normalize_as_array` keys of the
-     * class.
-     *
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @param ClassMetadata<T> $metadata
-     * @param array<array-key, mixed> $config
-     * @return ClassMetadata<T>
-     */
-    private static function readClassOptions(
-        \ReflectionClass $class,
-        ClassMetadata $metadata,
-        array $config,
-        ConfigPath $path,
-        ErrorCollector $errors,
-    ): ClassMetadata {
-        $message = $config[self::TYPE_ERROR_MESSAGE_KEY] ?? null;
-
-        if (\is_string($message) && $message !== '') {
-            $metadata = $metadata->withTypeErrorMessage($message);
-        }
-
-        if ($message !== null && (!\is_string($message) || $message === '')) {
-            $errors->addError(InvalidValueException::becauseValueIsNotNonEmptyString(
-                self::TYPE_ERROR_MESSAGE_KEY,
-                $class->name,
-                $path->withKey(self::TYPE_ERROR_MESSAGE_KEY)->createSource(),
-            ));
-        }
-
-        $isNormalizeAsArray = $config[self::NORMALIZE_AS_ARRAY_KEY] ?? null;
-
-        if (\is_bool($isNormalizeAsArray)) {
-            $metadata = $metadata->withNormalizeAsArray($isNormalizeAsArray);
-        }
-
-        if ($isNormalizeAsArray !== null && !\is_bool($isNormalizeAsArray)) {
-            $errors->addError(InvalidValueException::becauseValueIsNotBoolean(
-                self::NORMALIZE_AS_ARRAY_KEY,
-                $class->name,
-                $path->withKey(self::NORMALIZE_AS_ARRAY_KEY)->createSource(),
-            ));
-        }
-
-        return $metadata;
-    }
-
-    /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @param ClassMetadata<T> $metadata
-     * @return ClassMetadata<T>
-     */
-    private function readDiscriminator(
-        \ReflectionClass $class,
-        ClassMetadata $metadata,
-        mixed $discriminator,
-        ConfigPath $path,
-        ErrorCollector $errors,
-    ): ClassMetadata {
-        if (!\is_array($discriminator)) {
-            $errors->addError(InvalidValueException::becauseValueIsNotMap(
-                self::DISCRIMINATOR_KEY,
-                $class->name,
-                $path->createSource(),
-            ));
-
-            return $metadata;
-        }
-
-        foreach ($discriminator as $name => $_) {
-            if (!\in_array($name, self::DISCRIMINATOR_KEYS, true)) {
-                $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
-                    $name,
-                    $class->name,
-                    $path->withKey($name)->createSource(),
-                ));
-            }
-        }
-
-        $result = DiscriminatorFactory::create(
-            field: $discriminator['field'] ?? null,
-            map: $discriminator['map'] ?? null,
-            otherwise: $discriminator['otherwise'] ?? null,
-            context: new SourceContext($class->name, $path->createSource()),
-            parser: $this->parser,
-            errors: $errors,
-        );
-
-        if ($result === null) {
-            return $metadata;
-        }
-
-        return $metadata->withDiscriminator($result);
-    }
-
-    /**
-     * @template T of object
-     * @param \ReflectionClass<T> $class
-     * @param ClassMetadata<T> $metadata
-     * @return ClassMetadata<T>
+     * @template TArg of object
+     * @param \ReflectionClass<TArg> $class
+     * @param ClassMetadata<TArg> $metadata
+     * @return ClassMetadata<TArg>
+     * @throws MissingDependencyException in case of an expression is given,
+     *         but the `symfony/expression-language` package is not installed
      */
     private function readProperties(
         \ReflectionClass $class,
@@ -341,7 +221,7 @@ final class ArrayMetadataReader implements MetadataReaderInterface
         ErrorCollector $errors,
     ): ClassMetadata {
         if (!\is_array($properties)) {
-            $errors->addError(InvalidValueException::becauseValueIsNotMap(
+            $errors->addError(InvalidOptionValueException::becauseValueIsNotMap(
                 self::PROPERTIES_KEY,
                 $class->name,
                 $path->createSource(),
@@ -386,6 +266,8 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     /**
      * @param non-empty-string $target property reference: `App\User::$id`
      * @param ConfigPath $path path of the property
+     * @throws MissingDependencyException in case of an expression is given,
+     *         but the `symfony/expression-language` package is not installed
      */
     private function readProperty(
         mixed $config,
@@ -396,13 +278,13 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     ): PropertyMetadata {
         // id: int
         if (\is_string($config)) {
-            $config = PropertyConfig::createFromValue($target, TypeDirection::Both->value, $config, $path);
+            $section = ConfigSection::createFromValue($target, TypeDirection::Both->value, $config, $path);
 
-            return $this->loadProperty($config, $property, $errors);
+            return $this->readPropertySection($section, $property, $errors);
         }
 
         if (!\is_array($config)) {
-            $errors->addError(InvalidValueException::becausePropertyConfigIsNotStringOrMap(
+            $errors->addError(InvalidOptionValueException::becausePropertyConfigIsNotStringOrMap(
                 $target,
                 $path->createSource(),
             ));
@@ -410,14 +292,11 @@ final class ArrayMetadataReader implements MetadataReaderInterface
             return $property;
         }
 
-        $property = $this->loadProperty(
-            config: PropertyConfig::createFromMap($target, $config, $path),
-            property: $property,
-            errors: $errors,
-        );
+        $section = ConfigSection::createFromMap($target, $config, $path);
+        $property = $this->readPropertySection($section, $property, $errors);
 
         foreach ($config as $key => $_) {
-            if (!isset($this->keys[$key])) {
+            if (!isset($this->propertyKeys[$key])) {
                 $errors->addError(UnknownKeyException::becauseKeyIsUnknown(
                     $key,
                     $target,
@@ -430,20 +309,16 @@ final class ArrayMetadataReader implements MetadataReaderInterface
     }
 
     /**
-     * Applies each loader to the config, an error of a loader is collected
-     * and the other loaders go on.
+     * @throws MissingDependencyException in case of an expression is given,
+     *         but the `symfony/expression-language` package is not installed
      */
-    private function loadProperty(
-        PropertyConfig $config,
+    private function readPropertySection(
+        ConfigSection $section,
         PropertyMetadata $property,
         ErrorCollector $errors,
     ): PropertyMetadata {
-        foreach ($this->loaders as $loader) {
-            try {
-                $property = $loader->load($config, $property);
-            } catch (MetadataException $e) {
-                $errors->addError($e);
-            }
+        foreach ($this->options->properties as $option) {
+            $property = $option->readPropertyConfig($section, $property, $errors);
         }
 
         return $property;

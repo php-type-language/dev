@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Metadata;
 
+use TypeLang\Mapper\Naming\NamingStrategyInterface;
+
 /**
  * Mapping of a class: its mapped properties, its polymorphism and its
  * options. The fields are read directly and changed by the `with*()`
@@ -62,6 +64,28 @@ final class ClassMetadata
      * @phpstan-readonly-allow-private-mutation
      */
     public ?bool $isNormalizeAsArray = null;
+
+    /**
+     * Naming strategy of the properties without an explicit name,
+     * {@see null} in case of the strategy of the mapper
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public ?NamingStrategyInterface $namingStrategy = null;
+
+    /**
+     * Values of the cases of a backed enum by the other values of the data
+     * denormalized to them, empty for a class
+     *
+     * @var array<array-key, int|string>
+     *
+     * @readonly
+     *
+     * @phpstan-readonly-allow-private-mutation
+     */
+    public array $aliases = [];
 
     /**
      * @param array<non-empty-string, PropertyMetadata> $properties
@@ -130,6 +154,31 @@ final class ClassMetadata
     {
         $self = clone $this;
         $self->isNormalizeAsArray = $isNormalizeAsArray;
+
+        return $self;
+    }
+
+    /**
+     * @return self<T>
+     */
+    public function withNamingStrategy(NamingStrategyInterface $strategy): self
+    {
+        $self = clone $this;
+        $self->namingStrategy = $strategy;
+
+        return $self;
+    }
+
+    /**
+     * Returns a copy with the alias of the case value, replacing the same
+     * alias of a lower reader.
+     *
+     * @return self<T>
+     */
+    public function withAlias(int|string $alias, int|string $value): self
+    {
+        $self = clone $this;
+        $self->aliases[$alias] = $value;
 
         return $self;
     }

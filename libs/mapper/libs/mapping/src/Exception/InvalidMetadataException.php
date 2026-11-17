@@ -37,7 +37,7 @@ final class InvalidMetadataException extends ReaderException
      */
     public static function becauseMetadataIsInvalid(ClassMetadata $metadata, array $errors): self
     {
-        $message = \sprintf('Cannot read metadata of %s:', $metadata->name);
+        $message = \sprintf('Cannot read metadata of "%s":', $metadata->name);
 
         foreach ($errors as $error) {
             $message .= "\n  - " . $error->getMessage();

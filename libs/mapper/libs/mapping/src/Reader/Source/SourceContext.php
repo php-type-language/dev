@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Mapping\Reader\Internal;
+namespace TypeLang\Mapper\Mapping\Reader\Source;
 
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
@@ -40,29 +40,29 @@ final class SourceContext
          * @var (\Closure(): TypeResolver)|null
          */
         private readonly ?\Closure $resolver = null,
-        /**
-         * Namespace the types are written in
-         *
-         * @var non-empty-string|null
-         */
-        private readonly ?string $namespace = null,
     ) {}
 
     /**
-     * Resolves the names of the type by the imports of the place.
+     * Resolves the names of the type by the place, returns a type with an
+     * error in case of a name cannot be resolved, such as `parent` of a
+     * class without a parent.
      */
-    public function resolve(TypeNode $type): TypeNode
+    public function resolveType(TypeNode $type): TypeMetadata
     {
         if ($this->resolver === null) {
-            return $type;
+            return $this->createType($type);
         }
 
-        return ($this->resolver)()->resolve($type);
+        try {
+            return $this->createType(($this->resolver)()->resolve($type));
+        } catch (\UnexpectedValueException $e) {
+            return $this->createInvalidType($e);
+        }
     }
 
     public function createType(TypeNode $type): TypeMetadata
     {
-        return TypeMetadata::createFromType($type, $this->source, $this->namespace);
+        return TypeMetadata::createFromType($type, $this->source);
     }
 
     /**
@@ -79,7 +79,7 @@ final class SourceContext
             return $this->createInvalidType($e);
         }
 
-        return $this->createType($this->resolve($type));
+        return $this->resolveType($type);
     }
 
     /**

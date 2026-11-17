@@ -81,7 +81,7 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
                 }
 
                 $errors[] = InvalidTypeException::becauseTypeCannotBeRead(
-                    property: MetadataException::formatPropertyTarget($class->name, $property->name),
+                    target: MetadataException::formatPropertyTarget($class->name, $property->name),
                     reason: $type->error,
                     source: $type->source,
                 );
@@ -100,7 +100,7 @@ final class ValidatingMetadataProvider implements MetadataProviderInterface
             }
 
             $errors[] = InvalidTypeException::becauseTypeCannotBeRead(
-                property: $class->name,
+                target: $class->name,
                 reason: $type->error,
                 source: $type->source,
             );

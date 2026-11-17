@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Mapping\Reader\Internal;
+namespace TypeLang\Mapper\Mapping\Reader\Source;
 
 use TypeLang\Mapper\Mapping\Exception\InvalidDefaultValueException;
 use TypeLang\Mapper\Mapping\Metadata\DefaultValueMetadata;
