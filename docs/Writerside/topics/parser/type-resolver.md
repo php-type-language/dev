@@ -33,6 +33,10 @@ final readonly class TypeResolver
 
     public function withTypeImportsFromFunction(\ReflectionFunctionAbstract $function): self;
 
+    public function withNamespace(string $namespace, ?\Closure $exists = null): self;
+
+    public function withClasses(string $self, ?string $static = null): self;
+
     public function resolve(TypeNode $type): TypeNode;
 }
 ```
@@ -183,11 +187,56 @@ $resolver = new TypeResolver()
 > a closure `use (...)` capture is never mistaken for an import.
 > {style="note"}
 
+## Resolving Against the Namespace
+
+A class of the same namespace is written without an import. `withNamespace()`
+registers the namespace of the file: a relative name that matches no import
+becomes a name of the namespace, and `namespace\Name` always does.
+
+Unlike PHP, a type string also holds names that are not classes at all —
+`list`, `positive-int`, `non-empty-string`, a type alias of your own. So by
+default a name is resolved only in case of a class, an interface or an enum
+of the namespace exists, any other name is kept as written:
+
+```php
+use TypeLang\Parser\TypeResolver;
+
+$resolver = new TypeResolver()
+    ->withNamespace('App');
+
+// `list<Address>` to `list<App\Address>` in case of `App\Address` exists
+// `list<uuid>` as is
+// `namespace\Address` to `App\Address` always
+```
+
+Pass a check of your own as the second argument to change the rule, such as
+`static fn(string $name): bool => true` to resolve every name as PHP does.
+An empty string registers the global namespace.
+
+## Resolving `self`, `static` and `parent`
+
+`withClasses()` registers the class the type is written in (`self`), the class
+it is used for (`static`, `self` by default), and resolves `parent` to the
+parent of `self`. The names are kept as written without the classes:
+
+```php
+use TypeLang\Parser\TypeResolver;
+
+$resolver = new TypeResolver()
+    ->withClasses(App\User::class);
+
+// `self::STATUS_*` to `App\User::STATUS_*`
+// `list<self>` to `list<App\User>`
+```
+
+> `parent` in a class without a parent throws `\UnexpectedValueException`,
+> just like PHP refuses it.
+> {style="note"}
+
 ## Custom Name Rewriting
 
-`TypeResolver` is intentionally scoped to `use`-statement semantics. When you
-need to rewrite names some other way — against a runtime class map, a DI
-container, a PSR-4 lookup, and so on — drop down to
+When you need to rewrite names some other way — against a runtime class map,
+a DI container, a PSR-4 lookup, and so on — drop down to
 [`TypeMapVisitor`](type-map-visitor.md), which calls a callback of your own for
 every `Name` in the AST. `TypeResolver` is simply the ready-made configuration
 of that visitor for the most common case.
