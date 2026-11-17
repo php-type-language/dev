@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Mapper\Instantiator\Exception\ClassNotInstantiableException;
 use TypeLang\Mapper\Instantiator\InstantiatorFactory;
 use TypeLang\Mapper\Instantiator\InstantiatorInterface;
+use TypeLang\Mapper\Instantiator\Strategy\InstantiationStrategyInterface;
 use TypeLang\Mapper\Instantiator\Tests\Stub\AbstractStub;
 use TypeLang\Mapper\Instantiator\Tests\Stub\ConstructorStub;
 use TypeLang\Mapper\Instantiator\Tests\Stub\EmptyStub;
@@ -18,6 +19,60 @@ use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 
 final class InstantiatorFactoryTest extends TestCase
 {
+    public function testStrategyOfUserCreatesObjectsOfAbstractClass(): void
+    {
+        $object = AbstractStub::create();
+
+        $strategy = new class ($object) implements InstantiationStrategyInterface {
+            public function __construct(
+                private readonly AbstractStub $object,
+            ) {}
+
+            public function tryCreateInstantiator(
+                \ReflectionClass $class,
+                ClassMetadata $metadata,
+            ): ?InstantiatorInterface {
+                if ($class->name !== AbstractStub::class) {
+                    return null;
+                }
+
+                return new class ($this->object) implements InstantiatorInterface {
+                    public function __construct(
+                        private readonly AbstractStub $object,
+                    ) {}
+
+                    public function instantiate(array $data = []): object
+                    {
+                        return $this->object;
+                    }
+                };
+            }
+        };
+
+        $instantiator = (new InstantiatorFactory([$strategy]))
+            ->createInstantiator(new \ReflectionClass(AbstractStub::class), new ClassMetadata(AbstractStub::class));
+
+        self::assertSame($object, $instantiator->instantiate([]));
+    }
+
+    public function testClassNotTakenByStrategyOfUserIsCreatedByDefaultOne(): void
+    {
+        $strategy = new class implements InstantiationStrategyInterface {
+            public function tryCreateInstantiator(
+                \ReflectionClass $class,
+                ClassMetadata $metadata,
+            ): ?InstantiatorInterface {
+                return null;
+            }
+        };
+
+        $object = (new InstantiatorFactory([$strategy]))
+            ->createInstantiator(new \ReflectionClass(EmptyStub::class), new ClassMetadata(EmptyStub::class))
+            ->instantiate([]);
+
+        self::assertInstanceOf(EmptyStub::class, $object);
+    }
+
     public function testDoesNotCallConstructor(): void
     {
         $object = self::createInstantiator(ConstructorStub::class)->instantiate([]);

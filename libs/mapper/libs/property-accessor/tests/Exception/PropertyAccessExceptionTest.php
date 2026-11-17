@@ -25,15 +25,15 @@ final class PropertyAccessExceptionTest extends TestCase
     {
         yield 'property is static' => [
             static fn(string $c, string $p) => PropertyNotFoundException::becausePropertyIsStatic($c, $p),
-            'Property %s::$prop is static',
+            'Property "%s::$prop" is static',
         ];
         yield 'property is write-only' => [
             static fn(string $c, string $p) => PropertyNotReadableException::becausePropertyIsWriteOnly($c, $p),
-            'Property %s::$prop is write-only',
+            'Property "%s::$prop" is write-only',
         ];
         yield 'property is read-only' => [
             static fn(string $c, string $p) => PropertyNotWritableException::becausePropertyIsReadOnly($c, $p),
-            'Property %s::$prop is read-only',
+            'Property "%s::$prop" is read-only',
         ];
     }
 

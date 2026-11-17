@@ -6,7 +6,7 @@ namespace TypeLang\Mapper\PropertyAccessor;
 
 /**
  * Writes one property of any object of its class. The way of writing is
- * chosen once by {@see PropertyAccessorFactoryInterface::createWriter()},
+ * chosen once by {@see PropertyAccessorFactory::createWriter()},
  * the writing itself does no lookups.
  *
  * The object must be of the class of the property, the writer does not
@@ -16,7 +16,7 @@ namespace TypeLang\Mapper\PropertyAccessor;
  *
  * ```
  * $property = new \ReflectionProperty(User::class, 'email');
- * $writer = $factory->createWriter($property);
+ * $writer = $factory->createWriter($property, $metadata);
  *
  * $writer->write($user, 'user@example.com');
  * ```

@@ -30,6 +30,6 @@ abstract class PropertyAccessException extends \RuntimeException implements
      */
     protected static function formatProperty(string $class, string $property): string
     {
-        return $class . '::$' . $property;
+        return '"' . $class . '::$' . $property . '"';
     }
 }

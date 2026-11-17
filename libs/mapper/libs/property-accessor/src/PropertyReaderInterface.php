@@ -6,7 +6,7 @@ namespace TypeLang\Mapper\PropertyAccessor;
 
 /**
  * Reads one property of any object of its class. The way of reading is
- * chosen once by {@see PropertyAccessorFactoryInterface::createReader()},
+ * chosen once by {@see PropertyAccessorFactory::createReader()},
  * the reading itself does no lookups.
  *
  * The object must be of the class of the property, the reader does not
@@ -14,7 +14,7 @@ namespace TypeLang\Mapper\PropertyAccessor;
  *
  * ```
  * $property = new \ReflectionProperty(User::class, 'email');
- * $reader = $factory->createReader($property);
+ * $reader = $factory->createReader($property, $metadata);
  *
  * echo $reader->read($user); // user@example.com
  * ```

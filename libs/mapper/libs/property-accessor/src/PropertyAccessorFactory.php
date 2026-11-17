@@ -4,148 +4,97 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\PropertyAccessor;
 
+use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
+use TypeLang\Mapper\PropertyAccessor\Exception\PropertyAccessorExceptionInterface;
 use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotFoundException;
 use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotReadableException;
 use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotWritableException;
-use TypeLang\Mapper\PropertyAccessor\PropertyReader\DirectPropertyReader;
-use TypeLang\Mapper\PropertyAccessor\PropertyReader\RawPropertyReader;
-use TypeLang\Mapper\PropertyAccessor\PropertyReader\ReflectionPropertyReader;
-use TypeLang\Mapper\PropertyAccessor\PropertyWriter\DirectPropertyWriter;
-use TypeLang\Mapper\PropertyAccessor\PropertyWriter\RawPropertyWriter;
-use TypeLang\Mapper\PropertyAccessor\PropertyWriter\ReflectionPropertyWriter;
+use TypeLang\Mapper\PropertyAccessor\Strategy\AccessStrategyInterface;
+use TypeLang\Mapper\PropertyAccessor\Strategy\DirectAccessStrategy;
+use TypeLang\Mapper\PropertyAccessor\Strategy\RawAccessStrategy;
+use TypeLang\Mapper\PropertyAccessor\Strategy\ReflectionAccessStrategy;
 
 /**
- * Reads and writes a property bypassing its visibility. A property with a
- * backing store and a hook is accessed bypassing the hook, the hooks of a
- * virtual property are called (PHP 8.4+).
+ * Creates the reader and the writer of a property once by the first
+ * strategy that takes the property: the strategies of the user, then
+ * bypassing the hook of a property with a backing store, `$object->name`,
+ * the reflection. A static property is rejected, so is a property no
+ * strategy takes, such as a virtual one without the hook of the direction.
+ *
+ * ```
+ * $factory = new PropertyAccessorFactory([new GetterSetterStrategy()]);
+ *
+ * $factory->createWriter($property, $metadata)->write($user, 'user@example.com');
+ * ```
  */
-final class PropertyAccessorFactory implements PropertyAccessorFactoryInterface
+final class PropertyAccessorFactory
 {
     /**
-     * Returns the reader of the property:
-     *
-     * - bypassing the get hook, for a property with a backing store and the
-     *   hook
-     * - directly, for a public property, a virtual one is read through its
-     *   get hook
-     * - through the reflection, for any other property
-     *
-     * @throws PropertyNotFoundException in case of the property is static
-     * @throws PropertyNotReadableException in case of the property is
-     *         virtual without a get hook
+     * @var non-empty-list<AccessStrategyInterface>
      */
-    public function createReader(\ReflectionProperty $property): PropertyReaderInterface
+    private readonly array $strategies;
+
+    /**
+     * @param list<AccessStrategyInterface> $strategies strategies of the
+     *        user, tried before the default ones in the order of the list
+     */
+    public function __construct(array $strategies = [])
+    {
+        $this->strategies = [
+            ...$strategies,
+            new RawAccessStrategy(),
+            new DirectAccessStrategy(),
+            new ReflectionAccessStrategy(),
+        ];
+    }
+
+    /**
+     * @return PropertyReaderInterface<object, mixed>
+     * @throws PropertyNotFoundException in case of the property is static
+     * @throws PropertyNotReadableException in case of no strategy reads the
+     *         property, such as a virtual one without a get hook
+     * @throws PropertyAccessorExceptionInterface in case of a strategy takes
+     *         the property, but it cannot be read
+     */
+    public function createReader(\ReflectionProperty $property, PropertyMetadata $metadata): PropertyReaderInterface
     {
         if ($property->isStatic()) {
             throw PropertyNotFoundException::becausePropertyIsStatic($property->class, $property->name);
         }
 
-        $isVirtual = self::isVirtual($property);
-        $hasHook = self::hasGetHook($property);
+        foreach ($this->strategies as $strategy) {
+            $reader = $strategy->tryCreateReader($property, $metadata);
 
-        if ($isVirtual && !$hasHook) {
-            throw PropertyNotReadableException::becausePropertyIsWriteOnly($property->class, $property->name);
+            if ($reader !== null) {
+                return $reader;
+            }
         }
 
-        if (!$isVirtual && $hasHook) {
-            return new RawPropertyReader($property);
-        }
-
-        if ($property->isPublic()) {
-            /** @var non-empty-string */
-            $name = $property->name;
-
-            return new DirectPropertyReader($name);
-        }
-
-        return new ReflectionPropertyReader($property);
+        throw PropertyNotReadableException::becausePropertyIsWriteOnly($property->class, $property->name);
     }
 
     /**
-     * Returns the writer of the property:
-     *
-     * - bypassing the set hook, for a property with a backing store and the
-     *   hook
-     * - directly, for a property writable outside the class
-     * - through the reflection, for any other property, a virtual one is
-     *   written through its set hook
-     *
+     * @return PropertyWriterInterface<object, mixed>
      * @throws PropertyNotFoundException in case of the property is static
-     * @throws PropertyNotWritableException in case of the property is
-     *         virtual without a set hook
+     * @throws PropertyNotWritableException in case of no strategy writes the
+     *         property, such as a virtual one without a set hook
+     * @throws PropertyAccessorExceptionInterface in case of a strategy takes
+     *         the property, but it cannot be written
      */
-    public function createWriter(\ReflectionProperty $property): PropertyWriterInterface
+    public function createWriter(\ReflectionProperty $property, PropertyMetadata $metadata): PropertyWriterInterface
     {
         if ($property->isStatic()) {
             throw PropertyNotFoundException::becausePropertyIsStatic($property->class, $property->name);
         }
 
-        $isVirtual = self::isVirtual($property);
-        $hasHook = self::hasSetHook($property);
+        foreach ($this->strategies as $strategy) {
+            $writer = $strategy->tryCreateWriter($property, $metadata);
 
-        if ($isVirtual && !$hasHook) {
-            throw PropertyNotWritableException::becausePropertyIsReadOnly($property->class, $property->name);
+            if ($writer !== null) {
+                return $writer;
+            }
         }
 
-        if (!$isVirtual && $hasHook) {
-            return new RawPropertyWriter($property);
-        }
-
-        if (!$hasHook && self::isPublicSet($property)) {
-            /** @var non-empty-string */
-            $name = $property->name;
-
-            return new DirectPropertyWriter($name);
-        }
-
-        return new ReflectionPropertyWriter($property);
-    }
-
-    /**
-     * Returns {@see true} in case of a value can be assigned to the
-     * property outside the class.
-     */
-    private static function isPublicSet(\ReflectionProperty $property): bool
-    {
-        if (!$property->isPublic() || $property->isReadOnly()) {
-            return false;
-        }
-
-        if (\PHP_VERSION_ID < 80400) {
-            return true;
-        }
-
-        // @phpstan-ignore-next-line PHP 8.4 API, phpVersion.min is 8.1
-        return !$property->isPrivateSet() && !$property->isProtectedSet();
-    }
-
-    private static function isVirtual(\ReflectionProperty $property): bool
-    {
-        if (\PHP_VERSION_ID < 80400) {
-            return false;
-        }
-
-        // @phpstan-ignore-next-line PHP 8.4 API, phpVersion.min is 8.1
-        return $property->isVirtual();
-    }
-
-    private static function hasGetHook(\ReflectionProperty $property): bool
-    {
-        if (\PHP_VERSION_ID < 80400) {
-            return false;
-        }
-
-        // @phpstan-ignore-next-line PHP 8.4 API, phpVersion.min is 8.1
-        return $property->hasHook(\PropertyHookType::Get);
-    }
-
-    private static function hasSetHook(\ReflectionProperty $property): bool
-    {
-        if (\PHP_VERSION_ID < 80400) {
-            return false;
-        }
-
-        // @phpstan-ignore-next-line PHP 8.4 API, phpVersion.min is 8.1
-        return $property->hasHook(\PropertyHookType::Set);
+        throw PropertyNotWritableException::becausePropertyIsReadOnly($property->class, $property->name);
     }
 }

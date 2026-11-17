@@ -7,7 +7,7 @@ namespace TypeLang\Mapper\Instantiator;
 /**
  * Creates or finds the object of its class the data is written to, the
  * mapped properties are written after it. The way of creating is chosen
- * once by {@see InstantiatorFactoryInterface::createInstantiator()}.
+ * once by {@see InstantiatorFactory::createInstantiator()}.
  *
  * ```
  * $instantiator = $factory->createInstantiator($class, $metadata);
