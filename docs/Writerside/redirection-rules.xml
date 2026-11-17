@@ -6,4 +6,61 @@
         <accepts>page.html</accepts>
     </rule>
     -->
+    <rule id="data-mapper">
+        <description>Pages of the mapper 1.0 documentation</description>
+        <accepts>type-extractors.html</accepts>
+        <accepts>native-type-extractor.html</accepts>
+        <accepts>custom-type-extractor.html</accepts>
+    </rule>
+    <rule id="mapper-types">
+        <description>Pages of the mapper 1.0 documentation</description>
+        <accepts>mapper-platforms.html</accepts>
+        <accepts>standard-platform.html</accepts>
+        <accepts>custom-platform.html</accepts>
+        <accepts>types.html</accepts>
+        <accepts>mixed-type.html</accepts>
+        <accepts>bool-type.html</accepts>
+    </rule>
+    <rule id="mapper-extending">
+        <description>Pages of the mapper 1.0 documentation</description>
+        <accepts>custom-type.html</accepts>
+        <accepts>type-builders.html</accepts>
+        <accepts>custom-type-builder.html</accepts>
+    </rule>
+    <rule id="mapper-coercion">
+        <description>Pages of the mapper 1.0 documentation</description>
+        <accepts>type-coercers.html</accepts>
+        <accepts>array-key-type-coercer.html</accepts>
+        <accepts>bool-type-coercer.html</accepts>
+        <accepts>float-type-coercer.html</accepts>
+        <accepts>int-type-coercer.html</accepts>
+        <accepts>string-type-coercer.html</accepts>
+        <accepts>custom-type-coercer.html</accepts>
+    </rule>
+    <rule id="mapper-metadata">
+        <description>Pages of the mapper 1.0 documentation</description>
+        <accepts>type-metadata.html</accepts>
+        <accepts>meta-configuration.html</accepts>
+        <accepts>meta-reader.html</accepts>
+        <accepts>meta-reader-reflection.html</accepts>
+        <accepts>meta-reader-attribute.html</accepts>
+        <accepts>meta-reader-phpdoc.html</accepts>
+        <accepts>meta-reader-array.html</accepts>
+        <accepts>meta-reader-php-config.html</accepts>
+        <accepts>meta-reader-json-config.html</accepts>
+        <accepts>meta-reader-neon-config.html</accepts>
+        <accepts>meta-reader-yaml-config.html</accepts>
+        <accepts>meta-reader-null.html</accepts>
+        <accepts>meta-provider.html</accepts>
+        <accepts>meta-provider-in-memory.html</accepts>
+        <accepts>meta-provider-psr6-cache.html</accepts>
+        <accepts>meta-provider-psr16-cache.html</accepts>
+        <accepts>meta-provider-null.html</accepts>
+        <accepts>meta-clock.html</accepts>
+        <accepts>meta-references.html</accepts>
+    </rule>
+    <rule id="mapper-classes">
+        <description>Pages of the mapper 1.0 documentation</description>
+        <accepts>meta-expressions.html</accepts>
+    </rule>
 </rules>
