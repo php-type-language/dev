@@ -14,7 +14,7 @@ tab says what is used instead.
 
 Normalizes objects of the class into an associative array (`true`) or into
 `stdClass` (`false`). Overrides the
-[configuration option](mapper-configuration.md#object-as-array).
+[configuration option](mapper-configuration.md#normalize-as-array).
 
 <tabs group="metadata">
 <tab title="Attributes" group-key="attributes">
@@ -40,7 +40,7 @@ There is no PHPDoc tag for this option.
 <tab title="Reflection" group-key="reflection">
 
 <note>
-PHP has no such declaration: the <a href="mapper-configuration.md#object-as-array">configuration option</a> is used.
+PHP has no such declaration: the <a href="mapper-configuration.md#normalize-as-array">configuration option</a> is used.
 </note>
 
 </tab>

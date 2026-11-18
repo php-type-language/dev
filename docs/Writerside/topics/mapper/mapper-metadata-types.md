@@ -113,7 +113,7 @@ $mapper->denormalize(['tags' => ['php', 'mapper']], User::class);
 
 $mapper->denormalize(['tags' => ['php', '']], User::class);
 // throws InvalidValueException: $.tags[1]: Value must be of type
-// "non-empty-string" (non-empty)
+// non-empty-string (non-empty)
 ```
 
 <tip>
@@ -255,7 +255,7 @@ $user = $mapper->denormalize(['id' => '42'], User::class);
 $user->id;                 // 42
 $mapper->normalize($user); // ['id' => 42]
 $mapper->denormalize(['id' => -1], User::class);
-// throws InvalidValueException: $.id: Value must be of type "positive-int"
+// throws InvalidValueException: $.id: Value must be of type positive-int
 // (>= 1)
 ```
 
@@ -268,7 +268,7 @@ with its own value is written and read directly, bypassing its hooks.
 
 Disables [type coercion](mapper-coercion.md) for the value of the property
 and its nested values, or enables it with `false`. Overrides the
-[configuration option](mapper-configuration.md#strict-types).
+[configuration option](mapper-configuration.md#strict).
 
 <tabs group="metadata">
 <tab title="Attributes" group-key="attributes">
@@ -294,7 +294,7 @@ There is no PHPDoc tag for this option.
 <tab title="Reflection" group-key="reflection">
 
 <note>
-PHP has no such declaration: the <a href="mapper-configuration.md#strict-types">configuration option</a> is used.
+PHP has no such declaration: the <a href="mapper-configuration.md#strict">configuration option</a> is used.
 </note>
 
 </tab>
@@ -359,6 +359,6 @@ App\User:
 ```php
 $mapper->denormalize(['id' => 42], User::class); // User { id: 42 }
 $mapper->denormalize(['id' => '42'], User::class);
-// throws InvalidValueException: $.id: Value must be of type "int", but "42"
+// throws InvalidValueException: $.id: Value must be of type int, but "42"
 // given
 ```

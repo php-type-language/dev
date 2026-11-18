@@ -36,7 +36,7 @@ final class MoneyType implements TypeInterface
     public function denormalize(mixed $value, Context $context): Money
     {
         if (!$this->isDenormalizable($value, $context)) {
-            throw InvalidValueException::becauseInvalidType('money', $value);
+            throw InvalidValueException::becauseInvalidType($value);
         }
 
         [$amount, $currency] = \explode(' ', $value);
@@ -52,7 +52,7 @@ final class MoneyType implements TypeInterface
     public function normalize(mixed $value, Context $context): string
     {
         if (!$value instanceof Money) {
-            throw InvalidValueException::becauseInvalidType('money', $value);
+            throw InvalidValueException::becauseInvalidType($value);
         }
 
         return \sprintf(
@@ -81,7 +81,7 @@ $mapper->denormalize('10.50 USD', 'money');
 
 $mapper->normalize(new Money(1050, 'USD'), 'money'); // '10.50 USD'
 $mapper->denormalize('ten dollars', 'money');
-// throws InvalidValueException: $: Value must be of type "money", but "ten
+// throws InvalidValueException: $: Value must be of type money, but "ten
 // dollars" given
 
 $mapper->denormalize(['10.50 USD'], 'list<money>');
@@ -143,6 +143,36 @@ $mapper = new Mapper(builders: [new CollectionTypeBuilder()]);
 
 $mapper->denormalize(['1', '2'], 'collection<int>');
 // Collection { items: [1, 2] }
+```
+
+An error of an item, wrapped by your type with the key of the item
+(`InvalidValueException::wrapWithPath()`), is shown without the expected
+type (`$[1]: Value "x" is invalid`), unless the builder tells the type of
+its items with `CompositeTypeBuilderInterface`:
+
+```php
+use TypeLang\Mapper\Type\Builder\CompositeTypeBuilderInterface;
+
+final class CollectionTypeBuilder implements CompositeTypeBuilderInterface
+{
+    // ...
+
+    public function tryGetNestedType(
+        TypeNode $node,
+        int|string $key,
+        bool $isKey,
+    ): ?TypeNode {
+        if ($isKey) {
+            return null;
+        }
+
+        return $this->pattern->findArguments($node)['T'] ?? null;
+    }
+}
+
+$mapper->denormalize(['1', 'x'], 'collection<int>');
+// throws InvalidValueException: $[1]: Value must be of type int, but "x"
+// given
 ```
 
 ## Type Decorators

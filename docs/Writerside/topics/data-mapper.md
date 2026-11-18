@@ -94,7 +94,7 @@ Invalid data throws an exception with the path of the wrong value:
 
 ```php
 $mapper->denormalize(['id' => 'abc'], User::class);
-// throws InvalidValueException: $.id: Value must be of type "int", but "abc"
+// throws InvalidValueException: $.id: Value must be of type int, but "abc"
 // given
 ```
 

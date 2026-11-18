@@ -15,11 +15,11 @@ $mapper = new Mapper(
     config: new Configuration(
         // options = true|false
         // default = false
-        isStrict: false,
+        strict: false,
 
         // options = true|false
         // default = true
-        isObjectAsArray: true,
+        normalizeAsArray: true,
 
         // options = int<1, max>
         // default = 1
@@ -27,7 +27,15 @@ $mapper = new Mapper(
 
         // options = true|false
         // default = false
-        shouldRejectExtraFields: false,
+        rejectExtraFields: false,
+
+        // options = int<0, max>
+        // default = 1
+        expectedTypeDepth: 1,
+
+        // options = int<1, max>|null
+        // default = null
+        expectedTypeMaxFields: null,
     ),
 );
 ```
@@ -37,17 +45,17 @@ Create the mapper once and reuse it (for example, as a service of your
 container): it parses and builds every type only once.
 </tip>
 
-## Strict Types
+## Strict
 
 Disables [type coercion](mapper-coercion.md) on denormalization: `'42'` is
 no longer an `int`.
 
 ```php
-$mapper = new Mapper(new Configuration(isStrict: true));
+$mapper = new Mapper(new Configuration(strict: true));
 
 $mapper->denormalize(42, 'int');                               // 42
 $mapper->denormalize('42', 'int');
-// throws InvalidValueException: $: Value must be of type "int", but "42" given
+// throws InvalidValueException: $: Value must be of type int, but "42" given
 
 $mapper->denormalize(42, 'float');                             // 42.0
 $mapper->denormalize((object) ['id' => 42], 'array{id: int}'); // ['id' => 42]
@@ -60,7 +68,7 @@ A single property can override the option with
 <a href="mapper-metadata-types.md#strict-types">metadata</a>.
 </note>
 
-## Object As Array
+## Normalize As Array
 
 Whether objects are normalized into associative arrays or into
 `stdClass`.
@@ -71,7 +79,7 @@ final class User
     public string $name = 'Alice';
 }
 
-$mapper = new Mapper(new Configuration(isObjectAsArray: false));
+$mapper = new Mapper(new Configuration(normalizeAsArray: false));
 
 $mapper->normalize(new User()); // (object) ['name' => 'Alice']
 ```
@@ -90,7 +98,7 @@ fails on the first one. Normalization always fails on the first one.
 $mapper = new Mapper(new Configuration(maxViolations: 100));
 
 $mapper->denormalize(['a', 2, 'c'], 'list<int>');
-// throws InvalidValueException: $[0]: Value must be of type "int", but "a"
+// throws InvalidValueException: $[0]: Value must be of type int, but "a"
 // given (and 1 more)
 ```
 
@@ -108,7 +116,7 @@ final class User
     public string $name;
 }
 
-$mapper = new Mapper(new Configuration(shouldRejectExtraFields: true));
+$mapper = new Mapper(new Configuration(rejectExtraFields: true));
 
 $mapper->denormalize(['name' => 'Alice', 'age' => 42], User::class);
 // throws InvalidValueException: $.age: Unexpected field "age"
@@ -118,6 +126,55 @@ $mapper->denormalize(['name' => 'Alice', 'age' => 42], User::class);
 The field of a <a href="mapper-metadata-discriminator.md">discriminator</a>
 is not an extra field.
 </note>
+
+## Expected Type Depth
+
+How many levels of classes the [messages](mapper-errors.md#messages) describe
+by their fields. By default `1`: the fields of a class, its nested classes
+are `object`. `0` describes a class as `object`.
+
+```php
+final class User
+{
+    public string $name;
+    public ?Address $address = null;
+}
+
+final class Address
+{
+    public string $city;
+}
+
+$mapper = new Mapper(new Configuration(expectedTypeDepth: 0));
+
+$mapper->denormalize('x', User::class);
+// throws InvalidValueException: $: Value must be of type object, but "x" given
+
+$mapper = new Mapper();
+
+$mapper->denormalize('x', User::class);
+// throws InvalidValueException: $: Value must be of type object{name: string,
+// address?: ?object}, but "x" given
+
+$mapper = new Mapper(new Configuration(expectedTypeDepth: 2));
+
+$mapper->denormalize('x', User::class);
+// throws InvalidValueException: $: Value must be of type object{name: string,
+// address?: ?object{city: string}}, but "x" given
+```
+
+## Expected Type Max Fields
+
+How many fields of a class the messages show, the others are `...`. By
+default all of them.
+
+```php
+$mapper = new Mapper(new Configuration(expectedTypeMaxFields: 1));
+
+$mapper->denormalize('x', User::class);
+// throws InvalidValueException: $: Value must be of type object{name: string,
+// ...}, but "x" given
+```
 
 ## Other Arguments
 
@@ -133,6 +190,7 @@ $mapper = new Mapper(
     builders: [/* TypeBuilderInterface */],
     hooks: [/* ClassHookInterface */],
     decorators: [/* TypeDecoratorInterface */],
+    expanders: [/* TypeExpanderInterface */],
     accessors: [/* AccessStrategyInterface */],
     instantiators: [/* InstantiationStrategyInterface */],
     coercers: [/* 'int' => CoercerInterface, ... */],
@@ -144,6 +202,8 @@ $mapper = new Mapper(
 
 - `builders`, `hooks`, `decorators`, `accessors`, `instantiators` — see
   [extending](mapper-extending.md), they are tried before the built-in ones
+- `expanders` — expand the types of your own in the messages of errors, see
+  [errors](mapper-errors.md), tried before the built-in ones
 - `coercers` — replace the built-in coercers by the type: `int`, `float`,
   `string`, `bool`, `array`, see
   [type coercion](mapper-coercion.md#custom-coercers)

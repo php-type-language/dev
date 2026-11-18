@@ -58,15 +58,15 @@ Are checked on denormalization only.
 ```php
 $mapper->denormalize(5, 'int<1, 10>'); // 5
 $mapper->denormalize(42, 'int<1, 10>');
-// throws InvalidValueException: $: Value must be of type "int<1, 10>"
+// throws InvalidValueException: $: Value must be of type int<1, 10>
 // (between 1 and 10)
 
 $mapper->denormalize('', 'non-empty-string');
-// throws InvalidValueException: $: Value must be of type "non-empty-string"
+// throws InvalidValueException: $: Value must be of type non-empty-string
 // (non-empty)
 
 $mapper->denormalize('abc', 'numeric-string');
-// throws InvalidValueException: $: Value must be of type "numeric-string"
+// throws InvalidValueException: $: Value must be of type numeric-string
 // (numeric)
 ```
 
@@ -91,7 +91,7 @@ final class Access
 
 $mapper->denormalize(5, 'int-mask<1, 2, 4>');      // 5
 $mapper->denormalize(8, 'int-mask<1, 2, 4>');
-// throws InvalidValueException: $: Value must be of type "int-mask<1, 2, 4>"
+// throws InvalidValueException: $: Value must be of type int-mask<1, 2, 4>
 // (bits of 7)
 
 $mapper->denormalize(3, 'int-mask-of<Access::*>'); // 3
@@ -110,7 +110,7 @@ $mapper->denormalize('active', '"active"|"blocked"'); // 'active'
 $mapper->denormalize(null, 'null');                   // null
 $mapper->denormalize('GET', 'Http::METHOD_GET');      // 'GET'
 $mapper->denormalize('PUT', 'Http::METHOD_*');
-// throws InvalidValueException: $: Value must be of type "Http::METHOD_*", but
+// throws InvalidValueException: $: Value must be of type 'GET'|'POST', but
 // "PUT" given
 
 $mapper->denormalize(\E_WARNING, 'E_*');              // 2
@@ -130,7 +130,7 @@ $mapper->denormalize(\E_WARNING, 'E_*');              // 2
 $mapper->denormalize(['1', '2'], 'list<int>');                  // [1, 2]
 $mapper->denormalize(['a' => '1'], 'array<string, int>');       // ['a' => 1]
 $mapper->denormalize([], 'non-empty-list<int>');
-// throws InvalidValueException: $: Value must be of type "non-empty-list<int>"
+// throws InvalidValueException: $: Value must be of type non-empty-list<int>
 // (non-empty)
 
 $mapper->normalize(new ArrayIterator([1, 2]), 'iterable<int>'); // [1, 2]
@@ -193,8 +193,8 @@ $mapper->denormalize('2026-01-02', "DateTimeImmutable<'Y-m-d'>");
 // DateTimeImmutable('2026-01-02T00:00:00+00:00')
 
 $mapper->denormalize('02.01.2026', "DateTimeImmutable<'Y-m-d'>");
-// throws InvalidValueException: $: Value must be of type
-// "DateTimeImmutable<'Y-m-d'>", but "02.01.2026" given
+// throws InvalidValueException: $: Value must be of type string, but
+// "02.01.2026" given
 
 $mapper->normalize(new DateTimeImmutable('2026-01-02 03:04:05+00:00'));
 // '2026-01-02T03:04:05+00:00'

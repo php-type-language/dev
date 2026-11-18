@@ -120,7 +120,7 @@ $mapper->denormalize(['type' => 'circle', 'radius' => 2], Shape::class);
 
 $mapper->denormalize(['type' => 'oval'], Shape::class);
 // throws InvalidValueException: $.type: Value must be of type
-// "'circle'|'square'", but "oval" given
+// 'circle'|'square', but "oval" given
 
 $mapper->denormalize(['radius' => 2], Shape::class);
 // throws InvalidValueException: $.type: Required field "type" is missing

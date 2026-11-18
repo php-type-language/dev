@@ -41,7 +41,7 @@ There is no PHPDoc tag for this option.
 <tab title="Reflection" group-key="reflection">
 
 <note>
-The default message is used: <code>Value must be of type "App\User", but 42 given</code>.
+The default message is used: <code>Value must be of type object{name: string}, but 42 given</code>.
 </note>
 
 </tab>
@@ -97,7 +97,9 @@ $mapper->denormalize(42, User::class);
 Replaces the message of the error of the property value. Errors of its
 nested values keep their own messages. Placeholders: `{{value}}` and those
 of the replaced error: `{{expected}}` for a wrong type, plus `{{check}}` for
-a failed check such as `positive-int`.
+a failed check such as `positive-int`. The text replaces both errors, a
+placeholder without data is empty: `{{check}}` of a wrong type, or
+`{{expected}}` on normalization.
 
 <tabs group="metadata">
 <tab title="Attributes" group-key="attributes">
@@ -123,7 +125,7 @@ There is no PHPDoc tag for this option.
 <tab title="Reflection" group-key="reflection">
 
 <note>
-The default message is used: <code>Value must be of type "int", but "old" given</code>.
+The default message is used: <code>Value must be of type int, but "old" given</code>.
 </note>
 
 </tab>
