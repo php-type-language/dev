@@ -4,11 +4,11 @@
 <secondary-label ref="beta"/>
 <show-structure for="chapter" depth="2"/>
 
-Configuration is a `TypeLang\Mapper\Context\Configuration` DTO passed to the
+Configuration is a `TypeLang\Mapper\Configuration` DTO passed to the
 `TypeLang\Mapper\Mapper` constructor.
 
 ```php
-use TypeLang\Mapper\Context\Configuration;
+use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Mapper;
 
 $mapper = new Mapper(
@@ -179,7 +179,7 @@ $mapper->denormalize('x', User::class);
 ## Other Arguments
 
 ```php
-use TypeLang\Mapper\Context\Configuration;
+use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\Mapping\MetadataProviderFactory;
 use TypeLang\Parser\TypeParser;

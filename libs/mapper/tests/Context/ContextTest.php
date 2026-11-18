@@ -7,7 +7,7 @@ namespace TypeLang\Mapper\Tests\Context;
 use TypeLang\Mapper\Context\ClassAccessors;
 use TypeLang\Mapper\Context\ClassTypes;
 use TypeLang\Mapper\Context\Coercers;
-use TypeLang\Mapper\Context\Configuration;
+use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Context\Context;
 use TypeLang\Mapper\Instantiator\InstantiatorFactory;
 use TypeLang\Mapper\Mapping\MetadataProviderFactory;

@@ -9,7 +9,6 @@ use TypeLang\Mapper\Coercer\CoercerInterface;
 use TypeLang\Mapper\Context\ClassAccessors;
 use TypeLang\Mapper\Context\ClassTypes;
 use TypeLang\Mapper\Context\Coercers;
-use TypeLang\Mapper\Context\Configuration;
 use TypeLang\Mapper\Context\Context;
 use TypeLang\Mapper\Diagnostics\Printer\Value\ShortValuePrinter;
 use TypeLang\Mapper\Diagnostics\PublicViolationFormatter;

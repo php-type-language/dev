@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Context;
 
+use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Exception\InvalidValueException\DeclaredTypeFinder;
 
 /**

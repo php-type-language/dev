@@ -91,7 +91,7 @@ final class User
     public string $name;
 }
 
-use TypeLang\Mapper\Context\Configuration;
+use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Mapper;
 
@@ -188,7 +188,7 @@ The message shows `$violation->expected`, the type with the classes is
 message with the classes for a log, format the violations yourself:
 
 ```php
-use TypeLang\Mapper\Context\Configuration;
+use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Diagnostics\Printer\Path\JsonPathPrinter;
 use TypeLang\Mapper\Diagnostics\PublicViolationFormatter;
 use TypeLang\Mapper\Diagnostics\ViolationFormatter;

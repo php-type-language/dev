@@ -6,7 +6,7 @@ namespace TypeLang\Mapper\Tests;
 
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use TypeLang\Mapper\Context\Configuration;
+use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Diagnostics\Printer\Value\ShortValuePrinter;
 use TypeLang\Mapper\Diagnostics\PublicViolationFormatter;
 use TypeLang\Mapper\Diagnostics\ViolationFormatter;
