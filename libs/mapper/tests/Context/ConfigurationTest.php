@@ -11,11 +11,11 @@ final class ConfigurationTest extends TestCase
 {
     public function testStrictnessIsOverriddenInCopy(): void
     {
-        $config = new Configuration(isStrict: false);
-        $strict = $config->withStrictTypes(true);
+        $config = new Configuration(strict: false);
+        $strict = $config->withStrict(true);
 
         self::assertNotSame($config, $strict);
-        self::assertFalse($config->isStrict);
-        self::assertTrue($strict->isStrict);
+        self::assertFalse($config->strict);
+        self::assertTrue($strict->strict);
     }
 }

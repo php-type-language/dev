@@ -59,10 +59,7 @@ final class MixedTypeTest extends TestCase
         self::assertNormalizationFails(
             'mixed',
             ['items' => [$address]],
-            \sprintf(
-                '$.items[0].city: Typed property %s::$city must not be accessed before initialization',
-                AddressStub::class,
-            ),
+            '$.items[0].city: Value null is rejected',
         );
     }
 
@@ -83,7 +80,7 @@ final class MixedTypeTest extends TestCase
 
     public function testDynamicObjectStaysObjectInCaseOfObjectsAreNotArrays(): void
     {
-        $mapper = self::createMapper(config: new Configuration(isObjectAsArray: false));
+        $mapper = self::createMapper(config: new Configuration(normalizeAsArray: false));
 
         self::assertEquals(
             (object) ['a' => (object) []],
