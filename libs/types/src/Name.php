@@ -193,6 +193,63 @@ final class Name extends SymbolNode implements
     }
 
     /**
+     * Whether the name is the given word alone, such as a keyword of a type.
+     * The case is not taken into account. A name with a namespace or with the
+     * leading separator is not the word.
+     *
+     * ```
+     *  Name::from('object')->is('object')      // true
+     *  Name::from('Object')->is('object')      // true
+     *  Name::from('\object')->is('object')     // false
+     *  Name::from('App\Object')->is('object')  // false
+     *
+     *  if ($node->name->is('value-of')) {
+     *      // value-of<T>
+     *  }
+     * ```
+     *
+     * @api
+     *
+     * @param non-empty-string $word
+     */
+    public function is(string $word): bool
+    {
+        return $this->namespace === null && \strcasecmp($this->value, $word) === 0;
+    }
+
+    /**
+     * Returns the name of the class the name stands for, without the leading
+     * separator, such as for {@see \class_exists()} or a comparison with
+     * `Foo::class`. {@see null} in case of the name is relative to the
+     * current namespace: such a name is to be resolved first.
+     *
+     * ```
+     *  Name::from('\Some\Any')->toClassString()      // 'Some\Any'
+     *  Name::from('Some\Any')->toClassString()       // 'Some\Any'
+     *  Name::from('Any')->toClassString()            // 'Any'
+     *  Name::from('namespace\Any')->toClassString()  // null
+     *
+     *  $class = $node->name->toClassString();
+     *
+     *  if ($class !== null && \enum_exists($class)) {
+     *      // a name of an enum
+     *  }
+     * ```
+     *
+     * @api
+     *
+     * @return non-empty-string|null
+     */
+    public function toClassString(): ?string
+    {
+        if ($this->namespace?->kind === NamespaceKind::NamespaceRelative) {
+            return null;
+        }
+
+        return \implode(self::DELIMITER, $this->toArray());
+    }
+
+    /**
      * Returns the name that is made of the last word alone, with no namespace.
      *
      * ```

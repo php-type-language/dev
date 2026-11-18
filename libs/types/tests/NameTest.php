@@ -247,6 +247,54 @@ final class NameTest extends TestCase
         self::assertSame(5, $name->offset);
     }
 
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string, bool}>
+     */
+    public static function wordDataProvider(): iterable
+    {
+        yield 'the word' => ['object', 'object', true];
+        yield 'the word in other case' => ['Object', 'object', true];
+        yield 'other word' => ['array', 'object', false];
+        yield 'the word in the root namespace' => ['\object', 'object', false];
+        yield 'the word in a namespace' => ['App\Object', 'object', false];
+        yield 'the word in the current namespace' => ['namespace\object', 'object', false];
+    }
+
+    /**
+     * @param non-empty-string $text
+     * @param non-empty-string $word
+     */
+    #[Test]
+    #[DataProvider('wordDataProvider')]
+    public function nameIsTheWordAloneInAnyCase(string $text, string $word, bool $expected): void
+    {
+        self::assertSame($expected, self::nameOf($text)->is($word));
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string|null}>
+     */
+    public static function classStringDataProvider(): iterable
+    {
+        yield 'a simple name' => ['Any', 'Any'];
+        yield 'a qualified name' => ['Some\Any', 'Some\Any'];
+        yield 'a fully qualified name' => ['\Some\Any', 'Some\Any'];
+        yield 'a root name' => ['\Any', 'Any'];
+        yield 'a name of the current namespace' => ['namespace\Any', null];
+        yield 'a name in the current namespace' => ['namespace\Some\Any', null];
+    }
+
+    /**
+     * @param non-empty-string $text
+     * @param non-empty-string|null $expected
+     */
+    #[Test]
+    #[DataProvider('classStringDataProvider')]
+    public function classStringHasNoLeadingSeparator(string $text, ?string $expected): void
+    {
+        self::assertSame($expected, self::nameOf($text)->toClassString());
+    }
+
     #[Test]
     public function unqualifiedNameOfASimpleNameIsTheSameNode(): void
     {
