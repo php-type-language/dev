@@ -11,14 +11,15 @@ final class Configuration
 {
     public function __construct(
         /**
-         * Whether a value must match the type exactly, without coercion
+         * Whether a value must match the type exactly on denormalization,
+         * without coercion. A property may override it.
          */
-        public readonly bool $isStrict = false,
+        public readonly bool $strict = false,
         /**
          * Whether an object is normalized to an array or to a
-         * {@see \stdClass}, a class may override it
+         * {@see \stdClass}. A class may override it.
          */
-        public readonly bool $isObjectAsArray = true,
+        public readonly bool $normalizeAsArray = true,
         /**
          * Number of violations a denormalization collects before it fails,
          * the first one fails it by default
@@ -28,23 +29,41 @@ final class Configuration
         public readonly int $maxViolations = 1,
         /**
          * Whether a field of the data that no property of a class and no
-         * field of a sealed shape takes is a violation, such fields are
-         * dropped by default
+         * field of a sealed shape takes is a violation on denormalization,
+         * such fields are dropped by default
          */
-        public readonly bool $shouldRejectExtraFields = false,
+        public readonly bool $rejectExtraFields = false,
+        /**
+         * Number of levels of the classes described by their fields in the
+         * expected types of the violations, `0` describes a class as
+         * `object`
+         *
+         * @var int<0, max>
+         */
+        public readonly int $expectedTypeDepth = 1,
+        /**
+         * Number of fields a type is described by in the expected types of
+         * the violations, the others are shown as `...`, {@see null} shows
+         * all of them
+         *
+         * @var int<1, max>|null
+         */
+        public readonly ?int $expectedTypeMaxFields = null,
     ) {}
 
     /**
      * Returns a copy with the strictness overridden, the other settings are
      * kept.
      */
-    public function withStrictTypes(bool $isStrict): self
+    public function withStrict(bool $strict): self
     {
         return new self(
-            isStrict: $isStrict,
-            isObjectAsArray: $this->isObjectAsArray,
+            strict: $strict,
+            normalizeAsArray: $this->normalizeAsArray,
             maxViolations: $this->maxViolations,
-            shouldRejectExtraFields: $this->shouldRejectExtraFields,
+            rejectExtraFields: $this->rejectExtraFields,
+            expectedTypeDepth: $this->expectedTypeDepth,
+            expectedTypeMaxFields: $this->expectedTypeMaxFields,
         );
     }
 }
