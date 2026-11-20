@@ -58,36 +58,96 @@ Everything else is described with metadata:
 | YAML Config    | `App\User: ...`                          | `symfony/yaml`              |
 | NEON Config    | `App\User: ...`                          | `nette/neon`                |
 
-Attributes, PHPDoc and reflection are always enabled, config files are
-[enabled explicitly](#config-files). Priority, from the highest: config
-files, attributes, PHPDoc, reflection.
+Attributes, PHPDoc and reflection are enabled by default, config files are
+[enabled explicitly](#config-files). Priority, from the highest: attributes,
+PHPDoc, reflection.
 
-## Config Files
+## Readers
 
-A config file is a map of classes to their metadata. Pass the readers to the
-metadata provider:
+The metadata provider is built by `MetadataBuilder`. A reader of a
+higher priority overrides the values of a lower one, of readers with an
+equal priority the later added one wins. Reflection is always the lowest.
 
 ```php
 use TypeLang\Mapper\Mapper;
-use TypeLang\Mapper\Mapping\MetadataProviderFactory;
-use TypeLang\Mapper\Mapping\Reader\YamlFileMetadataReader;
+use TypeLang\Mapper\Mapping\MetadataBuilder;
+
+// attributes (300), PHPDoc @type-lang-var (200), PHPDoc @var (100), reflection
+$builder = MetadataBuilder::createDefault();
+
+// reflection only
+$builder = new MetadataBuilder();
 
 $mapper = new Mapper(
-    metadata: MetadataProviderFactory::create(
-        readers: [
-            new YamlFileMetadataReader(__DIR__ . '/mapping.yaml'),
-        ],
-    ),
+    metadata: (new MetadataBuilder())
+        ->withPhpDocReader(priority: 10)
+        ->withAttributeReader(priority: 20)
+        ->withAddedReader(new MyReader(), priority: 30)
+        ->build(),
 );
 ```
 
-| Format | Reader                   |
-|--------|--------------------------|
-| PHP    | `PhpFileMetadataReader`  |
-| JSON   | `JsonFileMetadataReader` |
-| YAML   | `YamlFileMetadataReader` |
-| NEON   | `NeonFileMetadataReader` |
-| array  | `ArrayMetadataReader`    |
+| Method                   | Reader                                  |
+|--------------------------|-----------------------------------------|
+| `withAttributeReader()`  | attributes                              |
+| `withPhpDocReader()`     | PHPDoc tags                             |
+| `withYamlReader()`       | YAML config                             |
+| `withNeonReader()`       | NEON config                             |
+| `withJsonReader()`       | JSON config                             |
+| `withPhpReader()`        | PHP config                              |
+| `withAddedReader()`      | any `MetadataReaderInterface`           |
+| `withReflectionReader()` | replaces the selector of the properties |
+
+The type parser of the readers and the expression language of the
+attributes are passed once:
+
+```php
+new MetadataBuilder(parser: new TypeParser(), expressions: new ExpressionLanguage());
+```
+
+### PHPDoc Tags
+
+```php
+use TypeLang\Mapper\Mapping\Reader\PhpDocMetadataReader\MapperPlatform;
+
+$builder = MetadataBuilder::createDefault()
+    // @api-var of a property, @api-param of a set hook, @api-return of a get hook
+    ->withPhpDocReader(new MapperPlatform(
+        var: 'api-var',
+        varAliases: ['api-type'],
+        return: 'api-return',
+        returnAliases: [],
+        param: 'api-param',
+        paramAliases: [],
+    ), priority: 250);
+```
+
+The default tags (`MapperPlatform::createWithDefaultTagNames()`) are `@var`,
+`@param`, `@return` and their `@phpstan-*`, `@psalm-*` and `@phan-*` aliases.
+
+## Config Files
+
+A config file is a map of classes to their metadata:
+
+```php
+use TypeLang\Mapper\Mapper;
+use TypeLang\Mapper\Mapping\MetadataBuilder;
+
+$mapper = new Mapper(
+    metadata: MetadataBuilder::createDefault()
+        ->withYamlReader(__DIR__ . '/mapping.yaml', priority: 400)
+        ->build(),
+);
+```
+
+| Format | Method             | Requires       |
+|--------|--------------------|----------------|
+| PHP    | `withPhpReader()`  |                |
+| JSON   | `withJsonReader()` |                |
+| YAML   | `withYamlReader()` | `symfony/yaml` |
+| NEON   | `withNeonReader()` | `nette/neon`   |
+
+An array is read by `withAddedReader(new ArrayMetadataReader([...]))`.
 
 ```yaml
 App\User:
@@ -107,17 +167,20 @@ $['App\User'].properties.email.nmae</code>
 
 ## Caching
 
-Reading metadata (especially PHPDoc) is slow. Pass a PSR-6 or PSR-16 cache:
+Reading metadata (especially PHPDoc) is slow. Add PSR-6 or PSR-16 caches,
+from the first one checked to the last one:
 
 ```php
 use TypeLang\Mapper\Mapper;
-use TypeLang\Mapper\Mapping\MetadataProviderFactory;
+use TypeLang\Mapper\Mapping\MetadataBuilder;
 
 $mapper = new Mapper(
-    metadata: MetadataProviderFactory::create(
-        cache: $psr16cache,
-    ),
+    metadata: MetadataBuilder::createDefault()
+        ->withPsr16Cache($redis, prefix: 'hot_')
+        ->withPsr6Cache($files, prefix: 'cold_')
+        ->build(),
 );
+// a miss of Redis reads the files and stores the metadata in Redis
 ```
 
 <warning>

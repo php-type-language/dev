@@ -181,7 +181,7 @@ $mapper->denormalize('x', User::class);
 ```php
 use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Mapper;
-use TypeLang\Mapper\Mapping\MetadataProviderFactory;
+use TypeLang\Mapper\Mapping\MetadataBuilder;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Printer\PrettyTypePrinter;
 
@@ -194,7 +194,7 @@ $mapper = new Mapper(
     accessors: [/* AccessStrategyInterface */],
     instantiators: [/* InstantiationStrategyInterface */],
     coercers: [/* 'int' => CoercerInterface, ... */],
-    metadata: MetadataProviderFactory::create(),
+    metadata: MetadataBuilder::createDefault()->build(),
     printer: new PrettyTypePrinter(),
     parser: new TypeParser(),
 );
@@ -208,6 +208,5 @@ $mapper = new Mapper(
   `string`, `bool`, `array`, see
   [type coercion](mapper-coercion.md#custom-coercers)
 - `metadata` — sources of the class mapping, see [metadata](mapper-metadata.md)
-- `printer` — prints types: the key of the cache of built types and the type
-  in errors of its definition
+- `printer` — prints types in errors
 - `parser` — the parser of the type strings

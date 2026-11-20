@@ -449,13 +449,13 @@ A strategy of the mapper is used for the classes without their own one.
 
 ```php
 use TypeLang\Mapper\Mapper;
-use TypeLang\Mapper\Mapping\MetadataProviderFactory;
+use TypeLang\Mapper\Mapping\MetadataBuilder;
 use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 
 $mapper = new Mapper(
-    metadata: MetadataProviderFactory::create(
-        strategy: new SnakeCaseNamingStrategy(),
-    ),
+    metadata: MetadataBuilder::createDefault()
+        ->withNamingStrategy(new SnakeCaseNamingStrategy())
+        ->build(),
 );
 
 $mapper->normalize(new User()); // ['first_name' => 'Ada']

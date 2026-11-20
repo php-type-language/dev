@@ -201,12 +201,16 @@ $mapper->normalize(new DateTimeImmutable('2026-01-02 03:04:05+00:00'));
 
 $mapper->denormalize(1767225600, "DateTimeImmutable<'U'>");
 // DateTimeImmutable('2026-01-01T00:00:00+00:00')
+
+$mapper->denormalize(1767225600, DateTimeImmutable::class);
+// throws InvalidValueException: $: Value must be of type string, but
+// 1767225600 given
 ```
 
 <note>
-Without a format a string is parsed by the constructor of the class, and
-a date is normalized to RFC 3339. Use the <code>'U'</code> format for
-timestamps.
+Without a format only a string is a date: it is parsed by the constructor
+of the class, and a date is normalized to RFC 3339. Use the
+<code>'U'</code> format for timestamps.
 </note>
 
 ## Objects
