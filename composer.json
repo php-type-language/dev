@@ -42,7 +42,7 @@
         "symfony/expression-language": "^6.4|^7.0|^8.0",
         "symfony/stopwatch": "^6.4|^7.0|^8.0",
         "symfony/yaml": "^6.4|^7.0|^8.0",
-        "twig/twig": "^3.0"
+        "twig/twig": "^3.3.3"
     },
     "autoload-dev": {
         "psr-4": {
