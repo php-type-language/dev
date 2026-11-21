@@ -24,12 +24,14 @@
         "illuminate/cache": "^10.0|^11.0|^12.0|^13.0",
         "illuminate/config": "^10.0|^11.0|^12.0|^13.0",
         "illuminate/container": "^10.0|^11.0|^12.0|^13.0",
+        "laravel/telescope": "^5.0",
         "php-debugbar/php-debugbar": "^2.0|^3.0",
         "phpstan/phpstan": "^2.3.6",
         "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0"
     },
     "suggest": {
-        "barryvdh/laravel-debugbar": "(^3.0|^4.0) Allows showing the mapper calls in the Laravel Debugbar"
+        "barryvdh/laravel-debugbar": "(^3.0|^4.0) Allows showing the mapper calls in the Laravel Debugbar",
+        "laravel/telescope": "(^5.0) Allows recording the mapper calls in Laravel Telescope"
     },
     "autoload-dev": {
         "psr-4": {

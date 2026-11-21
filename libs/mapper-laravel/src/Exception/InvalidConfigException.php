@@ -78,8 +78,8 @@ final class InvalidConfigException extends \InvalidArgumentException
         ));
     }
 
-    public static function becauseProfilerRequiresDebugbar(): self
+    public static function becauseProfilerRequiresPackage(string $key, string $package): self
     {
-        return new self('Mapper profiler requires the "barryvdh/laravel-debugbar" package');
+        return new self(\sprintf('Config "%s" requires the "%s" package', $key, $package));
     }
 }

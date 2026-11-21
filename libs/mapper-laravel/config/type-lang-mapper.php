@@ -66,6 +66,13 @@ return [
     // 'api' => ['strict' => true, 'types' => [App\Mapper\MoneyTypeBuilder::class]]
     'mappers' => [],
 
-    // Mapper tab of the Laravel Debugbar, enabled with the Debugbar by default
-    'profiler' => null,
+    'profiler' => [
+        // Mapper tab of the Laravel Debugbar, enabled with the Debugbar by
+        // default
+        'debugbar' => null,
+
+        // Mapper calls in the logs of Telescope, enabled with Telescope by
+        // default
+        'telescope' => null,
+    ],
 ];

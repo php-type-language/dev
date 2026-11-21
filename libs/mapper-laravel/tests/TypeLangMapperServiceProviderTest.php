@@ -6,10 +6,14 @@ namespace TypeLang\Mapper\Bridge\Laravel\Tests;
 
 use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\DebugBar;
+use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
+use Laravel\Telescope\Contracts\EntriesRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Mapper\Bridge\Laravel\Debugbar\MapperCollector;
 use TypeLang\Mapper\Bridge\Laravel\Exception\InvalidConfigException;
+use TypeLang\Mapper\Bridge\Laravel\ProfilerChain;
+use TypeLang\Mapper\Bridge\Laravel\Telescope\MapperRecorder;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\CacheFactoryStub;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\DecimalCommaCoercerStub;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\ShoutTypeBuilderStub;
@@ -21,6 +25,7 @@ use TypeLang\Mapper\Exception\TypeDefinitionException;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\MapperInterface;
 use TypeLang\Mapper\NormalizerInterface;
+use TypeLang\Mapper\Profiler\ProfilerInterface;
 use TypeLang\Mapper\Profiler\TraceableMapper;
 use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;
 
@@ -144,7 +149,7 @@ final class TypeLangMapperServiceProviderTest extends TestCase
     public function testProfilerCanBeDisabledWithDebugbar(): void
     {
         $container = self::createContainer(
-            config: ['profiler' => false],
+            config: ['profiler' => ['debugbar' => false]],
             configure: static function (Container $container): void {
                 $container->instance('debugbar', new DebugBar());
             },
@@ -153,14 +158,91 @@ final class TypeLangMapperServiceProviderTest extends TestCase
         self::assertInstanceOf(Mapper::class, $container->make('type-lang.mapper'));
     }
 
-    public function testEnabledProfilerRequiresDebugbar(): void
+    public function testMappersAreTracedWithTelescope(): void
     {
-        $container = self::createContainer(['profiler' => true]);
+        $container = self::createContainer(configure: static function (Container $container): void {
+            self::addTelescope($container, isEnabled: true);
+        });
+
+        $mapper = $container->make('type-lang.mapper');
+
+        self::assertInstanceOf(TraceableMapper::class, $mapper);
+        self::assertInstanceOf(MapperRecorder::class, self::getProfiler($mapper));
+    }
+
+    public function testDisabledTelescopeIsNotTraced(): void
+    {
+        $container = self::createContainer(configure: static function (Container $container): void {
+            self::addTelescope($container, isEnabled: false);
+        });
+
+        self::assertInstanceOf(Mapper::class, $container->make('type-lang.mapper'));
+    }
+
+    public function testDebugbarAndTelescopeAreTracedTogether(): void
+    {
+        $debugbar = new DebugBar();
+
+        $container = self::createContainer(configure: static function (Container $container) use ($debugbar): void {
+            $container->instance('debugbar', $debugbar);
+            self::addTelescope($container, isEnabled: true);
+        });
+
+        $mapper = $container->make('type-lang.mapper');
+        $mapper->denormalize('42', 'int');
+
+        self::assertInstanceOf(ProfilerChain::class, self::getProfiler($mapper));
+        self::assertSame(1, $debugbar->getCollector(MapperCollector::NAME)->collect()['count']);
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string}>
+     */
+    public static function profilerWithoutToolDataProvider(): iterable
+    {
+        yield 'debugbar' => ['debugbar', 'barryvdh/laravel-debugbar'];
+        yield 'telescope' => ['telescope', 'laravel/telescope'];
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param non-empty-string $package
+     */
+    #[DataProvider('profilerWithoutToolDataProvider')]
+    public function testEnabledProfilerRequiresItsTool(string $name, string $package): void
+    {
+        $container = self::createContainer(['profiler' => [$name => true]]);
 
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Mapper profiler requires the "barryvdh/laravel-debugbar" package');
+        $this->expectExceptionMessage(\sprintf(
+            'Config "type-lang-mapper.profiler.%s" requires the "%s" package',
+            $name,
+            $package,
+        ));
 
         $container->make('type-lang.mapper');
+    }
+
+    private static function addTelescope(Container $container, bool $isEnabled): void
+    {
+        $container->bind(EntriesRepository::class, static function (): never {
+            throw new \LogicException('Telescope storage is not available in tests');
+        });
+
+        $config = $container->make('config');
+
+        \assert($config instanceof Repository);
+
+        $config->set('telescope.enabled', $isEnabled);
+    }
+
+    private static function getProfiler(TraceableMapper $mapper): ProfilerInterface
+    {
+        $result = (new \ReflectionProperty($mapper, 'profiler'))->getValue($mapper);
+
+        \assert($result instanceof ProfilerInterface);
+
+        return $result;
     }
 
     /**
@@ -205,6 +287,11 @@ final class TypeLangMapperServiceProviderTest extends TestCase
         yield 'integer of named mapper' => [
             ['mappers' => ['api' => ['max_violations' => 0]]],
             'Config "type-lang-mapper.mappers.api.max_violations" must be an integer of at least 1, but int given',
+        ];
+
+        yield 'profiler flag' => [
+            ['profiler' => ['telescope' => 'yes']],
+            'Config "type-lang-mapper.profiler.telescope" must be a boolean, but string given',
         ];
 
         yield 'list' => [

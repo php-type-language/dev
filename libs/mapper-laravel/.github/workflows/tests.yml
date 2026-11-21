@@ -28,6 +28,8 @@ jobs:
           ini-values: "memory_limit=-1"
       - name: Install Dependencies
         uses: nick-invision/retry@v4
+        env:
+          COMPOSER_POLICY_ADVISORIES_BLOCK: 0
         with:
           timeout_minutes: 5
           max_attempts: 3

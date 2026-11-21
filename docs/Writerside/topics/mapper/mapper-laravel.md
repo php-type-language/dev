@@ -116,8 +116,12 @@ return [
         'api' => ['strict' => true],
     ],
 
-    // default = enabled with the Debugbar
-    'profiler' => null,
+    'profiler' => [
+        // default = enabled with the Debugbar
+        'debugbar' => null,
+        // default = enabled with Telescope
+        'telescope' => null,
+    ],
 ];
 ```
 
@@ -175,7 +179,48 @@ metadata reads. The calls are also shown on the timeline.
 ```php
 // config/type-lang-mapper.php
 return [
-    'profiler' => false, // never
-    'profiler' => true,  // also with a disabled Debugbar, fails without one
+    'profiler' => [
+        'debugbar' => false, // never
+        'debugbar' => true,  // also with a disabled Debugbar, fails without one
+    ],
+];
+```
+
+## Telescope
+
+With [Laravel Telescope](https://laravel.com/docs/telescope) each call of a
+mapper is an entry of the "Logs" tab, tied to its request, job or command.
+
+```
+Mapper "api": denormalize(array{id: int}) failed in 0.42 ms
+
+{
+    "mapper": "api",
+    "method": "denormalize",
+    "type": "array{id: int}",
+    "duration": 0.42,
+    "error": "TypeLang\\Mapper\\Exception\\InvalidValueException: ...",
+    "violations": ["$.id: Value must be of type int, but \"x\" given"],
+    "called at": "/app/Http/Controllers/ApiController.php:42"
+}
+```
+
+| Entry           | Level     | Tags                                                         |
+|-----------------|-----------|--------------------------------------------------------------|
+| succeeded call  | `debug`   | `type-lang-mapper`, `type-lang-mapper:api`                   |
+| failed call     | `warning` | `type-lang-mapper`, `type-lang-mapper:api`, `type-lang-mapper:failed` |
+
+<note>
+The input and the output of a call are not recorded: Telescope stores the
+entries in the database.
+</note>
+
+```php
+// config/type-lang-mapper.php
+return [
+    'profiler' => [
+        'telescope' => false, // never
+        'telescope' => true,  // fails without Telescope
+    ],
 ];
 ```
