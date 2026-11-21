@@ -131,7 +131,12 @@ final class MapperCollector extends DataCollector implements
     }
 
     /**
-     * @return array<non-empty-string, array<non-empty-string, mixed>>
+     * @return array<non-empty-string, array{
+     *     icon?: non-empty-string,
+     *     widget?: non-empty-string,
+     *     map?: non-empty-string,
+     *     default?: int|string,
+     * }>
      */
     public function getWidgets(): array
     {
