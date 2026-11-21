@@ -21,6 +21,8 @@ jobs:
         package:
           - local_path: 'libs/mapper'
             split_repository: 'mapper'
+          - local_path: 'libs/mapper-bundle'
+            split_repository: 'mapper-bundle'
           - local_path: 'libs/parser'
             split_repository: 'parser'
           - local_path: 'libs/phpdoc'

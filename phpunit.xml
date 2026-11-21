@@ -16,9 +16,6 @@
         <testsuite name="libs/mapper/bridge/phpstan">
             <directory>libs/mapper/libs/bridge/phpstan/tests</directory>
         </testsuite>
-        <testsuite name="libs/mapper/bridge/symfony">
-            <directory>libs/mapper/libs/bridge/symfony/tests</directory>
-        </testsuite>
         <testsuite name="libs/mapper/coercer">
             <directory>libs/mapper/libs/component/coercer/tests</directory>
         </testsuite>
@@ -39,6 +36,9 @@
         </testsuite>
         <testsuite name="libs/mapper/type-matcher">
             <directory>libs/mapper/libs/component/type-matcher/tests</directory>
+        </testsuite>
+        <testsuite name="libs/mapper-bundle">
+            <directory>libs/mapper-bundle/tests</directory>
         </testsuite>
         <testsuite name="libs/parser">
             <directory>libs/parser/tests</directory>
@@ -63,7 +63,6 @@
         <include>
             <directory>libs/mapper/src</directory>
             <directory>libs/mapper/libs/bridge/phpstan/src</directory>
-            <directory>libs/mapper/libs/bridge/symfony/src</directory>
             <directory>libs/mapper/libs/component/coercer/src</directory>
             <directory>libs/mapper/libs/component/diagnostics/src</directory>
             <directory>libs/mapper/libs/component/instantiator/src</directory>
@@ -71,6 +70,7 @@
             <directory>libs/mapper/libs/component/naming/src</directory>
             <directory>libs/mapper/libs/component/property-accessor/src</directory>
             <directory>libs/mapper/libs/component/type-matcher/src</directory>
+            <directory>libs/mapper-bundle/src</directory>
             <directory>libs/parser/src</directory>
             <directory>libs/phpdoc/src</directory>
             <directory>libs/printer/src</directory>
