@@ -48,7 +48,7 @@
         "psr/simple-cache": "(^2.0|^3.0) Allows caching metadata in a PSR-16 cache",
         "symfony/expression-language": "(^6.4|^7.0|^8.0) Allows skipping properties by an expression",
         "symfony/yaml": "(^6.4|^7.0|^8.0) Allows reading mapping configuration from YAML files",
-        "type-lang/mapper-bundle": "(^2.0) Allows using the mapper as a Symfony bundle",
+        "type-lang/mapper-symfony": "(^2.0) Allows using the mapper as a Symfony bundle",
         "type-lang/phpdoc": "(^2.0) Allows reading property types from PHPDoc"
     },
     "autoload-dev": {

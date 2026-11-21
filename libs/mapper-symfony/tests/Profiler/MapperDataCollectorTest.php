@@ -6,16 +6,14 @@ namespace TypeLang\Mapper\Bridge\Symfony\Tests\Profiler;
 
 use Symfony\Component\Stopwatch\Stopwatch;
 use TypeLang\Mapper\Bridge\Symfony\Profiler\MapperDataCollector;
-use TypeLang\Mapper\Bridge\Symfony\Profiler\TraceableMapper;
 use TypeLang\Mapper\Bridge\Symfony\Tests\TestCase;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Mapper;
-use TypeLang\Mapper\Tests\Stub\AddressStub;
-use TypeLang\Mapper\Tests\Stub\HookStub;
+use TypeLang\Mapper\Profiler\TraceableMapper;
 
-final class TraceableMapperTest extends TestCase
+final class MapperDataCollectorTest extends TestCase
 {
-    public function testCallIsPassedAndCollected(): void
+    public function testCallIsCollected(): void
     {
         $collector = new MapperDataCollector();
         $mapper = new TraceableMapper(new Mapper(), 'api', $collector);
@@ -55,36 +53,14 @@ final class TraceableMapperTest extends TestCase
         self::assertSame(1, $collector->getErrorCount());
     }
 
-    public function testViolationShowsMessageOfItsCause(): void
-    {
-        $collector = new MapperDataCollector();
-        $hook = new HookStub(AddressStub::class, beforeDenormalize: static function (): never {
-            throw new \DomainException('Address is blocked');
-        });
-        $mapper = new TraceableMapper(new Mapper(hooks: [$hook]), 'default', $collector);
-
-        try {
-            $mapper->denormalize(['city' => 'Paris'], AddressStub::class);
-            self::fail('The value is denormalized');
-        } catch (InvalidValueException) {
-        }
-
-        $collector->lateCollect();
-
-        self::assertSame(
-            'Value array(1) is rejected: Address is blocked',
-            $collector->getCalls()[0]['violations'][0]['message'],
-        );
-    }
-
     public function testCallIsReportedToStopwatch(): void
     {
         $stopwatch = new Stopwatch();
-        $mapper = new TraceableMapper(new Mapper(), 'default', new MapperDataCollector(), $stopwatch);
+        $mapper = new TraceableMapper(new Mapper(), 'default', new MapperDataCollector($stopwatch));
 
         $mapper->normalize(42, 'int');
 
-        self::assertTrue($stopwatch->isStarted('normalize(int)') === false);
+        self::assertFalse($stopwatch->isStarted('normalize(int)'));
         self::assertSame('type_lang_mapper', $stopwatch->getEvent('normalize(int)')->getCategory());
     }
 

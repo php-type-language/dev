@@ -1,0 +1,66 @@
+{
+    "name": "type-lang/mapper-laravel",
+    "type": "library",
+    "description": "Laravel integration of the TypeLang mapper",
+    "keywords": ["types", "mapper", "serializer", "normalizer", "denormalizer", "laravel"],
+    "license": "MIT",
+    "support": {
+        "source": "https://github.com/php-type-language/mapper-laravel",
+        "issues": "https://github.com/php-type-language/mapper-laravel/issues"
+    },
+    "require": {
+        "php": "^8.1",
+        "illuminate/contracts": "^10.0|^11.0|^12.0|^13.0",
+        "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+        "type-lang/mapper": "^2.0",
+        "type-lang/parser": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TypeLang\\Mapper\\Bridge\\Laravel\\": "src"
+        }
+    },
+    "require-dev": {
+        "illuminate/cache": "^10.0|^11.0|^12.0|^13.0",
+        "illuminate/config": "^10.0|^11.0|^12.0|^13.0",
+        "illuminate/container": "^10.0|^11.0|^12.0|^13.0",
+        "php-debugbar/php-debugbar": "^2.0|^3.0",
+        "phpstan/phpstan": "^2.3.6",
+        "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0"
+    },
+    "suggest": {
+        "barryvdh/laravel-debugbar": "(^3.0|^4.0) Allows showing the mapper calls in the Laravel Debugbar"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TypeLang\\Mapper\\Bridge\\Laravel\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev",
+            "dev-main": "2.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "TypeLang\\Mapper\\Bridge\\Laravel\\TypeLangMapperServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "platform-check": true,
+        "bin-compat": "full",
+        "preferred-install": {
+            "*": "dist"
+        }
+    },
+    "scripts-aliases": {
+        "test:unit": ["test", "phpunit", "unit"]
+    },
+    "scripts": {
+        "test:unit": "phpunit --testdox"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

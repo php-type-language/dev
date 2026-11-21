@@ -1,0 +1,4 @@
+TypeLang\Mapper\Bridge\Laravel\Tests\Stub\UserStub:
+  properties:
+    userName:
+      name: login

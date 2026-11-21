@@ -37,8 +37,11 @@
         <testsuite name="libs/mapper/type-matcher">
             <directory>libs/mapper/libs/component/type-matcher/tests</directory>
         </testsuite>
-        <testsuite name="libs/mapper-bundle">
-            <directory>libs/mapper-bundle/tests</directory>
+        <testsuite name="libs/mapper-laravel">
+            <directory>libs/mapper-laravel/tests</directory>
+        </testsuite>
+        <testsuite name="libs/mapper-symfony">
+            <directory>libs/mapper-symfony/tests</directory>
         </testsuite>
         <testsuite name="libs/parser">
             <directory>libs/parser/tests</directory>
@@ -70,7 +73,8 @@
             <directory>libs/mapper/libs/component/naming/src</directory>
             <directory>libs/mapper/libs/component/property-accessor/src</directory>
             <directory>libs/mapper/libs/component/type-matcher/src</directory>
-            <directory>libs/mapper-bundle/src</directory>
+            <directory>libs/mapper-laravel/src</directory>
+            <directory>libs/mapper-symfony/src</directory>
             <directory>libs/parser/src</directory>
             <directory>libs/phpdoc/src</directory>
             <directory>libs/printer/src</directory>

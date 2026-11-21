@@ -1,12 +1,12 @@
 {
-    "name": "type-lang/mapper-bundle",
+    "name": "type-lang/mapper-symfony",
     "type": "symfony-bundle",
     "description": "Symfony integration of the TypeLang mapper",
     "keywords": ["types", "mapper", "serializer", "normalizer", "denormalizer", "symfony", "bundle"],
     "license": "MIT",
     "support": {
-        "source": "https://github.com/php-type-language/mapper-bundle",
-        "issues": "https://github.com/php-type-language/mapper-bundle/issues"
+        "source": "https://github.com/php-type-language/mapper-symfony",
+        "issues": "https://github.com/php-type-language/mapper-symfony/issues"
     },
     "require": {
         "php": "^8.1",

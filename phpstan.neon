@@ -4,7 +4,8 @@ includes:
   - vendor/phpstan/phpstan-strict-rules/rules.neon
   # Components
   - libs/mapper/phpstan.neon
-  - libs/mapper-bundle/phpstan.neon
+  - libs/mapper-laravel/phpstan.neon
+  - libs/mapper-symfony/phpstan.neon
   - libs/parser/phpstan.neon
   - libs/phpdoc/phpstan.neon
   - libs/printer/phpstan.neon

@@ -10,9 +10,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use TypeLang\Mapper\Bridge\Symfony\Profiler\MapperDataCollector;
-use TypeLang\Mapper\Bridge\Symfony\Profiler\TraceableMapper;
-use TypeLang\Mapper\Bridge\Symfony\Profiler\TraceableMetadataProvider;
-use TypeLang\Mapper\Bridge\Symfony\Profiler\TypeBuildRecorder;
 use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Context\Coercers;
 use TypeLang\Mapper\DenormalizerInterface;
@@ -32,6 +29,9 @@ use TypeLang\Mapper\Naming\PascalCaseNamingStrategy;
 use TypeLang\Mapper\Naming\ScreamingSnakeCaseNamingStrategy;
 use TypeLang\Mapper\Naming\SnakeCaseNamingStrategy;
 use TypeLang\Mapper\NormalizerInterface;
+use TypeLang\Mapper\Profiler\TraceableMapper;
+use TypeLang\Mapper\Profiler\TraceableMetadataProvider;
+use TypeLang\Mapper\Profiler\TypeBuildRecorder;
 use TypeLang\Parser\TypeParser;
 
 /**
@@ -278,6 +278,9 @@ final class MapperDefinitions
     private function registerProfilerServices(array $mappers): void
     {
         $this->container->register(self::COLLECTOR_ID, MapperDataCollector::class)
+            ->setArguments([
+                '$stopwatch' => new Reference('debug.stopwatch', ContainerInterface::NULL_ON_INVALID_REFERENCE),
+            ])
             ->addTag('data_collector', [
                 'id' => 'type_lang_mapper',
                 'template' => '@TypeLangMapper/Collector/mapper.html.twig',
@@ -291,8 +294,7 @@ final class MapperDefinitions
                 ->setArguments([
                     '$delegate' => new Reference('.inner'),
                     '$name' => $name,
-                    '$collector' => $collector,
-                    '$stopwatch' => new Reference('debug.stopwatch', ContainerInterface::NULL_ON_INVALID_REFERENCE),
+                    '$profiler' => $collector,
                 ]);
 
             $this->container->register(self::getInternalId($name, 'traceable_metadata'), TraceableMetadataProvider::class)
@@ -300,11 +302,11 @@ final class MapperDefinitions
                 ->setArguments([
                     '$delegate' => new Reference('.inner'),
                     '$name' => $name,
-                    '$collector' => $collector,
+                    '$profiler' => $collector,
                 ]);
 
             $this->container->register(self::getTypeRecorderId($name), TypeBuildRecorder::class)
-                ->setArguments(['$name' => $name, '$collector' => $collector]);
+                ->setArguments(['$name' => $name, '$profiler' => $collector]);
         }
     }
 

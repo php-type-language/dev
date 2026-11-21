@@ -7,12 +7,12 @@ namespace TypeLang\Mapper\Bridge\Symfony\Tests\Profiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use TypeLang\Mapper\Bridge\Symfony\Profiler\MapperDataCollector;
-use TypeLang\Mapper\Bridge\Symfony\Profiler\TraceableMapper;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\DecoratorStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\UserStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\TestCase;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\MapperInterface;
+use TypeLang\Mapper\Profiler\TraceableMapper;
 
 final class ProfilerIntegrationTest extends TestCase
 {

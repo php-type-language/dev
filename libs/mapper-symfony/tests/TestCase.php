@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use TypeLang\Mapper\Bridge\Symfony\DependencyInjection\MapperExtensionsPass;
 use TypeLang\Mapper\Bridge\Symfony\TypeLangMapperBundle;
 
-#[Group('unit'), Group('type-lang/mapper-bundle')]
+#[Group('unit'), Group('type-lang/mapper-symfony')]
 abstract class TestCase extends BaseTestCase
 {
     /**

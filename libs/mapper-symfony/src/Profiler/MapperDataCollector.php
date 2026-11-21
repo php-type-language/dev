@@ -8,18 +8,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\VarDumper\Cloner\Data;
-use TypeLang\Mapper\Diagnostics\Exception\ViolationException;
-use TypeLang\Mapper\Diagnostics\Printer\Path\JsonPathPrinter;
-use TypeLang\Mapper\Diagnostics\Printer\Value\ShortValuePrinter;
-use TypeLang\Mapper\Diagnostics\ViolationFormatter;
-use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
-use TypeLang\Printer\PrettyTypePrinter;
-use TypeLang\Printer\PrinterOptions;
+use TypeLang\Mapper\Profiler\MapperCall;
+use TypeLang\Mapper\Profiler\ProfilerInterface;
 
 /**
  * Collects the calls of the mappers, the types they build and the metadata
- * they read during a request for the web profiler.
+ * they read during a request for the web profiler, the calls are also shown
+ * on the timeline with the stopwatch.
  *
  * @phpstan-type CallType array{
  *     mapper: non-empty-string,
@@ -45,8 +42,15 @@ use TypeLang\Printer\PrinterOptions;
  *     duration: float,
  * }
  */
-final class MapperDataCollector extends DataCollector implements LateDataCollectorInterface
+final class MapperDataCollector extends DataCollector implements
+    LateDataCollectorInterface,
+    ProfilerInterface
 {
+    /**
+     * Category of the stopwatch events
+     */
+    private const STOPWATCH_CATEGORY = 'type_lang_mapper';
+
     /**
      * Calls of the current request with the raw values, cloned on the late
      * collection
@@ -67,51 +71,41 @@ final class MapperDataCollector extends DataCollector implements LateDataCollect
      */
     private array $metadata = [];
 
-    /**
-     * @param non-empty-string $mapper
-     * @param non-empty-string $method
-     * @param float $duration in milliseconds
-     */
-    public function collectCall(
-        string $mapper,
-        string $method,
-        ?string $type,
-        mixed $input,
-        mixed $output,
-        ?\Throwable $error,
-        float $duration,
-        ?string $file = null,
-        ?int $line = null,
-    ): void {
+    public function __construct(
+        private readonly ?Stopwatch $stopwatch = null,
+    ) {}
+
+    public function startCall(string $mapper, string $method, ?string $type): void
+    {
+        $this->stopwatch?->start(self::getStopwatchEventName($method, $type), self::STOPWATCH_CATEGORY);
+    }
+
+    public function finishCall(MapperCall $call): void
+    {
+        $this->stopwatch?->stop(self::getStopwatchEventName($call->method, $call->type));
+
+        $error = $call->error;
+
         $this->calls[] = [
-            'mapper' => $mapper,
-            'method' => $method,
-            'type' => $type,
-            'input' => $input,
-            'output' => $output,
+            'mapper' => $call->mapper,
+            'method' => $call->method,
+            'type' => $call->type,
+            'input' => $call->input,
+            'output' => $call->output,
             'error' => $error === null ? null : ['class' => $error::class, 'message' => $error->getMessage()],
-            'violations' => self::readViolations($error),
-            'duration' => $duration,
-            'file' => $file,
-            'line' => $line,
+            'violations' => $call->getViolations(),
+            'duration' => $call->duration,
+            'file' => $call->file,
+            'line' => $call->line,
         ];
     }
 
-    /**
-     * @param non-empty-string $mapper
-     * @param class-string $class
-     */
-    public function collectType(string $mapper, string $type, string $class): void
+    public function recordType(string $mapper, string $type, string $class): void
     {
         $this->types[] = ['mapper' => $mapper, 'type' => $type, 'class' => $class];
     }
 
-    /**
-     * @param non-empty-string $mapper
-     * @param class-string $class
-     * @param float $duration in milliseconds
-     */
-    public function collectMetadata(string $mapper, string $class, float $duration): void
+    public function recordMetadataRead(string $mapper, string $class, float $duration): void
     {
         $key = $mapper . ':' . $class;
 
@@ -223,47 +217,10 @@ final class MapperDataCollector extends DataCollector implements LateDataCollect
     }
 
     /**
-     * Returns the violations for the developer: with the declared types and
-     * the messages of their causes, such as of an error of a hook.
-     *
-     * @return list<array{path: non-empty-string, message: string}>
+     * @return non-empty-string
      */
-    private static function readViolations(?\Throwable $error): array
+    private static function getStopwatchEventName(string $method, ?string $type): string
     {
-        if (!$error instanceof ViolationException) {
-            return [];
-        }
-
-        $formatter = self::createFormatter();
-        $printer = new JsonPathPrinter();
-        $result = [];
-
-        foreach ($error->violations as $violation) {
-            $message = $formatter->format($violation);
-
-            if ($violation->cause !== null && $violation->cause->getMessage() !== '') {
-                $message .= ': ' . $violation->cause->getMessage();
-            }
-
-            $result[] = [
-                'path' => $printer->print($violation->path),
-                'message' => $message,
-            ];
-        }
-
-        return $result;
-    }
-
-    /**
-     * Creates the formatter for the developer: the declared types with the
-     * classes of the application in a single line.
-     */
-    private static function createFormatter(): ViolationFormatterInterface
-    {
-        return new ViolationFormatter(
-            new ShortValuePrinter(),
-            new PrettyTypePrinter(new PrinterOptions(maxInlineShapeFields: \PHP_INT_MAX)),
-            shouldPrintDeclaredType: true,
-        );
+        return \sprintf('%s(%s)', $method, $type ?? 'mixed');
     }
 }
