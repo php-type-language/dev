@@ -6,12 +6,10 @@ namespace TypeLang\Mapper\Bridge\Laravel\Tests;
 
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\CacheFactoryStub;
 use TypeLang\Mapper\Bridge\Laravel\TypeLangMapperServiceProvider;
 
-#[Group('unit'), Group('type-lang/mapper-laravel')]
 abstract class TestCase extends BaseTestCase
 {
     /**

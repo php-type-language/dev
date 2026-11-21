@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Bridge\Symfony\Tests;
 
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Symfony\Component\DependencyInjection\Compiler\AttributeAutoconfigurationPass;
 use Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass;
@@ -15,7 +14,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use TypeLang\Mapper\Bridge\Symfony\DependencyInjection\MapperExtensionsPass;
 use TypeLang\Mapper\Bridge\Symfony\TypeLangMapperBundle;
 
-#[Group('unit'), Group('type-lang/mapper-symfony')]
 abstract class TestCase extends BaseTestCase
 {
     /**

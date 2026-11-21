@@ -87,7 +87,7 @@
     },
     "scripts": {
         "bench": "phpbench run ./bench --report=compare",
-        "test:unit": "phpunit --testdox",
+        "test:unit": "phpunit",
         "linter:check": "phpstan analyse --configuration phpstan.neon --memory-limit 256M",
         "linter:baseline": "@linter:check --generate-baseline",
         "phpcs:check": "@phpcs:fix --dry-run",
