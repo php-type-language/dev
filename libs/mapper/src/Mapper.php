@@ -109,7 +109,7 @@ final class Mapper implements MapperInterface
     private array $types = [];
 
     /**
-     * Parsed types by their strings, the expected types of the violations
+     * Parsed types by their strings, the declared types of the violations
      *
      * @var array<non-empty-string, TypeNode>
      */

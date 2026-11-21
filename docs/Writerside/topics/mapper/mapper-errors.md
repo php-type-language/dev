@@ -225,6 +225,7 @@ reported. `null` passes the type to the next expander:
 
 ```php
 use TypeLang\Mapper\Context\ExpandContext;
+use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\Type\Expander\TypeExpanderInterface;
 use TypeLang\Mapper\Type\TypeInterface;
 use TypeLang\Type\Name;
@@ -252,6 +253,16 @@ expands a nested type one level deeper. The fields over
 any expansion.
 
 ```php
+use TypeLang\Mapper\Context\ExpandContext;
+use TypeLang\Mapper\Type\Expander\TypeExpanderInterface;
+use TypeLang\Mapper\Type\TypeInterface;
+use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
+use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Shape\FieldListNode;
+use TypeLang\Type\Shape\NamedFieldNode;
+use TypeLang\Type\TypeNode;
+
 final class MoneyTypeExpander implements TypeExpanderInterface
 {
     public function tryExpand(TypeInterface $type, ExpandContext $context): ?TypeNode

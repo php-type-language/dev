@@ -22,6 +22,7 @@ use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\MetadataReaderStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\MisplacedHookStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\ShoutTypeBuilderStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\UserStub;
+use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\DenormalizerInterface;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Exception\TypeDefinitionException;
@@ -95,6 +96,43 @@ final class TypeLangMapperBundleTest extends TestCase
         $this->expectException(InvalidValueException::class);
 
         $api->denormalize('42', 'int');
+    }
+
+    public function testOptionsArePassedToConfiguration(): void
+    {
+        $container = self::createContainer(
+            config: [
+                'strict' => true,
+                'normalize_as_array' => false,
+                'max_violations' => 5,
+                'reject_extra_fields' => true,
+                'expected_type_depth' => 3,
+                'expected_type_max_fields' => 7,
+                'mappers' => ['api' => ['max_violations' => 9, 'expected_type_max_fields' => 2]],
+            ],
+            public: ['.type_lang_mapper.default.configuration', '.type_lang_mapper.api.configuration'],
+        );
+
+        $default = $container->get('test..type_lang_mapper.default.configuration');
+        $api = $container->get('test..type_lang_mapper.api.configuration');
+
+        self::assertEquals(new Configuration(
+            strict: true,
+            normalizeAsArray: false,
+            maxViolations: 5,
+            rejectExtraFields: true,
+            expectedTypeDepth: 3,
+            expectedTypeMaxFields: 7,
+        ), $default);
+
+        self::assertEquals(new Configuration(
+            strict: true,
+            normalizeAsArray: false,
+            maxViolations: 9,
+            rejectExtraFields: true,
+            expectedTypeDepth: 3,
+            expectedTypeMaxFields: 2,
+        ), $api);
     }
 
     public function testConfiguredTypeOfNamedMapperIsNotInDefaultOne(): void

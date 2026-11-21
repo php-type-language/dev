@@ -95,7 +95,7 @@ final class ConfigDefinition
             ->defaultNull();
 
         $children->integerNode('expected_type_max_fields')
-            ->info('Number of fields of a class shown in messages, the others are "..."')
+            ->info('Number of fields of a class shown in messages, the others are "...", all of them in case of none')
             ->min(1)
             ->defaultNull();
 

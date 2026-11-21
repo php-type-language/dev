@@ -221,13 +221,15 @@ final class Name extends SymbolNode implements
      * Returns the name of the class the name stands for, without the leading
      * separator, such as for {@see \class_exists()} or a comparison with
      * `Foo::class`. {@see null} in case of the name is relative to the
-     * current namespace: such a name is to be resolved first.
+     * current namespace: such a name is to be resolved first. A keyword or a
+     * built-in type, such as `self` or `int`, is returned as is.
      *
      * ```
      *  Name::from('\Some\Any')->toClassString()      // 'Some\Any'
      *  Name::from('Some\Any')->toClassString()       // 'Some\Any'
      *  Name::from('Any')->toClassString()            // 'Any'
      *  Name::from('namespace\Any')->toClassString()  // null
+     *  Name::from('int')->toClassString()            // 'int'
      *
      *  $class = $node->name->toClassString();
      *

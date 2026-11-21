@@ -367,7 +367,14 @@ final class ClassType implements TypeInterface
             try {
                 $field = $accessor->readers[$property->metadata->name]->read($value);
             } catch (\Throwable $e) {
-                throw InvalidValueException::wrapWithPath($e, new PropertySegment($key), null);
+                throw InvalidValueException::wrapWithPath(
+                    $e,
+                    new PropertySegment($key),
+                    null,
+                    null,
+                    $property->declared,
+                    $context->declaredTypes,
+                );
             }
 
             try {

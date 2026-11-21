@@ -200,6 +200,12 @@ final class LoggingDecorator implements TypeDecoratorInterface
 $mapper = new Mapper(decorators: [new LoggingDecorator()]);
 ```
 
+<warning>
+<code>int-mask&lt;...&gt;</code> and <code>int-mask-of&lt;...&gt;</code> fail to build
+when the types of their members are wrapped: return the types of integer
+literals, constants and their unions as is.
+</warning>
+
 ## Class Hooks
 
 A hook runs before or after the conversion of objects of the classes it
