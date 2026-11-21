@@ -12,6 +12,16 @@
         The implementation of the functionality available for installation
         of "type-lang/mapper" component.
     </primary-label>
+    <primary-label href="https://packagist.org/packages/type-lang/mapper-symfony"
+                   id="mapper-symfony" name="type-lang/mapper-symfony" short-name="ms" color="red">
+        The implementation of the functionality available for installation
+        of "type-lang/mapper-symfony" component.
+    </primary-label>
+    <primary-label href="https://packagist.org/packages/type-lang/mapper-laravel"
+                   id="mapper-laravel" name="type-lang/mapper-laravel" short-name="ml" color="red">
+        The implementation of the functionality available for installation
+        of "type-lang/mapper-laravel" component.
+    </primary-label>
     <primary-label href="https://packagist.org/packages/type-lang/printer"
         id="printer-component" name="type-lang/printer" short-name="c" color="purple">
         The implementation of the functionality available for installation

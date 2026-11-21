@@ -329,6 +329,8 @@
         <toc-element topic="mapper-errors.md" />
         <toc-element topic="mapper-extending.md" />
         <toc-element topic="mapper-phpstan.md" />
+        <toc-element topic="mapper-symfony.md" />
+        <toc-element topic="mapper-laravel.md" />
         <toc-element toc-title="GitHub" href="https://github.com/php-type-language/mapper" />
         <toc-element toc-title="Packagist" href="https://packagist.org/packages/type-lang/mapper" />
     </toc-element>
