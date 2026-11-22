@@ -41,6 +41,10 @@ return [
     // Coercers by the type: int, float, string, bool, array
     'coercers' => [],
 
+    // Formatters of the messages of the violations by the direction:
+    // denormalization, normalization
+    'formatters' => [],
+
     'metadata' => [
         // Metadata readers over the default ones
         'readers' => [],

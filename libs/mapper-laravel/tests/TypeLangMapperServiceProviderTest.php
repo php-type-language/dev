@@ -16,6 +16,7 @@ use TypeLang\Mapper\Bridge\Laravel\ProfilerChain;
 use TypeLang\Mapper\Bridge\Laravel\Telescope\MapperRecorder;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\CacheFactoryStub;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\DecimalCommaCoercerStub;
+use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\ShoutingFormatterStub;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\ShoutTypeBuilderStub;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\UserStub;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\WhisperTypeBuilderStub;
@@ -92,6 +93,41 @@ final class TypeLangMapperServiceProviderTest extends TestCase
 
         self::assertSame(1.5, $container->make('type-lang.mapper.api')->denormalize('1,5', 'float'));
         self::assertFalse($container->make('type-lang.mapper')->isDenormalizable('1,5', 'float'));
+    }
+
+    public function testFormatterOfDefaultMapperIsInherited(): void
+    {
+        $container = self::createContainer([
+            'formatters' => ['denormalization' => ShoutingFormatterStub::class],
+            'mappers' => ['api' => []],
+        ]);
+
+        foreach (['type-lang.mapper', 'type-lang.mapper.api'] as $id) {
+            try {
+                $container->make($id)->denormalize('x', 'int');
+                self::fail('The value must be rejected');
+            } catch (InvalidValueException $e) {
+                self::assertSame('$: INVALID INVALID_TYPE', $e->getMessage());
+            }
+        }
+    }
+
+    public function testFormatterOfDirectionKeepsTheOtherDirection(): void
+    {
+        $container = self::createContainer([
+            'formatters' => ['normalization' => ShoutingFormatterStub::class],
+        ]);
+
+        try {
+            $container->make('type-lang.mapper')->normalize('x', 'int');
+            self::fail('The value must be rejected');
+        } catch (InvalidValueException $e) {
+            self::assertSame('$: INVALID INVALID_TYPE', $e->getMessage());
+        }
+
+        $this->expectExceptionMessage('$: Value must be of type int, but "x" given');
+
+        $container->make('type-lang.mapper')->denormalize('x', 'int');
     }
 
     public function testMetadataIsCachedOutOfDebugMode(): void
@@ -301,7 +337,14 @@ final class TypeLangMapperServiceProviderTest extends TestCase
 
         yield 'coercer type' => [
             ['coercers' => ['decimal' => DecimalCommaCoercerStub::class]],
-            'Coercer type "decimal" is not supported, supported types are int, float, string, bool, array',
+            'Config "type-lang-mapper.coercers.decimal" is not supported, supported keys are int, float, '
+                . 'string, bool, array',
+        ];
+
+        yield 'formatter direction' => [
+            ['formatters' => ['input' => ShoutingFormatterStub::class]],
+            'Config "type-lang-mapper.formatters.input" is not supported, supported keys are denormalization, '
+                . 'normalization',
         ];
 
         yield 'service' => [

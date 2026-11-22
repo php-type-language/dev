@@ -21,6 +21,12 @@ final class MapperSettings
      */
     public const COERCED_TYPES = ['int', 'float', 'string', 'bool', 'array'];
 
+    /**
+     * Directions of the formatters, the formatter arguments of
+     * {@see \TypeLang\Mapper\Mapper}
+     */
+    public const FORMATTED_DIRECTIONS = ['denormalization', 'normalization'];
+
     public function __construct(
         /**
          * Prefix of the keys of the settings in the messages of the errors
@@ -134,9 +140,36 @@ final class MapperSettings
      */
     public function getCoercers(): array
     {
+        /** @var array<value-of<self::COERCED_TYPES>, non-empty-string> */
+        return $this->getServicesByKey('coercers', self::COERCED_TYPES);
+    }
+
+    /**
+     * Returns the services of the formatters by the direction, the ones of
+     * the mapper replace the inherited ones.
+     *
+     * @return array<value-of<self::FORMATTED_DIRECTIONS>, non-empty-string>
+     * @throws InvalidConfigException in case of a direction is not supported
+     *         or a service is not a non-empty string
+     */
+    public function getFormatters(): array
+    {
+        /** @var array<value-of<self::FORMATTED_DIRECTIONS>, non-empty-string> */
+        return $this->getServicesByKey('formatters', self::FORMATTED_DIRECTIONS);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param non-empty-list<non-empty-string> $supported
+     * @return array<non-empty-string, non-empty-string>
+     * @throws InvalidConfigException in case of a key is not supported or a
+     *         service is not a non-empty string
+     */
+    private function getServicesByKey(string $name, array $supported): array
+    {
         return [
-            ...$this->readCoercers(self::read($this->inherited ?? [], 'coercers')),
-            ...$this->readCoercers(self::read($this->own, 'coercers')),
+            ...$this->readServicesByKey($name, $supported, self::read($this->inherited ?? [], $name)),
+            ...$this->readServicesByKey($name, $supported, self::read($this->own, $name)),
         ];
     }
 
@@ -253,25 +286,27 @@ final class MapperSettings
     }
 
     /**
-     * @return array<value-of<self::COERCED_TYPES>, non-empty-string>
-     * @throws InvalidConfigException in case of a type is not supported or a
+     * @param non-empty-string $name
+     * @param non-empty-list<non-empty-string> $supported
+     * @return array<non-empty-string, non-empty-string>
+     * @throws InvalidConfigException in case of a key is not supported or a
      *         service is not a non-empty string
      */
-    private function readCoercers(mixed $value): array
+    private function readServicesByKey(string $name, array $supported, mixed $value): array
     {
         if ($value === null) {
             return [];
         }
 
         if (!\is_array($value)) {
-            throw InvalidConfigException::becauseValueIsInvalid($this->getKey('coercers'), 'an array', $value);
+            throw InvalidConfigException::becauseValueIsInvalid($this->getKey($name), 'an array', $value);
         }
 
         $result = [];
 
-        foreach ($value as $type => $service) {
-            if (!\in_array($type, self::COERCED_TYPES, true)) {
-                throw InvalidConfigException::becauseCoercedTypeIsUnknown((string) $type, self::COERCED_TYPES);
+        foreach ($value as $key => $service) {
+            if (!\in_array($key, $supported, true)) {
+                throw InvalidConfigException::becauseKeyIsUnknown($this->getKey($name . '.' . $key), $supported);
             }
 
             if ($service === null) {
@@ -280,13 +315,13 @@ final class MapperSettings
 
             if (!\is_string($service) || $service === '') {
                 throw InvalidConfigException::becauseValueIsInvalid(
-                    $this->getKey('coercers.' . $type),
+                    $this->getKey($name . '.' . $key),
                     'a non-empty string',
                     $service,
                 );
             }
 
-            $result[$type] = $service;
+            $result[$key] = $service;
         }
 
         return $result;

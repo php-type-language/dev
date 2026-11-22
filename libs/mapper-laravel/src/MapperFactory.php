@@ -9,6 +9,7 @@ use Illuminate\Contracts\Container\Container;
 use TypeLang\Mapper\Bridge\Laravel\Exception\InvalidConfigException;
 use TypeLang\Mapper\Coercer\CoercerInterface;
 use TypeLang\Mapper\Configuration;
+use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
 use TypeLang\Mapper\Hook\ClassHookInterface;
 use TypeLang\Mapper\Instantiator\Strategy\InstantiationStrategyInterface;
 use TypeLang\Mapper\Mapper;
@@ -153,6 +154,7 @@ final class MapperFactory
         $settings = $this->getSettings($name);
         $decorators = $this->makeServices($settings->getList('decorators'), TypeDecoratorInterface::class);
         $metadata = $this->createMetadataProvider($name, $settings);
+        $formatters = $this->makeFormatters($settings);
 
         if ($this->profiler !== null) {
             $decorators[] = new TypeBuildRecorder($name, $this->profiler);
@@ -172,6 +174,8 @@ final class MapperFactory
             ),
             coercers: $this->makeCoercers($settings),
             metadata: $metadata,
+            denormalizationFormatter: $formatters['denormalization'] ?? null,
+            normalizationFormatter: $formatters['normalization'] ?? null,
             parser: $this->parser,
         );
 
@@ -410,6 +414,21 @@ final class MapperFactory
 
         foreach ($settings->getCoercers() as $type => $service) {
             $result[$type] = $this->makeService($service, CoercerInterface::class);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array<value-of<MapperSettings::FORMATTED_DIRECTIONS>, ViolationFormatterInterface>
+     * @throws InvalidConfigException in case of a formatter is invalid
+     */
+    private function makeFormatters(MapperSettings $settings): array
+    {
+        $result = [];
+
+        foreach ($settings->getFormatters() as $direction => $service) {
+            $result[$direction] = $this->makeService($service, ViolationFormatterInterface::class);
         }
 
         return $result;

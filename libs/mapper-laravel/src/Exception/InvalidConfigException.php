@@ -39,11 +39,11 @@ final class InvalidConfigException extends \InvalidArgumentException
     /**
      * @param list<non-empty-string> $supported
      */
-    public static function becauseCoercedTypeIsUnknown(string $type, array $supported): self
+    public static function becauseKeyIsUnknown(string $key, array $supported): self
     {
         return new self(\sprintf(
-            'Coercer type "%s" is not supported, supported types are %s',
-            \addcslashes($type, '"'),
+            'Config "%s" is not supported, supported keys are %s',
+            \addcslashes($key, '"'),
             \implode(', ', $supported),
         ));
     }
