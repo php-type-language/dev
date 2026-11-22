@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TypeLang\Mapper\Bridge\Laravel;
+namespace TypeLang\Mapper\Bridge\Laravel\Profiler;
 
 use TypeLang\Mapper\Profiler\MapperCall;
 use TypeLang\Mapper\Profiler\ProfilerInterface;

@@ -12,7 +12,7 @@ use Laravel\Telescope\Contracts\EntriesRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TypeLang\Mapper\Bridge\Laravel\Debugbar\MapperCollector;
 use TypeLang\Mapper\Bridge\Laravel\Exception\InvalidConfigException;
-use TypeLang\Mapper\Bridge\Laravel\ProfilerChain;
+use TypeLang\Mapper\Bridge\Laravel\Profiler\ProfilerChain;
 use TypeLang\Mapper\Bridge\Laravel\Telescope\MapperRecorder;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\CacheFactoryStub;
 use TypeLang\Mapper\Bridge\Laravel\Tests\Stub\DecimalCommaCoercerStub;
