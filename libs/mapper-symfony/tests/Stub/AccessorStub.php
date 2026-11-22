@@ -13,12 +13,12 @@ use TypeLang\Mapper\PropertyAccessor\Strategy\AccessStrategyInterface;
 #[AsMapperAccessor]
 final class AccessorStub implements AccessStrategyInterface
 {
-    public function tryCreateReader(\ReflectionProperty $property, PropertyMetadata $metadata): ?PropertyReaderInterface
+    public function tryCreateReader(\ReflectionClass $class, PropertyMetadata $metadata): ?PropertyReaderInterface
     {
         return null;
     }
 
-    public function tryCreateWriter(\ReflectionProperty $property, PropertyMetadata $metadata): ?PropertyWriterInterface
+    public function tryCreateWriter(\ReflectionClass $class, PropertyMetadata $metadata): ?PropertyWriterInterface
     {
         return null;
     }
