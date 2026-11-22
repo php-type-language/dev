@@ -4,7 +4,7 @@ sidebar:
   order: 2
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 A decorator changes the types the mapper builds, whatever builder built
 them. A builder adds a type for a name, a decorator wraps types already
@@ -82,14 +82,24 @@ enum Status: string
 }
 
 $mapper = new Mapper(decorators: [new TrimEnumsDecorator()]);
+```
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
+```php
 $mapper->denormalize(' active ', Status::class);     // Status::Active
 $mapper->denormalize([' banned'], 'list<Status>');   // [Status::Banned]
-
-$mapper->denormalize('gone', Status::class);
-// throws InvalidValueException: $: Value must be of type 'active'|'banned',
-// but "gone" given
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize('gone', Status::class);
+// throws InvalidValueException:
+// $: Value must be of type 'active'|'banned', but "gone" given
+```
+</TabItem>
+</Tabs>
 
 The wrapped type is still described by its own form in errors (the values of
 the enum above), unless an [expander](/mapper/extending/expanders/) supports the

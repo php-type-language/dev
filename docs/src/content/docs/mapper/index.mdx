@@ -5,7 +5,7 @@ sidebar:
   order: 0
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 A mapper converts data by a [type](/language/) in both directions:
 
@@ -26,8 +26,67 @@ composer require type-lang/mapper
 ## Usage
 
 ```php
-use TypeLang\Mapper\Mapper;
+$mapper = new TypeLang\Mapper\Mapper();
 
+$array = $mapper->normalize(new Example());
+// ['key' => 42, ...]
+
+$object = $mapper->denormalize($array, Example::class);
+// object(Example) { key: int(42) }
+```
+
+## Guide
+
+### Objects
+
+A class is mapped by its public properties and their native types, nothing
+has to be configured:
+
+```php
+final class User
+{
+    public int $id;
+    public string $name;
+}
+```
+
+Data that does not match the class is rejected with the path of the wrong
+value:
+
+<Tabs>
+<TabItem label="Valid data">
+```php
+$mapper->denormalize(['id' => 42, 'name' => 'Alice'], User::class);
+// User { id: 42, name: 'Alice' }
+```
+</TabItem>
+
+<TabItem label="Wrong type">
+```php
+$mapper->denormalize(['id' => 'abc', 'name' => 'Alice'], User::class);
+// throws InvalidValueException:
+// $.id: Value must be of type int, but "abc" given
+```
+</TabItem>
+
+<TabItem label="Missing field">
+```php
+$mapper->denormalize(['id' => 42], User::class);
+// throws InvalidValueException: $.name: Required field "name" is missing
+```
+</TabItem>
+</Tabs>
+
+<Aside>
+An object is created without calling its constructor. See
+[metadata](/mapper/metadata/) for the rules of a class.
+</Aside>
+
+### Nested objects
+
+A property of a class type is mapped the same way, to any depth:
+
+```php
 final class Address
 {
     public string $city;
@@ -39,18 +98,297 @@ final class User
     public string $name;
     public Address $address;
 }
+```
 
-$mapper = new Mapper();
-
-$user = $mapper->denormalize([
+<Tabs>
+<TabItem label="Valid data">
+```php
+$mapper->denormalize([
     'id' => 42,
     'name' => 'Alice',
     'address' => ['city' => 'Paris'],
 ], User::class);
+// User { id: 42, name: 'Alice', address: Address { city: 'Paris' } }
+```
+</TabItem>
+
+<TabItem label="Not an object">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'name' => 'Alice',
+    'address' => 'Paris',
+], User::class);
+// throws InvalidValueException:
+// $.address: Value must be of type object{city: string}, but "Paris" given
+```
+</TabItem>
+
+<TabItem label="Wrong nested value">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'name' => 'Alice',
+    'address' => ['city' => null],
+], User::class);
+// throws InvalidValueException:
+// $.address.city: Value must be of type string, but null given
+```
+</TabItem>
+</Tabs>
+
+### Lists
+
+The native `array` says nothing about its elements: such a property takes
+any array as it is. The type of the elements is given by `@var`:
+
+```php
+final class User
+{
+    public int $id;
+    public string $name;
+
+    /**
+     * @var list<Address>
+     */
+    public array $addresses;
+}
+```
+
+Both the list and each of its elements are checked:
+
+<Tabs>
+<TabItem label="Valid data">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'name' => 'Alice',
+    'addresses' => [['city' => 'Paris'], ['city' => 'Berlin']],
+], User::class);
+// User {
+//   id: 42,
+//   name: 'Alice',
+//   addresses: [Address { city: 'Paris' }, Address { city: 'Berlin' }],
+// }
+```
+</TabItem>
+
+<TabItem label="Wrong element">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'name' => 'Alice',
+    'addresses' => [['city' => 'Paris'], 'Berlin'],
+], User::class);
+// throws InvalidValueException:
+// $.addresses[1]: Value must be of type object{city: string},
+// but "Berlin" given
+```
+</TabItem>
+
+<TabItem label="Not a list">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'name' => 'Alice',
+    'addresses' => ['home' => ['city' => 'Paris']],
+], User::class);
+// throws InvalidValueException:
+// $.addresses: Value must be of type list<object{city: string}>,
+// but array(1) given
+```
+</TabItem>
+</Tabs>
+
+<Aside type="caution">
+PHPDoc is read only with the `type-lang/phpdoc` package installed. Without
+it use the `#[MapType('list<Address>')]` attribute, see
+[property types](/mapper/metadata/types/).
+</Aside>
+
+### Refined types
+
+A PHPDoc type may be stricter than the native one. Any of the
+[supported types](/mapper/types/) can be used:
+
+```php
+final class User
+{
+    /**
+     * @var positive-int
+     */
+    public int $id;
+
+    /**
+     * @var non-empty-string
+     */
+    public string $name;
+}
+```
+
+<Tabs>
+<TabItem label="Valid data">
+```php
+$mapper->denormalize(['id' => 42, 'name' => 'Alice'], User::class);
+// User { id: 42, name: 'Alice' }
+```
+</TabItem>
+
+<TabItem label="Negative id">
+```php
+$mapper->denormalize(['id' => -1, 'name' => 'Alice'], User::class);
+// throws InvalidValueException:
+// $.id: Value must be of type positive-int (>= 1)
+```
+</TabItem>
+
+<TabItem label="Empty name">
+```php
+$mapper->denormalize(['id' => 42, 'name' => ''], User::class);
+// throws InvalidValueException:
+// $.name: Value must be of type non-empty-string (non-empty)
+```
+</TabItem>
+</Tabs>
+
+### Optional fields, enums and dates
+
+A property with a default value is optional. A nullable property without a
+default one still has to be given:
+
+```php
+enum Role: string
+{
+    case Admin = 'admin';
+    case Member = 'member';
+}
+
+final class User
+{
+    public int $id;
+    public Role $role = Role::Member;
+    public ?string $email;
+    public DateTimeImmutable $createdAt;
+}
+```
+
+<Tabs>
+<TabItem label="Without role">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'email' => null,
+    'createdAt' => '2026-01-15T10:00:00+00:00',
+], User::class);
+// User {
+//   id: 42,
+//   role: Role::Member,
+//   email: null,
+//   createdAt: DateTimeImmutable('2026-01-15T10:00:00+00:00'),
+// }
+```
+</TabItem>
+
+<TabItem label="With role">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'role' => 'admin',
+    'email' => null,
+    'createdAt' => '2026-01-15T10:00:00+00:00',
+], User::class);
+// User {
+//   id: 42,
+//   role: Role::Admin,
+//   email: null,
+//   createdAt: DateTimeImmutable('2026-01-15T10:00:00+00:00'),
+// }
+```
+</TabItem>
+
+<TabItem label="Unknown role">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'role' => 'root',
+    'email' => null,
+    'createdAt' => '2026-01-15T10:00:00+00:00',
+], User::class);
+// throws InvalidValueException:
+// $.role: Value must be of type 'admin'|'member', but "root" given
+```
+</TabItem>
+
+<TabItem label="Without email">
+```php
+$mapper->denormalize([
+    'id' => 42,
+    'createdAt' => '2026-01-15T10:00:00+00:00',
+], User::class);
+// throws InvalidValueException: $.email: Required field "email" is missing
+```
+</TabItem>
+</Tabs>
+
+### Type coercion
+
+A value written in another form is converted when it is the same value,
+as in data of a form or a query string. See
+[type coercion](/mapper/coercion/) for the rules and the strict mode.
+
+```php
+final class User
+{
+    public int $id;
+    public string $name;
+}
+```
+
+<Tabs>
+<TabItem label="Same value">
+```php
+$mapper->denormalize(['id' => '42', 'name' => 'Alice'], User::class);
+// User { id: 42, name: 'Alice' }
+```
+</TabItem>
+
+<TabItem label="Another value">
+```php
+$mapper->denormalize(['id' => '4.2', 'name' => 'Alice'], User::class);
+// throws InvalidValueException:
+// $.id: Value must be of type int, but "4.2" given
+```
+</TabItem>
+</Tabs>
+
+### Normalization
+
+`normalize()` converts a value back into plain data by the same types:
+
+```php
+$user = $mapper->denormalize([
+    'id' => 42,
+    'role' => 'admin',
+    'email' => null,
+    'createdAt' => '2026-01-15T10:00:00+00:00',
+], User::class);
 
 $mapper->normalize($user);
-// ['id' => 42, 'name' => 'Alice', 'address' => ['city' => 'Paris']]
+// [
+//   'id' => 42,
+//   'role' => 'admin',
+//   'email' => null,
+//   'createdAt' => '2026-01-15T10:00:00+00:00',
+// ]
 ```
+
+<Aside>
+The type of `normalize()` is optional: without it a value is
+normalized by its own type (an object by its class, an array element by
+element).
+</Aside>
+
+### Any type
 
 The type is not only a class, but any of the
 [supported types](/mapper/types/):
@@ -69,36 +407,20 @@ $mapper->denormalize('auto', 'int|"auto"');
 // 'auto'
 ```
 
-<Aside>
-The type of `normalize()` is optional: without it a value is
-normalized by its own type (an object by its class, an array element by
-element).
-</Aside>
-
-## Validation
+### Checking without exceptions
 
 `isDenormalizable()` and `isNormalizable()` return whether a value can be
 converted, without throwing on invalid data:
 
 ```php
-final class User
-{
-    public int $id;
-}
+$mapper->isDenormalizable(['id' => 42, 'name' => 'Alice'], User::class);
+// true
 
-$mapper->isDenormalizable(['id' => 42], User::class);    // true
-$mapper->isDenormalizable(['id' => 'abc'], User::class); // false
+$mapper->isDenormalizable(['id' => 'abc', 'name' => 'Alice'], User::class);
+// false
 ```
 
-Invalid data throws an exception with the path of the wrong value:
-
-```php
-$mapper->denormalize(['id' => 'abc'], User::class);
-// throws InvalidValueException: $.id: Value must be of type int, but "abc"
-// given
-```
-
-See [errors](/mapper/errors/) for details.
+See [errors](/mapper/errors/) for the exceptions and their messages.
 
 ## What's next
 

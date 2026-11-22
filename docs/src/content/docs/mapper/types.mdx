@@ -4,7 +4,7 @@ sidebar:
   order: 3
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Types of the [language](/language/) the mapper converts. Values given in
 another form, such as `'42'` for `int`, are converted by the
@@ -57,20 +57,29 @@ Are checked on denormalization only.
 | `non-empty-scalar`, `empty-scalar`                  | a truthy scalar, a falsy scalar            |
 | `non-empty-mixed`, `non-null-mixed`                 | a truthy value, not `null`                 |
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(5, 'int<1, 10>'); // 5
+```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
 $mapper->denormalize(42, 'int<1, 10>');
-// throws InvalidValueException: $: Value must be of type int<1, 10>
-// (between 1 and 10)
+// throws InvalidValueException:
+// $: Value must be of type int<1, 10> (between 1 and 10)
 
 $mapper->denormalize('', 'non-empty-string');
-// throws InvalidValueException: $: Value must be of type non-empty-string
-// (non-empty)
+// throws InvalidValueException:
+// $: Value must be of type non-empty-string (non-empty)
 
 $mapper->denormalize('abc', 'numeric-string');
-// throws InvalidValueException: $: Value must be of type numeric-string
-// (numeric)
+// throws InvalidValueException:
+// $: Value must be of type numeric-string (numeric)
 ```
+</TabItem>
+</Tabs>
 
 <Aside>
 `literal-string`, `callable-string`,
@@ -90,14 +99,24 @@ final class Access
     public const WRITE = 2;
     public const EXECUTE = 4;
 }
+```
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
+```php
 $mapper->denormalize(5, 'int-mask<1, 2, 4>');      // 5
-$mapper->denormalize(8, 'int-mask<1, 2, 4>');
-// throws InvalidValueException: $: Value must be of type int-mask<1, 2, 4>
-// (bits of 7)
-
 $mapper->denormalize(3, 'int-mask-of<Access::*>'); // 3
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize(8, 'int-mask<1, 2, 4>');
+// throws InvalidValueException:
+// $: Value must be of type int-mask<1, 2, 4> (bits of 7)
+```
+</TabItem>
+</Tabs>
 
 ## Literals and constants
 
@@ -107,16 +126,26 @@ final class Http
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
 }
+```
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
+```php
 $mapper->denormalize('active', '"active"|"blocked"'); // 'active'
 $mapper->denormalize(null, 'null');                   // null
 $mapper->denormalize('GET', 'Http::METHOD_GET');      // 'GET'
-$mapper->denormalize('PUT', 'Http::METHOD_*');
-// throws InvalidValueException: $: Value must be of type 'GET'|'POST', but
-// "PUT" given
-
 $mapper->denormalize(\E_WARNING, 'E_*');              // 2
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize('PUT', 'Http::METHOD_*');
+// throws InvalidValueException:
+// $: Value must be of type 'GET'|'POST', but "PUT" given
+```
+</TabItem>
+</Tabs>
 
 ## Lists and arrays
 
@@ -128,18 +157,28 @@ $mapper->denormalize(\E_WARNING, 'E_*');              // 2
 | `associative-array<K, V>`                  | same as `array<K, V>`                     |
 | `iterable<K, V>`                           | an array or a `Traversable`, gives an array |
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(['1', '2'], 'list<int>');                  // [1, 2]
 $mapper->denormalize(['a' => '1'], 'array<string, int>');       // ['a' => 1]
-$mapper->denormalize([], 'non-empty-list<int>');
-// throws InvalidValueException: $: Value must be of type non-empty-list<int>
-// (non-empty)
-
 $mapper->normalize(new ArrayIterator([1, 2]), 'iterable<int>'); // [1, 2]
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize([], 'non-empty-list<int>');
+// throws InvalidValueException:
+// $: Value must be of type non-empty-list<int> (non-empty)
+```
+</TabItem>
+</Tabs>
 
 ## Shapes
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(['id' => '1', 'x' => 1], 'array{id: int, name?: string}');
 // ['id' => 1]
@@ -149,10 +188,16 @@ $mapper->denormalize(['id' => '1', 'x' => 1], 'array{id: int, ...}');
 
 $mapper->denormalize(['id' => 1], 'object{id: int}');
 // (object) ['id' => 1]
+```
+</TabItem>
 
+<TabItem label="Invalid data">
+```php
 $mapper->denormalize([], 'array{id: int}');
 // throws InvalidValueException: $.id: Required field "id" is missing
 ```
+</TabItem>
+</Tabs>
 
 - `name?:` — an optional field
 - `...` — other fields are kept, without it they are dropped (or rejected by
@@ -190,24 +235,32 @@ Other accepted values of a case: see
 `DateTimeInterface`, `DateTimeImmutable`, `DateTime` and their subclasses. The
 format is an optional argument.
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize('2026-01-02', "DateTimeImmutable<'Y-m-d'>");
 // DateTimeImmutable('2026-01-02T00:00:00+00:00')
 
-$mapper->denormalize('02.01.2026', "DateTimeImmutable<'Y-m-d'>");
-// throws InvalidValueException: $: Value must be of type string, but
-// "02.01.2026" given
-
-$mapper->normalize(new DateTimeImmutable('2026-01-02 03:04:05+00:00'));
-// '2026-01-02T03:04:05+00:00'
-
 $mapper->denormalize(1767225600, "DateTimeImmutable<'U'>");
 // DateTimeImmutable('2026-01-01T00:00:00+00:00')
 
-$mapper->denormalize(1767225600, DateTimeImmutable::class);
-// throws InvalidValueException: $: Value must be of type string, but
-// 1767225600 given
+$mapper->normalize(new DateTimeImmutable('2026-01-02 03:04:05+00:00'));
+// '2026-01-02T03:04:05+00:00'
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize('02.01.2026', "DateTimeImmutable<'Y-m-d'>");
+// throws InvalidValueException:
+// $: Value must be of type string, but "02.01.2026" given
+
+$mapper->denormalize(1767225600, DateTimeImmutable::class);
+// throws InvalidValueException:
+// $: Value must be of type string, but 1767225600 given
+```
+</TabItem>
+</Tabs>
 
 <Aside>
 Without a format only a string is a date: it is parsed by the constructor

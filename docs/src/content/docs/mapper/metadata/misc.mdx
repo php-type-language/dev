@@ -165,13 +165,21 @@ App\User:
 
 </Tabs>
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(['name' => 'Ada'], User::class);
 // User { name: 'Ada', role: 'user' }
+```
+</TabItem>
 
+<TabItem label="Invalid data">
+```php
 $mapper->denormalize(['role' => 'admin'], User::class);
 // throws InvalidValueException: $.name: Required field "name" is missing
 ```
+</TabItem>
+</Tabs>
 
 <Aside>
 A promoted property takes the default value of its constructor parameter.

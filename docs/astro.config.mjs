@@ -74,6 +74,7 @@ export default defineConfig({
                         { label: 'Overview', items: [
                             { slug: 'mapper', label: 'Getting started' },
                             { slug: 'mapper/configuration' },
+                            { slug: 'mapper/comparison' },
                         ] },
                         { label: 'Metadata', items: [{ autogenerate: { directory: 'mapper/metadata' } }] },
                         { label: 'Types', items: [

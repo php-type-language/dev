@@ -101,14 +101,22 @@ App\User:
 
 </Tabs>
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(['tags' => ['php', 'mapper']], User::class);
 // User { tags: ['php', 'mapper'] }
-
-$mapper->denormalize(['tags' => ['php', '']], User::class);
-// throws InvalidValueException: $.tags[1]: Value must be of type
-// non-empty-string (non-empty)
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize(['tags' => ['php', '']], User::class);
+// throws InvalidValueException:
+// $.tags[1]: Value must be of type non-empty-string (non-empty)
+```
+</TabItem>
+</Tabs>
 
 <Aside type="tip">
 In attributes and PHPDoc names of classes are resolved by the
@@ -236,14 +244,23 @@ App\User:
 
 </Tabs>
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $user = $mapper->denormalize(['id' => '42'], User::class);
 $user->id;                 // 42
 $mapper->normalize($user); // ['id' => 42]
-$mapper->denormalize(['id' => -1], User::class);
-// throws InvalidValueException: $.id: Value must be of type positive-int
-// (>= 1)
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize(['id' => -1], User::class);
+// throws InvalidValueException:
+// $.id: Value must be of type positive-int (>= 1)
+```
+</TabItem>
+</Tabs>
 
 <Aside type="caution">
 The hooks are called only on a virtual property, such as above. A property
@@ -336,9 +353,18 @@ App\User:
 
 </Tabs>
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(['id' => 42], User::class); // User { id: 42 }
-$mapper->denormalize(['id' => '42'], User::class);
-// throws InvalidValueException: $.id: Value must be of type int, but "42"
-// given
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize(['id' => '42'], User::class);
+// throws InvalidValueException:
+// $.id: Value must be of type int, but "42" given
+```
+</TabItem>
+</Tabs>

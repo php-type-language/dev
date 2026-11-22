@@ -98,8 +98,8 @@ $mapper = new Mapper(
 );
 
 $mapper->denormalize('abcdef', 'int');
-// throws InvalidValueException: $: Value must be of type int, but string(6)
-// given
+// throws InvalidValueException:
+// $: Value must be of type int, but string(6) given
 ```
 
 ## Custom formatter
@@ -152,8 +152,8 @@ $mapper = new Mapper(
 );
 
 $mapper->denormalize(['status' => 'x'], Order::class);
-// throws InvalidValueException: $.status: Erwartet 'new'|'paid', erhalten
-// "x" (and 1 more)
+// throws InvalidValueException:
+// $.status: Erwartet 'new'|'paid', erhalten "x" (and 1 more)
 ```
 
 <Aside>

@@ -1,0 +1,196 @@
+---
+title: Comparison
+description: How TypeLang Mapper, Valinor, Symfony Serializer and JMS Serializer handle the same types and the same data.
+sidebar:
+  order: 10
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The same classes and the same arrays are given to every tool, the tables
+list what comes back.
+
+| Tool     | Version                   | Types are read from                           |
+|----------|---------------------------|-----------------------------------------------|
+| TypeLang | `type-lang/mapper` 2.0    | native types, docblocks, attributes           |
+| Valinor  | `cuyz/valinor` 2.8        | native types, docblocks                       |
+| Symfony  | `symfony/serializer` 8.1  | native types, docblocks (`PropertyInfo`)      |
+| JMS      | `jms/serializer` 3.32     | native types, docblocks (enabled), attributes |
+
+Every tool maps an array to an object, no format is involved. The settings
+are the default ones, the options a table depends on are named next to it.
+
+## Types
+
+A property is declared with the type, then a matching and a non-matching
+value are mapped to it.
+
+| Sign | Meaning                                              |
+|------|------------------------------------------------------|
+| ✓    | the matching value is accepted, the other is rejected |
+| !    | the declaration is read, the non-matching value passes |
+| ✗    | the declaration is rejected                          |
+
+| Type                            | TypeLang | Valinor | Symfony | JMS |
+|---------------------------------|:--------:|:-------:|:-------:|:---:|
+| `int`, `?int`, `Inner`          | ✓        | ✓       | ✓       | ✓   |
+| `BackedEnum`                    | ✓        | ✓       | ✓       | ✓   |
+| `DateTimeImmutable`             | ✓        | ✓       | ✓       | ✓   |
+| `int[]`, `array<string, int>`   | ✓        | ✓       | ✓       | ✓   |
+| `list<Inner>`                   | ✓        | ✓       | ✓       | ✓   |
+| `int\|bool`                     | ✓        | ✓       | ✓       | !   |
+| `list<int>`                     | ✓        | ✓       | !       | !   |
+| `non-empty-string`              | ✓        | ✓       | !       | !   |
+| `numeric-string`                | ✓        | ✓       | !       | !   |
+| `positive-int`                  | ✓        | ✓       | !       | !   |
+| `int<1, 10>`                    | ✓        | ✓       | !       | !   |
+| `'a'\|'b'`                      | ✓        | ✓       | !       | !   |
+| `1\|2\|3`                       | ✓        | ✓       | !       | !   |
+| `value-of<Suit>`                | ✓        | ✓       | !       | !   |
+| `Example::CONST_*`              | ✓        | ✓       | !       | !   |
+| `non-empty-list<int>`           | ✓        | ✓       | !       | ✗   |
+| `array{id: int, name?: string}` | ✓        | ✓       | !       | ✗   |
+| `int-mask<1, 2, 4>`             | ✓        | ✗       | !       | !   |
+
+```php
+final class Example
+{
+    /**
+     * @var list<int>
+     */
+    public array $value;
+}
+
+// ['value' => ['a' => 1]]
+//
+// TypeLang: $.value: Value must be of type list<int>, but array(1) given
+// Valinor:  value.a: Invalid sequential key 'a'
+// Symfony:  ['a' => 1]
+// JMS:      [1]
+```
+
+## Coercion
+
+A value of another scalar type is mapped to a property of the type. Every
+tool has a strict mode and a converting one, the default differs:
+
+| Tool     | Strict                                    | Converting                                 |
+|----------|-------------------------------------------|--------------------------------------------|
+| TypeLang | `new Configuration(strict: true)`         | default                                    |
+| Valinor  | default                                   | `allowScalarValueCasting()`                |
+| Symfony  | default                                   | `enable_type_conversion` <sup>1</sup>, `disable_type_enforcement` <sup>2</sup> |
+| JMS      | `new JsonDeserializationVisitorFactory(true)` | default                                |
+
+In the strict mode every tool rejects every value below. An `int` as a
+`float` is the exception: TypeLang and Valinor accept `42` as `42.0`.
+
+In the converting mode:
+
+| Value to type        | TypeLang | Valinor  | Symfony <sup>1</sup> | Symfony <sup>2</sup> | JMS    |
+|----------------------|----------|----------|----------|----------|--------|
+| `'42'` to `int`      | `42`     | `42`     | `42`     | `42`     | `42`   |
+| `42.0` to `int`      | `42`     | `42`     | rejected | `42`     | `42`   |
+| `' 42'` to `int`     | rejected | `42`     | rejected | `42`     | `42`   |
+| `42.5` to `int`      | rejected | rejected | rejected | `42`     | `42`   |
+| `'1e3'` to `int`     | rejected | rejected | rejected | `1000`   | `1000` |
+| `true` to `int`      | rejected | rejected | rejected | `1`      | `1`    |
+| `'abc'` to `int`     | rejected | rejected | rejected | rejected | `0`    |
+| `'4.5'` to `float`   | `4.5`    | `4.5`    | `4.5`    | `4.5`    | `4.5`  |
+| `true` to `float`    | rejected | rejected | rejected | `1.0`    | `1.0`  |
+| `42` to `string`     | `'42'`   | `'42'`   | rejected | `'42'`   | `'42'` |
+| `true` to `string`   | rejected | rejected | rejected | `'1'`    | `'1'`  |
+| `'true'` to `bool`   | `true`   | `true`   | `true`   | `true`   | `true` |
+| `1` to `bool`        | `true`   | `true`   | rejected | `true`   | `true` |
+| `'yes'` to `bool`    | `true`   | rejected | rejected | `true`   | `true` |
+| `2` to `bool`        | rejected | rejected | rejected | `true`   | `true` |
+| `'abc'` to `bool`    | rejected | rejected | rejected | `true`   | `true` |
+
+1. `enable_type_conversion` converts strings only, it is the default of the
+   XML and CSV formats. The `filter_bool` option adds `1` and `'yes'` as
+   `bool`.
+2. `disable_type_enforcement` skips the type check, the value is converted
+   by PHP on assignment.
+
+TypeLang converts a value only when it is the same value written in another
+form, see [type coercion](/mapper/coercion/).
+
+## Invalid data
+
+Each table gives the default behaviour and the option that changes it, a
+dash stands where no option was found.
+
+### Unknown field
+
+The data has a field that no property of the class takes.
+
+| Tool     | Default  | Option                                                         |
+|----------|----------|----------------------------------------------------------------|
+| TypeLang | ignored  | rejected by [`rejectExtraFields: true`](/mapper/configuration/#reject-extra-fields), kept by `...` of a [shape](/mapper/types/#shapes) |
+| Valinor  | rejected | ignored by `allowSuperfluousKeys()`                            |
+| Symfony  | ignored  | rejected by `allow_extra_attributes: false`                    |
+| JMS      | ignored  | —                                                              |
+
+### Missing field
+
+The data has no field for a property without a default value.
+
+| Tool     | Default                        | Option                                          |
+|----------|--------------------------------|-------------------------------------------------|
+| TypeLang | rejected                       | —                                               |
+| Valinor  | rejected                       | `null` for a nullable one by `allowUndefinedValues()` |
+| Symfony  | property is left uninitialized | —                                               |
+| JMS      | property is left uninitialized | —                                               |
+
+An uninitialized property is returned inside the object, reading it throws
+an `Error`.
+
+### Errors
+
+Two properties of an object and of its nested object get wrong values.
+
+| Tool     | Default         | Option                                            | Path     |
+|----------|-----------------|---------------------------------------------------|----------|
+| TypeLang | the first error | all by [`maxViolations`](/mapper/configuration/#max-violations) | `$.b.id` |
+| Valinor  | all errors      | —                                                 | `b.id`   |
+| Symfony  | the first error | all by `collect_denormalization_errors: true`     | `b.id`   |
+| JMS      | no error        | the first one in the [strict mode](#coercion)     | —        |
+
+JMS reports no error by default: a wrong scalar value is converted.
+
+## Performance
+
+One instance of the tool converts the same value again and again. The time
+is of one call, lower is better, the factor is relative to TypeLang.
+
+| Scenario                | TypeLang | JMS             | Valinor        | Symfony        |
+|-------------------------|----------|-----------------|----------------|----------------|
+| Denormalize an object   | 1.4 µs   | 6.4 µs (×4.5)   | 19.1 µs (×13)  | 40.0 µs (×28)  |
+| Denormalize 100 objects | 130 µs   | 361 µs (×2.8)   | 1 863 µs (×14) | 4 129 µs (×32) |
+| Normalize an object     | 1.0 µs   | 10.1 µs (×10)   | 7.6 µs (×7.8)  | 16.4 µs (×17)  |
+| Normalize 100 objects   | 81 µs    | 669 µs (×8.2)   | 744 µs (×9.1)  | 1 664 µs (×20) |
+
+With a persistent metadata cache, the production setup of every tool:
+
+| Scenario                | TypeLang | JMS             | Valinor        | Symfony        |
+|-------------------------|----------|-----------------|----------------|----------------|
+| Denormalize an object   | 1.4 µs   | 6.6 µs (×4.7)   | 19.3 µs (×14)  | 39.9 µs (×28)  |
+| Denormalize 100 objects | 130 µs   | 399 µs (×3.1)   | 1 842 µs (×14) | 4 187 µs (×32) |
+| Normalize an object     | 1.0 µs   | 10.2 µs (×10)   | 1.7 µs (×1.7)  | 16.6 µs (×17)  |
+| Normalize 100 objects   | 82 µs    | 702 µs (×8.5)   | 105 µs (×1.3)  | 1 673 µs (×20) |
+
+The object has five scalar properties and a nested object of two. PHP
+8.4.13 with OPcache and the tracing JIT, Windows 11, measured by
+[PHPBench](https://github.com/phpbench/phpbench). Every tool is checked to
+return the same result before it is measured.
+
+<Aside>
+The cache changes little here: a long-lived instance keeps the metadata in
+memory either way. The Valinor normalizer is the exception, with a cache it
+runs compiled code.
+</Aside>
+
+The benchmarks are in the `bench/Mapper/Tools` directory of the monorepo:
+
+```sh
+vendor/bin/phpbench run bench/Mapper/Tools --report=compare
+```

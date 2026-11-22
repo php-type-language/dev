@@ -4,7 +4,7 @@ sidebar:
   order: 1
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 A type converts a value in both directions. A builder creates the type of a
 type node, such as of a name `money` or of a generic `collection<T>`.
@@ -83,18 +83,29 @@ use TypeLang\Mapper\TypeMatcher\NamedTypePattern;
 $mapper = new Mapper(builders: [
     new NamedTypeBuilder(new NamedTypePattern(['money']), new MoneyType()),
 ]);
+```
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
+```php
 $mapper->denormalize('10.50 USD', 'money');
 // Money { cents: 1050, currency: 'USD' }
 
-$mapper->normalize(new Money(1050, 'USD'), 'money'); // '10.50 USD'
-$mapper->denormalize('ten dollars', 'money');
-// throws InvalidValueException: $: Value must be of type money, but "ten
-// dollars" given
-
 $mapper->denormalize(['10.50 USD'], 'list<money>');
 // [Money { cents: 1050, currency: 'USD' }]
+
+$mapper->normalize(new Money(1050, 'USD'), 'money'); // '10.50 USD'
 ```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
+$mapper->denormalize('ten dollars', 'money');
+// throws InvalidValueException:
+// $: Value must be of type money, but "ten dollars" given
+```
+</TabItem>
+</Tabs>
 
 <Aside>
 Builders of the user are tried before the built-in ones, so a builder can
@@ -179,7 +190,7 @@ final class CollectionTypeBuilder implements CompositeTypeBuilderInterface
 }
 
 $mapper->denormalize(['1', 'x'], 'collection<int>');
-// throws InvalidValueException: $[1]: Value must be of type int, but "x"
-// given
+// throws InvalidValueException:
+// $[1]: Value must be of type int, but "x" given
 ```
 

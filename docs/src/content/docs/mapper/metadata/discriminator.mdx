@@ -110,17 +110,29 @@ App\Shape:
 
 </Tabs>
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(['type' => 'circle', 'radius' => 2], Shape::class);
 // Circle { radius: 2.0 }
+```
+</TabItem>
 
+<TabItem label="Unknown type">
+```php
 $mapper->denormalize(['type' => 'oval'], Shape::class);
-// throws InvalidValueException: $.type: Value must be of type
-// 'circle'|'square', but "oval" given
+// throws InvalidValueException:
+// $.type: Value must be of type 'circle'|'square', but "oval" given
+```
+</TabItem>
 
+<TabItem label="Missing type">
+```php
 $mapper->denormalize(['radius' => 2], Shape::class);
 // throws InvalidValueException: $.type: Required field "type" is missing
 ```
+</TabItem>
+</Tabs>
 
 ## Fallback type
 

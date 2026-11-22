@@ -214,8 +214,8 @@ violation:
 
 ```php
 $mapper->denormalize(['email' => 'a@b.c', 'mail' => 'x@y.z'], User::class);
-// throws InvalidValueException: $.mail: Field "mail" duplicates the field
-// "email"
+// throws InvalidValueException:
+// $.mail: Field "mail" duplicates the field "email"
 ```
 
 Other values of the conflict:

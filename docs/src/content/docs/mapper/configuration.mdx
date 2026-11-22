@@ -4,7 +4,7 @@ sidebar:
   order: 1
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Configuration is a `TypeLang\Mapper\Configuration` DTO passed to the
 `TypeLang\Mapper\Mapper` constructor.
@@ -52,6 +52,20 @@ container): it parses and builds every type only once.
 Disables [type coercion](/mapper/coercion/) on denormalization: `'42'` is
 no longer an `int`.
 
+<Tabs>
+<TabItem label="strict: false (default)">
+```php
+$mapper = new Mapper(new Configuration(strict: false));
+
+$mapper->denormalize(42, 'int');                               // 42
+$mapper->denormalize('42', 'int');                             // 42
+$mapper->denormalize(1, 'bool');                               // true
+$mapper->denormalize(42, 'float');                             // 42.0
+$mapper->denormalize((object) ['id' => 42], 'array{id: int}'); // ['id' => 42]
+```
+</TabItem>
+
+<TabItem label="strict: true">
 ```php
 $mapper = new Mapper(new Configuration(strict: true));
 
@@ -59,9 +73,14 @@ $mapper->denormalize(42, 'int');                               // 42
 $mapper->denormalize('42', 'int');
 // throws InvalidValueException: $: Value must be of type int, but "42" given
 
+$mapper->denormalize(1, 'bool');
+// throws InvalidValueException: $: Value must be of type bool, but 1 given
+
 $mapper->denormalize(42, 'float');                             // 42.0
 $mapper->denormalize((object) ['id' => 42], 'array{id: int}'); // ['id' => 42]
 ```
+</TabItem>
+</Tabs>
 
 <Aside>
 Even in strict mode an `int` is accepted as a `float`,
@@ -80,11 +99,25 @@ final class User
 {
     public string $name = 'Alice';
 }
+```
 
+<Tabs>
+<TabItem label="normalizeAsArray: true (default)">
+```php
+$mapper = new Mapper(new Configuration(normalizeAsArray: true));
+
+$mapper->normalize(new User()); // ['name' => 'Alice']
+```
+</TabItem>
+
+<TabItem label="normalizeAsArray: false">
+```php
 $mapper = new Mapper(new Configuration(normalizeAsArray: false));
 
 $mapper->normalize(new User()); // (object) ['name' => 'Alice']
 ```
+</TabItem>
+</Tabs>
 
 <Aside>
 A single class can override it with
@@ -96,13 +129,37 @@ A single class can override it with
 How many errors are collected before denormalization fails. By default it
 fails on the first one. Normalization always fails on the first one.
 
+<Tabs>
+<TabItem label="maxViolations: 1 (default)">
+```php
+$mapper = new Mapper(new Configuration(maxViolations: 1));
+
+$mapper->denormalize(['a', 2, 'c', 'd'], 'list<int>');
+// throws InvalidValueException:
+// $[0]: Value must be of type int, but "a" given
+```
+</TabItem>
+
+<TabItem label="maxViolations: 2">
+```php
+$mapper = new Mapper(new Configuration(maxViolations: 2));
+
+$mapper->denormalize(['a', 2, 'c', 'd'], 'list<int>');
+// throws InvalidValueException:
+// $[0]: Value must be of type int, but "a" given (and 1 more)
+```
+</TabItem>
+
+<TabItem label="maxViolations: 100">
 ```php
 $mapper = new Mapper(new Configuration(maxViolations: 100));
 
-$mapper->denormalize(['a', 2, 'c'], 'list<int>');
-// throws InvalidValueException: $[0]: Value must be of type int, but "a"
-// given (and 1 more)
+$mapper->denormalize(['a', 2, 'c', 'd'], 'list<int>');
+// throws InvalidValueException:
+// $[0]: Value must be of type int, but "a" given (and 2 more)
 ```
+</TabItem>
+</Tabs>
 
 See [collecting violations](/mapper/errors/#collecting-violations) to read
 all of them.
@@ -117,12 +174,27 @@ final class User
 {
     public string $name;
 }
+```
 
+<Tabs>
+<TabItem label="rejectExtraFields: false (default)">
+```php
+$mapper = new Mapper(new Configuration(rejectExtraFields: false));
+
+$mapper->denormalize(['name' => 'Alice', 'age' => 42], User::class);
+// User { name: 'Alice' }
+```
+</TabItem>
+
+<TabItem label="rejectExtraFields: true">
+```php
 $mapper = new Mapper(new Configuration(rejectExtraFields: true));
 
 $mapper->denormalize(['name' => 'Alice', 'age' => 42], User::class);
 // throws InvalidValueException: $.age: Unexpected field "age"
 ```
+</TabItem>
+</Tabs>
 
 <Aside>
 The field of a [discriminator](/mapper/metadata/discriminator/)
@@ -146,37 +218,68 @@ final class Address
 {
     public string $city;
 }
+```
 
+<Tabs>
+<TabItem label="expectedTypeDepth: 0">
+```php
 $mapper = new Mapper(new Configuration(expectedTypeDepth: 0));
 
 $mapper->denormalize('x', User::class);
 // throws InvalidValueException: $: Value must be of type object, but "x" given
+```
+</TabItem>
 
-$mapper = new Mapper();
+<TabItem label="expectedTypeDepth: 1 (default)">
+```php
+$mapper = new Mapper(new Configuration(expectedTypeDepth: 1));
 
 $mapper->denormalize('x', User::class);
-// throws InvalidValueException: $: Value must be of type object{name: string,
-// address?: ?object}, but "x" given
+// throws InvalidValueException:
+// $: Value must be of type object{name: string, address?: ?object},
+// but "x" given
+```
+</TabItem>
 
+<TabItem label="expectedTypeDepth: 2">
+```php
 $mapper = new Mapper(new Configuration(expectedTypeDepth: 2));
 
 $mapper->denormalize('x', User::class);
-// throws InvalidValueException: $: Value must be of type object{name: string,
-// address?: ?object{city: string}}, but "x" given
+// throws InvalidValueException:
+// $: Value must be of type
+// object{name: string, address?: ?object{city: string}}, but "x" given
 ```
+</TabItem>
+</Tabs>
 
 ## Expected type max fields
 
 How many fields of a class the messages show, the others are `...`. By
 default all of them.
 
+<Tabs>
+<TabItem label="expectedTypeMaxFields: null (default)">
+```php
+$mapper = new Mapper(new Configuration(expectedTypeMaxFields: null));
+
+$mapper->denormalize('x', User::class);
+// throws InvalidValueException:
+// $: Value must be of type object{name: string, address?: ?object},
+// but "x" given
+```
+</TabItem>
+
+<TabItem label="expectedTypeMaxFields: 1">
 ```php
 $mapper = new Mapper(new Configuration(expectedTypeMaxFields: 1));
 
 $mapper->denormalize('x', User::class);
-// throws InvalidValueException: $: Value must be of type object{name: string,
-// ...}, but "x" given
+// throws InvalidValueException:
+// $: Value must be of type object{name: string, ...}, but "x" given
 ```
+</TabItem>
+</Tabs>
 
 ## Other arguments
 

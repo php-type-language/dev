@@ -21,12 +21,13 @@ final class User
 }
 
 $mapper->denormalize(['id' => 'abc'], User::class);
-// throws InvalidValueException: $.id: Value must be of type int, but "abc"
-// given
+// throws InvalidValueException:
+// $.id: Value must be of type int, but "abc" given
 
 $mapper->denormalize([], 'list<int');
-// throws TypeDefinitionException: Type "list<int" is written wrong: Invalid
-// template arguments, "," or ">" is expected
+// throws TypeDefinitionException:
+// Type "list<int" is written wrong:
+// Invalid template arguments, "," or ">" is expected
 
 $mapper->denormalize([], 'unknown');
 // throws TypeDefinitionException: Type "unknown" is not supported
@@ -77,8 +78,8 @@ metadata have the names of the data.
 
 ```php
 $mapper->denormalize(['items' => [['id' => 1], ['id' => 'x']]], Order::class);
-// throws InvalidValueException: $.items[1].id: Value must be of type int, but
-// "x" given
+// throws InvalidValueException:
+// $.items[1].id: Value must be of type int, but "x" given
 ```
 
 ## Collecting violations
@@ -137,12 +138,12 @@ final class Order
 }
 
 $mapper->denormalize(['status' => 'x'], Order::class);
-// throws InvalidValueException: $.status: Value must be of type 'new'|'paid',
-// but "x" given
+// throws InvalidValueException:
+// $.status: Value must be of type 'new'|'paid', but "x" given
 
 $mapper->denormalize(['status' => 'new', 'address' => 42], Order::class);
-// throws InvalidValueException: $.address: Value must be of type
-// ?object{city: string}, but 42 given
+// throws InvalidValueException:
+// $.address: Value must be of type ?object{city: string}, but 42 given
 ```
 
 | Declared type                   | In the message                  |
@@ -160,8 +161,8 @@ its message is written for a developer: with the declared type.
 
 ```php
 $mapper->normalize('active', Status::class);
-// throws InvalidValueException: $: Value must be of type App\Status, but
-// "active" given
+// throws InvalidValueException:
+// $: Value must be of type App\Status, but "active" given
 ```
 
 The text of a message is written by the formatter of its direction, see

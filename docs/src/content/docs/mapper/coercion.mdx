@@ -4,7 +4,7 @@ sidebar:
   order: 4
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 On denormalization a value written in another form is converted to the type,
 when it is the same value: `'42'` to `int` is `42`, `'4.2'` is not.
@@ -20,11 +20,18 @@ property, except an `int` as a `float`, a
 
 ## int
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize('42', 'int');   // 42
 $mapper->denormalize('-0', 'int');   // 0
 $mapper->denormalize('42.0', 'int'); // 42
 $mapper->denormalize(42.0, 'int');   // 42
+```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
 $mapper->denormalize(true, 'int');
 // throws InvalidValueException: $: Value must be of type int, but true given
 
@@ -37,22 +44,33 @@ $mapper->denormalize(' 42', 'int');
 $mapper->denormalize('1e3', 'int');
 // throws InvalidValueException: $: Value must be of type int, but "1e3" given
 ```
+</TabItem>
+</Tabs>
 
 ## float
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(42, 'float');    // 42.0
 $mapper->denormalize('4.2', 'float'); // 4.2
 $mapper->denormalize('1e3', 'float'); // 1000.0
 $mapper->denormalize('.5', 'float');  // 0.5
+```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
 $mapper->denormalize('1e400', 'float');
-// throws InvalidValueException: $: Value must be of type float, but "1e400"
-// given
+// throws InvalidValueException:
+// $: Value must be of type float, but "1e400" given
 
 $mapper->denormalize(true, 'float');
-// throws InvalidValueException: $: Value must be of type float, but true
-// given
+// throws InvalidValueException:
+// $: Value must be of type float, but true given
 ```
+</TabItem>
+</Tabs>
 
 <Aside>
 An integer without an exact `float` value, such as
@@ -61,29 +79,47 @@ An integer without an exact `float` value, such as
 
 ## string
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(42, 'string');  // '42'
 $mapper->denormalize(4.2, 'string'); // '4.2'
+```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
 $mapper->denormalize(true, 'string');
-// throws InvalidValueException: $: Value must be of type string, but true
-// given
+// throws InvalidValueException:
+// $: Value must be of type string, but true given
 
 $mapper->denormalize(null, 'string');
-// throws InvalidValueException: $: Value must be of type string, but null
-// given
+// throws InvalidValueException:
+// $: Value must be of type string, but null given
 ```
+</TabItem>
+</Tabs>
 
 ## bool
 
+<Tabs syncKey="data">
+<TabItem label="Valid data">
 ```php
 $mapper->denormalize(1, 'bool');      // true
 $mapper->denormalize('0', 'bool');    // false
 $mapper->denormalize('true', 'bool'); // true
 $mapper->denormalize('yes', 'bool');  // true
 $mapper->denormalize('off', 'bool');  // false
+```
+</TabItem>
+
+<TabItem label="Invalid data">
+```php
 $mapper->denormalize(2, 'bool');
 // throws InvalidValueException: $: Value must be of type bool, but 2 given
 ```
+</TabItem>
+</Tabs>
 
 ## array
 
