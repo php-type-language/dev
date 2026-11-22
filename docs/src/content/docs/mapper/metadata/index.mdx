@@ -46,6 +46,8 @@ Everything else is described with metadata:
 - [Error Messages](/mapper/metadata/errors/) — custom messages of errors
 - [Skipping Properties](/mapper/metadata/skip/) — leaving properties out of
   the normalized data
+- [Getters and Setters](/mapper/metadata/access/) — methods and hooks a
+  property is accessed through, one direction only
 - [Miscellaneous](/mapper/metadata/misc/) — objects as arrays, default
   values, enum value aliases
 
@@ -70,6 +72,8 @@ PHPDoc, reflection.
 The metadata provider is built by `MetadataBuilder`. A reader of a
 higher priority overrides the values of a lower one, of readers with an
 equal priority the later added one wins. Reflection is always the lowest.
+The [getters and setters](/mapper/metadata/access/) of attributes and
+configs are read right above it, so every reader reads the types at them.
 
 ```php
 use TypeLang\Mapper\Mapper;

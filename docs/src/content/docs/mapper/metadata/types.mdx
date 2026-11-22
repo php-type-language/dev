@@ -271,7 +271,8 @@ both of its types are the type of the property: PHPDoc of the hooks is not
 read and `set(int|string $id)` of `public string $id` takes only `string`.
 `#[MapType]` on such hooks is an error, so is `strict` on a `get` hook.
 A `write_type` in a config does not enable the hook either: the value of
-that type is written to the property and must fit its type.
+that type is written to the property and must fit its type. To call the
+hooks, choose them as [getter and setter](/mapper/metadata/access/#hooks).
 </Aside>
 
 ## Strict types
