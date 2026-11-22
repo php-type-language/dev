@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\AccessorStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\ApiShoutTypeBuilderStub;
+use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\AutowiredMapperConsumerStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\DecimalCommaCoercerStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\DecoratorStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\ExpanderStub;
@@ -20,6 +21,8 @@ use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\HookStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\InstantiatorStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\MetadataReaderStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\MisplacedHookStub;
+use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\NamedArgumentConsumerStub;
+use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\ShoutingFormatterStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\ShoutTypeBuilderStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\UserStub;
 use TypeLang\Mapper\Configuration;
@@ -63,16 +66,36 @@ final class TypeLangMapperBundleTest extends TestCase
         );
     }
 
-    public function testNamedMapperHasArgumentAliases(): void
+    public function testArgumentNameDoesNotSelectNamedMapper(): void
     {
-        $container = self::createContainer(config: ['mappers' => ['api' => []]], isCompiled: false);
+        $container = self::createContainer(
+            config: ['mappers' => ['api' => []]],
+            public: [NamedArgumentConsumerStub::class, 'type_lang_mapper.mapper'],
+            configure: static function (ContainerBuilder $container): void {
+                $container->autowire(NamedArgumentConsumerStub::class);
+            },
+        );
 
-        foreach ([MapperInterface::class, DenormalizerInterface::class, NormalizerInterface::class] as $type) {
-            self::assertSame(
-                'type_lang_mapper.mapper.api',
-                (string) $container->getAlias($type . ' $apiMapper'),
-            );
-        }
+        $consumer = $container->get('test.' . NamedArgumentConsumerStub::class);
+
+        self::assertInstanceOf(NamedArgumentConsumerStub::class, $consumer);
+        self::assertSame($container->get('test.type_lang_mapper.mapper'), $consumer->apiMapper);
+    }
+
+    public function testNamedMapperIsInjectedByItsServiceId(): void
+    {
+        $container = self::createContainer(
+            config: ['mappers' => ['api' => []]],
+            public: [AutowiredMapperConsumerStub::class, 'type_lang_mapper.mapper.api'],
+            configure: static function (ContainerBuilder $container): void {
+                $container->autowire(AutowiredMapperConsumerStub::class);
+            },
+        );
+
+        $consumer = $container->get('test.' . AutowiredMapperConsumerStub::class);
+
+        self::assertInstanceOf(AutowiredMapperConsumerStub::class, $consumer);
+        self::assertSame($container->get('test.type_lang_mapper.mapper.api'), $consumer->mapper);
     }
 
     public function testNamedMapperInheritsAndOverridesSettings(): void
@@ -332,6 +355,82 @@ final class TypeLangMapperBundleTest extends TestCase
             configure: static function (ContainerBuilder $container): void {
                 $container->register('app.coercer', DecimalCommaCoercerStub::class);
                 $container->register(DecimalCommaCoercerStub::class)->setAutoconfigured(true);
+            },
+        );
+    }
+
+    public function testFormatterAttributeSetsFormatterOfDirection(): void
+    {
+        $container = self::createContainer(
+            config: ['mappers' => ['api' => []]],
+            public: ['type_lang_mapper.mapper.api', 'type_lang_mapper.mapper'],
+            configure: static function (ContainerBuilder $container): void {
+                $container->register(ShoutingFormatterStub::class)->setAutoconfigured(true);
+            },
+        );
+
+        $api = $container->get('test.type_lang_mapper.mapper.api');
+        $default = $container->get('test.type_lang_mapper.mapper');
+
+        \assert($default instanceof Mapper && $api instanceof Mapper);
+
+        try {
+            $api->denormalize('x', 'int');
+            self::fail('The value must be rejected');
+        } catch (InvalidValueException $e) {
+            self::assertSame('$: INVALID INVALID_TYPE', $e->getMessage());
+        }
+
+        $this->expectExceptionMessage('$: Value must be of type int, but "x" given');
+
+        $default->denormalize('x', 'int');
+    }
+
+    public function testFormatterOfDefaultMapperIsInherited(): void
+    {
+        $container = self::createContainer(
+            config: ['formatters' => ['normalization' => 'app.formatter'], 'mappers' => ['api' => []]],
+            configure: static function (ContainerBuilder $container): void {
+                $container->register('app.formatter', ShoutingFormatterStub::class);
+            },
+            isCompiled: false,
+        );
+
+        $api = $container->getDefinition('type_lang_mapper.mapper.api');
+
+        self::assertEquals(new Reference('app.formatter'), $api->getArgument('$normalizationFormatter'));
+        self::assertFalse(\array_key_exists('$denormalizationFormatter', $api->getArguments()));
+    }
+
+    public function testNormalizationFormatterIsSetByConfig(): void
+    {
+        $container = self::createContainer(
+            config: ['formatters' => ['normalization' => 'app.formatter']],
+            public: ['type_lang_mapper.mapper'],
+            configure: static function (ContainerBuilder $container): void {
+                $container->register('app.formatter', ShoutingFormatterStub::class);
+            },
+        );
+
+        $mapper = $container->get('test.type_lang_mapper.mapper');
+
+        \assert($mapper instanceof Mapper);
+
+        $this->expectExceptionMessage('$: INVALID INVALID_TYPE');
+
+        $mapper->normalize('x', 'int');
+    }
+
+    public function testTwoFormattersOfOneDirectionAreRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('is given two formatters of direction "denormalization"');
+
+        self::createContainer(
+            config: ['mappers' => ['api' => ['formatters' => ['denormalization' => 'app.formatter']]]],
+            configure: static function (ContainerBuilder $container): void {
+                $container->register('app.formatter', ShoutingFormatterStub::class);
+                $container->register(ShoutingFormatterStub::class)->setAutoconfigured(true);
             },
         );
     }

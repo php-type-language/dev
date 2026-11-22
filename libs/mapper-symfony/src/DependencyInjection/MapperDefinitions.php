@@ -11,7 +11,6 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use TypeLang\Mapper\Bridge\Symfony\Profiler\MapperDataCollector;
 use TypeLang\Mapper\Configuration;
-use TypeLang\Mapper\Context\Coercers;
 use TypeLang\Mapper\DenormalizerInterface;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\MapperInterface;
@@ -54,6 +53,7 @@ use TypeLang\Parser\TypeParser;
  *     instantiators: list<non-empty-string>,
  *     accessors: list<non-empty-string>,
  *     coercers: array<non-empty-string, non-empty-string|null>,
+ *     formatters: array<non-empty-string, non-empty-string|null>,
  *     metadata: array{
  *         readers: list<non-empty-string>,
  *         paths: list<non-empty-string>,
@@ -84,6 +84,7 @@ use TypeLang\Parser\TypeParser;
  *     instantiators: list<non-empty-string>,
  *     accessors: list<non-empty-string>,
  *     coercers: array<non-empty-string, non-empty-string|null>,
+ *     formatters: array<non-empty-string, non-empty-string|null>,
  *     metadata: array{
  *         readers: list<non-empty-string>,
  *         paths: list<non-empty-string>,
@@ -120,8 +121,7 @@ final class MapperDefinitions
     public const COLLECTOR_ID = 'type_lang_mapper.data_collector';
 
     /**
-     * Contracts of a mapper service, the aliases of the default mapper and
-     * the argument aliases of the named ones
+     * Contracts of a mapper service, the aliases of the default mapper
      */
     private const MAPPER_INTERFACES = [
         MapperInterface::class,
@@ -142,17 +142,10 @@ final class MapperDefinitions
     public const EXTENSIONS_PARAMETER = '.type_lang_mapper.extensions';
 
     /**
-     * Parameter passing the configured coercers to
-     * {@see MapperExtensionsPass}, removed by the pass
+     * Parameter passing the configured services of the {@see MapperSlot}
+     * roles to {@see MapperExtensionsPass}, removed by the pass
      */
-    public const COERCERS_PARAMETER = '.type_lang_mapper.coercers';
-
-    public const COERCER_TAG = 'type_lang_mapper.coercer';
-
-    /**
-     * Types of the coercers of a mapper, the arguments of {@see Coercers::createDefault()}
-     */
-    public const COERCED_TYPES = ['int', 'float', 'string', 'bool', 'array'];
+    public const SLOTS_PARAMETER = '.type_lang_mapper.slots';
 
     /**
      * Built-in naming strategies by the name of the style written in that
@@ -231,26 +224,24 @@ final class MapperDefinitions
 
         $defaults = $config;
         $extensions = [];
-        $coercers = [];
+        $slots = [];
 
         $extensions[self::DEFAULT_NAME] = $this->registerMapper(self::DEFAULT_NAME, $defaults);
-        $coercers[self::DEFAULT_NAME] = self::getConfiguredCoercers($defaults);
+        $slots[self::DEFAULT_NAME] = self::getConfiguredSlots($defaults);
 
+        // The interfaces are autowired to the default mapper only, whatever
+        // the name of the argument. A named mapper is injected by its id.
         foreach (self::MAPPER_INTERFACES as $type) {
             $this->container->setAlias($type, self::MAPPER_ID);
         }
 
         foreach ($config['mappers'] as $name => $settings) {
             $extensions[$name] = $this->registerMapper($name, $settings, $defaults);
-            $coercers[$name] = self::getConfiguredCoercers($settings);
-
-            foreach (self::MAPPER_INTERFACES as $type) {
-                $this->container->registerAliasForArgument(self::getMapperId($name), $type, $name . '.mapper');
-            }
+            $slots[$name] = self::getConfiguredSlots($settings);
         }
 
         $this->container->setParameter(self::EXTENSIONS_PARAMETER, $extensions);
-        $this->container->setParameter(self::COERCERS_PARAMETER, $coercers);
+        $this->container->setParameter(self::SLOTS_PARAMETER, $slots);
 
         if ($config['profiler']['enabled'] ?? $this->isDebug()) {
             $this->registerProfilerServices(\array_keys($extensions));
@@ -311,22 +302,18 @@ final class MapperDefinitions
     }
 
     /**
-     * Returns the coercer services given in the settings of a mapper by the
-     * type, without the inherited ones.
+     * Returns the services of the {@see MapperSlot} roles given in the
+     * settings of a mapper by the key, without the inherited ones.
      *
      * @param MapperSettingsType $settings
-     * @return array<non-empty-string, non-empty-string>
+     * @return array<value-of<MapperSlot>, array<non-empty-string, non-empty-string>>
      */
-    private static function getConfiguredCoercers(array $settings): array
+    private static function getConfiguredSlots(array $settings): array
     {
         $result = [];
 
-        foreach (self::COERCED_TYPES as $type) {
-            $service = $settings['coercers'][$type] ?? null;
-
-            if ($service !== null) {
-                $result[$type] = $service;
-            }
+        foreach (MapperSlot::cases() as $slot) {
+            $result[$slot->value] = $slot->getConfiguredServices($settings);
         }
 
         return $result;

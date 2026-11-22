@@ -11,12 +11,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperCoercer;
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperFormatter;
 use TypeLang\Mapper\Bridge\Symfony\Attribute\MapperExtensionAttribute;
 use TypeLang\Mapper\Bridge\Symfony\DependencyInjection\ConfigDefinition;
 use TypeLang\Mapper\Bridge\Symfony\DependencyInjection\ExtensionKind;
 use TypeLang\Mapper\Bridge\Symfony\DependencyInjection\MapperDefinitions;
 use TypeLang\Mapper\Bridge\Symfony\DependencyInjection\MapperExtensionsPass;
-use TypeLang\Mapper\Coercer\CoercerInterface;
+use TypeLang\Mapper\Bridge\Symfony\DependencyInjection\MapperSlot;
 
 /**
  * Registers the default mapper (`type_lang_mapper.mapper`) and the named
@@ -65,32 +66,47 @@ final class TypeLangMapperBundle extends AbstractBundle
             self::registerExtensionAttribute($container, $kind);
         }
 
+        foreach (MapperSlot::cases() as $slot) {
+            self::registerSlotAttribute($container, $slot);
+        }
+
+        $container->addCompilerPass(new MapperExtensionsPass());
+    }
+
+    private static function registerSlotAttribute(ContainerBuilder $container, MapperSlot $slot): void
+    {
         $container->registerAttributeForAutoconfiguration(
-            AsMapperCoercer::class,
-            static function (ChildDefinition $definition, AsMapperCoercer $attribute, \Reflector $class): void {
+            $slot->getAttribute(),
+            static function (
+                ChildDefinition $definition,
+                AsMapperCoercer|AsMapperFormatter $attribute,
+                \Reflector $class,
+            ) use ($slot): void {
                 \assert($class instanceof \ReflectionClass);
 
-                self::assertImplements($class, CoercerInterface::class, AsMapperCoercer::class);
+                self::assertImplements($class, $slot->getInterface(), $slot->getAttribute());
 
-                if (!\in_array($attribute->type, MapperDefinitions::COERCED_TYPES, true)) {
+                $key = $slot->getAttributeKey($attribute);
+
+                if (!\in_array($key, $slot->getKeys(), true)) {
                     throw new \LogicException(\sprintf(
-                        'Coercer "%s" is declared for type "%s", supported types are %s',
+                        'Class "%s" is declared as the %s of %s "%s", supported ones are %s',
                         \addcslashes($class->name, '"'),
-                        \addcslashes($attribute->type, '"'),
-                        \implode(', ', MapperDefinitions::COERCED_TYPES),
+                        $slot->getName(),
+                        $slot->getKeyName(),
+                        \addcslashes($key, '"'),
+                        \implode(', ', $slot->getKeys()),
                     ));
                 }
 
                 foreach (self::getTaggedMappers($attribute->mappers) as $mapper) {
-                    $definition->addTag(MapperDefinitions::COERCER_TAG, \array_filter(
-                        ['type' => $attribute->type, 'mapper' => $mapper],
+                    $definition->addTag($slot->value, \array_filter(
+                        [$slot->getKeyName() => $key, 'mapper' => $mapper],
                         static fn(mixed $value): bool => $value !== null,
                     ));
                 }
             },
         );
-
-        $container->addCompilerPass(new MapperExtensionsPass());
     }
 
     private static function registerExtensionAttribute(ContainerBuilder $container, ExtensionKind $kind): void

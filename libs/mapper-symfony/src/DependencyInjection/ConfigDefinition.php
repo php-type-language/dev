@@ -110,14 +110,16 @@ final class ConfigDefinition
         self::defineServiceList($children, 'instantiators', 'Instantiation strategies');
         self::defineServiceList($children, 'accessors', 'Property access strategies');
 
-        $coercers = $children->arrayNode('coercers');
-        $coercers->info('Coercers of the scalar types and of the array input, by the type');
-        $coercers->addDefaultsIfNotSet();
+        foreach (MapperSlot::cases() as $slot) {
+            $services = $children->arrayNode($slot->getConfigKey());
+            $services->info($slot->getConfigInfo());
+            $services->addDefaultsIfNotSet();
 
-        $coercerChildren = $coercers->children();
+            $serviceChildren = $services->children();
 
-        foreach (MapperDefinitions::COERCED_TYPES as $type) {
-            $coercerChildren->scalarNode($type)->defaultNull();
+            foreach ($slot->getKeys() as $key) {
+                $serviceChildren->scalarNode($key)->defaultNull();
+            }
         }
 
         $metadata = $children->arrayNode('metadata');

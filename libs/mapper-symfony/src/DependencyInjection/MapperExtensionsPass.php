@@ -15,7 +15,8 @@ use Symfony\Component\DependencyInjection\Reference;
  * extensions of a mapper are the ones of its config in the order of the
  * config, then the tagged ones by the priority. A service tagged without
  * the `mapper` attribute extends the default mapper. A coercer of a type
- * of a named mapper replaces the one of the default mapper. The type
+ * or a formatter of a direction of a named mapper replaces the one of the
+ * default mapper, see {@see MapperSlot}. The type
  * recorder of the profiler is the last decorator, it sees the final type.
  *
  * @internal this is an internal library class, please do not use it in your code
@@ -72,66 +73,79 @@ final class MapperExtensionsPass implements CompilerPassInterface
             }
         }
 
-        $this->processCoercers($container, \array_keys($services));
+        /** @var array<non-empty-string, array<value-of<MapperSlot>, array<non-empty-string, non-empty-string>>> */
+        $slots = $container->getParameter(MapperDefinitions::SLOTS_PARAMETER);
+        $container->getParameterBag()->remove(MapperDefinitions::SLOTS_PARAMETER);
+
+        foreach (MapperSlot::cases() as $slot) {
+            $configured = [];
+
+            foreach ($slots as $name => $services) {
+                $configured[$name] = $services[$slot->value];
+            }
+
+            $this->processSlot($container, $slot, $configured);
+        }
     }
 
     /**
-     * Passes the coercers to the mappers: the own coercer of a type, then
-     * the one of the default mapper, then the default of the core.
+     * Passes the services of the role to the mappers: the own service of a
+     * key, then the one of the default mapper, then the default of the core.
      *
-     * @param list<non-empty-string> $mappers
+     * @param array<non-empty-string, array<non-empty-string, non-empty-string>> $services
+     *        configured services of the mappers by the key
      * @throws InvalidArgumentException in case of a mapper is given two
-     *         coercers of one type or a coercer of an unknown type
+     *         services of one key or a service of an unknown key
      */
-    private function processCoercers(ContainerBuilder $container, array $mappers): void
+    private function processSlot(ContainerBuilder $container, MapperSlot $slot, array $services): void
     {
-        /** @var array<non-empty-string, array<non-empty-string, non-empty-string>> */
-        $coercers = $container->getParameter(MapperDefinitions::COERCERS_PARAMETER);
-        $container->getParameterBag()->remove(MapperDefinitions::COERCERS_PARAMETER);
+        $mappers = \array_keys($services);
 
         /** @var array<non-empty-string, list<array<array-key, mixed>>> */
-        $tagged = $container->findTaggedServiceIds(MapperDefinitions::COERCER_TAG);
+        $tagged = $container->findTaggedServiceIds($slot->value);
 
         foreach ($tagged as $id => $tags) {
             foreach ($tags as $attributes) {
-                $mapper = self::getTaggedMapper($id, MapperDefinitions::COERCER_TAG, $attributes, $mappers);
-                $type = $attributes['type'] ?? null;
+                $mapper = self::getTaggedMapper($id, $slot->value, $attributes, $mappers);
+                $key = $attributes[$slot->getKeyName()] ?? null;
 
-                if (!\is_string($type) || !\in_array($type, MapperDefinitions::COERCED_TYPES, true)) {
+                if (!\is_string($key) || !\in_array($key, $slot->getKeys(), true)) {
                     throw new InvalidArgumentException(\sprintf(
-                        'Service "%s" is tagged "%s" with type "%s", supported types are %s',
+                        'Service "%s" is tagged "%s" with %s "%s", supported ones are %s',
                         \addcslashes($id, '"'),
-                        MapperDefinitions::COERCER_TAG,
-                        \addcslashes(\is_string($type) ? $type : \get_debug_type($type), '"'),
-                        \implode(', ', MapperDefinitions::COERCED_TYPES),
+                        $slot->value,
+                        $slot->getKeyName(),
+                        \addcslashes(\is_string($key) ? $key : \get_debug_type($key), '"'),
+                        \implode(', ', $slot->getKeys()),
                     ));
                 }
 
-                if (isset($coercers[$mapper][$type])) {
+                if (isset($services[$mapper][$key])) {
                     throw new InvalidArgumentException(\sprintf(
-                        'Mapper "%s" is given two coercers of type "%s": "%s" and "%s"',
+                        'Mapper "%s" is given two %ss of %s "%s": "%s" and "%s"',
                         $mapper,
-                        $type,
-                        \addcslashes($coercers[$mapper][$type], '"'),
+                        $slot->getName(),
+                        $slot->getKeyName(),
+                        $key,
+                        \addcslashes($services[$mapper][$key], '"'),
                         \addcslashes($id, '"'),
                     ));
                 }
 
-                $coercers[$mapper][$type] = $id;
+                $services[$mapper][$key] = $id;
             }
         }
 
-        $defaults = $coercers[MapperDefinitions::DEFAULT_NAME] ?? [];
+        $defaults = $services[MapperDefinitions::DEFAULT_NAME] ?? [];
 
         foreach ($mappers as $name) {
-            $arguments = [];
+            $references = [];
 
-            foreach ([...$defaults, ...$coercers[$name] ?? []] as $type => $id) {
-                $arguments[$type] = new Reference($id);
+            foreach ([...$defaults, ...$services[$name]] as $key => $id) {
+                $references[$key] = new Reference($id);
             }
 
-            $container->getDefinition(MapperDefinitions::getMapperId($name))
-                ->setArgument('$coercers', $arguments);
+            $slot->setServices($container->getDefinition(MapperDefinitions::getMapperId($name)), $references);
         }
     }
 
