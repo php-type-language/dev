@@ -6,7 +6,7 @@ sidebar:
   order: 2
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Partial parsing allows reading a type grammar embedded in other arbitrary
 data, without requiring the full input to be a valid type statement.
@@ -31,13 +31,26 @@ much of the source the grammar described.
 use TypeLang\Parser\TypeParser;
 
 $parser = new TypeParser();
+```
 
+<Tabs>
+<TabItem label="partial()">
+```php
 $result = $parser->partial('int and more text');
 
 var_dump($result::class);                  // PartialParsedResult
 var_dump($result->type->name->toString()); // string(3) "int"
 var_dump($result->offset);                 // int(4)
 ```
+</TabItem>
+
+<TabItem label="parse()">
+```php
+$parser->parse('int and more text');
+// throws UnexpectedTokenException: Unexpected "and"
+```
+</TabItem>
+</Tabs>
 
 `$result->offset` points right after the last byte that was actually
 consumed while building `$result->type` — including any trailing
@@ -49,15 +62,6 @@ $remainder = substr('int and more text', $result->offset);
 
 var_dump($remainder); // string(13) "and more text"
 ```
-
-<Aside>
-In **strict** mode, the same input is rejected outright:
-```php
-$parser->parse('int and more text');
-// TypeLang\Parser\Exception\UnexpectedTokenException:
-//   Unexpected "and"
-```
-</Aside>
 
 ## Parsing a docblock annotation
 

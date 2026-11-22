@@ -6,7 +6,7 @@ sidebar:
   order: 3
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 The reader component bridges PHP's [Reflection API](https://www.php.net/manual/en/book.reflection.php)
 to the [TypeLang](/language/) AST. Given a reflected constant, property,
@@ -232,22 +232,32 @@ final class Post
 }
 
 $property = new ReflectionProperty(Post::class, 'slug');
+```
 
+<Tabs>
+<TabItem label="Read (default)">
+```php
 // string
 echo $printer->print($reader->findPropertyType($property));
 
 // string
 echo $printer->print($reader->findPropertyType(
     property: $property,
-    access: PropertyAccessDirection::Read, // default
+    access: PropertyAccessDirection::Read,
 ));
+```
+</TabItem>
 
+<TabItem label="Write">
+```php
 // \Stringable|string
 echo $printer->print($reader->findPropertyType(
     property: $property,
     access: PropertyAccessDirection::Write,
 ));
 ```
+</TabItem>
+</Tabs>
 
 <Aside>
 <code>PropertyAccessDirection::DEFAULT</code> is a constant aliasing

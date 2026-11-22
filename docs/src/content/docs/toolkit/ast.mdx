@@ -69,7 +69,7 @@ $type[0]->name = new Name('iterable');
 // iterable<string, int, *>|null
 
 $type[0]->name->value = 'iterable';
-// Error: Cannot modify readonly property TypeLang\Type\Name::$value
+// throws Error: Cannot modify readonly property TypeLang\Type\Name::$value
 ```
 
 Every node keeps the `$offset` of its first character in the source, `0` for

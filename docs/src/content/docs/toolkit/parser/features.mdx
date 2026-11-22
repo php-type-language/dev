@@ -28,11 +28,7 @@ $parser = new TypeParser(new TypeParserFeatures(
 ));
 
 $parser->parse('42');
-```
-
-```
-TypeLang\Parser\Exception\FeatureNotEnabledException:
-Literals feature is not allowed
+// throws FeatureNotEnabledException: Literals feature is not allowed
 ```
 
 To override one or more flags on an *existing* parser, use `TypeParser::with()`
@@ -140,7 +136,7 @@ by both `parse()` and `partial()`:
 $parser = new TypeParser(new TypeParserFeatures(unions: false));
 
 $parser->partial('T|U');
-// FeatureNotEnabledException: Unions feature is not allowed
+// throws FeatureNotEnabledException: Unions feature is not allowed
 ```
 
 <Aside type="caution">
