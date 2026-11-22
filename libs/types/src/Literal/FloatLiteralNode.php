@@ -12,9 +12,11 @@ namespace TypeLang\Type\Literal;
  * of the range (`PHP_FLOAT_MAX`) for a number out of it, never an infinity.
  *
  * ```
- *  -1_5.5e+3  // value: -15500.0, raw: "-1_5.5e+3", mantissa: "-15.5", exponent: "3"
- *  .42        // value: 0.42,     raw: ".42",       mantissa: "0.42",  exponent: "0"
- *  - 1.5      // value: -1.5,     raw: "- 1.5",     mantissa: "-1.5",  exponent: "0"
+ *  -1_5.5e+3  // value: -15500.0, mantissa: "-15.5", exponent: "3"
+ *  .42        // value: 0.42,     mantissa: "0.42",  exponent: "0"
+ *  - 1.5      // value: -1.5,     mantissa: "-1.5",  exponent: "0"
+ *
+ *  // raw: the text as written, "-1_5.5e+3", ".42", "- 1.5"
  * ```
  *
  * A node made by hand has no text to read the exact number from, so the
