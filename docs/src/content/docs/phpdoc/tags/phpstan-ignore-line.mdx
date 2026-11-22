@@ -1,0 +1,23 @@
+---
+title: "@phpstan-ignore-line"
+description: "The @phpstan-ignore-line tag silences any error reported on the current line."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phpstan-ignore-line` tag silences any error reported on the current
+line, defined by PHPStan. Unlike [@phpstan-ignore](/phpdoc/tags/phpstan-ignore/),
+it does not name specific error identifiers.
+
+<TagReference name="phpstan-ignore-line" />
+
+Parsing a `phpstan-ignore-line` tag produces a `PhpStanIgnoreLineTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PhpStanIgnoreLineTag extends FlagTag {}
+```
+
+Documented by
+[PHPStan](https://phpstan.org/user-guide/ignoring-errors#ignoring-in-code-using-phpdocs).

@@ -1,0 +1,56 @@
+---
+title: Toolkit
+description: Four packages sharing one AST - parse a type string, read a type from Reflection, print a type back.
+sidebar:
+  label: Getting started
+  order: 0
+---
+
+import Pipeline from '../../../components/Pipeline.astro';
+
+The toolkit works with types as data: every package reads or writes the same
+tree of `TypeLang\Type\*` nodes.
+
+<Pipeline>
+    Everything speaks the same AST. Parse a string, read a reflection, print
+    back, or walk the nodes with a visitor.
+</Pipeline>
+
+| Package             | Does                                                    |
+|---------------------|---------------------------------------------------------|
+| `type-lang/types`   | The AST node classes, the vocabulary of the other parts |
+| `type-lang/parser`  | String to AST, with grammar checking and feature flags |
+| `type-lang/printer` | AST to string: the full form or a native PHP type       |
+| `type-lang/reader`  | PHP Reflection to AST                                   |
+
+## Installation
+
+Install what you need, `types` comes with any of them:
+
+```bash
+composer require type-lang/parser type-lang/printer
+```
+
+## A string in, a string out
+
+```php
+$parser = new TypeLang\Parser\TypeParser();
+$type = $parser->parse('array{ key: int }');
+
+echo new TypeLang\Printer\PrettyTypePrinter()->print($type); // array{key: int}
+echo new TypeLang\Printer\NativeTypePrinter()->print($type); // array
+```
+
+## Next
+
+- [AST](/toolkit/ast/): every node class, what it holds and the syntax it
+  stands for.
+- [Parser](/toolkit/parser/): reading modes, errors,
+  [feature flags](/toolkit/parser/features/),
+  [partial parsing](/toolkit/parser/tolerant-mode/),
+  [visitors](/toolkit/parser/visitors/) and
+  [name resolution](/toolkit/parser/type-resolver/).
+- [Printer](/toolkit/printer/): the [pretty](/toolkit/printer/pretty/) and the
+  [native](/toolkit/printer/native/) form of a type.
+- [Reader](/toolkit/reader/): types of constants, properties, functions and
+  parameters from Reflection.

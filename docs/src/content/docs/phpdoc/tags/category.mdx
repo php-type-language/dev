@@ -1,0 +1,30 @@
+---
+title: "@category"
+description: "The @category tag organizes groups of packages together."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@category` tag assigns a package to a broad logical category, letting
+documentation tooling group unrelated packages into sections such as
+`Database`, `Networking`, or `Templating` when rendering an index. It is a
+coarser-grained sibling of [@package](/phpdoc/tags/package/) and
+[@subpackage](/phpdoc/tags/subpackage/): where those two narrow down to a specific
+module, `@category` places that module within a wider organizational scheme.
+
+<TagReference name="category" />
+
+Parsing a `@category` tag produces a `CategoryTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description` every
+[Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class CategoryTag extends FlagTag {}
+```
+
+`@category` is still part of phpDocumentor's current tag reference, but
+phpDocumentor's own page explicitly calls it deprecated, noting that
+"support may be removed in a future version" —
+[phpDocumentor tag reference](https://docs.phpdoc.org/guide/references/phpdoc/tags/category.html).
+It remains here for compatibility with docblocks written against the
+classic toolchain.

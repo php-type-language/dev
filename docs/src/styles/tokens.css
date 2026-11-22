@@ -1,0 +1,34 @@
+/* Design tokens shared by the landing and the documentation. */
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+:root {
+    color-scheme: dark;
+
+    /* Surfaces: the page and the panels raised over it. */
+    --paper: #0b0b0f;
+    --paper-2: #121218;
+    --paper-3: #18181f;
+
+    /* Text: headings, body, secondary. */
+    --ink: #f3f3f5;
+    --ink-2: #c3c3cc;
+    --muted: #82828f;
+
+    /* Hairlines of the blueprint. */
+    --line: rgba(255, 255, 255, 0.08);
+    --line-2: rgba(255, 255, 255, 0.14);
+    --grid: rgba(255, 255, 255, 0.012);
+    --hatch: rgba(255, 255, 255, 0.045);
+
+    --accent: #9aa2ff;
+    --accent-tint: rgba(154, 162, 255, 0.12);
+    --rust: #f2937a;
+    --rust-tint: rgba(242, 147, 122, 0.12);
+
+    --display: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "Geist Mono Variable", "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+    --radius: 1px;
+}

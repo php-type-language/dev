@@ -1,0 +1,55 @@
+---
+title: Offset access
+sidebar:
+  order: 12
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+An offset access is the type of one element of another type: the type, then
+the key in square brackets (`T[K]`).
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type={"T['offset']"}>
+The element under the string key `offset`.
+</TypeTree>
+
+<TypeTree type="T[U]">
+The element under a key of the type `U`.
+</TypeTree>
+
+<TypeTree type="array{int, string}[0]">
+An element of a [shape](/language/syntax/shapes/) under a numeric key.
+</TypeTree>
+
+<TypeTree type="T<U>[object{key: int, ...}]">
+A [generic](/language/syntax/generics/) with a shape as the key.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="Collection[[Some]]" error message={"MalformedSyntaxException: A type or \"]\" is expected after \"[\""}>
+The key is enclosed in single brackets.
+</TypeTree>
+
+<TypeTree type={"Collection['key']{key: string}"} error message={"UnexpectedTokenException: Unexpected \"{\""}>
+The type comes first, the key follows it.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+Offsets chain with each other and with the
+[list syntax](/language/syntax/generics/#list-syntax): each suffix applies to
+the result of the previous one.
+
+<TypeTree type={"T['a'][]['b']"} />
+
+<Aside>
+The key may be any type, objects, [conditions](/language/syntax/conditionals/)
+and [shapes](/language/syntax/shapes/) included.
+</Aside>

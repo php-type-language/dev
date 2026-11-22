@@ -1,0 +1,126 @@
+---
+title: Comparison
+description: How PHPStan, Psalm and TypeLang parse the same type syntax, construct by construct.
+sidebar:
+  order: 10
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import ComparisonTable from '../../../components/ComparisonTable.astro';
+
+Every construct below is fed to the parser of each tool, asked directly. The
+table lists the basic constructs all of them read the same way and those on
+which they differ. Only the syntax is compared: whether the named type exists
+is not.
+
+| Sign | Constructs                                                | Malformed input            |
+|------|-----------------------------------------------------------|----------------------------|
+| ✓    | read as written                                           | rejected                   |
+| ✗    | rejected                                                  | accepted                   |
+| !    | accepted, but the meaning changed (a word dropped, words glued together, a value clamped) | accepted, meaning changed |
+
+<ComparisonTable />
+
+<Aside>
+The counts are taken over the rows of this page only, the basic constructs
+and those the parsers disagree on. They are not the share of the whole
+language each parser reads.
+</Aside>
+
+## Methodology
+
+| Tool     | Version                       | A type is supported when                                                   |
+|----------|-------------------------------|----------------------------------------------------------------------------|
+| PHPStan  | `phpstan/phpdoc-parser` 2.4   | `TypeParser::parse()` reads the source whole, leaving no trailing input    |
+| Psalm    | `vimeo/psalm` 7.0             | `Psalm\Type::parseString()` returns a type carrying what was written       |
+| TypeLang | `type-lang/parser` 2.0        | `TypeParser::parse()` returns a node, every feature of the parser enabled  |
+
+The tools run with their default settings. Psalm is given the templates
+`T U V K K2 L` and the parameters `$a $b`, otherwise it cannot read `T[K]` and
+conditional types at all. Error messages, offsets and the error-tolerant mode
+have no counterpart in the other tools and are not compared.
+
+<Aside>
+Psalm answers even where it did not understand the question. It reads a word
+it cannot parse as a name, so `int string` comes back as a type called
+`intstring`, and it cuts off what stands behind the part it understood. Such
+an answer is marked `!`.
+</Aside>
+
+## Names
+
+Class names, pseudo types and `$this`.
+
+<ComparisonTable section="names" />
+
+## Literals
+
+Boolean, null, integer, float and string literals.
+
+<ComparisonTable section="literals" />
+
+## Constants and masks
+
+Global constants, class constants and masks (`*` as a wildcard in a constant name).
+
+<ComparisonTable section="constants-and-masks" />
+
+## Lists and offsets
+
+List `T[]` and offset access `T[K]`.
+
+<ComparisonTable section="lists-and-offsets" />
+
+## Logical types
+
+Union `|`, intersection `&` and nullable `?`, and how they bind next to each other.
+
+<ComparisonTable section="logical-types" />
+
+## Generics
+
+Arguments of `Name<...>`.
+
+<ComparisonTable section="generics" />
+
+## Templates
+
+Template parameters of a callable: `callable<T of X = Y>(T): T`.
+
+<ComparisonTable section="templates" />
+
+## Callable
+
+Parameters, return types and modifiers of `callable(...)` and `Closure(...)`.
+
+<ComparisonTable section="callable" />
+
+## Shapes
+
+Fields of `array{}`, `list{}` and `object{}`.
+
+<ComparisonTable section="shapes" />
+
+## Conditional types
+
+The `T is U ? A : B` family.
+
+<ComparisonTable section="conditional-types" />
+
+## Special names
+
+Names that carry meaning in PHPStan and Psalm. PHPStan and TypeLang read them as ordinary `Name<arguments>` and leave the meaning to the next layer, Psalm checks them while parsing.
+
+<ComparisonTable section="special-names" />
+
+## Whitespace and comments
+
+What may stand between tokens. Newlines are written as `\n`.
+
+<ComparisonTable section="whitespace-and-comments" />
+
+## Malformed input
+
+Inputs that must be rejected. A parser that accepts them reads garbage as a type.
+
+<ComparisonTable section="malformed-input" />

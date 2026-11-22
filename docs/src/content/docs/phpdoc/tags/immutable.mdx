@@ -1,0 +1,21 @@
+---
+title: "@immutable"
+description: "The @immutable tag declares a class as immutable, meaning none of its state can change after construction."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@immutable` tag declares a class as immutable, meaning none of its
+state can change after construction. Real enforcement exists independently
+in Psalm (`@psalm-immutable`), PHPStan (`@phpstan-immutable`) and Phan
+(`@phan-immutable`).
+
+<TagReference name="immutable" />
+
+Parsing an `@immutable` tag produces an `ImmutableTag` instance. Being a
+pure marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class ImmutableTag extends FlagTag {}
+```

@@ -1,0 +1,83 @@
+---
+title: "PHPStan tags"
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **PHPStan Tags** are the annotations that belong to
+[PHPStan](https://phpstan.org)'s own vocabulary, written under its
+`@phpstan-*` vendor prefix. As with Psalm, the prefix serves two roles: it
+introduces PHPStan-specific features — assertions, its `@phpstan-ignore`
+family of diagnostic suppressors, type aliases — and it provides a
+PHPStan-scoped override of a tag that also exists unprefixed, letting a
+project refine a type *for PHPStan only*.
+
+A prefixed tag that mirrors one documented elsewhere — `@phpstan-param`
+beside [@param](/phpdoc/tags/param/), `@phpstan-return` beside
+[@return](/phpdoc/tags/return/) — carries the same meaning as the plain spelling;
+the prefix simply tells PHPStan to prefer this line when it and another tool
+disagree.
+
+## What this group covers
+
+* **Assertions** — [@phpstan-assert](/phpdoc/tags/assert/),
+  [@phpstan-assert-if-true](/phpdoc/tags/assert-if-true/),
+  [@phpstan-assert-if-false](/phpdoc/tags/assert-if-false/).
+* **Diagnostic suppression** — the `@phpstan-ignore` family
+  ([@phpstan-ignore](/phpdoc/tags/phpstan-ignore/),
+  [@phpstan-ignore-line](/phpdoc/tags/phpstan-ignore-line/),
+  [@phpstan-ignore-next-line](/phpdoc/tags/phpstan-ignore-next-line/)).
+* **Purity and immutability** — [@phpstan-pure](/phpdoc/tags/pure/),
+  [@phpstan-impure](/phpdoc/tags/phpstan-impure/),
+  [@phpstan-immutable](/phpdoc/tags/immutable/),
+  [@phpstan-readonly](/phpdoc/tags/readonly/),
+  [@phpstan-pure-unless-callable-is-impure](/phpdoc/tags/pure-unless-callable-is-impure/).
+* **Constructors and mutation** —
+  [@phpstan-consistent-constructor](/phpdoc/tags/consistent-constructor/),
+  [@phpstan-allow-private-mutation](/phpdoc/tags/allow-private-mutation/),
+  [@phpstan-readonly-allow-private-mutation](/phpdoc/tags/readonly-allow-private-mutation/).
+* **Generators** — [@phpstan-yield](/phpdoc/tags/yield/).
+* **Type aliases and generics** — [@phpstan-type](/phpdoc/tags/type/),
+  [@phpstan-import-type](/phpdoc/tags/import-type/),
+  [@phpstan-template](/phpdoc/tags/template/) (with its
+  [covariant](/phpdoc/tags/template-covariant/) and
+  [contravariant](/phpdoc/tags/template-contravariant/) forms).
+* **Prefixed overrides** — [@phpstan-param](/phpdoc/tags/param/),
+  [@phpstan-return](/phpdoc/tags/return/),
+  [@phpstan-var](/phpdoc/tags/var/),
+  [@phpstan-property](/phpdoc/tags/property/),
+  [@phpstan-method](/phpdoc/tags/method/),
+  [@phpstan-param-out](/phpdoc/tags/param-out/),
+  [@phpstan-self-out](/phpdoc/tags/self-out/), and the rest, each shadowing
+  its unprefixed counterpart for PHPStan specifically.
+
+<Aside>
+Many capabilities PHPStan shares with Psalm are recognized here without a
+prefix — see [Advanced Tags](/phpdoc/platforms/advanced/) for the
+vendor-neutral spellings such as
+[@param-out](/phpdoc/tags/param-out/) and
+[@pure-unless-callable-is-impure](/phpdoc/tags/pure-unless-callable-is-impure/).
+</Aside>
+
+<Aside>
+The tags of this group belong to the PHPStan platform, `PhpStanPlatform`.
+`DocBlockParser::createDefault()` loads it together with every other
+built-in platform. The constructor loads only the platforms passed to it, so
+pass the platforms you need explicitly:
+
+```php
+use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\PhpDoc\Platform\PhpStanPlatform;
+use TypeLang\PhpDoc\Platform\StandardPlatform;
+
+$parser = new DocBlockParser([new StandardPlatform(), new PhpStanPlatform()]);
+```
+
+A tag of a platform that is not loaded becomes a plain
+[Tag](/phpdoc/reading/#tag).
+</Aside>
+
+For the authoritative definitions, see
+[PHPStan's PHPDoc reference](https://phpstan.org/writing-php-code/phpdocs-basics).

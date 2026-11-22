@@ -1,0 +1,29 @@
+---
+title: "@subpackage"
+description: "The @subpackage tag categorizes elements into a logical subdivision below their package."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@subpackage` tag subdivides a [@package](/phpdoc/tags/package/) into a finer
+logical section, letting documentation tooling organize a large package
+into smaller subsections rather than listing every element in one
+undifferentiated group. It is meaningful only alongside a `@package` tag on
+the same element, naming a subdivision of the package that tag already
+identifies.
+
+<TagReference name="subpackage" />
+
+Parsing a `@subpackage` tag produces a `SubpackageTag` instance. Being a
+pure marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class SubpackageTag extends FlagTag {}
+```
+
+`@subpackage` is still part of phpDocumentor's current tag reference, but
+phpDocumentor's own page explicitly calls it deprecated, noting that
+"support may be removed in a future version" —
+[phpDocumentor tag reference](https://docs.phpdoc.org/guide/references/phpdoc/tags/subpackage.html).
+It is supported here for classic-style docblocks.

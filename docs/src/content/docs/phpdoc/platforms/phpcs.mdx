@@ -1,0 +1,58 @@
+---
+title: "PHP CodeSniffer tags"
+sidebar:
+  order: 8
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **PHP CodeSniffer Tags** are the annotations
+[PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)
+recognizes to turn its own rules on and off inside a file. Unlike every other
+group in this section, these tags have nothing to do with types or
+documentation at all — they are coding-standard directives, telling the
+sniffer to skip a line, a block, or a whole file when checking style.
+
+They are the tag-based forms that PHP_CodeSniffer used before it moved to its
+`phpcs:` comment directives. Only the tag spellings are parsed here: the
+`@codingStandardsIgnore*` family and `@phpcsSuppress`.
+
+## What this group covers
+
+* **Scoped suppression** — [@phpcsSuppress](/phpdoc/tags/phpcs-suppress/),
+  disabling a named sniff for the element it decorates.
+* **Region suppression** —
+  [@codingStandardsIgnoreStart](/phpdoc/tags/coding-standards-ignore-start/) and
+  [@codingStandardsIgnoreEnd](/phpdoc/tags/coding-standards-ignore-end/) bracket a
+  block the sniffer should skip, while
+  [@codingStandardsIgnoreLine](/phpdoc/tags/coding-standards-ignore-line/) skips a
+  single line and
+  [@codingStandardsIgnoreFile](/phpdoc/tags/coding-standards-ignore-file/) exempts
+  the entire file.
+* **General marker** —
+  [@codingStandards](/phpdoc/tags/coding-standards/), the bare root of that
+  family.
+
+<Aside>
+The tags of this group belong to the PHP CodeSniffer platform, `PhpCodeSnifferPlatform`.
+`DocBlockParser::createDefault()` loads it together with every other
+built-in platform. The constructor loads only the platforms passed to it, so
+pass the platforms you need explicitly:
+
+```php
+use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\PhpDoc\Platform\PhpCodeSnifferPlatform;
+use TypeLang\PhpDoc\Platform\StandardPlatform;
+
+$parser = new DocBlockParser([
+    new StandardPlatform(),
+    new PhpCodeSnifferPlatform(),
+]);
+```
+
+A tag of a platform that is not loaded becomes a plain
+[Tag](/phpdoc/reading/#tag).
+</Aside>
+
+For the authoritative behavior, see
+[PHP_CodeSniffer's wiki on ignoring code](https://github.com/PHPCSStandards/PHP_CodeSniffer/wiki/Advanced-Usage#ignoring-parts-of-a-file).

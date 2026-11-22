@@ -1,0 +1,84 @@
+---
+title: Instantiators
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+An instantiator creates the objects of a class, or finds existing ones. It
+is chosen by a strategy once per class, on the first conversion of the
+class.
+
+By default an object is created without its constructor. An instantiation
+strategy takes a class and returns the instantiator of its objects, or
+`null` for a class it does not take: the next strategy is tried, the
+built-in one is the last.
+
+The instantiator gets the data the object is filled from, so it may find an
+existing object instead of creating one, such as an entity to update:
+
+```php
+use TypeLang\Mapper\Instantiator\InstantiatorInterface;
+use TypeLang\Mapper\Instantiator\Strategy\InstantiationStrategyInterface;
+use TypeLang\Mapper\Mapper;
+use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
+
+final class AccountInstantiator implements InstantiatorInterface
+{
+    public function __construct(
+        private readonly AccountRepository $accounts,
+    ) {}
+
+    public function instantiate(array $data = []): object
+    {
+        $id = $data['id'] ?? null;
+
+        if (\is_int($id)) {
+            return $this->accounts->find($id) ?? new Account();
+        }
+
+        return new Account();
+    }
+}
+
+final class AccountStrategy implements InstantiationStrategyInterface
+{
+    public function __construct(
+        private readonly AccountRepository $accounts,
+    ) {}
+
+    public function tryCreateInstantiator(
+        \ReflectionClass $class,
+        ClassMetadata $metadata,
+    ): ?InstantiatorInterface {
+        if ($class->name !== Account::class) {
+            return null;
+        }
+
+        return new AccountInstantiator($this->accounts);
+    }
+}
+
+$mapper = new Mapper(instantiators: [new AccountStrategy($accounts)]);
+
+$account = $mapper->denormalize(
+    ['id' => 1, 'email' => 'new@example.com'],
+    Account::class,
+);
+// the account 1 of the repository, with the new email
+```
+
+<Aside type="caution">
+Every mapped property of the object is written, the found object as well:
+a field missing from the data is an error, unless the property has a
+[default value](/mapper/metadata/misc/#default-value).
+
+```php
+$mapper->denormalize(['id' => 1], Account::class);
+// throws InvalidValueException: $.email: Required field "email" is missing
+```
+</Aside>
+
+The instantiator is called by the conversion only. A check of the data, such
+as the choice of a branch of `Account|int`, creates no object.

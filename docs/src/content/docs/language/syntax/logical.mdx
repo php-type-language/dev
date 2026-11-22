@@ -1,0 +1,81 @@
+---
+title: Logical types
+sidebar:
+  order: 2
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+The TypeLang, [like PHP](https://www.php.net/manual/en/language.types.type-system.php#language.types.type-system.composite), supports two types of composite (logical) types:
+Union and Intersection. The ability to specify a _nullable_ type using a 
+separate expression is also supported.
+
+## Union types
+
+Each union type is separated by a pipe character (`|`) and may contain any other
+type definition.
+
+<TypeTree type="A | B | C" />
+
+## Intersection types
+
+Each intersection type is separated by an ampersand character (`&`) and may
+contain any other type definition.
+
+<TypeTree type="A & B & C" />
+
+## Nullable types
+
+Nullable type is a shortened alias for union type `T | null` 
+and is written as `?T.`
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="?Example">
+Description of nullable type `Example` (equivalent to `Example | null`)
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="Example?" error message={"UnexpectedTokenException: Unexpected \"?\""}>
+The question mark must be placed before the type name.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Precedence
+
+An intersection binds tighter than a union, and a nullable marker binds tighter
+than both of them, so the parentheses are needed only to change the order.
+
+<TypeTree type="A | B & C">
+Read as `A | (B & C)`.
+</TypeTree>
+
+<TypeTree type="?A | B">
+Read as `(?A) | B`.
+</TypeTree>
+
+<TypeTree type="?A & B">
+Read as `(?A) & B`.
+</TypeTree>
+
+<TypeTree type="?A[]">
+Read as `?(A[])`.
+</TypeTree>
+
+## Parentheses
+
+Parentheses can be used to disambiguate types.
+
+<TypeTree type="(A & B) | C">
+Disjunctive form (DNF).
+</TypeTree>
+
+<TypeTree type="(A | B) & C">
+Conjunctive form (CNF).
+</TypeTree>

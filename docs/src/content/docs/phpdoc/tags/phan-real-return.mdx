@@ -1,0 +1,23 @@
+---
+title: "@phan-real-return"
+description: "The @phan-real-return tag documents the actual native return type of a function or method, kept distinct from the documented @return type."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-real-return` tag documents the actual native return
+type of a function or method, kept distinct from the type
+documented via [@return](/phpdoc/tags/return/).
+
+<TagReference name="phan-real-return" />
+
+Parsing a `@phan-real-return` tag produces a `PhanRealReturnTag` instance, carrying the
+parsed `$type` alongside the `$name` and optional `$description` every
+[Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class PhanRealReturnTag extends TypedTag {}
+```
+
+Defined by Phan, a static analyzer for PHP; no dedicated
+documentation page could be confirmed for this tag.

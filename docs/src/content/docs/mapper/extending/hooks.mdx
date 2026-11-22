@@ -1,0 +1,192 @@
+---
+title: Hooks
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A hook is a service run around the conversion of objects of some classes. It
+changes what a property-by-property mapping cannot express: data spread over
+several fields, invariants of the whole object, data added to the output.
+A hook may depend on any service, such as one from a DI container.
+
+| Interface | Runs | Returns |
+|---|---|---|
+| `BeforeDenormalizationHookInterface` | before the object is created | the data the object is created from |
+| `AfterDenormalizationHookInterface` | after the object is filled | nothing, throws to reject the object |
+| `BeforeNormalizationHookInterface` | before the object is read | the object to read |
+| `AfterNormalizationHookInterface` | after the object is read | the data of the object |
+
+One service may implement several of them. All extend `ClassHookInterface`:
+its `isSupported()` is called once per class, on the first conversion of the
+class, and the hooks of the class are kept. Hooks of one point run in the
+order of the list, each gets the result of the previous one.
+
+```php
+use TypeLang\Mapper\Mapper;
+
+$mapper = new Mapper(hooks: [new FullNameHook(), new PeriodHook()]);
+```
+
+## Before denormalization
+
+The hook gets the data of the object before anything is read from it. Use it
+for a payload that does not match the fields, such as one field split into
+two properties:
+
+```php
+use TypeLang\Mapper\Context\Context;
+use TypeLang\Mapper\Hook\BeforeDenormalizationHookInterface;
+use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
+
+final class Person
+{
+    public string $firstName;
+    public string $lastName;
+}
+
+final class FullNameHook implements BeforeDenormalizationHookInterface
+{
+    public function isSupported(ClassMetadata $metadata): bool
+    {
+        return $metadata->name === Person::class;
+    }
+
+    public function beforeDenormalize(
+        ClassMetadata $metadata,
+        mixed $data,
+        Context $context,
+    ): mixed {
+        if (!\is_array($data) || !\is_string($data['name'] ?? null)) {
+            return $data;
+        }
+
+        [$first, $last] = \explode(' ', $data['name'], 2) + [1 => ''];
+        unset($data['name']);
+
+        return $data + ['firstName' => $first, 'lastName' => $last];
+    }
+}
+
+$mapper->denormalize(['name' => 'John Smith'], Person::class);
+// Person { firstName: 'John', lastName: 'Smith' }
+
+$mapper->denormalize(
+    ['firstName' => 'John', 'lastName' => 'Smith'],
+    Person::class,
+);
+// Person { firstName: 'John', lastName: 'Smith' }
+```
+
+<Aside type="caution">
+The hook also runs when the data is only checked, such as by
+`isDenormalizable()` or by the choice of a branch of `Person|int`, and may
+run several times for one value. It must have no side effects and depend on
+its arguments only.
+</Aside>
+
+A renamed field does not need a hook: see
+[field aliases](/mapper/metadata/naming/#field-aliases).
+
+## After denormalization
+
+The hook gets the filled object and the data it was filled from. It runs
+only when every field is valid, and does not run when the data is only
+checked. Use it to check the invariants of the whole object:
+
+```php
+use TypeLang\Mapper\Context\Context;
+use TypeLang\Mapper\Exception\InvalidValueException;
+use TypeLang\Mapper\Hook\AfterDenormalizationHookInterface;
+use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
+
+final class Period
+{
+    public int $from;
+    public int $to;
+}
+
+final class PeriodHook implements AfterDenormalizationHookInterface
+{
+    public function isSupported(ClassMetadata $metadata): bool
+    {
+        return $metadata->name === Period::class;
+    }
+
+    public function afterDenormalize(
+        ClassMetadata $metadata,
+        object $object,
+        mixed $data,
+        Context $context,
+    ): void {
+        if ($object->from <= $object->to) {
+            return;
+        }
+
+        throw InvalidValueException::becauseValueIsRejected(
+            new \DomainException('The period ends before it starts'),
+            $data,
+        )->withTemplate('The period ends before it starts');
+    }
+}
+
+$mapper->denormalize(['p' => ['from' => 5, 'to' => 1]], 'array{p: Period}');
+// throws InvalidValueException: $.p: The period ends before it starts
+```
+
+## Errors of a hook
+
+An exception of a hook rejects the object: it becomes a violation at the path
+of the object. The message of any exception other than
+`InvalidValueException` is not shown, it may expose internals:
+
+```php
+throw new \DomainException('The period ends before it starts');
+// throws InvalidValueException: $.p: Value array(2) is rejected
+```
+
+The exception itself is kept as the cause of the violation and as
+`$e->getPrevious()`, for logs. To show a message, throw an
+`InvalidValueException` with a [template](/mapper/errors/#messages), as the
+hook above does. The path is added by the mapper.
+
+## Before normalization
+
+The hook gets the object and returns the object to read, such as the
+same object with a lazy relation loaded. Like the hook before
+denormalization, it also runs when the object is only checked, and must have
+no side effects visible in the data.
+
+## After normalization
+
+The hook gets the object and its data, and returns the data. Use it to add
+data that is not a property:
+
+```php
+use TypeLang\Mapper\Context\Context;
+use TypeLang\Mapper\Hook\AfterNormalizationHookInterface;
+use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
+
+final class LinksHook implements AfterNormalizationHookInterface
+{
+    public function isSupported(ClassMetadata $metadata): bool
+    {
+        return $metadata->name === Article::class;
+    }
+
+    public function afterNormalize(
+        ClassMetadata $metadata,
+        object $object,
+        array $data,
+        Context $context,
+    ): array {
+        $data['_links'] = ['self' => '/articles/' . $object->id];
+
+        return $data;
+    }
+}
+
+$mapper->normalize($article, Article::class);
+// ['id' => 42, 'title' => 'Hello', '_links' => ['self' => '/articles/42']]
+```

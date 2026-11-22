@@ -1,0 +1,22 @@
+---
+title: "@psalm-taint-sink"
+description: "The @psalm-taint-sink tag marks the given variable as a sink where tainted data of the named taint type must never arrive."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@psalm-taint-sink` tag marks an argument as a taint sink for
+the given taint type. It is part of Psalm's taint-analysis
+annotations.
+
+<TagReference name="psalm-taint-sink" />
+
+Parsing a `@psalm-taint-sink` tag produces a `PsalmTaintSinkTag` instance,
+carrying the parsed `$taint` type and `$variable` alongside the `$name`
+every [Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class PsalmTaintSinkTag extends Tag {}
+```
+
+See [Psalm's security analysis annotations](https://psalm.dev/docs/security_analysis/annotations/#psalm-taint-sink-lttaint-typegt-ltparam-namegt).

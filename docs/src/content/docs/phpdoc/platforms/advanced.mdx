@@ -1,0 +1,63 @@
+---
+title: "Advanced tags"
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **Advanced Tags** are a small set of tags that were originally
+introduced by individual static analyzers — chiefly Psalm and PHPStan — to
+express things the classic phpDocumentor vocabulary never covered: purity,
+by-reference output parameters, how a closure is invoked, whether a class
+may grow magic members. Over time these spellings became common enough that
+both analyzers came to accept them **without a vendor prefix**, and that is
+exactly how they are grouped here.
+
+In other words, this is the vendor-neutral middle ground: less universal
+than the [Standard Tags](/phpdoc/platforms/standard/), but no longer tied to a single
+tool's `@psalm-*` or `@phpstan-*` namespace either. You write
+`@param-out`, not `@psalm-param-out`; `@pure-unless-callable-is-impure`, not
+its prefixed form.
+
+## What belongs here
+
+* **Purity and side effects** —
+  [@pure-unless-callable-is-impure](/phpdoc/tags/pure-unless-callable-is-impure/),
+  which marks a function pure except when a callable it is handed is itself
+  impure.
+* **By-reference output** — [@param-out](/phpdoc/tags/param-out/), describing the
+  type a parameter *holds after* the call rather than the type it accepts.
+* **How a callable is invoked** —
+  [@param-closure-this](/phpdoc/tags/param-closure-this/) binds the `$this` a
+  closure parameter runs against, while
+  [@param-immediately-invoked-callable](/phpdoc/tags/param-immediately-invoked-callable/)
+  and
+  [@param-later-invoked-callable](/phpdoc/tags/param-later-invoked-callable/)
+  distinguish a callback called before the function returns from one stored
+  for later.
+* **Sealing magic members** — [@seal-methods](/phpdoc/tags/seal-methods/) and
+  [@seal-properties](/phpdoc/tags/seal-properties/) forbid a class from resolving
+  any magic member not explicitly declared.
+* **Diagnostics** — [@suppress](/phpdoc/tags/suppress/) silences named issues on an
+  element, and [@unused-param](/phpdoc/tags/unused-param/) marks a parameter kept
+  only for signature compatibility.
+* **Calling conventions** —
+  [@no-named-arguments](/phpdoc/tags/no-named-arguments/) declares that a function
+  must not be called with named arguments, and
+  [@not-deprecated](/phpdoc/tags/not-deprecated/) asserts an element is explicitly
+  *not* deprecated despite what surrounding code might suggest.
+
+<Aside>
+Each of these tags still has a prefixed twin under a specific analyzer —
+`@psalm-param-out`, `@phpstan-param-out`,
+`@phpstan-pure-unless-callable-is-impure`, and so on — listed
+under that analyzer's own group in the sidebar. The bare spellings collected
+here are the ones both major analyzers agree to read without a prefix, and
+they are recognized by the standard platform alone.
+</Aside>
+
+Like the standard set, every tag in this group is fully recognized: it
+parses into a dedicated, typed object, with any type it carries read through
+the same [TypeLang grammar](/language/) used everywhere else. Open any
+entry in the sidebar for its grammar, resulting object, and examples.

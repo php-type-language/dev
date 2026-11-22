@@ -1,0 +1,181 @@
+---
+title: AST
+description: The node classes of type-lang/types, the tree every package of the toolkit reads or writes.
+---
+
+import AstReference from '../../../components/AstReference.astro';
+import TypeTree from '../../../components/TypeTree.astro';
+
+A type is a tree of `TypeLang\Type\*` nodes. The [parser](/toolkit/parser/)
+builds it from a string, the [reader](/toolkit/reader/) from Reflection, the
+[printer](/toolkit/printer/) turns it back into a string.
+
+```bash
+composer require type-lang/types
+```
+
+<TypeTree type="Example<string, int, *>|null" />
+
+## Building a tree
+
+The tree is plain objects, it can be built by hand:
+
+```php
+use TypeLang\Type\Literal\NullLiteralNode;
+use TypeLang\Type\LogicalTypeNode\UnionTypeNode;
+use TypeLang\Type\Name;
+use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Template\TemplateListNode;
+use TypeLang\Type\Template\TypedTemplateArgumentNode;
+use TypeLang\Type\Template\WildcardTemplateArgumentNode;
+
+$type = new UnionTypeNode([
+    new NamedTypeNode(
+        name: new Name('Example'),
+        arguments: new TemplateListNode([
+            new TypedTemplateArgumentNode(
+                new NamedTypeNode(new Name('string')),
+            ),
+            new TypedTemplateArgumentNode(
+                new NamedTypeNode(new Name('int')),
+            ),
+            new WildcardTemplateArgumentNode(),
+        ]),
+    ),
+    new NullLiteralNode(),
+]);
+
+echo new TypeLang\Printer\PrettyTypePrinter()->print($type);
+// Example<string, int, *>|null
+```
+
+## Reading and changing
+
+A node with children is a list or holds its children in public properties.
+Lists (unions, intersections, template arguments, shape fields, parameters)
+are indexed, iterable and countable:
+
+```php
+$type[0]->name->value;                      // 'Example'
+$type[0]->arguments[1]->value->name->value; // 'int'
+count($type[0]->arguments);                 // 3
+```
+
+The tree is mutable, names and literals are immutable values: a changed name
+is a new `Name`.
+
+```php
+$type[0]->name = new Name('iterable');
+// iterable<string, int, *>|null
+
+$type[0]->name->value = 'iterable';
+// Error: Cannot modify readonly property TypeLang\Type\Name::$value
+```
+
+Every node keeps the `$offset` of its first character in the source, `0` for
+a node built by hand:
+
+```php
+$type = new TypeLang\Parser\TypeParser()->parse('list<int>|null');
+
+$type[1]->offset;              // 10, the "null"
+$type[0]->arguments->offset;   // 5, the "<"
+```
+
+To walk or rewrite a whole tree, use the [traverser and its
+visitors](/toolkit/parser/visitors/).
+
+## Base classes
+
+<AstReference classes={['Node', 'TypeNode', 'NodesListNode', 'SymbolNode']} />
+
+## Names
+
+<AstReference classes={[
+    'NamedTypeNode',
+    'Name',
+    'NamespaceName',
+    'NamespaceName\\NamespaceKind',
+    'Identifier',
+    'VariableNode',
+    'ThisTypeNode',
+]} />
+
+## Logical types
+
+<AstReference classes={[
+    'LogicalTypeNode',
+    'LogicalTypeNode\\UnionTypeNode',
+    'LogicalTypeNode\\IntersectionTypeNode',
+    'WrappingTypeNode',
+    'WrappingTypeNode\\NullableTypeNode',
+    'WrappingTypeNode\\TypesListTypeNode',
+    'TypeOffsetAccessTypeNode',
+]} />
+
+## Literals
+
+<AstReference classes={[
+    'Literal\\LiteralNode',
+    'Literal\\ScalarLiteralNode',
+    'Literal\\BoolLiteralNode',
+    'Literal\\NullLiteralNode',
+    'Literal\\IntLiteralNode',
+    'Literal\\IntLiteralKind',
+    'Literal\\FloatLiteralNode',
+    'Literal\\StringLiteralNode',
+    'Literal\\StringLiteralKind',
+]} />
+
+## Constants
+
+<AstReference classes={[
+    'Constant\\ConstTypeNode',
+    'Constant\\ConstMaskTypeNode',
+    'Constant\\MaskNode',
+    'Constant\\MaskNode\\WildcardMaskNode',
+]} />
+
+## Shapes
+
+<AstReference classes={[
+    'Shape\\FieldListNode',
+    'Shape\\FieldNode',
+    'Shape\\ExplicitFieldNode',
+    'Shape\\NamedFieldNode',
+    'Shape\\ScalarFieldNode',
+    'Shape\\ComplexFieldNode',
+    'Shape\\ImplicitFieldNode',
+]} />
+
+## Templates
+
+<AstReference classes={[
+    'Template\\TemplateListNode',
+    'Template\\TemplateNode',
+    'Template\\TemplateArgumentNode',
+    'Template\\TypedTemplateArgumentNode',
+    'Template\\WildcardTemplateArgumentNode',
+    'Template\\VarianceNode',
+    'Template\\VarianceNode\\VarianceKind',
+    'Template\\TemplateParameterListNode',
+    'Template\\TemplateParameterNode',
+    'Template\\TemplateBoundNode',
+]} />
+
+## Callables
+
+<AstReference classes={[
+    'Callable\\CallableTypeNode',
+    'Callable\\CallableParameterListNode',
+    'Callable\\CallableParameterNode',
+    'Callable\\DefaultValueNode',
+]} />
+
+## Conditional types
+
+<AstReference classes={[
+    'Condition\\ConditionalTypeNode',
+    'Condition\\ConditionNode',
+    'Condition\\ConditionNode\\ConditionKind',
+]} />

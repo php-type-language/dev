@@ -1,0 +1,203 @@
+---
+title: Number literals
+sidebar:
+  label: Numbers
+  order: 6
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+Integers and floats are written the way PHP writes them. Rules shared by both:
+
+- A number may be prefixed by a sign: a minus (`-`) makes it negative, a plus
+  (`+`) changes nothing. Whitespace may stand between the sign and the number
+  (`- 1` is `-1`).
+- An underscore (`_`) separates digits: it stands between two digits and
+  nowhere else, so it neither leads, nor trails, nor doubles.
+
+<Aside>
+A number is kept whole, however large it is. The node carries the native
+`$value`, to which the limits of the platform apply, and the `$decimal`: the
+value written in base 10 as a string, readable in full even when it does not
+fit an `int`.
+</Aside>
+
+## Integers
+
+A decimal integer is a run of digits without a leading zero
+(`[1-9][0-9]*`). Other notations are prefixed and described below.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="42_04">
+A number written with a separator.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="42_" error message={"UnexpectedTokenException: Unexpected \"_\""}>
+A separator cannot trail a number.
+</TypeTree>
+
+<TypeTree type="4__2" error message={"UnexpectedTokenException: Unexpected \"__2\""}>
+Two separators in a row are not allowed.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+### Binary
+
+Prefixed with `0b` or `0B`, written in the digits `0` and `1`.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="0b1010_1101">
+The number `173`.
+</TypeTree>
+
+<TypeTree type="-0B1010">
+The number `-10`, the prefix is case-insensitive.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="0b101042" error message={"UnexpectedTokenException: Unexpected \"42\""}>
+A binary number contains `0` and `1` only.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+### Octal
+
+Prefixed with `0o` or `0O`, written in the digits `0` to `7`. For
+compatibility with older PHP, a leading `0` alone is an octal prefix too.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="0o42">
+The number `34`.
+</TypeTree>
+
+<TypeTree type="042">
+Also `34`, with the legacy prefix.
+</TypeTree>
+
+<TypeTree type="0O42_23">
+The number `2195`, the prefix is case-insensitive.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="0o4281" error message={"UnexpectedTokenException: Unexpected \"81\""}>
+An octal number contains the digits `0` to `7` only.
+</TypeTree>
+
+<TypeTree type="08" error message={"UnexpectedTokenException: Unexpected \"8\""}>
+A leading `0` makes a number octal, so `8` cannot follow it.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+### Hexadecimal
+
+Prefixed with `0x` or `0X`, written in the digits `0` to `9` and the letters
+`A` to `F` in any case.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="0xDEAD">
+The number `57005`.
+</TypeTree>
+
+<TypeTree type="0XDead_Beef">
+The number `3735928559`, the prefix and the letters are case-insensitive.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="0xHELL" error message={"UnexpectedTokenException: Unexpected \"xHELL\""}>
+`H` and `L` are not hexadecimal digits.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Floats
+
+A float is two runs of digits around a dot (`[0-9]+\.[0-9]+`), either run may
+be omitted, but not both. Every run, the exponent included, accepts the
+separator.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="0.9" />
+
+<TypeTree type=".9">
+The same as `0.9`.
+</TypeTree>
+
+<TypeTree type="1.">
+The same as `1.0`.
+</TypeTree>
+
+<TypeTree type="-0.9" />
+
+<TypeTree type="2_3.4_5e-6_7">
+Separators in every part, the same as `23.45e-67`.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="." error message={"UnrecognizedSyntaxException: Unrecognized syntax \".\""}>
+Both runs of digits cannot be omitted.
+</TypeTree>
+
+<TypeTree type="0.0A" error message={"UnexpectedTokenException: Unexpected \"A\""}>
+A float contains decimal digits only.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+### Scientific notation
+
+A number followed by `e` (or `E`) and a decimal exponent with an optional sign.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="10e2">
+The number `1000.0`.
+</TypeTree>
+
+<TypeTree type="10E-2">
+The number `0.1`, the `E` is case-insensitive.
+</TypeTree>
+
+<TypeTree type="10e+2">
+The number `1000.0`, a plus changes nothing.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="10e-F" error message={"UnexpectedTokenException: Unexpected \"e-F\""}>
+The exponent is decimal.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>

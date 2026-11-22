@@ -1,0 +1,48 @@
+---
+title: "PHPStan"
+sidebar:
+  order: 3
+---
+
+The PHPStan extension reports type strings written wrong in calls of
+`denormalize()`, `isDenormalizable()`, `normalize()`, `isNormalizable()` and in
+`#[MapType]`.
+
+```php
+$mapper->denormalize($data, 'list<Item'); // reported
+
+#[MapType('array{id: int')]                // reported
+public array $data;
+```
+
+```
+ ------ ---------------------------------------------------------------
+  Line   example.php
+ ------ ---------------------------------------------------------------
+  12     Type "list<Item" is written wrong: Invalid template
+         arguments, "," or ">" is expected
+         🪪  typeLangMapper.typeSyntax
+ ------ ---------------------------------------------------------------
+```
+
+## Installation
+
+With [phpstan/extension-installer](https://github.com/phpstan/extension-installer)
+the extension is enabled automatically. Otherwise include it in
+`phpstan.neon`:
+
+```yaml
+includes:
+    - vendor/type-lang/mapper/libs/bridge/phpstan/extension.neon
+```
+
+## Limitations
+
+- Only strings known to PHPStan as constants are checked: literals,
+  constants, variables holding a literal. A type built at runtime is not.
+- Calls are checked only on a value known to be a mapper
+  (`NormalizerInterface`, `DenormalizerInterface`), nullsafe calls are not.
+- Of attributes, only `#[MapType]` is checked, `#[DiscriminatorMap]` is not.
+- Only the syntax is checked: an unknown type such as `list<Itme>` is not
+  reported.
+- Types in PHPDoc and config files are not checked.

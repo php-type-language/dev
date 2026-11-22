@@ -1,0 +1,23 @@
+---
+title: "@phan-forbid-undeclared-magic-methods"
+description: "The @phan-forbid-undeclared-magic-methods tag forbids calling undeclared magic methods on the class it decorates, so only documented methods may be called."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-forbid-undeclared-magic-methods` tag forbids calling
+undeclared magic methods on the class it decorates, so only the
+methods actually documented via [@method](/phpdoc/tags/method/) may be
+called.
+
+<TagReference name="phan-forbid-undeclared-magic-methods" />
+
+Parsing a `@phan-forbid-undeclared-magic-methods` tag produces a `PhanForbidUndeclaredMagicMethodsTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PhanForbidUndeclaredMagicMethodsTag extends FlagTag {}
+```
+
+See [Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code), where it is mentioned in body text.

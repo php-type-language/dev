@@ -1,0 +1,37 @@
+---
+title: "@uses"
+description: "The @uses tag indicates that the described element uses the referenced one."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@uses` tag documents that the described element uses — depends on —
+the referenced one. Where [@see](/phpdoc/tags/see/) is a loose "read also"
+pointer, `@uses` (together with its inverse, [@used-by](/phpdoc/tags/used-by/))
+is meant to express a real dependency relationship worth tracking: if the
+referenced element changes behavior, the element carrying `@uses` may
+break. This makes the relationship visible from the dependent side, even
+when the referenced element carries no annotation of its own.
+
+<TagReference name="uses" />
+
+Parsing a `@uses` tag produces a `ReferenceTag` instance narrowed to a
+`CodeReference` (a class, function, method, constant, property, or
+variable — never an external URI), exposing `$reference`.
+
+```php
+final class UsesTag extends ReferenceTag
+{
+    // extends ReferenceTag<CodeReference>
+    // directly; adds nothing beyond the
+    // inherited $reference, $name and
+    // $description.
+}
+```
+
+Defined by the PSR-19 draft
+([FIG proposed PHPDoc Tags, §5.17](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md#517-uses))
+and by
+[phpDocumentor](https://docs.phpdoc.org/guide/references/phpdoc/tags/uses.html),
+which also documents its inverse, [@used-by](/phpdoc/tags/used-by/), on the same
+page.

@@ -1,0 +1,163 @@
+---
+title: Formatters
+sidebar:
+  order: 7
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A formatter writes the text of one violation. The mapper builds the message
+of an `InvalidValueException` from it: the path of the first violation, its
+text and the number of the others.
+
+```
+$.status: Value must be of type 'new'|'paid', but "x" given (and 1 more)
+└──┬───┘  └─────────────────────┬─────────────────────────┘ └────┬─────┘
+ path               text of the formatter                     mapper
+```
+
+The mapper has one formatter per direction, they write for different
+readers:
+
+| Argument | Reader | Default | Type in the text | Value in the text |
+|---|---|---|---|---|
+| `denormalizationFormatter` | a client sending the data | `PublicViolationFormatter` | expected: `'new'\|'paid'` | public: `"x"`, `object` |
+| `normalizationFormatter` | a developer of the application | `ViolationFormatter` | declared: `App\Status` | short: `"x"`, `object(App\User)` |
+
+The expected type and the declared type are described in
+[errors](/mapper/errors/#messages). In an application a formatter is set by
+the `formatters` config key of [Symfony](/mapper/integrations/symfony/#formatters)
+and [Laravel](/mapper/integrations/laravel/#extensions).
+
+## Templates
+
+The text is the template of the violation with its placeholders replaced.
+The template is the one set by [metadata](/mapper/metadata/errors/), or the
+one of the [code](/mapper/errors/#violations) of the violation.
+
+| Placeholder | Value |
+|---|---|
+| `{{expected}}` | the type, printed by the type printer |
+| `{{value}}` | the rejected value, printed by the value printer |
+| `{{field}}` | the name of the missing, unexpected or duplicate field |
+| `{{other}}` | the field a duplicate field repeats |
+| `{{check}}` | the failed check of a refined type, such as `positive-int` |
+
+A code that names the type has a second template without it, used when the
+type is unknown: `Value {{value}} is invalid`. In a template of metadata an
+unknown type and a check of a violation of another kind are empty.
+
+## Built-in formatters
+
+```php
+use TypeLang\Mapper\Diagnostics\Printer\Value\PublicValuePrinter;
+use TypeLang\Mapper\Diagnostics\Printer\Value\ShortValuePrinter;
+use TypeLang\Mapper\Diagnostics\PublicViolationFormatter;
+use TypeLang\Mapper\Diagnostics\ViolationFormatter;
+use TypeLang\Mapper\Mapper;
+use TypeLang\Printer\PrettyTypePrinter;
+use TypeLang\Printer\PrinterOptions;
+
+// the type printer of the mapper: shapes in one line with all fields
+$types = new PrettyTypePrinter(
+    new PrinterOptions(maxInlineShapeFields: \PHP_INT_MAX),
+);
+
+$mapper = new Mapper(
+    // the expected type, the value printed by PublicValuePrinter
+    denormalizationFormatter: new PublicViolationFormatter($types),
+
+    // the declared type, the value printed by ShortValuePrinter
+    normalizationFormatter: new ViolationFormatter(
+        valuePrinter: new ShortValuePrinter(),
+        typePrinter: $types,
+        shouldPrintDeclaredType: true,
+    ),
+);
+```
+
+`ViolationFormatter` with `shouldPrintDeclaredType: false` prints the
+expected type, the way `PublicViolationFormatter` does.
+
+### Value printers
+
+| Printer | Prints |
+|---|---|
+| `ShortValuePrinter` | scalars by value, a string cut to `maxStringLength` characters (40), arrays and objects by kind: `array(3)`, `object(App\User)` |
+| `PublicValuePrinter` | an object as `object`, a case of an enum as its value or name, the rest by the inner printer (`ShortValuePrinter`) |
+
+A string of the data may be a password or a token. To keep it out of the
+messages sent to clients, print strings by their length only:
+
+```php
+$mapper = new Mapper(
+    denormalizationFormatter: new PublicViolationFormatter(
+        $types,
+        new PublicValuePrinter(new ShortValuePrinter(maxStringLength: 0)),
+    ),
+);
+
+$mapper->denormalize('abcdef', 'int');
+// throws InvalidValueException: $: Value must be of type int, but string(6)
+// given
+```
+
+## Custom formatter
+
+A formatter implements `ViolationFormatterInterface`. The violation gives
+everything the text is made of: the `code`, the `parameters` of the
+placeholders, the `path`, the rejected `value`, the `expected` and
+`declared` types and the `template` of metadata.
+
+A formatter translating the templates by the code, the placeholders are
+still replaced by the built-in formatter:
+
+```php
+use TypeLang\Mapper\Diagnostics\PublicViolationFormatter;
+use TypeLang\Mapper\Diagnostics\Violation;
+use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
+use TypeLang\Mapper\Mapper;
+
+final class TranslatedViolationFormatter implements ViolationFormatterInterface
+{
+    /**
+     * @param array<non-empty-string, non-empty-string> $templates
+     */
+    public function __construct(
+        private readonly ViolationFormatterInterface $formatter,
+        private readonly array $templates,
+    ) {}
+
+    public function format(Violation $violation): string
+    {
+        $template = $this->templates[$violation->code->getCode()] ?? null;
+
+        // a template set by metadata is kept as is
+        if ($template !== null && $violation->template === null) {
+            $violation = $violation->withTemplate($template);
+        }
+
+        return $this->formatter->format($violation);
+    }
+}
+
+$mapper = new Mapper(
+    denormalizationFormatter: new TranslatedViolationFormatter(
+        new PublicViolationFormatter($types),
+        [
+            'invalid_type' => 'Erwartet {{expected}}, erhalten {{value}}',
+            'missing_field' => 'Pflichtfeld "{{field}}" fehlt',
+        ],
+    ),
+);
+
+$mapper->denormalize(['status' => 'x'], Order::class);
+// throws InvalidValueException: $.status: Erwartet 'new'|'paid', erhalten
+// "x" (and 1 more)
+```
+
+<Aside>
+The formatter writes the message of the exception only. To return all
+violations, such as in the body of an API response, format
+`$e->violations` yourself: see [errors](/mapper/errors/#messages).
+</Aside>

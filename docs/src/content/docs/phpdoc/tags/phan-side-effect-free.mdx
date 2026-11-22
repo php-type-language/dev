@@ -1,0 +1,21 @@
+---
+title: "@phan-side-effect-free"
+description: "The @phan-side-effect-free tag declares a function or method as free of side effects."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-side-effect-free` tag declares a function or method
+as free of side effects.
+
+<TagReference name="phan-side-effect-free" />
+
+Parsing a `@phan-side-effect-free` tag produces a `PhanSideEffectFreeTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PhanSideEffectFreeTag extends FlagTag {}
+```
+
+Defined by [Phan](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code#phan-side-effect-free).

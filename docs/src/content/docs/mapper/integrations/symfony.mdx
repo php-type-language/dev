@@ -1,0 +1,617 @@
+---
+title: "Symfony"
+sidebar:
+  order: 1
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The bundle registers mappers as services of a Symfony 6.4+ application.
+
+```shell
+composer require type-lang/mapper-symfony
+```
+
+With Symfony Flex the bundle is enabled automatically. Otherwise add it to
+`config/bundles.php`:
+
+```php
+return [
+    // ...
+    TypeLang\Mapper\Bridge\Symfony\TypeLangMapperBundle::class => [
+        'all' => true,
+    ],
+];
+```
+
+## Mappers
+
+The default mapper is the `type_lang_mapper.mapper` service, autowired by
+`MapperInterface`, `DenormalizerInterface` and `NormalizerInterface`.
+
+```php
+use TypeLang\Mapper\DenormalizerInterface;
+
+final class CreateUserController
+{
+    public function __construct(
+        private readonly DenormalizerInterface $mapper,
+    ) {}
+
+    public function __invoke(Request $request): Response
+    {
+        $user = $this->mapper->denormalize(
+            $request->toArray(),
+            CreateUser::class,
+        );
+        // ...
+    }
+}
+```
+
+A named mapper takes the settings of the default one and overrides some of
+them. There may be any number of them, each is the
+`type_lang_mapper.mapper.<name>` service.
+
+```yaml
+# config/packages/type_lang_mapper.yaml
+type_lang_mapper:
+  # settings of the default mapper, inherited by the named ones
+  naming: snake_case
+
+  mappers:
+    # type_lang_mapper.mapper.api
+    api:
+      # config overrides
+      strict: true
+
+    # type_lang_mapper.mapper.import
+    import:
+      # config overrides
+      reject_extra_fields: true
+      max_violations: 100
+```
+
+The interfaces are always autowired to the default mapper, whatever the
+name of the argument. A named mapper is passed by its service id:
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+# config/services.yaml
+services:
+  App\Controller\ImportController:
+    arguments:
+      # snake_case
+      $mapper: '@type_lang_mapper.mapper'
+      # snake_case, strict
+      $apiMapper: '@type_lang_mapper.mapper.api'
+```
+
+```php
+final class ImportController
+{
+    public function __construct(
+        // type_lang_mapper.mapper: snake_case
+        private readonly DenormalizerInterface $mapper,
+        // type_lang_mapper.mapper.api: snake_case, strict
+        private readonly DenormalizerInterface $apiMapper,
+    ) {}
+}
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
+final class ImportController
+{
+    public function __construct(
+        // type_lang_mapper.mapper: snake_case
+        private readonly DenormalizerInterface $mapper,
+        // type_lang_mapper.mapper.api: snake_case, strict
+        #[Autowire(service: 'type_lang_mapper.mapper.api')]
+        private readonly DenormalizerInterface $apiMapper,
+    ) {}
+}
+```
+
+</TabItem>
+</Tabs>
+
+Without the explicit `$apiMapper` the controller would get the default
+mapper there too: the name of an argument never selects a mapper.
+
+<Aside>
+A setting a named mapper leaves unset is the one of the default mapper. The
+lists (types, hooks, readers, ...) of a named mapper go before the ones of
+the default mapper.
+</Aside>
+
+## Configuration
+
+```yaml
+# config/packages/type_lang_mapper.yaml
+type_lang_mapper:
+  # see "Configuration" for the meaning of the options
+  strict: false
+  normalize_as_array: true
+  max_violations: 1
+  reject_extra_fields: false
+  expected_type_depth: 1
+  expected_type_max_fields: ~
+
+  # snake_case, camelCase, PascalCase, SCREAMING_SNAKE_CASE, kebab-case
+  # or a NamingStrategyInterface service
+  naming: ~
+
+  # services, see "Extensions"
+  types: []
+  decorators: []
+  expanders: []
+  hooks: []
+  instantiators: []
+  accessors: []
+
+  # CoercerInterface service by the type
+  coercers:
+    int: ~
+    float: ~
+    string: ~
+    bool: ~
+    array: ~
+
+  # ViolationFormatterInterface service by the direction
+  formatters:
+    denormalization: ~
+    normalization: ~
+
+  metadata:
+    # MetadataReaderInterface services over the default readers
+    readers: []
+
+    # config files or directories of them (yaml, yml, neon, json, php)
+    paths:
+      - '%kernel.project_dir%/config/mapping'
+
+    # PropertySelectorInterface service
+    selector: ~
+
+    cache:
+      # default = false in debug mode, true otherwise
+      enabled: ~
+      # from the first one checked to the last one,
+      # default = the "cache.type_lang_mapper" pool
+      pools:
+        - { psr16: app.redis, prefix: hot_ }
+        - { psr6: cache.app }
+
+  # named mappers extending the default one: any number of them, each
+  # under its own name, with any of the options above it overrides
+  mappers:
+    your_mapper_name:
+      # config overrides
+      strict: true
+    another_mapper_name:
+      # config overrides
+      naming: camelCase
+      types:
+        - App\Mapper\MoneyTypeBuilder
+
+  # default = enabled in debug mode
+  profiler: ~
+```
+
+The options are described in [Configuration](/mapper/configuration/),
+[Naming Strategy](/mapper/metadata/naming/#naming-strategy),
+[Config Files](/mapper/metadata/#config-files) and
+[Caching](/mapper/metadata/#caching).
+
+## Extensions
+
+An extension is a service added to the mappers in one of two ways:
+
+- **YAML:** its id is listed in the config, at the root for the default
+  mapper or under `mappers.<name>` for a named one;
+- **Attributes:** its class carries an attribute of its role and is
+  autoconfigured, as the classes of `src/` are by default.
+
+| Role | Attribute | Config key | What it does |
+|---|---|---|---|
+| Type builder | `AsMapperTypeBuilder` | `types` | [Custom types](/mapper/extending/types/) |
+| Decorator | `AsMapperDecorator` | `decorators` | [Decorators](/mapper/extending/decorators/) |
+| Type expander | `AsMapperTypeExpander` | `expanders` | [Expanders](/mapper/extending/expanders/) |
+| Hook | `AsMapperHook` | `hooks` | [Hooks](/mapper/extending/hooks/) |
+| Instantiator | `AsMapperInstantiator` | `instantiators` | [Instantiators](/mapper/extending/instantiators/) |
+| Accessor | `AsMapperAccessor` | `accessors` | [Property accessors](/mapper/extending/accessors/) |
+| Metadata reader | `AsMapperMetadataReader` | `metadata.readers` | [Metadata](/mapper/metadata/#readers) |
+| Coercer | `AsMapperCoercer` | `coercers.<type>` | [Type coercion](/mapper/coercion/#custom-coercers) |
+| Formatter | `AsMapperFormatter` | `formatters.<direction>` | [Formatters](/mapper/extending/formatters/) |
+
+An extension of the default mapper extends the named ones too. An attribute
+without `mappers` extends the default mapper and all named ones,
+`mappers: ['api']` the `api` mapper only. Within one role the services of
+the config go first, in the order of the config, then the ones of the
+attributes by their `priority`, a higher one first. A named mapper tries its
+own services before the ones of the default mapper.
+
+<Aside type="caution">
+An attribute on a class that does not implement the interface of its role
+is an error, so is a tag of a mapper that is not declared.
+</Aside>
+
+### Type builders
+
+A type builder adds a type of your own, such as `money` or a generic
+`collection<T>`, or replaces a built-in one. See
+[Custom types](/mapper/extending/types/).
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+# config/packages/type_lang_mapper.yaml
+type_lang_mapper:
+  types:
+    - App\Mapper\UuidTypeBuilder
+  mappers:
+    api:
+      types:
+        - App\Mapper\MoneyTypeBuilder
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperTypeBuilder;
+use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;
+
+// the default mapper and all named ones
+#[AsMapperTypeBuilder]
+final class UuidTypeBuilder implements TypeBuilderInterface {}
+
+// the "api" mapper only, before the type builders of a lower priority
+#[AsMapperTypeBuilder(mappers: ['api'], priority: 10)]
+final class MoneyTypeBuilder implements TypeBuilderInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+### Decorators
+
+A decorator wraps the types the mapper builds, whatever builder built them,
+such as to preprocess the input of every enum. See
+[Decorators](/mapper/extending/decorators/).
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+type_lang_mapper:
+  decorators:
+    - App\Mapper\TrimEnumsDecorator
+  mappers:
+    api:
+      decorators:
+        - App\Mapper\LoggingDecorator
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperDecorator;
+use TypeLang\Mapper\Type\Decorator\TypeDecoratorInterface;
+
+// the default mapper and all named ones
+#[AsMapperDecorator]
+final class TrimEnumsDecorator implements TypeDecoratorInterface {}
+
+// the "api" mapper only, before the decorators of a lower priority
+#[AsMapperDecorator(mappers: ['api'], priority: 10)]
+final class LoggingDecorator implements TypeDecoratorInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+### Type expanders
+
+An expander tells how a type of your own is shown to clients in the
+messages of errors, such as a `Uuid` as `string`. See
+[Expanders](/mapper/extending/expanders/).
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+type_lang_mapper:
+  expanders:
+    - App\Mapper\UuidTypeExpander
+  mappers:
+    api:
+      expanders:
+        - App\Mapper\MoneyTypeExpander
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperTypeExpander;
+use TypeLang\Mapper\Type\Expander\TypeExpanderInterface;
+
+// the default mapper and all named ones
+#[AsMapperTypeExpander]
+final class UuidTypeExpander implements TypeExpanderInterface {}
+
+// the "api" mapper only, before the expanders of a lower priority
+#[AsMapperTypeExpander(mappers: ['api'], priority: 10)]
+final class MoneyTypeExpander implements TypeExpanderInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+### Hooks
+
+A hook runs before or after the conversion of objects of some classes: it
+changes the data, checks the invariants of the object, adds data to the
+output. See [Hooks](/mapper/extending/hooks/).
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+type_lang_mapper:
+  hooks:
+    - App\Mapper\PeriodHook
+  mappers:
+    api:
+      hooks:
+        - App\Mapper\LinksHook
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperHook;
+use TypeLang\Mapper\Hook\AfterDenormalizationHookInterface;
+use TypeLang\Mapper\Hook\AfterNormalizationHookInterface;
+
+// the default mapper and all named ones
+#[AsMapperHook]
+final class PeriodHook implements AfterDenormalizationHookInterface {}
+
+// the "api" mapper only, before the hooks of a lower priority
+#[AsMapperHook(mappers: ['api'], priority: 10)]
+final class LinksHook implements AfterNormalizationHookInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+### Instantiators
+
+An instantiation strategy creates the objects of some classes, or finds
+existing ones, such as entities to update. See
+[Instantiators](/mapper/extending/instantiators/).
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+type_lang_mapper:
+  instantiators:
+    - App\Mapper\AccountStrategy
+  mappers:
+    api:
+      instantiators:
+        - App\Mapper\ContainerStrategy
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperInstantiator;
+use TypeLang\Mapper\Instantiator\Strategy\InstantiationStrategyInterface;
+
+// the default mapper and all named ones
+#[AsMapperInstantiator]
+final class AccountStrategy implements InstantiationStrategyInterface {}
+
+// the "api" mapper only, before the strategies of a lower priority
+#[AsMapperInstantiator(mappers: ['api'], priority: 10)]
+final class ContainerStrategy implements InstantiationStrategyInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+### Accessors
+
+An access strategy reads and writes the properties of some classes, such as
+through getters and setters. See
+[Property accessors](/mapper/extending/accessors/).
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+type_lang_mapper:
+  accessors:
+    - App\Mapper\AccessorMethodsStrategy
+  mappers:
+    api:
+      accessors:
+        - App\Mapper\LazyProxyStrategy
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperAccessor;
+use TypeLang\Mapper\PropertyAccessor\Strategy\AccessStrategyInterface;
+
+// the default mapper and all named ones
+#[AsMapperAccessor]
+final class AccessorMethodsStrategy implements AccessStrategyInterface {}
+
+// the "api" mapper only, before the strategies of a lower priority
+#[AsMapperAccessor(mappers: ['api'], priority: 10)]
+final class LazyProxyStrategy implements AccessStrategyInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+### Metadata readers
+
+A metadata reader tells how the classes are mapped from a source of your
+own: the fields, their names and types. See [Metadata](/mapper/metadata/).
+A reader has the highest [priority](/mapper/metadata/#readers): what it sets
+overrides the attributes, the config files, PHPDoc and reflection.
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+type_lang_mapper:
+  metadata:
+    readers:
+      - App\Mapper\LegacyMappingReader
+  mappers:
+    api:
+      metadata:
+        readers:
+          - App\Mapper\ApiMappingReader
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperMetadataReader;
+use TypeLang\Mapper\Mapping\Reader\MetadataReaderInterface;
+
+// the default mapper and all named ones
+#[AsMapperMetadataReader]
+final class LegacyMappingReader implements MetadataReaderInterface {}
+
+// the "api" mapper only, over the readers of a lower priority
+#[AsMapperMetadataReader(mappers: ['api'], priority: 10)]
+final class ApiMappingReader implements MetadataReaderInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+### Coercers
+
+A coercer converts a value written in another form when the mapping is not
+strict, such as `'4,2'` to `4.2`. It replaces the built-in one of its type:
+`int`, `float`, `string`, `bool` or `array`. The attribute takes the type
+instead of a priority. See [Type coercion](/mapper/coercion/#custom-coercers).
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+type_lang_mapper:
+  coercers:
+    bool: App\Mapper\YesNoCoercer
+  mappers:
+    api:
+      coercers:
+        float: App\Mapper\DecimalCommaCoercer
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperCoercer;
+use TypeLang\Mapper\Coercer\CoercerInterface;
+
+// the default mapper and all named ones
+#[AsMapperCoercer('bool')]
+final class YesNoCoercer implements CoercerInterface {}
+
+// the "api" mapper only
+#[AsMapperCoercer('float', mappers: ['api'])]
+final class DecimalCommaCoercer implements CoercerInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="caution">
+A mapper takes one coercer per type: two coercers of the same type for the
+same mapper are an error. A coercer of a named mapper replaces the one of
+the default mapper.
+</Aside>
+
+### Formatters
+
+A formatter writes the messages of the errors, such as translated ones. A
+mapper has one per direction: `denormalization` writes for the clients
+sending the data, `normalization` for the developers of the application.
+See [Formatters](/mapper/extending/formatters/).
+
+<Tabs>
+<TabItem label="YAML">
+
+```yaml
+type_lang_mapper:
+  formatters:
+    denormalization: App\Mapper\TranslatedFormatter
+  mappers:
+    api:
+      formatters:
+        normalization: App\Mapper\LogFormatter
+```
+
+</TabItem>
+<TabItem label="Attributes">
+
+```php
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperFormatter;
+use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
+
+// the default mapper and all named ones
+#[AsMapperFormatter('denormalization')]
+final class TranslatedFormatter implements ViolationFormatterInterface {}
+
+// the "api" mapper only
+#[AsMapperFormatter('normalization', mappers: ['api'])]
+final class LogFormatter implements ViolationFormatterInterface {}
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="caution">
+A mapper takes one formatter per direction: two formatters of the same
+direction for the same mapper are an error. A formatter of a named mapper
+replaces the one of the default mapper.
+</Aside>
+
+## Profiler
+
+In debug mode the Symfony profiler gets a "Mapper" panel: the calls of each
+mapper with their input, output and violations, the place of the call, the
+built types and the metadata reads. With `symfony/stopwatch` the calls are
+also shown on the performance timeline.
+
+```yaml
+type_lang_mapper:
+  profiler: false
+```

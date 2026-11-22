@@ -1,0 +1,44 @@
+---
+title: "@property"
+description: "The @property tag declares a magic property that can be both read and written."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@property` tag declares a "magic" property: one that is readable and
+writable through `__get`/`__set` (or `ArrayAccess`-style tricks) but never
+appears as an actual declared property in the class body. Because such
+properties are invisible to reflection and to PHP's own type system, IDEs
+and static analyzers have no way to know they exist — or what type they
+hold — unless the class itself documents them. `@property` is written on
+the class docblock, not on any property or method, typically with one line
+per magic property the class exposes.
+
+<TagReference name="property" />
+
+Parsing a `@property` tag produces a `TypedVariableTag` instance exposing:
+
+* `$type` — the documented `TypeNode`.
+* `$variable` — the property's name, without the leading `$`.
+
+```php
+final class PropertyTag extends MagicPropertyTag
+{
+    // Inherits `$type` (a `TypeNode`)
+    // and `string $variable` from MagicPropertyTag
+    // (itself a TypedVariableTag), plus `$name` and
+    // `$description` from the base `Tag` class; adds
+    // nothing of its own.
+}
+```
+
+This is the same shape as [@param](/phpdoc/tags/param/): a type paired with a
+name. When a magic property only supports one direction, the more specific
+[@property-read](/phpdoc/tags/property-read/) or
+[@property-write](/phpdoc/tags/property-write/) tag should be used instead, so
+consumers know not to attempt the unsupported operation.
+
+Defined by [PSR-19 §5.11](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md#511-property)
+— which groups `@property`, `@property-read`, and
+`@property-write` under a single section — and
+phpDocumentor's own [`@property` reference](https://docs.phpdoc.org/guide/references/phpdoc/tags/property.html).

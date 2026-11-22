@@ -1,0 +1,23 @@
+---
+title: "@psalm-assert-untainted"
+description: "The @psalm-assert-untainted tag asserts that the given variable holds no tainted data from this point on."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@psalm-assert-untainted` tag asserts that the given variable holds no
+tainted data from this point on. It is part of Psalm's taint-analysis
+assertion family, alongside [@psalm-assert](/phpdoc/tags/assert/).
+
+<TagReference name="psalm-assert-untainted" />
+
+Parsing a `@psalm-assert-untainted` tag produces a
+`PsalmAssertUntaintedTag` instance, carrying the asserted `$variable`
+alongside the `$name` and optional `$description` every
+[Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class PsalmAssertUntaintedTag extends VariableTag {}
+```
+
+See [Psalm's security analysis annotations](https://psalm.dev/docs/security_analysis/annotations/).

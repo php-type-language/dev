@@ -1,0 +1,25 @@
+---
+import { Code } from '@astrojs/starlight/components';
+
+interface Props {
+    examples: { title: string | null; code: string }[];
+}
+---
+
+{Astro.props.examples.map((example) => (
+    <figure class="tag-example">
+        {example.title && <figcaption>{example.title}</figcaption>}
+        <Code code={example.code} lang="php" />
+    </figure>
+))}
+
+<style>
+    .tag-example {
+        margin: 0 0 1.25rem;
+    }
+    .tag-example figcaption {
+        margin-bottom: 0.4rem;
+        color: var(--ink-2);
+        font-size: 0.95rem;
+    }
+</style>

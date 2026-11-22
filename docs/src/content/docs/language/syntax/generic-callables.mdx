@@ -1,0 +1,82 @@
+---
+title: Generic callables
+sidebar:
+  order: 11
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+A [callable](/language/syntax/callables/) may declare the template parameters
+it introduces: a `<...>` list between the name and the parameters.
+
+<TypeTree type="callable<T>(T): T">
+A callable returning the type of its argument.
+</TypeTree>
+
+## Template parameters
+
+A template parameter is a name, optionally prefixed with a variance
+(`covariant`, `contravariant` or `invariant`) and followed by up to three
+limits. Each limit is written at most once, in this order:
+
+| Limit          | Meaning                                                    |
+|----------------|------------------------------------------------------------|
+| `of T`, `as T` | **upper bound**: the argument is a subtype of `T`          |
+| `super T`      | **lower bound**: the argument is a supertype of `T`        |
+| `= T`          | **default**: the type taken when no argument is passed     |
+
+`of` and `as` mean the same and are kept as written. The words are
+case-sensitive: `OF` is an ordinary name.
+
+<Aside>
+A `<...>` that no parenthesis follows is a list of
+[template arguments](/language/syntax/generics/), not of template parameters,
+and template arguments have no limits.
+</Aside>
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="callable<T of Some>(T): T">
+An upper bound.
+</TypeTree>
+
+<TypeTree type="Closure<T of Some, U super Any, V = int>(T, U): V">
+Several parameters, each with a limit of its own.
+</TypeTree>
+
+<TypeTree type="callable<covariant T>(T): void">
+A variance.
+</TypeTree>
+
+<TypeTree type="callable<T of Some super Any = int>(T): void">
+Every limit on one parameter.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="Collection<T of Some>" error message={"MalformedSyntaxException: Invalid template arguments, \",\" or \">\" is expected"}>
+Limits belong to a callable: a type with template arguments has none.
+</TypeTree>
+
+<TypeTree type="callable<T whatever Some>(): void" error message={"MalformedSyntaxException: Invalid template arguments, \",\" or \">\" is expected"}>
+Only `of`, `as` and `super` bound a parameter.
+</TypeTree>
+
+<TypeTree type="callable<T of Some as Any>(): void" error message={"MalformedSyntaxException: Invalid template arguments, \",\" or \">\" is expected"}>
+Each kind of limit is written at most once.
+</TypeTree>
+
+<TypeTree type="callable<T super Any of Some>(): void" error message={"MalformedSyntaxException: Invalid template arguments, \",\" or \">\" is expected"}>
+The lower bound cannot stand before the upper one.
+</TypeTree>
+
+<TypeTree type="callable<T = int of Some>(): void" error message={"MalformedSyntaxException: Invalid template arguments, \",\" or \">\" is expected"}>
+A limit behind the default would bound the default itself: here `of Some`
+would bound `int`, not `T`.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>

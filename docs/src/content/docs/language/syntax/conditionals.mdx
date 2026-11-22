@@ -1,0 +1,127 @@
+---
+title: Conditional types
+sidebar:
+  order: 13
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+A conditional (ternary) type describes a type that depends on the result of
+comparing a **subject** with some other type. It consists of a condition,
+followed by a question mark (`?`), the type used **if the condition is true**,
+a colon (`:`), and the type used **if the condition is false**.
+
+```
+<Subject> <Operator> <Type> ? <TypeIfTrue> : <TypeIfFalse>
+```
+
+<TypeTree type={"T is int ? \"int type\" : \"not int type\""} />
+
+Both the **subject** and the type being compared against can be a [union](/language/syntax/logical/#union-types)
+(and so any type below it: an intersection, a nullable, a list, etc.) or a
+variable (`$name`). The branches can be any type, including another
+conditional type, so the chain `T is A ? B : C is D ? E : F` is read as
+`T is A ? B : (C is D ? E : F)`.
+
+<Aside>
+A variable is not a type of its own, so a variable subject always requires
+the `is` / `is not` operator behind it.
+</Aside>
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="T is int ? A : B">
+A named type as the subject.
+</TypeTree>
+
+<TypeTree type="$value is int ? A : B">
+A variable as the subject.
+</TypeTree>
+
+<TypeTree type="T is A|B ? C : D">
+A [union type](/language/syntax/logical/#union-types) as the subject.
+</TypeTree>
+
+<TypeTree type="foo() is int ? A : B">
+A [callable type](/language/syntax/callables/) as the subject.
+</TypeTree>
+
+<TypeTree type="T is int ? (U is string ? A : B) : C">
+Parentheses may be used to disambiguate or nest conditional types.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="T ? U : V" error message={"UnexpectedTokenException: Unexpected \"?\""}>
+A bare question mark, without a preceding condition, is not a conditional
+type: it will be parsed as the beginning of a [nullable type](/language/syntax/logical/#nullable-types)
+and fail because the placement of `?` is wrong.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Equality operators
+
+The `is` keyword checks whether the subject **is** of the compared type, and
+`is not` checks the opposite. Both keywords are written in lower case only:
+`IS` is an ordinary name, not a keyword. Whitespace and comments are allowed
+between the words of `is not`.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="T is int ? A : B">
+Positive equality check.
+</TypeTree>
+
+<TypeTree type="T is not int ? A : B">
+Negative equality check.
+</TypeTree>
+
+<TypeTree type="T is /* comment */ not int ? A : B">
+A comment between the words of `is not`.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="T == int ? A : B" error message={"UnexpectedTokenException: Unexpected \"=\""}>
+The PHP-like `==` and `!=` operators are not recognized: use the `is` and
+`is not` keywords instead.
+</TypeTree>
+
+<TypeTree type="T is int ? A" error message={"MalformedSyntaxException: The condition requires an else branch, \":\" expected"}>
+The `else` branch is required.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Yoda-style conditions
+
+Since the subject and the compared type can both be arbitrary type
+expressions, the condition may also be written in
+[Yoda-style](https://en.wikipedia.org/wiki/Yoda_conditions), with the concrete
+type on the left and the subject (a type or a variable) on the right.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="int is T ? A : B">
+Yoda-style equality check with a named type as the subject.
+</TypeTree>
+
+<TypeTree type="int is $value ? A : B">
+Yoda-style equality check with a variable as the subject.
+</TypeTree>
+
+<TypeTree type="$value is not $other ? A : B">
+A variable may also stand on both sides.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>

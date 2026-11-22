@@ -1,0 +1,110 @@
+---
+/*
+ * Every name the phpdoc parser recognizes, grouped by the tag it is read
+ * as, from the model data.
+ */
+import { getCollection } from 'astro:content';
+import { getTagHref } from '../phpdoc';
+
+const entries = await getCollection('phpdocTags');
+const tags = new Map<string, { summary: string; registrations: Record<string, string[]> }>();
+
+for (const { data } of entries) {
+    tags.set(data.tag, { summary: data.summary, registrations: data.registrations });
+}
+
+const rows = [...tags.entries()].sort(([a], [b]) => a.localeCompare(b));
+---
+
+<p class="catalog-count">{rows.length} tags, {entries.length} names</p>
+
+<table class="catalog not-content">
+    <thead>
+        <tr><th>Tag</th><th>Names by platform</th></tr>
+    </thead>
+    <tbody>
+        {rows.map(([name, tag]) => (
+            <tr>
+                <td>
+                    <a href={getTagHref(name)}><code>@{name}</code></a>
+                    <p set:html={tag.summary.replace(/`([^`]+)`/g, '<code>$1</code>')} />
+                </td>
+                <td>
+                    <dl>
+                        {Object.entries(tag.registrations).map(([platform, names]) => (
+                            <>
+                                <dt>{platform}</dt>
+                                <dd>{names.map((alias) => <code>@{alias}</code>)}</dd>
+                            </>
+                        ))}
+                    </dl>
+                </td>
+            </tr>
+        ))}
+    </tbody>
+</table>
+
+<style>
+    .catalog-count {
+        font: 500 11px/1.4 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+    .catalog {
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.94rem;
+    }
+    .catalog th {
+        padding: 8px 12px 8px 0;
+        text-align: left;
+        font: 500 11px/1.4 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line-2);
+    }
+    .catalog td {
+        padding: 12px 12px 12px 0;
+        border-bottom: 1px solid var(--line);
+    }
+    .catalog a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+    .catalog a:hover code {
+        border-bottom: 1px solid var(--accent);
+    }
+    .catalog code {
+        font-size: 0.86em;
+    }
+    .catalog td {
+        vertical-align: top;
+    }
+    .catalog td:first-child {
+        width: 45%;
+    }
+    .catalog td p {
+        margin: 0.25rem 0 0;
+        font-size: 0.88rem;
+        color: var(--ink-2);
+    }
+    .catalog dl {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 2px 12px;
+        margin: 0;
+    }
+    .catalog dt {
+        font: 400 12px/1.8 var(--mono);
+        color: var(--muted);
+    }
+    .catalog dd {
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px 8px;
+    }
+</style>

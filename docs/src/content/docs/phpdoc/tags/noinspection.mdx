@@ -1,0 +1,22 @@
+---
+title: "@noinspection"
+description: "The @noinspection tag suppresses the named IDE inspection for the element that follows it."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@noinspection` tag suppresses one or more named IDE inspections for
+the element that follows it, so PhpStorm stops flagging a specific,
+intentional pattern in that spot.
+
+<TagReference name="noinspection" />
+
+Parsing a `@noinspection` tag produces a `NoinspectionTag` instance, carrying the
+parsed `$identifier` alongside the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class NoinspectionTag extends IdentifierTag {}
+```
+
+Defined by [PhpStorm](https://www.jetbrains.com/help/phpstorm/disabling-and-enabling-inspections.html).

@@ -1,0 +1,82 @@
+---
+title: PHPDoc
+description: Reads /** ... */ comments into a description and typed tags, with the tags of phpDocumentor, PHPStan, Psalm, Phan, PhpStorm and PHP CodeSniffer.
+sidebar:
+  label: Getting started
+  order: 0
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Most PHP code keeps part of its types in the docblock: a `@param` narrowing
+`array` to `list<User>`, a `@throws` PHP has no syntax for, a `@template`
+making a class generic. The PHPDoc component reads such a comment into a
+description and a list of tags, each parsed by what the tag means. Types in
+the tags are read by the [TypeLang grammar](/language/).
+
+## Installation
+
+```bash
+composer require type-lang/phpdoc
+```
+
+## Usage
+
+```php
+use TypeLang\PhpDoc\DocBlockParser;
+
+$parser = DocBlockParser::createDefault();
+
+$block = $parser->parse(<<<'PHPDOC'
+    /**
+     * Sends a notification to the given recipient.
+     *
+     * @see Mailer::send() The underlying transport.
+     * @return bool
+     */
+    PHPDOC);
+
+echo $block->description;   // "Sends a notification to the given recipient.\n"
+echo count($block);         // 2
+
+foreach ($block as $tag) {
+    echo $tag->name;        // "see", "return"
+}
+```
+
+<Aside>
+`DocBlockParser::createDefault()` recognizes every built-in tag: the standard
+set and the phpDocumentor, Psalm, PHPStan, Phan, PhpStorm and PHP CodeSniffer
+families. `new DocBlockParser()` with no platforms recognizes no tag at all.
+</Aside>
+
+## Broken tags do not break the comment
+
+A tag whose body does not match its grammar is returned as an `InvalidTag`
+with the reason, the tags around it are parsed as usual. An unknown tag is a
+plain `Tag`.
+
+```php
+$block = $parser->parse(<<<'PHPDOC'
+    /**
+     * @param int $wellFormed
+     * @param not a valid type here $because
+     */
+    PHPDOC);
+
+$broken = $block[1];        // InvalidTag
+echo $broken->reason->getMessage();
+// Malformed "@param" tag, expected: <Type> <Variable> [ <Description> ]
+```
+
+## Next
+
+- [Reading a comment](/phpdoc/reading/): what a `DocBlock`, its description
+  and its tags hold.
+- [Types from Reflection](/phpdoc/reflection/): `@param`, `@return` and
+  `@template` of a class and its methods.
+- [Platforms](/phpdoc/platforms/): the tag sets of phpDocumentor, PHPStan,
+  Psalm, Phan, PhpStorm and PHP CodeSniffer, and how to pick them.
+- [Custom tags](/phpdoc/extending/custom-tags/): a tag of your own, from the
+  grammar to the platform.
+- [Tag reference](/phpdoc/tags/): every tag the parser knows, by platform.

@@ -1,0 +1,109 @@
+---
+title: Types from Reflection
+description: Reading the @param, @return and @template types of a class and its methods with Reflection.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Reflection gives the docblock of a class or a method as a string,
+`DocBlockParser` turns it into tags with parsed types. The examples print the
+types with the [pretty printer](/toolkit/printer/pretty/).
+
+```php
+/**
+ * @template-covariant T of object
+ * @template TKey of array-key = int
+ */
+final class Repository
+{
+    /**
+     * @param array $ids
+     * @phpstan-param list<positive-int> $ids
+     * @param bool $withDeleted
+     * @return list<User>
+     */
+    public function findAll(array $ids, bool $withDeleted = false): array
+    {
+        // ...
+    }
+}
+```
+
+## Parameters and return type
+
+`@phpstan-param` and `@psalm-param` are parsed into the same `ParamTag` as
+`@param`, the `$name` of the tag tells them apart. A tool usually prefers the
+prefixed one.
+
+```php
+use TypeLang\PhpDoc\DocBlock\Tag\ParamTag\ParamTag;
+use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTag;
+use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\Printer\PrettyTypePrinter;
+
+$parser = DocBlockParser::createDefault();
+$printer = new PrettyTypePrinter();
+
+$method = new \ReflectionMethod(Repository::class, 'findAll');
+$block = $parser->parse((string) $method->getDocComment());
+
+$params = [];
+$return = null;
+
+foreach ($block as $tag) {
+    if ($tag instanceof ParamTag) {
+        // "@param" does not override "@phpstan-param" or "@psalm-param"
+        if ($tag->name === 'param' && isset($params[$tag->variable])) {
+            continue;
+        }
+
+        $params[$tag->variable] = $tag->type;
+    }
+
+    if ($tag instanceof ReturnTag) {
+        $return = $tag->type;
+    }
+}
+
+echo $printer->print($params['ids']);           // list<positive-int>
+echo $printer->print($params['withDeleted']);   // bool
+echo $printer->print($return);                  // list<User>
+```
+
+<Aside>
+A tag with a malformed type is an `InvalidTag`, not a `ParamTag`, so the loop
+above skips it. See [broken tags](/phpdoc/#broken-tags-do-not-break-the-comment).
+</Aside>
+
+## Template parameters
+
+`@template`, `@template-covariant` and `@template-contravariant` share the
+`TypeParameterTag` base: the `$parameter` name, the optional `$bound` and
+`$default`.
+
+```php
+use TypeLang\PhpDoc\DocBlock\Tag\TemplateTag\TypeParameterTag;
+
+$class = new \ReflectionClass(Repository::class);
+$block = $parser->parse((string) $class->getDocComment());
+
+foreach ($block as $tag) {
+    if (!$tag instanceof TypeParameterTag) {
+        continue;
+    }
+
+    echo $tag->name;                            // "template-covariant"
+    echo $tag->parameter;                       // "T"
+    echo $printer->print($tag->bound->type);    // object
+}
+```
+
+For `TKey` the loop gives `template`, `TKey`, the bound `array-key` and
+`$tag->default->type` printed as `int`.
+
+## Names of classes
+
+The types hold class names as they are written in the docblock: `User` above
+is a short name. To get `App\Entity\User`, resolve the names against the
+namespace and the `use` statements of the file with the
+[type resolver](/toolkit/parser/type-resolver/).

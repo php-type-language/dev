@@ -1,0 +1,156 @@
+---
+title: Type parser
+description: Parses TypeLang syntax into an AST of TypeLang\Type\* nodes, with strict, partial and validating reading modes, feature toggling and grammar checking.
+sidebar:
+  label: Overview
+  order: 0
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The parser component analyzes a [TypeLang](/language/) type declaration
+string and builds an AST (Abstract Syntax Tree) out of it, checking the
+grammar along the way.
+
+## Installation
+
+```bash
+composer require type-lang/parser
+```
+
+Requires PHP 8.1 or later.
+
+## Quick start
+
+The `TypeLang\Parser\TypeParser` class is the entry point of the component.
+Its `parse()` method turns a type declaration string into a
+`TypeLang\Type\TypeNode` instance (a `NamedTypeNode`, `UnionTypeNode`, etc.,
+depending on the source).
+
+```php
+$parser = new TypeLang\Parser\TypeParser();
+
+$type = $parser->parse('array{ key: int }'); // TypeLang\Type\NamedTypeNode
+
+echo $type->name->value;                      // array
+echo count($type->fields);                    // 1
+var_dump($type->fields->isSealed);            // true
+```
+
+Every node exposes an `$offset` (byte offset in the source where the node
+starts) and, depending on its kind, a handful of other public properties. The
+node classes themselves (`TypeLang\Type\*`) belong to the separate
+`type-lang/types` package.
+
+<Aside>
+If a statement cannot be parsed, `parse()` throws an exception implementing
+`TypeLang\Parser\Exception\ParserExceptionInterface`. See
+[partial parsing](/toolkit/parser/tolerant-mode/) for a way to read partially valid
+input instead of failing outright.
+</Aside>
+
+## Three ways of reading a source
+
+`TypeParser` asks the grammar three different questions, all three declared on
+`TypeParserInterface`:
+
+- `parse(): TypeNode` is the strict mode. Requires the whole input to be a
+  syntactically valid type statement, throws a `ParserExceptionInterface` on
+  the first error.
+- `partial(): ParsedResult` reads as much of the input as the grammar
+  describes and returns a `TypeLang\Parser\Partial\ParsedResult` carrying the
+  type built out of the read part and the offset the reading stopped at.
+  Useful for docblock parsing, where a type declaration is followed by a
+  free-text description. See [tolerant mode](/toolkit/parser/tolerant-mode/).
+- `validate(): CheckResult` tells whether the source is a type, building
+  nothing of it. This is the cheapest of the three whenever the type itself is
+  of no use. See [validation](/toolkit/parser/tolerant-mode/#validation).
+
+## Parser arguments
+
+All three methods accept the source code in any of the following forms:
+
+<Tabs>
+<TabItem label="string">
+
+```php
+$type = $parser->parse(<<<'CODE'
+    object{ key?: int<0, max> }
+CODE);
+```
+
+</TabItem>
+<TabItem label="resource">
+
+```php
+$type = $parser->parse(
+    fopen(__DIR__ . '/source.txt', 'rb'),
+);
+```
+
+</TabItem>
+<TabItem label="SplFileInfo">
+
+```php
+$type = $parser->parse(
+    new SplFileInfo(__DIR__ . '/source.txt'),
+);
+```
+
+</TabItem>
+<TabItem label="ReadableInterface">
+
+```php
+$type = $parser->parse(
+    Phplrt\Source\FileSource::createFromPathname(__DIR__ . '/source.txt'),
+);
+```
+
+</TabItem>
+</Tabs>
+
+## Parsing other constructs
+
+By default the parser reads a whole type. Two context methods return a new
+parser that starts from another grammar rule:
+
+```php
+use TypeLang\Parser\TypeParser;
+
+$parser = new TypeParser();
+
+// TypeLang\Type\TypeNode
+$type = $parser->forType()->parse('Type<U, V>');
+
+// TypeLang\Type\Template\TemplateParameterNode
+$template = $parser->forTemplateParameter()->parse('T of U<V> = Default<Z>');
+```
+
+## Errors
+
+Every exception thrown by the parser implements
+`TypeLang\Parser\Exception\ParserExceptionInterface` and carries the `$source`
+and the `$range` (`ParsingErrorRange` with `$offset` and `$length`) of the
+problematic fragment.
+
+| Exception                     | Thrown when                                                                     |
+|-------------------------------|---------------------------------------------------------------------------------|
+| `UnexpectedTokenException`    | a token stands where another one is expected: `Unexpected "and"`                |
+| `MalformedSyntaxException`    | a construct is broken: `The group is not closed properly, ")" expected`        |
+| `UnrecognizedSyntaxException` | a fragment is not a part of the syntax at all: `Unrecognized syntax "~"`        |
+| `FeatureNotEnabledException`  | the syntax is [disabled](/toolkit/parser/features/): `Unions feature is not allowed`    |
+
+The first three extend `SyntaxErrorException`, and all of them extend
+`ParsingException`. `MalformedSyntaxException` extends
+`UnexpectedTokenException`.
+
+## What's next
+
+- [Feature toggling](/toolkit/parser/features/): enable or disable individual language
+  constructs (generics, shapes, unions, ...).
+- [Partial parsing and validation](/toolkit/parser/tolerant-mode/): read a type
+  declaration embedded in free-form text, such as a phpdoc annotation, or ask
+  whether a source is a type at all.
+- [Visitors](/toolkit/parser/visitors/): traverse, search and rewrite a parsed AST.
+- [Name resolution](/toolkit/parser/type-resolver/): resolve short and relative names
+  in an AST against `use` statements or any other custom rule.

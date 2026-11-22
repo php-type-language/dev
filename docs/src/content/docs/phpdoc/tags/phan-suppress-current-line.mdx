@@ -1,0 +1,21 @@
+---
+title: "@phan-suppress-current-line"
+description: "The @phan-suppress-current-line tag silences the listed issue types reported on the current line."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-suppress-current-line` tag silences the listed
+issue types reported on the current line.
+
+<TagReference name="phan-suppress-current-line" />
+
+Parsing a `@phan-suppress-current-line` tag produces a `PhanSuppressCurrentLineTag` instance, carrying the
+listed `$issues` alongside the `$name` and optional `$description` every
+[Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class PhanSuppressCurrentLineTag extends IssueListTag {}
+```
+
+Defined by [Phan](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code#phan-suppress-current-line).

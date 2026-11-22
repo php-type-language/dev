@@ -1,0 +1,66 @@
+---
+title: "Standard tags"
+sidebar:
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **Standard Tags** are the everyday PHPDoc vocabulary — the handful of
+tags nearly every PHP codebase already uses, and that every major toolchain
+(phpDocumentor, PHPStan, Psalm, PhpStorm) understands without any
+configuration. If a docblock carries type information at all, it is almost
+certainly through one of the tags on this list.
+
+They are grouped here not by which tool invented them, but by the fact that
+they need no vendor prefix: `@param`, not `@psalm-param`; `@return`, not
+`@phpstan-return`. This is the common ground the entire ecosystem shares.
+
+## What belongs here
+
+The set breaks down into a few families:
+
+* **Signatures and types** — the tags that describe what a member accepts,
+  returns, and holds: [@param](/phpdoc/tags/param/), [@return](/phpdoc/tags/return/)
+  (with its alias [@returns](/phpdoc/tags/return/)), and [@var](/phpdoc/tags/var/).
+* **Magic members** — declaring members that have no native PHP
+  declaration to attach to: [@method](/phpdoc/tags/method/),
+  [@property](/phpdoc/tags/property/), [@property-read](/phpdoc/tags/property-read/), and
+  [@property-write](/phpdoc/tags/property-write/).
+* **Generics** — turning a plain class into a generic one and wiring its
+  type parameters through inheritance:
+  [@template](/phpdoc/tags/template/) and its variance-annotated forms
+  ([@template-covariant](/phpdoc/tags/template-covariant/),
+  [@template-contravariant](/phpdoc/tags/template-contravariant/),
+  [@template-invariant](/phpdoc/tags/template/)),
+  together with [@extends](/phpdoc/tags/extends/) /
+  [@template-extends](/phpdoc/tags/extends/) / [@inherits](/phpdoc/tags/extends/),
+  [@implements](/phpdoc/tags/implements/) /
+  [@template-implements](/phpdoc/tags/implements/), and
+  [@use](/phpdoc/tags/use/) / [@template-use](/phpdoc/tags/use/).
+* **Modifiers and markers** — docblock stand-ins for language keywords and
+  intent: [@abstract](/phpdoc/tags/abstract/), [@final](/phpdoc/tags/final/),
+  [@readonly](/phpdoc/tags/readonly/), [@immutable](/phpdoc/tags/immutable/),
+  [@override](/phpdoc/tags/override/), [@mixin](/phpdoc/tags/mixin/), and the
+  visibility boundary pair [@api](/phpdoc/tags/api/) /
+  [@internal](/phpdoc/tags/internal/).
+* **Constraints** — narrowing where a trait or interface may be used:
+  [@require-extends](/phpdoc/tags/require-extends/) and
+  [@require-implements](/phpdoc/tags/require-implements/).
+* **Exceptions** — documenting what PHP has no native syntax for:
+  [@throws](/phpdoc/tags/throws/) (with its alias [@throw](/phpdoc/tags/throws/)).
+* **References and metadata** — [@see](/phpdoc/tags/see/), [@link](/phpdoc/tags/link/),
+  [@deprecated](/phpdoc/tags/deprecated/).
+
+<Aside type="tip">
+Several entries here are aliases of one another —
+[@return](/phpdoc/tags/return/) / [@returns](/phpdoc/tags/return/),
+[@throws](/phpdoc/tags/throws/) / [@throw](/phpdoc/tags/throws/). Both
+spellings are recognized and parse into the same tag object.
+</Aside>
+
+Every tag in this group is fully recognized by the parser: it produces a
+dedicated, typed tag object, and any type it carries is parsed with the same
+[TypeLang grammar](/language/) used throughout the project. Pick any
+entry in the sidebar for its exact grammar, the object it produces, and
+worked examples.

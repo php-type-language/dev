@@ -1,0 +1,189 @@
+---
+/*
+ * Verdicts of the parsers for the constructs of one section of the syntax
+ * comparison, or the totals over all sections without `section`.
+ */
+import { getCollection, getEntry } from 'astro:content';
+
+interface Props {
+    section?: string;
+}
+
+const TOOLS = [
+    { id: 'phpstan', label: 'PHPStan', href: 'https://github.com/phpstan/phpdoc-parser' },
+    { id: 'psalm', label: 'Psalm', href: 'https://github.com/vimeo/psalm' },
+    { id: 'typelang', label: 'TypeLang', href: 'https://github.com/php-type-language' },
+] as const;
+
+type Tool = (typeof TOOLS)[number]['id'];
+
+const SIGNS = { ok: '✓', fail: '✗', lossy: '!' } as const;
+
+// On the malformed input a rejection is the right answer.
+const TITLES = {
+    read: { ok: 'read as written', fail: 'rejected', lossy: 'accepted, meaning changed' },
+    malformed: { ok: 'rejected', fail: 'accepted', lossy: 'accepted, meaning changed' },
+} as const;
+
+const { section } = Astro.props;
+const sections = section === undefined ? [] : [await getEntry('comparison', section)];
+
+if (section !== undefined && sections[0] === undefined) {
+    throw new Error(`Comparison section "${section}" is not in src/data/language/comparison.json`);
+}
+
+function countSupported(cases: { verdicts: Record<Tool, { verdict: string }> }[], tool: Tool): number {
+    return cases.filter((c) => c.verdicts[tool].verdict === 'ok').length;
+}
+
+const all = section === undefined ? await getCollection('comparison') : [];
+const totals = [
+    { label: 'Constructs read as written', cases: all.filter((s) => !s.data.isMalformed).flatMap((s) => s.data.cases) },
+    { label: 'Malformed inputs rejected', cases: all.filter((s) => s.data.isMalformed).flatMap((s) => s.data.cases) },
+];
+---
+
+<div class="comparison not-content">
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                {TOOLS.map((tool) => <th><a href={tool.href}>{tool.label}</a></th>)}
+            </tr>
+        </thead>
+        <tbody>
+            {section === undefined && totals.map((total) => (
+                <tr class="total">
+                    <td>{total.label}</td>
+                    {TOOLS.map((tool) => (
+                        <td class:list={{ full: countSupported(total.cases, tool.id) === total.cases.length }}>
+                            {countSupported(total.cases, tool.id)}<small>/{total.cases.length}</small>
+                        </td>
+                    ))}
+                </tr>
+            ))}
+
+            {section !== undefined && sections.map((entry) => (
+                <>
+                    <tr class="total">
+                        <td>supported</td>
+                        {TOOLS.map((tool) => (
+                            <td class:list={{ full: countSupported(entry!.data.cases, tool.id) === entry!.data.cases.length }}>
+                                {countSupported(entry!.data.cases, tool.id)}<small>/{entry!.data.cases.length}</small>
+                            </td>
+                        ))}
+                    </tr>
+                    {entry!.data.cases.map((row) => (
+                        <tr>
+                            <td><code>{row.type}</code></td>
+                            {TOOLS.map((tool) => {
+                                const { verdict, note } = row.verdicts[tool.id];
+                                const titles = entry!.data.isMalformed ? TITLES.malformed : TITLES.read;
+
+                                return (
+                                    <td class={`v v-${verdict}`} title={titles[verdict]}>
+                                        {SIGNS[verdict]}
+                                        {note !== undefined && <sup><a href={`#${section}-note-${note}`}>{note}</a></sup>}
+                                    </td>
+                                );
+                            })}
+                        </tr>
+                    ))}
+                </>
+            ))}
+        </tbody>
+    </table>
+
+    {section !== undefined && Object.keys(sections[0]!.data.notes).length > 0 && (
+        <ol class="notes">
+            {Object.entries(sections[0]!.data.notes).map(([number, text]) => (
+                <li id={`${section}-note-${number}`} value={Number(number)} set:html={text.replace(/`([^`]+)`/g, (m, code) => `<code>${code.replace(/</g, '&lt;')}</code>`)} />
+            ))}
+        </ol>
+    )}
+</div>
+
+<style>
+    .comparison {
+        margin: 1rem 0 1.5rem;
+        overflow-x: auto;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.94rem;
+    }
+    th {
+        padding: 8px 12px;
+        text-align: center;
+        font: 500 11px/1.4 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--line-2);
+    }
+    th a {
+        color: var(--muted);
+        text-decoration: none;
+    }
+    th a:hover {
+        color: var(--accent);
+    }
+    td {
+        padding: 6px 12px;
+        border-bottom: 1px solid var(--line);
+        text-align: center;
+    }
+    td:first-child {
+        text-align: left;
+        padding-left: 0;
+    }
+    td code {
+        font-size: 0.9em;
+        white-space: pre;
+    }
+    .total td {
+        font: 500 15px/1.4 var(--mono);
+        color: var(--ink);
+        border-bottom-color: var(--line-2);
+    }
+    .total td:first-child {
+        font: 500 11px/1.4 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+    .total td.full {
+        color: var(--accent);
+    }
+    .total small {
+        font-size: 11px;
+        color: var(--muted);
+    }
+    .v {
+        font: 500 15px/1 var(--mono);
+    }
+    .v-ok {
+        color: var(--accent);
+    }
+    .v-fail {
+        color: var(--rust);
+    }
+    .v-lossy {
+        color: var(--rust);
+        background: var(--rust-tint);
+    }
+    sup a {
+        color: inherit;
+        font-size: 10px;
+        text-decoration: none;
+    }
+    .notes {
+        margin: 0.75rem 0 0;
+        padding-left: 1.5rem;
+        font-size: 0.88rem;
+        color: var(--ink-2);
+    }
+    .notes li:target {
+        background: var(--accent-tint);
+    }
+</style>

@@ -1,0 +1,977 @@
+[
+    {
+        "id": "Identifier",
+        "name": "Identifier",
+        "group": "",
+        "kind": "final",
+        "parent": "SymbolNode",
+        "description": "A single word, the one that has no namespace separators in it.\n\n```\n Some\\Any::CONST_NAME\n           ^^^^^^^^^^ a single word\n\n Some\\Any::BAR*BAZ\n           ^^^ ^^^ two single words\n```",
+        "properties": [
+            {
+                "name": "value",
+                "type": "string",
+                "isReadonly": true,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "LogicalTypeNode",
+        "name": "LogicalTypeNode",
+        "group": "",
+        "kind": "abstract",
+        "parent": "TypeNode",
+        "description": "Several types joined by an operator, like a union or an intersection.\n\nA type of the same kind is flattened into its parent: an `A|(B|C)`\nholds the three types side by side.\n\nThe flattening and the minimum of two types are checked on creation\nonly. Since PHP 8.4, property hooks make it possible to keep the checks\npermanent.",
+        "properties": [
+            {
+                "name": "children",
+                "type": "array",
+                "isReadonly": false,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Name",
+        "name": "Name",
+        "group": "",
+        "kind": "final",
+        "parent": "SymbolNode",
+        "description": "A name: the namespace it begins with and the word it ends in.\n\n```\n Some\\Any\n ^^^^     the namespace\n      ^^^ the word\n\n \\Some\\Any\n ^^^^^     a fully qualified namespace begins in a separator\n\n \\Any\n ^    the root namespace\n\n non-empty-string\n ^^^^^^^^^^^^^^^^ a single word, there is no namespace\n```",
+        "properties": [
+            {
+                "name": "value",
+                "type": "string",
+                "isReadonly": true,
+                "description": "The last word of the name, it has no separators."
+            },
+            {
+                "name": "namespace",
+                "type": "?NamespaceName",
+                "isReadonly": true,
+                "description": "The namespace the word belongs to, or `null` in case of the\nname is written with none."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "NamedTypeNode",
+        "name": "NamedTypeNode",
+        "group": "",
+        "kind": "final",
+        "parent": "TypeNode",
+        "description": "A type referenced by name, along with whatever the name is followed by.\n\nThe meaning of what follows is left to whoever reads the tree, as it depends\non the type the name stands for. A `FOO` may be a constant or a class, and\nthe template arguments of an `array{a: int, ...<string, int>}` are not the\nones of an `array<int>`.\n\n```\n Some\\Any<int, string>\n ^^^^^^^^              the name\n         ^^^^^^^^^^^^^ the template arguments\n\n array{name: string}\n ^^^^^               the name\n      ^^^^^^^^^^^^^^ the shape fields\n\nobject{name: string, ...<string, mixed>}\n^^^^^^                                   the name\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the shape fields\n                        ^^^^^^^^^^^^^^^  the template arguments\n```",
+        "properties": [
+            {
+                "name": "name",
+                "type": "Name",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "arguments",
+                "type": "?Template\\TemplateListNode",
+                "isReadonly": false,
+                "description": "Template arguments of a type, or `null` in case of the name is\nfollowed by none.\n\nThe list is never empty.\n\n```\n Some       // null\n Some<int>  // a list of 1 argument\n```"
+            },
+            {
+                "name": "fields",
+                "type": "?Shape\\FieldListNode",
+                "isReadonly": false,
+                "description": "Shape fields of a type, or `null` in case of the name is\nfollowed by none. An empty list is not the same as a `null`:\nA shape may well be written with no fields at all.\n\n```\n array           // null: no shape\n array{}         // an empty list: a shape of no fields\n array{a: int}   // a list of 1 field\n```"
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "NamespaceName",
+        "name": "NamespaceName",
+        "group": "",
+        "kind": "final",
+        "parent": "Node",
+        "description": "A namespace a name or a mask of constants belongs to.\n\n```\n Some\\Any\\Name\n ^^^^^^^^      a qualified namespace\n\n \\Some\\Any\\Name\n ^^^^^^^^^      a fully qualified namespace begins in a separator\n\n namespace\\Some\\Name\n ^^^^^^^^^^^^^^      a namespace relative to the current one\n```\n\nThe class cannot be named `Namespace`, the word is reserved by PHP.",
+        "properties": [
+            {
+                "name": "value",
+                "type": "string",
+                "isReadonly": true,
+                "description": "The words of the namespace with the separators between them and with\nno one at the ends. The `namespace` keyword and the leading separator\nare not the words."
+            },
+            {
+                "name": "kind",
+                "type": "NamespaceName\\NamespaceKind",
+                "isReadonly": true,
+                "description": "From where the namespace is read."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Node",
+        "name": "Node",
+        "group": "",
+        "kind": "abstract",
+        "parent": null,
+        "description": "",
+        "properties": [
+            {
+                "name": "offset",
+                "type": "int",
+                "isReadonly": true,
+                "description": "Token offset defined in the source code."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "NodesListNode",
+        "name": "NodesListNode",
+        "group": "",
+        "kind": "abstract",
+        "parent": "Node",
+        "description": "An ordered list of nodes of one kind, like the arguments of a generic\nor the fields of a shape.",
+        "properties": [
+            {
+                "name": "children",
+                "type": "array",
+                "isReadonly": false,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "SymbolNode",
+        "name": "SymbolNode",
+        "group": "",
+        "kind": "abstract",
+        "parent": "Node",
+        "description": "A node that stands for a piece of text: an identifier, a name or a variable.\n\nThe text of a node is the one it is written with, so a node is told apart\nfrom the others by `toString()` alone.",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "ThisTypeNode",
+        "name": "ThisTypeNode",
+        "group": "",
+        "kind": "final",
+        "parent": "TypeNode",
+        "description": "The type of the object a method is called on, written as a `$this`.\n\n```\n callable(): $this\n```\n\nIt is written the way a variable is, but it is a type. Any other variable\nis a `VariableNode` and no type at all.",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "TypeNode",
+        "name": "TypeNode",
+        "group": "",
+        "kind": "abstract",
+        "parent": "Node",
+        "description": "A node standing where a type is expected.",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "TypeOffsetAccessTypeNode",
+        "name": "TypeOffsetAccessTypeNode",
+        "group": "",
+        "kind": "final",
+        "parent": "TypeNode",
+        "description": "The type standing at an offset of another type.\n\n```\n Some\\Any[int]\n ^^^^^^^^      the type an offset is taken of\n          ^^^  the offset itself\n```",
+        "properties": [
+            {
+                "name": "type",
+                "type": "TypeNode",
+                "isReadonly": false,
+                "description": "The type an offset is taken of."
+            },
+            {
+                "name": "access",
+                "type": "TypeNode",
+                "isReadonly": false,
+                "description": "The type standing in the square brackets."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "VariableNode",
+        "name": "VariableNode",
+        "group": "",
+        "kind": "final",
+        "parent": "SymbolNode",
+        "description": "A variable, written as a name with a `$` in front of it.\n\n```\n callable(int $value): void\n //           ^^^^^^ names a parameter\n\n ($value is int ? string : bool)\n //^^^^^ stands as the subject of a condition\n```",
+        "properties": [
+            {
+                "name": "name",
+                "type": "string",
+                "isReadonly": false,
+                "description": "The name of the variable, written without the leading `$`."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "WrappingTypeNode",
+        "name": "WrappingTypeNode",
+        "group": "",
+        "kind": "abstract",
+        "parent": "TypeNode",
+        "description": "A type built around another one.\n\n```\n ?Some\\Any\n ^         the wrapping type\n  ^^^^^^^^ the type it wraps\n```",
+        "properties": [
+            {
+                "name": "type",
+                "type": "TypeNode",
+                "isReadonly": false,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Callable\\CallableParameterListNode",
+        "name": "CallableParameterListNode",
+        "group": "Callable",
+        "kind": "final",
+        "parent": "NodesListNode",
+        "description": "Parameters of a callable, in the order they are written in.\n\n```\n callable(int, string ...$rest)\n //       ^^^  ^^^^^^^^^^^^^^^\n //       two parameters\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Callable\\CallableParameterNode",
+        "name": "CallableParameterNode",
+        "group": "Callable",
+        "kind": "final",
+        "parent": "Node",
+        "description": "A single parameter of a callable.\n\n```\n callable(int &$byRef, string ...$rest, bool $flag = true)\n //       ^^^^^^^^^^^  ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^\n //       by reference  variadic         optional, with a default\n```\n\nA parameter is optional when it has a `DefaultValueNode`, with a value\nor without one.\n\nThe constructor checks the parameter on creation only. The properties are\npublic and writable, so a later change is not checked. Since PHP 8.4,\nproperty hooks make it possible to keep the checks permanent.",
+        "properties": [
+            {
+                "name": "type",
+                "type": "?TypeNode",
+                "isReadonly": false,
+                "description": "Type of parameter, or `null` in case of a parameter that is\nbuilt by hand and carries a name alone."
+            },
+            {
+                "name": "name",
+                "type": "?VariableNode",
+                "isReadonly": false,
+                "description": "Name of a parameter, or `null` in case of it is written\nwithout one.\n\n```\n callable(int)          // null\n callable(int $value)   // a name\n```"
+            },
+            {
+                "name": "isByReference",
+                "type": "bool",
+                "isReadonly": false,
+                "description": "Whether a parameter is taken by reference.\n\nIt is written as an `&` behind the type, like the one of\na `callable(int &$byRef)`."
+            },
+            {
+                "name": "isVariadic",
+                "type": "bool",
+                "isReadonly": false,
+                "description": "Whether a parameter takes every argument left, written as a `...`:\nA `callable(string ...$rest)`."
+            },
+            {
+                "name": "default",
+                "type": "?Callable\\DefaultValueNode",
+                "isReadonly": false,
+                "description": "Default of a parameter, or `null` in case of a required one.\nA variadic parameter is optional itself, so it has no default.\n\n```\n callable(int $a)            // null\n callable(int $a =)          // a default without a value\n callable(int $a = 42)       // a default with a value\n```"
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Callable\\CallableTypeNode",
+        "name": "CallableTypeNode",
+        "group": "Callable",
+        "kind": "final",
+        "parent": "TypeNode",
+        "description": "Something callable, written as a name with a parameter list behind it.\n\n```\n Closure<T of Some>(T, string ...$rest): T\n ^^^^^^^                                    the name\n        ^^^^^^^^^^^                         the template parameters\n                   ^^^^^^^^^^^^^^^^^^^^     the parameters\n                                         ^  the return type\n```",
+        "properties": [
+            {
+                "name": "name",
+                "type": "Name",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "parameters",
+                "type": "Callable\\CallableParameterListNode",
+                "isReadonly": false,
+                "description": "Parameters a callable accepts. The list is never `null`, an\nempty list stands for empty parentheses.\n\n```\n callable()      // an empty list\n callable(int)   // a list of 1 parameter\n```"
+            },
+            {
+                "name": "type",
+                "type": "?TypeNode",
+                "isReadonly": false,
+                "description": "A return type of callable, or `null` in case of it is left\nunsaid.\n\n```\n callable()       // null\n callable(): int  // a type\n```"
+            },
+            {
+                "name": "templates",
+                "type": "?Template\\TemplateParameterListNode",
+                "isReadonly": false,
+                "description": "Template parameters a callable declares, or `null` in case of\nit declares none.\n\nThe list is never empty.\n\n```\n callable(T): T     // null\n callable<T>(T): T  // a list of 1 parameter\n```"
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Callable\\DefaultValueNode",
+        "name": "DefaultValueNode",
+        "group": "Callable",
+        "kind": "final",
+        "parent": "Node",
+        "description": "The default of a callable parameter, written as an `=` and the value it\nstands for.\n\nThe node itself tells that the parameter may be left out, so a parameter\nwith it is optional, and one without it is required.\n\n```\n callable(int $a =, string $b = 'x')\n //             ^                      no value, the parameter is optional\n //                            ^^^^^^^ the value\n```",
+        "properties": [
+            {
+                "name": "value",
+                "type": "?TypeNode",
+                "isReadonly": false,
+                "description": "The value of a default, or `null` in case of the parameter\nis only marked as optional.\n\nThe value is a literal or a constant, so it is a type node of the\nsame kind as in any other position."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Condition\\ConditionNode",
+        "name": "ConditionNode",
+        "group": "Condition",
+        "kind": "final",
+        "parent": "Node",
+        "description": "The question a ternary type asks: the two sides of it and the operator\nbetween them.\n\n```\n ($value is int ? string : bool)\n //^^^^^ ^^ ^^^\n //subject  target\n //      the operator\n```",
+        "properties": [
+            {
+                "name": "subject",
+                "type": "TypeNode|VariableNode",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "target",
+                "type": "TypeNode|VariableNode",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "kind",
+                "type": "Condition\\ConditionNode\\ConditionKind",
+                "isReadonly": false,
+                "description": "The kind of the operator between the sides."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Condition\\ConditionNode\\ConditionKind",
+        "name": "ConditionKind",
+        "group": "Condition",
+        "kind": "enum",
+        "parent": null,
+        "description": "The kind of a condition, it is the operator the condition is written with.",
+        "properties": [],
+        "cases": [
+            {
+                "name": "Equal",
+                "description": "Whether the subject is the target.\n\n```\n ($value is int ? string : bool)\n```"
+            },
+            {
+                "name": "NotEqual",
+                "description": "Whether the subject is anything but the target.\n\n```\n ($value is not int ? string : bool)\n```"
+            }
+        ]
+    },
+    {
+        "id": "Condition\\ConditionalTypeNode",
+        "name": "ConditionalTypeNode",
+        "group": "Condition",
+        "kind": "final",
+        "parent": "TypeNode",
+        "description": "A type chosen by a condition.\n\n```\n ($value is int ? string : bool)\n  ^^^^^^^^^^^^^                  the condition\n                  ^^^^^^         the type it holds for\n                           ^^^^  the type it does not\n```",
+        "properties": [
+            {
+                "name": "condition",
+                "type": "Condition\\ConditionNode",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "then",
+                "type": "TypeNode",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "else",
+                "type": "TypeNode",
+                "isReadonly": false,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Constant\\ConstMaskTypeNode",
+        "name": "ConstMaskTypeNode",
+        "group": "Constant",
+        "kind": "final",
+        "parent": "TypeNode",
+        "description": "A set of constants, referenced by a name written in part.\n\n```\n Some\\Any::SOME_*\n ^^^^^^^^         the class the constants belong to\n           ^^^^^^ the mask their names are written as\n\n Some\\Any\\SOME_*\n ^^^^^^^^        the namespace the constants belong to\n\n *_SOME\n ^^^^^^ a mask with no class and no namespace at all\n\n \\SOME_*\n ^       a mask of the root namespace\n```\n\nA name written whole stands for a single constant, see the\n`ConstTypeNode`.",
+        "properties": [
+            {
+                "name": "owner",
+                "type": "Name|NamespaceName|null",
+                "isReadonly": false,
+                "description": "The class or the namespace the constants belong to, or\n`null` in case of the mask is written with neither.\n\n```\n Some\\Any::SOME_*  // the class Some\\Any\n Some\\Any\\SOME_*   // the namespace Some\\Any\n \\SOME_*           // the root namespace\n SOME_*            // null\n```"
+            },
+            {
+                "name": "mask",
+                "type": "Constant\\MaskNode",
+                "isReadonly": false,
+                "description": "The name of the constants, written in part."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Constant\\ConstTypeNode",
+        "name": "ConstTypeNode",
+        "group": "Constant",
+        "kind": "final",
+        "parent": "TypeNode",
+        "description": "A single constant, referenced by its whole name.\n\n```\n Some\\Any::CONST_NAME\n ^^^^^^^^             the class the constant belongs to\n           ^^^^^^^^^^ the name of the constant\n```\n\nA name written in part stands for a set of constants, see the\n`ConstMaskTypeNode`.",
+        "properties": [
+            {
+                "name": "owner",
+                "type": "Name|NamespaceName",
+                "isReadonly": false,
+                "description": "The class or the namespace the constant belongs to.\n\nA constant of a namespace written by its whole name\n(`Some\\CONST_NAME`) is a name of a type in the source, so the\nparser builds it as a `NamedTypeNode`."
+            },
+            {
+                "name": "constant",
+                "type": "Identifier",
+                "isReadonly": false,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Constant\\MaskNode",
+        "name": "MaskNode",
+        "group": "Constant",
+        "kind": "final",
+        "parent": "NodesListNode",
+        "description": "The name of a constant written in part.\n\nThe segments the name is made of are kept in the order they are written\nin, with a `WildcardMaskNode` standing wherever the name is left unsaid.\n\nA mask is never empty.\n\n```\n Some\\Any::BAR*BAZ*SOME\n //           ^   ^      // wildcards\n //        ^^^ ^^^ ^^^^  // segments\n //        the segments and the wildcards between them\n\n Some\\Any::*\n //        ^ a single wildcard\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Constant\\MaskNode\\WildcardMaskNode",
+        "name": "WildcardMaskNode",
+        "group": "Constant",
+        "kind": "final",
+        "parent": "Node",
+        "description": "An asterisk standing in the place of any run of characters of a constant name.\n\n```\n Some\\Any::CONST_*\n //              ^ the part of the name that is left unsaid\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Literal\\BoolLiteralNode",
+        "name": "BoolLiteralNode",
+        "group": "Literal",
+        "kind": "final",
+        "parent": "Literal\\ScalarLiteralNode",
+        "description": "A `true` or a `false`, in any case they are written in.\n\n```\n TruE  // value: true, raw: \"TruE\"\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Literal\\FloatLiteralNode",
+        "name": "FloatLiteralNode",
+        "group": "Literal",
+        "kind": "final",
+        "parent": "Literal\\ScalarLiteralNode",
+        "description": "A floating point number.\n\nThe value is the nearest double, the mantissa and the exponent keep the\nexact number: `mantissa * 10 ** exponent`. A parser stores the nearest bound\nof the range (`PHP_FLOAT_MAX`) for a number out of it, never an infinity.\n\n```\n -1_5.5e+3  // value: -15500.0, mantissa: \"-15.5\", exponent: \"3\"\n .42        // value: 0.42,     mantissa: \"0.42\",  exponent: \"0\"\n - 1.5      // value: -1.5,     mantissa: \"-1.5\",  exponent: \"0\"\n\n // raw: the text as written, \"-1_5.5e+3\", \".42\", \"- 1.5\"\n```\n\nA node made by hand has no text to read the exact number from, so the\nmantissa and the exponent are the ones of the value itself.",
+        "properties": [
+            {
+                "name": "mantissa",
+                "type": "string",
+                "isReadonly": true,
+                "description": "The number before the exponent, without separators and leading zeros. The\ninteger part is always there, the point is there only with a fraction:\n`0.5`, `1`, `-0.10`."
+            },
+            {
+                "name": "exponent",
+                "type": "string",
+                "isReadonly": true,
+                "description": "The power of ten, `0` if there is no exponent."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Literal\\IntLiteralKind",
+        "name": "IntLiteralKind",
+        "group": "Literal",
+        "kind": "enum",
+        "parent": null,
+        "description": "",
+        "properties": [],
+        "cases": [
+            {
+                "name": "Binary",
+                "description": ""
+            },
+            {
+                "name": "Octal",
+                "description": ""
+            },
+            {
+                "name": "Decimal",
+                "description": ""
+            },
+            {
+                "name": "Hexadecimal",
+                "description": ""
+            }
+        ]
+    },
+    {
+        "id": "Literal\\IntLiteralNode",
+        "name": "IntLiteralNode",
+        "group": "Literal",
+        "kind": "final",
+        "parent": "Literal\\ScalarLiteralNode",
+        "description": "A whole number, written in any of the four radixes.\n\n```\n 0xFE_DE  // value: 65246, raw: \"0xFE_DE\", decimal: \"65246\", kind: Hexadecimal\n 042      // value: 34,    raw: \"042\",     decimal: \"34\",    kind: Octal\n```",
+        "properties": [
+            {
+                "name": "decimal",
+                "type": "string",
+                "isReadonly": true,
+                "description": "The value written out in base 10."
+            },
+            {
+                "name": "kind",
+                "type": "Literal\\IntLiteralKind",
+                "isReadonly": true,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Literal\\LiteralNode",
+        "name": "LiteralNode",
+        "group": "Literal",
+        "kind": "abstract",
+        "parent": "TypeNode",
+        "description": "A value standing where a type is expected, kept both as PHP sees it\nand as it is written.\n\nThe two are not the same thing. A value is what PHP would compute, while\na raw is the very text it was computed from, quotes, radix and all.\n\n```\n 0x1F     // value: 31,     raw: \"0x1F\"\n '\\x41'   // value: \"\\x41\", raw: \"'\\x41'\"\n```",
+        "properties": [
+            {
+                "name": "value",
+                "type": "mixed",
+                "isReadonly": true,
+                "description": ""
+            },
+            {
+                "name": "raw",
+                "type": "string",
+                "isReadonly": true,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Literal\\NullLiteralNode",
+        "name": "NullLiteralNode",
+        "group": "Literal",
+        "kind": "final",
+        "parent": "Literal\\LiteralNode",
+        "description": "A `null`, in any case it is written in.\n\n```\n NulL  // value: null, raw: \"NulL\"\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Literal\\ScalarLiteralNode",
+        "name": "ScalarLiteralNode",
+        "group": "Literal",
+        "kind": "abstract",
+        "parent": "Literal\\LiteralNode",
+        "description": "",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Literal\\StringLiteralKind",
+        "name": "StringLiteralKind",
+        "group": "Literal",
+        "kind": "enum",
+        "parent": null,
+        "description": "",
+        "properties": [],
+        "cases": [
+            {
+                "name": "SingleQuoted",
+                "description": ""
+            },
+            {
+                "name": "DoubleQuoted",
+                "description": ""
+            }
+        ]
+    },
+    {
+        "id": "Literal\\StringLiteralNode",
+        "name": "StringLiteralNode",
+        "group": "Literal",
+        "kind": "final",
+        "parent": "Literal\\ScalarLiteralNode",
+        "description": "A string, kept both decoded and as it is written.\n\n```\n \"\\x41\\x42\"  // value: \"AB\", raw: \"\\\"\\x41\\x42\\\"\"\n```",
+        "properties": [
+            {
+                "name": "kind",
+                "type": "Literal\\StringLiteralKind",
+                "isReadonly": true,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "LogicalTypeNode\\IntersectionTypeNode",
+        "name": "IntersectionTypeNode",
+        "group": "LogicalTypeNode",
+        "kind": "final",
+        "parent": "LogicalTypeNode",
+        "description": "All of several types at once.\n\n```\n Some\\Any & Stringable\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "LogicalTypeNode\\UnionTypeNode",
+        "name": "UnionTypeNode",
+        "group": "LogicalTypeNode",
+        "kind": "final",
+        "parent": "LogicalTypeNode",
+        "description": "Any one of several types.\n\n```\n int|string|null\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "NamespaceName\\NamespaceKind",
+        "name": "NamespaceKind",
+        "group": "NamespaceName",
+        "kind": "enum",
+        "parent": null,
+        "description": "How the namespace of a name is written, that is, from where it is read.",
+        "properties": [],
+        "cases": [
+            {
+                "name": "Qualified",
+                "description": "A namespace written as it is.\n\n```\n Some\\Any\\Name\n ^^^^^^^^\n```"
+            },
+            {
+                "name": "FullyQualified",
+                "description": "A namespace that begins in a separator, it is read from the root.\n\n```\n \\Some\\Any\\Name\n ^^^^^^^^^\n\n \\Name\n ^     the root namespace has no words\n```"
+            },
+            {
+                "name": "NamespaceRelative",
+                "description": "A namespace that begins in the `namespace` keyword, it is read from\nthe current one. The keyword is not a word of the namespace.\n\n```\n namespace\\Some\\Name\n ^^^^^^^^^^^^^^\n\n namespace\\Name\n ^^^^^^^^^      the current namespace has no words\n```"
+            }
+        ]
+    },
+    {
+        "id": "Shape\\ComplexFieldNode",
+        "name": "ComplexFieldNode",
+        "group": "Shape",
+        "kind": "final",
+        "parent": "Shape\\ExplicitFieldNode",
+        "description": "A field of a shape keyed by something that has to be read to be understood:\nA reference to a constant, the mask of a family of them, or any other type.\n\n```\n array{Some\\Any::CONST_NAME: string}\n //    ^^^^^^^^^^^^^^^^^^^^          a class constant\n\n array{Some\\Any::CONST_*: string}\n //    ^^^^^^^^^^^^^^^^^          the mask of a class constant\n\n array{JSON_*: string}\n //    ^^^^^^          the mask of a global constant\n\n WeakMap{User<Some>: T}\n //      ^^^^^^^^^^ a type\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Shape\\ExplicitFieldNode",
+        "name": "ExplicitFieldNode",
+        "group": "Shape",
+        "kind": "abstract",
+        "parent": "Shape\\FieldNode",
+        "description": "A field of a shape written with a key of its own.\n\nWhat the key may be is what tells the children of this class apart.\nA `NamedFieldNode` carries a bare word, a `ScalarFieldNode`\na scalar value and a `ComplexFieldNode` a reference that has to\nbe read.",
+        "properties": [
+            {
+                "name": "key",
+                "type": "Identifier|TypeNode",
+                "isReadonly": false,
+                "description": "The key a field is written with."
+            },
+            {
+                "name": "isOptional",
+                "type": "bool",
+                "isReadonly": false,
+                "description": "Whether a field may be absent, written as a `?` in front of\nthe colon. Only a field with a key can be marked so.\n\n```\n array{name: string}   // false\n array{name?: string}  // true\n```"
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Shape\\FieldListNode",
+        "name": "FieldListNode",
+        "group": "Shape",
+        "kind": "final",
+        "parent": "NodesListNode",
+        "description": "The fields of a shape, in the order they are written in.\n\nAn empty list is a shape written with no fields at all, which is a thing\nof its own.\n\nAn `array` carries no list, while an `array{}` carries an empty one.\nSee the `NamedTypeNode::$fields`.",
+        "properties": [
+            {
+                "name": "isSealed",
+                "type": "bool",
+                "isReadonly": false,
+                "description": "Whether the shape is written with the fields it lists and no other.\nAn unsealed one ends in a `...`, which says that whatever else it\ncarries was left unsaid.\n\n```\n array{a: int}       // sealed\n array{a: int, ...}  // unsealed\n```"
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Shape\\FieldNode",
+        "name": "FieldNode",
+        "group": "Shape",
+        "kind": "abstract",
+        "parent": "Node",
+        "description": "A single field of a shape.\n\nA field is written either with a key or with none, and a shape may mix\nthe two. The keyless ones are numbered from zero in the order they are\nwritten in.\n\n```\n array{name: string, id: int}  // fields written with a key\n array{string, int}            // fields written with none\n array{string, id: int}        // both in one shape\n```",
+        "properties": [
+            {
+                "name": "type",
+                "type": "TypeNode",
+                "isReadonly": false,
+                "description": ""
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Shape\\ImplicitFieldNode",
+        "name": "ImplicitFieldNode",
+        "group": "Shape",
+        "kind": "final",
+        "parent": "Shape\\FieldNode",
+        "description": "A field of a shape written with no key at all, the way an element of\na plain list is.\n\n```\n array{int, string}\n //    ^^^  ^^^^^^ two implicit fields\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Shape\\NamedFieldNode",
+        "name": "NamedFieldNode",
+        "group": "Shape",
+        "kind": "final",
+        "parent": "Shape\\ExplicitFieldNode",
+        "description": "A field of a shape keyed by a bare word.\n\n```\n array{name: string}\n //    ^^^^ the key\n```\n\nA `true`, a `false` and a `null` are bare words as well. In the place of\na key they name nothing but themselves.",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Shape\\ScalarFieldNode",
+        "name": "ScalarFieldNode",
+        "group": "Shape",
+        "kind": "final",
+        "parent": "Shape\\ExplicitFieldNode",
+        "description": "A field of a shape keyed by a number or by a string.\n\n```\n array{0: string, 1: int}\n //    ^          ^ the keys\n\n array{\"some key\": string}\n //    ^^^^^^^^^^ the key\n```\n\nA key is a number or a string and nothing else, the way a key of an array\nis.\n\nA `true` and a `null` are keys of a `NamedFieldNode` instead. In the\nplace of a key they are read as the words they are written with, not as\nthe values they name elsewhere.",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Template\\TemplateArgumentNode",
+        "name": "TemplateArgumentNode",
+        "group": "Template",
+        "kind": "abstract",
+        "parent": "Template\\TemplateNode",
+        "description": "A value passed to a template parameter, as opposed to a parameter\ndeclared by a type.\n\n```\n Some\\Any<int, covariant string, *>\n //       ^^^  ^^^^^^^^^^^^^^^^  ^ three arguments\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Template\\TemplateBoundNode",
+        "name": "TemplateBoundNode",
+        "group": "Template",
+        "kind": "final",
+        "parent": "Node",
+        "description": "One end a template parameter is bounded at, written as the word it is\nbounded with and the type the bound is expressed by.\n\n```\n callable<T of Some super Any>(T): T\n //         ^^^^^^^                  the upper bound\n //                 ^^^^^^^^^        the lower bound\n```",
+        "properties": [
+            {
+                "name": "type",
+                "type": "TypeNode",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "operator",
+                "type": "Identifier",
+                "isReadonly": false,
+                "description": "The word the bound is written with: `of` and `as` bound from\nabove, `super` from below."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Template\\TemplateListNode",
+        "name": "TemplateListNode",
+        "group": "Template",
+        "kind": "final",
+        "parent": "NodesListNode",
+        "description": "Template arguments a type is referenced with, in the order they are\nwritten in. A slot of the list may also declare a parameter in place of\npassing an argument.\n\nThe list is never empty.\n\n```\n Some\\Any<int, string>\n //       ^^^  ^^^^^^ two arguments\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Template\\TemplateNode",
+        "name": "TemplateNode",
+        "group": "Template",
+        "kind": "abstract",
+        "parent": "Node",
+        "description": "Whatever stands in a slot of the `<...>` list of a type: an argument that\nis passed or a parameter that is declared right there.\n\n```\n Some\\Any<int, *>\n //       ^^^  ^ two arguments\n\n callable<T of Some>(T): T\n //       ^^^^^^^^^ a parameter\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Template\\TemplateParameterListNode",
+        "name": "TemplateParameterListNode",
+        "group": "Template",
+        "kind": "final",
+        "parent": "NodesListNode",
+        "description": "Template parameters a type declares, in the order they are written in.\n\nThe list is never empty: a type that declares no parameters carries no\nlist at all.\n\n```\n callable<T, U of Some>(T): U\n //       ^  ^^^^^^^^^\n //       two parameters\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "Template\\TemplateParameterNode",
+        "name": "TemplateParameterNode",
+        "group": "Template",
+        "kind": "final",
+        "parent": "Template\\TemplateNode",
+        "description": "A template parameter declared by a type.\n\nA parameter is a name the type introduces, along with the limits put on it.\nEach limit is written at most once and any of them may be left out.\n\n```\n callable<T, U of Some super Any = int>(T): U\n //       ^                              a name and nothing else\n //          ^^^^^^^^^                   the upper bound\n //                    ^^^^^^^^^         the lower bound\n //                              ^^^^^   the default\n```",
+        "properties": [
+            {
+                "name": "name",
+                "type": "Identifier",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "upper",
+                "type": "?Template\\TemplateBoundNode",
+                "isReadonly": false,
+                "description": "The end the parameter is bounded at from above, written with an\n`of` or an `as`.\n\nThe argument is to be a subtype of it."
+            },
+            {
+                "name": "lower",
+                "type": "?Template\\TemplateBoundNode",
+                "isReadonly": false,
+                "description": "The end the parameter is bounded at from below, written with\na `super`.\n\nThe argument is to be a supertype of it."
+            },
+            {
+                "name": "default",
+                "type": "?TypeNode",
+                "isReadonly": false,
+                "description": "The type the parameter takes when no argument is passed, written\nwith an `=`.\n\nIt bounds nothing. A bound says what an argument may be, while\na default says what it becomes when left unsaid."
+            },
+            {
+                "name": "variance",
+                "type": "?Template\\VarianceNode",
+                "isReadonly": false,
+                "description": "Declaration-site variance of the parameter, or `null` in case of\nit carries none, which makes the parameter invariant."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Template\\TypedTemplateArgumentNode",
+        "name": "TypedTemplateArgumentNode",
+        "group": "Template",
+        "kind": "final",
+        "parent": "Template\\TemplateArgumentNode",
+        "description": "A template argument that is a type, along with the call-site variance it\nmay carry.\n\n```\n Some\\Any<int, covariant string>\n //       ^^^                    an invariant argument\n //            ^^^^^^^^^^^^^^^^  a covariant argument\n```",
+        "properties": [
+            {
+                "name": "value",
+                "type": "TypeNode",
+                "isReadonly": false,
+                "description": ""
+            },
+            {
+                "name": "variance",
+                "type": "?Template\\VarianceNode",
+                "isReadonly": false,
+                "description": "Variance standing in front of the argument, or `null` in case of\nit carries none, which makes the argument invariant.\n\n```\n Some\\Any<covariant string>\n //       ^^^^^^^^^ the variance\n```"
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Template\\VarianceNode",
+        "name": "VarianceNode",
+        "group": "Template",
+        "kind": "final",
+        "parent": "Node",
+        "description": "A variance of a template argument or of a template parameter, the word that\nstands in front of it.\n\n```\n Some\\Any<covariant string>\n //       ^^^^^^^^^ the variance\n\n callable<contravariant T>(T): void\n //       ^^^^^^^^^^^^^ the variance\n```",
+        "properties": [
+            {
+                "name": "kind",
+                "type": "Template\\VarianceNode\\VarianceKind",
+                "isReadonly": true,
+                "description": "The kind of the variance."
+            }
+        ],
+        "cases": []
+    },
+    {
+        "id": "Template\\VarianceNode\\VarianceKind",
+        "name": "VarianceKind",
+        "group": "Template",
+        "kind": "enum",
+        "parent": null,
+        "description": "The kind of a variance, it is the word the variance is written with.",
+        "properties": [],
+        "cases": [
+            {
+                "name": "Covariant",
+                "description": "A subtype may stand in the place of the type.\n\n```\n Some\\Any<covariant string>\n```"
+            },
+            {
+                "name": "Contravariant",
+                "description": "A supertype may stand in the place of the type.\n\n```\n Some\\Any<contravariant string>\n```"
+            },
+            {
+                "name": "Invariant",
+                "description": "Only the type itself may stand in its place.\n\n```\n Some\\Any<invariant string>\n```"
+            }
+        ]
+    },
+    {
+        "id": "Template\\WildcardTemplateArgumentNode",
+        "name": "WildcardTemplateArgumentNode",
+        "group": "Template",
+        "kind": "final",
+        "parent": "Template\\TemplateArgumentNode",
+        "description": "A template argument that is left unsaid, written as an asterisk.\n\n```\n Some\\Any<*>\n //       ^ an unspecified argument\n```\n\nThe node names no type and carries no variance.",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "WrappingTypeNode\\NullableTypeNode",
+        "name": "NullableTypeNode",
+        "group": "WrappingTypeNode",
+        "kind": "final",
+        "parent": "WrappingTypeNode",
+        "description": "A type a `null` is allowed besides, written with a leading `?`.\n\n```\n ?Some\\Any\n```",
+        "properties": [],
+        "cases": []
+    },
+    {
+        "id": "WrappingTypeNode\\TypesListTypeNode",
+        "name": "TypesListTypeNode",
+        "group": "WrappingTypeNode",
+        "kind": "final",
+        "parent": "WrappingTypeNode",
+        "description": "A list of the wrapped type, written in the legacy `[]` notation.\n\n```\n Some\\Any[]\n ^^^^^^^^   the type the list is made of\n\n Some\\Any[][]\n ^^^^^^^^^^   a list the outer list is made of\n```",
+        "properties": [],
+        "cases": []
+    }
+]

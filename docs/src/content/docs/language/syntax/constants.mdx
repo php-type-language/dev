@@ -1,0 +1,151 @@
+---
+title: Constants
+sidebar:
+  order: 7
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+Unlike [identifiers (type names)](/language/syntax/names/), constants cannot contain
+the dash (`-`) character. However, the grammar of the [type name](/language/syntax/names/)
+and the constant *are identical*, so this conflict of semantics will have to be
+resolved independently during the implementation of a custom solution that uses
+the TypeLang grammar.
+
+[Namespaces](/language/syntax/names/#namespace) specifying a reference to a constant are
+also allowed.
+
+<Aside>
+With this in mind, note that any constant is interpreted as a
+[named type](/language/syntax/names/).
+</Aside>
+
+Given the complete identity of the grammar of constants with
+[named type](/language/syntax/names/), they cannot contain case-insensitive names
+`true`, `false` and `null` of literals.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="JSON_THROW_ON_ERROR">
+Example of global constant (or type name)
+</TypeTree>
+
+<TypeTree type={"pcov\\version"}>
+Example of namespaced constant (or type name)
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="TrUe">
+A reserved word alone, in any case, is a
+[literal](/language/syntax/booleans/), not a constant.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Class constants
+
+Class constants begin with any [type name](/language/syntax/names/), then contain 
+a double colon (`::`) character, and then the constant name.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="ClassName::CONSTANT_NAME">
+Reference to a class constant in the global namespace.
+</TypeTree>
+
+<TypeTree type={"Path\\To\\ClassName::ANOTHER_CONSTANT_NAME"}>
+Reference a constant in a class that is located in some namespace.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type={"ClassName::SOME\\ANY"} error message={"UnexpectedTokenException: Unexpected \"SOME\\\", expected an identifier, \"true\", \"false\", \"null\" and other"}>
+A constant in a class must be an 
+Identifier and cannot contain its own namespace.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Constant masks
+
+A reference to a certain set of constants can be defined using a mask: A
+sequence of name segments with an asterisk (`*`) standing wherever the name
+is left unsaid.
+
+A mask is made of at least one asterisk, and its segments and asterisks
+alternate, so two asterisks in a row describe nothing a single one does not.
+
+Prefixes on class constants can be omitted, so type will mean any class constant.
+
+A global constant may be left unsaid from its very beginning as well, and the
+namespace it belongs to may be written in front of the mask. A name separated
+from the mask by a backslash is a namespace whole, so the mask then means any
+constant that namespace holds.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="JSON_*">
+Reference to any constant with the `JSON_` prefix.
+</TypeTree>
+
+<TypeTree type="*_SUFFIX">
+Reference to any constant with the `_SUFFIX` suffix.
+</TypeTree>
+
+<TypeTree type={"Path\\To\\JSON_*"}>
+Reference to any constant with the `JSON_` prefix in the `Path\To` namespace.
+</TypeTree>
+
+<TypeTree type={"Path\\To\\*"}>
+Reference to any constant of the `Path\To` namespace.
+</TypeTree>
+
+<TypeTree type={"\\*"}>
+Reference to any constant of the global namespace explicitly.
+</TypeTree>
+
+<TypeTree type="A*B*C">
+Several asterisks in one mask.
+</TypeTree>
+
+<TypeTree type={"Path\\To\\ClassName::PREFIX_*"}>
+Reference to any class constant with the `PREFIX_` prefix.
+</TypeTree>
+
+<TypeTree type={"Path\\To\\ClassName::*_SUFFIX"}>
+Reference to any class constant with the `_SUFFIX` suffix.
+</TypeTree>
+
+<TypeTree type={"Path\\To\\ClassName::PREFIX_*_SUFFIX"}>
+Reference to any class constant written of the `PREFIX_` and `_SUFFIX`
+segments, in that order.
+</TypeTree>
+
+<TypeTree type={"Path\\To\\ClassName::*"}>
+Reference to any class constant
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="*" error message={"UnexpectedTokenException: Unexpected \"*\", expected a type name, an identifier, \"true\", \"false\" and other"}>
+A global mask needs at least one segment of a name, whether it stands in
+front of the asterisk or behind it. A lone asterisk would mean any constant
+there is, and that is not a type.
+</TypeTree>
+
+<TypeTree type={"Path\\To\\ClassName::PREFIX_**"} error message={"UnexpectedTokenException: Unexpected \"*\""}>
+Two asterisks in a row are not a mask.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>

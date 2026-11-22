@@ -1,0 +1,166 @@
+---
+title: "Native printer"
+description: "The PHP-compatible printer that reduces any type down to syntax PHP itself accepts, applying built-in and custom type aliases."
+sidebar:
+  label: Native printer
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`TypeLang\Printer\NativeTypePrinter` renders the closest type that PHP itself
+would accept. TypeLang can describe far more than the language can express —
+generics, shapes, conditional types, integer ranges — so the native printer
+trades that precision for validity, collapsing every construct without a
+native equivalent down to a supported approximation.
+
+```php
+use TypeLang\Parser\TypeParser;
+use TypeLang\Printer\NativeTypePrinter;
+
+$type = new TypeParser()
+    ->parse('non-empty-list<positive-int>|null');
+
+echo new NativeTypePrinter()
+    ->print($type);
+// array|null
+```
+
+Use it to emit something the runtime can consume — a property type, a
+parameter or return hint, generated code — rather than something a human
+reads. For the latter, use the [Pretty Printer](/toolkit/printer/pretty/).
+
+It is built on the same node printers as `PrettyTypePrinter` and accepts the
+same `PrinterOptions` as its **second** constructor argument. In practice
+the formatting options rarely show, because the constructs that would span
+several lines (shapes especially) are reduced to a single word first.
+
+## Conversion rules
+
+The printer keeps whatever PHP already understands and rewrites the rest:
+
+| TypeLang input                 | Native output            | Rule                                                      |
+|--------------------------------|--------------------------|-----------------------------------------------------------|
+| `array{id: int, name: string}` | `array`                  | a shape becomes its base type                             |
+| `object{id: int}`              | `object`                 | —                                                         |
+| `callable(int $a): void`       | `callable`               | a callable loses its signature                            |
+| `int[]`                        | `iterable`               | a list suffix becomes `iterable`                          |
+| `Collection[Key]`              | `mixed`                  | offset access is not expressible                          |
+| `Foo::BAR`, `Foo::*`           | `mixed`                  | class constants and masks become `mixed`                  |
+| `42`, `"foo"`, `3.14`          | `int`, `string`, `float` | a literal becomes its type                                |
+| `true`, `false`                | `bool`                   | a boolean literal becomes `bool`                          |
+| `?int`                         | `int│null`               | a nullable type becomes a union with `null`               |
+| `$this`                        | `self`                   | —                                                         |
+| `$arg is A ? B : C`            | `B│C`                    | a conditional becomes the union of its branches           |
+| `true│false`                   | `bool`                   | the pair collapses to `bool`                              |
+| `int│mixed`                    | `mixed`                  | any union containing `mixed` collapses to `mixed`         |
+
+Generic arguments are dropped along with everything else — `array<int, User>`
+prints as `array`, and `class-string<Foo>` as `string`. Nested conditional
+types contribute the results of all their branches, so
+`T is A ? B : (T is C ? D : E)` prints as `B│D│E`.
+
+<Aside>
+A native union always joins its members with a bare <code>|</code> and an
+intersection with a bare <code>&amp;</code>, never adding spaces, since that
+is the only form PHP accepts. The <code>unionSpacing</code> and
+<code>intersectionSpacing</code> options of the
+<a href="/toolkit/printer/pretty/">pretty printer</a> have no effect here.
+</Aside>
+
+## Type aliases
+
+Much of the reduction is driven by a table of **type aliases** — a map from a
+type name to the native type it stands for. This is how `positive-int` becomes
+`int` and `non-empty-list` becomes `array`.
+
+The printer preloads the built-in vocabularies of the three major static
+analyzers (Phan, Psalm and PHPStan), so their custom scalar and collection
+types resolve out of the box:
+
+```php
+$printer = new NativeTypePrinter();
+
+echo $printer->print($parser->parse('positive-int'));   // int
+echo $printer->print($parser->parse('class-string'));   // string
+echo $printer->print($parser->parse('non-empty-list')); // array
+```
+
+<Aside type="tip">
+Aliases are matched case-insensitively and apply to the <b>name</b> of a named
+or callable type. A name with no alias is printed as-is, so a plain class name
+such as <code>App\Entity\User</code> passes through untouched.
+</Aside>
+
+### Registering your own
+
+Pass extra aliases as the **first** constructor argument, an iterable keyed by
+the alias name. Your aliases take precedence over the built-in ones:
+
+```php
+$printer = new NativeTypePrinter(aliases: [
+    'Money' => 'int',
+    'custom-uuid' => 'string',
+]);
+
+// int
+echo $printer->print($parser->parse('Money'));
+
+// string
+echo $printer->print($parser->parse('custom-uuid'));
+```
+
+The formatting options go second:
+
+```php
+use TypeLang\Printer\PrinterOptions;
+
+$printer = new NativeTypePrinter(
+    aliases: ['Money' => 'int'],
+    options: new PrinterOptions(),
+);
+```
+
+<Aside type="caution">
+The <a href="/toolkit/printer/pretty/">pretty printer</a> takes only the options, so
+its first constructor argument is <code>PrinterOptions</code>. The native
+printer takes <code>aliases</code> first and <code>options</code> second. Use
+named arguments to avoid mixing them up.
+</Aside>
+
+The same can be done after construction, which additionally allows an alias to
+a union or an intersection of several native types:
+
+- **addTypeAlias(string &#36;alias, string &#36;type)**: Map an alias to a single native type.
+- **addUnionTypeAlias(string &#36;alias, array &#36;types)**: Map an alias to a union of native types (joined with `|`, sorted alphabetically).
+- **addIntersectionTypeAlias(string &#36;alias, array &#36;types)**: Map an alias to an intersection of native types (joined with `&`, sorted alphabetically).
+
+```php
+$printer = new NativeTypePrinter();
+
+$printer->addTypeAlias('Money', 'int');
+
+// int
+echo $printer->print($parser->parse('Money'));
+
+$printer->addUnionTypeAlias('numeric-string', [
+    'int',
+    'string',
+]);
+
+// int|string
+echo $printer->print($parser->parse('numeric-string'));
+
+$printer->addIntersectionTypeAlias('Collection', [
+    'Countable',
+    'Traversable',
+]);
+
+// Countable&Traversable
+echo $printer->print($parser->parse('Collection'));
+```
+
+## See also
+
+- **Pretty Printer**: Render the full, faithful type instead. See [Pretty Printer](/toolkit/printer/pretty/).
+- **Type Printer**: The component overview and the shared `print()` contract. See [Type Printer](/toolkit/printer/).

@@ -1,0 +1,39 @@
+---
+title: "@source"
+description: "The @source tag points at a range of lines of the documented element's source, starting at a line and optionally spanning a number of lines."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@source` tag points at a range of lines within the documented element's
+own source code, so that documentation tooling can render an excerpt of the
+real implementation next to the docblock — useful when seeing the actual
+code clarifies behavior that prose alone would need many words to explain.
+Unlike [@example](/phpdoc/tags/example/), which references a separate illustrating
+file, `@source` always refers back to the element it is written on.
+
+<TagReference name="source" />
+
+Parsing a `@source` tag produces a `SourceTag` instance exposing `$start` —
+the starting line of the excerpt, always given — and `$count`, the number of
+lines to include, or `null` when the excerpt runs to the end of the element.
+
+```php
+final class SourceTag extends Tag
+{
+    public function __construct(
+        string $name,
+        public readonly int $start,
+        public readonly ?int $count = null,
+        ?DescriptionInterface $description = null,
+    ) {
+        parent::__construct($name, $description);
+    }
+}
+```
+
+`@source` is still part of phpDocumentor's current tag reference, but its
+own page notes that its effects "are not yet fully implemented in
+phpDocumentor 3" —
+[phpDocumentor tag reference](https://docs.phpdoc.org/guide/references/phpdoc/tags/source.html).
+It remains here for reading classic-style docblocks.

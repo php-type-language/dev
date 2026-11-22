@@ -1,0 +1,265 @@
+---
+title: "Error messages"
+sidebar:
+  order: 4
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Custom messages of the errors of a class and of its properties. Other details
+of errors are described in [errors](/mapper/errors/).
+
+Every option is shown in each [metadata source](/mapper/metadata/): choose
+the tab of the source you use. When a source cannot express an option, its
+tab says what is used instead.
+
+## Class type error
+
+Replaces the message of the error when the value is not data of the class
+(denormalization) or not an object of the class (normalization).
+Placeholders: `{{value}}`, `{{expected}}`.
+<Tabs syncKey="metadata">
+<TabItem label="Attributes">
+```php
+use TypeLang\Mapper\Mapping\OnTypeError;
+
+#[OnTypeError('A user is expected, {{value}} given')]
+final class User
+{
+    public string $name;
+}
+```
+</TabItem>
+
+<TabItem label="PHPDoc">
+<Aside type="caution">
+There is no PHPDoc tag for this option.
+</Aside>
+
+</TabItem>
+
+<TabItem label="Reflection">
+<Aside>
+The default message is used: `Value must be of type object{name: string}, but 42 given`.
+</Aside>
+
+</TabItem>
+
+<TabItem label="PHP Config">
+```php
+<?php
+
+return [
+    App\User::class => [
+        'type_error_message' => 'A user is expected, {{value}} given',
+    ],
+];
+```
+</TabItem>
+
+<TabItem label="JSON">
+```json
+{
+    "App\\User": {
+        "type_error_message": "A user is expected, {{value}} given"
+    }
+}
+```
+</TabItem>
+
+<TabItem label="YAML">
+```yaml
+App\User:
+    type_error_message: 'A user is expected, {{value}} given'
+```
+</TabItem>
+
+<TabItem label="NEON">
+```yaml
+App\User:
+    type_error_message: 'A user is expected, {{value}} given'
+```
+</TabItem>
+
+</Tabs>
+
+```php
+$mapper->denormalize(42, User::class);
+// throws InvalidValueException: $: A user is expected, 42 given
+```
+
+## Property type error
+
+Replaces the message of the error of the property value. Errors of its
+nested values keep their own messages. Placeholders: `{{value}}` and those
+of the replaced error: `{{expected}}` for a wrong type, plus `{{check}}` for
+a failed check such as `positive-int`. The text replaces both errors, a
+placeholder without data is empty: `{{check}}` of a wrong type, or
+`{{expected}}` on normalization.
+<Tabs syncKey="metadata">
+<TabItem label="Attributes">
+```php
+use TypeLang\Mapper\Mapping\OnTypeError;
+
+final class User
+{
+    #[OnTypeError('Age must be a number, {{value}} given')]
+    public int $age;
+}
+```
+</TabItem>
+
+<TabItem label="PHPDoc">
+<Aside type="caution">
+There is no PHPDoc tag for this option.
+</Aside>
+
+</TabItem>
+
+<TabItem label="Reflection">
+<Aside>
+The default message is used: `Value must be of type int, but "old" given`.
+</Aside>
+
+</TabItem>
+
+<TabItem label="PHP Config">
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'age' => [
+                'type_error_message' => 'Age must be a number, {{value}} given',
+            ],
+        ],
+    ],
+];
+```
+</TabItem>
+
+<TabItem label="JSON">
+```json
+{
+    "App\\User": {
+        "properties": {
+            "age": {
+                "type_error_message": "Age must be a number, {{value}} given"
+            }
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem label="YAML">
+```yaml
+App\User:
+    properties:
+        age:
+            type_error_message: 'Age must be a number, {{value}} given'
+```
+</TabItem>
+
+<TabItem label="NEON">
+```yaml
+App\User:
+    properties:
+        age:
+            type_error_message: 'Age must be a number, {{value}} given'
+```
+</TabItem>
+
+</Tabs>
+
+```php
+$mapper->denormalize(['age' => 'old'], User::class);
+// throws InvalidValueException: $.age: Age must be a number, "old" given
+```
+
+## Missing field error
+
+Replaces the message of the error of a missing field. Placeholder:
+`{{field}}`.
+<Tabs syncKey="metadata">
+<TabItem label="Attributes">
+```php
+use TypeLang\Mapper\Mapping\OnUndefinedError;
+
+final class User
+{
+    #[OnUndefinedError('The {{field}} is required')]
+    public string $email;
+}
+```
+</TabItem>
+
+<TabItem label="PHPDoc">
+<Aside type="caution">
+There is no PHPDoc tag for this option.
+</Aside>
+
+</TabItem>
+
+<TabItem label="Reflection">
+<Aside>
+The default message is used: `Required field "email" is missing`.
+</Aside>
+
+</TabItem>
+
+<TabItem label="PHP Config">
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'email' => [
+                'undefined_error_message' => 'The {{field}} is required',
+            ],
+        ],
+    ],
+];
+```
+</TabItem>
+
+<TabItem label="JSON">
+```json
+{
+    "App\\User": {
+        "properties": {
+            "email": {
+                "undefined_error_message": "The {{field}} is required"
+            }
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem label="YAML">
+```yaml
+App\User:
+    properties:
+        email:
+            undefined_error_message: 'The {{field}} is required'
+```
+</TabItem>
+
+<TabItem label="NEON">
+```yaml
+App\User:
+    properties:
+        email:
+            undefined_error_message: 'The {{field}} is required'
+```
+</TabItem>
+
+</Tabs>
+
+```php
+$mapper->denormalize([], User::class);
+// throws InvalidValueException: $.email: The email is required
+```

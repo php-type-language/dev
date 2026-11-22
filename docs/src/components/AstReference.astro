@@ -1,0 +1,140 @@
+---
+/*
+ * Reference of AST node classes of type-lang/types, built from their
+ * docblocks (src/data/toolkit/ast.json, written by bin/build-ast.php).
+ */
+import { getEntry } from 'astro:content';
+import { renderDocBlock } from '../docblock';
+
+interface Props {
+    /**
+     * Classes relative to `TypeLang\Type`, in the order of the page.
+     */
+    classes: string[];
+}
+
+const entries = await Promise.all(Astro.props.classes.map(async (id) => {
+    const entry = await getEntry('ast', id);
+
+    if (entry === undefined) {
+        throw new Error(`Class "TypeLang\\Type\\${id}" is not in src/data/toolkit/ast.json`);
+    }
+
+    return entry;
+}));
+
+const toAnchor = (id: string): string => id.toLowerCase().replace(/\\/g, '-');
+---
+
+<div class="ast not-content">
+    {entries.map(({ id, data }) => (
+        <section class="ast-class" id={toAnchor(id)}>
+            <h3><a href={`#${toAnchor(id)}`}>{data.name}</a></h3>
+            <p class="ast-meta">
+                <span class="ast-kind">{data.kind}</span>
+                <code>TypeLang\Type\{id}</code>
+                {data.parent !== null && <span>extends <code>{data.parent}</code></span>}
+            </p>
+            <div class="ast-doc" set:html={renderDocBlock(data.description)} />
+
+            {data.properties.length > 0 && (
+                <dl class="ast-props">
+                    {data.properties.map((property) => (
+                        <>
+                            <dt>
+                                <code>{property.isReadonly ? 'readonly ' : ''}{property.type} ${property.name}</code>
+                            </dt>
+                            <dd set:html={renderDocBlock(property.description)} />
+                        </>
+                    ))}
+                </dl>
+            )}
+
+            {data.cases.length > 0 && (
+                <dl class="ast-props">
+                    {data.cases.map((enumCase) => (
+                        <>
+                            <dt><code>case {enumCase.name}</code></dt>
+                            <dd set:html={renderDocBlock(enumCase.description)} />
+                        </>
+                    ))}
+                </dl>
+            )}
+        </section>
+    ))}
+</div>
+
+<style>
+    .ast-class {
+        padding: 1.25rem 0 1rem;
+        border-top: 1px solid var(--line);
+    }
+    h3 {
+        margin: 0;
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 1.05rem;
+    }
+    h3 a {
+        color: var(--ink);
+        text-decoration: none;
+    }
+    h3 a:hover {
+        color: var(--accent);
+    }
+    .ast-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        margin: 0.25rem 0 0.75rem;
+        font: 12px/1.6 var(--mono);
+        color: var(--muted);
+    }
+    .ast-kind {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+    .ast-meta code {
+        font-size: inherit;
+        color: var(--ink-2);
+    }
+    .ast-doc :global(p),
+    .ast-props :global(p) {
+        margin: 0 0 0.6rem;
+    }
+    .ast-doc :global(code),
+    .ast-props :global(dd code) {
+        color: var(--ink);
+        font-size: 0.875em;
+    }
+    .ast :global(pre.doc-code) {
+        margin: 0 0 0.75rem;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        background: var(--paper-2);
+        overflow-x: auto;
+        font: 13px/1.5 var(--mono);
+    }
+    .ast :global(pre.doc-code code) {
+        border: 0;
+        padding: 0;
+        background: none;
+        font-size: inherit;
+    }
+    .ast-props {
+        margin: 0.5rem 0 0;
+        border-top: 1px dashed var(--line);
+    }
+    .ast-props dt {
+        margin-top: 0.6rem;
+    }
+    .ast-props dt code {
+        font-size: 0.88rem;
+        color: var(--accent);
+    }
+    .ast-props dd {
+        margin: 0.25rem 0 0 1.25rem;
+        font-size: 0.94rem;
+        color: var(--ink-2);
+    }
+</style>

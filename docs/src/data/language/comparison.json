@@ -1,0 +1,4317 @@
+[
+    {
+        "id": "names",
+        "title": "Names",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "\\Foo\\Bar",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "non-empty-string",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array-key",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "positive-int",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "namespace\\Foo",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo-bar",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "$this",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "?$this",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "PHPStan allows it anywhere, Psalm only for known pseudo types.",
+            "2": "Psalm resolves it to `static`."
+        }
+    },
+    {
+        "id": "literals",
+        "title": "Literals",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "true|false",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "42",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "-42",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "1.5",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "-1.5",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "'a'",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "\"a\"",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "1|2|3",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "'a'|'b'",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "true",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "null",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "+1",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "- 1",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "007",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "0x1F",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "-0x1F",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "0b101",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "0o17",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 7
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "1e3",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "1_000.5",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": ".5",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "1.",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "1.5e3",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "9223372036854775808",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 11
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "-9223372036854775809",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 12
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "'a\"b'",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 13
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "\"a\\\"b\"",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 14
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "\"a\\nb\"",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 15
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "\"a\\x41\"",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 15
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "\"a\\u{1F600}\"",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 15
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "Psalm has no explicit plus sign in numbers.",
+            "2": "PHPStan does not allow a space after the sign of a number.",
+            "3": "Psalm reads it as `-1`.",
+            "4": "Psalm has no legacy octal numbers.",
+            "5": "Psalm has no hexadecimal numbers.",
+            "6": "Psalm has no binary numbers.",
+            "7": "Psalm has no `0o` octal prefix.",
+            "8": "Psalm has no exponent in floats.",
+            "9": "Psalm has no digit separators in numbers.",
+            "10": "Psalm requires digits on both sides of the decimal point.",
+            "11": "Psalm clamps it to the maximum.",
+            "12": "Psalm clamps it to the minimum.",
+            "13": "Psalm does not allow a double quote inside a single-quoted string.",
+            "14": "Psalm keeps the backslash in the value.",
+            "15": "Psalm does not decode it."
+        }
+    },
+    {
+        "id": "constants-and-masks",
+        "title": "Constants and masks",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "PHP_EOL",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "\\PHP_EOL",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::BAR",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo\\Bar::BAZ",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::class",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::BAR|Foo::BAZ",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::*",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "PHP_*",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Some\\Any\\CONST_*",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "FOO*BAR",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "*_SOME",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Some\\Any\\*",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "\\*",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::*_BAZ",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::B*R",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "$this::BAR",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "fail",
+                        "note": 6
+                    }
+                }
+            },
+            {
+                "type": "$this::class",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "fail",
+                        "note": 6
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "PHPStan has masks only for class constants.",
+            "2": "PHPStan has masks only for class constants, `Foo::BAR_*`, and none for global ones.",
+            "3": "PHPStan allows a star only at the end of a constant name.",
+            "4": "Psalm allows a star only at the end of a constant name.",
+            "5": "PHPStan does not allow `$this` before `::`.",
+            "6": "TypeLang does not allow `$this` before `::`."
+        }
+    },
+    {
+        "id": "lists-and-offsets",
+        "title": "Lists and offsets",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "int[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int[][]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(A|B)[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array<int>[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "?int[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int[]|null",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::BAR[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T[K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T[int]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T['a']",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T[Foo::A]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T[K|L]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T[?K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(A|B)[K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(?T)[K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<int>[K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "list<int>[0]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int}['a']",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T [K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int\\n[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "$this[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "Psalm accepts only declared templates.",
+            "2": "Psalm supports offset access only on a template name, `T[K]`, and only with a template as the offset.",
+            "3": "PHPStan does not allow a space before `[`.",
+            "4": "Psalm glues it into the name.",
+            "5": "Psalm resolves `$this` to `static`."
+        }
+    },
+    {
+        "id": "logical-types",
+        "title": "Logical types",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "A|B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A|B|C",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A&B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A&B&C",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(A|B)&C",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(A&B)|C",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "?int",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A&B|C",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A|B&C",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A&B|C&D",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "?A|B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "?T|U[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A|?B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "?A&B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 6
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A&?B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 7
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "?A&?B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(?A)&B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 10
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(A&B)&C",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A[]|B[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 11
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A[]&B[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 11
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T|U[K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(A|?B)[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "PHPStan rejects it on purpose: it is stricter and requires parentheses, because the priority may be non-obvious.",
+            "2": "PHPStan rejects it on purpose: it is stricter and requires parentheses, because the priority may be non-obvious: `(?A)|B` or `?(A|B)`.",
+            "3": "PHPStan rejects it on purpose: it is stricter and requires parentheses, because the priority may be non-obvious: `(?T)|U[]`, `?(T|U[])` or `?(T|U)[]`.",
+            "4": "PHPStan rejects it on purpose: it is stricter and requires parentheses, because the priority may be non-obvious: `A|(?B)`.",
+            "5": "PHPStan rejects it on purpose: it is stricter and requires parentheses, because the priority may be non-obvious: `(?A)&B` or `?(A&B)`.",
+            "6": "Psalm reads `null|(A&B)`, the mark binds weaker there.",
+            "7": "PHPStan rejects it on purpose: it is stricter and requires parentheses, because the priority may be non-obvious: `A&(?B)`.",
+            "8": "Psalm silently drops the `null`.",
+            "9": "Psalm loses `B`.",
+            "10": "The only form PHPStan accepts. Psalm drops the `null`.",
+            "11": "Psalm merges the arrays into one."
+        }
+    },
+    {
+        "id": "generics",
+        "title": "Generics",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "Foo\\Bar<int>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array<int, string>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<int>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "iterable<int>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "list<int>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "non-empty-list<int>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<int, string,>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<*>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<int, *>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<covariant T>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<contravariant T>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<invariant T>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<int>[K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<T is int ? A : B>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "Psalm does not allow a trailing comma in generic arguments.",
+            "2": "Psalm has no wildcard `*` as a generic argument.",
+            "3": "Psalm drops the keyword silently.",
+            "4": "PHPStan knows only the `covariant` and `contravariant` keywords.",
+            "5": "Psalm supports offset access only on a template name, `T[K]`, and only with a template as the offset.",
+            "6": "PHPStan requires parentheses around a conditional type, even as a generic argument."
+        }
+    },
+    {
+        "id": "templates",
+        "title": "Templates",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "callable<T>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<T, U,>(T): U",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<T of int>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<T as int>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<T super int>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<T of A super B>(): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<T = int>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<T of int = int>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<covariant T>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Closure<T>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "pure-Closure<T>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<T>(T): T",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "Psalm has no template parameters for callables.",
+            "2": "PHPStan has no variance on template parameters of a callable."
+        }
+    },
+    {
+        "id": "callable",
+        "title": "Callable",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "callable(): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int $a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int ...$a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Closure(int): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "pure-callable(int): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(...int): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int...): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int... $a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(...): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "fail",
+                        "note": 5
+                    }
+                }
+            },
+            {
+                "type": "callable(...$a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable($a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int &$a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 7
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(&$a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int&): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int &...$a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int $a=): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int=): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int = 42): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 11
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int $a = 42): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 13
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int $a = -1): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 13
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int $a = PHP_INT_MAX): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 13
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int $a = Foo::BAR): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 13
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(): $this",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 14
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(): T is int ? A : B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 15
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "foo(T): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 16
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable (int): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(): T|U",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(): T&U",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 17
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(): ?T|U",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 17
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(): callable(): T|U",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 18
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 18
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "PHPStan rejects it on purpose: it requires a return type for strict signatures, and it avoids the conflict with a variance in front of a group, `Generic<covariant(T)>` against `Generic<covariant(T): void>`.",
+            "2": "PHPStan supports only the postfix form, `callable(int...): void`.",
+            "3": "Psalm does not allow a name after `...`.",
+            "4": "PHPStan rejects it on purpose: it requires a type on every parameter.",
+            "5": "TypeLang requires a type or a name after `...`.",
+            "6": "Psalm requires a type for every parameter.",
+            "7": "Psalm has no by-reference marker `&` with a parameter name.",
+            "8": "Psalm drops the `&`.",
+            "9": "Psalm has no optional marker `=` after a parameter name.",
+            "10": "PHPStan has the optional marker `=`, but no default value after it.",
+            "11": "Psalm skips it and loses the value.",
+            "12": "PHPStan has no default values of parameters, only the bare `=`.",
+            "13": "Psalm has no default values of parameters.",
+            "14": "Psalm resolves it to `static`.",
+            "15": "PHPStan requires parentheses around a conditional return type.",
+            "16": "Psalm reads only `callable` and `Closure` before the parentheses of a callable.",
+            "17": "Psalm folds it into the return type.",
+            "18": "PHPStan rejects it, Psalm folds the union."
+        }
+    },
+    {
+        "id": "shapes",
+        "title": "Shapes",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "array{}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a?: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{int, string}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{0: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{'a': int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: array{b: int}}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int, ...}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "list{int, string}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "object{a: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{int, string,}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int, string}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{Foo::BAR: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{covariant: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{'Foo\\Bar': int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{- 1: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{...}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 7
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int, ...<string>}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int, ...<string, int>}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "list{1: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "list{...}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 10
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "non-empty-array{a: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 11
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "object{a: int,}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "object{a: int, ...}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 13
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "object{0: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 14
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "object{Foo::BAR: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 14
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo{a: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 15
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 16
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int} | array{b: string}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 17
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "Psalm does not allow a trailing comma in a shape.",
+            "2": "Psalm does not allow named and positional fields in one shape.",
+            "3": "Psalm does not allow a class constant as a key.",
+            "4": "Psalm does not accept a reserved word as a key.",
+            "5": "Psalm drops the backslash from a string key.",
+            "6": "PHPStan does not allow a space after the sign of a key.",
+            "7": "Psalm reads an empty array.",
+            "8": "Psalm does not read a single type argument in the unsealed marker.",
+            "9": "Psalm does not allow explicit keys in a list shape.",
+            "10": "Psalm loses the tail.",
+            "11": "Psalm has no shape for `non-empty-array`.",
+            "12": "PHPStan has no unsealed object shape.",
+            "13": "Psalm drops `...`.",
+            "14": "PHPStan allows only names as the keys of an object shape.",
+            "15": "PHPStan allows a shape only after `array`, `list` and `object`.",
+            "16": "Psalm allows a shape only after `array`, `list` and `object`.",
+            "17": "Psalm merges them into one."
+        }
+    },
+    {
+        "id": "conditional-types",
+        "title": "Conditional types",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "(T is int ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(T is not int ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "($a is int ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T is int ? A : B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T is not int ? A : B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "$a is int ? A : B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(T is ?int ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(T is int[] ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(T is callable(int): void ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(T is int ? A : B is C ? D : E)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(T is int ? A : (B is C ? D : E))",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 7
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(T is $this ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "($this is int ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int &$a): ($a is int ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: T is int ? A : B}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 11
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(T $a): T is int ? A : B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "?T is U ? V : Z",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 13
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 14
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A|B is C ? D : E",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 15
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 15
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "PHPStan requires parentheses around a conditional type.",
+            "2": "Psalm requires parentheses around a conditional type.",
+            "3": "Psalm does not allow a nullable type as the target of a condition.",
+            "4": "Psalm does not allow a list type as the target of a condition.",
+            "5": "Psalm does not allow a callable as the target of a condition.",
+            "6": "Psalm does not allow a conditional type in the else branch without parentheses.",
+            "7": "Psalm does not allow a nested condition in the else branch, even in parentheses.",
+            "8": "Psalm resolves `$this` to `static`.",
+            "9": "Psalm does not allow `$this` as the subject of a condition.",
+            "10": "Psalm has no by-reference marker `&` with a parameter name.",
+            "11": "PHPStan requires parentheses around a conditional type inside a shape.",
+            "12": "PHPStan requires parentheses around a conditional return type.",
+            "13": "PHPStan does not allow `?` in front of the subject of a condition.",
+            "14": "Psalm reads it as `(T is U:fn-corpus as mixed ? V:fn-corpus as mixed : Z)|null`.",
+            "15": "TypeLang binds the condition weaker than the union, the others reject it."
+        }
+    },
+    {
+        "id": "special-names",
+        "title": "Special names",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "int<0, max>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int<min, 0>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "class-string<Foo>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "key-of<T>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "value-of<T>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int-mask<1, 2, 4>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int<10, 0>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int<PHP_INT_MIN, PHP_INT_MAX>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int-mask<1, 2, 4,>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int-mask-of<1|2|4>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "class-string<int>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "enum-string<Foo>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 6
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "trait-string<Foo>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 7
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "key-of<T, U>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "uppercase-string",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "open-resource",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "Psalm checks an integer range while parsing: the minimum must not exceed the maximum.",
+            "2": "Psalm accepts only `min`, `max` and integer literals as the bounds of a range.",
+            "3": "Psalm does not allow a trailing comma in `int-mask`.",
+            "4": "Psalm requires a class constant mask as the argument of `int-mask-of`.",
+            "5": "Psalm checks while parsing that the argument of `class-string` is a class.",
+            "6": "Psalm turns it into `class-string`.",
+            "7": "Psalm has no `trait-string`.",
+            "8": "Psalm drops the second argument.",
+            "9": "Psalm drops the refinement.",
+            "10": "Psalm has no `open-resource`."
+        }
+    },
+    {
+        "id": "whitespace-and-comments",
+        "title": "Whitespace and comments",
+        "isMalformed": false,
+        "cases": [
+            {
+                "type": "\\nint",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 1
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int |\\n string",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array<\\n    int,\\n    string\\n>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int\\n$a): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 7
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array {a: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 8
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int []",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int [ ]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T [K]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 9
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo <int>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array <K, V>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo :: BAR",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "? int",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int | string",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable( int ): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable(int , string): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "callable<T> (T): void",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 10
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int /* c */",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 11
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int // c",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 11
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int # c",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 11
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int /* c */, b: string}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 11
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Some</* a */int/* b */,/* c */string>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "fail",
+                        "note": 11
+                    },
+                    "psalm": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "PHPStan does not allow a line break at the very start.",
+            "2": "Psalm does not allow a line break at the very start.",
+            "3": "PHPStan does not allow a line break after an operator.",
+            "4": "Psalm does not allow a line break after an operator.",
+            "5": "Psalm does not allow line breaks inside generic arguments.",
+            "6": "PHPStan does not allow a line break between a type and a parameter name.",
+            "7": "Psalm does not allow a line break between a type and a parameter name.",
+            "8": "PHPStan does not allow a space before `{` of a shape.",
+            "9": "PHPStan does not allow a space before `[`.",
+            "10": "Psalm has no template parameters for callables.",
+            "11": "PHPStan does not allow comments in a type.",
+            "12": "Psalm does not allow comments in a type."
+        }
+    },
+    {
+        "id": "malformed-input",
+        "title": "Malformed input",
+        "isMalformed": true,
+        "cases": [
+            {
+                "type": "int string",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 1
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<A B>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 2
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int b: string}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int|",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A&",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A&&B",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 6
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(A|)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 5
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "??int",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 7
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int?[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 8
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int ? a",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int *",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 10
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "PHP_ *",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 11
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "in t",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 12
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "'a",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 13
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "'a''b'",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 14
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo\\",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 15
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo\\\\Bar",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 16
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "foo-",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "lossy",
+                        "note": 17
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "08",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "lossy",
+                        "note": 18
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "1__000",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 19
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "1._5",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "lossy",
+                        "note": 20
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::BAR::class",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 21
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "(Foo)::class",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 22
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo::BAR-BAZ",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "lossy",
+                        "note": 23
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<T of Bar>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 24
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "Foo<out T>",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 25
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int, ...int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 4
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{$a: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 26
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{PHP_*: int}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 26
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "array{a: int, a: string}",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "lossy",
+                        "note": 27
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "typelang": {
+                        "verdict": "lossy",
+                        "note": 27
+                    }
+                }
+            },
+            {
+                "type": "(T is not not int ? A : B)",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 3
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "T is int ? A",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 28
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "A is B ? C",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "ok"
+                    },
+                    "psalm": {
+                        "verdict": "lossy",
+                        "note": 29
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            }
+        ],
+        "notes": {
+            "1": "Psalm glues them into `intstring`.",
+            "2": "Psalm glues them.",
+            "3": "Psalm glues the words.",
+            "4": "Psalm ignores it.",
+            "5": "Psalm ignores a dangling operator and reads the rest.",
+            "6": "Psalm reads `A&B`.",
+            "7": "Psalm folds it.",
+            "8": "Psalm drops the mark and the brackets.",
+            "9": "Psalm ignores the tail.",
+            "10": "Psalm accepts a trailing `*`.",
+            "11": "Psalm glues it into `PHP_*`.",
+            "12": "Psalm reads `int`.",
+            "13": "Psalm accepts and truncates it.",
+            "14": "Psalm keeps the first.",
+            "15": "Psalm accepts and ignores it.",
+            "16": "Psalm accepts a doubled backslash as part of a name.",
+            "17": "PHPStan accepts a trailing hyphen in a name.",
+            "18": "PHPStan accepts a digit outside of the octal range after a leading zero.",
+            "19": "Psalm accepts a doubled digit separator.",
+            "20": "PHPStan accepts a separator right after the decimal point.",
+            "21": "Psalm drops the second constant.",
+            "22": "Psalm drops the constant.",
+            "23": "PHPStan accepts a hyphen in a constant name.",
+            "24": "Psalm reads a template map.",
+            "25": "Psalm glues the words into `outT`.",
+            "26": "Psalm reads a string key.",
+            "27": "Psalm rejects it, PHPStan and TypeLang keep both.",
+            "28": "Psalm drops the condition.",
+            "29": "Psalm reads `A`."
+        }
+    }
+]

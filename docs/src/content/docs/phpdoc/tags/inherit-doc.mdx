@@ -1,0 +1,31 @@
+---
+title: "@inheritDoc"
+description: "The @inheritDoc tag reuses the documentation of the parent element."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@inheritDoc` tag tells documentation generators to pull in the
+description and tags of the method or class being overridden or implemented,
+instead of repeating them. It saves an overriding method from having to
+restate a parent's contract word for word when it isn't changing that
+contract, only its implementation.
+
+<TagReference name="inheritDoc" />
+
+Parsing an `@inheritDoc` tag produces an `InheritDocTag`
+instance:
+
+```php
+final class InheritDocTag extends FlagTag {}
+```
+
+Being a pure marker, it adds nothing beyond the `$name`
+and optional `$description` every [Tag](/phpdoc/reading/#tag)
+already carries — the description carries only the text
+to append when the tag is used inline.
+
+Defined by the [PSR-19 draft](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md)'s
+`@inheritDoc` section and phpDocumentor's
+[inheritance guide](https://docs.phpdoc.org/guide/guides/inheritance.html)
+(its tags-reference page 404s for this one).

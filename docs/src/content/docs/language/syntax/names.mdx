@@ -1,0 +1,131 @@
+---
+title: Names
+sidebar:
+  order: 1
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+A type name is written the way PHP writes an
+[identifier](https://www.php.net/manual/en/language.variables.basics.php),
+with one difference: a dash (`-`) may stand inside a name.
+
+- The first character is a letter or an underscore (`_`).
+- The rest are letters, digits, underscores and dashes, a dash cannot be the
+  last character.
+- A letter is `a-z`, `A-Z` or a byte from `0x80` to `0xff`.
+- A dash is allowed only in a name without a namespace: `non-empty-string` is
+  a name, `Some\non-empty-string` and `non-empty\Some` are not.
+
+The words `true`, `false` and `null` in any case are
+[literals](/language/syntax/booleans/), not names, when they stand alone.
+
+<Aside>
+The words `is`, `not`, `of`, `as`, `super`, `covariant`, `contravariant` and
+`invariant` mean something only where the grammar expects them, like `is` in
+a [conditional type](/language/syntax/conditionals/). Anywhere else they are
+ordinary names, and in upper case (`IS`, `OF`) they are always names.
+</Aside>
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="ExampleTypeName" />
+
+<TypeTree type="example-type">
+A dash inside a name.
+</TypeTree>
+
+<TypeTree type="true-type">
+A reserved word as a part of a name.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="TrUe">
+A reserved word alone is a literal, not a name.
+</TypeTree>
+
+<TypeTree type="42type" error message={"UnexpectedTokenException: Unexpected \"type\""}>
+A name cannot begin with a digit.
+</TypeTree>
+
+<TypeTree type="example-" error message={"UnrecognizedSyntaxException: Unrecognized syntax \"-\""}>
+A name cannot end with a dash.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Namespace
+
+A name may carry a namespace, separated with a backslash (`\`) the
+[way PHP does it](https://www.php.net/manual/en/language.namespaces.rationale.php).
+A backslash may stand inside a name or at its start, not at its end. With a
+namespace, the reserved words are ordinary names.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type={"Example\\Name"}>
+A relative name.
+</TypeTree>
+
+<TypeTree type={"\\Absolute\\Type\\Name"}>
+A fully qualified name.
+</TypeTree>
+
+<TypeTree type={"true\\null"}>
+The reserved words as a namespace and a name, not literals.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type={"example\\name\\"} error message={"UnrecognizedSyntaxException: Unrecognized syntax \"\\name\\\""}>
+A name cannot end with a backslash.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## The $this type
+
+The `$this` variable denotes the type of the object the type is written on. It
+is a type of its own, so it stands wherever a type stands: inside a union,
+behind a question mark, or as the type a
+[callable](/language/syntax/callables/) returns.
+
+<Aside>
+`$this` is the one variable that is a type. Any other variable names a
+[callable parameter](/language/syntax/callables/#named-parameters) or an operand of a
+[conditional type](/language/syntax/conditionals/), and is not a type on its own.
+</Aside>
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="$this">
+The type of the current object.
+</TypeTree>
+
+<TypeTree type="?$this">
+The current object type, or nothing at all.
+</TypeTree>
+
+<TypeTree type="callable(): $this">
+A callable returning the object it was called on.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="$var" error message={"UnexpectedTokenException: Unexpected end of input, expected \"is not\", \"is\""}>
+Any other variable is not a type.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+

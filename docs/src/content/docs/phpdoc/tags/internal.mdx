@@ -1,0 +1,34 @@
+---
+title: "@internal"
+description: "The @internal tag marks an element as internal to its package, or documents information meant only for the maintainers of that package."
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@internal` tag marks an element as belonging to the internal workings
+of its own package rather than to its public API: consumers should not
+depend on it, since it may change or disappear without a deprecation notice.
+Used inline inside a description, it instead marks just the surrounding
+portion of text as meant only for the package's own maintainers, letting
+documentation generators strip that portion from public-facing output while
+keeping the rest of the description intact.
+
+<TagReference name="internal" />
+
+Parsing an `@internal` tag produces an `InternalTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class InternalTag extends FlagTag {}
+```
+
+<Aside type="tip">
+`@internal` is the counterpart to [@api](/phpdoc/tags/api/):
+together the two tags divide a codebase into what consumers may rely on and
+what they may not.
+</Aside>
+
+Defined by the [PSR-19 draft PHPDoc Tags proposal](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md#56-internal)
+and [phpDocumentor's tag reference](https://docs.phpdoc.org/guide/references/phpdoc/tags/internal.html).

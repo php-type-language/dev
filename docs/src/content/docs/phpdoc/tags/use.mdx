@@ -1,0 +1,38 @@
+---
+title: "@use"
+description: "The @use tag allows to extend templated traits, providing the concrete type arguments of the used trait."
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import TagReference from '../../../../components/TagReference.astro';
+
+Traits can be generic too, and PHP's `use` keyword for pulling a trait into a
+class carries no syntax for type arguments. `@use` supplies them, mirroring
+what `@extends` does for parent classes and `@implements` does for
+interfaces — for example a caching trait that needs to know what kind of
+value it is caching.
+
+<TagReference name="use" />
+
+Parsing a `@use` tag produces a tag exposing `$type` — the `TypeNode` naming
+the trait with its type arguments — along with the inherited `$name` and
+`$description`.
+
+```php
+final class UseTag extends InheritanceTag
+{
+    // adds nothing of its own: `$type`, `$name`
+    // and `$description` are inherited.
+}
+```
+
+The alias [@template-use](/phpdoc/tags/use/) is also recognized and
+parses to the same `UseTag` instance. See also
+[@extends](/phpdoc/tags/extends/) and [@implements](/phpdoc/tags/implements/) for the
+equivalent tags used on a generic parent class or interface.
+
+<Aside>
+In practice, real-world PHPStan and Psalm documentation more commonly shows 
+the `@template-use` spelling,
+which this component recognizes as an alias.
+</Aside>

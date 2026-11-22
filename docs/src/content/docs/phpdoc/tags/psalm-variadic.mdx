@@ -1,0 +1,19 @@
+---
+title: "@psalm-variadic"
+description: "The @psalm-variadic tag declares that a class's magic __call/__callStatic methods accept a variadic list of arguments."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@psalm-variadic` tag declares that a class's magic
+`__call`/`__callStatic` methods accept a variadic list of arguments.
+
+<TagReference name="psalm-variadic" />
+
+Parsing a `@psalm-variadic` tag produces a `PsalmVariadicTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PsalmVariadicTag extends FlagTag {}
+```

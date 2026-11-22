@@ -1,0 +1,22 @@
+---
+title: "@phan-output-reference"
+description: "The @phan-output-reference tag marks a by-reference argument as output-only."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-output-reference` tag marks a by-reference argument as
+output-only — Phan's own counterpart to
+[@param-out](/phpdoc/tags/param-out/).
+
+<TagReference name="phan-output-reference" />
+
+Parsing a `@phan-output-reference` tag produces a `PhanOutputReferenceTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PhanOutputReferenceTag extends FlagTag {}
+```
+
+Defined by [Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code#phan-output-reference).

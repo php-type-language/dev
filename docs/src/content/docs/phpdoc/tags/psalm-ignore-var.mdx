@@ -1,0 +1,21 @@
+---
+title: "@psalm-ignore-var"
+description: "The @psalm-ignore-var tag excludes the immediately following @var annotation from type inference, falling back to the inferred type instead of the declared one."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@psalm-ignore-var` tag excludes the `@var` annotation immediately
+following it from being used by Psalm for type inference, telling the
+analyzer to fall back to its own inferred type instead of trusting the
+declared one.
+
+<TagReference name="psalm-ignore-var" />
+
+Parsing a `@psalm-ignore-var` tag produces a `PsalmIgnoreVarTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PsalmIgnoreVarTag extends FlagTag {}
+```

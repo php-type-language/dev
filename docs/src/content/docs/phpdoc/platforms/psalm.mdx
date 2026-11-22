@@ -1,0 +1,103 @@
+---
+title: "Psalm tags"
+sidebar:
+  order: 5
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **Psalm Tags** are the annotations that belong to
+[Psalm](https://psalm.dev)'s own vocabulary, written under its `@psalm-*`
+vendor prefix. Psalm uses the prefix for two purposes: to introduce
+capabilities the shared PHPDoc convention never had — taint tracking,
+assertions, mutation freedom — and to offer a Psalm-scoped override of a tag
+that also exists unprefixed, so that a project can tighten a type *for Psalm
+only* without affecting other tools.
+
+Where a Psalm tag is simply the prefixed twin of a tag already documented
+elsewhere — `@psalm-param` beside [@param](/phpdoc/tags/param/),
+`@psalm-return` beside [@return](/phpdoc/tags/return/) — the two carry the same
+meaning; the prefix only says "trust this spelling over the plain one when
+Psalm is the analyzer reading it."
+
+## What this group covers
+
+The tags here span Psalm's full feature surface, including:
+
+* **Assertions** — [@psalm-assert](/phpdoc/tags/assert/),
+  [@psalm-assert-if-true](/phpdoc/tags/assert-if-true/),
+  [@psalm-assert-if-false](/phpdoc/tags/assert-if-false/),
+  [@psalm-assert-untainted](/phpdoc/tags/psalm-assert-untainted/).
+* **Immutability and purity** — [@psalm-immutable](/phpdoc/tags/immutable/),
+  [@psalm-pure](/phpdoc/tags/pure/),
+  [@psalm-mutation-free](/phpdoc/tags/psalm-mutation-free/),
+  [@psalm-external-mutation-free](/phpdoc/tags/psalm-external-mutation-free/),
+  [@psalm-readonly](/phpdoc/tags/readonly/).
+* **Taint analysis** — [@psalm-taint-source](/phpdoc/tags/psalm-taint-source/),
+  [@psalm-taint-sink](/phpdoc/tags/psalm-taint-sink/),
+  [@psalm-taint-escape](/phpdoc/tags/psalm-taint-escape/),
+  [@psalm-taint-specialize](/phpdoc/tags/psalm-taint-specialize/), and related
+  [flow tags](/phpdoc/tags/psalm-flow/).
+* **Type checks and context** —
+  [@psalm-check-type](/phpdoc/tags/psalm-check-type/),
+  [@psalm-check-type-exact](/phpdoc/tags/psalm-check-type-exact/),
+  [@psalm-if-this-is](/phpdoc/tags/psalm-if-this-is/),
+  [@psalm-self-out](/phpdoc/tags/self-out/),
+  [@psalm-scope-this](/phpdoc/tags/psalm-scope-this/),
+  [@psalm-trace](/phpdoc/tags/psalm-trace/),
+  [@psalm-variadic](/phpdoc/tags/psalm-variadic/),
+  [@psalm-yield](/phpdoc/tags/yield/).
+* **Class design** — [@psalm-inheritors](/phpdoc/tags/psalm-inheritors/),
+  [@psalm-consistent-constructor](/phpdoc/tags/consistent-constructor/),
+  [@psalm-consistent-templates](/phpdoc/tags/psalm-consistent-templates/),
+  [@psalm-no-seal-methods](/phpdoc/tags/psalm-no-seal-methods/),
+  [@psalm-no-seal-properties](/phpdoc/tags/psalm-no-seal-properties/),
+  [@psalm-allow-private-mutation](/phpdoc/tags/allow-private-mutation/),
+  [@psalm-readonly-allow-private-mutation](/phpdoc/tags/readonly-allow-private-mutation/),
+  [@psalm-override-method-visibility](/phpdoc/tags/psalm-override-method-visibility/),
+  [@psalm-override-property-visibility](/phpdoc/tags/psalm-override-property-visibility/),
+  [@psalm-stub-override](/phpdoc/tags/psalm-stub-override/).
+* **Ignoring nullable and falsable results** —
+  [@psalm-ignore-nullable-return](/phpdoc/tags/psalm-ignore-nullable-return/),
+  [@psalm-ignore-falsable-return](/phpdoc/tags/psalm-ignore-falsable-return/),
+  [@psalm-ignore-var](/phpdoc/tags/psalm-ignore-var/),
+  [@psalm-ignore-variable-method](/phpdoc/tags/psalm-ignore-variable-method/),
+  [@psalm-ignore-variable-property](/phpdoc/tags/psalm-ignore-variable-property/).
+* **Type aliases and generics** — [@psalm-type](/phpdoc/tags/type/),
+  [@psalm-import-type](/phpdoc/tags/import-type/),
+  [@psalm-template](/phpdoc/tags/template/) (with its
+  [covariant](/phpdoc/tags/template-covariant/) and
+  [contravariant](/phpdoc/tags/template-contravariant/) forms).
+* **Prefixed overrides** — [@psalm-param](/phpdoc/tags/param/),
+  [@psalm-return](/phpdoc/tags/return/), [@psalm-var](/phpdoc/tags/var/),
+  [@psalm-property](/phpdoc/tags/property/),
+  [@psalm-method](/phpdoc/tags/method/), and the rest, each shadowing its
+  unprefixed counterpart for Psalm specifically.
+
+<Aside>
+Some of the plainer capabilities Psalm pioneered are recognized here without
+the prefix — see [Advanced Tags](/phpdoc/platforms/advanced/) for the
+vendor-neutral spellings such as [@suppress](/phpdoc/tags/suppress/) and
+[@param-out](/phpdoc/tags/param-out/).
+</Aside>
+
+<Aside>
+The tags of this group belong to the Psalm platform, `PsalmPlatform`.
+`DocBlockParser::createDefault()` loads it together with every other
+built-in platform. The constructor loads only the platforms passed to it, so
+pass the platforms you need explicitly:
+
+```php
+use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\PhpDoc\Platform\PsalmPlatform;
+use TypeLang\PhpDoc\Platform\StandardPlatform;
+
+$parser = new DocBlockParser([new StandardPlatform(), new PsalmPlatform()]);
+```
+
+A tag of a platform that is not loaded becomes a plain
+[Tag](/phpdoc/reading/#tag).
+</Aside>
+
+For the authoritative definitions, see
+[Psalm's supported annotations](https://psalm.dev/docs/annotating_code/supported_annotations/).

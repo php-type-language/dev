@@ -1,0 +1,23 @@
+---
+title: "@language"
+description: "The @language tag injects a foreign-language grammar, such as SQL, HTML or a regular expression, into a string literal, so an IDE can apply the right highlighting and completion inside it."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@language` tag injects a foreign-language grammar — SQL, HTML,
+regular expressions, and the like — into a string literal, so PhpStorm can
+apply the right syntax highlighting and completion inside it.
+
+<TagReference name="language" />
+
+Parsing a `@language` tag produces a `LanguageTag` instance, carrying the
+parsed `$identifier` alongside the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class LanguageTag extends IdentifierTag {}
+```
+
+Associated with PhpStorm; no dedicated JetBrains page documenting this
+exact doc-comment tag could be confirmed.

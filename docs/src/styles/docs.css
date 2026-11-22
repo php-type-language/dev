@@ -1,0 +1,472 @@
+/*
+ * Starlight theme of the documentation pages, built on the tokens: a dark
+ * blueprint of hairlines, one accent, mono labels.
+ */
+
+:root {
+    --sl-font: var(--sans);
+    --sl-font-mono: var(--mono);
+
+    --sl-color-white: var(--ink);
+    --sl-color-gray-1: var(--ink);
+    --sl-color-gray-2: var(--ink-2);
+    --sl-color-gray-3: var(--muted);
+    --sl-color-gray-4: #4a4a55;
+    --sl-color-gray-5: #2a2a33;
+    --sl-color-gray-6: var(--paper-2);
+    --sl-color-black: var(--paper);
+
+    --sl-color-accent-low: var(--accent-tint);
+    --sl-color-accent: var(--accent);
+    --sl-color-accent-high: var(--accent);
+
+    --sl-color-text: var(--ink-2);
+    --sl-color-text-accent: var(--accent);
+    --sl-color-text-invert: var(--paper);
+    --sl-color-bg: var(--paper);
+    --sl-color-bg-nav: var(--paper);
+    --sl-color-bg-sidebar: var(--paper);
+    --sl-color-bg-inline-code: rgba(255, 255, 255, 0.06);
+    --sl-color-hairline: var(--line);
+    --sl-color-hairline-light: var(--line);
+    --sl-color-hairline-shade: var(--line);
+    --sl-color-backdrop-overlay: rgba(5, 5, 8, 0.7);
+
+    --sl-color-orange-low: var(--rust-tint);
+    --sl-color-orange: var(--rust);
+    --sl-color-orange-high: var(--rust);
+    --sl-color-red-low: var(--rust-tint);
+    --sl-color-red: var(--rust);
+    --sl-color-red-high: var(--rust);
+    --sl-color-blue-low: var(--accent-tint);
+    --sl-color-blue: var(--accent);
+    --sl-color-blue-high: var(--accent);
+    --sl-color-green-low: rgba(134, 214, 163, 0.12);
+    --sl-color-green: #86d6a3;
+    --sl-color-green-high: #86d6a3;
+    --sl-color-purple-low: var(--accent-tint);
+    --sl-color-purple: var(--accent);
+    --sl-color-purple-high: var(--accent);
+
+    --sl-shadow-sm: none;
+    --sl-shadow-md: none;
+    --sl-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+
+    --sl-text-h1: 2.25rem;
+    --sl-text-h2: 1.5rem;
+    --sl-text-h3: 1.15rem;
+    --sl-text-h4: 1rem;
+    --sl-line-height: 1.7;
+    --sl-line-height-headings: 1.25;
+    --sl-content-width: 50rem;
+    --sl-sidebar-width: 17rem;
+}
+
+::selection {
+    background: var(--accent-tint);
+    color: var(--ink);
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ─────────────────────────────── Header ─────────────────────────────── */
+
+header.header {
+    border-bottom: 1px solid var(--line);
+    background: rgba(11, 11, 15, 0.85);
+    backdrop-filter: blur(12px);
+}
+
+/* ─────────────────────────────── Text ─────────────────────────────── */
+
+h1#_top {
+    font-family: var(--display);
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--ink);
+}
+.content-panel + .content-panel {
+    border-top: 0;
+}
+
+/*
+ * Blueprint frame: the text column is a solid sheet between two hairlines, the
+ * free space around it is hatched.
+ */
+@media (min-width: 50rem) {
+    /* The sheet runs to the bottom of the window, however short the page. */
+    :root {
+        --sl-main-pad: 0;
+    }
+    .main-pane {
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - var(--sl-nav-height));
+        background: repeating-linear-gradient(-45deg, var(--hatch) 0 1px, transparent 1px 9px);
+    }
+    .main-pane > main {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
+    .content-panel:last-of-type {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
+    .content-panel:last-of-type .sl-container {
+        flex: 1;
+        width: 100%;
+    }
+    .content-panel {
+        padding-block: 0;
+    }
+    .content-panel .sl-container {
+        padding: 1.75rem 2.25rem;
+        border-inline: 1px solid var(--line);
+        background: var(--paper);
+    }
+    .content-panel:first-of-type .sl-container {
+        padding-top: 2.5rem;
+        padding-bottom: 0;
+    }
+    .content-panel:last-of-type .sl-container {
+        padding-bottom: 3rem;
+    }
+}
+
+.sl-markdown-content :is(h2, h3, h4):not(:where(.not-content *)) {
+    font-family: var(--display);
+    font-weight: 600;
+    color: var(--ink);
+}
+.sl-markdown-content h2:not(:where(.not-content *)) {
+    letter-spacing: -0.02em;
+}
+.sl-markdown-content h3:not(:where(.not-content *)) {
+    letter-spacing: -0.01em;
+}
+.sl-markdown-content .sl-heading-wrapper.level-h2 {
+    margin-top: 2.75rem;
+}
+.sl-markdown-content .sl-heading-wrapper.level-h3 {
+    margin-top: 2rem;
+}
+
+.sl-markdown-content strong:not(:where(.not-content *)) {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.sl-markdown-content a:not(:where(.not-content *)) {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: rgba(154, 162, 255, 0.5);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+}
+.sl-markdown-content a:not(:where(.not-content *)):hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+}
+
+/* Inline code: the mono face, a little brighter than the text, no chip. */
+.sl-markdown-content code:not(:where(.not-content *, pre *)) {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 0.875em;
+}
+
+/* Heading anchors: small and quiet. */
+.sl-markdown-content .sl-heading-wrapper {
+    --sl-anchor-icon-size: 0.6em;
+    --sl-anchor-icon-gap: 0.4em;
+}
+.sl-markdown-content .sl-anchor-link {
+    color: var(--muted);
+}
+.sl-markdown-content .sl-anchor-link:hover {
+    color: var(--accent);
+}
+
+/* ─────────────────────────────── Tables ─────────────────────────────── */
+
+.sl-markdown-content table:not(:where(.not-content *)) {
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+@media (min-width: 50rem) {
+    .sl-markdown-content table:not(:where(.not-content *)) {
+        display: table;
+        width: 100%;
+    }
+}
+.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+    padding: 0.65rem 1rem 0.65rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    vertical-align: top;
+}
+.sl-markdown-content th:not(:where(.not-content *)) {
+    font: 500 11px/1.4 var(--mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom-color: var(--line-2);
+}
+
+/* ─────────────────────────────── Blocks ─────────────────────────────── */
+
+.starlight-aside {
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--line);
+    border-inline-start: 2px solid var(--sl-color-asides-border);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+}
+.starlight-aside__title {
+    font: 500 11px/1.4 var(--mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.starlight-aside__icon {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+starlight-tabs [role='tablist'] {
+    border-bottom: 1px solid var(--line);
+}
+starlight-tabs [role='tab'] {
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px solid transparent;
+    font: 500 0.875rem/1.4 var(--sans);
+    color: var(--muted);
+}
+starlight-tabs [role='tab']:hover {
+    color: var(--ink-2);
+}
+starlight-tabs [role='tab'][aria-selected='true'] {
+    color: var(--ink);
+    border-color: var(--accent);
+}
+
+.card,
+.sl-link-card {
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius) !important;
+    background: var(--paper-2) !important;
+    box-shadow: none !important;
+}
+.sl-link-card:hover {
+    border-color: var(--line-2) !important;
+    background: var(--paper-3) !important;
+}
+.sl-link-card .title {
+    font-weight: 600;
+    color: var(--ink);
+}
+.sl-link-card .description {
+    color: var(--muted);
+}
+
+.sl-markdown-content details:not(:where(.not-content *)) {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper-2);
+}
+
+/* Previous and next pages: two light rows under a hairline. */
+.pagination-links {
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+}
+.pagination-links a {
+    padding: 0.25rem 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    font: 500 11px/1.6 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.pagination-links a svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.15s;
+}
+.pagination-links a[rel='prev']:hover svg {
+    transform: translateX(-3px);
+}
+.pagination-links a[rel='next']:hover svg {
+    transform: translateX(3px);
+}
+.pagination-links .link-title {
+    font: 500 0.95rem/1.5 var(--sans);
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-2);
+}
+.pagination-links a:hover,
+.pagination-links a:hover .link-title {
+    color: var(--accent);
+}
+
+/* ─────────────────────────────── Sidebar ─────────────────────────────── */
+
+/*
+ * Every page stands in a group: the group is a mono label, its pages hang
+ * under it on a hairline, the current page is marked on the hairline.
+ */
+.sidebar-content {
+    padding-top: 0.5rem;
+}
+.sidebar-content .top-level > li + li {
+    margin-top: 1.5rem;
+}
+.sidebar-content summary {
+    padding: 0 0 0.5rem;
+    cursor: default;
+    pointer-events: none;
+}
+.sidebar-content summary .caret {
+    display: none;
+}
+.sidebar-content summary .large {
+    font: 500 11px/1.4 var(--mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.sidebar-content ul ul li {
+    margin-inline-start: 0;
+    padding-inline-start: 0;
+    border-inline-start: 1px solid var(--line);
+}
+.sidebar-content ul ul ul li {
+    margin-inline-start: 0.75rem;
+}
+.sidebar-content a,
+.sidebar-content a.large {
+    margin-inline-start: -1px;
+    padding: 0.3rem 0.9rem;
+    border-radius: 0;
+    font: 400 0.875rem/1.45 var(--sans);
+    color: var(--ink-2);
+}
+.sidebar-content a:hover {
+    color: var(--ink);
+    background: transparent;
+}
+.sidebar-content a[aria-current='page'] {
+    background: transparent;
+    color: var(--ink);
+    font-weight: 500;
+    box-shadow: inset 1px 0 0 var(--ink);
+}
+
+/* ─────────────────────────────── Table of contents ─────────────────────────────── */
+
+.right-sidebar-panel h2 {
+    font: 500 11px/1.4 var(--mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.right-sidebar-panel a {
+    font-size: 0.8125rem;
+    color: var(--muted);
+}
+.right-sidebar-panel a:hover,
+.right-sidebar-panel a[aria-current='true'] {
+    color: var(--ink);
+}
+
+/* ─────────────────────────────── Mobile ─────────────────────────────── */
+
+.sl-menu-button {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper-2) !important;
+    color: var(--ink-2) !important;
+    box-shadow: none !important;
+}
+
+/* Corners: 1px everywhere, Starlight and Pagefind included. */
+:root {
+    --sl-search-corners: var(--radius);
+    --pagefind-ui-border-radius: var(--radius);
+}
+mobile-starlight-toc .toggle,
+site-search button[data-open-modal],
+site-search button > kbd,
+site-search dialog,
+.pagefind-ui__search-input,
+.pagefind-ui__result,
+.expressive-code .frame,
+.expressive-code pre,
+.expressive-code .copy button,
+.sl-badge {
+    border-radius: var(--radius) !important;
+}
+
+/* Search results: the weights of the site, matches in the accent color. */
+#starlight__search .pagefind-ui__message {
+    font: 500 11px/1.6 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+#starlight__search .pagefind-ui__result-title {
+    font-weight: 600;
+}
+#starlight__search .pagefind-ui__result-excerpt {
+    color: var(--ink-2);
+}
+#starlight__search mark {
+    background: transparent;
+    font-weight: inherit;
+    color: var(--accent);
+}
+
+/* Blueprint corner marks, as on the blocks of the landing: top left and bottom right. */
+.expressive-code,
+.type-tree {
+    position: relative;
+}
+.expressive-code::before,
+.expressive-code::after,
+.type-tree::before,
+.type-tree::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--muted);
+    pointer-events: none;
+}
+.expressive-code::before,
+.type-tree::before {
+    top: -1px;
+    left: -1px;
+    border-right: 0;
+    border-bottom: 0;
+}
+.expressive-code::after,
+.type-tree::after {
+    right: -1px;
+    bottom: -1px;
+    border-top: 0;
+    border-left: 0;
+}

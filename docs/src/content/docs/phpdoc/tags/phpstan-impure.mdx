@@ -1,0 +1,22 @@
+---
+title: "@phpstan-impure"
+description: "The @phpstan-impure tag declares a function or method as impure, that is, having side effects."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phpstan-impure` tag declares a function or method as impure — that
+is, having side effects — defined by PHPStan.
+
+<TagReference name="phpstan-impure" />
+
+Parsing a `@phpstan-impure` tag produces a `PhpStanImpureTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PhpStanImpureTag extends FlagTag {}
+```
+
+Documented by
+[PHPStan](https://phpstan.org/writing-php-code/phpdocs-basics#impure-functions).

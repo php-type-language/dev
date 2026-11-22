@@ -1,0 +1,20 @@
+---
+title: "@psalm-scope-this"
+description: "The @psalm-scope-this tag binds the type of $this inside a Closure, so the closure body is type-checked as if it were a method of the given class."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@psalm-scope-this` tag binds the type of `$this` inside a
+`Closure`, letting Psalm type-check the closure body as if it were
+a method of the given class.
+
+<TagReference name="psalm-scope-this" />
+
+Parsing a `@psalm-scope-this` tag produces a `PsalmScopeThisTag` instance, carrying the
+parsed `$type` alongside the `$name` and optional `$description` every
+[Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class PsalmScopeThisTag extends TypedTag {}
+```

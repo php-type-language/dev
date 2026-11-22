@@ -1,0 +1,81 @@
+---
+title: Shapes
+sidebar:
+  order: 8
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+A shape describes the structure of an array or an object field by field. It is
+written in braces after a type name, fields are separated by commas, a
+trailing comma is allowed.
+
+<TypeTree type="array{id: int, name: string}">
+An array with two fields.
+</TypeTree>
+
+<TypeTree type="object{id: int}">
+An object with one field.
+</TypeTree>
+
+A field is either a type alone or a `key: Type` pair. The kinds of keys are
+described in [Shape keys](/language/syntax/shape-keys/).
+
+## Optional fields
+
+A question mark (`?`) before the colon marks a field that may be absent:
+`key?: Type`. It is not the same as a nullable type of the value.
+
+<TypeTree type="array{key?: Type}">
+The field may be absent.
+</TypeTree>
+
+<TypeTree type="array{key: ?Type}">
+The field is present, its value may be `null`.
+</TypeTree>
+
+## Unsealed shapes
+
+A shape is sealed: it describes all the fields there are. An ellipsis (`...`)
+as the last element unseals it, the value may then carry fields beyond the
+described ones.
+
+<TypeTree type="array{key: Type, ...}">
+`key` and any other fields.
+</TypeTree>
+
+## Typed shapes
+
+Template arguments after the ellipsis describe the types of the other fields:
+of the values, or of the keys and the values. The syntax is that of
+[generics](/language/syntax/generics/).
+
+<TypeTree type="array{user: User, ...<string, object>}">
+`user`, and any other fields with string keys and object values.
+</TypeTree>
+
+The ellipsis is always the last element. A shape may consist of the ellipsis
+alone, and may be empty.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="array{...<string, object>}" />
+
+<TypeTree type="array{}" />
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="array{...<string, object>, user: User}" error message={"MalformedSyntaxException: Invalid shape, a field, \",\" or \"}\" is expected"}>
+The ellipsis must be the last.
+</TypeTree>
+
+<TypeTree type="array<int>{user: User}" error message={"UnexpectedTokenException: Unexpected \"{\""}>
+A shape and template arguments cannot be written together on a named type:
+the arguments of a shape stand after its ellipsis.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>

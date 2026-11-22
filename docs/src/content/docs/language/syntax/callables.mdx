@@ -1,0 +1,184 @@
+---
+title: Callables
+sidebar:
+  order: 10
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+A callable type describes a function: a name followed by a list of parameters
+in parentheses and, optionally, a return type. A callable may also declare
+template parameters, see [Generic callables](/language/syntax/generic-callables/).
+
+<TypeTree type="foo()">
+No parameters, no return type.
+</TypeTree>
+
+<TypeTree type="foo(T): void">
+One parameter and a return type.
+</TypeTree>
+
+<TypeTree type="a(int<0, max>, c(?C): mixed): void">
+A callable as a parameter of another one.
+</TypeTree>
+
+## Return type
+
+The return type is written after a colon (`:`). A nullable type (`?T`) and a
+list (`T[]`) belong to the return type. A union (`|`), an intersection (`&`)
+or a condition behind it belongs to the type around the callable, the way
+PHPStan, Psalm and Phan read it: to return such a type, wrap it in
+parentheses.
+
+<TypeTree type="foo(): ?A">
+Returns a nullable type.
+</TypeTree>
+
+<TypeTree type="foo(): (A|B)">
+Returns a union.
+</TypeTree>
+
+<TypeTree type="foo(): A|B">
+A union of a callable returning `A` and the type `B`, the same as
+`(foo(): A)|B`.
+</TypeTree>
+
+## Named parameters
+
+A name after the type of a parameter, beginning with `$`, is the name it
+[is passed by](https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments).
+The type of a named parameter may be omitted. A trailing comma after the last
+parameter is allowed.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="foo(T $name)" />
+
+<TypeTree type="foo(A $a, B, C)">
+Named and anonymous parameters together.
+</TypeTree>
+
+<TypeTree type="foo($name)">
+A named parameter without a type.
+</TypeTree>
+
+<TypeTree type="foo(A $a, B $b,)">
+A trailing comma.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="foo(A, , B)" error message={"MalformedSyntaxException: Invalid callable parameters, a parameter, \",\" or \")\" is expected"}>
+A parameter cannot be empty.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Output parameters
+
+A parameter passed by reference, which the function may change, is marked
+with an ampersand (`&`) after the type and before the name. A parameter
+without a type begins with the ampersand.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="foo(T&)" />
+
+<TypeTree type="foo(T &$name)" />
+
+<TypeTree type="foo(&$name)">
+An output parameter without a type.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="foo(&T)" error message={"MalformedSyntaxException: Invalid callable parameters, a parameter, \",\" or \")\" is expected"}>
+The ampersand stands after the type.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Optional parameters
+
+A parameter the caller may omit ends with an equals sign (`=`). The sign may
+be followed by a default value: a literal ([boolean or null](/language/syntax/booleans/),
+[string](/language/syntax/strings/), [number](/language/syntax/numbers/)) or a
+[constant](/language/syntax/constants/) (`FOO`, `Foo::BAR`, `Foo::class`).
+Masks, lists and other types are not default values.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="foo(T=)" />
+
+<TypeTree type="foo(T &$name=)">
+An optional output parameter with a name.
+</TypeTree>
+
+<TypeTree type={"foo(int $a = 42, string $b = 'text', ?Foo $c = null, int $d = Foo::BAR)"}>
+Default values.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="foo(T= $name)" error message={"MalformedSyntaxException: Invalid callable parameters, a parameter, \",\" or \")\" is expected"}>
+The equals sign stands at the end.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## Variadic parameters
+
+A variadic parameter is marked with an ellipsis (`...`) after the type. With
+both markers, the ampersand comes first. The ellipsis may also stand before
+the type (`...T`), the way some phpdoc dialects write it, but then the
+parameter has no name.
+
+<Aside type="caution">
+A variadic parameter is optional by nature, so it cannot be marked optional
+and has no default value.
+</Aside>
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="foo(T...)" />
+
+<TypeTree type="foo(T &...$name)">
+A variadic output parameter with a name.
+</TypeTree>
+
+<TypeTree type="foo(...$name)">
+A variadic parameter without a type.
+</TypeTree>
+
+<TypeTree type="foo(...T)">
+The ellipsis before the type.
+</TypeTree>
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="foo(...T $name)" error message={"MalformedSyntaxException: Invalid callable parameters, a parameter, \",\" or \")\" is expected"}>
+An ellipsis before the type is not followed by a name.
+</TypeTree>
+
+<TypeTree type="foo(T ...&$name)" error message={"MalformedSyntaxException: Invalid callable parameters, a parameter, \",\" or \")\" is expected"}>
+The ampersand comes before the ellipsis.
+</TypeTree>
+
+<TypeTree type="foo(T ...$name=)" error message={"MalformedSyntaxException: Invalid callable parameters, a parameter, \",\" or \")\" is expected"}>
+A variadic parameter cannot be optional.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>

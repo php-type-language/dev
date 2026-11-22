@@ -1,0 +1,22 @@
+---
+title: "@phan-write-only"
+description: "The @phan-write-only tag declares that a property may only ever be written, never read."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-write-only` tag, paired with
+[@phan-read-only](/phpdoc/tags/readonly/), declares that a
+property may only ever be written, never read.
+
+<TagReference name="phan-write-only" />
+
+Parsing a `@phan-write-only` tag produces a `PhanWriteOnlyTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PhanWriteOnlyTag extends FlagTag {}
+```
+
+Defined by [Phan](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code#phan-read-only-and-phan-write-only).

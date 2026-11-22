@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-spec-md "./TypeLang.md" > ./../Writerside/cfg/static/spec.html
+spec-md "./TypeLang.md" > ./../public/static/spec.html

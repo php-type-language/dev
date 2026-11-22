@@ -1,0 +1,81 @@
+---
+title: How the mapper works
+sidebar:
+  label: Overview
+  order: 0
+---
+
+Every argument of the `Mapper` constructor is a point where the work of the
+mapper can be changed. This page shows where each of them is called.
+
+## Building a type
+
+A type string is built into a type once and kept for the life of the mapper:
+
+```
+'list<User>'
+   │ parser          string → TypeNode
+   ▼
+TypeNode
+   │ builders        the first builder that takes the node creates the type
+   ▼
+TypeInterface
+   │ decorators      each decorator may wrap the type, in the list order
+   ▼
+TypeInterface        kept by the mapper, reused by every call
+```
+
+The type of a class is built from its [metadata](/mapper/metadata/): the
+fields, their names and types, read by the `metadata` provider.
+
+## Converting a value
+
+The built type converts the value. Scalars go through the
+[coercers](/mapper/coercion/) unless the mapping is strict. An object of a
+class is converted in steps:
+
+```
+data ──► before denormalization hooks     may change the data
+     ──► instantiator                     creates or finds the object
+     ──► property writers                 write the converted fields
+     ──► after denormalization hooks      check or complete the object
+     ──► object
+
+object ──► before normalization hooks     may replace the object
+       ──► property readers               read the fields to convert
+       ──► after normalization hooks      may change the data
+       ──► data
+```
+
+The instantiator, the readers, the writers and the hooks of a class are
+chosen on its first conversion, a class without hooks spends nothing on
+them.
+
+## Reporting an error
+
+A value that does not fit is reported as an `InvalidValueException` with a
+violation per wrong field. The expected type of a violation is the type of
+the data, a class is shown as the `object{...}` of its fields: the
+`expanders` turn types into such data types. The `printer` writes them, the
+formatters write the messages. See [errors](/mapper/errors/).
+
+## Extension points
+
+| Argument | Contract | Page |
+|---|---|---|
+| `builders` | `TypeBuilderInterface` | [Custom types](/mapper/extending/types/) |
+| `decorators` | `TypeDecoratorInterface` | [Decorators](/mapper/extending/decorators/) |
+| `hooks` | `*HookInterface` | [Hooks](/mapper/extending/hooks/) |
+| `instantiators` | `InstantiationStrategyInterface` | [Instantiators](/mapper/extending/instantiators/) |
+| `accessors` | `AccessStrategyInterface` | [Property accessors](/mapper/extending/accessors/) |
+| `coercers` | `CoercerInterface` | [Type coercion](/mapper/coercion/#custom-coercers) |
+| `expanders` | `TypeExpanderInterface` | [Expanders](/mapper/extending/expanders/) |
+| `denormalizationFormatter`, `normalizationFormatter` | `ViolationFormatterInterface` | [Formatters](/mapper/extending/formatters/) |
+| `metadata` | `MetadataProviderInterface` | [Metadata](/mapper/metadata/) |
+| `printer` | `TypePrinterInterface` | [Printer](/toolkit/printer/) |
+| `parser` | `TypeParser` | [Parser](/toolkit/parser/) |
+
+Lists are applied in their order. Builders, instantiators, accessors and
+expanders of the user are tried before the built-in ones, so they can also
+replace a built-in behavior. The mapper has no decorators and hooks of its
+own. A coercer replaces the built-in coercer of its type.

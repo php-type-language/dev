@@ -1,0 +1,88 @@
+---
+title: Expanders
+sidebar:
+  order: 6
+---
+
+An expander turns a type into the type of the data it takes, for the
+messages sent to clients. A class is shown as the `object{...}` of its
+fields, a backed enum as the values of its cases: the client sees what to
+send, not the classes of the application. See
+[errors](/mapper/errors/#messages) for the built-in expansions.
+
+An expander returns the expansion of a type it supports, `null` passes the
+type to the next expander. Expanders of the user are tried before the
+built-in ones.
+
+A type of your own is shown as it is written, unless an expander expands
+it. A type wrapped by a decorator is expanded as it is built, unless an
+expander supports the wrapper. An expander that throws leaves the message
+without the type (`Value 42 is invalid`), the error of the expander is not
+reported.
+
+```php
+use TypeLang\Mapper\Context\ExpandContext;
+use TypeLang\Mapper\Mapper;
+use TypeLang\Mapper\Type\Expander\TypeExpanderInterface;
+use TypeLang\Mapper\Type\TypeInterface;
+use TypeLang\Type\Name;
+use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\TypeNode;
+
+final class UuidTypeExpander implements TypeExpanderInterface
+{
+    public function tryExpand(
+        TypeInterface $type,
+        ExpandContext $context,
+    ): ?TypeNode {
+        if (!$type instanceof UuidType) {
+            return null;
+        }
+
+        return new NamedTypeNode(new Name('string'));
+    }
+}
+
+$mapper = new Mapper(expanders: [new UuidTypeExpander()]);
+```
+
+## Nested types
+
+A type with nested types expands them by the context: `$context->expand()`
+expands a nested type one level deeper. The fields over
+`expectedTypeMaxFields` and at `expectedTypeDepth` are cut by the mapper for
+any expansion.
+
+```php
+use TypeLang\Mapper\Context\ExpandContext;
+use TypeLang\Mapper\Type\Expander\TypeExpanderInterface;
+use TypeLang\Mapper\Type\TypeInterface;
+use TypeLang\Type\Identifier;
+use TypeLang\Type\Name;
+use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Shape\FieldListNode;
+use TypeLang\Type\Shape\NamedFieldNode;
+use TypeLang\Type\TypeNode;
+
+final class MoneyTypeExpander implements TypeExpanderInterface
+{
+    public function tryExpand(
+        TypeInterface $type,
+        ExpandContext $context,
+    ): ?TypeNode {
+        if (!$type instanceof MoneyType) {
+            return null;
+        }
+
+        $amount = new NamedTypeNode(new Name('int'));
+        $currency = $context->expand($type->currency);
+
+        return new NamedTypeNode(new Name('object'), fields: new FieldListNode([
+            new NamedFieldNode(new Identifier('amount'), $amount),
+            new NamedFieldNode(new Identifier('currency'), $currency),
+        ]));
+        // object{amount: int, currency: 'EUR'|'USD'}
+    }
+}
+```
+

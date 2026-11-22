@@ -1,0 +1,21 @@
+---
+title: "@phan-suppress-previous-line"
+description: "The @phan-suppress-previous-line tag silences the listed issue types reported on the previous line."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-suppress-previous-line` tag silences the listed
+issue types reported on the previous line.
+
+<TagReference name="phan-suppress-previous-line" />
+
+Parsing a `@phan-suppress-previous-line` tag produces a `PhanSuppressPreviousLineTag` instance, carrying the
+listed `$issues` alongside the `$name` and optional `$description` every
+[Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class PhanSuppressPreviousLineTag extends IssueListTag {}
+```
+
+Defined by [Phan](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).

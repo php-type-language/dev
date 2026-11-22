@@ -1,0 +1,84 @@
+---
+title: Shape keys
+sidebar:
+  order: 9
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+A field of a [shape](/language/syntax/shapes/) has an implicit key or an
+explicit one. Both kinds may be used together in one shape, the way PHPStan
+and Psalm allow it: which keys the implicit fields denote is left to whoever
+reads the shape.
+
+<TypeTree type="array{First, name: Second}">
+An implicit and an explicit key in one shape.
+</TypeTree>
+
+## Implicit keys
+
+An implicit field is a type alone, its position in the shape gives it a
+numeric index.
+
+<TypeTree type="array{First, Second, Third}" />
+
+## Explicit keys
+
+An explicit field is a key, a colon (`:`) and the type: `key: Type`. The
+simplest key is an [identifier](/language/syntax/names/), the same as a type
+name: it may contain dashes and a namespace, and the words `true`, `false` and
+`null` are ordinary names here, not literals.
+
+<TypeTree type="array{a: First, b: Second}" />
+
+<TypeTree type={"array{some-key: First, Some\\Name: Second, null: Third}"}>
+A dash, a namespace and a reserved word as keys.
+</TypeTree>
+
+## Numeric keys
+
+A key may be an [integer literal](/language/syntax/numbers/#integers) in any
+notation, signed ones included. A float cannot be a key.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="array{42: A, -1: B, 0x1F: C}" />
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="array{1.5: A}" error message={"MalformedSyntaxException: Invalid shape, a field, \",\" or \"}\" is expected"}>
+A float is not a key.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>
+
+## String keys
+
+A key may be a [string literal](/language/syntax/strings/), which allows
+characters an identifier does not, [escape
+sequences](/language/syntax/strings/#escape-sequences) included.
+
+<TypeTree type={"array{\"name some\": First, \"escape\\nchars\": Second}"} />
+
+## Constant keys
+
+A key may be a [class constant](/language/syntax/constants/#class-constants).
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type={"array{Path\\To\\ClassName::CONSTANT_NAME: string}"} />
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type={"array{Path\\To\\ClassName::PREFIX_*: string}"} error message={"MalformedSyntaxException: Invalid shape, a field, \",\" or \"}\" is expected"}>
+A [constant mask](/language/syntax/constants/#constant-masks) is not a key.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>

@@ -1,0 +1,35 @@
+---
+/*
+ * Title of a documentation page with the label of its sidebar group above it.
+ */
+
+type Entry = (typeof Astro.locals.starlightRoute.sidebar)[number];
+
+const { entry, sidebar } = Astro.locals.starlightRoute;
+
+function hasCurrent(item: Entry): boolean {
+    if (item.type === 'link') {
+        return item.isCurrent;
+    }
+
+    return item.entries.some(hasCurrent);
+}
+
+const group = sidebar.find((item) => item.type === 'group' && hasCurrent(item));
+---
+
+{group !== undefined && <p class="eyebrow">{group.label}</p>}
+<h1 id="_top">{entry.data.title}</h1>
+
+<style>
+    .eyebrow {
+        margin: 0 0 0.75rem;
+        font: 500 11px/1.4 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+    h1 {
+        margin: 0;
+    }
+</style>

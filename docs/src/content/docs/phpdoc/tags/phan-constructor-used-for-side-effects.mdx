@@ -1,0 +1,23 @@
+---
+title: "@phan-constructor-used-for-side-effects"
+description: "The @phan-constructor-used-for-side-effects tag declares that a constructor's return value is intentionally discarded by callers, suppressing the issue raised for an unused new expression."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-constructor-used-for-side-effects` tag declares that a
+constructor's return value is intentionally discarded by callers,
+suppressing the issue Phan would otherwise raise for an unused `new`
+expression.
+
+<TagReference name="phan-constructor-used-for-side-effects" />
+
+Parsing a `@phan-constructor-used-for-side-effects` tag produces a `PhanConstructorUsedForSideEffectsTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PhanConstructorUsedForSideEffectsTag extends FlagTag {}
+```
+
+See [Phan's Annotating Your Source Code wiki](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).

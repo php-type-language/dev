@@ -1,0 +1,15 @@
+---
+title: Tag reference
+description: Every tag the PHPDoc parser recognizes and the names it is registered under on each platform.
+sidebar:
+  label: All tags
+  order: 0
+---
+
+import TagCatalog from '../../../../components/TagCatalog.astro';
+
+A tag is described once, under its canonical name. Platforms register it
+under their own names too (`@psalm-param` and `@phpstan-param` are read as
+`@param`), they are listed next to the tag and lead to its page.
+
+<TagCatalog />

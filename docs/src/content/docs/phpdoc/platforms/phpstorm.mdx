@@ -1,0 +1,61 @@
+---
+title: "PhpStorm tags"
+sidebar:
+  order: 7
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **PhpStorm Tags** are the annotations that
+[PhpStorm](https://www.jetbrains.com/phpstorm/) understands as directives to
+the IDE itself rather than to a command-line analyzer. They do not describe
+types or generate documentation; they change how the editor treats the
+surrounding code — suppressing an inspection, injecting a language into a
+string, marking a call as one that is expected to throw.
+
+Because they steer editor behavior, these tags have no vendor prefix in the
+`@psalm-*` sense: they are spelled as ordinary tags (`@noinspection`,
+`@language`) that happen to be meaningful only inside JetBrains tooling.
+
+## What this group covers
+
+* **Inspection control** — [@noinspection](/phpdoc/tags/noinspection/), which
+  silences one or more named IDE inspections for the element that follows.
+* **Language injection** — [@language](/phpdoc/tags/language/), telling the editor
+  that a string or heredoc contains another language (SQL, JSON, regexp)
+  so it can be highlighted and analyzed accordingly.
+* **Test expectations** —
+  [@expectedException](/phpdoc/tags/expected-exception/), recording the exception
+  a test is expected to raise.
+* **Formatter control** — [@formatter:off](/phpdoc/tags/formatter-off/) and
+  [@formatter:on](/phpdoc/tags/formatter-on/), bracketing a region the reformatter
+  should leave untouched.
+
+<Aside>
+The tags of this group belong to the PhpStorm platform, `PhpStormPlatform`.
+`DocBlockParser::createDefault()` loads it together with every other
+built-in platform. The constructor loads only the platforms passed to it, so
+pass the platforms you need explicitly:
+
+```php
+use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\PhpDoc\Platform\PhpStormPlatform;
+use TypeLang\PhpDoc\Platform\StandardPlatform;
+
+$parser = new DocBlockParser([new StandardPlatform(), new PhpStormPlatform()]);
+```
+
+A tag of a platform that is not loaded becomes a plain
+[Tag](/phpdoc/reading/#tag).
+</Aside>
+
+<Aside>
+[@expectedException](/phpdoc/tags/expected-exception/) is not a PhpStorm
+directive in the strict sense: it is an old PHPUnit convention that the IDE
+happens to understand, and is registered by the same platform.
+</Aside>
+
+For the authoritative behavior, see
+[PhpStorm's documentation on suppressing inspections](https://www.jetbrains.com/help/phpstorm/disabling-and-enabling-inspections.html)
+and its
+[language injection guide](https://www.jetbrains.com/help/phpstorm/using-language-injections.html).

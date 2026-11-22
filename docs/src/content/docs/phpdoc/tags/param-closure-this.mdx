@@ -1,0 +1,41 @@
+---
+title: "@param-closure-this"
+description: "The @param-closure-this tag documents the bound \"$this\" type of closure passed as an argument."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@param-closure-this` tag documents what `$this` refers to inside a
+`Closure` parameter. A [@param](/phpdoc/tags/param/) on that same parameter already
+describes the closure's own signature — the arguments it receives and what
+it returns — but says nothing about the object it will be bound to when the
+closure is eventually invoked through `Closure::bindTo()`, `Closure::call()`,
+or an equivalent internal rebinding. Without this tag, code inside the
+closure that reads `$this` has no documented type to check against.
+
+<TagReference name="param-closure-this" />
+
+Parsing a `@param-closure-this` tag produces a `ParamClosureThisTag` instance
+(a `TypedVariableTag`) exposing:
+
+* `$type` — the documented `TypeNode` that `$this` is bound to.
+* `$variable` — the closure parameter's name, without the leading `$`.
+
+```php
+final class ParamClosureThisTag extends TypedVariableTag
+{
+    // Own constructor adds nothing; both
+    // properties below are inherited from
+    // TypedVariableTag (and its parent TypedTag):
+
+    public readonly TypeNode $type;
+
+    public readonly string $variable;
+}
+```
+
+This is the same shape as [@param](/phpdoc/tags/param/), just aimed at the
+closure's binding rather than its signature.
+
+[PHPStan documents `@param-closure-this`](https://phpstan.org/writing-php-code/phpdocs-basics#callables)
+alongside its other callable-related tags; Psalm has no equivalent.

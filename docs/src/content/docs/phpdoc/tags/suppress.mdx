@@ -1,0 +1,64 @@
+---
+title: "@suppress"
+description: "The @suppress tag silences the listed diagnostics that would otherwise be reported for an element."
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@suppress` tag silences one or more named diagnostics that a static
+analyzer would otherwise report for the described element, without disabling
+analysis of the element altogether.
+
+<TagReference name="suppress" />
+<Tabs>
+<TabItem label="Examples">
+</TabItem>
+
+<TabItem label="Counterexamples">
+<Aside type="caution">
+Issue names are separated by a comma; whitespace alone does not.
+```php
+@suppress UndefinedMethod PossiblyUnusedMethod
+```
+Only `UndefinedMethod` is read as the issue name; everything after it is
+parsed as the tag's description instead of a second issue.
+</Aside>
+
+</TabItem>
+
+</Tabs>
+
+Parsing a `@suppress` tag produces a `SuppressTag` instance exposing
+`$issues`: the list of every comma-separated identifier, in the order they
+were written (always at least one).
+
+```php
+abstract class IssueListTag extends Tag
+{
+    public function __construct(
+        string $name,
+        /**
+         * @var non-empty-list<non-empty-string>
+         */
+        public readonly array $issues,
+        ?DescriptionInterface $description = null,
+    ) {
+        parent::__construct($name, $description);
+    }
+}
+
+final class SuppressTag extends IssueListTag {}
+```
+
+<Aside>
+Every major static analyzer ships an equivalent tag under its own vendor
+prefix instead — `@psalm-suppress`, `@phpstan-ignore`,
+`@phan-suppress-next-line`, and so on — each with slightly
+different scoping rules (the current line, the next line, the whole element).
+</Aside>
+
+The plain, vendor-neutral spelling parsed here is
+[Psalm's `@psalm-suppress`](https://psalm.dev/docs/annotating_code/supported_annotations/#psalm-suppress-someissuename)
+in its bare form. PHPStan and Phan only recognize their own prefixed
+spellings, not this bare one.

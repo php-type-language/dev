@@ -1,0 +1,261 @@
+---
+title: "Laravel"
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The service provider registers mappers in the container of a Laravel 10+
+application. It is discovered automatically.
+
+```shell
+composer require type-lang/mapper-laravel
+php artisan vendor:publish --tag=type-lang-mapper-config
+```
+
+## Mappers
+
+The default mapper is the `type-lang.mapper` singleton, bound to
+`MapperInterface`, `DenormalizerInterface` and `NormalizerInterface`.
+
+```php
+use TypeLang\Mapper\DenormalizerInterface;
+
+final class CreateUserController
+{
+    public function __invoke(
+        Request $request,
+        DenormalizerInterface $mapper,
+    ): Response
+    {
+        $user = $mapper->denormalize($request->all(), CreateUser::class);
+        // ...
+    }
+}
+```
+
+A named mapper takes the settings of the default one and overrides some of
+them. There may be any number of them, each is the
+`type-lang.mapper.<name>` singleton.
+
+```php
+// config/type-lang-mapper.php
+return [
+    // settings of the default mapper, inherited by the named ones
+    'naming' => 'snake_case',
+
+    'mappers' => [
+        // type-lang.mapper.api: config overrides
+        'api' => [
+            'strict' => true,
+        ],
+        // type-lang.mapper.import: config overrides
+        'import' => [
+            'reject_extra_fields' => true,
+            'max_violations' => 100,
+        ],
+    ],
+];
+```
+
+```php
+app('type-lang.mapper.api')->denormalize('42', 'int');
+// throws InvalidValueException: $: Value must be of type int, but "42" given
+
+// to a class
+$this->app->when(ApiController::class)
+    ->needs(DenormalizerInterface::class)
+    ->give('type-lang.mapper.api');
+```
+
+<Aside>
+A setting a named mapper leaves `null` is the one of the default
+mapper. The lists (types, hooks, readers, ...) of a named mapper go before
+the ones of the default mapper.
+</Aside>
+
+## Configuration
+
+```php
+// config/type-lang-mapper.php
+return [
+    // see "Configuration" for the meaning of the options
+    'strict' => false,
+    'normalize_as_array' => true,
+    'max_violations' => 1,
+    'reject_extra_fields' => false,
+    'expected_type_depth' => 1,
+    'expected_type_max_fields' => null,
+
+    // snake_case, camelCase, PascalCase, SCREAMING_SNAKE_CASE, kebab-case
+    // or a NamingStrategyInterface service
+    'naming' => null,
+
+    // services, see "Extensions"
+    'types' => [],
+    'decorators' => [],
+    'expanders' => [],
+    'hooks' => [],
+    'instantiators' => [],
+    'accessors' => [],
+
+    // CoercerInterface service by the type: int, float, string, bool, array
+    'coercers' => [
+        'float' => App\Mapper\DecimalCommaCoercer::class,
+    ],
+
+    // ViolationFormatterInterface service by the direction:
+    // denormalization, normalization
+    'formatters' => [
+        'denormalization' => App\Mapper\TranslatedFormatter::class,
+    ],
+
+    'metadata' => [
+        // MetadataReaderInterface services over the default readers
+        'readers' => [],
+
+        // config files or directories of them (yaml, yml, neon, json, php)
+        'paths' => [config_path('mapping')],
+
+        // PropertySelectorInterface service
+        'selector' => null,
+
+        'cache' => [
+            // default = false with "app.debug", true otherwise
+            'enabled' => null,
+            // from the first one checked to the last one,
+            // default = the default cache store
+            'stores' => [
+                ['store' => 'redis', 'prefix' => 'hot_'],
+                'file',
+            ],
+        ],
+    ],
+
+    // named mappers extending the default one: any number of them, each
+    // under its own name, with any of the options above it overrides
+    'mappers' => [
+        'your_mapper_name' => [
+            // config overrides
+            'strict' => true,
+        ],
+        'another_mapper_name' => [
+            // config overrides
+            'naming' => 'camelCase',
+            'types' => [App\Mapper\MoneyTypeBuilder::class],
+        ],
+    ],
+
+    'profiler' => [
+        // default = enabled with the Debugbar
+        'debugbar' => null,
+        // default = enabled with Telescope
+        'telescope' => null,
+    ],
+];
+```
+
+The options are described in [Configuration](/mapper/configuration/),
+[Naming Strategy](/mapper/metadata/naming/#naming-strategy),
+[Config Files](/mapper/metadata/#config-files) and
+[Caching](/mapper/metadata/#caching). The prefix of the cache keys is
+`tlm_<mapper>_` by default.
+
+<Aside type="caution">
+A wrong value fails on the first use of the mapper:
+`Config "type-lang-mapper.mappers.api.max_violations" must be an
+integer of at least 1, but int given`.
+</Aside>
+
+## Extensions
+
+An extension is a class name or a container id, resolved with the
+container.
+
+```php
+// config/type-lang-mapper.php
+return [
+    'types' => [App\Mapper\UuidTypeBuilder::class],
+    'hooks' => ['app.mapper.audit_hook'],
+    'mappers' => [
+        'api' => [
+            'types' => [App\Mapper\MoneyTypeBuilder::class],
+        ],
+    ],
+];
+```
+
+| Config key         | Interface                        |
+|--------------------|----------------------------------|
+| `types`            | `TypeBuilderInterface`           |
+| `decorators`       | `TypeDecoratorInterface`         |
+| `expanders`        | `TypeExpanderInterface`          |
+| `hooks`            | `ClassHookInterface`             |
+| `instantiators`    | `InstantiationStrategyInterface` |
+| `accessors`        | `AccessStrategyInterface`        |
+| `metadata.readers` | `MetadataReaderInterface`        |
+| `coercers`         | `CoercerInterface`               |
+| `formatters`       | `ViolationFormatterInterface`    |
+
+What each extension does: see [Extending](/mapper/extending/).
+
+A coercer of a named mapper replaces the one of the default mapper, see
+[Custom Coercers](/mapper/coercion/#custom-coercers). The same goes for a
+formatter of a direction, see [Formatters](/mapper/extending/formatters/).
+
+## Debugbar
+
+With [barryvdh/laravel-debugbar](https://github.com/barryvdh/laravel-debugbar)
+the bar gets a "mapper" tab: the calls of each mapper with their input,
+output and violations, the place of the call, the built types and the
+metadata reads. The calls are also shown on the timeline.
+
+```php
+// config/type-lang-mapper.php
+return [
+    'profiler' => [
+        'debugbar' => false, // never
+        'debugbar' => true,  // also with a disabled Debugbar, fails without one
+    ],
+];
+```
+
+## Telescope
+
+With [Laravel Telescope](https://laravel.com/docs/telescope) each call of a
+mapper is an entry of the "Logs" tab, tied to its request, job or command.
+
+```
+Mapper "api": denormalize(array{id: int}) failed in 0.42 ms
+
+{
+    "mapper": "api",
+    "method": "denormalize",
+    "type": "array{id: int}",
+    "duration": 0.42,
+    "error": "TypeLang\\Mapper\\Exception\\InvalidValueException: ...",
+    "violations": ["$.id: Value must be of type int, but \"x\" given"],
+    "called at": "/app/Http/Controllers/ApiController.php:42"
+}
+```
+
+| Entry           | Level     | Tags                                                         |
+|-----------------|-----------|--------------------------------------------------------------|
+| succeeded call  | `debug`   | `type-lang-mapper`, `type-lang-mapper:api`                   |
+| failed call     | `warning` | `type-lang-mapper`, `type-lang-mapper:api`, `type-lang-mapper:failed` |
+
+<Aside>
+The input and the output of a call are not recorded: Telescope stores the
+entries in the database.
+</Aside>
+
+```php
+// config/type-lang-mapper.php
+return [
+    'profiler' => [
+        'telescope' => false, // never
+        'telescope' => true,  // fails without Telescope
+    ],
+];
+```

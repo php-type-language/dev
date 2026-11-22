@@ -1,0 +1,97 @@
+---
+/*
+ * Reference part of a phpdoc tag page, built from the model data: the grammar
+ * under every name of the tag, the examples and the names by platform.
+ */
+import { getCollection } from 'astro:content';
+import { Tabs, TabItem, Code } from '@astrojs/starlight/components';
+import TagExamples from './TagExamples.astro';
+
+interface Props {
+    /**
+     * Canonical name of the tag, without `@`.
+     */
+    name: string;
+}
+
+const { name } = Astro.props;
+const entries = (await getCollection('phpdocTags')).filter((entry) => entry.data.tag === name);
+
+if (entries.length === 0) {
+    throw new Error(`Tag "@${name}" is not in src/data/phpdoc/tags.json`);
+}
+
+// A tag registered under its own name, or only under the names of its aliases.
+const canonical = entries.find((entry) => entry.id === name);
+const grammar = [...new Set(entries.flatMap((entry) => entry.data.grammar))];
+const platforms = Object.entries(entries[0]!.data.registrations);
+const aliasExamples = entries.filter((entry) => entry.id !== name && entry.data.examples.length > 0);
+---
+
+<section class="tag-ref">
+    <p class="tag-ref-label">Grammar</p>
+    <Code code={grammar.join('\n')} lang="txt" />
+
+    {canonical !== undefined && canonical.data.examples.length > 0 && (
+        <>
+            <p class="tag-ref-label">Examples</p>
+            <TagExamples examples={canonical.data.examples} />
+        </>
+    )}
+
+    {canonical === undefined && aliasExamples.length > 0 && (
+        <>
+            <p class="tag-ref-label">Examples</p>
+            <Tabs>
+                {aliasExamples.map((entry) => (
+                    <TabItem label={`@${entry.id}`}>
+                        <TagExamples examples={entry.data.examples} />
+                    </TabItem>
+                ))}
+            </Tabs>
+        </>
+    )}
+
+    <p class="tag-ref-label">Names by platform</p>
+    <dl class="tag-platforms">
+        {platforms.map(([platform, names]) => (
+            <>
+                <dt>{platform}</dt>
+                <dd>{names.map((alias) => <code>@{alias}</code>)}</dd>
+            </>
+        ))}
+    </dl>
+</section>
+
+<style>
+    .tag-ref-label {
+        margin: 2rem 0 0.5rem;
+        font: 500 11px/1.4 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+    .tag-platforms {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        margin: 0;
+        border-top: 1px solid var(--line);
+    }
+    .tag-platforms dt,
+    .tag-platforms dd {
+        margin: 0;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--line);
+    }
+    .tag-platforms dt {
+        padding-right: 24px;
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--muted);
+    }
+    .tag-platforms dd {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+    }
+</style>

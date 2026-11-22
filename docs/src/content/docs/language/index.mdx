@@ -1,0 +1,43 @@
+---
+title: The language
+description: TypeLang describes the types written in PHP doc-comments, the syntax PHPStan, Psalm and other tools share.
+sidebar:
+  label: Introduction
+  order: 0
+---
+
+Most PHP developers read and write docblock types every day:
+
+```php
+/**
+ * @param list<User> $users
+ * @return array<non-empty-string, User|null>
+ * @throws \OutOfBoundsException
+ */
+function index(array $users): array {}
+```
+
+Tags (`@param`, `@return`, `@throws`) differ from tool to tool, but the
+types inside them share one syntax: `list<User>`, `User|null`,
+`array{id: int}`, `T is U ? A : B`. TypeLang is that syntax, written down as a
+grammar.
+
+The language describes **how a type is written, not what it means**. It does
+not know that `int` is a built-in or that `User` must exist: `list<User>` and
+`list<Whatever>` are the same construct. What a name stands for is decided by
+the tool reading the type: the [mapper](/mapper/) resolves it to a PHP value,
+an analyser to its own type system.
+
+## What is in this section
+
+- [Syntax](/language/syntax/names/): every construct of the grammar, from a
+  plain name to conditional types, with the tree it is read into.
+- [Comparison](/language/comparison/): how PHPStan and Psalm read the same
+  constructs, case by case.
+- [Specification](/static/spec.html): the formal grammar.
+
+## Where the syntax comes from
+
+The grammar follows the type syntax of PHPStan and Psalm, the two tools that
+shaped it. Where they disagree, TypeLang picks one reading and says which in
+the [comparison](/language/comparison/).

@@ -1,0 +1,304 @@
+---
+/*
+ * The landing page.
+ */
+import { links, sections } from '../navigation';
+import typelangUrl from '../scripts/typelang.js?url';
+import landingUrl from '../scripts/landing.js?url';
+import '../styles/tokens.css';
+import '../styles/landing.css';
+
+const parts = [
+    {
+        ...sections[0],
+        num: '01',
+        packages: [],
+        note: 'No package: the grammar every other part reads.',
+    },
+    {
+        ...sections[1],
+        num: '02',
+        packages: ['type-lang/types', 'type-lang/parser', 'type-lang/printer', 'type-lang/reader'],
+    },
+    {
+        ...sections[2],
+        num: '03',
+        packages: ['type-lang/mapper', 'type-lang/mapper-symfony', 'type-lang/mapper-laravel'],
+    },
+    {
+        ...sections[3],
+        num: '04',
+        packages: ['type-lang/phpdoc'],
+    },
+];
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TypeLang — the type syntax of PHPDoc, parsed</title>
+  <meta name="description" content="TypeLang is a declarative type language for PHP inspired by PHPStan and Psalm. Parser, printer, reader and PHPDoc components with a formal specification.">
+  <meta property="og:title" content="TypeLang">
+  <meta property="og:description" content="A declarative type language for PHP. Type a type — watch it parse.">
+  <meta name="theme-color" content="#0b0b0f">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="/">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.41.21A.5.5,0,0,0,17,0H12a.5.5,0,0,0-.47.34l-8,23A.5.5,0,0,0,4,24H9a.5.5,0,0,0,.47-.34l8-23A.5.5,0,0,0,17.41.21Z"/><circle cx="17.5" cy="21" r="3"/></svg>
+    <span>TypeLang</span>
+  </a>
+  <nav class="nav">
+    {sections.map((section) => <a href={section.href}>{section.label}</a>)}
+    {links.map((link) => <a class="ext" href={link.href} target="_blank" rel="noopener">{link.label}</a>)}
+  </nav>
+</header>
+
+<!-- ─────────────────────────── § 00 Hero ─────────────────────────── -->
+<section class="hero" id="top">
+  <div class="hero-head">
+    <p class="kicker"><span>type-lang 2.0</span><span>Type language for PHP</span><span>PHP 8.1+</span></p>
+    <h1>The type syntax of PHPDoc,<br>parsed.</h1>
+    <p class="lede">
+      TypeLang is a declarative type language inspired by PHPStan and Psalm. It describes the types you already
+      write in doc-comments — <code>int[]</code>, <code>array&lt;string, T&gt;</code>, <code>Foo::CONST_*</code>,
+      <code>T is U ? A : B</code> — and ships the parts to work with them: a parser, a printer, a reflection reader
+      and a PHPDoc parser. The tree below is drawn by a JavaScript port of the reference parser. Type a type.
+    </p>
+  </div>
+
+  <div class="stage stage-hero" id="hero-stage" data-editable>
+    <div class="stage-scroll">
+      <div class="line">
+        <pre class="mirror" aria-hidden="true"></pre>
+        <input class="src" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-label="Type declaration" value="">
+        <div class="hl" hidden></div>
+      </div>
+      <div class="tree"></div>
+    </div>
+    <div class="countdown" aria-hidden="true"><i></i></div>
+    <div class="status">
+      <p class="msg" aria-live="polite"></p>
+      <p class="meta"><span class="tokens">0 tokens</span><span class="nodes">0 nodes</span><span class="depth">depth 0</span></p>
+    </div>
+  </div>
+
+  <div class="hero-foot">
+    <div class="chips" id="hero-chips" aria-label="Examples"></div>
+    <div class="printed">
+      <p class="label">Pretty printer</p>
+      <pre id="hero-printed"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── § 01 Grown ─────────────────────────── -->
+<section class="grown" id="grown">
+  <div class="section-head">
+    <p class="num">§ 01</p>
+    <h2>One type, grown.</h2>
+    <p class="sub">Every construct in the language composes with every other. Start from a name and keep wrapping.</p>
+  </div>
+
+  <div class="grown-body">
+    <div class="grown-stage-wrap">
+      <div class="stage stage-grown" id="grown-stage">
+        <div class="stage-scroll">
+          <div class="line"><pre class="mirror"></pre><div class="hl" hidden></div></div>
+          <div class="tree"></div>
+        </div>
+        <div class="status"><p class="msg"></p><p class="meta"><span class="tokens"></span><span class="nodes"></span><span class="depth"></span></p></div>
+      </div>
+    </div>
+
+    <ol class="steps" id="steps">
+      <li class="step" data-type="int">
+        <h3>A name</h3>
+        <p>Any identifier is a type: a built-in, a class, an alias, even a hyphenated <code>non-empty-string</code>. The parser reads it as a <code>NamedTypeNode</code>. It checks that a type is well-formed, not that it exists — resolution is a separate concern.</p>
+        <a href="/language/syntax/names/">Basic types →</a>
+      </li>
+      <li class="step" data-type="?int">
+        <h3>Nullable</h3>
+        <p>A leading question mark wraps the type in a <code>NullableTypeNode</code>. It binds tighter than <code>|</code>, so <code>?A|B</code> is <code>(?A)|B</code>.</p>
+        <a href="/language/syntax/logical/">Logical types →</a>
+      </li>
+      <li class="step" data-type="list<?int>">
+        <h3>Template arguments</h3>
+        <p>Angle brackets carry generics. Any type goes inside, trailing commas are fine, <code>*</code> stands for “whatever”, and <code>covariant</code>, <code>contravariant</code> or <code>invariant</code> may precede an argument.</p>
+        <a href="/language/syntax/generics/">Generic types →</a>
+      </li>
+      <li class="step" data-type="list<User|null>">
+        <h3>Union</h3>
+        <p>Unions are flat: <code>A|B|C</code> is one node with three children, not two nested pairs. Intersections use <code>&amp;</code> and bind tighter.</p>
+        <a href="/language/syntax/logical/">Logical types →</a>
+      </li>
+      <li class="step" data-type="array<string, User|null>">
+        <h3>Keys</h3>
+        <p>A second argument describes the key. <code>array-key</code>, <code>int</code>, literal strings — the parser doesn't care which; your tool decides what they mean.</p>
+        <a href="/language/syntax/generics/">Generic types →</a>
+      </li>
+      <li class="step" data-type="array{id: int, user: User|null}">
+        <h3>Shape</h3>
+        <p>Braces turn a name into a shape: a list of fields, each with its own type. Keys can be identifiers, numbers, quoted strings or class constants; a field with no key is implicit.</p>
+        <a href="/language/syntax/shapes/">Shape types →</a>
+      </li>
+      <li class="step" data-type="array{id: int<1, max>, user: User|null, ...}">
+        <h3>Ranges and unsealed shapes</h3>
+        <p><code>int&lt;1, max&gt;</code> is just a generic with two literal-ish arguments. The trailing <code>...</code> says “more keys may follow”, and may even describe them: <code>...&lt;string, mixed&gt;</code>.</p>
+        <a href="/language/syntax/shapes/">Shape types →</a>
+      </li>
+      <li class="step" data-type="array{id: int<1, max>, user?: User|null, ...}">
+        <h3>Optional fields</h3>
+        <p>A question mark after the key marks the field optional. Notice how little of the tree has to move.</p>
+        <a href="/language/syntax/shapes/">Shape types →</a>
+      </li>
+      <li class="step" data-type="callable(array{id: int, ...}): bool">
+        <h3>Callable</h3>
+        <p>Any name followed by parentheses is a callable type. Parameters may be named, variadic, by-reference or carry a default; the return type follows a colon and binds tightly: <code>callable(): A|B</code> is <code>(callable(): A)|B</code>.</p>
+        <a href="/language/syntax/callables/">Callable types →</a>
+      </li>
+      <li class="step" data-type="Closure<T of Order>(T): (T is Paid ? Bill : null)">
+        <h3>Generic callables and conditions</h3>
+        <p>A named callable like <code>Closure</code> can declare template parameters: variance, <code>of</code> / <code>as</code> and <code>super</code> bounds, and defaults. The return type here is conditional: <code>T is Paid ? Bill : null</code>, or <code>T is not Paid ? …</code> to negate it.</p>
+        <a href="/language/syntax/conditionals/">Conditional types →</a>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ─────────────────────────── § 02 Vocabulary ─────────────────────────── -->
+<section class="vocab" id="vocabulary">
+  <div class="section-head">
+    <p class="num">§ 02</p>
+    <h2>Vocabulary.</h2>
+    <p class="sub">Every construct the grammar knows, set as a specimen. Hover a bracket to see the node behind it.</p>
+  </div>
+  <div class="cards" id="cards">
+    <article class="card" data-type="Fully\Qualified\Name" data-href="/language/syntax/names/"><h3>Names</h3></article>
+    <article class="card" data-type="?T" data-href="/language/syntax/logical/"><h3>Nullable</h3></article>
+    <article class="card" data-type="T|U|V" data-href="/language/syntax/logical/"><h3>Union</h3></article>
+    <article class="card" data-type="T&U" data-href="/language/syntax/logical/"><h3>Intersection</h3></article>
+    <article class="card" data-type="Collection<array-key, User>" data-href="/language/syntax/generics/"><h3>Generics</h3></article>
+    <article class="card" data-type="Collection<covariant K, contravariant V>" data-href="/language/syntax/generics/"><h3>Variance hints</h3></article>
+    <article class="card" data-type="Collection<*>" data-href="/language/syntax/generics/"><h3>Wildcard argument</h3></article>
+    <article class="card" data-type="User[]" data-href="/language/syntax/generics/"><h3>Legacy list</h3></article>
+    <article class="card" data-type="Shape['key']" data-href="/language/syntax/offsets/"><h3>Offset access</h3></article>
+    <article class="card" data-type="0x1F|'str'|1.5e3|true" data-href="/language/syntax/numbers/"><h3>Literals</h3></article>
+    <article class="card" data-type="Foo::BAR|Foo::PREFIX_*|*_SUFFIX" data-href="/language/syntax/constants/"><h3>Constants and masks</h3></article>
+    <article class="card" data-type="array{id: int, name?: string, ...}" data-href="/language/syntax/shapes/"><h3>Shapes</h3></article>
+    <article class="card" data-type="callable(int $x, string ...$rest): void" data-href="/language/syntax/callables/"><h3>Callables</h3></article>
+    <article class="card" data-type="Closure<covariant T of Some, U super Any, V = int>(T, U): V" data-href="/language/syntax/callables/"><h3>Generic callables</h3></article>
+    <article class="card" data-type="callable(int $x = 42): void" data-href="/language/syntax/callables/"><h3>Defaults</h3></article>
+    <article class="card" data-type="array{id: int, ...&lt;string, mixed&gt;}" data-href="/language/syntax/shapes/"><h3>Unsealed shapes</h3></article>
+    <article class="card" data-type="T is not U ? A : B" data-href="/language/syntax/conditionals/"><h3>Conditional</h3></article>
+    <article class="card" data-type="callable(): $this" data-href="/language/syntax/names/"><h3>$this</h3></article>
+  </div>
+</section>
+
+<!-- ─────────────────────────── § 03 Features ─────────────────────────── -->
+<section class="features" id="features">
+  <div class="section-head">
+    <p class="num">§ 03</p>
+    <h2>Strict subsets.</h2>
+    <p class="sub">
+      Every grammar construct is a flag on <code>TypeParserFeatures</code>. Switch some off and the parser
+      rejects the syntax with a message that says why. Native PHP types only? Turn everything off but names.
+    </p>
+  </div>
+
+  <div class="features-body">
+      <div class="stage stage-features" id="features-stage" data-editable>
+        <div class="stage-scroll">
+          <div class="line">
+            <pre class="mirror" aria-hidden="true"></pre>
+            <input class="src" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Type declaration" value="callable(Foo<covariant T>|array{id: int[]}, $this): (42 is int ? T&U : Foo['k'])">
+            <div class="hl" hidden></div>
+          </div>
+          <div class="tree"></div>
+        </div>
+        <div class="status"><p class="msg"></p><p class="meta"><span class="tokens"></span><span class="nodes"></span><span class="depth"></span></p></div>
+      </div>
+      <div class="switches" id="switches"></div>
+      <pre class="php" id="features-php"></pre>
+  </div>
+</section>
+
+<!-- ─────────────────────────── § 04 Coverage ─────────────────────────── -->
+<section class="coverage" id="coverage">
+  <div class="section-head">
+    <p class="num">§ 04</p>
+    <h2>Coverage.</h2>
+    <p class="sub">
+      239 syntactic constructs, the basic ones and those on which PHPStan, Psalm and TypeLang disagree, each fed to the tool's own parser.
+      A construct counts when the parser returns a node carrying what was written, not a silently truncated one.
+    </p>
+  </div>
+  <div class="rulers" id="rulers">
+    <div class="ruler" data-value="236"><span class="who">TypeLang <small>type-lang/parser 2.0</small></span><span class="bar"><i></i></span><span class="val">236<small>/239</small></span></div>
+    <div class="ruler" data-value="180"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.4</small></span><span class="bar"><i></i></span><span class="val">180<small>/239</small></span></div>
+    <div class="ruler" data-value="108"><span class="who">Psalm <small>vimeo/psalm 7.0</small></span><span class="bar"><i></i></span><span class="val">108<small>/239</small></span></div>
+    <div class="ruler" data-value="99"><span class="who">Phan <small>phan/phan 6.0</small></span><span class="bar"><i></i></span><span class="val">99<small>/239</small></span></div>
+  </div>
+  <p class="foot-note">
+    Full table with the verdict for every construct, per tool, in the
+    <a href="/language/comparison/">syntax comparison</a>.
+    Phan is not in that table; it was run over the same constructs.
+    The table also lists 34 malformed inputs that must be rejected: TypeLang rejects 33, PHPStan 29, Phan 29 and Psalm 5.
+    Psalm answers even where it did not understand the question; the comparison explains how those answers are told apart.
+  </p>
+</section>
+
+<!-- ─────────────────────────── § 05 Parts ─────────────────────────── -->
+<section class="parts" id="parts">
+  <div class="section-head">
+    <p class="num">§ 05</p>
+    <h2>Four parts.</h2>
+    <p class="sub">One grammar and three things built on it. Every package is published standalone and split from a single development monorepo.</p>
+  </div>
+
+  <div class="part-list">
+    {parts.map((part) => (
+      <a class="part" href={part.href}>
+        <p class="num">{part.num}</p>
+        <h3>{part.label}</h3>
+        <p class="part-summary">{part.summary}</p>
+        {part.note && <p class="part-note">{part.note}</p>}
+        {part.packages.length > 0 && (
+          <ul class="part-packages">
+            {part.packages.map((name) => <li><code>{name}</code></li>)}
+          </ul>
+        )}
+        <span class="part-more">Read the docs →</span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-grid">
+    <div>
+      <p class="brand-foot"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.41.21A.5.5,0,0,0,17,0H12a.5.5,0,0,0-.47.34l-8,23A.5.5,0,0,0,4,24H9a.5.5,0,0,0,.47-.34l8-23A.5.5,0,0,0,17.41.21Z"/><circle cx="17.5" cy="21" r="3"/></svg> TypeLang</p>
+      <p>A declarative type language for PHP. MIT licensed.</p>
+    </div>
+    <ul>
+      {sections.map((section) => <li><a href={section.href}>{section.label}</a></li>)}
+    </ul>
+    <ul>
+      <li><a href="https://typelang.dev/static/spec.html" target="_blank" rel="noopener">Language specification</a></li>
+      <li><a href="https://github.com/php-type-language" target="_blank" rel="noopener">GitHub organisation</a></li>
+      <li><a href="https://packagist.org/packages/type-lang/" target="_blank" rel="noopener">Packagist</a></li>
+    </ul>
+  </div>
+  <p class="colophon">Set in Roboto Condensed and IBM Plex Mono. The trees on this page are drawn by a JavaScript port of <code>type-lang/parser</code>; the PHP one is the reference.</p>
+</footer>
+
+<div class="tip" id="tip" hidden></div>
+
+<script is:inline src={typelangUrl}></script>
+<script is:inline src={landingUrl}></script>
+</body>
+</html>

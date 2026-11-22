@@ -1,0 +1,103 @@
+---
+title: Decorators
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A decorator changes the types the mapper builds, whatever builder built
+them. A builder adds a type for a name, a decorator wraps types already
+built: every enum, every type of some class, every type at all.
+
+A decorator is called once for each built type, before the mapper keeps it.
+It gets the type, the node it was built from, and returns the type to keep:
+the same one when it is not interested, or a wrapper. Decorators run in the
+order of the list, each gets the result of the previous one.
+
+A decorator that trims the strings given to every backed enum:
+
+```php
+use TypeLang\Mapper\Context\BuildContext;
+use TypeLang\Mapper\Context\Context;
+use TypeLang\Mapper\Mapper;
+use TypeLang\Mapper\Type\BackedEnumType;
+use TypeLang\Mapper\Type\Decorator\TypeDecoratorInterface;
+use TypeLang\Mapper\Type\TypeInterface;
+use TypeLang\Type\TypeNode;
+
+final class TrimmingType implements TypeInterface
+{
+    public function __construct(private readonly TypeInterface $type) {}
+
+    public function isDenormalizable(mixed $value, Context $context): bool
+    {
+        return $this->type->isDenormalizable(self::trim($value), $context);
+    }
+
+    public function denormalize(mixed $value, Context $context): mixed
+    {
+        return $this->type->denormalize(self::trim($value), $context);
+    }
+
+    public function isNormalizable(mixed $value, Context $context): bool
+    {
+        return $this->type->isNormalizable($value, $context);
+    }
+
+    public function normalize(mixed $value, Context $context): mixed
+    {
+        return $this->type->normalize($value, $context);
+    }
+
+    private static function trim(mixed $value): mixed
+    {
+        if (\is_string($value)) {
+            return \trim($value);
+        }
+
+        return $value;
+    }
+}
+
+final class TrimEnumsDecorator implements TypeDecoratorInterface
+{
+    public function decorate(
+        TypeInterface $type,
+        TypeNode $node,
+        BuildContext $context,
+    ): TypeInterface {
+        if (!$type instanceof BackedEnumType) {
+            return $type;
+        }
+
+        return new TrimmingType($type);
+    }
+}
+
+enum Status: string
+{
+    case Active = 'active';
+    case Banned = 'banned';
+}
+
+$mapper = new Mapper(decorators: [new TrimEnumsDecorator()]);
+
+$mapper->denormalize(' active ', Status::class);     // Status::Active
+$mapper->denormalize([' banned'], 'list<Status>');   // [Status::Banned]
+
+$mapper->denormalize('gone', Status::class);
+// throws InvalidValueException: $: Value must be of type 'active'|'banned',
+// but "gone" given
+```
+
+The wrapped type is still described by its own form in errors (the values of
+the enum above), unless an [expander](/mapper/extending/expanders/) supports the
+wrapper.
+
+<Aside type="caution">
+Some built-in types look into the types they are built of. `int-mask<...>`
+and `int-mask-of<...>` fail to build when the types of their members are
+wrapped: return the types of integer literals, constants and their unions as
+they are.
+</Aside>

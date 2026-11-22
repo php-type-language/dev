@@ -1,0 +1,53 @@
+---
+title: "@param"
+description: "The @param tag documents a single argument of a function or method."
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@param` tag documents a single argument of a function or method: the
+type of value it accepts, and — since PHP's own type hints cannot express
+everything a docblock can (a shape, a generic, a literal, a conditional
+type) — often more precisely than the function's native signature does.
+
+<TagReference name="param" />
+
+The type is parsed using the full [TypeLang grammar](/language/),
+so anything documented elsewhere in this reference — a
+[shape](/language/syntax/shapes/), a [generic](/language/syntax/generics/), a
+[conditional type](/language/syntax/conditionals/) — is equally valid here.
+
+Parsing a `@param` tag produces a `ParamTag` instance exposing:
+
+* `$type` — the documented `TypeNode`.
+* `$variable` — the parameter's name, without the leading `$`.
+
+```php
+final class ParamTag extends TypedVariableTag
+{
+    // Inherits `public readonly TypeNode $type` and
+    // `string $variable` from TypedVariableTag, plus
+    // `$name` and `$description` from the base `Tag`
+    // class; adds nothing of its own.
+}
+```
+
+One `@param` tag is expected per documented argument, each naming the
+argument it describes; the order of the tags in the comment does not have to
+match the order of the arguments in the signature.
+
+<Aside>
+PHPStan and Psalm additionally recognize a vendor-prefixed
+`@phpstan-param` / `@psalm-param` spelling, typically
+used to narrow a type beyond what a plain `@param` above it
+already states. Both are registered as aliases (see
+[@phpstan-param](/phpdoc/tags/param/) and
+[@psalm-param](/phpdoc/tags/param/)) once the PHPStan or Psalm
+[platform](/phpdoc/platforms/) is loaded, and parse into the same
+`ParamTag`.
+</Aside>
+
+Defined by [PSR-19 §5.10](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md#510-param)
+— FIG's proposed PHPDoc tags standard — and phpDocumentor's own
+[`@param` reference](https://docs.phpdoc.org/guide/references/phpdoc/tags/param.html).

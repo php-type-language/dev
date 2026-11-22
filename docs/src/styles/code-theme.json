@@ -1,0 +1,17 @@
+{
+    "name": "typelang-night",
+    "type": "dark",
+    "colors": {
+        "editor.background": "#121218",
+        "editor.foreground": "#d6d6de"
+    },
+    "tokenColors": [
+        { "scope": ["comment", "punctuation.definition.comment"], "settings": { "foreground": "#6c6c7a", "fontStyle": "italic" } },
+        { "scope": ["keyword", "storage", "storage.type", "storage.modifier", "constant.language"], "settings": { "foreground": "#9aa2ff" } },
+        { "scope": ["string", "constant.numeric", "constant.character"], "settings": { "foreground": "#e8b98a" } },
+        { "scope": ["variable", "variable.other", "variable.parameter"], "settings": { "foreground": "#d6d6de" } },
+        { "scope": ["entity.name", "support.class", "support.function", "entity.other.inherited-class"], "settings": { "foreground": "#f3f3f5" } },
+        { "scope": ["punctuation", "keyword.operator", "meta.brace"], "settings": { "foreground": "#82828f" } },
+        { "scope": ["keyword.other.phpdoc", "storage.type.class.phpdoc"], "settings": { "foreground": "#9aa2ff", "fontStyle": "italic" } }
+    ]
+}

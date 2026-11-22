@@ -1,0 +1,16 @@
+---
+title: Not found
+template: splash
+pagefind: false
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+There is no page at this address. The documentation is split into four parts:
+
+<CardGrid>
+    <LinkCard title="Language" href="/language/" description="The syntax of the types, how it reads and how other tools read it." />
+    <LinkCard title="Toolkit" href="/toolkit/" description="Parse a type into an AST, print it back, read it from Reflection." />
+    <LinkCard title="Mapper" href="/mapper/" description="Map raw data to objects and back by the types you declare." />
+    <LinkCard title="PHPDoc" href="/phpdoc/" description="Read doc-comments into a description and typed tags." />
+</CardGrid>

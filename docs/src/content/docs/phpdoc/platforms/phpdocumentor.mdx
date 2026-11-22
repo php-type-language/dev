@@ -1,0 +1,77 @@
+---
+title: "phpDocumentor tags"
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **phpDocumentor Tags** are the tags that originate with
+[phpDocumentor](https://www.phpdoc.org) itself — the documentation
+generator that defined the original PHPDoc convention long before the
+current generation of static analyzers existed. Where the
+[Standard](/phpdoc/platforms/standard/) and [Advanced](/phpdoc/platforms/advanced/) groups collect
+tags about *types*, this group collects tags about *documentation*:
+authorship, licensing, packaging, cross-references, and the prose that ends
+up in a generated API manual.
+
+Many of these predate modern type analysis and carry no type information at
+all — they annotate the human-facing documentation rather than constrain the
+code. They are grouped here by provenance, and a fair number are legacy
+entries from phpDocumentor 1.x kept for compatibility with older docblocks.
+
+## What belongs here
+
+* **Authorship and legal** — [@author](/phpdoc/tags/author/),
+  [@copyright](/phpdoc/tags/copyright/), [@license](/phpdoc/tags/license/).
+* **Packaging and structure** — [@package](/phpdoc/tags/package/),
+  [@subpackage](/phpdoc/tags/subpackage/), [@category](/phpdoc/tags/category/),
+  [@name](/phpdoc/tags/name/), [@global](/phpdoc/tags/global/),
+  [@staticvar](/phpdoc/tags/staticvar/), and the plain [@static](/phpdoc/tags/static/).
+* **Cross-references** — [@uses](/phpdoc/tags/uses/) and its reverse
+  [@used-by](/phpdoc/tags/used-by/).
+* **Versioning and lifecycle** — [@version](/phpdoc/tags/version/) records an
+  element's own version, [@since](/phpdoc/tags/since/) the version it first
+  appeared in, and [@todo](/phpdoc/tags/todo/) notes work still to be done.
+* **Documentation control** — [@inheritdoc](/phpdoc/tags/inherit-doc/) pulls
+  documentation down from a parent, [@ignore](/phpdoc/tags/ignore/) hides an
+  element from the generated output, and [@access](/phpdoc/tags/access/) is the
+  legacy way of recording visibility.
+* **Examples and sources** — [@example](/phpdoc/tags/example/),
+  [@source](/phpdoc/tags/source/), and [@filesource](/phpdoc/tags/filesource/) embed or
+  point to code in the rendered documentation.
+
+<Aside>
+Several of these tags — [@access](/phpdoc/tags/access/),
+[@staticvar](/phpdoc/tags/staticvar/), [@name](/phpdoc/tags/name/) —
+belong to the classic phpDocumentor 1.x vocabulary and have been dropped from
+phpDocumentor 3's current reference. They are still parsed here so that
+docblocks written against the older toolchain keep working.
+</Aside>
+
+<Aside>
+The tags of this group belong to the phpDocumentor platform, `PhpDocumentorPlatform`.
+`DocBlockParser::createDefault()` loads it together with every other
+built-in platform. The constructor loads only the platforms passed to it, so
+pass the platforms you need explicitly:
+
+```php
+use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\PhpDoc\Platform\PhpDocumentorPlatform;
+use TypeLang\PhpDoc\Platform\StandardPlatform;
+
+$parser = new DocBlockParser([
+    new StandardPlatform(),
+    new PhpDocumentorPlatform(),
+]);
+```
+
+A tag of a platform that is not loaded becomes a plain
+[Tag](/phpdoc/reading/#tag).
+</Aside>
+
+The implemented tags in this group each parse into a dedicated object; a few
+entries (`@id`, `@toc`, and
+`@tutorial`) are not implemented yet and fall back to a
+plain `Tag`. Open any entry in the sidebar for its exact grammar and
+behavior.

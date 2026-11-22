@@ -1,0 +1,86 @@
+---
+title: "Phan tags"
+sidebar:
+  order: 6
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **Phan Tags** are the annotations that belong to
+[Phan](https://github.com/phan/phan)'s own vocabulary, written under its
+`@phan-*` vendor prefix. Phan uses the prefix much as Psalm and PHPStan do:
+to add analyzer-specific capabilities — line-scoped suppression, real vs.
+documented return types, magic-member policing — and to offer a Phan-scoped
+override of a tag that also exists in the shared convention.
+
+A prefixed tag that mirrors one documented elsewhere — `@phan-param` beside
+[@param](/phpdoc/tags/param/), `@phan-return` beside [@return](/phpdoc/tags/return/) —
+means the same thing as the plain spelling; the prefix only marks it as the
+one Phan should trust.
+
+## What this group covers
+
+* **Assertions** — [@phan-assert](/phpdoc/tags/assert/),
+  `@phan-assert-true-condition`,
+  `@phan-assert-false-condition`,
+  [@phan-assert-if-true](/phpdoc/tags/assert-if-true/),
+  [@phan-assert-if-false](/phpdoc/tags/assert-if-false/).
+* **Line-scoped suppression** —
+  [@phan-suppress-current-line](/phpdoc/tags/phan-suppress-current-line/),
+  [@phan-suppress-next-line](/phpdoc/tags/phan-suppress-next-line/),
+  [@phan-suppress-next-next-line](/phpdoc/tags/phan-suppress-next-next-line/),
+  [@phan-suppress-previous-line](/phpdoc/tags/phan-suppress-previous-line/), and the
+  file-wide [@phan-file-suppress](/phpdoc/tags/phan-file-suppress/).
+* **Return types** — [@phan-real-return](/phpdoc/tags/phan-real-return/),
+  [@phan-hardcode-return-type](/phpdoc/tags/phan-hardcode-return-type/),
+  distinguishing the type Phan should infer from the one it should report.
+* **Magic-member policy** —
+  [@phan-forbid-undeclared-magic-methods](/phpdoc/tags/phan-forbid-undeclared-magic-methods/),
+  [@phan-forbid-undeclared-magic-properties](/phpdoc/tags/phan-forbid-undeclared-magic-properties/),
+  [@phan-read-only](/phpdoc/tags/readonly/),
+  [@phan-write-only](/phpdoc/tags/phan-write-only/).
+* **Purity and immutability** — [@phan-pure](/phpdoc/tags/pure/),
+  [@phan-side-effect-free](/phpdoc/tags/phan-side-effect-free/),
+  [@phan-immutable](/phpdoc/tags/immutable/),
+  [@phan-constructor-used-for-side-effects](/phpdoc/tags/phan-constructor-used-for-side-effects/).
+* **Types and scope** — [@phan-type](/phpdoc/tags/type/),
+  [@phan-closure-scope](/phpdoc/tags/phan-closure-scope/) (also spelled
+  `@phanClosureScope`), [@phan-transient](/phpdoc/tags/phan-transient/),
+  [@phan-output-reference](/phpdoc/tags/phan-output-reference/).
+* **Prefixed overrides** — [@phan-var](/phpdoc/tags/var/),
+  [@phan-param](/phpdoc/tags/param/), [@phan-return](/phpdoc/tags/return/),
+  [@phan-property](/phpdoc/tags/property/),
+  [@phan-method](/phpdoc/tags/method/), [@phan-template](/phpdoc/tags/template/),
+  [@phan-mixin](/phpdoc/tags/mixin/), [@phan-extends](/phpdoc/tags/extends/), and
+  the rest, each shadowing its unprefixed counterpart for Phan specifically.
+
+<Aside>
+The tags of this group belong to the Phan platform, `PhanPlatform`.
+`DocBlockParser::createDefault()` loads it together with every other
+built-in platform. The constructor loads only the platforms passed to it, so
+pass the platforms you need explicitly:
+
+```php
+use TypeLang\PhpDoc\DocBlockParser;
+use TypeLang\PhpDoc\Platform\PhanPlatform;
+use TypeLang\PhpDoc\Platform\StandardPlatform;
+
+$parser = new DocBlockParser([new StandardPlatform(), new PhanPlatform()]);
+```
+
+A tag of a platform that is not loaded becomes a plain
+[Tag](/phpdoc/reading/#tag).
+</Aside>
+
+<Aside type="caution">
+Two assertion tags in this group are not yet recognized —
+`@phan-assert-true-condition` and
+`@phan-assert-false-condition`.
+A docblock containing either currently falls back to a plain
+[Tag](/phpdoc/reading/#tag). The shorter forms
+`@phan-assert`, `@phan-assert-if-true` and
+`@phan-assert-if-false` are fully supported.
+</Aside>
+
+For the authoritative definitions, see
+[Phan's annotating-your-source-code guide](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).

@@ -1,0 +1,21 @@
+---
+title: "@phan-suppress-next-next-line"
+description: "The @phan-suppress-next-next-line tag silences the listed issue types reported two lines below the annotation."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@phan-suppress-next-next-line` tag silences the listed
+issue types reported two lines below the annotation.
+
+<TagReference name="phan-suppress-next-next-line" />
+
+Parsing a `@phan-suppress-next-next-line` tag produces a `PhanSuppressNextNextLineTag` instance, carrying the
+listed `$issues` alongside the `$name` and optional `$description` every
+[Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class PhanSuppressNextNextLineTag extends IssueListTag {}
+```
+
+Defined by [Phan](https://github.com/phan/phan/wiki/Annotating-Your-Source-Code).

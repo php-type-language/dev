@@ -1,0 +1,24 @@
+---
+title: "@codingStandardsIgnoreStart"
+description: "The @codingStandardsIgnoreStart tag starts a block of code excluded from coding-standard checks, closed by a matching @codingStandardsIgnoreEnd."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@codingStandardsIgnoreStart` tag starts a block of code excluded
+from coding-standard checks, closed by a matching
+[@codingStandardsIgnoreEnd](/phpdoc/tags/coding-standards-ignore-end/). This is
+pre-3.2.0 PHP_CodeSniffer syntax; current PHP_CodeSniffer prefers the
+`phpcs:*` comment syntax instead, but still understands it.
+
+<TagReference name="codingStandardsIgnoreStart" />
+
+Parsing a `@codingStandardsIgnoreStart` tag produces a `CodingStandardsIgnoreStartTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class CodingStandardsIgnoreStartTag extends FlagTag {}
+```
+
+Defined by [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer/wiki/Advanced-Usage#ignoring-parts-of-a-file).

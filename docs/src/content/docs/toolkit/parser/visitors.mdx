@@ -1,0 +1,587 @@
+---
+title: "Visitors"
+description: "Traverse, search, and rewrite a parsed AST using `TypeLang\\Parser\\Traverser` and the visitor implementations shipped with the package."
+sidebar:
+  label: Visitors
+  order: 3
+---
+
+To walk the whole graph of an already-parsed type, use the
+`TypeLang\Parser\Traverser` class. It accepts one or more
+`TypeLang\Parser\Traverser\VisitorInterface` implementations and calls each
+of them for every node it visits.
+
+Let's write a visitor that prints the class name of every node it enters,
+using the convenience `TypeLang\Parser\Traverser\Visitor` abstract class
+(which no-ops every lifecycle method, so you only override what you need):
+
+```php
+use TypeLang\Parser\Traverser;
+use TypeLang\Parser\Traverser\Command;
+use TypeLang\Parser\Traverser\Visitor;
+use TypeLang\Type\Node;
+
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('array<array-key, object{ key?: int<0, max> }>');
+
+$visitor = new class extends Visitor {
+    public function enter(Node $node): ?Command
+    {
+        echo \sprintf(" - %s\n", $node::class);
+
+        return null;
+    }
+};
+
+Traverser::new([$visitor])
+    ->traverse([$type]);
+```
+
+<details>
+<summary>Output</summary>
+
+```
+ - TypeLang\Type\NamedTypeNode
+ - TypeLang\Type\Name
+ - TypeLang\Type\Template\TemplateListNode
+ - TypeLang\Type\Template\TypedTemplateArgumentNode
+ - TypeLang\Type\NamedTypeNode
+ - TypeLang\Type\Name
+ - TypeLang\Type\Template\TypedTemplateArgumentNode
+ - TypeLang\Type\NamedTypeNode
+ - TypeLang\Type\Name
+ - TypeLang\Type\Shape\FieldListNode
+ - TypeLang\Type\Shape\NamedFieldNode
+ - TypeLang\Type\Identifier
+ - TypeLang\Type\NamedTypeNode
+ - TypeLang\Type\Name
+ - TypeLang\Type\Template\TemplateListNode
+ - TypeLang\Type\Template\TypedTemplateArgumentNode
+ - TypeLang\Type\Literal\IntLiteralNode
+ - TypeLang\Type\Template\TypedTemplateArgumentNode
+ - TypeLang\Type\NamedTypeNode
+ - TypeLang\Type\Name
+```
+
+</details>
+
+## The visitor lifecycle
+
+`VisitorInterface` (and its `Visitor` no-op base class) has four methods,
+called in this order for a single `traverse()` call:
+
+| Method                        | Called                                                |
+|-------------------------------|-------------------------------------------------------|
+| `before(): void`              | once, before the first node is visited                |
+| `enter(Node $node): ?Command` | once per node, on the way down, before its children   |
+| `leave(Node $node): void`     | once per node, on the way back up, after its children |
+| `after(): void`               | once, after the last node has been visited            |
+
+```
+before
+enter UnionTypeNode
+  enter NamedTypeNode(int)
+  leave NamedTypeNode(int)
+  enter NamedTypeNode(string)
+  leave NamedTypeNode(string)
+leave UnionTypeNode
+after
+```
+
+`enter()` may return `TypeLang\Parser\Traverser\Command::SkipChildren` to
+prevent the traverser from descending into that node's children — `leave()`
+is still called for the node itself, just not for anything beneath it.
+
+```php
+use TypeLang\Type\Template\TypedTemplateArgumentNode;
+
+$visitor = new class extends Visitor {
+    public function enter(Node $node): ?Command
+    {
+        if ($node instanceof TypedTemplateArgumentNode) {
+            return Command::SkipChildren;
+        }
+
+        echo \sprintf(" - %s\n", $node::class);
+
+        return null;
+    }
+};
+
+Traverser::new([$visitor])
+    ->traverse([$type]);
+```
+
+```
+ - TypeLang\Type\NamedTypeNode
+ - TypeLang\Type\Name
+ - TypeLang\Type\Template\TemplateListNode
+```
+
+## Traverser API
+
+* `new Traverser(iterable $visitors = [], PropertyAccessorInterface $propertyAccessor = new SimplePropertyAccessor())`
+  — construct directly from a list of visitors, or use the equivalent static
+  `Traverser::new($visitors)`.
+* `Traverser::through(VisitorInterface $visitor, iterable $nodes)` — shortcut
+  for the common "one visitor, traverse once, give it back to me" pattern —
+  wraps the visitor in a new traverser, runs it, and returns the same
+  visitor instance so you can immediately read state off it:
+  ```php
+  // Find the first "Name" node
+  $find = Traverser::through(new ClassNameMatcherVisitor(Name::class), [
+    $type
+  ]);
+  ```
+* `->with(VisitorInterface $visitor, bool $prepend = false)` — returns a new
+  traverser with an additional visitor appended (or prepended).
+* `->withPropertyAccessor(PropertyAccessorInterface $propertyAccessor)` —
+  returns a new traverser that discovers a node's children through a custom
+  `PropertyAccessorInterface` instead of the default reflection-based one —
+  see below.
+
+## Custom property access
+
+By default, the traverser discovers a node's children via
+`Traverser\PropertyAccessor\SimplePropertyAccessor`, which reflects over
+every non-static, non-readonly (and non-hooked, on PHP 8.4+) property and
+descends into whichever ones hold a `Node` or an iterable of them. Readonly
+properties (such as the `Name` parts or literal values) are never visited.
+You can supply
+your own `PropertyAccessorInterface` implementation (e.g. to only look at a
+specific subset of properties, for performance or for a custom node
+hierarchy) via `Traverser::withPropertyAccessor()`.
+
+## Built-in visitors
+
+- **MatcherVisitor / ClassNameMatcherVisitor**: Find the first node matching an arbitrary predicate, or matching a given class. See [MatcherVisitor](/toolkit/parser/visitors/#matchervisitor) and [ClassNameMatcherVisitor](/toolkit/parser/visitors/#classnamematchervisitor).
+- **DumperVisitor / StreamDumperVisitor / StringDumperVisitor**: Render the whole tree as an indented, human-readable dump — to a stream or into a string. See [DumperVisitor](/toolkit/parser/visitors/#dumpervisitor), [StreamDumperVisitor](/toolkit/parser/visitors/#streamdumpervisitor), and [StringDumperVisitor](/toolkit/parser/visitors/#stringdumpervisitor).
+- `TypeMapVisitor`: Rewrite every `Name` occurrence in a tree via a callback — the mechanism behind [Name resolution](/toolkit/parser/type-resolver/). See [TypeMapVisitor](/toolkit/parser/visitors/#typemapvisitor).
+
+## MatcherVisitor
+
+`MatcherVisitor` is the generic base behind
+[`ClassNameMatcherVisitor`](/toolkit/parser/visitors/#classnamematchervisitor). Use it directly
+when the condition you're searching for is more than just "is an instance of
+this class".
+
+```php
+public function __construct(
+    \Closure $matcher,
+    ?\Closure $break = null,
+) {}
+```
+
+* `$matcher` — called for every node; the first node for which it returns
+  `true` becomes the match, and traversal of that subtree stops there
+  (`Command::SkipChildren` is returned automatically once found, and for
+  every node visited afterwards).
+* `$break` — optional early-exit predicate, checked whenever `$matcher`
+  itself didn't match; if it returns `true`, the search stops there (leaving
+  `node` as `null`) without visiting the rest of the tree.
+
+After a `traverse()` call, `$matcher->node` holds the matched node (or
+`null`), and `$matcher->hasMatches()` is a convenience boolean for the same.
+
+### Example
+
+Find the first named type whose name is longer than a given length:
+
+```php
+use TypeLang\Parser\Traverser;
+use TypeLang\Parser\Traverser\MatcherVisitor;
+use TypeLang\Type\NamedTypeNode;
+use TypeLang\Type\Node;
+
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('int|non-empty-string|bool');
+
+$finder = Traverser::through(new MatcherVisitor(
+    static fn(Node $node): bool => $node instanceof NamedTypeNode
+        && \strlen($node->name->toString()) > 5,
+), [$type]);
+
+// string(16) "non-empty-string"
+var_dump($finder->node->name->toString());
+```
+
+### Stopping early with `$break`
+
+The `$break` callback lets you bail out before scanning the whole tree once
+some other condition is met — useful when you know the node you're looking
+for can't possibly occur past a certain point:
+
+```php
+use TypeLang\Type\Shape\FieldListNode;
+use TypeLang\Type\Literal\BoolLiteralNode;
+
+$finder = Traverser::through(
+    new MatcherVisitor(
+        matcher: static fn(Node $node): bool
+            => $node instanceof BoolLiteralNode,
+        // give up as soon as we step into a shape's field list
+        break: static fn(Node $node): bool
+            => $node instanceof FieldListNode,
+    ),
+    [$type],
+);
+```
+
+`ClassNameMatcherVisitor(SomeClass::class)` is exactly
+`new MatcherVisitor(static fn(Node $node): bool => $node instanceof SomeClass)`
+with no `$break` — reach for it directly whenever an `instanceof` check is
+all you need.
+
+## ClassNameMatcherVisitor
+
+To search for the first node matching a given class, use
+`ClassNameMatcherVisitor` — a thin [`MatcherVisitor`](/toolkit/parser/visitors/#matchervisitor)
+specialization that matches by `instanceof`.
+
+```php
+use TypeLang\Parser\Traverser;
+use TypeLang\Parser\Traverser\ClassNameMatcherVisitor;
+use TypeLang\Type\Name;
+
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('array<array-key, mixed>');
+
+$finder = Traverser::through(
+    visitor: new ClassNameMatcherVisitor(Name::class),
+    nodes: [$type],
+);
+
+var_dump($finder->hasMatches()); // bool(true)
+var_dump($finder->node);
+```
+
+<details>
+<summary>Result</summary>
+
+```php
+object(TypeLang\Type\Name)#1 (3) {
+  ["offset"]=> int(0)
+  ["value"]=> string(5) "array"
+  ["namespace"]=> NULL
+}
+```
+
+</details>
+
+Since it finds the *first* match in traversal order, searching for a more
+specific class than the root node's own returns the first nested occurrence.
+Here, looking for any `NamedTypeNode` inside a union returns the left
+operand:
+
+```php
+use TypeLang\Type\NamedTypeNode;
+
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('int|string');
+
+$finder = Traverser::through(
+    visitor: new ClassNameMatcherVisitor(NamedTypeNode::class),
+    nodes: [$type],
+);
+
+// string(3) "int"
+var_dump($finder->node->name->toString());
+```
+
+If nothing matches, `$finder->node` stays `null` and
+`$finder->hasMatches()` returns `false`:
+
+```php
+use TypeLang\Type\Literal\BoolLiteralNode;
+
+$finder = Traverser::through(
+    visitor: new ClassNameMatcherVisitor(BoolLiteralNode::class),
+    nodes: [$type],
+);
+
+var_dump($finder->hasMatches()); // bool(false)
+var_dump($finder->node);         // NULL
+```
+
+## TypeMapVisitor
+
+To replace short names with their FQN
+alternatives (or rewrite them any other way), use `TypeMapVisitor`. It calls
+your callback for every `Name` it finds on a `NamedTypeNode` or
+`CallableTypeNode` (via their `$name` property) and on a
+`ConstTypeNode`/`ConstMaskTypeNode` (via their `$owner` property; an owner
+that is a namespace is passed as a `Name` of its last word) — and, if the
+callback returns a `Name`, replaces it **in place**.
+
+```php
+use TypeLang\Parser\Traverser;
+use TypeLang\Parser\Traverser\TypeMapVisitor;
+use TypeLang\Type\Name;
+use TypeLang\Type\NamespaceName;
+
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('User|Admin');
+
+// Replace all "User" occurrences with "App\Example\User"
+$replacement = static function (Name $name): ?Name {
+    if ($name->toLowerString() === 'user') {
+        return new Name('User', new NamespaceName('App\\Example'));
+    }
+
+    return null;
+};
+
+Traverser::new([new TypeMapVisitor($replacement)])
+    ->traverse([$type]);
+
+// App\Example\User
+echo $type[0]->name->toString(), "\n";
+// Admin
+echo $type[1]->name->toString(), "\n";
+```
+
+Returning `null` from the callback leaves that particular `Name` untouched
+— as seen above for `Admin`, which doesn't match the condition.
+
+The same rewrite reaches class-constant references too, since
+`ConstTypeNode::$owner` is also a `Name`:
+
+```php
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('User::STATUS_ACTIVE');
+
+Traverser::new([new TypeMapVisitor($replacement)])
+    ->traverse([$type]);
+
+echo $type->owner->toString(); // App\Example\User
+```
+
+`TypeMapVisitor` is the visitor `TypeResolver` uses internally — reach for
+[`TypeResolver`](/toolkit/parser/type-resolver/) directly if what you need is resolving
+names against a set of PHP `use` statements; use `TypeMapVisitor` yourself
+for anything more custom.
+
+## DumperVisitor
+
+`DumperVisitor` is the abstract base shared by
+[`StreamDumperVisitor`](/toolkit/parser/visitors/#streamdumpervisitor) and
+[`StringDumperVisitor`](/toolkit/parser/visitors/#stringdumpervisitor). It implements the whole
+traversal side of rendering — indentation tracking and node formatting — and
+leaves only the sink itself abstract:
+
+```php
+abstract class DumperVisitor extends Visitor
+{
+    public const string DEFAULT_SIMPLIFIED_NODE_NAMESPACE = 'TypeLang\\Type\\';
+
+    public function __construct(
+        string $simplifyNodeNamespace
+            = self::DEFAULT_SIMPLIFIED_NODE_NAMESPACE,
+    ) {}
+
+    abstract protected function write(string $data): void;
+}
+```
+
+Each visited node is rendered as `<indent><ShortClassName>[(suffix)]`, one
+line per node: the class name has `$simplifyNodeNamespace` stripped off its
+front, and a suffix in parentheses is appended:
+
+* if the node implements `\Stringable`, its string representation
+  (`Name(int)`, `Literal\NullLiteralNode(null)`);
+* otherwise the node's mutable scalar properties (`prop=value`, `offset` and
+  readonly properties excluded), if there are any
+  (`Shape\FieldListNode(isSealed=true)`,
+  `Shape\NamedFieldNode(isOptional=false)`).
+
+### Writing a custom sink
+
+Extend `DumperVisitor` and implement `write()` to render anywhere you like —
+into an array of lines, a PSR logger, a buffer shared with other output, etc:
+
+```php
+use TypeLang\Parser\Traverser;
+use TypeLang\Parser\Traverser\DumperVisitor;
+
+final class LineCollectorDumperVisitor extends DumperVisitor
+{
+    /** @var list<string> */
+    public array $lines = [];
+
+    protected function write(string $data): void
+    {
+        $this->lines[] = \rtrim($data, "\n");
+    }
+}
+
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('int|null');
+
+$visitor = new LineCollectorDumperVisitor();
+Traverser::new([$visitor])->traverse([$type]);
+
+var_dump($visitor->lines);
+```
+
+```php
+array(4) {
+  [0]=> string(29) "LogicalTypeNode\UnionTypeNode"
+  [1]=> string(15) "  NamedTypeNode"
+  [2]=> string(13) "    Name(int)"
+  [3]=> string(31) "  Literal\NullLiteralNode(null)"
+}
+```
+
+### Disabling namespace simplification
+
+Pass an empty string (or any prefix that won't match) as
+`$simplifyNodeNamespace` to render fully-qualified class names instead:
+
+```php
+$visitor = new LineCollectorDumperVisitor(
+    simplifyNodeNamespace: '',
+);
+```
+
+```
+TypeLang\Type\LogicalTypeNode\UnionTypeNode
+  TypeLang\Type\NamedTypeNode
+    TypeLang\Type\Name(int)
+  TypeLang\Type\Literal\NullLiteralNode(null)
+```
+
+## StreamDumperVisitor
+
+To print the structure of an AST straight to a stream while debugging, use
+`StreamDumperVisitor` — a [`DumperVisitor`](/toolkit/parser/visitors/#dumpervisitor) that writes
+to a PHP stream resource (`php://stderr` by default) instead of buffering
+into a string.
+
+```php
+use TypeLang\Parser\Traverser;
+use TypeLang\Parser\Traverser\StreamDumperVisitor;
+
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('array<array-key, object{ key?: int<0, max> }>');
+
+Traverser::new([new StreamDumperVisitor()])->traverse([$type]);
+```
+
+You can see the following text printed to `STDERR`:
+
+```yaml
+NamedTypeNode
+  Name(array)
+  Template\TemplateListNode
+    Template\TypedTemplateArgumentNode
+      NamedTypeNode
+        Name(array-key)
+    Template\TypedTemplateArgumentNode
+      NamedTypeNode
+        Name(object)
+        Shape\FieldListNode(isSealed=true)
+          Shape\NamedFieldNode(isOptional=true)
+            Identifier(key)
+            NamedTypeNode
+              Name(int)
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
+                  Literal\IntLiteralNode(0)
+                Template\TypedTemplateArgumentNode
+                  NamedTypeNode
+                    Name(max)
+```
+
+### Writing elsewhere
+
+The second constructor argument is any stream URI accepted by `fopen()` —
+point it at a file to keep a persistent trace of every type parsed during a
+debugging session:
+
+```php
+$visitor = new StreamDumperVisitor(
+    stream: __DIR__ . '/parsed-types.log',
+);
+
+Traverser::new([$visitor])
+    ->traverse([$type]);
+```
+
+Since a plain string is more convenient than a file when the goal is a
+one-off assertion or a log message, consider
+[`StringDumperVisitor`](/toolkit/parser/visitors/#stringdumpervisitor) instead in those cases.
+
+## StringDumperVisitor
+
+To capture the structure of an AST into a string, use `StringDumperVisitor` —
+a [`DumperVisitor`](/toolkit/parser/visitors/#dumpervisitor) that buffers into an internal
+`$output` string instead of writing to a stream.
+
+```php
+use TypeLang\Parser\Traverser;
+use TypeLang\Parser\Traverser\StringDumperVisitor;
+
+$type = new TypeLang\Parser\TypeParser()
+    ->parse('array<array-key, object{ key?: int<0, max> }>');
+
+$visitor = new StringDumperVisitor();
+
+Traverser::new([$visitor])
+    ->traverse([$type]);
+
+echo $visitor->output;
+```
+
+You can see the following text as the output result:
+
+```yaml
+NamedTypeNode
+  Name(array)
+  Template\TemplateListNode
+    Template\TypedTemplateArgumentNode
+      NamedTypeNode
+        Name(array-key)
+    Template\TypedTemplateArgumentNode
+      NamedTypeNode
+        Name(object)
+        Shape\FieldListNode(isSealed=true)
+          Shape\NamedFieldNode(isOptional=true)
+            Identifier(key)
+            NamedTypeNode
+              Name(int)
+              Template\TemplateListNode
+                Template\TypedTemplateArgumentNode
+                  Literal\IntLiteralNode(0)
+                Template\TypedTemplateArgumentNode
+                  NamedTypeNode
+                    Name(max)
+```
+
+This is convenient for snapshot-style unit tests: parse a type, dump it, and
+assert on the string instead of comparing whole object graphs.
+
+```php
+public function testExampleType(): void
+{
+    $visitor = new StringDumperVisitor();
+
+    Traverser::new([$visitor])
+        ->traverse([
+            new TypeLang\Parser\TypeParser()
+                ->parse('int|null'),
+        ]);
+
+    self::assertSame(<<<'AST'
+        LogicalTypeNode\UnionTypeNode
+          NamedTypeNode
+            Name(int)
+          Literal\NullLiteralNode(null)
+        AST . "\n", $visitor->output);
+}
+```
+
+The visitor is reusable across multiple `traverse()` calls — call
+`$visitor->reset()` to clear `$output` manually (the next `traverse()` call
+does it implicitly in `before()`).
+
+Every line, including the last one, ends with `"\n"`.

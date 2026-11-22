@@ -1,0 +1,20 @@
+---
+title: "@not-deprecated"
+description: "The @not-deprecated tag marks an element as explicitly not deprecated, overriding a @deprecated tag it would otherwise inherit from a parent."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@not-deprecated` tag marks an element as explicitly not deprecated,
+overriding a `@deprecated` tag it would otherwise inherit from a parent
+class or interface.
+
+<TagReference name="not-deprecated" />
+
+Parsing a `@not-deprecated` tag produces a `NotDeprecatedTag` instance.
+Being a pure marker, it adds nothing beyond the `$name` and optional
+`$description` every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class NotDeprecatedTag extends FlagTag {}
+```

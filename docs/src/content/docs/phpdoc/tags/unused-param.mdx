@@ -1,0 +1,28 @@
+---
+title: "@unused-param"
+description: "The @unused-param tag marks an argument that is intentionally left unused."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@unused-param` tag marks a single argument as intentionally left
+unread inside the function body — for example, a parameter that exists only
+to satisfy an interface or callback signature the implementation does not
+actually need. Static analyzers commonly warn about unused parameters as a
+sign of a mistake, but that warning is a false positive whenever the
+parameter is unused on purpose; rather than disabling the check for the
+whole function, this tag suppresses it for exactly the one parameter named.
+
+<TagReference name="unused-param" />
+
+Parsing an `@unused-param` tag produces a `VariableTag` instance exposing
+`$variable`: the parameter's name, without the leading `$`.
+
+```php
+final class UnusedParamTag extends VariableTag
+{
+    // Adds nothing of its own; $variable is
+    // declared on the parent VariableTag.
+    public readonly string $variable;
+}
+```

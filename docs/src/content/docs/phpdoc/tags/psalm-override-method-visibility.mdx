@@ -1,0 +1,20 @@
+---
+title: "@psalm-override-method-visibility"
+description: "The @psalm-override-method-visibility tag allows a subclass to override an inherited method with a different visibility than the parent declares."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@psalm-override-method-visibility` tag allows a subclass to
+override an inherited method with a different visibility than the
+parent declares, without Psalm flagging the change as a violation.
+
+<TagReference name="psalm-override-method-visibility" />
+
+Parsing a `@psalm-override-method-visibility` tag produces a `PsalmOverrideMethodVisibilityTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class PsalmOverrideMethodVisibilityTag extends FlagTag {}
+```

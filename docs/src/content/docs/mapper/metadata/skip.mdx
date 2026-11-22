@@ -1,0 +1,279 @@
+---
+title: "Skipping properties"
+sidebar:
+  order: 5
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Leaves a property out of the normalized data under a condition. Several
+conditions can be combined: the property is skipped when any of them matches.
+
+Every option is shown in each [metadata source](/mapper/metadata/): choose
+the tab of the source you use. When a source cannot express an option, its
+tab says what is used instead.
+
+## When null
+<Tabs syncKey="metadata">
+<TabItem label="Attributes">
+```php
+use TypeLang\Mapper\Mapping\SkipWhenNull;
+
+final class User
+{
+    #[SkipWhenNull]
+    public ?string $phone = null;
+}
+```
+</TabItem>
+
+<TabItem label="PHPDoc">
+<Aside type="caution">
+There is no PHPDoc tag for this option.
+</Aside>
+
+</TabItem>
+
+<TabItem label="Reflection">
+<Aside>
+PHP has no such declaration: the property is always normalized.
+</Aside>
+
+</TabItem>
+
+<TabItem label="PHP Config">
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'phone' => [
+                'skip' => 'null',
+            ],
+        ],
+    ],
+];
+```
+</TabItem>
+
+<TabItem label="JSON">
+```json
+{
+    "App\\User": {
+        "properties": {
+            "phone": {
+                "skip": "null"
+            }
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem label="YAML">
+```yaml
+App\User:
+    properties:
+        phone:
+            skip: 'null'
+```
+</TabItem>
+
+<TabItem label="NEON">
+```yaml
+App\User:
+    properties:
+        phone:
+            skip: 'null'
+```
+</TabItem>
+
+</Tabs>
+
+```php
+$mapper->normalize(new User()); // []
+```
+
+<Aside type="caution">
+In config files the condition is the string `'null'`: an
+unquoted `null` of YAML and NEON, and `null` of PHP
+and JSON, are not accepted.
+</Aside>
+
+## When empty
+
+Skips `null`, `false`, `0`, `0.0`, `''`, `'0'` and `[]`.
+<Tabs syncKey="metadata">
+<TabItem label="Attributes">
+```php
+use TypeLang\Mapper\Mapping\SkipWhenEmpty;
+
+final class User
+{
+    #[SkipWhenEmpty]
+    public array $tags = [];
+}
+```
+</TabItem>
+
+<TabItem label="PHPDoc">
+<Aside type="caution">
+There is no PHPDoc tag for this option.
+</Aside>
+
+</TabItem>
+
+<TabItem label="Reflection">
+<Aside>
+PHP has no such declaration: the property is always normalized.
+</Aside>
+
+</TabItem>
+
+<TabItem label="PHP Config">
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'tags' => [
+                'skip' => 'empty',
+            ],
+        ],
+    ],
+];
+```
+</TabItem>
+
+<TabItem label="JSON">
+```json
+{
+    "App\\User": {
+        "properties": {
+            "tags": {
+                "skip": "empty"
+            }
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem label="YAML">
+```yaml
+App\User:
+    properties:
+        tags:
+            skip: empty
+```
+</TabItem>
+
+<TabItem label="NEON">
+```yaml
+App\User:
+    properties:
+        tags:
+            skip: empty
+```
+</TabItem>
+
+</Tabs>
+
+```php
+$mapper->normalize(new User()); // []
+```
+
+## Expression
+
+An expression of the
+[Symfony Expression Language](https://symfony.com/doc/current/components/expression_language.html),
+`this` is the object. Requires `symfony/expression-language`.
+<Tabs syncKey="metadata">
+<TabItem label="Attributes">
+```php
+use TypeLang\Mapper\Mapping\SkipWhen;
+
+final class User
+{
+    public bool $isGuest = true;
+
+    #[SkipWhen('this.isGuest')]
+    public string $email = 'guest@example.com';
+}
+```
+</TabItem>
+
+<TabItem label="PHPDoc">
+<Aside type="caution">
+There is no PHPDoc tag for this option.
+</Aside>
+
+</TabItem>
+
+<TabItem label="Reflection">
+<Aside>
+PHP has no such declaration: the property is always normalized.
+</Aside>
+
+</TabItem>
+
+<TabItem label="PHP Config">
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'email' => [
+                'skip' => 'this.isGuest',
+            ],
+        ],
+    ],
+];
+```
+</TabItem>
+
+<TabItem label="JSON">
+```json
+{
+    "App\\User": {
+        "properties": {
+            "email": {
+                "skip": "this.isGuest"
+            }
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem label="YAML">
+```yaml
+App\User:
+    properties:
+        email:
+            skip: this.isGuest
+```
+</TabItem>
+
+<TabItem label="NEON">
+```yaml
+App\User:
+    properties:
+        email:
+            skip: this.isGuest
+```
+</TabItem>
+
+</Tabs>
+
+```php
+$mapper->normalize(new User()); // ['isGuest' => true]
+```
+
+<Aside type="caution">
+Functions such as `constant()` are not supported in expressions:
+use properties, methods of the object and operators.
+</Aside>

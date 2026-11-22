@@ -1,0 +1,26 @@
+---
+title: "@copyright"
+description: "The @copyright tag documents the copyright information of an element."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@copyright` tag records who holds the copyright to an element, and
+typically the year or range of years it covers. It is most often placed on a
+file-level docblock or on the class that anchors a file, so that generated
+documentation and license-checking tools can surface ownership information
+without having to parse a separate license header.
+
+<TagReference name="copyright" />
+
+Parsing a `@copyright` tag produces a `CopyrightTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description` every
+[Tag](/phpdoc/reading/#tag) already carries — the holder and year are read back out
+of the free-form description text.
+
+```php
+final class CopyrightTag extends FlagTag {}
+```
+
+Defined by the [PSR-19 draft PHPDoc Tags proposal](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md#53-copyright)
+and [phpDocumentor's tag reference](https://docs.phpdoc.org/guide/references/phpdoc/tags/copyright.html).

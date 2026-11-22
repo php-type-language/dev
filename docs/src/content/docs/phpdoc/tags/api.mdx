@@ -1,0 +1,32 @@
+---
+title: "@api"
+description: "The @api tag marks an element as part of the public, supported API of its package."
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@api` tag marks an element as part of the stable, public API of its
+package. It tells both human readers and static analysis tools that the
+element is safe to depend on: unlike the rest of an internal or
+work-in-progress codebase, its signature is not expected to change between
+releases without a deprecation notice.
+
+<TagReference name="api" />
+
+Parsing an `@api` tag produces an `ApiTag` instance. Being a pure marker, it
+adds nothing beyond the `$name` and optional `$description` every
+[tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class ApiTag extends FlagTag {}
+```
+
+<Aside type="tip">
+`@api` is often used as the counterpart to
+[@internal](/phpdoc/tags/internal/): together the two tags divide a
+codebase into what consumers may rely on and what they may not.
+</Aside>
+
+Defined by the [PSR-19 draft PHPDoc Tags proposal](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md#51-api)
+and [phpDocumentor's tag reference](https://docs.phpdoc.org/guide/references/phpdoc/tags/api.html).

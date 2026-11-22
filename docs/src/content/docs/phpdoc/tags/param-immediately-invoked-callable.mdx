@@ -1,0 +1,39 @@
+---
+title: "@param-immediately-invoked-callable"
+description: "The @param-immediately-invoked-callable tag marks a callable argument that is invoked before the function or method returns."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@param-immediately-invoked-callable` tag marks a callable argument that
+is guaranteed to be called before the function or method returns, and is
+never stored away for later. That guarantee matters to static analysis: a
+variable captured by reference into the callback can be trusted to reflect
+its post-call value as soon as the outer call returns, and a function that
+only ever invokes such a callback synchronously is easier to reason about as
+pure or side-effect-free. Without this tag, an analyzer has to assume the
+callable might be kept and invoked at some unrelated point in time.
+
+<TagReference name="param-immediately-invoked-callable" />
+
+Parsing a `@param-immediately-invoked-callable` tag produces a `VariableTag`
+instance exposing `$variable`: the parameter's name, without the leading
+`$`. The type of the callable itself is whatever the parameter's own
+[@param](/phpdoc/tags/param/) already declares.
+
+```php
+abstract class ParamInvokedCallableTag extends VariableTag {}
+
+final class ParamImmediatelyInvokedCallableTag extends ParamInvokedCallableTag
+{
+    // Adds nothing of its own; $variable is
+    // declared on the parent VariableTag.
+}
+```
+
+The opposite case — a callable stored and invoked only after the call has
+returned — is documented with
+[@param-later-invoked-callable](/phpdoc/tags/param-later-invoked-callable/) instead.
+
+[PHPStan documents `@param-immediately-invoked-callable`](https://phpstan.org/writing-php-code/phpdocs-basics#callables)
+alongside its other callable-related tags; Psalm has no equivalent.

@@ -1,0 +1,110 @@
+---
+title: Property accessors
+sidebar:
+  label: Accessors
+  order: 5
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A property of a mapped class is read by a reader and written by a writer.
+They are chosen by a strategy once per property, on the first conversion of
+the class.
+
+By default a property is written directly, through the backing value of a
+PHP 8.4 property hook, or by reflection for private and readonly properties.
+An access strategy takes a property and returns its reader or its writer, or
+`null` for a property it does not take. A strategy may take one direction
+only.
+
+A strategy that goes through the getter and the setter of a property:
+
+```php
+use TypeLang\Mapper\Mapper;
+use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
+use TypeLang\Mapper\PropertyAccessor\PropertyReaderInterface;
+use TypeLang\Mapper\PropertyAccessor\PropertyWriterInterface;
+use TypeLang\Mapper\PropertyAccessor\Strategy\AccessStrategyInterface;
+
+final class GetterReader implements PropertyReaderInterface
+{
+    public function __construct(private readonly string $method) {}
+
+    public function read(object $object): mixed
+    {
+        return $object->{$this->method}();
+    }
+}
+
+final class SetterWriter implements PropertyWriterInterface
+{
+    public function __construct(private readonly string $method) {}
+
+    public function write(object $object, mixed $value): void
+    {
+        $object->{$this->method}($value);
+    }
+}
+
+final class AccessorMethodsStrategy implements AccessStrategyInterface
+{
+    public function tryCreateReader(
+        \ReflectionProperty $property,
+        PropertyMetadata $metadata,
+    ): ?PropertyReaderInterface {
+        $method = 'get' . \ucfirst($property->name);
+
+        if (!\method_exists($property->class, $method)) {
+            return null;
+        }
+
+        return new GetterReader($method);
+    }
+
+    public function tryCreateWriter(
+        \ReflectionProperty $property,
+        PropertyMetadata $metadata,
+    ): ?PropertyWriterInterface {
+        $method = 'set' . \ucfirst($property->name);
+
+        if (!\method_exists($property->class, $method)) {
+            return null;
+        }
+
+        return new SetterWriter($method);
+    }
+}
+
+final class Customer
+{
+    public string $name = '';
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = \strtolower($name);
+    }
+}
+
+$mapper = new Mapper(accessors: [new AccessorMethodsStrategy()]);
+
+$customer = $mapper->denormalize(['name' => 'JOHN'], Customer::class);
+// Customer { name: 'john' }
+
+$mapper->normalize($customer, Customer::class); // ['name' => 'john']
+```
+
+The strategy chooses the property, not the field of the data: which
+properties are mapped and under which names is decided by the
+[metadata](/mapper/metadata/). The value reaches the writer already
+converted to the type of the property.
+
+<Aside>
+Read and write a property the same way. A getter that changes the value, such
+as one returning `ucfirst($this->name)`, makes a normalized object
+denormalize into another one.
+</Aside>

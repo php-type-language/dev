@@ -1,0 +1,446 @@
+---
+/*
+ * A type with the tree it is read into, drawn at build time by the
+ * JavaScript port of the parser (src/scripts/typelang.js).
+ *
+ * The build fails when the example disagrees with the parser: a type passed
+ * without `error` must parse, a type passed with `error` must be rejected.
+ */
+import '../scripts/typelang.js';
+
+interface Props {
+    type: string;
+    /**
+     * The type is a counterexample, the parser must reject it.
+     */
+    error?: boolean;
+    /**
+     * Error of the reference PHP parser as `Exception: message`, shown in
+     * place of the message of the JavaScript port.
+     */
+    message?: string;
+}
+
+interface Token {
+    type: string;
+    value: string;
+    start: number;
+    end: number;
+}
+
+interface ParseError {
+    name: string;
+    message: string;
+    offset: number;
+    length: number;
+}
+
+const TL = (globalThis as any).TypeLang;
+const KEYWORDS = new Set(['is', 'not', 'of', 'as', 'super', 'covariant', 'contravariant', 'invariant']);
+
+const { type, error: isCounterexample = false, message: reference } = Astro.props;
+
+let tokens: Token[] = [];
+let tree: any = null;
+let failure: ParseError | null = null;
+
+try {
+    tokens = TL.tokenize(type);
+    tree = TL.parse(type);
+} catch (e) {
+    if (!(e instanceof TL.ParseError)) {
+        throw e;
+    }
+
+    failure = e as ParseError;
+}
+
+if (isCounterexample && failure === null) {
+    throw new Error(`<TypeTree error> expects "${type}" to be rejected, but it parses`);
+}
+
+if (!isCounterexample && failure !== null) {
+    throw new Error(`<TypeTree> expects "${type}" to parse, but: ${failure.message}`);
+}
+
+function getTokenClass(token: Token): string {
+    if (/^T_(FLOAT|INT_|SQ_STRING|DQ_STRING)/.test(token.type)) {
+        return 't-lit';
+    }
+
+    if (token.type === 'T_IDENTIFIER') {
+        const value = token.value.toLowerCase();
+
+        if (value === 'true' || value === 'false' || value === 'null') {
+            return 't-lit';
+        }
+
+        if (KEYWORDS.has(token.value)) {
+            return 't-kw';
+        }
+
+        return '';
+    }
+
+    if (token.type === 'T_IS_NOT') {
+        return 't-kw';
+    }
+
+    if (token.type === 'T_VARIABLE' || token.type === 'T_THIS') {
+        return 't-var';
+    }
+
+    if (token.type === 'T_IDENTIFIER_MASK' || token.type === 'T_VIRTUAL_NAME') {
+        return '';
+    }
+
+    return 't-punct';
+}
+
+// Source split into spans: tokens colored by kind, the failed range marked.
+const spans: { text: string; class: string }[] = [];
+let position = 0;
+const errorStart = failure?.offset ?? -1;
+const errorEnd = failure === null ? -1 : failure.offset + failure.length;
+
+for (const token of tokens) {
+    if (token.type === 'T_EOI') {
+        break;
+    }
+
+    if (token.start > position) {
+        spans.push({ text: type.slice(position, token.start), class: '' });
+    }
+
+    const isFailed = token.start < errorEnd && token.end > errorStart;
+
+    spans.push({ text: token.value, class: [getTokenClass(token), isFailed ? 't-err' : ''].join(' ').trim() });
+    position = token.end;
+}
+
+if (position < type.length) {
+    const rest = type.slice(position);
+
+    spans.push({ text: rest, class: failure !== null && position >= errorStart ? 't-err' : '' });
+}
+
+const isAtEnd = failure !== null && failure.offset >= type.length;
+const layout = tree === null ? null : TL.layout(tree);
+let errorClass = failure?.name;
+let message = failure?.message.replace(` in ${JSON.stringify(type)}`, '');
+
+if (reference !== undefined) {
+    [errorClass, message] = reference.split(/: (.*)/s);
+}
+---
+
+<figure class="type-tree not-content" data-error={isCounterexample ? '' : undefined}>
+    {Astro.slots.has('default') && <figcaption><slot /></figcaption>}
+    <div class="stage">
+        <div class="line">
+            <span class="hl" hidden></span>
+            <pre class="src">{spans.map((span) => span.class === '' ? span.text : <span class={span.class}>{span.text}</span>)}{isAtEnd && <span class="t-eoi"> </span>}</pre>
+        </div>
+        {layout !== null && (
+            <div class="tree-pane" data-pagefind-ignore>
+            <div class="tree" style={`--rows: ${layout.rows}`}>
+                {layout.items.map((item: any) => (
+                    <div
+                        class:list={['br', { leaf: item.leaf, tight: item.l * 9 < item.label.length * 6.9 + 6 }]}
+                        style={`--s: ${item.s}; --l: ${item.l}; --r: ${item.r}`}
+                        data-s={item.s}
+                        data-l={item.l}
+                        data-label={item.label}
+                        data-cls={item.cls}
+                    >
+                        <i></i><b>{item.label}</b>
+                    </div>
+                ))}
+            </div>
+            </div>
+        )}
+    </div>
+    {failure !== null && (
+        <p class="msg" data-pagefind-ignore><span class="msg-label">error</span><span class="cls">{errorClass}</span> {message}</p>
+    )}
+    {tree !== null && <p class="msg" data-pagefind-ignore><span class="msg-label">result</span><span class="cls">{TL.NODE_CLASSES[tree.kind]}</span></p>}
+</figure>
+
+<script>
+    // Hovering a bracket marks its part of the source and names the node.
+    const tip = document.createElement('div');
+
+    tip.className = 'type-tree-tip';
+    tip.hidden = true;
+    document.body.append(tip);
+
+    function moveTip(x: number, y: number): void {
+        const rect = tip.getBoundingClientRect();
+        let top = y + 18;
+
+        if (top + rect.height > window.innerHeight) {
+            top = y - rect.height - 10;
+        }
+
+        tip.style.left = Math.max(8, Math.min(x + 14, window.innerWidth - rect.width - 8)) + 'px';
+        tip.style.top = top + 'px';
+    }
+
+    for (const root of document.querySelectorAll<HTMLElement>('.type-tree')) {
+        const tree = root.querySelector<HTMLElement>('.tree');
+        const hl = root.querySelector<HTMLElement>('.hl');
+
+        if (tree === null || hl === null) {
+            continue;
+        }
+
+        tree.addEventListener('mouseover', (event) => {
+            const br = (event.target as Element).closest<HTMLElement>('.br');
+
+            if (br === null) {
+                return;
+            }
+
+            const { s = '0', l = '0', label = '', cls = '' } = br.dataset;
+
+            hl.style.setProperty('--s', s);
+            hl.style.setProperty('--l', l);
+            hl.hidden = false;
+
+            const name = document.createElement('small');
+
+            name.textContent = `${cls} · ${s}–${Number(s) + Number(l)}`;
+            tip.replaceChildren(label, name);
+            tip.hidden = false;
+            moveTip(event.clientX, event.clientY);
+        });
+
+        tree.addEventListener('mousemove', (event) => {
+            if (!tip.hidden) {
+                moveTip(event.clientX, event.clientY);
+            }
+        });
+
+        tree.addEventListener('mouseout', (event) => {
+            const br = (event.target as Element).closest('.br');
+            const next = (event.relatedTarget as Element | null)?.closest('.br');
+
+            if (br !== null && br !== next) {
+                hl.hidden = true;
+                tip.hidden = true;
+            }
+        });
+    }
+</script>
+
+<style>
+    .type-tree {
+        margin: 1rem 0 1.5rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background:
+            linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 9px,
+            linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 9px 100%;
+        background-color: var(--paper-2);
+    }
+    .type-tree[data-error] {
+        border-color: rgba(242, 147, 122, 0.35);
+    }
+    figcaption {
+        padding: 12px 16px 0;
+        font-size: 0.9rem;
+        color: var(--ink-2);
+    }
+    figcaption :global(p) {
+        margin: 0;
+    }
+    figcaption :global(code) {
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 0.875em;
+    }
+    figcaption :global(a) {
+        color: var(--accent);
+    }
+    .stage {
+        overflow-x: auto;
+        padding: 14px 16px;
+        font-family: var(--mono);
+        font-size: 15px;
+        scrollbar-width: thin;
+    }
+    .line {
+        position: relative;
+        width: max-content;
+    }
+    /* Part of the source read into the bracket under the pointer. */
+    .hl {
+        position: absolute;
+        top: -1px;
+        bottom: -1px;
+        left: calc(var(--s) * 1ch);
+        width: calc(var(--l) * 1ch);
+        background: var(--accent-tint);
+        border-bottom: 2px solid var(--accent);
+        pointer-events: none;
+    }
+    .hl[hidden] {
+        display: none;
+    }
+    .src {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        background: none;
+        border: 0;
+        font: inherit;
+        line-height: 1.4;
+        white-space: pre;
+        color: var(--ink);
+        overflow: visible;
+    }
+    .t-punct {
+        color: var(--muted);
+    }
+    .t-lit {
+        color: var(--accent);
+    }
+    .t-var {
+        font-style: italic;
+    }
+    .t-kw {
+        color: var(--muted);
+        font-style: italic;
+    }
+    .t-err {
+        text-decoration: underline wavy var(--rust);
+        text-decoration-skip-ink: none;
+        text-underline-offset: 4px;
+    }
+    .t-eoi {
+        display: inline-block;
+        width: 1ch;
+        border-bottom: 2px solid var(--rust);
+        height: 0.9em;
+        vertical-align: -0.2em;
+    }
+    /* The tree under the source: a solid pane, the blueprint shows behind the source only. */
+    .tree-pane {
+        width: max-content;
+        min-width: calc(100% + 32px);
+        margin: 12px -16px -14px;
+        padding: 8px 16px 6px;
+        border-top: 1px solid var(--line);
+        background: var(--paper-2);
+    }
+    .tree {
+        position: relative;
+        height: calc(var(--rows) * 18px + 4px);
+        width: max-content;
+        min-width: 100%;
+    }
+    .br {
+        position: absolute;
+        height: 18px;
+        left: calc(var(--s) * 1ch);
+        width: calc(var(--l) * 1ch);
+        top: calc(var(--r) * 18px);
+        color: var(--ink);
+        cursor: default;
+    }
+    .br i {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1px;
+        height: 4px;
+        border: 1px solid currentColor;
+        border-top: 0;
+    }
+    .br b {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 6px;
+        text-align: center;
+        font: 500 9px/1.3 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .br.leaf {
+        color: var(--muted);
+    }
+    .br.leaf b {
+        font-weight: 400;
+    }
+    .br.tight b {
+        visibility: hidden;
+    }
+    .br:hover {
+        color: var(--accent);
+    }
+    .br:hover b {
+        visibility: visible;
+        overflow: visible;
+        font-weight: 700;
+    }
+    /* What the source is read into: the class of the root node, or the error. */
+    .msg {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        margin: 0;
+        padding: 9px 16px;
+        border-top: 1px solid var(--line);
+        background: var(--paper);
+        font: 12.5px/1.6 var(--mono);
+        color: var(--muted);
+        white-space: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+    .msg-label {
+        flex: none;
+        padding: 0 6px;
+        border: 1px solid var(--line-2);
+        border-radius: var(--radius);
+        font-size: 10px;
+        font-weight: 500;
+        line-height: 1.7;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+    .msg .cls {
+        color: var(--ink);
+    }
+    .type-tree[data-error] .msg {
+        color: var(--rust);
+        background: rgba(242, 147, 122, 0.05);
+    }
+    :global(.type-tree-tip) {
+        position: fixed;
+        z-index: 50;
+        padding: 6px 9px;
+        border: 1px solid var(--line-2);
+        border-radius: var(--radius);
+        background: var(--paper-3);
+        font: 12px/1.4 var(--mono);
+        color: var(--ink);
+        white-space: nowrap;
+        pointer-events: none;
+    }
+    :global(.type-tree-tip[hidden]) {
+        display: none;
+    }
+    :global(.type-tree-tip small) {
+        display: block;
+        color: var(--muted);
+    }
+    .type-tree[data-error] .msg-label {
+        border-color: rgba(242, 147, 122, 0.4);
+        color: var(--rust);
+    }
+</style>

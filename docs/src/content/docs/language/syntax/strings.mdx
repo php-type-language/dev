@@ -1,0 +1,83 @@
+---
+title: String literals
+sidebar:
+  label: Strings
+  order: 5
+---
+
+import TypeTree from '../../../../components/TypeTree.astro';
+
+A string literal is written the way PHP writes a string: in single (`'`) or
+double (`"`) quotes, a quote inside is escaped with a backslash (`\`).
+
+<TypeTree type={"'single-quoted with \\' inside'"}>
+Single-quoted string.
+</TypeTree>
+
+<TypeTree type={"\"double-quoted with \\\" inside\""}>
+Double-quoted string.
+</TypeTree>
+
+A single-quoted string is read as it is written: its only escape sequences are
+`\'` and `\\`, any other backslash stays in the value. A double-quoted string
+takes the escape sequences below.
+
+## Escape sequences
+
+The sequences are the ones of
+[PHP strings](https://www.php.net/manual/en/language.types.string.php):
+
+| Sequence | Character             |
+|----------|-----------------------|
+| `\n`     | line feed (`0x0A`)    |
+| `\r`     | carriage return (`0x0D`) |
+| `\t`     | tab (`0x09`)          |
+| `\v`     | vertical tab (`0x0B`) |
+| `\e`     | escape (`0x1B`)       |
+| `\f`     | form feed (`0x0C`)    |
+| `\$`     | dollar sign (`0x24`)  |
+| `\"`     | double quote (`0x22`) |
+| `\\`     | backslash (`0x5C`)    |
+
+A backslash that begins no known sequence stays in the value together with
+the next character, the way PHP does it: `"\q"` is `\q`.
+
+<TypeTree type={"\"String with\\nNew Line\""}>
+The value is two lines, `String with` and `New Line`.
+</TypeTree>
+
+<TypeTree type={"'String without\\nNew Line'"}>
+The value is `String without\nNew Line`: a single-quoted string keeps the
+backslash.
+</TypeTree>
+
+## Hexadecimal sequences
+
+`\x` (or `\X`) followed by one or two hexadecimal digits is the byte with that
+code: `"\x41"` is `A`.
+
+<TypeTree type={"\"\\x48\\x65\\x6c\\x6c\\x6f\""}>
+The value is `Hello`.
+</TypeTree>
+
+## Octal sequences
+
+A backslash followed by one to three octal digits is the byte with that code:
+`"\101"` is `A`. As in PHP, a code above `\377` keeps its low eight bits.
+
+<TypeTree type={"\"\\101\""}>
+The value is `A`.
+</TypeTree>
+
+## Unicode sequences
+
+`\u{...}` with hexadecimal digits in the braces is a Unicode code point,
+written into the value as UTF-8: `"\u{41}"` is `A`.
+
+<TypeTree type={"\"\\u{1F60A}\""}>
+The value is [`😊`](https://www.compart.com/en/unicode/U+1F60A).
+</TypeTree>
+
+A `\u` without braces or without digits in them is not a sequence and stays
+as it is: `"\u41"` is `\u41`. A code above `10FFFF` is not a code point and
+becomes the replacement character (`U+FFFD`).

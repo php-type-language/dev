@@ -1,0 +1,43 @@
+---
+title: Comments
+sidebar:
+  order: 14
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import TypeTree from '../../../../components/TypeTree.astro';
+
+A type may carry comments. They are read as whitespace: they separate tokens
+and mean nothing of their own.
+
+- A **line comment** begins with `//` or `#` and runs to the end of the line.
+- A **block comment** begins with `/*` and runs to the next `*/` inclusive.
+
+<Tabs>
+<TabItem label="Examples">
+<TypeTree type="int /* comment */ | string">
+A block comment between two tokens.
+</TypeTree>
+
+A line comment ends a line of a type written across several:
+
+```php
+int | // comment
+    string
+```
+
+```php
+# comment
+int
+```
+
+</TabItem>
+
+<TabItem label="Counterexamples">
+<TypeTree type="// comment" error message={"UnexpectedTokenException: Unexpected end of input, expected a type name, an identifier, \"true\", \"false\" and other"}>
+A comment is not a type: a source of a comment alone describes nothing.
+</TypeTree>
+
+</TabItem>
+
+</Tabs>

@@ -1,0 +1,23 @@
+---
+title: "@psalm-taint-unescape"
+description: "The @psalm-taint-unescape tag marks a value as tainted again after passing through the described element, reversing an earlier @psalm-taint-escape."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@psalm-taint-unescape` tag marks a value as tainted again after
+passing through the described element, reversing an earlier
+[@psalm-taint-escape](/phpdoc/tags/psalm-taint-escape/). It is part of
+Psalm's taint-analysis annotations.
+
+<TagReference name="psalm-taint-unescape" />
+
+Parsing a `@psalm-taint-unescape` tag produces a `PsalmTaintUnescapeTag` instance, carrying the
+parsed `$identifier` alongside the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already provides.
+
+```php
+final class PsalmTaintUnescapeTag extends IdentifierTag {}
+```
+
+See [Psalm's security analysis annotations](https://psalm.dev/docs/security_analysis/annotations/).

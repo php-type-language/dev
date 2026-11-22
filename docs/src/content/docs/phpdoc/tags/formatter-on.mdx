@@ -1,0 +1,22 @@
+---
+title: "@formatter:on"
+description: "The @formatter:on tag re-enables automatic code formatting from this point on, pairing with an earlier @formatter:off."
+---
+
+import TagReference from '../../../../components/TagReference.astro';
+
+The `@formatter:on` tag re-enables PhpStorm's automatic code formatting
+from this point on, pairing with an earlier
+[@formatter:off](/phpdoc/tags/formatter-off/).
+
+<TagReference name="formatter:on" />
+
+Parsing a `@formatter:on` tag produces a `FormatterOnTag` instance. Being a pure
+marker, it adds nothing beyond the `$name` and optional `$description`
+every [Tag](/phpdoc/reading/#tag) already carries.
+
+```php
+final class FormatterOnTag extends FlagTag {}
+```
+
+Associated with PhpStorm.
