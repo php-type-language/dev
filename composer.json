@@ -18,7 +18,7 @@
         "type-lang/types": "^2.0"
     },
     "require-dev": {
-        "cuyz/valinor": "^2.8",
+        "cuyz/valinor": "^2.0",
         "doctrine/instantiator": "^1.5",
         "friendsofphp/php-cs-fixer": "^3.95",
         "illuminate/cache": "^10.0|^11.0|^12.0|^13.0",
