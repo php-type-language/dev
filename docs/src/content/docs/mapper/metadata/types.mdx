@@ -131,10 +131,12 @@ Different types for normalization (read) and denormalization (write), given
 on the `get` and `set` hooks of a property (PHP 8.4):
 
 - attributes: a type on the property itself sets both types;
-- PHPDoc: `@var` sets both types, on a property with a `set` hook only the
-  read type;
+- PHPDoc: the tags of the hooks, then `@var`, which sets only the read type
+  when the `set` hook takes another type;
 - reflection: the read type is the declared type of the property, the write
-  type is the parameter type of the `set` hook.
+  type is the parameter type of the `set` hook;
+- config: `read_type` or `write_type` of a direction the property does not
+  take part in, such as `write_type` without a `set` hook, is an error.
 <Tabs syncKey="metadata">
 <TabItem label="Attributes">
 ```php
@@ -264,7 +266,12 @@ $mapper->denormalize(['id' => -1], User::class);
 
 <Aside type="caution">
 The hooks are called only on a virtual property, such as above. A property
-with its own value is written and read directly, bypassing its hooks.
+with its own value is written and read directly, bypassing its hooks, so
+both of its types are the type of the property: PHPDoc of the hooks is not
+read and `set(int|string $id)` of `public string $id` takes only `string`.
+`#[MapType]` on such hooks is an error, so is `strict` on a `get` hook.
+A `write_type` in a config does not enable the hook either: the value of
+that type is written to the property and must fit its type.
 </Aside>
 
 ## Strict types

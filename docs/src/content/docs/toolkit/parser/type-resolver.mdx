@@ -8,245 +8,100 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-The parser has no notion of namespaces, `use` statements, or autoloading — a
-type such as `Collection<User>` is parsed exactly as written, with `Collection`
-and `User` staying relative names. Resolving what they actually refer to is a
-separate step, deliberately left up to the caller, and `TypeLang\Parser\TypeResolver`
-is the utility for it.
-
-## How it works
-
-`TypeResolver` is an immutable builder. You register the imports it should
-resolve against — through the fluent `withTypeImport()` / `withTypeImportAs()`
-methods (or the constructor) — and then call `resolve()`. It walks the whole
-node graph (via the same [`Traverser`](/toolkit/parser/visitors/) machinery used by
-[`TypeMapVisitor`](/toolkit/parser/visitors/#typemapvisitor)) and rewrites every matching
-`TypeLang\Type\Name` it finds **in place**.
-
-```php
-final class TypeResolver
-{
-    public function withTypeImport(string $name): self;
-
-    public function withTypeImportAs(string $name, string $alias): self;
-
-    public function withTypeImportsFromClass(\ReflectionClass $class): self;
-
-    public function withTypeImportsFromFunction(
-        \ReflectionFunctionAbstract $function,
-    ): self;
-
-    public function withNamespace(
-        string $namespace,
-        ?\Closure $exists = null,
-    ): self;
-
-    public function withClasses(string $self, ?string $static = null): self;
-
-    public function resolve(TypeNode $type): TypeNode;
-}
-```
-
-<Aside type="caution">
-`resolve()` **mutates** and returns the **same** `$type` instance you passed
-in — it is not a copy. Clone the AST beforehand (or re-parse) if you need
-to keep the original, unresolved names around.
-</Aside>
-
-## Resolving against PHP `use` statements
-
-The most common use case is resolving relative names the same way PHP resolves
-class references against the `use` statements of the file a phpdoc comment lives
-in.
-
-Given PHP source that declares:
-
-```php
-use TypeLang\Type\Name;
-use TypeLang\Parser\Exception as Error;
-```
-
-register the plain imports with `withTypeImport()` and the aliased ones with
-`withTypeImportAs()`:
-
-```php
-use TypeLang\Parser\TypeResolver;
-
-$resolver = new TypeResolver()
-    // use TypeLang\Type\Name;
-    ->withTypeImport('TypeLang\Type\Name')
-    // use TypeLang\Parser\Exception as Error;
-    ->withTypeImportAs('TypeLang\Parser\Exception', 'Error');
-```
-
-Applying it resolves the first segment of every name that matches one of the
-imports (case-insensitively, just like PHP) and merges in the rest of the name
-unchanged:
+The parser knows nothing about namespaces and `use` statements:
+`Collection<User>` is parsed as written. `TypeLang\Parser\TypeResolver`
+resolves the names afterwards.
 
 ```php
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeResolver;
 
-// parse array shape with 2 named types
-$statement = new TypeParser()
-    ->parse(<<<'PHP'
-        array{
-            Name,
-            Error\ParsingException
-        }
-        PHP);
+$type = new TypeParser()->parse('Name|Error\ParsingException');
 
-// resolve type names
-$statement = new TypeResolver()
+$type = new TypeResolver()
+    // use TypeLang\Type\Name;
     ->withTypeImport('TypeLang\Type\Name')
+    // use TypeLang\Parser\Exception as Error;
     ->withTypeImportAs('TypeLang\Parser\Exception', 'Error')
-    ->resolve($statement);
+    ->resolve($type);
 
-foreach ($statement->fields as $field) {
-    echo $field->type->name->toString(), "\n";
-}
-
-// Expected Output:
-//   TypeLang\Type\Name
-//   TypeLang\Parser\Exception\ParsingException
+// TypeLang\Type\Name|TypeLang\Parser\Exception\ParsingException
 ```
 
-Because `TypeResolver` is immutable, `withTypeImport()` and
-`withTypeImportAs()` return a new instance each time and never mutate the
-receiver — the same resolver can be safely shared and extended for different
-contexts.
+The first segment of a name is matched against the imports, without regard
+to case, as in PHP. The resolver is immutable: every `with*()` returns a new
+one.
 
-### Passing imports through the constructor
+<Aside type="caution">
+`resolve()` changes and returns the **same** `$type`, not a copy. Parse the
+type again to keep the original names.
+</Aside>
 
-If you already have the whole import list assembled, hand it to the constructor
-directly instead of chaining `with*` calls. Plain imports are listed as values
-and aliased ones as `alias => target` pairs:
+## Imports
+
+The same imports as a constructor argument, an alias is a key:
 
 ```php
-use TypeLang\Parser\TypeResolver;
-
 $resolver = new TypeResolver([
     // use TypeLang\Type\Name;
     'TypeLang\Type\Name',
     // use TypeLang\Parser\Exception as Error;
     'Error' => 'TypeLang\Parser\Exception',
 ]);
-
-$statement = $resolver->resolve($statement);
 ```
 
-For a plain import the alias is inferred from the last segment of the name
-(`TypeLang\Type\Name` becomes reachable as `Name`), which mirrors how a
-`use` statement without an explicit `as` behaves.
-
-## Reading imports from Reflection
-
-Instead of listing imports by hand, `TypeResolver` can read them straight from
-the source file of a reflected class or function. Only the imports are read:
-the namespace and `self` are registered with `withNamespace()` and
-`withClasses()`, see below.
-
-Given a class whose file declares:
+Or read from the file of a class or a function:
 
 ```php
-namespace App;
-
-use TypeLang\Type\Name;
-use TypeLang\Parser\Exception as Error;
-
-final class Example {}
-```
-
-`withTypeImportsFromClass()` registers both of its imports:
-
-```php
-use TypeLang\Parser\TypeParser;
-use TypeLang\Parser\TypeResolver;
-
-$statement = new TypeParser()
-    ->parse('Name|Error\ParsingException');
-
-$statement = new TypeResolver()
-    ->withTypeImportsFromClass(new ReflectionClass(App\Example::class))
-    ->resolve($statement);
-
-foreach ($statement as $type) {
-    echo $type->name->toString(), "\n";
-}
-
-// Expected Output:
-//   TypeLang\Type\Name
-//   TypeLang\Parser\Exception\ParsingException
-```
-
-`withTypeImportsFromFunction()` does the same for a free function or a method —
-both are a `ReflectionFunctionAbstract` — reading the imports of the file the
-function is declared in:
-
-```php
-use TypeLang\Parser\TypeResolver;
-
 $resolver = new TypeResolver()
+    ->withTypeImportsFromClass(new ReflectionClass(App\Example::class))
     ->withTypeImportsFromFunction(new ReflectionFunction('App\example'));
 ```
 
 <Aside>
-Only the file header, up to the element's own declaration, is scanned, and
-only real `use` imports are collected — a trait `use` inside a class body or
-a closure `use (...)` capture is never mistaken for an import.
+Only the `use` statements of the file header are read: neither a trait
+`use` of a class body, nor a `use (...)` of a closure. The namespace and
+`self` are registered separately, see below.
 </Aside>
 
-## Resolving against the namespace
+## Namespace
 
-A class of the same namespace is written without an import. `withNamespace()`
-registers the namespace of the file: a relative name that matches no import
-becomes a name of the namespace, and `namespace\Name` always does.
-
-Unlike PHP, a type string also holds names that are not classes at all —
-`list`, `positive-int`, `non-empty-string`, a type alias of your own. So by
-default a name is resolved only in case of a class, an interface or an enum
-of the namespace exists, any other name is kept as written:
+`withNamespace()` registers the namespace of the file. A type string also
+holds names that are not classes (`list`, `positive-int`, an alias of your
+own), so a name is resolved only when such a class, interface or enum
+exists:
 
 ```php
-use TypeLang\Parser\TypeResolver;
+$resolver = new TypeResolver()->withNamespace('App');
 
-$resolver = new TypeResolver()
-    ->withNamespace('App');
-
-// `list<Address>` to `list<App\Address>` in case of `App\Address` exists
-// `list<uuid>` as is
-// `namespace\Address` to `App\Address` always
+// list<Address>      list<App\Address>, when App\Address exists
+// list<uuid>         list<uuid>
+// namespace\Address  App\Address, always
 ```
 
-Pass a check of your own as the second argument to change the rule, such as
+The second argument replaces the check, such as
 `static fn(string $name): bool => true` to resolve every name as PHP does.
-An empty string registers the global namespace.
+An empty string is the global namespace.
 
-## Resolving `self`, `static` and `parent`
+## `self`, `static` and `parent`
 
-`withClasses()` registers the class the type is written in (`self`), the class
-it is used for (`static`, `self` by default), and resolves `parent` to the
-parent of `self`. The names are kept as written without the classes:
+`withClasses()` registers the class the type is written in (`self`) and the
+class it is used for (`static`, the same class by default). `parent` is the
+parent of `self`.
 
 ```php
-use TypeLang\Parser\TypeResolver;
+$resolver = new TypeResolver()->withClasses(App\User::class);
 
-$resolver = new TypeResolver()
-    ->withClasses(App\User::class);
-
-// `self::STATUS_*` to `App\User::STATUS_*`
-// `list<self>` to `list<App\User>`
+// list<self>      list<App\User>
+// self::STATUS_*  App\User::STATUS_*
 ```
 
 <Aside>
-`parent` in a class without a parent throws `\UnexpectedValueException`,
-just like PHP refuses it.
+`parent` of a class without a parent throws `\UnexpectedValueException`.
 </Aside>
 
-## Custom name rewriting
+## Custom rules
 
-When you need to rewrite names some other way — against a runtime class map,
-a DI container, a PSR-4 lookup, and so on — drop down to
-[`TypeMapVisitor`](/toolkit/parser/visitors/#typemapvisitor), which calls a callback of your own for
-every `Name` in the AST. `TypeResolver` is simply the ready-made configuration
-of that visitor for the most common case.
+Any other rule (a class map, a container, a PSR-4 lookup) is a callback of
+[`TypeMapVisitor`](/toolkit/parser/visitors/#typemapvisitor), the visitor
+`TypeResolver` is built on.

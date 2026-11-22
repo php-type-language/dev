@@ -6,166 +6,67 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-Every named building block a [tag's grammar](/phpdoc/extending/grammar/) is assembled
-from — a type, a variable, a URI, an email address — is a **combinator**:
-a small object that knows how to read exactly one piece of syntax and
-nothing else. `Spec::rule(TypeCombinator::NAME, 'type')` in
-[`@param`](/phpdoc/tags/param/)'s definition, for instance, refers to the
-combinator below by name.
+A combinator reads one piece of a tag line: a type, a variable, a URI. A
+[grammar](/phpdoc/extending/grammar/) refers to it by name:
+`Spec::rule(TypeCombinator::NAME, 'type')`.
 
 ```php
-/**
- * @template-covariant TResult of mixed = mixed
- */
 interface CombinatorInterface
 {
-    /**
-     * @return TResult
-     */
     public function __invoke(Cursor $cursor): mixed;
 }
 ```
 
-Given a `Cursor` positioned at the start of whatever text is still left to
-parse, a combinator either consumes the part that belongs to it and returns
-the value it read, or throws `NoMatchException`. The surrounding grammar
-takes a snapshot of the cursor before trying an alternative and rolls it
-back when the combinator does not match — see
-[`Spec::oneOf()`](/phpdoc/extending/grammar/) — but a combinator that decides early, before
-consuming anything, is cheaper and easier to reason about.
+A combinator reads its part from the `Cursor` and returns the value, or
+throws a `NoMatchException`: the grammar then rolls the cursor back and
+tries the next alternative.
 
-The `Cursor` itself offers the handful of reading operations most
-combinators need, so a combinator rarely has to touch its raw position by
-hand: `peek()` and `read()` for a fixed number of bytes, `readWhile()` /
-`readUntil()` for a run of (or up to) a set of characters, `readWord()` for
-the next whitespace-delimited word, `readPhpIdentifier()` /
-`readPhpQualifiedName()` for a name (with or without namespace separators),
-`readLiteral()` for an exact piece of text (it returns `true` and moves on
-when the text is next, and `false` otherwise), `skipWhitespace()` to move
-past blanks, `isEof()` to check for the end of input, and `readRemainder()`
-for whatever is left entirely.
+| `Cursor` method                               | Reads                                  |
+|-----------------------------------------------|----------------------------------------|
+| `peek($length)`, `read($length)`              | a number of bytes, without or with moving |
+| `readWhile($chars)`, `readUntil($chars)`      | a run of, or up to, the characters     |
+| `readWord()`                                  | up to the next whitespace              |
+| `readPhpIdentifier()`, `readPhpQualifiedName()` | a name, without or with `\`          |
+| `readLiteral($text)`                          | the exact text, `false` when it is not next |
+| `readRemainder()`                             | everything left                        |
+| `skipWhitespace()`, `isEof()`                 |                                        |
 
 ## Built-in combinators
 
-Sixteen combinators cover every built-in tag's grammar between them:
-
-<table style="both">
-    <tr>
-        <td width="140">Name</td>
-        <td width="160">Returns</td>
-        <td>Reads</td>
-    </tr>
-    <tr>
-        <td>`Visibility`</td>
-        <td>`Visibility`</td>
-        <td>Method or property visibility.</td>
-    </tr>
-    <tr>
-        <td>`AssertSubject`</td>
-        <td>`CodeReference`</td>
-        <td>What an assertion is written of: `$value`,
-            `$this->items`, `$this->getItems()`
-            or `self::$instances`.</td>
-    </tr>
-    <tr>
-        <td>`AuthorName`</td>
-        <td>`string`</td>
-        <td>Everything up to an optional `"<"`.</td>
-    </tr>
-    <tr>
-        <td>`CallableType`</td>
-        <td>`TypeReference`</td>
-        <td>A [TypeLang callable type](/language/syntax/callables/).</td>
-    </tr>
-    <tr>
-        <td>`Description`</td>
-        <td>`DescriptionInterface`</td>
-        <td>Everything left, recursively parsed for inline tags.</td>
-    </tr>
-    <tr>
-        <td>`Email`</td>
-        <td>`string`</td>
-        <td>An address, up to its closing `">"`.</td>
-    </tr>
-    <tr>
-        <td>`FlowType`</td>
-        <td>`FlowType`</td>
-        <td>A taint flow kind: `TaintSource`,
-            `TaintSink`, `TaintSpecialize` or
-            `TaintUnescape`.</td>
-    </tr>
-    <tr>
-        <td>`Integer`</td>
-        <td>`int`</td>
-        <td>A non-negative integer.</td>
-    </tr>
-    <tr>
-        <td>`IssueName`</td>
-        <td>`string`</td>
-        <td>Letters, digits, `_`, `-` and `.`.</td>
-    </tr>
-    <tr>
-        <td>`Name`</td>
-        <td>`string`</td>
-        <td>A single identifier.</td>
-    </tr>
-    <tr>
-        <td>`Reference`</td>
-        <td>`CodeReference`</td>
-        <td>A class, function, method, constant, property or variable.</td>
-    </tr>
-    <tr>
-        <td>`Type`</td>
-        <td>`TypeReference`</td>
-        <td>A full [TypeLang type](/language/).</td>
-    </tr>
-    <tr>
-        <td>`URI`</td>
-        <td>`UriReference`</td>
-        <td>A well-formed word, per RFC 3986.</td>
-    </tr>
-    <tr>
-        <td>`URL`</td>
-        <td>`UrlReference`</td>
-        <td>A word that additionally carries a scheme.</td>
-    </tr>
-    <tr>
-        <td>`Variable`</td>
-        <td>`string`</td>
-        <td>A `$name`, without the leading `$`.</td>
-    </tr>
-    <tr>
-        <td>`Version`</td>
-        <td>`string`</td>
-        <td>A word beginning with a digit; <br />anything else is left for the description.</td>
-    </tr>
-</table>
+| Name            | Returns                | Reads                                       |
+|-----------------|------------------------|---------------------------------------------|
+| `Type`          | `TypeReference`        | a [TypeLang type](/language/)               |
+| `CallableType`  | `TypeReference`        | a [callable type](/language/syntax/callables/) |
+| `Variable`      | `string`               | a `$name`, without the `$`                  |
+| `Name`          | `string`               | an identifier                               |
+| `Integer`       | `int`                  | a non-negative integer                      |
+| `Reference`     | `CodeReference`        | a class, function, method, constant, property or variable |
+| `AssertSubject` | `CodeReference`        | `$value`, `$this->items`, `$this->getItems()`, `self::$instances` |
+| `URI`           | `UriReference`         | a word of RFC 3986                          |
+| `URL`           | `UrlReference`         | a URI with a scheme                         |
+| `Version`       | `string`               | a word beginning with a digit               |
+| `IssueName`     | `string`               | letters, digits, `_`, `-` and `.`           |
+| `Description`   | `DescriptionInterface` | everything left, with its inline tags       |
+| `Visibility`    | `Visibility`           | `public`, `protected` or `private`          |
+| `AuthorName`    | `string`               | everything up to an optional `<`            |
+| `Email`         | `string`               | an address, up to its closing `>`           |
+| `FlowType`      | `FlowType`             | a taint flow kind of Psalm                  |
 
 <Aside>
-The parser itself provides `URI`,
-`URL`, `Reference`, `Type`,
-`CallableType`, `Variable`, `AssertSubject`,
-`Integer`, `IssueName`, `Version` and
-`Name` to every platform, `Type` and
-`CallableType` reading types with the `TypeParser`
-passed to `DocBlockParser`. [Platforms](/phpdoc/platforms/) add
-the combinators only their own tags need: `PhpDocumentorPlatform` adds
-`Visibility`, `AuthorName` and `Email`, and
-`PsalmPlatform` adds `FlowType`. `Description`
-is wired by the parser itself and cannot be redefined.
+`Visibility`, `AuthorName` and `Email` are added by `PhpDocumentorPlatform`,
+`FlowType` by `PsalmPlatform`, the others are given to every platform by the
+parser. `Type` and `CallableType` read types by the `TypeParser` of
+`DocBlockParser`. `Description` cannot be redefined.
 </Aside>
 
 ## Writing one of your own
 
-A combinator that reads one of a fixed set of keywords looks much like the
-built-in `Visibility` combinator above. This one reads a `low` / `medium` /
-`high` priority level:
+A combinator reading a `low` or `high` priority:
 
 ```php
 enum Priority: string
 {
     case Low = 'low';
-    case Medium = 'medium';
     case High = 'high';
 }
 
@@ -175,32 +76,40 @@ final class PriorityCombinator implements CombinatorInterface
 
     public function __invoke(Cursor $cursor): Priority
     {
-        $priority = Priority::tryFrom($cursor->readWord());
-
-        if ($priority === null) {
-            throw new NoMatchException('Expected a priority level');
-        }
-
-        return $priority;
+        return Priority::tryFrom($cursor->readWord())
+            ?? throw new NoMatchException('Expected a priority level');
     }
 }
 ```
 
-Three habits keep a combinator well-behaved inside a larger grammar:
+It is registered by a [platform](/phpdoc/platforms/) and used as a built-in
+one:
 
-* **Fail before consuming.** Throw `NoMatchException` the moment the input
-  is found not to fit, before reading anything that would belong to what
-  comes next — a combinator that consumes first and validates afterward
-  leaves the cursor somewhere a sibling alternative can no longer make sense
-  of.
-* **Consume only your own syntax.** Whitespace meant to separate one grammar
-  element from the next is handled by `Spec::sequence()`, not by the
-  combinator itself; reading past it leaves nothing for the rest of the
-  grammar to match.
-* **Fail rather than guess.** When more than one reading of the same input
-  would be plausible, throwing and letting a different alternative in a
-  surrounding `Spec::oneOf()` take over is safer than silently picking one.
+```php
+final class PriorityPlatform extends Platform
+{
+    public function getCombinators(): iterable
+    {
+        return [PriorityCombinator::NAME => new PriorityCombinator()];
+    }
 
-Once written, a combinator with a `NAME` constant is used from a tag's
-`$spec` exactly like a built-in one — see [Grammar](/phpdoc/extending/grammar/). To make it
-available to the parser, register it on a [platform](/phpdoc/platforms/).
+    // ...
+}
+
+// "@priority" <Priority>
+Spec::rule(PriorityCombinator::NAME, 'priority');
+```
+
+```php
+$parser->parse('/** @priority high */')[0];
+// PriorityTag { priority: Priority::High }
+
+$parser->parse('/** @priority urgent */')[0];
+// InvalidTag: Malformed "@priority" tag, expected: <Priority>
+```
+
+<Aside type="tip">
+Read only your own syntax: the whitespace between the parts of a grammar is
+skipped by `Spec::sequence()`. When the input does not fit, throw instead of
+guessing: another alternative of `Spec::oneOf()` may take it.
+</Aside>

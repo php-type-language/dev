@@ -6,53 +6,20 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-A [definition](/phpdoc/extending/definitions/)'s `spec` — the shape of the line that follows
-`@tagname` — is written with a handful of factory methods on `Spec`, combined
-the same way a regular-expression or parser-combinator library would be: a
-sequence of parts, one of several alternatives, an optional group, a repeated
-group.
+The `spec` of a [definition](/phpdoc/extending/definitions/) is the grammar
+of the line after `@tagname`, built by the methods of `Spec`:
+
+| Method                              | Grammar            | Matches                          |
+|-------------------------------------|--------------------|----------------------------------|
+| `Spec::literal('static')`           | `"static"`         | an exact word or symbol          |
+| `Spec::rule(TypeCombinator::NAME)`  | `<Type>`           | what the [combinator](/phpdoc/extending/combinators/) reads |
+| `Spec::sequence($a, $b)`            | `a b`              | every rule, one after another    |
+| `Spec::oneOf($a, $b)`               | `( a \| b )`       | the first rule that applies      |
+| `Spec::maybe($a)`                   | `[ a ]`            | the rule or nothing              |
+| `Spec::repeat($a)`                  | `[ a ... ]`        | the rule, any number of times    |
 
 ```php
-// an exact word or symbol, e.g. 'static', optionally captured under an alias
-Spec::literal(string $value, ?string $alias = null)
-
-// a named building block — see Combinators; the alias captures its value,
-// $renderAs is how the rule is printed in the tag's grammar string
-Spec::rule(string $name, ?string $alias = null, ?string $renderAs = null)
-
-// every rule, one after another
-Spec::sequence($rule, ...$other)
-
-// the first rule that applies
-Spec::oneOf($rule, ...$other)
-
-// the rule, or nothing at all
-Spec::maybe($rule)
-
-// the rule, as many times as it applies, at least $times of them
-Spec::repeat($rule, int $times = 0)
-```
-
-`Spec::rule()` is how a grammar reaches into the type parser, a variable, a URI,
-and so on without knowing anything about how any of those are actually read —
-that part is delegated entirely to a **combinator**.
-
-<Aside type="tip">
-Every `Spec::rule()` names the combinator that reads that part of the
-line. See [Combinators](/phpdoc/extending/combinators/) for the built-in set and how
-to write one of your own.
-</Aside>
-
-Take the [`@param`](/phpdoc/tags/param/) tag, whose grammar is
-
-```
-"@param" <Type> <Variable> [ <Description> ]
-```
-
-Written with `Spec` — a type, then a variable, then an optional description —
-this becomes:
-
-```php
+// "@param" <Type> <Variable> [ <Description> ]
 Spec::sequence(
     Spec::rule(TypeCombinator::NAME, 'type'),
     Spec::rule(VariableCombinator::NAME, 'variable'),
@@ -62,29 +29,28 @@ Spec::sequence(
 )
 ```
 
+`Spec::repeat($rule, times: 1)` requires at least one match (`a ...`). The third
+argument of `Spec::rule()` is the name of the rule in the printed grammar:
+`Spec::rule(IntegerCombinator::NAME, 'amount', 'Amount')` is `<Amount>`.
+
 ## Captures
 
-The second argument to `Spec::rule()` — `'type'`, `'variable'`, `'description'`
-above — is an **alias**: the key under which whatever that part of the grammar
-matched is later retrieved from the `TagPayload` handed to a definition's
-`create()`.
+The second argument of `Spec::rule()` and `Spec::literal()` is an alias: the
+key of the matched value in the `TagPayload` given to `create()` of the
+definition. A rule without an alias has to match, but its value is not kept.
 
 ```php
-$result->get('type');          // required — throws if nothing was captured
-$result->find('description');  // optional — null when it did not match
-$result->getAll('issue');      // every value captured under a repeating alias
+$result->get('type');         // the value, throws when not captured
+$result->find('description'); // the value or null
+$result->getAll('issue');     // every value of a repeated alias
 ```
 
-`getAll()` returns every value captured under an alias that can occur more than
-once — the [`@suppress`](/phpdoc/tags/suppress/) tag uses exactly that, for its
-comma-separated list of issue names:
-
-```
-"@suppress" <IssueName> { "," <IssueName> } [ <Description> ]
-```
+An alias may repeat, such as the issues of
+[`@suppress`](/phpdoc/tags/suppress/):
 
 ```php
-spec: Spec::sequence(
+// "@suppress" <IssueName> [ "," <IssueName> ... ] [ <Description> ]
+Spec::sequence(
     Spec::rule(IssueNameCombinator::NAME, 'issue'),
     Spec::repeat(
         Spec::sequence(
@@ -95,25 +61,8 @@ spec: Spec::sequence(
     Spec::maybe(
         Spec::rule(DescriptionCombinator::NAME, 'description'),
     ),
-),
+)
+
+// @suppress PhanUnusedVariable, PhanTypeMismatch
+$result->getAll('issue'); // ['PhanUnusedVariable', 'PhanTypeMismatch']
 ```
-
-```php
-// every comma-separated identifier
-$issues = $result->getAll('issue');
-```
-
-A rule that only shapes the grammar, without producing a value worth keeping —
-a literal delimiter such as the `<`/`>` around an email address in
-[`@author`](/phpdoc/tags/author/) — is simply written without an alias at all; it
-still has to match, but nothing is captured for it.
-
-<Aside>
-A definition reads these captures back inside its `create()` method.
-See [Definitions](/phpdoc/extending/definitions/#building-the-tag).
-</Aside>
-
-## Where to go next
-
-- **Combinators**: The named building blocks a `Spec::rule()` runs. See [Combinators](/phpdoc/extending/combinators/).
-- **Definitions**: Where a `spec` lives and how its captures are turned into a tag. See [Definitions](/phpdoc/extending/definitions/).

@@ -7,140 +7,85 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-A **platform** is a bundle of [tag definitions](/phpdoc/extending/definitions/), aliases
-and [combinators](/phpdoc/extending/combinators/) — everything needed to teach the parser a
-family of tags.
-
-A platform implements `PlatformInterface`, three methods, each returning an
-`iterable`. The abstract `Platform` base class implements all three as empty,
-so a platform extends it and overrides only what it contributes:
+A platform is a set of tags the parser knows: their
+[definitions](/phpdoc/extending/definitions/), aliases and
+[combinators](/phpdoc/extending/combinators/).
 
 ```php
+use TypeLang\PhpDoc\DocBlockParser;
+
+// every built-in platform
+$parser = DocBlockParser::createDefault();
+
+// every built-in platform and your own
+$parser = DocBlockParser::createDefault(additionalPlatforms: [
+    new MoneyPlatform(),
+]);
+
+// only the given ones: any other tag is a plain Tag
+$parser = new DocBlockParser(platforms: [
+    new StandardPlatform(),
+    new PhpStanPlatform(),
+]);
+```
+
+<Aside type="caution">
+`new DocBlockParser()` without arguments loads **no** platform at all.
+</Aside>
+
+A later platform overrides a tag, an alias or a combinator of an earlier
+one with the same name. No name is shared by two built-in platforms, so
+their order does not matter. The names are matched without regard to case.
+
+<Aside type="tip">
+The parser builds its grammar once, in the constructor: create it once and
+reuse it.
+</Aside>
+
+## Built-in platforms
+
+| Platform                 | Tags                                                |
+|--------------------------|-----------------------------------------------------|
+| `StandardPlatform`       | [Standard](/phpdoc/platforms/standard/) and [Advanced](/phpdoc/platforms/advanced/) |
+| `PhpDocumentorPlatform`  | [phpDocumentor](/phpdoc/platforms/phpdocumentor/)   |
+| `PhpStanPlatform`        | [PHPStan](/phpdoc/platforms/phpstan/) and the `@phpstan-` spellings of the shared tags |
+| `PsalmPlatform`          | [Psalm](/phpdoc/platforms/psalm/) and the `@psalm-` spellings |
+| `PhanPlatform`           | [Phan](/phpdoc/platforms/phan/) and the `@phan-` spellings |
+| `PhpStormPlatform`       | [PhpStorm](/phpdoc/platforms/phpstorm/)             |
+| `PhpCodeSnifferPlatform` | [PHP CodeSniffer](/phpdoc/platforms/phpcs/)         |
+
+## Custom platform
+
+A platform extends `Platform` and overrides what it adds:
+
+```php
+use TypeLang\PhpDoc\Platform\Platform;
+
 final class MoneyPlatform extends Platform
 {
+    // definitions by the name of the tag
     public function getTags(): iterable
     {
-        return [
-            MoneyTagDefinition::getCanonicalName() => new MoneyTagDefinition(),
-        ];
+        return ['money' => new MoneyTagDefinition()];
+    }
+
+    // other spellings of a tag: @price is read as @money
+    public function getAliases(): iterable
+    {
+        return ['price' => 'money'];
+    }
+
+    // combinators the definitions use, by their names
+    public function getCombinators(): iterable
+    {
+        return [PriorityCombinator::NAME => new PriorityCombinator()];
     }
 }
 ```
 
-* **`getTags()`** — [definitions](/phpdoc/extending/definitions/), keyed by each tag's
-  canonical name.
-* **`getAliases()`** — alternative-spelling to canonical-name pairs, both
-  lower-case (this is how `@template-implements` is treated as `@implements`, for instance).
-* **`getCombinators()`** — any [combinator](/phpdoc/extending/combinators/) the definitions
-  reference that is not built in already, keyed by name. A value is a
-  `CombinatorInterface` implementation or any `callable(Cursor): mixed`.
+A combinator is a `CombinatorInterface` or any `callable(Cursor): mixed`.
+See [custom tags](/phpdoc/extending/custom-tags/) for the whole way from a
+tag to a platform.
 
-<Aside>
-`MoneyTagDefinition` only leans on the built-in `Integer`
-and `Name` combinators, so its platform contributes none of its own.
-A platform adds combinators only when its tags introduce grammar the parser
-does not already provide — see
-[Writing One of Your Own](/phpdoc/extending/combinators/#writing-one-of-your-own).
-</Aside>
-
-Tag names and aliases are matched case-insensitively: a definition registered
-as `inheritDoc` also answers to `@inheritdoc`.
-
-## Built-in platforms
-
-<table style="both">
-    <tr>
-        <td width="220">Platform</td>
-        <td>Contributes</td>
-    </tr>
-    <tr>
-        <td>`StandardPlatform`</td>
-        <td>The [Standard](/phpdoc/platforms/standard/) and
-            [Advanced](/phpdoc/platforms/advanced/) tags and their
-            aliases.</td>
-    </tr>
-    <tr>
-        <td>`PhpDocumentorPlatform`</td>
-        <td>The [phpDocumentor](/phpdoc/platforms/phpdocumentor/) tags.</td>
-    </tr>
-    <tr>
-        <td>`PhpStanPlatform`</td>
-        <td>The [PHPStan](/phpdoc/platforms/phpstan/) tags and the
-            `@phpstan-` spellings of the shared ones.</td>
-    </tr>
-    <tr>
-        <td>`PsalmPlatform`</td>
-        <td>The [Psalm](/phpdoc/platforms/psalm/) tags and the
-            `@psalm-` spellings of the shared ones.</td>
-    </tr>
-    <tr>
-        <td>`PhanPlatform`</td>
-        <td>The [Phan](/phpdoc/platforms/phan/) tags and the
-            `@phan-` spellings of the shared ones.</td>
-    </tr>
-    <tr>
-        <td>`PhpStormPlatform`</td>
-        <td>The [PhpStorm](/phpdoc/platforms/phpstorm/) tags.</td>
-    </tr>
-    <tr>
-        <td>`PhpCodeSnifferPlatform`</td>
-        <td>The [PHP CodeSniffer](/phpdoc/platforms/phpcs/) tags.</td>
-    </tr>
-</table>
-
-## Registering it
-
-The platform is handed to `DocBlockParser`'s constructor:
-
-```php
-$parser = new DocBlockParser(platforms: [
-    new MoneyPlatform(),
-]);
-
-$block = $parser->parse('/** @money 100 USD */');
-```
-
-The parser loads exactly the platforms it is given, in order: a later platform
-overrides an entry of an earlier one only when it reuses the same tag, alias or
-combinator name. Every platform is self-contained, so `MoneyPlatform` alone
-yields a parser that knows `@money` and nothing else (any other tag is read as a
-plain `Tag`).
-
-<Aside>
-`new DocBlockParser()` with no arguments loads **no** platform at
-all. To load every built-in one (Standard, phpDocumentor, Psalm, PHPStan, Phan,
-PhpStorm and PHP CodeSniffer), use the
-`DocBlockParser::createDefault()` factory. No tag name is shared by
-two built-in platforms, so the order they are loaded in does not matter:
-
-```php
-$parser = DocBlockParser::createDefault();
-```
-
-To register your own platform on top of the built-in tool families, pass it to
-`createDefault()` via the `$additionalPlatforms` argument —
-it is appended after the built-in platforms, so it extends them and overrides an
-entry only when it reuses the same name:
-
-```php
-$parser = DocBlockParser::createDefault(additionalPlatforms: [
-    new MoneyPlatform(),
-]);
-```
-
-</Aside>
-
-The definitions that end up registered are exposed as `$parser->tags` (a
-countable, iterable `TagRegistryInterface`), and the factory that builds tags
-from them as `$parser->factory`.
-
-<Aside type="tip">
-A `DocBlockParser` builds its whole tag and type grammar once, in its
-constructor, and is otherwise stateless. Construct it once — platforms and
-all — and reuse it across the application rather than per docblock.
-</Aside>
-
-## Where to go next
-
-- **Definitions**: What a `$tags` entry is. See [Definitions](/phpdoc/extending/definitions/).
-- **Combinators**: What a `$combinators` entry is. See [Combinators](/phpdoc/extending/combinators/).
+The registered definitions are `$parser->tags`, a countable and iterable
+`TagRegistryInterface`.

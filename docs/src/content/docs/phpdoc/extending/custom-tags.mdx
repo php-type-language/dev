@@ -6,61 +6,22 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-None of the tags listed in the sidebar are special-cased inside the parser.
-`@param`, `@see`, `@template` and every other tag are declared the exact same
-way, and a tag of your own is added through that very same mechanism: a 
-**[platform](/phpdoc/platforms/)**.
-
-Adding one takes a few small parts that fit together — a tag object, its
-definition, the grammar the definition is written in, the combinators it leans
-on, and the platform that registers the lot. This page shows how they connect;
-each part is covered in depth on its own page, linked as it comes up and again
-under [Where to Go Next](#where-to-go-next).
-
-## Adding a tag in practice
-
-Recognizing a `@money` tag of your own — documenting a monetary amount and a
-currency — starts from the shape of the line it should accept:
+No tag is special to the parser: `@param`, `@see` and a tag of your own are
+declared the same way. A tag takes three parts:
 
 ```
-"@money" <Amount> <Currency> [ <Description> ]
+@money 100 USD The price
+
+MoneyTag             the object a line becomes
+MoneyTagDefinition   the grammar of the line and how the tag is created
+MoneyPlatform        registers the definition in the parser
 ```
 
-Describing that shape is all the parser needs: it becomes the tag's
-**specification**, written with the [`Spec`](/phpdoc/extending/grammar/) grammar DSL — an
-integer, then a name, then an optional description:
+## The tag
+
+A [tag](/phpdoc/extending/tags/) is a value object of what the line holds:
 
 ```php
-use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\IntegerCombinator;
-use TypeLang\PhpDoc\DocBlock\Combinator\NameCombinator;
-use TypeLang\PhpDoc\DocBlock\TagDefinition\Spec;
-
-$spec = Spec::sequence(
-    Spec::rule(IntegerCombinator::NAME, 'amount', 'Amount'),
-    Spec::rule(NameCombinator::NAME, 'currency', 'Currency'),
-    Spec::maybe(
-        Spec::rule(DescriptionCombinator::NAME, 'description'),
-    ),
-);
-```
-
-Each `Spec::rule()` takes the combinator that reads that part of the line, the
-alias its captured value is stored under, and — optionally — the name (e.g. 
-`Amount` or `Currency`) it renders as in the grammar above.
-
-<Aside type="tip">
-The building blocks named here — `Integer`, `Name`,
-`Description` — are combinators. See [Grammar](/phpdoc/extending/grammar/)
-for the `Spec` DSL and [Combinators](/phpdoc/extending/combinators/) for
-the blocks it reads with.
-</Aside>
-
-The value object the parsed line becomes is a small, immutable [tag](/phpdoc/extending/tags/)
-class:
-
-```php
-use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\Tag\Tag;
 
 final class MoneyTag extends Tag
@@ -76,24 +37,23 @@ final class MoneyTag extends Tag
 }
 ```
 
-A specification is not used on its own — it is declared inside a
-[definition](/phpdoc/extending/definitions/), which pairs it with a `create()` method turning a
-match into that tag object:
+## The definition
+
+A [definition](/phpdoc/extending/definitions/) declares the
+[grammar](/phpdoc/extending/grammar/) of the line and creates the tag from
+what the grammar captured:
 
 ```php
+use TypeLang\PhpDoc\DocBlock\TagDefinition\Spec;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagDefinition;
 use TypeLang\PhpDoc\DocBlock\TagDefinition\TagPayload;
 
 final class MoneyTagDefinition extends TagDefinition
 {
-    public static function getCanonicalName(): string
-    {
-        return 'money';
-    }
-
     public function __construct()
     {
-        parent::__construct(self::getCanonicalName(), Spec::sequence(
+        // "@money" <Amount> <Currency> [ <Description> ]
+        parent::__construct('money', Spec::sequence(
             Spec::rule(IntegerCombinator::NAME, 'amount', 'Amount'),
             Spec::rule(NameCombinator::NAME, 'currency', 'Currency'),
             Spec::maybe(
@@ -114,19 +74,13 @@ final class MoneyTagDefinition extends TagDefinition
 }
 ```
 
-The aliases declared in the spec — `'amount'`, `'currency'`, `'description'` —
-are exactly how `create()` reads the matched pieces back: the `TagPayload` it
-receives is keyed by them, so `$result->get('amount')` returns whatever the
-`amount` rule captured.
+`Spec::rule()` takes the [combinator](/phpdoc/extending/combinators/) that
+reads the part of the line, the alias its value is captured under and the
+name it has in the printed grammar.
 
-<Aside type="tip">
-`get()` fetches a required capture, `find()` an optional
-one, and `getAll()` every value of a repeating one. See
-[Captures](/phpdoc/extending/grammar/#captures).
-</Aside>
+## The platform
 
-Finally, the definition is registered by contributing a [platform](/phpdoc/platforms/)
-to the parser:
+A [platform](/phpdoc/platforms/) registers the definition:
 
 ```php
 use TypeLang\PhpDoc\DocBlockParser;
@@ -136,52 +90,20 @@ final class MoneyPlatform extends Platform
 {
     public function getTags(): iterable
     {
-        return [
-            MoneyTagDefinition::getCanonicalName() => new MoneyTagDefinition(),
-        ];
+        return ['money' => new MoneyTagDefinition()];
     }
 }
 
-$parser = new DocBlockParser(platforms: [
-    new MoneyPlatform(),
-]);
-
-$block = $parser->parse('/** @money 100 USD */');
-
-$block[0]; // MoneyTag { amount: 100, currency: "USD" }
-```
-
-A platform's three methods register the three kinds of thing the parser needs:
-
-* **`getTags()`** registers the [definitions](/phpdoc/extending/definitions/), keyed by each
-  tag's canonical name.
-* **`getCombinators()`** registers any [combinators](/phpdoc/extending/combinators/) the
-  definitions reference that are not built in already (`@money` needs none).
-* **`getAliases()`** maps an alternative spelling to a canonical tag name.
-
-`Platform` is an abstract base whose three methods return empty lists, so a
-platform overrides only the ones it needs; implementing `PlatformInterface`
-directly works just as well.
-
-<Aside>
-The constructor loads only the platforms passed to it: no built-in platform,
-not even the `StandardPlatform`, is added on its own. To get the
-full built-in set together with your own platform, pass it to
-[`DocBlockParser::createDefault()`](/phpdoc/platforms/) via its
-`$additionalPlatforms` argument:
-
-```php
 $parser = DocBlockParser::createDefault(additionalPlatforms: [
     new MoneyPlatform(),
 ]);
+
+$block = $parser->parse('/** @money 100 USD The price */');
+
+$block[0]; // MoneyTag { amount: 100, currency: 'USD' }
 ```
 
+<Aside>
+`new DocBlockParser(platforms: [new MoneyPlatform()])` knows `@money` and
+nothing else: the constructor adds no built-in platform.
 </Aside>
-
-## Where to go next
-
-- **Tags**: What a parsed tag object is. See [Tags](/phpdoc/extending/tags/).
-- **Definitions**: How a tag's parsing and construction are declared. See [Definitions](/phpdoc/extending/definitions/).
-- **Grammar**: The `Spec` DSL a definition's body is written in. See [Grammar](/phpdoc/extending/grammar/).
-- **Combinators**: The building blocks a grammar reads with. See [Combinators](/phpdoc/extending/combinators/).
-- **Platforms**: Bundling and registering it all. See [Platforms](/phpdoc/platforms/).

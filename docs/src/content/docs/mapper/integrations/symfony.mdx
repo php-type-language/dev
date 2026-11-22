@@ -243,11 +243,7 @@ An attribute on a class that does not implement the interface of its role
 is an error, so is a tag of a mapper that is not declared.
 </Aside>
 
-### Type builders
-
-A type builder adds a type of your own, such as `money` or a generic
-`collection<T>`, or replaces a built-in one. See
-[Custom types](/mapper/extending/types/).
+A role with a list of services:
 
 <Tabs>
 <TabItem label="YAML">
@@ -255,10 +251,12 @@ A type builder adds a type of your own, such as `money` or a generic
 ```yaml
 # config/packages/type_lang_mapper.yaml
 type_lang_mapper:
+  # the default mapper and all named ones
   types:
     - App\Mapper\UuidTypeBuilder
   mappers:
     api:
+      # the "api" mapper only
       types:
         - App\Mapper\MoneyTypeBuilder
 ```
@@ -268,7 +266,6 @@ type_lang_mapper:
 
 ```php
 use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperTypeBuilder;
-use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;
 
 // the default mapper and all named ones
 #[AsMapperTypeBuilder]
@@ -282,244 +279,21 @@ final class MoneyTypeBuilder implements TypeBuilderInterface {}
 </TabItem>
 </Tabs>
 
-### Decorators
+Decorators, expanders, hooks, instantiators, accessors and metadata readers
+are added the same way, by their config key and attribute of the table.
 
-A decorator wraps the types the mapper builds, whatever builder built them,
-such as to preprocess the input of every enum. See
-[Decorators](/mapper/extending/decorators/).
+<Aside>
+A metadata reader has the highest [priority](/mapper/metadata/#readers):
+what it sets overrides the attributes, the config files, PHPDoc and
+reflection.
+</Aside>
 
-<Tabs>
-<TabItem label="YAML">
+### Coercers and formatters
 
-```yaml
-type_lang_mapper:
-  decorators:
-    - App\Mapper\TrimEnumsDecorator
-  mappers:
-    api:
-      decorators:
-        - App\Mapper\LoggingDecorator
-```
-
-</TabItem>
-<TabItem label="Attributes">
-
-```php
-use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperDecorator;
-use TypeLang\Mapper\Type\Decorator\TypeDecoratorInterface;
-
-// the default mapper and all named ones
-#[AsMapperDecorator]
-final class TrimEnumsDecorator implements TypeDecoratorInterface {}
-
-// the "api" mapper only, before the decorators of a lower priority
-#[AsMapperDecorator(mappers: ['api'], priority: 10)]
-final class LoggingDecorator implements TypeDecoratorInterface {}
-```
-
-</TabItem>
-</Tabs>
-
-### Type expanders
-
-An expander tells how a type of your own is shown to clients in the
-messages of errors, such as a `Uuid` as `string`. See
-[Expanders](/mapper/extending/expanders/).
-
-<Tabs>
-<TabItem label="YAML">
-
-```yaml
-type_lang_mapper:
-  expanders:
-    - App\Mapper\UuidTypeExpander
-  mappers:
-    api:
-      expanders:
-        - App\Mapper\MoneyTypeExpander
-```
-
-</TabItem>
-<TabItem label="Attributes">
-
-```php
-use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperTypeExpander;
-use TypeLang\Mapper\Type\Expander\TypeExpanderInterface;
-
-// the default mapper and all named ones
-#[AsMapperTypeExpander]
-final class UuidTypeExpander implements TypeExpanderInterface {}
-
-// the "api" mapper only, before the expanders of a lower priority
-#[AsMapperTypeExpander(mappers: ['api'], priority: 10)]
-final class MoneyTypeExpander implements TypeExpanderInterface {}
-```
-
-</TabItem>
-</Tabs>
-
-### Hooks
-
-A hook runs before or after the conversion of objects of some classes: it
-changes the data, checks the invariants of the object, adds data to the
-output. See [Hooks](/mapper/extending/hooks/).
-
-<Tabs>
-<TabItem label="YAML">
-
-```yaml
-type_lang_mapper:
-  hooks:
-    - App\Mapper\PeriodHook
-  mappers:
-    api:
-      hooks:
-        - App\Mapper\LinksHook
-```
-
-</TabItem>
-<TabItem label="Attributes">
-
-```php
-use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperHook;
-use TypeLang\Mapper\Hook\AfterDenormalizationHookInterface;
-use TypeLang\Mapper\Hook\AfterNormalizationHookInterface;
-
-// the default mapper and all named ones
-#[AsMapperHook]
-final class PeriodHook implements AfterDenormalizationHookInterface {}
-
-// the "api" mapper only, before the hooks of a lower priority
-#[AsMapperHook(mappers: ['api'], priority: 10)]
-final class LinksHook implements AfterNormalizationHookInterface {}
-```
-
-</TabItem>
-</Tabs>
-
-### Instantiators
-
-An instantiation strategy creates the objects of some classes, or finds
-existing ones, such as entities to update. See
-[Instantiators](/mapper/extending/instantiators/).
-
-<Tabs>
-<TabItem label="YAML">
-
-```yaml
-type_lang_mapper:
-  instantiators:
-    - App\Mapper\AccountStrategy
-  mappers:
-    api:
-      instantiators:
-        - App\Mapper\ContainerStrategy
-```
-
-</TabItem>
-<TabItem label="Attributes">
-
-```php
-use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperInstantiator;
-use TypeLang\Mapper\Instantiator\Strategy\InstantiationStrategyInterface;
-
-// the default mapper and all named ones
-#[AsMapperInstantiator]
-final class AccountStrategy implements InstantiationStrategyInterface {}
-
-// the "api" mapper only, before the strategies of a lower priority
-#[AsMapperInstantiator(mappers: ['api'], priority: 10)]
-final class ContainerStrategy implements InstantiationStrategyInterface {}
-```
-
-</TabItem>
-</Tabs>
-
-### Accessors
-
-An access strategy reads and writes the properties of some classes, such as
-through getters and setters. See
-[Property accessors](/mapper/extending/accessors/).
-
-<Tabs>
-<TabItem label="YAML">
-
-```yaml
-type_lang_mapper:
-  accessors:
-    - App\Mapper\AccessorMethodsStrategy
-  mappers:
-    api:
-      accessors:
-        - App\Mapper\LazyProxyStrategy
-```
-
-</TabItem>
-<TabItem label="Attributes">
-
-```php
-use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperAccessor;
-use TypeLang\Mapper\PropertyAccessor\Strategy\AccessStrategyInterface;
-
-// the default mapper and all named ones
-#[AsMapperAccessor]
-final class AccessorMethodsStrategy implements AccessStrategyInterface {}
-
-// the "api" mapper only, before the strategies of a lower priority
-#[AsMapperAccessor(mappers: ['api'], priority: 10)]
-final class LazyProxyStrategy implements AccessStrategyInterface {}
-```
-
-</TabItem>
-</Tabs>
-
-### Metadata readers
-
-A metadata reader tells how the classes are mapped from a source of your
-own: the fields, their names and types. See [Metadata](/mapper/metadata/).
-A reader has the highest [priority](/mapper/metadata/#readers): what it sets
-overrides the attributes, the config files, PHPDoc and reflection.
-
-<Tabs>
-<TabItem label="YAML">
-
-```yaml
-type_lang_mapper:
-  metadata:
-    readers:
-      - App\Mapper\LegacyMappingReader
-  mappers:
-    api:
-      metadata:
-        readers:
-          - App\Mapper\ApiMappingReader
-```
-
-</TabItem>
-<TabItem label="Attributes">
-
-```php
-use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperMetadataReader;
-use TypeLang\Mapper\Mapping\Reader\MetadataReaderInterface;
-
-// the default mapper and all named ones
-#[AsMapperMetadataReader]
-final class LegacyMappingReader implements MetadataReaderInterface {}
-
-// the "api" mapper only, over the readers of a lower priority
-#[AsMapperMetadataReader(mappers: ['api'], priority: 10)]
-final class ApiMappingReader implements MetadataReaderInterface {}
-```
-
-</TabItem>
-</Tabs>
-
-### Coercers
-
-A coercer converts a value written in another form when the mapping is not
-strict, such as `'4,2'` to `4.2`. It replaces the built-in one of its type:
-`int`, `float`, `string`, `bool` or `array`. The attribute takes the type
-instead of a priority. See [Type coercion](/mapper/coercion/#custom-coercers).
+A mapper has one coercer per type (`int`, `float`, `string`, `bool`,
+`array`) and one formatter per direction (`denormalization`,
+`normalization`). The attribute takes the type or the direction instead of
+a priority:
 
 <Tabs>
 <TabItem label="YAML">
@@ -528,6 +302,8 @@ instead of a priority. See [Type coercion](/mapper/coercion/#custom-coercers).
 type_lang_mapper:
   coercers:
     bool: App\Mapper\YesNoCoercer
+  formatters:
+    denormalization: App\Mapper\TranslatedFormatter
   mappers:
     api:
       coercers:
@@ -539,11 +315,13 @@ type_lang_mapper:
 
 ```php
 use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperCoercer;
-use TypeLang\Mapper\Coercer\CoercerInterface;
+use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperFormatter;
 
-// the default mapper and all named ones
 #[AsMapperCoercer('bool')]
 final class YesNoCoercer implements CoercerInterface {}
+
+#[AsMapperFormatter('denormalization')]
+final class TranslatedFormatter implements ViolationFormatterInterface {}
 
 // the "api" mapper only
 #[AsMapperCoercer('float', mappers: ['api'])]
@@ -554,54 +332,9 @@ final class DecimalCommaCoercer implements CoercerInterface {}
 </Tabs>
 
 <Aside type="caution">
-A mapper takes one coercer per type: two coercers of the same type for the
-same mapper are an error. A coercer of a named mapper replaces the one of
-the default mapper.
-</Aside>
-
-### Formatters
-
-A formatter writes the messages of the errors, such as translated ones. A
-mapper has one per direction: `denormalization` writes for the clients
-sending the data, `normalization` for the developers of the application.
-See [Formatters](/mapper/extending/formatters/).
-
-<Tabs>
-<TabItem label="YAML">
-
-```yaml
-type_lang_mapper:
-  formatters:
-    denormalization: App\Mapper\TranslatedFormatter
-  mappers:
-    api:
-      formatters:
-        normalization: App\Mapper\LogFormatter
-```
-
-</TabItem>
-<TabItem label="Attributes">
-
-```php
-use TypeLang\Mapper\Bridge\Symfony\Attribute\AsMapperFormatter;
-use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
-
-// the default mapper and all named ones
-#[AsMapperFormatter('denormalization')]
-final class TranslatedFormatter implements ViolationFormatterInterface {}
-
-// the "api" mapper only
-#[AsMapperFormatter('normalization', mappers: ['api'])]
-final class LogFormatter implements ViolationFormatterInterface {}
-```
-
-</TabItem>
-</Tabs>
-
-<Aside type="caution">
-A mapper takes one formatter per direction: two formatters of the same
-direction for the same mapper are an error. A formatter of a named mapper
-replaces the one of the default mapper.
+Two coercers of one type, or two formatters of one direction, for the same
+mapper are an error. A coercer or a formatter of a named mapper replaces the
+one of the default mapper.
 </Aside>
 
 ## Profiler

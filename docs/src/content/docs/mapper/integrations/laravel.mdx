@@ -20,16 +20,13 @@ The default mapper is the `type-lang.mapper` singleton, bound to
 `MapperInterface`, `DenormalizerInterface` and `NormalizerInterface`.
 
 ```php
-use TypeLang\Mapper\DenormalizerInterface;
+use TypeLang\Mapper\MapperInterface;
 
 final class CreateUserController
 {
-    public function __invoke(
-        Request $request,
-        DenormalizerInterface $mapper,
-    ): Response
+    public function __invoke(Request $req, MapperInterface $mapper): Response
     {
-        $user = $mapper->denormalize($request->all(), CreateUser::class);
+        $user = $mapper->denormalize($req->all(), UserRequestDTO::class);
         // ...
     }
 }

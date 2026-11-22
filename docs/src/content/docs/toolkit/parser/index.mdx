@@ -6,7 +6,7 @@ sidebar:
   order: 0
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
 The parser component analyzes a [TypeLang](/language/) type declaration
 string and builds an AST (Abstract Syntax Tree) out of it, checking the
@@ -30,11 +30,11 @@ depending on the source).
 ```php
 $parser = new TypeLang\Parser\TypeParser();
 
-$type = $parser->parse('array{ key: int }'); // TypeLang\Type\NamedTypeNode
+$type = $parser->parse('array{key: int}'); // NamedTypeNode
 
-echo $type->name->value;                      // array
-echo count($type->fields);                    // 1
-var_dump($type->fields->isSealed);            // true
+$type->name->toString(); // 'array'
+count($type->fields);    // 1
+$type->fields->isSealed; // true
 ```
 
 Every node exposes an `$offset` (byte offset in the source where the node
@@ -68,46 +68,15 @@ input instead of failing outright.
 
 ## Parser arguments
 
-All three methods accept the source code in any of the following forms:
-
-<Tabs>
-<TabItem label="string">
+All three methods accept a string, a resource, an `SplFileInfo` or a
+phplrt `ReadableInterface`:
 
 ```php
-$type = $parser->parse(<<<'CODE'
-    object{ key?: int<0, max> }
-CODE);
+$parser->parse('object{key?: int<0, max>}');
+$parser->parse(fopen(__DIR__ . '/source.txt', 'rb'));
+$parser->parse(new SplFileInfo(__DIR__ . '/source.txt'));
+$parser->parse(Phplrt\Source\FileSource::createFromPathname($pathname));
 ```
-
-</TabItem>
-<TabItem label="resource">
-
-```php
-$type = $parser->parse(
-    fopen(__DIR__ . '/source.txt', 'rb'),
-);
-```
-
-</TabItem>
-<TabItem label="SplFileInfo">
-
-```php
-$type = $parser->parse(
-    new SplFileInfo(__DIR__ . '/source.txt'),
-);
-```
-
-</TabItem>
-<TabItem label="ReadableInterface">
-
-```php
-$type = $parser->parse(
-    Phplrt\Source\FileSource::createFromPathname(__DIR__ . '/source.txt'),
-);
-```
-
-</TabItem>
-</Tabs>
 
 ## Parsing other constructs
 

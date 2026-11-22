@@ -6,29 +6,20 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-A **definition** is what turns a raw `@tag` line into a [tag object](/phpdoc/extending/tags/).
-There is exactly one per tag, and it declares two things: the shape of the line
-that follows `@tagname`, and how to build the tag from what that shape matched.
+A definition turns a `@tag` line into a [tag](/phpdoc/extending/tags/).
+There is one per tag, it declares the [grammar](/phpdoc/extending/grammar/)
+of the line and creates the tag from what the grammar matched.
 
-A definition is a `TagDefinitionInterface` implementation — in practice, almost
-always written by extending the `TagDefinition` base class, which takes care of
-the boilerplate and leaves only one method to fill in: `create()`.
-
-Take the [`@param`](/phpdoc/tags/param/) tag, whose line is
-`"@param" <Type> <Variable> [ <Description> ]`:
+The definition of [`@param`](/phpdoc/tags/param/):
 
 ```php
 final class ParamTagDefinition extends TagDefinition
 {
-    public static function getCanonicalName(): string
-    {
-        return 'param';
-    }
-
     public function __construct()
     {
         parent::__construct(
-            name: self::getCanonicalName(),
+            name: 'param',
+            // "@param" <Type> <Variable> [ <Description> ]
             spec: Spec::sequence(
                 Spec::rule(TypeCombinator::NAME, 'type'),
                 Spec::rule(VariableCombinator::NAME, 'variable'),
@@ -52,89 +43,55 @@ final class ParamTagDefinition extends TagDefinition
 }
 ```
 
-The constructor hands the base class three things:
+| Argument    | Value                                                      |
+|-------------|------------------------------------------------------------|
+| `name`      | the name of the tag, without the `@`                       |
+| `spec`      | the grammar of the line after the name                     |
+| `placement` | where the tag may be written, see [below](#inline-tags)    |
 
-* **`name`** — the canonical tag name, without the leading `@`.
-* **`spec`** — the grammar of the line's body.
-* **`placement`** — where the tag may appear (see [below](#inline-tags)).
-
-The static `getCanonicalName()` is a convention, not a part of the
-interface: it lets the name be referenced by the class
-(`ParamTagDefinition::getCanonicalName()`) without creating the definition.
-The contract is the `name` property, so a definition whose name is known only
-at runtime (one class serving several tags) needs no static method.
-
-A tag missing from the registry is read by a definition created for its name,
-`GenericTagDefinition` by default: the whole body becomes the description of a
-plain `Tag`. A `TagFactory` built by hand takes a `createUnknownTagDefinition`
-closure to read such tags differently; `DocBlockParser` creates its own factory
-and has no such option.
-
-<Aside type="tip">
-The `spec` is written with the `Spec` grammar DSL —
-`Spec::sequence()`, `Spec::rule()`,
-`Spec::maybe()` and friends. See [Grammar](/phpdoc/extending/grammar/)
-for how it is assembled, and [Combinators](/phpdoc/extending/combinators/) for the
-named building blocks (`TypeCombinator`, `VariableCombinator`,
-...) it reaches into.
+<Aside>
+The built-in definitions also have a static `getCanonicalName()`: a
+convention to refer to the name without creating the definition, not a part
+of `TagDefinitionInterface`.
 </Aside>
 
 ## Building the tag
 
-`create()` receives a `TagPayload` carrying whatever the grammar captured, and
-returns the finished [tag](/phpdoc/extending/tags/). `$result->get('type')` fetches a required
-capture (it throws if nothing was captured under that alias);
-`$result->find('description')` fetches an optional one, returning `null` when it
-did not match.
+`create()` gets a `TagPayload` with the values the grammar
+[captured](/phpdoc/extending/grammar/#captures) and returns the tag.
 
-<Aside type="tip">
-The values in the payload are addressed by the aliases declared in the
-grammar — the second argument to `Spec::rule()`. See
-[Captures](/phpdoc/extending/grammar/#captures) for how they are named and read back,
-including `getAll()` for a value that repeats.
-</Aside>
+A line that does not match the `spec` never reaches `create()`: it becomes
+an [`InvalidTag`](/phpdoc/#broken-tags-do-not-break-the-comment).
 
-A tag body that does not match its `spec` at all never reaches `create()`: it
-becomes an [`InvalidTag`](/phpdoc/#broken-tags-do-not-break-the-comment) before `create()` would even be
-called, so a definition never has to guard against a malformed match itself.
+## Unknown tags
+
+A tag without a definition is read by `GenericTagDefinition`: the whole
+line becomes the description of a plain `Tag`. A `TagFactory` built by hand
+takes a `createUnknownTagDefinition` closure to read such tags another way.
 
 ## Inline tags
-
-Where a tag may appear is declared by the `placement:` argument, a
-`TagPlacement` enum with three cases:
 
 ```php
 enum TagPlacement
 {
-    // only inline, inside a description as a "{@tag}" sequence
+    // inside a description: {@tag ...}
     case Inline;
-    // only as a block tag, occupying its own line
+    // on a line of its own
     case Block;
-    // usable both inline and as a block tag
+    // both, the default
     case Any;
 }
 ```
 
-A definition that omits the argument defaults to `TagPlacement::Any`. A tag
-may be used, in addition to standing on its own line, nested inside a
-description as a `{@tag ...}` sequence with balanced braces — parsing it there
-produces the exact same kind of tag object either way.
+| Placement | Built-in tags                                             |
+|-----------|-----------------------------------------------------------|
+| `Any`     | [`@see`](/phpdoc/tags/see/), [`@link`](/phpdoc/tags/link/), [`@internal`](/phpdoc/tags/internal/), [`@example`](/phpdoc/tags/example/) |
+| `Inline`  | [`@inheritdoc`](/phpdoc/tags/inherit-doc/), [`@source`](/phpdoc/tags/source/) |
+| `Block`   | every other tag                                           |
 
-Six built-in tags are declared to be used inline: [`@see`](/phpdoc/tags/see/),
-[`@link`](/phpdoc/tags/link/), [`@internal`](/phpdoc/tags/internal/) and
-[`@example`](/phpdoc/tags/example/) are `Any`, while [`@inheritdoc`](/phpdoc/tags/inherit-doc/)
-and [`@source`](/phpdoc/tags/source/) are `Inline`-only. Every other tag, `@param`
-included, is declared `Block`.
+An inline tag is parsed into the same tag object as a block one.
 
 <Aside>
-The placement is exposed as `$placement` on the definition, but the
-description parser does not consult it yet: any registered tag written as
-`{@name ...}` is parsed into a tag object, whatever its declared
-placement.
+The placement is not checked yet: any known tag written as `{@name ...}` is
+parsed, whatever its placement.
 </Aside>
-
-## Where to go next
-
-- **Grammar**: The `Spec` DSL a definition's `spec` is written in. See [Grammar](/phpdoc/extending/grammar/).
-- **Tags**: The value objects a definition's `create()` returns. See [Tags](/phpdoc/extending/tags/).
-- **Platforms**: How a definition is registered with the parser. See [Platforms](/phpdoc/platforms/).

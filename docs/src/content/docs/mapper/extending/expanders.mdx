@@ -21,7 +21,6 @@ without the type (`Value 42 is invalid`), the error of the expander is not
 reported.
 
 ```php
-use TypeLang\Mapper\Context\ExpandContext;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\Type\Expander\TypeExpanderInterface;
 use TypeLang\Mapper\Type\TypeInterface;
@@ -31,14 +30,13 @@ use TypeLang\Type\TypeNode;
 
 final class UuidTypeExpander implements TypeExpanderInterface
 {
-    public function tryExpand(
-        TypeInterface $type,
-        ExpandContext $context,
-    ): ?TypeNode {
+    public function tryExpand(TypeInterface $type, /* ... */): ?TypeNode
+    {
         if (!$type instanceof UuidType) {
             return null;
         }
 
+        // uuid is shown as: string
         return new NamedTypeNode(new Name('string'));
     }
 }
@@ -54,35 +52,29 @@ expands a nested type one level deeper. The fields over
 any expansion.
 
 ```php
-use TypeLang\Mapper\Context\ExpandContext;
-use TypeLang\Mapper\Type\Expander\TypeExpanderInterface;
-use TypeLang\Mapper\Type\TypeInterface;
-use TypeLang\Type\Identifier;
-use TypeLang\Type\Name;
-use TypeLang\Type\NamedTypeNode;
-use TypeLang\Type\Shape\FieldListNode;
-use TypeLang\Type\Shape\NamedFieldNode;
-use TypeLang\Type\TypeNode;
-
 final class MoneyTypeExpander implements TypeExpanderInterface
 {
-    public function tryExpand(
-        TypeInterface $type,
-        ExpandContext $context,
-    ): ?TypeNode {
+    public function tryExpand(TypeInterface $type, ExpandContext $ctx): ?TypeNode
+    {
         if (!$type instanceof MoneyType) {
             return null;
         }
 
-        $amount = new NamedTypeNode(new Name('int'));
-        $currency = $context->expand($type->currency);
-
-        return new NamedTypeNode(new Name('object'), fields: new FieldListNode([
-            new NamedFieldNode(new Identifier('amount'), $amount),
-            new NamedFieldNode(new Identifier('currency'), $currency),
-        ]));
-        // object{amount: int, currency: 'EUR'|'USD'}
+        // money is shown as: object{amount: int, currency: 'EUR'|'USD'}
+        return new NamedTypeNode(
+            name: new Name('object'),
+            fields: new FieldListNode([
+                new NamedFieldNode(
+                    new Identifier('amount'),
+                    new NamedTypeNode(new Name('int')),
+                ),
+                new NamedFieldNode(
+                    new Identifier('currency'),
+                    // the type of the currency, expanded by the mapper
+                    $ctx->expand($type->currency),
+                ),
+            ]),
+        );
     }
 }
 ```
-

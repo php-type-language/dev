@@ -18,55 +18,39 @@ order of the list, each gets the result of the previous one.
 A decorator that trims the strings given to every backed enum:
 
 ```php
-use TypeLang\Mapper\Context\BuildContext;
 use TypeLang\Mapper\Context\Context;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\Type\BackedEnumType;
 use TypeLang\Mapper\Type\Decorator\TypeDecoratorInterface;
+use TypeLang\Mapper\Type\TypeDecorator;
 use TypeLang\Mapper\Type\TypeInterface;
-use TypeLang\Type\TypeNode;
 
-final class TrimmingType implements TypeInterface
+// The wrapper: TypeDecorator passes every call to $this->delegate
+final class TrimmingType extends TypeDecorator
 {
-    public function __construct(private readonly TypeInterface $type) {}
-
+    #[\Override]
     public function isDenormalizable(mixed $value, Context $context): bool
     {
-        return $this->type->isDenormalizable(self::trim($value), $context);
+        return $this->delegate->isDenormalizable(self::trim($value), $context);
     }
 
+    #[\Override]
     public function denormalize(mixed $value, Context $context): mixed
     {
-        return $this->type->denormalize(self::trim($value), $context);
-    }
-
-    public function isNormalizable(mixed $value, Context $context): bool
-    {
-        return $this->type->isNormalizable($value, $context);
-    }
-
-    public function normalize(mixed $value, Context $context): mixed
-    {
-        return $this->type->normalize($value, $context);
+        return $this->delegate->denormalize(self::trim($value), $context);
     }
 
     private static function trim(mixed $value): mixed
     {
-        if (\is_string($value)) {
-            return \trim($value);
-        }
-
-        return $value;
+        return \is_string($value) ? \trim($value) : $value;
     }
 }
 
+// The decorator: wraps the types of backed enums only
 final class TrimEnumsDecorator implements TypeDecoratorInterface
 {
-    public function decorate(
-        TypeInterface $type,
-        TypeNode $node,
-        BuildContext $context,
-    ): TypeInterface {
+    public function decorate(TypeInterface $type, /* ... */): TypeInterface
+    {
         if (!$type instanceof BackedEnumType) {
             return $type;
         }
@@ -75,13 +59,15 @@ final class TrimEnumsDecorator implements TypeDecoratorInterface
     }
 }
 
+$mapper = new Mapper(decorators: [new TrimEnumsDecorator()]);
+```
+
+```php
 enum Status: string
 {
     case Active = 'active';
     case Banned = 'banned';
 }
-
-$mapper = new Mapper(decorators: [new TrimEnumsDecorator()]);
 ```
 
 <Tabs syncKey="data">

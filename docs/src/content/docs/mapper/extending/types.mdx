@@ -11,34 +11,25 @@ type node, such as of a name `money` or of a generic `collection<T>`.
 
 ## Types
 
-A type implements `TypeInterface`: two pairs of methods, one per direction.
-`isDenormalizable()` and `isNormalizable()` only check the value: they are
-called to choose the branch of a union and must not throw on a wrong value.
-`denormalize()` and `normalize()` convert it and throw an
-`InvalidValueException` when it does not fit.
+A type implements `TypeInterface`: a pair of methods per direction.
+
+| Method                                  | Does                                        |
+|-----------------------------------------|---------------------------------------------|
+| `isDenormalizable()`, `isNormalizable()` | checks the value, never throws: it chooses the branch of a union |
+| `denormalize()`, `normalize()`          | converts the value or throws an `InvalidValueException` |
 
 ```php
 use TypeLang\Mapper\Context\Context;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Type\TypeInterface;
 
-final class Money
-{
-    public function __construct(
-        public readonly int $cents,
-        public readonly string $currency,
-    ) {}
-}
-
-/**
- * @template-implements TypeInterface<Money>
- */
+// '100 USD' <-> Money { amount: 100, currency: 'USD' }
 final class MoneyType implements TypeInterface
 {
     public function isDenormalizable(mixed $value, Context $context): bool
     {
         return \is_string($value)
-            && \preg_match('/^\d+\.\d{2} [A-Z]{3}$/', $value) === 1;
+            && \preg_match('/^\d+ [A-Z]{3}$/', $value) === 1;
     }
 
     public function denormalize(mixed $value, Context $context): Money
@@ -49,7 +40,7 @@ final class MoneyType implements TypeInterface
 
         [$amount, $currency] = \explode(' ', $value);
 
-        return new Money((int) \str_replace('.', '', $amount), $currency);
+        return new Money((int) $amount, $currency);
     }
 
     public function isNormalizable(mixed $value, Context $context): bool
@@ -63,12 +54,7 @@ final class MoneyType implements TypeInterface
             throw InvalidValueException::becauseInvalidType($value);
         }
 
-        return \sprintf(
-            '%d.%02d %s',
-            \intdiv($value->cents, 100),
-            $value->cents % 100,
-            $value->currency,
-        );
+        return $value->amount . ' ' . $value->currency;
     }
 }
 ```
@@ -88,13 +74,14 @@ $mapper = new Mapper(builders: [
 <Tabs syncKey="data">
 <TabItem label="Valid data">
 ```php
-$mapper->denormalize('10.50 USD', 'money');
-// Money { cents: 1050, currency: 'USD' }
+$mapper->denormalize('100 USD', 'money');
+// Money { amount: 100, currency: 'USD' }
 
-$mapper->denormalize(['10.50 USD'], 'list<money>');
-// [Money { cents: 1050, currency: 'USD' }]
+$mapper->denormalize(['100 USD'], 'list<money>');
+// [Money { amount: 100, currency: 'USD' }]
 
-$mapper->normalize(new Money(1050, 'USD'), 'money'); // '10.50 USD'
+$mapper->normalize(new Money(100, 'USD'), 'money');
+// '100 USD'
 ```
 </TabItem>
 
@@ -110,8 +97,7 @@ $mapper->denormalize('ten dollars', 'money');
 <Aside>
 Builders of the user are tried before the built-in ones, so a builder can
 also replace a built-in type. Only that name is replaced: refined types built
-on it, such as `positive-int` for `int`, keep the
-built-in type.
+on it, such as `positive-int` for `int`, keep the built-in type.
 </Aside>
 
 ## Type builders
@@ -121,16 +107,10 @@ arguments, such as `collection<T>`.
 
 ```php
 use TypeLang\Mapper\Context\BuildContext;
-use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\Type\Builder\TypeBuilderInterface;
 use TypeLang\Mapper\Type\TypeInterface;
 use TypeLang\Mapper\TypeMatcher\NamedTypePattern;
 use TypeLang\Type\TypeNode;
-
-final class Collection
-{
-    public function __construct(public readonly array $items) {}
-}
 
 final class CollectionTypeBuilder implements TypeBuilderInterface
 {
@@ -141,20 +121,17 @@ final class CollectionTypeBuilder implements TypeBuilderInterface
         $this->pattern = new NamedTypePattern(['collection<T>']);
     }
 
-    public function tryBuild(
-        TypeNode $node,
-        BuildContext $context,
-    ): ?TypeInterface {
+    public function tryBuild(TypeNode $node, BuildContext $ctx): ?TypeInterface
+    {
+        // ['T' => TypeNode], or null for a node of another form
         $arguments = $this->pattern->findArguments($node);
 
         if ($arguments === null) {
             return null;
         }
 
-        // the type of the items, built by the mapper
-        $items = $context->types->getType($arguments['T']);
-
-        return new CollectionType($items);
+        // CollectionType is a TypeInterface holding the type of its items
+        return new CollectionType($ctx->types->getType($arguments['T']));
     }
 }
 
@@ -164,10 +141,12 @@ $mapper->denormalize(['1', '2'], 'collection<int>');
 // Collection { items: [1, 2] }
 ```
 
+### Errors of nested values
+
 An error of an item, wrapped by your type with the key of the item
 (`InvalidValueException::wrapWithPath()`), is shown without the expected
-type (`$[1]: Value "x" is invalid`), unless the builder tells the type of
-its items with `CompositeTypeBuilderInterface`:
+type: `$[1]: Value "x" is invalid`. To show it, tell the type of the items
+with `CompositeTypeBuilderInterface`:
 
 ```php
 use TypeLang\Mapper\Type\Builder\CompositeTypeBuilderInterface;
@@ -176,15 +155,8 @@ final class CollectionTypeBuilder implements CompositeTypeBuilderInterface
 {
     // ...
 
-    public function tryGetNestedType(
-        TypeNode $node,
-        int|string $key,
-        bool $isKey,
-    ): ?TypeNode {
-        if ($isKey) {
-            return null;
-        }
-
+    public function tryGetNestedType(TypeNode $node, /* ... */): ?TypeNode
+    {
         return $this->pattern->findArguments($node)['T'] ?? null;
     }
 }
@@ -193,4 +165,3 @@ $mapper->denormalize(['1', 'x'], 'collection<int>');
 // throws InvalidValueException:
 // $[1]: Value must be of type int, but "x" given
 ```
-

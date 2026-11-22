@@ -177,39 +177,35 @@ client, `$violation->declared` the type with the classes.
 ```php
 use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Diagnostics\Printer\Path\JsonPathPrinter;
-use TypeLang\Mapper\Diagnostics\Printer\Value\ShortValuePrinter;
 use TypeLang\Mapper\Diagnostics\PublicViolationFormatter;
-use TypeLang\Mapper\Diagnostics\ViolationFormatter;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Printer\PrettyTypePrinter;
 
 $mapper = new Mapper(new Configuration(maxViolations: 100));
-$types = new PrettyTypePrinter();
+
 $paths = new JsonPathPrinter();
+$formatter = new PublicViolationFormatter(new PrettyTypePrinter());
 
 try {
     $mapper->denormalize(['status' => 'x', 'address' => 42], Order::class);
 } catch (InvalidValueException $e) {
-    $public = new PublicViolationFormatter($types);
     $errors = [];
 
     foreach ($e->violations as $violation) {
         $path = $paths->print($violation->path);
-        $errors[$path] = $public->format($violation);
+        $errors[$path] = $formatter->format($violation);
     }
-
-    $errors;
-    // [
-    //   '$.status' => 'Value must be of type \'new\'|\'paid\', but "x" given',
-    //   '$.address' => 'Value must be of type ?object{city: string}, ...',
-    // ]
-
-    $developer = new ViolationFormatter(new ShortValuePrinter(), $types);
-    $developer->format($e->violations[0]);
-    // 'Value must be of type \App\Status, but "x" given'
 }
+
+// [
+//   '$.status' => 'Value must be of type \'new\'|\'paid\', but "x" given',
+//   '$.address' => 'Value must be of type ?object{city: string}, ...',
+// ]
 ```
+
+For a log, `ViolationFormatter` writes the same messages with the declared
+types: `Value must be of type \App\Status, but "x" given`.
 
 <Aside type="caution">
 `Violation::$value` is the raw rejected value: do not log it as is

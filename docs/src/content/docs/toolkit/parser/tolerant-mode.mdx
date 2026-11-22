@@ -8,39 +8,29 @@ sidebar:
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-Partial parsing allows reading a type grammar embedded in other arbitrary
-data, without requiring the full input to be a valid type statement.
+`partial()` reads a type followed by any other text, such as the type of a
+`@return` tag followed by its description. It never throws on a syntax
+error and returns a `TypeLang\Parser\Partial\ParsedResult`:
 
-This is convenient, for example, for analyzing phpdoc (docblocks): a
-`@return` annotation contains a type declaration followed by a free-text
-description, and there is no delimiter between the two other than "the type
-grammar stops making sense here".
-
-Unlike `parse()`, which either returns a fully valid `TypeNode` or throws,
-`TypeParser::partial()` always returns a
-`TypeLang\Parser\Partial\ParsedResult`, and which of the three it is says how
-much of the source the grammar described.
-
-- `SuccessfulParsedResult`: The source is a type whole, so the reading stopped at the very end of it. Carries the `$type` built out of it and the `$offset` the reading stopped at.
-- `PartialParsedResult`: The grammar described the beginning of the source alone. This is a successful result as well, since a type has been built either way — the rest of the source simply begins at the `$offset`.
-- `FailureParsedResult`: The source opens no type at all, so nothing has been built of it. Carries the `$message` of what stands in the way, the `$position` (line and column) and the `$offset` the reading stopped at.
+| Result                   | The source                  | Holds                             |
+|--------------------------|-----------------------------|-----------------------------------|
+| `SuccessfulParsedResult` | is a type as a whole        | `$type`, `$offset`                |
+| `PartialParsedResult`    | begins with a type          | `$type`, `$offset`                |
+| `FailureParsedResult`    | does not begin with a type  | `$message`, `$position`, `$offset` |
 
 ## Basic usage
-
-```php
-use TypeLang\Parser\TypeParser;
-
-$parser = new TypeParser();
-```
 
 <Tabs>
 <TabItem label="partial()">
 ```php
-$result = $parser->partial('int and more text');
+$source = 'int and more text';
 
-var_dump($result::class);                  // PartialParsedResult
-var_dump($result->type->name->toString()); // string(3) "int"
-var_dump($result->offset);                 // int(4)
+$result = $parser->partial($source);
+// PartialParsedResult
+
+$result->type;                    // NamedTypeNode of `int`
+$result->offset;                  // 4
+substr($source, $result->offset); // 'and more text'
 ```
 </TabItem>
 
@@ -52,139 +42,66 @@ $parser->parse('int and more text');
 </TabItem>
 </Tabs>
 
-`$result->offset` points right after the last byte that was actually
-consumed while building `$result->type` — including any trailing
-whitespace that belongs to it. Everything from that offset onward is simply
-whatever was left in the source:
+The offset is the byte after the type and the whitespace following it.
+
+## Parsing a docblock tag
 
 ```php
-$remainder = substr('int and more text', $result->offset);
+// @return Example<T> Returns something
+$body = 'Example<T> Returns something';
 
-var_dump($remainder); // string(13) "and more text"
+$result = $parser->partial($body);
+
+$result->type;                  // Example<T>
+substr($body, $result->offset); // 'Returns something'
 ```
 
-## Parsing a docblock annotation
+## Incomplete constructs
 
-Let's parse the contents of a "`@return`" docblock. The same technique
-applies to any other annotation that embeds a type followed by free text.
-
-```php
-$parser = new TypeParser();
-
-$content = <<<'PHP'
-    @return Example<T> Returns something very interesting!
-    PHP;
-
-// There is no need to strip the description ourselves,
-// only the tag name:
-$content = substr($content, strlen('@return '));
-// "Example<T> Returns something very interesting!"
-
-$result = $parser->partial($content);
-
-var_dump($result->type);
-```
-
-<details>
-<summary>Result</summary>
-
-```php
-TypeLang\Type\NamedTypeNode {
-  +offset: 0
-  +name: TypeLang\Type\Name { ... "Example" ... }
-  +arguments: TypeLang\Type\Template\TemplateListNode {
-    +children: array:1 [
-      0 => TypeLang\Type\Template\TypedTemplateArgumentNode {
-        +value: TypeLang\Type\NamedTypeNode { ... "T" ... }
-        ...
-      }
-    ]
-  }
-  +fields: null
-}
-```
-
-</details>
-
-The description can then be recovered from the reported offset:
-
-```php
-$description = substr($content, $result->offset);
-
-var_dump($description);
-// string(35) "Returns something very interesting!"
-```
-
-## Recovering from incomplete constructs
-
-Partial parsing does not attempt to *repair* broken syntax — it stops at the
-last point where a complete sub-rule was matched and treats everything past
-it as trailing content, however implausible that trailing content looks.
+Broken syntax is not repaired: the reading stops after the last complete
+type, the rest is trailing text.
 
 ```php
 $result = $parser->partial('array{');
 
-var_dump($result->type->name->toString()); // string(5) "array"
-var_dump($result->offset);                 // int(5)
+$result->type;   // array
+$result->offset; // 5, the "{"
 ```
-
-Here the unterminated `{` of the shape-fields list is never entered, so the
-parser falls back to the last valid statement — the bare `array` named type —
-and reports offset `5`, right before the `{`.
 
 ## Validation
 
-Where the type itself is of no use and the only question is whether the
-source is one, `TypeParser::validate()` asks exactly that and builds nothing.
-It returns a `TypeLang\Parser\Validation\CheckResult`, and which of the three
-it is answers the question.
-
-- `SuccessfulCheckResult`: The source is a type whole, so nothing stands in the way of it.
-- `FailureCheckResult`: The source is no type of its own. Carries the `$message` of what stands in the way, the `$position` (line and column) and the `$offset` the reading stopped at.
-- `PartialCheckResult`: The grammar described the beginning of the source alone. This is a failure as well, since a check asks about the source whole, and the rest of it begins at the `$offset`.
+`validate()` tells whether the source is a type and builds nothing. It
+returns a `TypeLang\Parser\Validation\CheckResult`:
 
 ```php
-use TypeLang\Parser\TypeParser;
-use TypeLang\Parser\Validation\SuccessfulCheckResult;
+$parser->validate('array{id: int}');          // SuccessfulCheckResult
+$parser->validate('array{id: int} and more'); // PartialCheckResult
+$parser->validate('array{');                  // PartialCheckResult
+$parser->validate(')');                       // FailureCheckResult
 
-$parser = new TypeParser();
-
-var_dump($parser->validate('array{ field: result }')::class);
-// TypeLang\Parser\Validation\SuccessfulCheckResult
-
-var_dump($parser->validate('array{ field: result } and more')::class);
-// TypeLang\Parser\Validation\PartialCheckResult
-
-var_dump($parser->validate('array{')::class);
-// TypeLang\Parser\Validation\PartialCheckResult
-
-var_dump($parser->validate(')')::class);
-// TypeLang\Parser\Validation\FailureCheckResult
-
-// A check for a source that is a type whole:
 $isType = $parser->validate($source) instanceof SuccessfulCheckResult;
 ```
 
-The `$position` is a `Phplrt\Contracts\Position\PositionInterface`, its `line` and
-`column` properties are 1-based:
+A failure holds the message and the place, the line and the column are
+1-based:
 
 ```php
 $result = $parser->validate('int string');
 
-var_dump($result->message);          // string(19) "Unexpected "string""
-var_dump($result->offset);           // int(4)
-var_dump($result->position->line);   // int(1)
-var_dump($result->position->column); // int(5)
+$result->message;          // 'Unexpected "string"'
+$result->offset;           // 4
+$result->position->line;   // 1
+$result->position->column; // 5
 ```
 
 <Aside>
-`validate()` ignores the [feature flags](/toolkit/parser/features/): it checks the grammar
-only. Disabled syntax is reported by `parse()` and `partial()`.
+A `PartialCheckResult` **is** a `FailureCheckResult`: a check asks about
+the whole source. A `PartialParsedResult` **is** a `SuccessfulParsedResult`:
+a partial parse is content with the beginning.
 </Aside>
 
-<Aside>
-A `PartialCheckResult` **is** a `FailureCheckResult`, and a
-`PartialParsedResult` **is** a `SuccessfulParsedResult`. Each hierarchy is
-shaped around the question its method asks: a check asks about the source
-whole, whereas a partial parse is content with the beginning of it.
+<Aside type="caution">
+`validate()` checks the grammar only and ignores the
+[feature flags](/toolkit/parser/features/). Disabled syntax is reported by
+`parse()` and `partial()`.
 </Aside>

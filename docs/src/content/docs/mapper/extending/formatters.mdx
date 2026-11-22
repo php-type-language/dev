@@ -26,7 +26,7 @@ readers:
 
 The expected type and the declared type are described in
 [errors](/mapper/errors/#messages). In an application a formatter is set by
-the `formatters` config key of [Symfony](/mapper/integrations/symfony/#formatters)
+the `formatters` config key of [Symfony](/mapper/integrations/symfony/#coercers-and-formatters)
 and [Laravel](/mapper/integrations/laravel/#extensions).
 
 ## Templates
@@ -118,19 +118,20 @@ use TypeLang\Mapper\Diagnostics\Violation;
 use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
 use TypeLang\Mapper\Mapper;
 
-final class TranslatedViolationFormatter implements ViolationFormatterInterface
+final class TranslatedFormatter implements ViolationFormatterInterface
 {
-    /**
-     * @param array<non-empty-string, non-empty-string> $templates
-     */
+    private const array TEMPLATES = [
+        'invalid_type' => 'Erwartet {{expected}}, erhalten {{value}}',
+        'missing_field' => 'Pflichtfeld "{{field}}" fehlt',
+    ];
+
     public function __construct(
-        private readonly ViolationFormatterInterface $formatter,
-        private readonly array $templates,
+        private ViolationFormatterInterface $formatter,
     ) {}
 
     public function format(Violation $violation): string
     {
-        $template = $this->templates[$violation->code->getCode()] ?? null;
+        $template = self::TEMPLATES[$violation->code->getCode()] ?? null;
 
         // a template set by metadata is kept as is
         if ($template !== null && $violation->template === null) {
@@ -142,18 +143,13 @@ final class TranslatedViolationFormatter implements ViolationFormatterInterface
 }
 
 $mapper = new Mapper(
-    denormalizationFormatter: new TranslatedViolationFormatter(
+    denormalizationFormatter: new TranslatedFormatter(
         new PublicViolationFormatter($types),
-        [
-            'invalid_type' => 'Erwartet {{expected}}, erhalten {{value}}',
-            'missing_field' => 'Pflichtfeld "{{field}}" fehlt',
-        ],
     ),
 );
 
-$mapper->denormalize(['status' => 'x'], Order::class);
-// throws InvalidValueException:
-// $.status: Erwartet 'new'|'paid', erhalten "x" (and 1 more)
+$mapper->denormalize('x', 'int');
+// throws InvalidValueException: $: Erwartet int, erhalten "x"
 ```
 
 <Aside>
