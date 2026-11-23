@@ -40,6 +40,18 @@ abstract class LogicalTypeNodePrinter implements NodePrinterInterface
     }
 
     /**
+     * Prints a member of a logical type as the list of the types it is made
+     * of, which a subclass may expand.
+     *
+     * @return list<string>
+     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     */
+    protected function expand(TypeNode $type, PrinterContext $context): array
+    {
+        return [$context->print($type)];
+    }
+
+    /**
      * @throws PrinterExceptionInterface in case of a child node cannot be printed
      */
     public function printNode(Node $node, PrinterContext $context): string
@@ -64,7 +76,7 @@ abstract class LogicalTypeNodePrinter implements NodePrinterInterface
         $result = [];
 
         foreach ($this->unwrap($node) as $type) {
-            $result[] = $context->print($type);
+            \array_push($result, ...$this->expand($type, $context));
         }
 
         return \array_values(\array_unique($result));

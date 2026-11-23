@@ -27,6 +27,12 @@ final class NativeNamedTypeNodePrinter implements NodePrinterInterface
 
     public function printNode(Node $node, PrinterContext $context): string
     {
-        return $this->aliases->resolve($node->name->toString());
+        $type = $this->aliases->resolve($node->name->toString());
+
+        if ($context->isInsideLogical() && \str_contains($type, '|')) {
+            return '(' . $type . ')';
+        }
+
+        return $type;
     }
 }

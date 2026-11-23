@@ -91,6 +91,38 @@ final class NativeTypePrinterTest extends TestCase
             ->print(self::parse('((A | B) & C) | D')));
     }
 
+    /**
+     * @return iterable<non-empty-string, array{non-empty-string, non-empty-string, bool}>
+     */
+    public static function nestedTypesDataProvider(): iterable
+    {
+        yield 'alias of a union with a repeated member' => ['array-key|int', 'int|string', true];
+        yield 'alias of a wider union with a repeated member' => ['scalar|int', 'bool|float|int|string', true];
+        yield 'nullable member of a union' => ['?A|B', 'A|B|null', true];
+        yield 'nullable of a nullable' => ['?(?int)', 'int|null', true];
+        yield 'conditional member of a union' => ['(A is B ? C : D)|E', 'C|D|E', true];
+        yield 'alias of a union in an intersection' => ['array-key&Foo', '(int|string)&Foo', false];
+    }
+
+    /**
+     * @param non-empty-string $type
+     * @param non-empty-string $expected
+     */
+    #[DataProvider('nestedTypesDataProvider')]
+    public function testPrintNestedTypesAsValidNativeType(string $type, string $expected, bool $isValidInPhp): void
+    {
+        $actual = (new NativeTypePrinter())->print(self::parse($type));
+
+        self::assertSame($expected, $actual);
+
+        if (!$isValidInPhp) {
+            return;
+        }
+
+        // The statement is parsed only, nothing of it is executed
+        self::assertNotEmpty(\token_get_all('<?php fn(' . $actual . ' $x) => 1;', \TOKEN_PARSE));
+    }
+
     public function testPrintIntersectionTypeWithoutWhitespaces(): void
     {
         self::assertSame('int&string', (new NativeTypePrinter())->print(self::parse('int&string')));

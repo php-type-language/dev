@@ -28,6 +28,9 @@ final class NativeUnionTypeNodePrinterTest extends NodePrinterTestCase
         yield 'true alone is kept' => [['true', 'int'], 'true|int'];
         yield 'qualified true with false' => [['\true', '\false'], 'bool'];
         yield 'qualified bool pair keeps the rest' => [['\true', '\false', 'int'], 'int|bool'];
+        yield 'null goes last' => [['null', 'int', 'string'], 'int|string|null'];
+        yield 'qualified null goes last' => [['\null', 'int'], 'int|null'];
+        yield 'null with qualified null' => [['null', '\null', 'int'], 'int|null'];
         yield 'alias of a union' => [['numeric', 'null'], 'int|float|string|null'];
     }
 
