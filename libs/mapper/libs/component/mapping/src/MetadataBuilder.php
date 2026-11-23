@@ -6,7 +6,6 @@ namespace TypeLang\Mapper\Mapping;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\Provider\CacheMetadataProvider;
 use TypeLang\Mapper\Mapping\Provider\InMemoryMetadataProvider;
@@ -86,13 +85,9 @@ final class MetadataBuilder
     /**
      * @param TypeParser $parser parser of the types of the readers created
      *        by the builder
-     * @param ExpressionLanguage|null $expressions parser of the skip
-     *        expressions of the attribute reader, created on its first
-     *        expression in case of {@see null}
      */
     public function __construct(
         TypeParser $parser = new TypeParser(),
-        private readonly ?ExpressionLanguage $expressions = null,
     ) {
         $this->parser = $parser->forType();
         $this->reflection = new ReflectionMetadataReader();
@@ -104,11 +99,9 @@ final class MetadataBuilder
      * package is installed ({@see SPECIAL_PHPDOC_PRIORITY} and
      * {@see PHPDOC_PRIORITY}) and reflection.
      */
-    public static function createDefault(
-        TypeParser $parser = new TypeParser(),
-        ?ExpressionLanguage $expressions = null,
-    ): self {
-        $result = (new self($parser, $expressions))
+    public static function createDefault(TypeParser $parser = new TypeParser()): self
+    {
+        $result = (new self($parser))
             ->withAttributeReader(self::ATTRIBUTE_PRIORITY);
 
         if (!PhpDocMetadataReader::isAvailable()) {
@@ -148,7 +141,7 @@ final class MetadataBuilder
     public function withAttributeReader(int $priority = 0): self
     {
         return $this->withAddedReader(
-            new AttributeMetadataReader($this->parser, $this->expressions),
+            new AttributeMetadataReader($this->parser),
             $priority,
         );
     }

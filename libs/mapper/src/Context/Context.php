@@ -38,6 +38,10 @@ final class Context
          * as of an element of a property of `list<T>`
          */
         public readonly DeclaredTypeFinder $declaredTypes = new DeclaredTypeFinder(),
+        /**
+         * Depth of the normalization, shared by the contexts of one mapper
+         */
+        public readonly Nesting $nesting = new Nesting(),
     ) {}
 
     /**
@@ -57,6 +61,7 @@ final class Context
                 accessors: $this->accessors,
                 coercers: $this->coercers,
                 declaredTypes: $this->declaredTypes,
+                nesting: $this->nesting,
             );
             $this->sibling->sibling = $this;
         }

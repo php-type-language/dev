@@ -522,6 +522,21 @@ final class ArrayMetadataReaderTest extends TestCase
         self::assertStringStartsWith("{$class}::\$email: expression \"this.\" is invalid (", $errors[1]);
     }
 
+    public function testFunctionCallInSkipConfigIsThrown(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => ['properties' => ['email' => ['skip' => 'max(1, 2) > 1']]],
+        ]);
+        $class = UserStub::class;
+
+        $errors = self::getErrors(static fn() => self::readOverReflection($reader, UserStub::class));
+
+        self::assertStringStartsWith(
+            "{$class}::\$email: expression \"max(1, 2) > 1\" is invalid (",
+            $errors[0] ?? '',
+        );
+    }
+
     public function testDiscriminatorConfigSetsPolymorphism(): void
     {
         $reader = new ArrayMetadataReader([

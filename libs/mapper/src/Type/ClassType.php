@@ -299,6 +299,27 @@ final class ClassType implements TypeInterface
             return false;
         }
 
+        $nesting = $context->nesting;
+
+        if ($nesting->depth >= $context->config->maxDepth) {
+            return false;
+        }
+
+        ++$nesting->depth;
+
+        try {
+            return $this->isObjectNormalizable($value, $context);
+        } finally {
+            --$nesting->depth;
+        }
+    }
+
+    /**
+     * @throws TypeDefinitionException in case of a strategy rejects the
+     *         class or a property
+     */
+    private function isObjectNormalizable(object $value, Context $context): bool
+    {
         $accessor = $context->accessors->get($this->metadata);
 
         try {
@@ -341,7 +362,8 @@ final class ClassType implements TypeInterface
      *
      * @return array<array-key, mixed>|\stdClass
      * @throws InvalidValueException in case of the value is not an object of
-     *         the class or one of its properties cannot be normalized
+     *         the class, is nested deeper than the limit or one of its
+     *         properties cannot be normalized
      * @throws TypeDefinitionException in case of a strategy rejects the
      *         class or a property
      */
@@ -352,6 +374,30 @@ final class ClassType implements TypeInterface
                 ->withTemplate($this->metadata->typeErrorMessage);
         }
 
+        $nesting = $context->nesting;
+
+        if ($nesting->depth >= $context->config->maxDepth) {
+            throw InvalidValueException::becauseDepthIsExceeded($context->config->maxDepth, $value);
+        }
+
+        ++$nesting->depth;
+
+        try {
+            return $this->normalizeObject($value, $context);
+        } finally {
+            --$nesting->depth;
+        }
+    }
+
+    /**
+     * @return array<array-key, mixed>|\stdClass
+     * @throws InvalidValueException in case of one of the properties cannot
+     *         be normalized
+     * @throws TypeDefinitionException in case of a strategy rejects the
+     *         class or a property
+     */
+    private function normalizeObject(object $value, Context $context): array|\stdClass
+    {
         $accessor = $context->accessors->get($this->metadata);
         $object = $value;
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader;
 
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Exception\InvalidOptionValueException;
@@ -97,8 +96,6 @@ final class ArrayMetadataReader implements AccessSourceReaderInterface
     /**
      * @param TypeParserInterface<TypeNode, string> $parser parser of the
      *        types of the config
-     * @param ExpressionLanguage|null $expressions parser of the expressions
-     *        of `skip`, created on the first one in case of {@see null}
      * @param ReaderInterface $nativeTypeReader reader of the native types of
      *        the getters and the setters
      */
@@ -115,10 +112,9 @@ final class ArrayMetadataReader implements AccessSourceReaderInterface
          */
         private readonly ?string $file = null,
         TypeParserInterface $parser = new TypeParser(),
-        ?ExpressionLanguage $expressions = null,
         ReaderInterface $nativeTypeReader = new ReflectionReader(),
     ) {
-        $this->options = Options::createDefault($parser, $expressions);
+        $this->options = Options::createDefault($parser);
         $this->access = new AccessOption($nativeTypeReader);
 
         $classKeys = [self::PROPERTIES_KEY => true];

@@ -49,6 +49,12 @@ enum ViolationCode: string implements TypedViolationCodeInterface
      */
     case InvalidValue = 'invalid_value';
 
+    /**
+     * Value is nested deeper than the limit of the configuration, such as
+     * an object that refers to itself. The path points to the object.
+     */
+    case DepthExceeded = 'depth_exceeded';
+
     public function getCode(): string
     {
         return $this->value;
@@ -64,6 +70,7 @@ enum ViolationCode: string implements TypedViolationCodeInterface
             self::DuplicateField => 'Field "{{field}}" duplicates the field "{{other}}"',
             self::FailedCheck => 'Value must be of type {{expected}} ({{check}})',
             self::InvalidValue => 'Value {{value}} is rejected',
+            self::DepthExceeded => 'Nesting depth exceeds the limit of {{limit}}',
         };
     }
 

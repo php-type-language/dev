@@ -26,6 +26,7 @@ use TypeLang\Mapper\Mapping\Tests\Stub\BrokenDiscriminatorStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenNamingStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenPropertyAliasStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenSkipStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\FunctionSkipStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\Concern\OwnerTrait;
 use TypeLang\Mapper\Mapping\Tests\Stub\MessageStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\MethodAttributeStub;
@@ -343,6 +344,22 @@ final class AttributeMetadataReaderTest extends TestCase
             $errors[0],
         );
         self::assertStringEndsWith(' in BrokenSkipStub.php', $errors[0]);
+    }
+
+    public function testFunctionCallInExpressionIsThrown(): void
+    {
+        $errors = self::getErrors(static fn() => self::readAttributes(FunctionSkipStub::class));
+
+        self::assertCount(2, $errors);
+        self::assertStringStartsWith(
+            FunctionSkipStub::class . '::$email: expression "max(1, 2) > 1" is invalid (',
+            $errors[0],
+        );
+        self::assertStringStartsWith(
+            FunctionSkipStub::class . '::$phone: expression "this.isPrivate(min(1, 2))" is invalid (',
+            $errors[1],
+        );
+        self::assertStringEndsWith(' in FunctionSkipStub.php', $errors[0]);
     }
 
     public function testBrokenDiscriminatorMapIsThrown(): void

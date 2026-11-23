@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader\Option;
 
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Parser\TypeParserInterface;
 use TypeLang\Type\TypeNode;
 
@@ -28,11 +27,8 @@ final class Options
 
     /**
      * @param TypeParserInterface<TypeNode, string> $parser parser of the types
-     * @param ExpressionLanguage|null $expressions parser of the expressions of
-     *        the skip conditions, created on the first one in case of
-     *        {@see null}
      */
-    public static function createDefault(TypeParserInterface $parser, ?ExpressionLanguage $expressions = null): self
+    public static function createDefault(TypeParserInterface $parser): self
     {
         $types = new TypeOption($parser);
         $messages = new MessageOption();
@@ -44,7 +40,7 @@ final class Options
                 $aliases,
                 $types,
                 new DefaultOption(),
-                new SkipOption($expressions),
+                new SkipOption(),
                 $messages,
             ],
             classes: [
