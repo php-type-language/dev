@@ -250,6 +250,12 @@ final class MapperFactory
             $result = $result->withExpectedTypeMaxFields($expectedTypeMaxFields);
         }
 
+        $maxDepth = $settings->findPositiveInt('max_depth');
+
+        if ($maxDepth !== null) {
+            $result = $result->withMaxDepth($maxDepth);
+        }
+
         return $result;
     }
 

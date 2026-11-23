@@ -131,7 +131,8 @@ final class TypeLangMapperBundleTest extends TestCase
                 'reject_extra_fields' => true,
                 'expected_type_depth' => 3,
                 'expected_type_max_fields' => 7,
-                'mappers' => ['api' => ['max_violations' => 9, 'expected_type_max_fields' => 2]],
+                'max_depth' => 64,
+                'mappers' => ['api' => ['max_violations' => 9, 'expected_type_max_fields' => 2, 'max_depth' => 8]],
             ],
             public: ['.type_lang_mapper.default.configuration', '.type_lang_mapper.api.configuration'],
         );
@@ -146,6 +147,7 @@ final class TypeLangMapperBundleTest extends TestCase
             rejectExtraFields: true,
             expectedTypeDepth: 3,
             expectedTypeMaxFields: 7,
+            maxDepth: 64,
         ), $default);
 
         self::assertEquals(new Configuration(
@@ -155,6 +157,7 @@ final class TypeLangMapperBundleTest extends TestCase
             rejectExtraFields: true,
             expectedTypeDepth: 3,
             expectedTypeMaxFields: 2,
+            maxDepth: 8,
         ), $api);
     }
 

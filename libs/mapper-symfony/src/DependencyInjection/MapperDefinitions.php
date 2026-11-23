@@ -45,6 +45,7 @@ use TypeLang\Parser\TypeParser;
  *     reject_extra_fields: bool|null,
  *     expected_type_depth: int<0, max>|null,
  *     expected_type_max_fields: int<1, max>|null,
+ *     max_depth: int<1, max>|null,
  *     naming: non-empty-string|null,
  *     types: list<non-empty-string>,
  *     decorators: list<non-empty-string>,
@@ -76,6 +77,7 @@ use TypeLang\Parser\TypeParser;
  *     reject_extra_fields: bool|null,
  *     expected_type_depth: int<0, max>|null,
  *     expected_type_max_fields: int<1, max>|null,
+ *     max_depth: int<1, max>|null,
  *     naming: non-empty-string|null,
  *     types: list<non-empty-string>,
  *     decorators: list<non-empty-string>,
@@ -345,6 +347,7 @@ final class MapperDefinitions
                 '$expectedTypeMaxFields' => $settings['expected_type_max_fields']
                     ?? $defaults['expected_type_max_fields']
                     ?? null,
+                '$maxDepth' => $settings['max_depth'] ?? $defaults['max_depth'] ?? null,
             ]));
 
         $this->registerMetadata($name, $settings, $defaults);

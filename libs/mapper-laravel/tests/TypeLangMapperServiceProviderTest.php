@@ -54,6 +54,18 @@ final class TypeLangMapperServiceProviderTest extends TestCase
         self::assertTrue($container->make('type-lang.mapper.loose')->isDenormalizable('42', 'int'));
     }
 
+    public function testMaxDepthIsAppliedAndOverriddenByNamedMapper(): void
+    {
+        $container = self::createContainer([
+            'max_depth' => 1,
+            'mappers' => ['api' => [], 'deep' => ['max_depth' => 2]],
+        ]);
+
+        self::assertFalse($container->make('type-lang.mapper')->isNormalizable([[1]]));
+        self::assertFalse($container->make('type-lang.mapper.api')->isNormalizable([[1]]));
+        self::assertTrue($container->make('type-lang.mapper.deep')->isNormalizable([[1]]));
+    }
+
     public function testNamedMapperTakesItsExtensionsAndInheritedOnes(): void
     {
         $container = self::createContainer([
@@ -323,6 +335,11 @@ final class TypeLangMapperServiceProviderTest extends TestCase
         yield 'integer of named mapper' => [
             ['mappers' => ['api' => ['max_violations' => 0]]],
             'Config "type-lang-mapper.mappers.api.max_violations" must be an integer of at least 1, but int given',
+        ];
+
+        yield 'max depth' => [
+            ['max_depth' => 0],
+            'Config "type-lang-mapper.max_depth" must be an integer of at least 1, but int given',
         ];
 
         yield 'profiler flag' => [
