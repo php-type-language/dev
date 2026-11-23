@@ -40,9 +40,22 @@ final class StringLiteralNode extends ScalarLiteralNode
     private static function representAsRawValue(string $value, StringLiteralKind $kind): string
     {
         if ($kind === StringLiteralKind::DoubleQuoted) {
-            return \sprintf('"%s"', \addcslashes($value, "\0..\37\"\\\177"));
+            return \sprintf('"%s"', self::escapeDoubleQuoted($value));
         }
 
         return \sprintf("'%s'", \addcslashes($value, "'\\"));
+    }
+
+    /**
+     * Escapes the quote, the backslash and the control characters. The bell
+     * and the backspace are written as `\007` and `\010`.
+     */
+    private static function escapeDoubleQuoted(string $value): string
+    {
+        return \str_replace(
+            ["\x07", "\x08"],
+            ['\007', '\010'],
+            \addcslashes($value, "\0..\6\11..\37\"\\\177"),
+        );
     }
 }

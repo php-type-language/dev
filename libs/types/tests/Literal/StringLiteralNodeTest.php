@@ -24,6 +24,11 @@ final class StringLiteralNodeTest extends TestCase
         yield 'double quoted backslash' => ['a\\b', StringLiteralKind::DoubleQuoted, '"a\\\\b"'];
         yield 'double quoted line break' => ["a\nb", StringLiteralKind::DoubleQuoted, '"a\nb"'];
         yield 'double quoted escape' => ["\e", StringLiteralKind::DoubleQuoted, '"\033"'];
+        yield 'double quoted bell' => ["\x07", StringLiteralKind::DoubleQuoted, '"\007"'];
+        yield 'double quoted backspace' => ["\x08", StringLiteralKind::DoubleQuoted, '"\010"'];
+        yield 'double quoted backslash and a' => ['\\a', StringLiteralKind::DoubleQuoted, '"\\\\a"'];
+        yield 'double quoted backslash and b' => ['\\b', StringLiteralKind::DoubleQuoted, '"\\\\b"'];
+        yield 'double quoted bell and a digit' => ["\x071", StringLiteralKind::DoubleQuoted, '"\0071"'];
 
         yield 'single quoted plain' => ['example', StringLiteralKind::SingleQuoted, "'example'"];
         yield 'single quoted empty' => ['', StringLiteralKind::SingleQuoted, "''"];
