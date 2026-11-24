@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\PropertyAccessor\Strategy;
 
-use TypeLang\Mapper\Mapping\Metadata\AccessPoint\StorageAccessPoint;
-use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Access\SlotAccessMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Field\InputFieldMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Field\OutputFieldMetadata;
 use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotReadableException;
 use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotWritableException;
 use TypeLang\Mapper\PropertyAccessor\PropertyReader\DirectPropertyReader;
@@ -18,22 +19,22 @@ use TypeLang\Mapper\PropertyAccessor\PropertyWriter\ReflectionPropertyWriter;
 use TypeLang\Mapper\PropertyAccessor\PropertyWriterInterface;
 
 /**
- * Takes {@see StorageAccessPoint}: accesses the backing store of the
+ * Takes {@see SlotAccessMetadata}: accesses the backing store of the
  * property bypassing its hook of the direction, then as `$object->name`
  * where it is visible, then through the reflection, such as a `readonly`
  * or a `private(set)` property.
  */
-final class StorageAccessStrategy implements AccessStrategyInterface
+final class SlotAccessStrategy implements AccessStrategyInterface
 {
-    public function tryCreateReader(\ReflectionClass $class, PropertyMetadata $metadata): ?PropertyReaderInterface
+    public function tryCreateReader(\ReflectionClass $class, OutputFieldMetadata $field): ?PropertyReaderInterface
     {
-        $point = $metadata->read?->point;
+        $access = $field->access;
 
-        if (!$point instanceof StorageAccessPoint) {
+        if (!$access instanceof SlotAccessMetadata) {
             return null;
         }
 
-        $property = PropertyDeclaration::getProperty($class, $point->property);
+        $property = PropertyDeclaration::getProperty($class, $access->property, $access->class);
 
         if (PropertyDeclaration::isVirtual($property)) {
             throw PropertyNotReadableException::becausePropertyIsVirtual($property->class, $property->name);
@@ -44,21 +45,21 @@ final class StorageAccessStrategy implements AccessStrategyInterface
         }
 
         if ($property->isPublic()) {
-            return new DirectPropertyReader($point->property);
+            return new DirectPropertyReader($access->property);
         }
 
         return new ReflectionPropertyReader($property);
     }
 
-    public function tryCreateWriter(\ReflectionClass $class, PropertyMetadata $metadata): ?PropertyWriterInterface
+    public function tryCreateWriter(\ReflectionClass $class, InputFieldMetadata $field): ?PropertyWriterInterface
     {
-        $point = $metadata->write?->point;
+        $access = $field->access;
 
-        if (!$point instanceof StorageAccessPoint) {
+        if (!$access instanceof SlotAccessMetadata) {
             return null;
         }
 
-        $property = PropertyDeclaration::getProperty($class, $point->property);
+        $property = PropertyDeclaration::getProperty($class, $access->property, $access->class);
 
         if (PropertyDeclaration::isVirtual($property)) {
             throw PropertyNotWritableException::becausePropertyIsVirtual($property->class, $property->name);
@@ -69,7 +70,7 @@ final class StorageAccessStrategy implements AccessStrategyInterface
         }
 
         if (PropertyDeclaration::isPublicSet($property)) {
-            return new DirectPropertyWriter($point->property);
+            return new DirectPropertyWriter($access->property);
         }
 
         // a `readonly` property is initialized in the scope of the class
