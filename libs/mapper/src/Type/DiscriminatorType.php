@@ -149,16 +149,14 @@ final class DiscriminatorType implements TypeInterface
     public function normalize(mixed $value, Context $context): mixed
     {
         if (!$value instanceof $this->metadata->name) {
-            throw InvalidValueException::becauseInvalidType($value)
-                ->withTemplate($this->getTypeErrorMessage());
+            throw InvalidValueException::becauseInvalidType($value);
         }
 
         $tag = $this->findTag($value);
 
         if ($tag === null) {
             if ($this->untagged === null) {
-                throw InvalidValueException::becauseObjectIsNotTagged($this->owner->name, $value)
-                    ->withTemplate($this->getTypeErrorMessage());
+                throw InvalidValueException::becauseObjectIsNotTagged($this->owner->name, $value);
             }
 
             return $this->untagged->normalize($value, $context);
@@ -263,7 +261,7 @@ final class DiscriminatorType implements TypeInterface
      */
     private function getTypeErrorMessage(): ?string
     {
-        return $this->metadata->typeErrorMessage ?? $this->owner->typeErrorMessage;
+        return $this->metadata->input->typeErrorMessage ?? $this->owner->input->typeErrorMessage;
     }
 
     private function getDiscriminator(): DiscriminatorMetadata

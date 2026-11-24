@@ -36,7 +36,7 @@ final class TypeDefinitionException extends \LogicException implements
     public static function becauseTypeCannotBeBuilt(string $type, \Throwable $previous): self
     {
         return new self(
-            message: \sprintf('Type "%s" cannot be built: %s', \addcslashes($type, '"'), $previous->getMessage()),
+            message: \sprintf('Type "%s" cannot be built, %s', \addcslashes($type, '"'), \lcfirst($previous->getMessage())),
             previous: $previous,
         );
     }
@@ -160,11 +160,12 @@ final class TypeDefinitionException extends \LogicException implements
      * @param class-string $class
      * @param non-empty-string $error why the source cannot read the type
      */
-    public static function becausePropertyTypeCannotBeRead(string $class, string $property, string $error): self
+    public static function becauseFieldTypeCannotBeRead(string $class, string $field, string $error): self
     {
         return new self(\sprintf(
-            'Type of property "%s" is invalid: %s',
-            \addcslashes($class . '::$' . $property, '"'),
+            'Type of field "%s" of "%s" is invalid: %s',
+            \addcslashes($field, '"'),
+            \addcslashes($class, '"'),
             $error,
         ));
     }
@@ -174,14 +175,15 @@ final class TypeDefinitionException extends \LogicException implements
      */
     public static function becauseSkipExpressionIsInvalid(
         string $class,
-        string $property,
+        string $field,
         string $expression,
         \Throwable $previous,
     ): self {
         return new self(\sprintf(
-            'Skip expression "%s" of property "%s" is invalid: %s',
+            'Skip expression "%s" of field "%s" of "%s" is invalid: %s',
             \addcslashes($expression, '"'),
-            \addcslashes($class . '::$' . $property, '"'),
+            \addcslashes($field, '"'),
+            \addcslashes($class, '"'),
             $previous->getMessage(),
         ), previous: $previous);
     }
@@ -189,11 +191,12 @@ final class TypeDefinitionException extends \LogicException implements
     /**
      * @param class-string $class
      */
-    public static function becausePropertyTypeIsNotDefined(string $class, string $property): self
+    public static function becauseFieldTypeIsNotDefined(string $class, string $field): self
     {
         return new self(\sprintf(
-            'Type of property "%s" is not defined',
-            \addcslashes($class . '::$' . $property, '"'),
+            'Type of field "%s" of "%s" is not defined',
+            \addcslashes($field, '"'),
+            \addcslashes($class, '"'),
         ));
     }
 

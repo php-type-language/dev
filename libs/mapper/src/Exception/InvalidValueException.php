@@ -133,6 +133,19 @@ final class InvalidValueException extends ViolationException implements MapperEx
     }
 
     /**
+     * The value of an object cannot be read, such as an uninitialized
+     * property. The error is the cause of the violation and the previous
+     * error, the violation has no value.
+     */
+    public static function becauseValueIsUnreadable(\Throwable $error): self
+    {
+        return self::fromViolation(
+            new Violation(ViolationCode::UnreadableValue, [], new Path(), null, cause: $error),
+            $error,
+        );
+    }
+
+    /**
      * The path of the error points to the value nested deeper than the
      * limit.
      *
