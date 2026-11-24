@@ -13,7 +13,10 @@ use TypeLang\Mapper\Exception\TypeDefinitionException;
 use TypeLang\Mapper\Mapping\Metadata\AliasConflict;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
+use TypeLang\Mapper\Mapping\Metadata\SkipCondition\ExpressionSkipCondition;
 use TypeLang\Mapper\Type\ClassType\Property;
+use TypeLang\Mapper\Type\ClassType\TagCheck;
+use TypeLang\Mapper\Type\Extractor\LiteralTypeExtractor;
 use TypeLang\Type\Name;
 
 /**
@@ -80,6 +83,20 @@ final class ClassType implements TypeInterface
          * @var list<string>
          */
         public readonly array $tagFields = [],
+        /**
+         * Tags of the class written first on normalization, by the fields of
+         * the discriminators of its bases, the root ones first
+         *
+         * @var array<non-empty-string, int|string>
+         */
+        public readonly array $tags = [],
+        /**
+         * Tags the data may have in the fields of the discriminators on
+         * denormalization
+         *
+         * @var list<TagCheck>
+         */
+        public readonly array $tagChecks = [],
     ) {
         $keys = \array_fill_keys($tagFields, true);
 
@@ -116,6 +133,12 @@ final class ClassType implements TypeInterface
 
         if ($value === null) {
             return false;
+        }
+
+        foreach ($this->tagChecks as $check) {
+            if (\array_key_exists($check->field, $value) && !$check->isAccepted($value[$check->field])) {
+                return false;
+            }
         }
 
         foreach ($this->writable as $property) {
@@ -182,6 +205,14 @@ final class ClassType implements TypeInterface
 
         $limit = $context->config->maxViolations;
         $violations = [];
+
+        foreach ($this->tagChecks as $check) {
+            $field = $check->field;
+
+            if (\array_key_exists($field, $value) && !$check->isAccepted($value[$field])) {
+                InvalidValueException::collect($violations, self::createTagException($check, $value[$field]), $limit);
+            }
+        }
 
         foreach ($this->writable as $property) {
             $name = $property->metadata->name;
@@ -340,7 +371,7 @@ final class ClassType implements TypeInterface
             }
 
             try {
-                if ($property->metadata->skip !== [] && self::isSkipped($property, $value, $field)) {
+                if ($property->metadata->skip !== [] && self::isSkipped($property, $value, $field, $context)) {
                     continue;
                 }
             } catch (\Exception) {
@@ -430,7 +461,7 @@ final class ClassType implements TypeInterface
             }
 
             try {
-                if ($property->metadata->skip !== [] && self::isSkipped($property, $value, $field)) {
+                if ($property->metadata->skip !== [] && self::isSkipped($property, $value, $field, $context)) {
                     continue;
                 }
             } catch (\Exception $e) {
@@ -463,11 +494,34 @@ final class ClassType implements TypeInterface
             throw InvalidValueException::becauseValueIsRejected($e, $object);
         }
 
+        if ($this->tags !== []) {
+            $result = \array_diff_key($this->tags, $result) + $result;
+        }
+
         if ($this->metadata->normalizeAsArray ?? $context->config->normalizeAsArray) {
             return $result;
         }
 
         return (object) $result;
+    }
+
+    /**
+     * Returns the error of the tag of another class, with the path of the
+     * field.
+     */
+    private static function createTagException(TagCheck $check, mixed $tag): InvalidValueException
+    {
+        $declared = null;
+
+        if ($check->tags !== []) {
+            $declared = LiteralTypeExtractor::extractAll(\array_keys($check->tags));
+        }
+
+        return InvalidValueException::wrapWithPath(
+            InvalidValueException::becauseInvalidType($tag, $declared),
+            new PropertySegment($check->field),
+            $tag,
+        );
     }
 
     /**
@@ -546,13 +600,27 @@ final class ClassType implements TypeInterface
 
     /**
      * Returns {@see true} in case of a skip condition of the property is
-     * matched by the read value.
+     * matched by the read value. An expression is evaluated by the language
+     * of the context, in case of it is given.
      *
      * @param Property<mixed> $property
      */
-    private static function isSkipped(Property $property, object $object, mixed $field): bool
+    private static function isSkipped(Property $property, object $object, mixed $field, Context $context): bool
     {
+        $expressions = $context->expressions;
+
         foreach ($property->metadata->skip as $condition) {
+            if ($expressions !== null && $condition instanceof ExpressionSkipCondition) {
+                if ((bool) $expressions->evaluate($condition->expression, [
+                    ExpressionSkipCondition::VALUE => $field,
+                    $condition->variable => $object,
+                ])) {
+                    return true;
+                }
+
+                continue;
+            }
+
             if ($condition->isMatched($object, $field)) {
                 return true;
             }

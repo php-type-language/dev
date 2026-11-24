@@ -55,6 +55,13 @@ enum ViolationCode: string implements TypedViolationCodeInterface
      */
     case DepthExceeded = 'depth_exceeded';
 
+    /**
+     * Object of a class of a discriminated hierarchy has no tag: neither
+     * its class nor a parent of it is in the map. The path points to the
+     * object.
+     */
+    case UntaggedObject = 'untagged_object';
+
     public function getCode(): string
     {
         return $this->value;
@@ -71,6 +78,7 @@ enum ViolationCode: string implements TypedViolationCodeInterface
             self::FailedCheck => 'Value must be of type {{expected}} ({{check}})',
             self::InvalidValue => 'Value {{value}} is rejected',
             self::DepthExceeded => 'Nesting depth exceeds the limit of {{limit}}',
+            self::UntaggedObject => 'Class "{{class}}" has no tag in the discriminator map of "{{base}}"',
         };
     }
 

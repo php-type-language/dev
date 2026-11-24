@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader\Option;
 
-use Symfony\Component\ExpressionLanguage\Lexer;
-use Symfony\Component\ExpressionLanguage\ParsedExpression;
-use Symfony\Component\ExpressionLanguage\Parser;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use TypeLang\Mapper\Mapping\Exception\InvalidOptionValueException;
 use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
@@ -27,9 +25,9 @@ use TypeLang\Mapper\Mapping\SkipWhenNull;
  * Skip conditions of a property: {@see SkipWhenNull}, {@see SkipWhenEmpty},
  * {@see SkipWhen} and the `skip` key with one condition or a list of them
  * (`null` as a string or as a value, `empty` or an expression over the
- * object `this`). An expression
- * is parsed once, here, calls of functions are not allowed in it. A wrong
- * condition is an error, the others are set.
+ * object `this` and the value `value`). An expression is parsed once, here,
+ * by the given language: only its functions are allowed in the expression.
+ * A wrong condition is an error, the others are set.
  *
  * ```
  * skip: [null, 'this.isPrivate()']
@@ -46,6 +44,14 @@ final class SkipOption implements PropertyOptionInterface
      * @var list<class-string>
      */
     private const ATTRIBUTES = [SkipWhenNull::class, SkipWhenEmpty::class, SkipWhen::class];
+
+    public function __construct(
+        /**
+         * Parser of the expressions, created on the first expression in
+         * case of {@see null}
+         */
+        private ?ExpressionLanguage $language = null,
+    ) {}
 
     public function hasPropertyAttributes(\ReflectionProperty $property): bool
     {
@@ -186,15 +192,10 @@ final class SkipOption implements PropertyOptionInterface
         SourceContext $context,
         ErrorCollector $errors,
     ): ?ExpressionSkipCondition {
-        if (!\class_exists(Parser::class)) {
-            throw MissingDependencyException::becausePackageIsNotInstalled(
-                package: 'symfony/expression-language',
-                purpose: 'Skipping a property by an expression',
-            );
-        }
+        $this->language ??= self::createLanguage();
 
         try {
-            $nodes = (new Parser([]))->parse((new Lexer())->tokenize($expression), [$variable]);
+            $parsed = $this->language->parse($expression, [$variable, ExpressionSkipCondition::VALUE]);
         } catch (SyntaxError $e) {
             $errors->addError(InvalidOptionValueException::becauseExpressionIsInvalid(
                 expression: $expression,
@@ -206,6 +207,22 @@ final class SkipOption implements PropertyOptionInterface
             return null;
         }
 
-        return new ExpressionSkipCondition(new ParsedExpression($expression, $nodes), $variable);
+        return new ExpressionSkipCondition($parsed, $variable);
+    }
+
+    /**
+     * @throws MissingDependencyException in case of the
+     *         `symfony/expression-language` package is not installed
+     */
+    private static function createLanguage(): ExpressionLanguage
+    {
+        if (!\class_exists(ExpressionLanguage::class)) {
+            throw MissingDependencyException::becausePackageIsNotInstalled(
+                package: 'symfony/expression-language',
+                purpose: 'Skipping a property by an expression',
+            );
+        }
+
+        return new ExpressionLanguage();
     }
 }

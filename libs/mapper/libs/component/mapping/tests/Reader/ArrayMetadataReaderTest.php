@@ -6,6 +6,7 @@ namespace TypeLang\Mapper\Mapping\Tests\Reader;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\InvalidDefaultValueException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
@@ -522,19 +523,48 @@ final class ArrayMetadataReaderTest extends TestCase
         self::assertStringStartsWith("{$class}::\$email: expression \"this.\" is invalid (", $errors[1]);
     }
 
-    public function testFunctionCallInSkipConfigIsThrown(): void
+    public function testFunctionOfDefaultLanguageInSkipConfigIsAccepted(): void
     {
         $reader = new ArrayMetadataReader([
-            UserStub::class => ['properties' => ['email' => ['skip' => 'max(1, 2) > 1']]],
+            UserStub::class => ['properties' => ['email' => ['skip' => 'max(1, 2) > 1 and value === ""']]],
+        ]);
+
+        $metadata = self::readOverReflection($reader, UserStub::class);
+
+        $email = self::getProperty($metadata, 'email')->skip;
+        self::assertCount(1, $email);
+        self::assertInstanceOf(ExpressionSkipCondition::class, $email[0]);
+    }
+
+    public function testFunctionOfGivenLanguageInSkipConfigIsAccepted(): void
+    {
+        $language = new ExpressionLanguage();
+        $language->register(
+            'blank',
+            static fn(string $v): string => $v,
+            static fn(array $v, mixed $x): bool => $x === '',
+        );
+
+        $reader = new ArrayMetadataReader(
+            config: [UserStub::class => ['properties' => ['email' => ['skip' => 'blank(value)']]]],
+            expressions: $language,
+        );
+
+        $email = self::getProperty(self::readOverReflection($reader, UserStub::class), 'email')->skip;
+        self::assertCount(1, $email);
+        self::assertInstanceOf(ExpressionSkipCondition::class, $email[0]);
+    }
+
+    public function testUnknownFunctionInSkipConfigIsThrown(): void
+    {
+        $reader = new ArrayMetadataReader([
+            UserStub::class => ['properties' => ['email' => ['skip' => 'blank(value)']]],
         ]);
         $class = UserStub::class;
 
         $errors = self::getErrors(static fn() => self::readOverReflection($reader, UserStub::class));
 
-        self::assertStringStartsWith(
-            "{$class}::\$email: expression \"max(1, 2) > 1\" is invalid (",
-            $errors[0] ?? '',
-        );
+        self::assertStringStartsWith("{$class}::\$email: expression \"blank(value)\" is invalid (", $errors[0] ?? '');
     }
 
     public function testDiscriminatorConfigSetsPolymorphism(): void

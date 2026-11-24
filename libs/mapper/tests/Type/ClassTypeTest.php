@@ -6,13 +6,21 @@ namespace TypeLang\Mapper\Tests\Type;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Configuration;
+use TypeLang\Mapper\Context\ClassAccessors;
+use TypeLang\Mapper\Context\ClassTypes;
+use TypeLang\Mapper\Context\Coercers;
+use TypeLang\Mapper\Context\Context;
 use TypeLang\Mapper\Exception\InvalidValueException;
 use TypeLang\Mapper\Exception\MapperExceptionInterface;
 use TypeLang\Mapper\Exception\TypeDefinitionException;
 use TypeLang\Mapper\Instantiator\Exception\ClassNotInstantiableException;
+use TypeLang\Mapper\Instantiator\InstantiatorFactory;
 use TypeLang\Mapper\Instantiator\InstantiatorInterface;
 use TypeLang\Mapper\Instantiator\Strategy\InstantiationStrategyInterface;
+use TypeLang\Mapper\Mapper;
+use TypeLang\Mapper\Mapping\MetadataBuilder;
 use TypeLang\Mapper\Mapping\Metadata\AccessMetadata;
 use TypeLang\Mapper\Mapping\Metadata\AccessPoint\HookAccessPoint;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
@@ -21,16 +29,19 @@ use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
 use TypeLang\Mapper\Mapping\Provider\MetadataProviderInterface;
 use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotWritableException;
+use TypeLang\Mapper\PropertyAccessor\PropertyAccessorFactory;
 use TypeLang\Mapper\PropertyAccessor\PropertyReaderInterface;
 use TypeLang\Mapper\PropertyAccessor\PropertyWriterInterface;
 use TypeLang\Mapper\PropertyAccessor\Strategy\AccessStrategyInterface;
 use TypeLang\Mapper\Tests\Stub\AbstractShapeStub;
+use TypeLang\Mapper\Tests\Stub\AccessorStub;
 use TypeLang\Mapper\Tests\Stub\AddressStub;
 use TypeLang\Mapper\Tests\Stub\AliasedStub;
-use TypeLang\Mapper\Tests\Stub\AccessorStub;
 use TypeLang\Mapper\Tests\Stub\BrokenSkipStub;
+use TypeLang\Mapper\Tests\Stub\BuiltinFunctionSkipStub;
 use TypeLang\Mapper\Tests\Stub\BypassedSetHookStub;
 use TypeLang\Mapper\Tests\Stub\ComputedStub;
+use TypeLang\Mapper\Tests\Stub\CustomFunctionSkipStub;
 use TypeLang\Mapper\Tests\Stub\FirstInDataAliasStub;
 use TypeLang\Mapper\Tests\Stub\HookStub;
 use TypeLang\Mapper\Tests\Stub\LastInDataAliasStub;
@@ -46,14 +57,22 @@ use TypeLang\Mapper\Tests\Stub\ReadonlyStub;
 use TypeLang\Mapper\Tests\Stub\RelativeNameStub;
 use TypeLang\Mapper\Tests\Stub\RenamedStub;
 use TypeLang\Mapper\Tests\Stub\SkipStub;
-use TypeLang\Mapper\Tests\Stub\ThrowingHookStub;
 use TypeLang\Mapper\Tests\Stub\StdClassChildStub;
 use TypeLang\Mapper\Tests\Stub\StrictnessStub;
+use TypeLang\Mapper\Tests\Stub\ThrowingHookStub;
 use TypeLang\Mapper\Tests\Stub\UntypedStub;
 use TypeLang\Mapper\Tests\Stub\UserStub;
 use TypeLang\Mapper\Tests\Stub\VirtualStringableStub;
 use TypeLang\Mapper\Tests\Stub\WiderSetHookStub;
 use TypeLang\Mapper\Tests\TestCase;
+use TypeLang\Mapper\TypeMatcher\NamedTypePattern;
+use TypeLang\Mapper\Type\Builder\ClassTypeBuilder;
+use TypeLang\Mapper\Type\Builder\NamedTypeBuilder;
+use TypeLang\Mapper\Type\ClassType;
+use TypeLang\Mapper\Type\Repository\TypeRepository;
+use TypeLang\Mapper\Type\StringType;
+use TypeLang\Parser\TypeParser;
+use TypeLang\Printer\PrettyTypePrinter;
 use TypeLang\Type\Name;
 use TypeLang\Type\NamedTypeNode;
 
@@ -607,6 +626,101 @@ final class ClassTypeTest extends TestCase
             'email' => 'user@example.com',
             'isPrivate' => false,
         ]);
+    }
+
+    public function testBuiltinFunctionAndValueInSkipExpressionAreEvaluated(): void
+    {
+        $object = new BuiltinFunctionSkipStub();
+
+        self::assertNormalizes(BuiltinFunctionSkipStub::class, $object, ['name' => 'John']);
+
+        $object->email = 'user@example.com';
+
+        self::assertNormalizes(BuiltinFunctionSkipStub::class, $object, [
+            'email' => 'user@example.com',
+            'name' => 'John',
+        ]);
+    }
+
+    public function testFunctionOfGivenLanguageInSkipExpressionIsEvaluated(): void
+    {
+        $mapper = new Mapper(expressions: self::createBlankLanguage());
+        $object = new CustomFunctionSkipStub();
+
+        self::assertNormalizes(CustomFunctionSkipStub::class, $object, ['name' => 'John'], $mapper);
+
+        $object->email = 'user@example.com';
+        $object->name = '';
+
+        self::assertNormalizes(CustomFunctionSkipStub::class, $object, ['email' => 'user@example.com'], $mapper);
+    }
+
+    public function testFunctionUnknownToLanguageOfMapperIsErrorOfDefinition(): void
+    {
+        $mapper = new Mapper(
+            metadata: MetadataBuilder::createDefault(expressions: self::createBlankLanguage())->build(),
+        );
+
+        $this->expectException(TypeDefinitionException::class);
+        $this->expectExceptionMessage(
+            'Skip expression "blank(value)" of property "'
+            . CustomFunctionSkipStub::class
+            . '::$email" is invalid: The function "blank" does not exist',
+        );
+
+        $mapper->normalize(new CustomFunctionSkipStub());
+    }
+
+    public function testBuiltTypeWithSkipExpressionIsSerializable(): void
+    {
+        $parser = new TypeParser();
+        $accessors = new ClassAccessors(
+            properties: PropertyAccessorFactory::createDefault(),
+            instantiators: InstantiatorFactory::createDefault(),
+            hooks: [],
+        );
+        $repository = new TypeRepository(
+            builders: [
+                new NamedTypeBuilder(new NamedTypePattern(['string'], $parser), new StringType()),
+                new ClassTypeBuilder(),
+            ],
+            metadata: MetadataBuilder::createDefault()->build(),
+            decorators: [],
+            accessors: $accessors,
+            printer: new PrettyTypePrinter(),
+        );
+        $context = new Context(
+            types: new ClassTypes($repository),
+            config: new Configuration(),
+            accessors: $accessors,
+            coercers: Coercers::createDefault(),
+            expressions: new ExpressionLanguage(),
+        );
+
+        $type = $repository->getType($parser->parse(BuiltinFunctionSkipStub::class));
+        $copy = \unserialize(\serialize($type));
+
+        self::assertInstanceOf(ClassType::class, $copy);
+
+        $object = new BuiltinFunctionSkipStub();
+
+        self::assertSame(['name' => 'John'], $copy->normalize($object, $context));
+
+        $object->email = 'user@example.com';
+
+        self::assertSame(['email' => 'user@example.com', 'name' => 'John'], $copy->normalize($object, $context));
+    }
+
+    private static function createBlankLanguage(): ExpressionLanguage
+    {
+        $language = new ExpressionLanguage();
+        $language->register(
+            'blank',
+            static fn(string $value): string => "({$value} === '')",
+            static fn(array $values, mixed $value): bool => $value === '',
+        );
+
+        return $language;
     }
 
     public function testFailingSkipConditionIsViolationWithPathOfProperty(): void

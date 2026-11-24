@@ -235,7 +235,8 @@ $mapper->denormalize(['type' => 'oval'], Shape::class); // UnknownShape {}
 ## Normalization
 
 The tag of the class is written as the first field. A subclass that is not
-in the map, such as a proxy, takes the tag of its nearest parent in the map.
+in the map, such as a proxy, is normalized as its nearest parent in the map:
+with its tag and its fields only, the data is read back as that parent.
 
 ```php
 use TypeLang\Mapper\Mapping\DiscriminatorMap;
@@ -257,13 +258,71 @@ $mapper->normalize(new CircleProxy(), Shape::class);
 // ['type' => 'circle', 'radius' => 1.5]
 ```
 
-<Aside type="caution">
-Pass the base type to `normalize()`: without it the object is
-normalized by its own class, without the tag.
-</Aside>
+The tag does not depend on the type passed: the class of the object has it.
 
 ```php
-$mapper->normalize(new Circle()); // ['radius' => 1.5]
+$mapper->normalize(new Circle());
+// ['type' => 'circle', 'radius' => 1.5]
+```
+
+Several maps in the hierarchy write their tags, the root one first. Two maps
+that give the class different tags in one field are an error of the type.
+
+A class that is not in the map and has no parent in it is not normalized.
+With `otherwise` it is normalized without the tag.
+
+```php
+$mapper->normalize(new Hexagon(), Shape::class);
+// throws InvalidValueException:
+// $: Class "Hexagon" has no tag in the discriminator map of "Shape"
+```
+
+## Classes of the hierarchy
+
+Any class of the hierarchy can be the type, such as of a property. It takes
+the classes of the map that are the class or its children, an object is
+normalized the same as through the base.
+
+```php
+#[DiscriminatorMap(field: 'type', map: ['square' => Square::class])]
+abstract class Shape {}
+
+class Polygon extends Shape { public int $corners = 4; }
+
+class Square extends Polygon { public int $side = 2; }
+
+$mapper->normalize(new Square(), Polygon::class);
+// ['type' => 'square', 'side' => 2, 'corners' => 4]
+
+$mapper->denormalize(['type' => 'square'], Polygon::class); // Square
+
+$mapper->denormalize(['type' => 'circle'], Polygon::class);
+// throws InvalidValueException:
+// $.type: Value must be of type 'square', but "circle" given
+```
+
+A class of the map takes the data without the tag too, the tag of another
+class is an error:
+
+```php
+$mapper->denormalize(['side' => 2, 'corners' => 4], Square::class);
+// Square { side: 2, corners: 4 }
+
+$mapper->denormalize(['type' => 'circle'], Square::class);
+// throws InvalidValueException:
+// $.type: Value must be of type 'square', but "circle" given
+
+$mapper->denormalize(['corners' => 4], Polygon::class);
+// throws InvalidValueException: $.type: Required field "type" is missing
+```
+
+A class outside the map without children in it takes no data: reading it
+is an error of the type.
+
+```php
+$mapper->denormalize(['edges' => 6], Hexagon::class);
+// throws TypeDefinitionException: Class "Hexagon" is not in the
+// discriminator map of "Shape": neither it nor its children have a tag
 ```
 
 A class with its own property named as the tag field writes that property,

@@ -172,6 +172,23 @@ final class TypeDefinitionException extends \LogicException implements
     /**
      * @param class-string $class
      */
+    public static function becauseSkipExpressionIsInvalid(
+        string $class,
+        string $property,
+        string $expression,
+        \Throwable $previous,
+    ): self {
+        return new self(\sprintf(
+            'Skip expression "%s" of property "%s" is invalid: %s',
+            \addcslashes($expression, '"'),
+            \addcslashes($class . '::$' . $property, '"'),
+            $previous->getMessage(),
+        ), previous: $previous);
+    }
+
+    /**
+     * @param class-string $class
+     */
     public static function becausePropertyTypeIsNotDefined(string $class, string $property): self
     {
         return new self(\sprintf(
@@ -222,6 +239,44 @@ final class TypeDefinitionException extends \LogicException implements
             '%s is invalid: "%s" does not extend it',
             self::describeDiscriminator($class, $tag),
             \addcslashes($child, '"'),
+        ));
+    }
+
+    /**
+     * @param class-string $class
+     * @param class-string $base class with the discriminator
+     */
+    public static function becauseClassIsNotInDiscriminatorMap(string $class, string $base): self
+    {
+        return new self(\sprintf(
+            'Class "%s" is not in the discriminator map of "%s": neither it nor its children have a tag',
+            \addcslashes($class, '"'),
+            \addcslashes($base, '"'),
+        ));
+    }
+
+    /**
+     * @param class-string $class
+     * @param non-empty-string $field
+     * @param class-string $first base of the first tag
+     * @param class-string $second base of the second tag
+     */
+    public static function becauseDiscriminatorFieldIsAmbiguous(
+        string $class,
+        string $field,
+        string $first,
+        int|string $firstTag,
+        string $second,
+        int|string $secondTag,
+    ): self {
+        return new self(\sprintf(
+            'Class "%s" has two tags in field "%s": "%s" of class "%s" and "%s" of class "%s"',
+            \addcslashes($class, '"'),
+            \addcslashes($field, '"'),
+            \addcslashes((string) $firstTag, '"'),
+            \addcslashes($first, '"'),
+            \addcslashes((string) $secondTag, '"'),
+            \addcslashes($second, '"'),
         ));
     }
 

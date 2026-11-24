@@ -146,6 +146,19 @@ final class InvalidValueException extends ViolationException implements MapperEx
     }
 
     /**
+     * @param class-string $base class with the discriminator
+     */
+    public static function becauseObjectIsNotTagged(string $base, object $value): self
+    {
+        return self::fromViolation(new Violation(
+            ViolationCode::UntaggedObject,
+            ['class' => $value::class, 'base' => $base],
+            new Path(),
+            $value,
+        ));
+    }
+
+    /**
      * @param non-empty-string $check
      */
     public static function becauseCheckFailed(string $check, mixed $value): self

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader;
 
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\DiscriminatorMap;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
@@ -54,15 +55,18 @@ final class AttributeMetadataReader implements AccessSourceReaderInterface
     /**
      * @param TypeParserInterface<TypeNode, string> $parser parser of the
      *        types of {@see MapType}
+     * @param ExpressionLanguage|null $expressions parser of the expressions of
+     *        {@see SkipWhen}, created on the first one in case of {@see null}
      * @param ReaderInterface $nativeTypeReader reader of the native types of
      *        the getters and the setters
      */
     public function __construct(
         TypeParserInterface $parser = new TypeParser(),
+        ?ExpressionLanguage $expressions = null,
         ReaderInterface $nativeTypeReader = new ReflectionReader(),
     ) {
         $this->contexts = new SourceContextFactory();
-        $this->options = Options::createDefault($parser);
+        $this->options = Options::createDefault($parser, $expressions);
         $this->access = new AccessOption($nativeTypeReader);
     }
 

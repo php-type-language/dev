@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Reader;
 
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
@@ -32,6 +33,11 @@ abstract class FileMetadataReader implements AccessSourceReaderInterface
          * @var TypeParserInterface<TypeNode, string>
          */
         private readonly TypeParserInterface $parser = new TypeParser(),
+        /**
+         * Parser of the expressions of `skip`, created on the first one in
+         * case of {@see null}
+         */
+        private readonly ?ExpressionLanguage $expressions = null,
         /**
          * Reader of the native types of the getters and the setters
          */
@@ -79,6 +85,7 @@ abstract class FileMetadataReader implements AccessSourceReaderInterface
             config: $this->load(),
             file: $this->path,
             parser: $this->parser,
+            expressions: $this->expressions,
             nativeTypeReader: $this->nativeTypeReader,
         );
     }

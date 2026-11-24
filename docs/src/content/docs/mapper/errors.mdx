@@ -69,12 +69,15 @@ the application (see [messages](#messages)).
 | `unexpected_field` | `Unexpected field "{{field}}"`                        |
 | `duplicate_field` | `Field "{{field}}" duplicates the field "{{other}}"`, a property is given by its name and by an [alias](/mapper/metadata/naming/#field-aliases) |
 | `failed_check`   | `Value must be of type {{expected}} ({{check}})`, `Value {{value}} is invalid ({{check}})` without the expected type |
+| `depth_exceeded` | `Nesting depth exceeds the limit of {{limit}}`, see [max depth](/mapper/configuration/#max-depth) |
+| `untagged_object` | `Class "{{class}}" has no tag in the discriminator map of "{{base}}"`, see [discriminator](/mapper/metadata/discriminator/#classes-of-the-hierarchy) |
 | `invalid_value`  | `Value {{value}} is rejected`: an exception of a hook, or of a custom type nested in a list, an array, a shape or a class. Its message is not shown, the exception is `$violation->cause` and `$e->getPrevious()` |
 
 ## Paths
 
 The path of a violation is printed as JSONPath. Properties renamed by
-metadata have the names of the data.
+metadata have the names of the data. A name longer than 64 characters is cut
+and ends with `...`, bytes that are not valid UTF-8 are printed as `\xFF`.
 
 ```php
 $mapper->denormalize(['items' => [['id' => 1], ['id' => 'x']]], Order::class);

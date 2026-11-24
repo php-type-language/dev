@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Context;
 
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Exception\InvalidValueException\DeclaredTypeFinder;
 
@@ -42,6 +43,11 @@ final class Context
          * Depth of the normalization, shared by the contexts of one mapper
          */
         public readonly Nesting $nesting = new Nesting(),
+        /**
+         * Language evaluating the skip expressions of the properties,
+         * {@see null} evaluates an expression without its functions
+         */
+        public readonly ?ExpressionLanguage $expressions = null,
     ) {}
 
     /**
@@ -62,6 +68,7 @@ final class Context
                 coercers: $this->coercers,
                 declaredTypes: $this->declaredTypes,
                 nesting: $this->nesting,
+                expressions: $this->expressions,
             );
             $this->sibling->sibling = $this;
         }

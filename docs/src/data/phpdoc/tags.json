@@ -1086,7 +1086,7 @@
             ]
         },
         "grammar": [
-            "\"@param\" <Type> <Variable> [ <Description> ]"
+            "\"@param\" <Type> [ \"&\" ] [ \"...\" ] <Variable> [ <Description> ]"
         ],
         "examples": [
             {
@@ -1100,6 +1100,18 @@
             {
                 "title": "A shape describing the accepted array structure.",
                 "code": "/**\n * @param array{name: string, age: int<0, max>} $profile\n */"
+            },
+            {
+                "title": "A variadic argument.",
+                "code": "/**\n * @param int ...$numbers The values to sum.\n */"
+            },
+            {
+                "title": "A by-reference argument.",
+                "code": "/**\n * @param array<string> &$items\n */"
+            },
+            {
+                "title": "A variadic by-reference argument.",
+                "code": "/**\n * @param Node &...$nodes\n */"
             }
         ],
         "canonicalExamples": null
@@ -1719,7 +1731,7 @@
             ]
         },
         "grammar": [
-            "\"@phan-param\" <Type> <Variable> [ <Description> ]"
+            "\"@phan-param\" <Type> [ \"&\" ] [ \"...\" ] <Variable> [ <Description> ]"
         ],
         "examples": [],
         "canonicalExamples": null
@@ -2688,7 +2700,7 @@
             ]
         },
         "grammar": [
-            "\"@phpstan-param\" <Type> <Variable> [ <Description> ]"
+            "\"@phpstan-param\" <Type> [ \"&\" ] [ \"...\" ] <Variable> [ <Description> ]"
         ],
         "examples": [],
         "canonicalExamples": null
@@ -4294,7 +4306,7 @@
             ]
         },
         "grammar": [
-            "\"@psalm-param\" <Type> <Variable> [ <Description> ]"
+            "\"@psalm-param\" <Type> [ \"&\" ] [ \"...\" ] <Variable> [ <Description> ]"
         ],
         "examples": [],
         "canonicalExamples": null

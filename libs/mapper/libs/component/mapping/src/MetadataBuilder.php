@@ -6,6 +6,7 @@ namespace TypeLang\Mapper\Mapping;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\Exception\MissingDependencyException;
 use TypeLang\Mapper\Mapping\Provider\CacheMetadataProvider;
 use TypeLang\Mapper\Mapping\Provider\InMemoryMetadataProvider;
@@ -85,9 +86,13 @@ final class MetadataBuilder
     /**
      * @param TypeParser $parser parser of the types of the readers created
      *        by the builder
+     * @param ExpressionLanguage|null $expressions parser of the skip
+     *        expressions of the attribute reader, created on its first
+     *        expression in case of {@see null}
      */
     public function __construct(
         TypeParser $parser = new TypeParser(),
+        private readonly ?ExpressionLanguage $expressions = null,
     ) {
         $this->parser = $parser->forType();
         $this->reflection = new ReflectionMetadataReader();
@@ -99,9 +104,11 @@ final class MetadataBuilder
      * package is installed ({@see SPECIAL_PHPDOC_PRIORITY} and
      * {@see PHPDOC_PRIORITY}) and reflection.
      */
-    public static function createDefault(TypeParser $parser = new TypeParser()): self
-    {
-        $result = (new self($parser))
+    public static function createDefault(
+        TypeParser $parser = new TypeParser(),
+        ?ExpressionLanguage $expressions = null,
+    ): self {
+        $result = (new self($parser, $expressions))
             ->withAttributeReader(self::ATTRIBUTE_PRIORITY);
 
         if (!PhpDocMetadataReader::isAvailable()) {
@@ -141,7 +148,7 @@ final class MetadataBuilder
     public function withAttributeReader(int $priority = 0): self
     {
         return $this->withAddedReader(
-            new AttributeMetadataReader($this->parser),
+            new AttributeMetadataReader($this->parser, $this->expressions),
             $priority,
         );
     }
@@ -174,7 +181,7 @@ final class MetadataBuilder
     public function withYamlReader(string $path, int $priority = 0): self
     {
         return $this->withAddedReader(
-            new YamlFileMetadataReader($path, $this->parser),
+            new YamlFileMetadataReader($path, $this->parser, $this->expressions),
             $priority,
         );
     }
@@ -187,7 +194,7 @@ final class MetadataBuilder
     public function withNeonReader(string $path, int $priority = 0): self
     {
         return $this->withAddedReader(
-            new NeonFileMetadataReader($path, $this->parser),
+            new NeonFileMetadataReader($path, $this->parser, $this->expressions),
             $priority,
         );
     }
@@ -200,7 +207,7 @@ final class MetadataBuilder
     public function withJsonReader(string $path, int $priority = 0): self
     {
         return $this->withAddedReader(
-            new JsonFileMetadataReader($path, $this->parser),
+            new JsonFileMetadataReader($path, $this->parser, $this->expressions),
             $priority,
         );
     }
@@ -211,7 +218,7 @@ final class MetadataBuilder
     public function withPhpReader(string $path, int $priority = 0): self
     {
         return $this->withAddedReader(
-            new PhpFileMetadataReader($path, $this->parser),
+            new PhpFileMetadataReader($path, $this->parser, $this->expressions),
             $priority,
         );
     }

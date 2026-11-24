@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Mapper\Mapping\Tests\Reader;
 
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Mapping\Exception\InvalidAttributeException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
 use TypeLang\Mapper\Mapping\Exception\InvalidOptionValueException;
@@ -26,6 +27,7 @@ use TypeLang\Mapper\Mapping\Tests\Stub\BrokenDiscriminatorStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenNamingStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenPropertyAliasStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\BrokenSkipStub;
+use TypeLang\Mapper\Mapping\Tests\Stub\CustomFunctionSkipStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\FunctionSkipStub;
 use TypeLang\Mapper\Mapping\Tests\Stub\Concern\OwnerTrait;
 use TypeLang\Mapper\Mapping\Tests\Stub\MessageStub;
@@ -346,20 +348,42 @@ final class AttributeMetadataReaderTest extends TestCase
         self::assertStringEndsWith(' in BrokenSkipStub.php', $errors[0]);
     }
 
-    public function testFunctionCallInExpressionIsThrown(): void
+    public function testFunctionsOfDefaultLanguageInExpressionAreAccepted(): void
     {
-        $errors = self::getErrors(static fn() => self::readAttributes(FunctionSkipStub::class));
+        $metadata = self::readAttributes(FunctionSkipStub::class);
 
-        self::assertCount(2, $errors);
+        foreach (['email', 'phone', 'name'] as $name) {
+            $conditions = self::getProperty($metadata, $name)->skip;
+
+            self::assertCount(1, $conditions);
+            self::assertInstanceOf(ExpressionSkipCondition::class, $conditions[0]);
+        }
+    }
+
+    public function testFunctionOfGivenLanguageInExpressionIsAccepted(): void
+    {
+        $language = new ExpressionLanguage();
+        $language->register(
+            'blank',
+            static fn(string $v): string => $v,
+            static fn(array $v, mixed $x): bool => $x === '',
+        );
+
+        $reader = new AttributeMetadataReader(expressions: $language);
+        $metadata = self::readOverReflection($reader, CustomFunctionSkipStub::class);
+
+        self::assertCount(1, self::getProperty($metadata, 'email')->skip);
+    }
+
+    public function testUnknownFunctionInExpressionIsThrown(): void
+    {
+        $errors = self::getErrors(static fn() => self::readAttributes(CustomFunctionSkipStub::class));
+
+        self::assertCount(1, $errors);
         self::assertStringStartsWith(
-            FunctionSkipStub::class . '::$email: expression "max(1, 2) > 1" is invalid (',
+            CustomFunctionSkipStub::class . '::$email: expression "blank(value)" is invalid (',
             $errors[0],
         );
-        self::assertStringStartsWith(
-            FunctionSkipStub::class . '::$phone: expression "this.isPrivate(min(1, 2))" is invalid (',
-            $errors[1],
-        );
-        self::assertStringEndsWith(' in FunctionSkipStub.php', $errors[0]);
     }
 
     public function testBrokenDiscriminatorMapIsThrown(): void

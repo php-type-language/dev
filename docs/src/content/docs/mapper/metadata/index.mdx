@@ -106,12 +106,18 @@ $mapper = new Mapper(
 | `withReflectionReader()` | replaces the selector of the properties |
 
 The type parser of the readers and the expression language of the
-attributes are passed once:
+[skip expressions](/mapper/metadata/skip/#expression) are passed once. The
+`Mapper` takes the same language in `expressions:` to evaluate them:
 
 ```php
-new MetadataBuilder(
-    parser: new TypeParser(),
-    expressions: new ExpressionLanguage(),
+$language = new ExpressionLanguage();
+
+$mapper = new Mapper(
+    metadata: MetadataBuilder::createDefault(
+        parser: new TypeParser(),
+        expressions: $language,
+    )->build(),
+    expressions: $language,
 );
 ```
 

@@ -38,6 +38,10 @@ $mapper = new Mapper(
         // options = int<1, max>|null
         // default = null
         expectedTypeMaxFields: null,
+
+        // options = int<1, max>
+        // default = 512
+        maxDepth: 512,
     ),
 );
 ```
@@ -280,6 +284,29 @@ $mapper->denormalize('x', User::class);
 ```
 </TabItem>
 </Tabs>
+
+## Max depth
+
+How many levels of nested objects a normalization goes through before it
+fails, so a cyclic graph of objects is an error and not an exhausted memory.
+An object and an array of a `mixed` value are a level each. Denormalization
+is limited by its data and ignores the option.
+
+```php
+final class Node
+{
+    public ?Node $next = null;
+}
+
+$node = new Node();
+$node->next = $node;
+
+$mapper = new Mapper(new Configuration(maxDepth: 3));
+
+$mapper->normalize($node);
+// throws InvalidValueException:
+// $.next.next.next: Nesting depth exceeds the limit of 3
+```
 
 ## Other arguments
 

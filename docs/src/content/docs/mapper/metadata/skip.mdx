@@ -189,7 +189,8 @@ $mapper->normalize(new User()); // []
 
 An expression of the
 [Symfony Expression Language](https://symfony.com/doc/current/components/expression_language.html),
-`this` is the object. Requires `symfony/expression-language`.
+`this` is the object, `value` is the value of the property. Requires
+`symfony/expression-language`.
 <Tabs syncKey="metadata">
 <TabItem label="Attributes">
 ```php
@@ -273,7 +274,57 @@ App\User:
 $mapper->normalize(new User()); // ['isGuest' => true]
 ```
 
+### Functions and value
+
+An expression sees the object (`this`) and the value of the property
+(`value`). Functions of the language work in it: `min()`, `max()`,
+`constant()` and `enum()` are built in.
+
+```php
+use TypeLang\Mapper\Mapping\SkipWhen;
+
+final class User
+{
+    #[SkipWhen('value === "" or max(this.age, 18) === 18')]
+    public string $email = '';
+
+    public int $age = 16;
+}
+```
+
+```php
+$mapper->normalize(new User()); // ['age' => 16]
+```
+
+Your own functions are registered in an expression language given to the
+mapper. The same language parses the expressions and evaluates them.
+
+```php
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use TypeLang\Mapper\Mapper;
+
+$language = new ExpressionLanguage();
+$language->register(
+    'blank',
+    static fn(string $v): string => "($v === '')",
+    static fn(array $vars, mixed $v): bool => $v === '',
+);
+
+$mapper = new Mapper(expressions: $language);
+```
+
+```php
+final class User
+{
+    #[SkipWhen('blank(value)')]
+    public string $email = '';
+}
+
+$mapper->normalize(new User()); // []
+```
+
 <Aside type="caution">
-Functions such as `constant()` are not supported in expressions:
-use properties, methods of the object and operators.
+An expression with a function the language does not know is an error of
+the metadata. Metadata read by another language, such as one from a cache,
+throws `TypeDefinitionException` when the class type is built.
 </Aside>
