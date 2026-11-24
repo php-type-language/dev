@@ -13,7 +13,7 @@ use TypeLang\Mapper\Mapping\Provider\InMemoryMetadataProvider;
 use TypeLang\Mapper\Mapping\Provider\MetadataProviderInterface;
 use TypeLang\Mapper\Mapping\Provider\Psr16MetadataProvider;
 use TypeLang\Mapper\Mapping\Provider\Psr6MetadataProvider;
-use TypeLang\Mapper\Mapping\Provider\ValidatingMetadataProvider;
+use TypeLang\Mapper\Mapping\Provider\ReaderMetadataProvider;
 use TypeLang\Mapper\Mapping\Reader\AttributeMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\ChainMetadataReader;
 use TypeLang\Mapper\Mapping\Reader\JsonFileMetadataReader;
@@ -273,7 +273,7 @@ final class MetadataBuilder
 
     public function build(): MetadataProviderInterface
     {
-        $provider = new ValidatingMetadataProvider(new ChainMetadataReader([
+        $provider = new ReaderMetadataProvider(new ChainMetadataReader([
             new NamingStrategyMetadataReader($this->strategy),
             ...$this->getSortedReaders(),
             $this->reflection,

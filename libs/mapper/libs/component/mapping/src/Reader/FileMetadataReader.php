@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Mapping\Reader;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use TypeLang\Mapper\Mapping\Draft\ClassDraft;
 use TypeLang\Mapper\Mapping\Exception\ConfigLoadingException;
 use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
-use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Parser\TypeParserInterface;
 use TypeLang\Reader\ReaderInterface;
@@ -50,7 +50,7 @@ abstract class FileMetadataReader implements AccessSourceReaderInterface
      * @throws InvalidMetadataException in case of the config of the class
      *         is wrong
      */
-    public function read(\ReflectionClass $class, ?ClassMetadata $metadata = null): ClassMetadata
+    public function read(\ReflectionClass $class, ?ClassDraft $metadata = null): ClassDraft
     {
         return $this->getReader()->read($class, $metadata);
     }
@@ -60,7 +60,7 @@ abstract class FileMetadataReader implements AccessSourceReaderInterface
      *         is not a map of classes
      * @throws InvalidMetadataException in case of an access key is wrong
      */
-    public function readAccess(\ReflectionClass $class, ClassMetadata $metadata): ClassMetadata
+    public function readAccess(\ReflectionClass $class, ClassDraft $metadata): ClassDraft
     {
         return $this->getReader()->readAccess($class, $metadata);
     }

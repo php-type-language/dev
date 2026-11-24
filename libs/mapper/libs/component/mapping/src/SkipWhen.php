@@ -17,7 +17,7 @@ use JetBrains\PhpStorm\Language;
  * public string $email;
  * ```
  */
-#[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
+#[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 final class SkipWhen
 {
     public function __construct(
