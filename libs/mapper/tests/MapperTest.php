@@ -49,7 +49,10 @@ final class MapperTest extends TestCase
             self::assertInstanceOf(TypeDefinitionException::class, $error);
             self::assertInstanceOf(InvalidMetadataException::class, $error->getPrevious());
             self::assertStringStartsWith(
-                \sprintf('Type "%s" cannot be built: Cannot read metadata of', DuplicateNameStub::class),
+                \sprintf(
+                    'Type "%1$s" cannot be built, the mapping for class "%1$s" contains errors:',
+                    DuplicateNameStub::class,
+                ),
                 $error->getMessage(),
             );
         }
