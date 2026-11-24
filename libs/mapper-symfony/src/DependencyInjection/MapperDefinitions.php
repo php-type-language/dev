@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Bridge\Symfony\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Bridge\Symfony\Profiler\MapperDataCollector;
 use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\DenormalizerInterface;
@@ -47,6 +50,7 @@ use TypeLang\Parser\TypeParser;
  *     expected_type_max_fields: int<1, max>|null,
  *     max_depth: int<1, max>|null,
  *     naming: non-empty-string|null,
+ *     expression_language: non-empty-string|null,
  *     types: list<non-empty-string>,
  *     decorators: list<non-empty-string>,
  *     expanders: list<non-empty-string>,
@@ -79,6 +83,7 @@ use TypeLang\Parser\TypeParser;
  *     expected_type_max_fields: int<1, max>|null,
  *     max_depth: int<1, max>|null,
  *     naming: non-empty-string|null,
+ *     expression_language: non-empty-string|null,
  *     types: list<non-empty-string>,
  *     decorators: list<non-empty-string>,
  *     expanders: list<non-empty-string>,
@@ -119,6 +124,18 @@ final class MapperDefinitions
     public const MAPPER_ID = 'type_lang_mapper.mapper';
 
     public const PARSER_ID = 'type_lang_mapper.parser';
+
+    /**
+     * Language of the skip expressions of the mappers without their own
+     * one, registered in case of `symfony/expression-language` is installed
+     */
+    public const EXPRESSION_LANGUAGE_ID = 'type_lang_mapper.expression_language';
+
+    /**
+     * Tag of the {@see ExpressionFunctionProviderInterface} services giving
+     * their functions to {@see EXPRESSION_LANGUAGE_ID}
+     */
+    public const EXPRESSION_LANGUAGE_PROVIDER_TAG = 'type_lang_mapper.expression_language_provider';
 
     public const COLLECTOR_ID = 'type_lang_mapper.data_collector';
 
@@ -223,6 +240,11 @@ final class MapperDefinitions
     {
         /** @var BundleConfigType $config */
         $this->container->register(self::PARSER_ID, TypeParser::class);
+
+        if (\class_exists(ExpressionLanguage::class)) {
+            $this->container->register(self::EXPRESSION_LANGUAGE_ID, ExpressionLanguage::class)
+                ->setArguments([null, new TaggedIteratorArgument(self::EXPRESSION_LANGUAGE_PROVIDER_TAG)]);
+        }
 
         $defaults = $config;
         $extensions = [];
@@ -350,7 +372,9 @@ final class MapperDefinitions
                 '$maxDepth' => $settings['max_depth'] ?? $defaults['max_depth'] ?? null,
             ]));
 
-        $this->registerMetadata($name, $settings, $defaults);
+        $expressions = $this->findExpressionLanguage($settings, $defaults);
+
+        $this->registerMetadata($name, $settings, $defaults, $expressions);
 
         $this->container->register(self::getMapperId($name), Mapper::class)
             ->setArguments([
@@ -360,6 +384,7 @@ final class MapperDefinitions
                 '$decorators' => [],
                 '$expanders' => [],
                 '$parser' => new Reference(self::PARSER_ID),
+                '$expressions' => $expressions,
                 '$accessors' => [],
                 '$instantiators' => [],
                 '$hooks' => [],
@@ -374,7 +399,7 @@ final class MapperDefinitions
 
         $extensions[ExtensionKind::MetadataReader->value] = [
             ...$extensions[ExtensionKind::MetadataReader->value],
-            ...$this->registerFileReaders($settings['metadata']['paths']),
+            ...$this->registerFileReaders($settings['metadata']['paths'], $expressions),
         ];
 
         return $extensions;
@@ -392,6 +417,29 @@ final class MapperDefinitions
     }
 
     /**
+     * Returns the reference to the language of the skip expressions of the
+     * `expression_language` setting or of the bundle, {@see null} in case of
+     * neither is available.
+     *
+     * @param MapperSettingsType $settings
+     * @param MapperSettingsType|null $defaults
+     */
+    private function findExpressionLanguage(array $settings, ?array $defaults): ?Reference
+    {
+        $id = $settings['expression_language'] ?? $defaults['expression_language'] ?? null;
+
+        if ($id !== null) {
+            return new Reference($id);
+        }
+
+        if ($this->container->hasDefinition(self::EXPRESSION_LANGUAGE_ID)) {
+            return new Reference(self::EXPRESSION_LANGUAGE_ID);
+        }
+
+        return null;
+    }
+
+    /**
      * Registers the builder of the metadata provider of the mapper and the
      * provider built by it. The readers are added by
      * {@see MapperExtensionsPass}.
@@ -399,12 +447,20 @@ final class MapperDefinitions
      * @param non-empty-string $name
      * @param MapperSettingsType $settings
      * @param MapperSettingsType|null $defaults
+     * @param Reference|null $expressions language of the skip expressions
      */
-    private function registerMetadata(string $name, array $settings, ?array $defaults): void
-    {
+    private function registerMetadata(
+        string $name,
+        array $settings,
+        ?array $defaults,
+        ?Reference $expressions,
+    ): void {
         $builder = $this->container->register(self::getMetadataBuilderId($name), MetadataBuilder::class)
             ->setFactory([MetadataBuilder::class, 'createDefault'])
-            ->setArguments(['$parser' => new Reference(self::PARSER_ID)]);
+            ->setArguments([
+                '$parser' => new Reference(self::PARSER_ID),
+                '$expressions' => $expressions,
+            ]);
 
         $strategy = $this->createNamingStrategy($settings['naming'] ?? $defaults['naming'] ?? null);
 
@@ -428,24 +484,26 @@ final class MapperDefinitions
 
     /**
      * Registers a reader per mapping config file, returns their ids in the
-     * order of the paths, the files of a directory by the name.
+     * order of the paths, the files of a directory by the name. A reader is
+     * shared by the mappers with the same language of the skip expressions.
      *
      * @param list<non-empty-string> $paths
+     * @param Reference|null $expressions language of the skip expressions
      * @return list<non-empty-string>
      * @throws InvalidConfigurationException in case of a path does not exist
      *         or its format is not supported
      */
-    private function registerFileReaders(array $paths): array
+    private function registerFileReaders(array $paths, ?Reference $expressions): array
     {
         $result = [];
 
         foreach ($paths as $path) {
             foreach ($this->findConfigFiles($path) as $file) {
-                $id = '.type_lang_mapper.file_reader.' . \hash('xxh128', $file);
+                $id = '.type_lang_mapper.file_reader.' . \hash('xxh128', $file . "\0" . $expressions);
 
                 if (!$this->container->hasDefinition($id)) {
                     $this->container->register($id, self::getFileReaderClass($file))
-                        ->setArguments([$file, new Reference(self::PARSER_ID)]);
+                        ->setArguments([$file, new Reference(self::PARSER_ID), $expressions]);
                 }
 
                 $result[] = $id;

@@ -6,6 +6,7 @@ namespace TypeLang\Mapper\Bridge\Laravel;
 
 use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Container\Container;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use TypeLang\Mapper\Bridge\Laravel\Exception\InvalidConfigException;
 use TypeLang\Mapper\Coercer\CoercerInterface;
 use TypeLang\Mapper\Configuration;
@@ -153,7 +154,8 @@ final class MapperFactory
     {
         $settings = $this->getSettings($name);
         $decorators = $this->makeServices($settings->getList('decorators'), TypeDecoratorInterface::class);
-        $metadata = $this->createMetadataProvider($name, $settings);
+        $expressions = $this->createExpressionLanguage($settings);
+        $metadata = $this->createMetadataProvider($name, $settings, $expressions);
         $formatters = $this->makeFormatters($settings);
 
         if ($this->profiler !== null) {
@@ -177,6 +179,7 @@ final class MapperFactory
             denormalizationFormatter: $formatters['denormalization'] ?? null,
             normalizationFormatter: $formatters['normalization'] ?? null,
             parser: $this->parser,
+            expressions: $expressions,
         );
 
         if ($this->profiler === null) {
@@ -263,9 +266,12 @@ final class MapperFactory
      * @param non-empty-string $name
      * @throws InvalidConfigException in case of a setting is invalid
      */
-    private function createMetadataProvider(string $name, MapperSettings $settings): MetadataProviderInterface
-    {
-        $builder = MetadataBuilder::createDefault($this->parser);
+    private function createMetadataProvider(
+        string $name,
+        MapperSettings $settings,
+        ?ExpressionLanguage $expressions,
+    ): MetadataProviderInterface {
+        $builder = MetadataBuilder::createDefault($this->parser, $expressions);
 
         $naming = $settings->findString('naming');
 
@@ -281,7 +287,7 @@ final class MapperFactory
 
         $readers = [
             ...$this->makeServices($settings->getList('metadata.readers'), MetadataReaderInterface::class),
-            ...$this->createFileReaders($settings->getList('metadata.paths')),
+            ...$this->createFileReaders($settings->getList('metadata.paths'), $expressions),
         ];
 
         foreach (\array_reverse($readers) as $reader) {
@@ -319,6 +325,23 @@ final class MapperFactory
     }
 
     /**
+     * Returns the language of the skip expressions of the `expression_language`
+     * setting, {@see null} in case of it is not set.
+     *
+     * @throws InvalidConfigException in case of the service is invalid
+     */
+    private function createExpressionLanguage(MapperSettings $settings): ?ExpressionLanguage
+    {
+        $service = $settings->findString('expression_language');
+
+        if ($service === null) {
+            return null;
+        }
+
+        return $this->makeService($service, ExpressionLanguage::class);
+    }
+
+    /**
      * @param non-empty-string $name
      * @throws InvalidConfigException in case of the service is invalid
      */
@@ -342,7 +365,7 @@ final class MapperFactory
      * @throws InvalidConfigException in case of a path does not exist or its
      *         format is not supported
      */
-    private function createFileReaders(array $paths): array
+    private function createFileReaders(array $paths, ?ExpressionLanguage $expressions): array
     {
         $result = [];
 
@@ -350,7 +373,7 @@ final class MapperFactory
             foreach (self::findConfigFiles($path) as $file) {
                 $class = self::getFileReaderClass($file);
 
-                $result[] = new $class($file, $this->parser);
+                $result[] = new $class($file, $this->parser, $expressions);
             }
         }
 

@@ -143,10 +143,15 @@ type_lang_mapper:
   reject_extra_fields: false
   expected_type_depth: 1
   expected_type_max_fields: ~
+  max_depth: 512
 
   # snake_case, camelCase, PascalCase, SCREAMING_SNAKE_CASE, kebab-case
   # or a NamingStrategyInterface service
   naming: ~
+
+  # ExpressionLanguage service of the skip expressions,
+  # default = type_lang_mapper.expression_language
+  expression_language: ~
 
   # services, see "Extensions"
   types: []
@@ -336,6 +341,32 @@ Two coercers of one type, or two formatters of one direction, for the same
 mapper are an error. A coercer or a formatter of a named mapper replaces the
 one of the default mapper.
 </Aside>
+
+### Expression functions
+
+The functions of the [skip expressions](/mapper/metadata/skip/#expression)
+come from the `type_lang_mapper.expression_language` service, registered
+when `symfony/expression-language` is installed. A function provider is
+added to it by a tag, as for the conditions of the routes:
+
+```yaml
+# config/services.yaml
+services:
+  App\Mapper\StringFunctions:
+    tags: [type_lang_mapper.expression_language_provider]
+```
+
+```php
+final class StringFunctions implements ExpressionFunctionProviderInterface
+{
+    public function getFunctions(): array
+    {
+        return [ExpressionFunction::fromPhp('trim')];
+    }
+}
+```
+
+The `expression_language` setting replaces the service for a mapper.
 
 ## Profiler
 

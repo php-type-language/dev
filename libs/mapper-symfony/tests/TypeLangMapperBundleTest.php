@@ -13,6 +13,10 @@ use Symfony\Component\DependencyInjection\Reference;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\AccessorStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\ApiShoutTypeBuilderStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\AutowiredMapperConsumerStub;
+use TypeLang\Mapper\Bridge\Symfony\DependencyInjection\MapperDefinitions;
+use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\BlankExpressionLanguageStub;
+use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\BlankFunctionProviderStub;
+use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\BlankSkipStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\DecimalCommaCoercerStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\DecoratorStub;
 use TypeLang\Mapper\Bridge\Symfony\Tests\Stub\ExpanderStub;
@@ -51,6 +55,93 @@ final class TypeLangMapperBundleTest extends TestCase
         self::assertSame($mapper, $container->get('test.' . DenormalizerInterface::class));
         self::assertSame($mapper, $container->get('test.' . NormalizerInterface::class));
         self::assertSame(42, $mapper->denormalize('42', 'int'));
+    }
+
+    public function testExpressionLanguageServiceGivesFunctionsToSkipExpressions(): void
+    {
+        $container = self::createContainer(
+            config: ['expression_language' => 'app.expression_language'],
+            public: ['type_lang_mapper.mapper'],
+            configure: static function (ContainerBuilder $container): void {
+                $container->register('app.expression_language', BlankExpressionLanguageStub::class);
+            },
+        );
+
+        $mapper = $container->get('test.type_lang_mapper.mapper');
+
+        \assert($mapper instanceof Mapper);
+
+        self::assertSame(['name' => 'John'], $mapper->normalize(new BlankSkipStub()));
+    }
+
+    public function testTaggedProviderGivesFunctionsToSkipExpressions(): void
+    {
+        $container = self::createContainer(
+            config: ['mappers' => ['api' => []]],
+            public: ['type_lang_mapper.mapper', 'type_lang_mapper.mapper.api'],
+            configure: static function (ContainerBuilder $container): void {
+                $container->register('app.blank_provider', BlankFunctionProviderStub::class)
+                    ->addTag(MapperDefinitions::EXPRESSION_LANGUAGE_PROVIDER_TAG);
+            },
+        );
+
+        foreach (['test.type_lang_mapper.mapper', 'test.type_lang_mapper.mapper.api'] as $id) {
+            $mapper = $container->get($id);
+
+            \assert($mapper instanceof Mapper);
+
+            self::assertSame(['name' => 'John'], $mapper->normalize(new BlankSkipStub()));
+        }
+    }
+
+    public function testNamedMapperInheritsExpressionLanguage(): void
+    {
+        $container = self::createContainer(
+            config: ['expression_language' => 'app.expression_language', 'mappers' => ['api' => []]],
+            public: ['type_lang_mapper.mapper.api'],
+            configure: static function (ContainerBuilder $container): void {
+                $container->register('app.expression_language', BlankExpressionLanguageStub::class);
+            },
+        );
+
+        $mapper = $container->get('test.type_lang_mapper.mapper.api');
+
+        \assert($mapper instanceof Mapper);
+
+        self::assertSame(['name' => 'John'], $mapper->normalize(new BlankSkipStub()));
+    }
+
+    public function testServiceNamedExpressionLanguageIsNotTakenWithoutSetting(): void
+    {
+        $container = self::createContainer(
+            public: ['type_lang_mapper.mapper'],
+            configure: static function (ContainerBuilder $container): void {
+                $container->register('expression_language', BlankExpressionLanguageStub::class);
+            },
+        );
+
+        $mapper = $container->get('test.type_lang_mapper.mapper');
+
+        \assert($mapper instanceof Mapper);
+
+        $this->expectException(TypeDefinitionException::class);
+        $this->expectExceptionMessage('expression "blank(value)" is invalid');
+
+        $mapper->normalize(new BlankSkipStub());
+    }
+
+    public function testFunctionIsRejectedWithoutExpressionLanguageService(): void
+    {
+        $container = self::createContainer(public: ['type_lang_mapper.mapper']);
+
+        $mapper = $container->get('test.type_lang_mapper.mapper');
+
+        \assert($mapper instanceof Mapper);
+
+        $this->expectException(TypeDefinitionException::class);
+        $this->expectExceptionMessage('expression "blank(value)" is invalid');
+
+        $mapper->normalize(new BlankSkipStub());
     }
 
     public function testNamedMapperIsRegistered(): void

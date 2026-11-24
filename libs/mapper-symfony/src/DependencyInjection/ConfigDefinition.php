@@ -108,6 +108,10 @@ final class ConfigDefinition
             ->info('Built-in naming strategy (snake_case, camelCase, ...) or a service')
             ->defaultNull();
 
+        $children->scalarNode('expression_language')
+            ->info('ExpressionLanguage service of the skip expressions, the one of the bundle by default')
+            ->defaultNull();
+
         self::defineServiceList($children, 'types', 'Type builders');
         self::defineServiceList($children, 'decorators', 'Type decorators');
         self::defineServiceList($children, 'expanders', 'Type expanders of the expected types of errors');

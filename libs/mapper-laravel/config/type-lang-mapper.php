@@ -34,6 +34,11 @@ return [
     // SCREAMING_SNAKE_CASE, kebab-case) or a service
     'naming' => null,
 
+    // Service of Symfony\Component\ExpressionLanguage\ExpressionLanguage with
+    // the functions of the skip expressions, a language with the default
+    // functions by default
+    'expression_language' => null,
+
     // Services of the extensions, the classes or the container ids
     'types' => [],
     'decorators' => [],

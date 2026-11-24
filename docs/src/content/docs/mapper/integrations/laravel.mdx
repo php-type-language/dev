@@ -84,10 +84,15 @@ return [
     'reject_extra_fields' => false,
     'expected_type_depth' => 1,
     'expected_type_max_fields' => null,
+    'max_depth' => 512,
 
     // snake_case, camelCase, PascalCase, SCREAMING_SNAKE_CASE, kebab-case
     // or a NamingStrategyInterface service
     'naming' => null,
+
+    // ExpressionLanguage service with the functions of the skip
+    // expressions, default = a language with the built-in functions
+    'expression_language' => null,
 
     // services, see "Extensions"
     'types' => [],
