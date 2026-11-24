@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Bridge\Symfony\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
@@ -18,18 +19,29 @@ use Symfony\Component\DependencyInjection\Reference;
  * or a formatter of a direction of a named mapper replaces the one of the
  * default mapper, see {@see MapperSlot}. The type
  * recorder of the profiler is the last decorator, it sees the final type.
+ * The function providers tagged for the expression language of the bundle
+ * are passed to it as a list, by the priority.
  *
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Mapper\Bridge\Symfony
  */
 final class MapperExtensionsPass implements CompilerPassInterface
 {
+    use PriorityTaggedServiceTrait;
+
     /**
      * @throws InvalidArgumentException in case of a service is tagged for a
      *         mapper that is not configured
      */
     public function process(ContainerBuilder $container): void
     {
+        if ($container->hasDefinition(MapperDefinitions::EXPRESSION_LANGUAGE_ID)) {
+            $container->getDefinition(MapperDefinitions::EXPRESSION_LANGUAGE_ID)->setArgument(
+                1,
+                $this->findAndSortTaggedServices(MapperDefinitions::EXPRESSION_LANGUAGE_PROVIDER_TAG, $container),
+            );
+        }
+
         if (!$container->hasParameter(MapperDefinitions::EXTENSIONS_PARAMETER)) {
             return;
         }

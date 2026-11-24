@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Bridge\Symfony\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
@@ -243,7 +242,7 @@ final class MapperDefinitions
 
         if (\class_exists(ExpressionLanguage::class)) {
             $this->container->register(self::EXPRESSION_LANGUAGE_ID, ExpressionLanguage::class)
-                ->setArguments([null, new TaggedIteratorArgument(self::EXPRESSION_LANGUAGE_PROVIDER_TAG)]);
+                ->setArguments([null, []]);
         }
 
         $defaults = $config;
