@@ -6,8 +6,11 @@ sidebar:
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-Leaves a property out of the normalized data under a condition. Several
-conditions can be combined: the property is skipped when any of them matches.
+Leaves a field out of the normalized data under a condition. Several
+conditions can be combined: the field is skipped when any of them matches.
+A condition is given where the read is declared: on a property, on a
+[getter or a `get` hook](/mapper/metadata/access/) with `#[MapGetter]`, in
+the `get` key of a config.
 
 Every option is shown in each [metadata source](/mapper/metadata/): choose
 the tab of the source you use. When a source cannot express an option, its
@@ -191,6 +194,11 @@ An expression of the
 [Symfony Expression Language](https://symfony.com/doc/current/components/expression_language.html),
 `this` is the object, `value` is the value of the property. Requires
 `symfony/expression-language`.
+
+- The `context` argument renames `this`: a variable name other than
+  `value`.
+- An exception, an error, a notice or a warning of the expression, such as
+  of a property the object does not have, is a violation of the field.
 <Tabs syncKey="metadata">
 <TabItem label="Attributes">
 ```php

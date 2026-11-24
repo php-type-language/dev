@@ -6,15 +6,155 @@ sidebar:
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-How a property is read on normalization and written on denormalization. By
-default a property with its own value is accessed directly, bypassing its
-hooks, and a virtual property through its hooks.
+A field of the data is read from and written to a member of the class. By
+default a property is read and written through its backing store, its
+hooks are not called, a virtual property is not mapped.
+
+`#[MapGetter]` declares the read, `#[MapSetter]` the write. The member
+takes part only in the declared directions, the place of the attribute
+chooses the access:
+
+| Attribute on   | Access                                        |
+|----------------|-----------------------------------------------|
+| a property     | the backing store, past the hooks             |
+| a hook         | the hook                                      |
+| a method       | the method, a field of its own                |
+
+<Aside type="caution">
+A property with `#[MapGetter]` only is not written: `denormalize()` leaves
+it with its default value or uninitialized, the output of `normalize()`
+does not come back. Give `#[MapSetter]` next to it for both directions.
+</Aside>
+
+## Property
+
+The value is read and written past the hooks, such as on restoring an
+object from storage.
+
+- A private property with an attribute is mapped, a private property of a
+  parent too, even next to a property of the same name in the child.
+- A static property is an error.
+- In a config the name of a property is a property of the class itself: a
+  private property of a parent hidden by it is declared by attributes only.
+<Tabs syncKey="metadata">
+<TabItem label="Attributes">
+```php
+use TypeLang\Mapper\Mapping\MapGetter;
+use TypeLang\Mapper\Mapping\MapSetter;
+
+final class User
+{
+    #[MapGetter('created_at')]
+    public \DateTimeImmutable $createdAt;
+
+    #[MapSetter(onUndefinedError: 'Password is required')]
+    private string $password;
+
+    #[MapGetter, MapSetter('login', aliases: ['email'])]
+    public string $name;
+}
+
+$mapper->normalize($user);
+// ['created_at' => '...', 'name' => 'john']
+
+$mapper->denormalize(['password' => 'x', 'email' => 'john'], User::class);
+// User { password: 'x', name: 'john' }
+```
+</TabItem>
+
+<TabItem label="PHPDoc">
+<Aside type="caution">
+Not supported.
+</Aside>
+
+</TabItem>
+
+<TabItem label="Reflection">
+<Aside type="caution">
+Not supported: a property is read and written through its backing store.
+</Aside>
+
+</TabItem>
+
+<TabItem label="PHP Config">
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'createdAt' => ['get' => ['name' => 'created_at']],
+            'password' => ['set' => [
+                'undefined_error_message' => 'Password is required',
+            ]],
+            'name' => [
+                'get' => [],
+                'set' => ['name' => 'login', 'aliases' => ['email']],
+            ],
+        ],
+    ],
+];
+```
+</TabItem>
+
+<TabItem label="JSON">
+```json
+{
+    "App\\User": {
+        "properties": {
+            "createdAt": { "get": { "name": "created_at" } },
+            "password": { "set": {
+                "undefined_error_message": "Password is required"
+            } },
+            "name": {
+                "get": {},
+                "set": { "name": "login", "aliases": ["email"] }
+            }
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem label="YAML">
+```yaml
+App\User:
+  properties:
+    createdAt:
+      get: { name: created_at }
+    password:
+      set: { undefined_error_message: 'Password is required' }
+    name:
+      get: {}
+      set: { name: login, aliases: [email] }
+```
+</TabItem>
+
+<TabItem label="NEON">
+```yaml
+App\User:
+    properties:
+        createdAt:
+            get: [name: created_at]
+        password:
+            set: [undefined_error_message: 'Password is required']
+        name:
+            get: []
+            set: [name: login, aliases: [email]]
+```
+</TabItem>
+</Tabs>
 
 ## Methods
 
-A getter takes no required arguments, a setter takes one value, its result
-is not used. The type is the return type of the getter and the parameter
-type of the setter, `#[MapType]` and PHPDoc of the method override it.
+A method with an attribute is a field of its own, not bound to a property.
+The name of the field is required.
+
+- The method is public, neither the constructor nor a magic method.
+- A getter takes no required arguments and returns a value.
+- A setter takes one value, not a variadic one. A setter with an optional
+  parameter is not called when the data has no field, the `default` key of
+  a config is passed to it.
 <Tabs syncKey="metadata">
 <TabItem label="Attributes">
 ```php
@@ -23,34 +163,38 @@ use TypeLang\Mapper\Mapping\MapSetter;
 
 final class User
 {
-    public string $name = '';
+    private string $first = '';
+    private string $last = '';
 
-    #[MapGetter('name')]
-    public function getName(): string
+    #[MapGetter('full_name')]
+    public function getFullName(): string
     {
-        return \ucfirst($this->name);
+        return $this->first . ' ' . $this->last;
     }
 
-    #[MapSetter('name')]
-    public function setName(string $name): void
+    #[MapSetter('full_name', type: 'non-empty-string')]
+    public function setFullName(string $name): void
     {
-        $this->name = \strtolower($name);
+        [$this->first, $this->last] = \explode(' ', $name, 2);
     }
 }
+
+$mapper->normalize($user);
+// ['full_name' => 'John Doe']
 ```
 </TabItem>
 
 <TabItem label="PHPDoc">
 <Aside type="caution">
-There is no PHPDoc tag for this option. The types are read from
-`@return` of the getter and `@param` of the setter.
+Not supported: the types are read from `@return` of the getter and
+`@param` of the setter.
 </Aside>
 
 </TabItem>
 
 <TabItem label="Reflection">
-<Aside>
-PHP has no such declaration: the property is accessed directly.
+<Aside type="caution">
+Not supported.
 </Aside>
 
 </TabItem>
@@ -61,11 +205,12 @@ PHP has no such declaration: the property is accessed directly.
 
 return [
     App\User::class => [
-        'properties' => [
-            'name' => [
-                'getter' => 'getName',
-                'setter' => 'setName',
-            ],
+        'methods' => [
+            'getFullName' => ['get' => ['name' => 'full_name']],
+            'setFullName' => ['set' => [
+                'name' => 'full_name',
+                'type' => 'non-empty-string',
+            ]],
         ],
     ],
 ];
@@ -76,11 +221,12 @@ return [
 ```json
 {
     "App\\User": {
-        "properties": {
-            "name": {
-                "getter": "getName",
-                "setter": "setName"
-            }
+        "methods": {
+            "getFullName": { "get": { "name": "full_name" } },
+            "setFullName": { "set": {
+                "name": "full_name",
+                "type": "non-empty-string"
+            } }
         }
     }
 }
@@ -90,75 +236,71 @@ return [
 <TabItem label="YAML">
 ```yaml
 App\User:
-    properties:
-        name:
-            getter: getName
-            setter: setName
+  methods:
+    getFullName:
+      get: { name: full_name }
+    setFullName:
+      set: { name: full_name, type: non-empty-string }
 ```
 </TabItem>
 
 <TabItem label="NEON">
 ```yaml
 App\User:
-    properties:
-        name:
-            getter: getName
-            setter: setName
+    methods:
+        getFullName:
+            get: [name: full_name]
+        setFullName:
+            set: [name: full_name, type: non-empty-string]
 ```
 </TabItem>
-
 </Tabs>
-
-```php
-$user = $mapper->denormalize(['name' => 'JOHN'], User::class);
-$user->name;               // 'john'
-$mapper->normalize($user); // ['name' => 'John']
-```
-
-<Aside>
-A missing field gets its default value through the setter.
-</Aside>
-
-<Aside type="caution">
-The property of the name must be mapped, a public one by default: a
-private property behind a getter and a property without a PHP field, such
-as a computed `fullName`, are not supported yet.
-</Aside>
 
 ## Hooks
 
-Accesses a property with its own value through its PHP 8.4 hooks. The type
-is the type of the property for the `get` hook and the parameter type of
-the `set` hook.
+`#[MapGetter]` on the `get` hook and `#[MapSetter]` on the `set` hook
+access the property through the hook, with the type of the hook. A virtual
+property is mapped only so.
 <Tabs syncKey="metadata">
 <TabItem label="Attributes">
 ```php
 use TypeLang\Mapper\Mapping\MapGetter;
 use TypeLang\Mapper\Mapping\MapSetter;
 
-final class User
+final class Post
 {
-    public string $name = '' {
+    public string $title = '' {
         #[MapGetter]
-        get => \ucfirst($this->name);
+        get => \ucfirst($this->title);
         #[MapSetter]
-        set(string $value) => \strtolower($value);
+        set(string|int $value) {
+            $this->title = (string) $value;
+        }
+    }
+
+    public string $slug {
+        #[MapGetter]
+        get => \strtolower($this->title);
     }
 }
+
+$mapper->normalize($post);
+// ['title' => 'Hello', 'slug' => 'hello']
 ```
 </TabItem>
 
 <TabItem label="PHPDoc">
 <Aside type="caution">
-There is no PHPDoc tag for this option.
+Not supported: the types are read from `@return` of the `get` hook and
+`@param` of the `set` hook, then from `@var` of the property in case of
+the hook takes the native type of the property.
 </Aside>
 
 </TabItem>
 
 <TabItem label="Reflection">
-<Aside>
-PHP has no such declaration: only a virtual property is accessed through
-its hooks.
+<Aside type="caution">
+Not supported: the hooks are not called.
 </Aside>
 
 </TabItem>
@@ -168,12 +310,13 @@ its hooks.
 <?php
 
 return [
-    App\User::class => [
+    App\Post::class => [
         'properties' => [
-            'name' => [
-                'getter' => true,
-                'setter' => true,
+            'title' => [
+                'get' => ['hook' => true],
+                'set' => ['hook' => true],
             ],
+            'slug' => ['get' => ['hook' => true]],
         ],
     ],
 ];
@@ -183,12 +326,13 @@ return [
 <TabItem label="JSON">
 ```json
 {
-    "App\\User": {
+    "App\\Post": {
         "properties": {
-            "name": {
-                "getter": true,
-                "setter": true
-            }
+            "title": {
+                "get": { "hook": true },
+                "set": { "hook": true }
+            },
+            "slug": { "get": { "hook": true } }
         }
     }
 }
@@ -197,121 +341,59 @@ return [
 
 <TabItem label="YAML">
 ```yaml
-App\User:
-    properties:
-        name:
-            getter: true
-            setter: true
+App\Post:
+  properties:
+    title:
+      get: { hook: true }
+      set: { hook: true }
+    slug:
+      get: { hook: true }
 ```
 </TabItem>
 
 <TabItem label="NEON">
 ```yaml
-App\User:
+App\Post:
     properties:
-        name:
-            getter: true
-            setter: true
+        title:
+            get: [hook: true]
+            set: [hook: true]
+        slug:
+            get: [hook: true]
 ```
 </TabItem>
-
 </Tabs>
 
-## One direction
+## Arguments
 
-Maps a property in one direction only.
-<Tabs syncKey="metadata">
-<TabItem label="Attributes">
-```php
-use TypeLang\Mapper\Mapping\Direction;
-use TypeLang\Mapper\Mapping\MapOnly;
+| `#[MapGetter]` | `#[MapSetter]` | Config key |
+|---|---|---|
+| `name` | `name` | `name` |
+| `type` | `type` | `type` |
+| | `strict` | `strict` |
+| | `aliases`, `onConflict` | `aliases`, `alias_conflict` |
+| | `onTypeError` | `type_error_message` |
+| | `onUndefinedError` | `undefined_error_message` |
 
-final class User
-{
-    #[MapOnly(Direction::Normalization)]
-    public string $createdAt = '2026-01-01';
-}
-```
-</TabItem>
+## Rules
 
-<TabItem label="PHPDoc">
-<Aside type="caution">
-There is no PHPDoc tag for this option.
-</Aside>
-
-</TabItem>
-
-<TabItem label="Reflection">
-<Aside>
-PHP has no such declaration: a virtual property takes part in the
-directions it has hooks for.
-</Aside>
-
-</TabItem>
-
-<TabItem label="PHP Config">
-```php
-<?php
-
-return [
-    App\User::class => [
-        'properties' => [
-            'createdAt' => [
-                'only' => 'normalization',
-            ],
-        ],
-    ],
-];
-```
-</TabItem>
-
-<TabItem label="JSON">
-```json
-{
-    "App\\User": {
-        "properties": {
-            "createdAt": {
-                "only": "normalization"
-            }
-        }
-    }
-}
-```
-</TabItem>
-
-<TabItem label="YAML">
-```yaml
-App\User:
-    properties:
-        createdAt:
-            only: normalization
-```
-</TabItem>
-
-<TabItem label="NEON">
-```yaml
-App\User:
-    properties:
-        createdAt:
-            only: normalization
-```
-</TabItem>
-
-</Tabs>
-
-```php
-$user = $mapper->denormalize(['createdAt' => 'now'], User::class);
-$user->createdAt;          // '2026-01-01'
-$mapper->normalize($user); // ['createdAt' => '2026-01-01']
-```
-
-<Aside type="caution">
-A direction left out by one source is not brought back by another one: an
-`only` key of the other direction over `#[MapOnly]` is an error.
-</Aside>
-
-<Aside>
-The field of a property that is only normalized is not an extra one
-under the [`rejectExtraFields`](/mapper/configuration/#reject-extra-fields)
-option.
-</Aside>
+- Skip conditions are given next to the read: `#[SkipWhenNull]` on the
+  property, the getter or the `get` hook, the `skip` key in `get`.
+- A config key of a property without `get` and `set` applies to both
+  directions, next to `get` or `set` it is an error.
+- `#[MapName]`, `#[MapType]`, `#[MapAlias]`, `#[OnTypeError]` and
+  `#[OnUndefinedError]` next to `#[MapGetter]` or `#[MapSetter]`, on a
+  method or on a hook are errors: give their values in the arguments.
+- An attribute of a direction the member does not declare, such as
+  `#[SkipWhenNull]` next to `#[MapSetter]` only, is an error. An attribute
+  of a direction left out by a config is not applied.
+- The arguments are values like the others: a source of a higher priority
+  overrides them, of a lower one it does not. A source declaring the
+  directions (the attributes of the access, the `get` and `set` keys)
+  declares the member as a whole: the directions of a lower source are
+  replaced, not joined.
+- PHP does not inherit attributes: a method or a hook overridden in a
+  subclass, an abstract method and a method of an interface need their own
+  `#[MapGetter]` or `#[MapSetter]`, otherwise the field is not mapped.
+- The fields are written once all the values of the data are accepted: a
+  setter or a hook is not called when another field is rejected.

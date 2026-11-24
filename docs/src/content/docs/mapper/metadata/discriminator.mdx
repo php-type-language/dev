@@ -14,7 +14,8 @@ tab says what is used instead.
 
 ## Declaring the map
 
-The map is declared on a base class or an interface.
+The map is declared on a base class or an interface. A type of the map is
+a class or an interface, another type is an error of the metadata.
 <Tabs syncKey="metadata">
 <TabItem label="Attributes">
 ```php
@@ -133,6 +134,28 @@ $mapper->denormalize(['radius' => 2], Shape::class);
 ```
 </TabItem>
 </Tabs>
+
+### Field of the tag
+
+A field of a class with the name of the field of the tag takes the tag.
+
+```php
+final class Circle extends Shape
+{
+    public string $type = 'round';
+    public float $radius;
+}
+
+$mapper->normalize($circle);
+// ['type' => 'circle', 'radius' => 2.0]
+
+$mapper->denormalize(['type' => 'circle', 'radius' => 2], Circle::class);
+// Circle { type: 'circle', radius: 2.0 }
+
+$mapper->denormalize(['type' => 'square', 'side' => 2], Circle::class);
+// throws InvalidValueException:
+// $.type: Value must be of type 'circle', but "square" given
+```
 
 ## Fallback type
 

@@ -420,6 +420,10 @@ $camel->rename('created_at'); // 'createdAt'
 
 A [field name](#field-name) of a property always wins over the strategy.
 
+The strategy renames the fields the class declares: a child keeps the
+strategy of its parent for the fields of the parent, its own fields are
+named by its own strategy or by the strategy of the mapper.
+
 ### For the whole mapper
 
 A strategy of the mapper is used for the classes without their own one.

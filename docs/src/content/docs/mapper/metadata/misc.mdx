@@ -181,18 +181,30 @@ $mapper->denormalize(['role' => 'admin'], User::class);
 </TabItem>
 </Tabs>
 
+Where the default value comes from:
+
+- a property: PHP sets it on creating the object, it is not written again
+  and its `set` hook is not called;
+- a promoted property written by a field: the default value of its
+  constructor parameter is written through the access of the field, a
+  `set` hook with `#[MapSetter]` is called as the constructor would;
+- a promoted property no field writes, such as one that is only read or
+  not mapped: the default value of the parameter is set on creating the
+  object;
+- the `default` key of a config: written through the access of the field.
+
 <Aside>
-A promoted property takes the default value of its constructor parameter.
-A default value is `null`, a scalar, an enum case or an array of
-them: an object, such as `new Address()` in an initializer, is an
-error of the metadata. `null` in the data is a value, not a
-missing field: it must match the type.
+A default value is `null`, a scalar, an enum case or an array of them: an
+object, such as `new Address()` in an initializer, is an error of the
+metadata. `null` in the data is a value, not a missing field: it must
+match the type.
 </Aside>
 
 ## Value aliases
 
-Other values accepted for a case of a backed enum, such as old values.
-Normalization always gives the value of the case.
+Other values accepted for a case of an enum, such as old values: values of
+a backed enum, names of an enum without values. Normalization always gives
+the value or the name of the case.
 <Tabs syncKey="metadata">
 <TabItem label="Attributes">
 ```php

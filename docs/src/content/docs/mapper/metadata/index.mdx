@@ -74,6 +74,8 @@ higher priority overrides the values of a lower one, of readers with an
 equal priority the later added one wins. Reflection is always the lowest.
 The [getters and setters](/mapper/metadata/access/) of attributes and
 configs are read right above it, so every reader reads the types at them.
+Without them a property is accessed through its backing store and a
+virtual property is not mapped.
 
 ```php
 use TypeLang\Mapper\Mapper;
@@ -202,5 +204,6 @@ $mapper = new Mapper(
 
 <Aside type="caution">
 The cache is not invalidated when a class or a config file changes: clear
-it on deploy.
+it on deploy. Mappers with different readers or configs sharing a cache
+need different prefixes.
 </Aside>

@@ -71,7 +71,13 @@ the application (see [messages](#messages)).
 | `failed_check`   | `Value must be of type {{expected}} ({{check}})`, `Value {{value}} is invalid ({{check}})` without the expected type |
 | `depth_exceeded` | `Nesting depth exceeds the limit of {{limit}}`, see [max depth](/mapper/configuration/#max-depth) |
 | `untagged_object` | `Class "{{class}}" has no tag in the discriminator map of "{{base}}"`, see [discriminator](/mapper/metadata/discriminator/#classes-of-the-hierarchy) |
-| `invalid_value`  | `Value {{value}} is rejected`: an exception of a hook, or of a custom type nested in a list, an array, a shape or a class. Its message is not shown, the exception is `$violation->cause` and `$e->getPrevious()` |
+| `invalid_value`  | `Value {{value}} is rejected`: an exception or an error of a hook or a setter, of a custom type nested in a list, an array, a shape or a class, a value the property does not take |
+| `unreadable_value` | `Value cannot be read`: a field of an object cannot be read on normalization, such as an uninitialized property or a getter that throws |
+
+The message of the exception of `invalid_value` and `unreadable_value` is
+not shown: the exception is `$violation->cause` and `$e->getPrevious()`.
+A value is written after the type of its field is chosen: in a union such
+as `A|B` a failed write into `A` does not try `B`.
 
 ## Paths
 
@@ -109,9 +115,36 @@ try {
     $e->getMessage();
     // '$.id: Value must be of type int, but "abc" given (and 1 more)'
 
-    \count($e->violations); // 2
+    \count($e); // 2
 }
 ```
+
+## Fatal violations
+
+The exception iterates over its violations. A violation caused by an
+`\Error`, such as a call of a method that does not exist inside a setter,
+is fatal: a defect of the code rather than of the input.
+
+```php
+try {
+    $mapper->denormalize($data, User::class);
+} catch (InvalidValueException $e) {
+    if ($e->hasFatalViolations) {
+        foreach ($e->getFatalErrors() as $violation => $error) {
+            $logger->error($error->getMessage(), ['exception' => $error]);
+        }
+
+        throw $e;
+    }
+
+    foreach ($e as $violation) {
+        // ...
+    }
+}
+```
+
+`getFatalViolations()` returns the fatal violations, `getCauses()` the
+causes of all of them.
 
 ## Messages
 

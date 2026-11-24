@@ -7,26 +7,29 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-A property of a mapped class is read by a reader and written by a writer.
-They are chosen by a strategy once per property, on the first conversion of
-the class.
+A field of a mapped class is read by a reader and written by a writer. They
+are chosen by a strategy once per field, on the first conversion of the
+class.
 
-The [metadata](/mapper/metadata/) give each direction of a property its
-access point: the backing value of the property (`StorageAccessPoint`), its
-PHP 8.4 hook (`HookAccessPoint`) or a method (`MethodAccessPoint`). By
-default the backing value is written directly or by reflection for private
-and readonly properties, bypassing its hooks, a virtual property is accessed
-through its hooks, a method is called.
+The [metadata](/mapper/metadata/) give each field of the data its access:
+the backing value of a property (`SlotAccessMetadata`), its PHP 8.4 hook
+(`HookAccessMetadata`) or a method (`MethodAccessMetadata`). By default the
+backing value is written directly or by reflection for private and readonly
+properties, bypassing its hooks, a virtual property is accessed through its
+hooks, a method is called.
 
-An access strategy takes the point of its direction and returns the reader
-or the writer, or `null` for a point it does not take. A strategy may take
-one direction only. Strategies of the user are tried first.
+An access strategy takes a field of the normalization
+(`OutputFieldMetadata`) or of the denormalization (`InputFieldMetadata`) and
+returns the reader or the writer, or `null` for an access it does not take.
+A strategy may take one direction only. Strategies of the user are tried
+first.
 
 A strategy that goes through the getter and the setter of a property:
 
 ```php
-use TypeLang\Mapper\Mapping\Metadata\AccessPoint\StorageAccessPoint;
-use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Access\SlotAccessMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Field\InputFieldMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Field\OutputFieldMetadata;
 use TypeLang\Mapper\PropertyAccessor\PropertyReader\MethodPropertyReader;
 use TypeLang\Mapper\PropertyAccessor\PropertyReaderInterface;
 use TypeLang\Mapper\PropertyAccessor\PropertyWriter\MethodPropertyWriter;
@@ -37,16 +40,16 @@ final class AccessorMethodsStrategy implements AccessStrategyInterface
 {
     public function tryCreateReader(
         \ReflectionClass $class,
-        PropertyMetadata $metadata,
+        OutputFieldMetadata $field,
     ): ?PropertyReaderInterface {
-        $point = $metadata->read?->point;
+        $access = $field->access;
 
         // only a property with its own value
-        if (!$point instanceof StorageAccessPoint) {
+        if (!$access instanceof SlotAccessMetadata) {
             return null;
         }
 
-        $method = 'get' . \ucfirst($point->property);
+        $method = 'get' . \ucfirst($access->property);
 
         if (!$class->hasMethod($method)) {
             return null;
@@ -55,10 +58,11 @@ final class AccessorMethodsStrategy implements AccessStrategyInterface
         return new MethodPropertyReader($method);
     }
 
-    public function tryCreateWriter(/* ... */): ?PropertyWriterInterface
-    {
-        // the same with $metadata->write, the "set" prefix
-        // and MethodPropertyWriter
+    public function tryCreateWriter(
+        \ReflectionClass $class,
+        InputFieldMetadata $field,
+    ): ?PropertyWriterInterface {
+        // the same with the "set" prefix and MethodPropertyWriter
     }
 }
 ```
@@ -82,10 +86,9 @@ $mapper->denormalize(['name' => 'JOHN'], Customer::class);
 // Customer { name: 'john' }
 ```
 
-The strategy chooses how to access the point, not the field of the data:
-which properties are mapped and under which names is decided by the
-metadata. The value reaches the writer already converted to the type of the
-direction.
+The strategy chooses how to execute the access, not the fields of the data:
+which fields are mapped and under which names is decided by the metadata.
+The value reaches the writer already converted to the type of the field.
 
 <Aside>
 Read and write a property the same way. A getter that changes the value, such

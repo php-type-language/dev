@@ -127,33 +127,21 @@ qualified.
 
 ### Read and write types
 
-Different types for normalization (read) and denormalization (write), given
-on the `get` and `set` hooks of a property (PHP 8.4):
-
-- attributes: a type on the property itself sets both types;
-- PHPDoc: the tags of the hooks, then `@var`, which sets only the read type
-  when the `set` hook takes another type;
-- reflection: the read type is the declared type of the property, the write
-  type is the parameter type of the `set` hook;
-- config: `read_type` or `write_type` of a direction the property does not
-  take part in, such as `write_type` without a `set` hook, is an error.
+Different types for normalization (read) and denormalization (write) are
+given by [getters and setters](/mapper/metadata/access/): the `type` of
+`#[MapGetter]` and `#[MapSetter]`, the `type` key in `get` and `set`. The
+type of a direction without it is the type of its access: the property,
+the hook or the method.
 <Tabs syncKey="metadata">
 <TabItem label="Attributes">
 ```php
-use TypeLang\Mapper\Mapping\MapType;
+use TypeLang\Mapper\Mapping\MapGetter;
+use TypeLang\Mapper\Mapping\MapSetter;
 
 final class User
 {
-    private string $value = '';
-
-    public mixed $id {
-        #[MapType('int')]
-        get => (int) $this->value;
-        #[MapType('positive-int')]
-        set(mixed $id) {
-            $this->value = (string) $id;
-        }
-    }
+    #[MapGetter(type: 'int'), MapSetter(type: 'positive-int')]
+    public int $id;
 }
 ```
 </TabItem>
@@ -164,11 +152,13 @@ final class User
 {
     private string $value = '';
 
-    public mixed $id {
+    public int $id {
         /** @return int */
+        #[MapGetter]
         get => (int) $this->value;
         /** @param positive-int $id */
-        set(mixed $id) {
+        #[MapSetter]
+        set(int $id) {
             $this->value = (string) $id;
         }
     }
@@ -183,7 +173,9 @@ final class User
     private string $value = '';
 
     public int $id {
+        #[MapGetter]
         get => (int) $this->value;
+        #[MapSetter]
         set(int|string $id) {
             $this->value = (string) $id;
         }
@@ -200,8 +192,8 @@ return [
     App\User::class => [
         'properties' => [
             'id' => [
-                'read_type' => 'int',
-                'write_type' => 'positive-int',
+                'get' => ['type' => 'int'],
+                'set' => ['type' => 'positive-int'],
             ],
         ],
     ],
@@ -215,8 +207,8 @@ return [
     "App\\User": {
         "properties": {
             "id": {
-                "read_type": "int",
-                "write_type": "positive-int"
+                "get": { "type": "int" },
+                "set": { "type": "positive-int" }
             }
         }
     }
@@ -229,8 +221,8 @@ return [
 App\User:
     properties:
         id:
-            read_type: int
-            write_type: positive-int
+            get: { type: int }
+            set: { type: positive-int }
 ```
 </TabItem>
 
@@ -239,8 +231,8 @@ App\User:
 App\User:
     properties:
         id:
-            read_type: int
-            write_type: positive-int
+            get: [type: int]
+            set: [type: positive-int]
 ```
 </TabItem>
 
@@ -265,14 +257,9 @@ $mapper->denormalize(['id' => -1], User::class);
 </Tabs>
 
 <Aside type="caution">
-The hooks are called only on a virtual property, such as above. A property
-with its own value is written and read directly, bypassing its hooks, so
-both of its types are the type of the property: PHPDoc of the hooks is not
-read and `set(int|string $id)` of `public string $id` takes only `string`.
-`#[MapType]` on such hooks is an error, so is `strict` on a `get` hook.
-A `write_type` in a config does not enable the hook either: the value of
-that type is written to the property and must fit its type. To call the
-hooks, choose them as [getter and setter](/mapper/metadata/access/#hooks).
+`#[MapType]` on a property sets both types, on a hook or a method it is an
+error. The hooks of a property without `#[MapGetter]` and `#[MapSetter]`
+are not called: its value is read and written directly.
 </Aside>
 
 ## Strict types
