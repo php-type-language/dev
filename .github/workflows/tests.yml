@@ -19,6 +19,7 @@ jobs:
           - { php: '8.3', stability: lowest }
           - { php: '8.4', stability: lowest }
           - { php: '8.5', stability: lowest }
+          - { php: '8.6', stability: lowest }
     steps:
       - name: Checkout
         uses: actions/checkout@v7
