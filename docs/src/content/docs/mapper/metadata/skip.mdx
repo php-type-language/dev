@@ -284,16 +284,15 @@ $mapper->normalize(new User()); // ['isGuest' => true]
 
 ### Functions and value
 
-An expression sees the object (`this`) and the value of the property
-(`value`). Functions of the language work in it: `min()`, `max()`,
-`constant()` and `enum()` are built in.
+An expression sees the object (`this`), the value of the property
+(`value`) and the functions of the language.
 
 ```php
 use TypeLang\Mapper\Mapping\SkipWhen;
 
 final class User
 {
-    #[SkipWhen('value === "" or max(this.age, 18) === 18')]
+    #[SkipWhen('value === "" or this.age < 18')]
     public string $email = '';
 
     public int $age = 16;
