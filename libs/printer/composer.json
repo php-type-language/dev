@@ -20,7 +20,7 @@
     "require-dev": {
         "type-lang/parser": "self.version",
         "phpstan/phpstan": "^2.3",
-        "phpunit/phpunit": "^10.5|^11.0|^12.0|^13.0"
+        "phpunit/phpunit": "^10.5.36|^11.0|^12.0|^13.0"
     },
     "autoload-dev": {
         "psr-4": {
