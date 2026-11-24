@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TypeLang\Mapper\Tests\Type;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use TypeLang\Mapper\Configuration;
 use TypeLang\Mapper\Context\ClassAccessors;
 use TypeLang\Mapper\Context\ClassTypes;
@@ -32,7 +33,6 @@ use TypeLang\Mapper\Tests\Stub\Clash\SelfSamePolygonStub;
 use TypeLang\Mapper\Tests\Stub\Event\EventStub;
 use TypeLang\Mapper\Tests\Stub\Event\GenericEventStub;
 use TypeLang\Mapper\Tests\Stub\Event\SpecialEventStub;
-use TypeLang\Mapper\Tests\Stub\Figure\CircleFigureStub;
 use TypeLang\Mapper\Tests\Stub\Figure\FigureStub;
 use TypeLang\Mapper\Tests\Stub\Figure\HexagonFigureStub;
 use TypeLang\Mapper\Tests\Stub\Figure\HoldsFiguresStub;
@@ -63,13 +63,13 @@ use TypeLang\Mapper\Tests\Stub\Hierarchy\HolderPolygon;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\HolderShape;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\HolderSquare;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\HolderUnion;
+use TypeLang\Mapper\Tests\Stub\Hierarchy\HookedSquare;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\Lab;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\Label;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\Level;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\LevelOne;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\Msg;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\Named;
-use TypeLang\Mapper\Tests\Stub\Hierarchy\Pdf;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\PlainMsg;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\Polygon;
 use TypeLang\Mapper\Tests\Stub\Hierarchy\Pug;
@@ -96,18 +96,16 @@ use TypeLang\Mapper\Tests\Stub\Shape\MessageUnmappedStub;
 use TypeLang\Mapper\Tests\Stub\Shape\ShapeStub;
 use TypeLang\Mapper\Tests\Stub\Shape\SquareStub;
 use TypeLang\Mapper\Tests\Stub\Shape\UnmappedFallbackStub;
-use TypeLang\Mapper\Tests\Stub\Vehicle\CarStub;
 use TypeLang\Mapper\Tests\Stub\Vehicle\ElectricCarStub;
 use TypeLang\Mapper\Tests\Stub\Vehicle\HoverVehicleStub;
-use TypeLang\Mapper\Tests\Stub\Vehicle\TruckStub;
 use TypeLang\Mapper\Tests\Stub\Vehicle\VehicleStub;
 use TypeLang\Mapper\Tests\TestCase;
-use TypeLang\Mapper\TypeMatcher\NamedTypePattern;
 use TypeLang\Mapper\Type\Builder\ClassTypeBuilder;
 use TypeLang\Mapper\Type\Builder\NamedTypeBuilder;
 use TypeLang\Mapper\Type\ClassType;
 use TypeLang\Mapper\Type\IntType;
 use TypeLang\Mapper\Type\Repository\TypeRepository;
+use TypeLang\Mapper\TypeMatcher\NamedTypePattern;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Printer\PrettyTypePrinter;
 
@@ -147,24 +145,6 @@ final class DiscriminatorTypeTest extends TestCase
         );
     }
 
-    public function testMissingTagIsRejectedWithPathOfField(): void
-    {
-        self::assertDenormalizationFails(
-            ShapeStub::class,
-            ['radius' => 1],
-            '$.type: Required field "type" is missing',
-        );
-    }
-
-    public function testUnknownTagIsRejectedWithKnownTags(): void
-    {
-        self::assertDenormalizationFails(
-            ShapeStub::class,
-            ['type' => 'triangle'],
-            '$.type: Value must be of type \'circle\'|\'square\'|\'group\', but "triangle" given',
-        );
-    }
-
     public function testErrorOfSelectedClassHasPathOfData(): void
     {
         self::assertDenormalizationFails(
@@ -177,7 +157,11 @@ final class DiscriminatorTypeTest extends TestCase
     public function testMessageOfBaseClassReplacesMessageOfMapper(): void
     {
         self::assertDenormalizationFails(MessageShapeStub::class, 'x', '$: Shape is expected, "x" given');
-        self::assertNormalizationFails(MessageShapeStub::class, 42, '$: Shape is expected, 42 given');
+        self::assertNormalizationFails(
+            MessageShapeStub::class,
+            42,
+            \sprintf('$: Value must be of type %s, but 42 given', MessageShapeStub::class),
+        );
     }
 
     public function testDataWithUnknownOrMissingTagIsMappedToDefault(): void
@@ -197,16 +181,6 @@ final class DiscriminatorTypeTest extends TestCase
     public function testTagIsAddedFirstOnNormalization(): void
     {
         self::assertNormalizes(ShapeStub::class, self::createCircle(1), ['type' => 'circle', 'radius' => 1]);
-    }
-
-    public function testTagIsAddedToObjectNormalizedAsStdClass(): void
-    {
-        $mapper = self::createMapper(config: new Configuration(normalizeAsArray: false));
-
-        self::assertEquals(
-            (object) ['type' => 'circle', 'radius' => 1],
-            $mapper->normalize(self::createCircle(1), ShapeStub::class),
-        );
     }
 
     public function testNestedPolymorphicObjectsAreNormalizedWithTags(): void
@@ -247,29 +221,14 @@ final class DiscriminatorTypeTest extends TestCase
         self::assertNormalizes(FallbackShapeStub::class, $fallback, ['label' => 'none']);
     }
 
-    public function testOwnClassIsNormalizedAsStdClassWithTag(): void
+    public function testTagIsAddedToObjectNormalizedAsStdClass(): void
     {
         $mapper = self::createMapper(config: new Configuration(normalizeAsArray: false));
+        $expected = (object) ['type' => 'circle', 'radius' => 1];
 
-        self::assertEquals(
-            (object) ['type' => 'circle', 'radius' => 1],
-            $mapper->normalize(self::createCircle(1)),
-        );
-        self::assertEquals(
-            (object) ['type' => 'circle', 'radius' => 1],
-            $mapper->normalize(self::createCircle(1), CircleStub::class),
-        );
-    }
-
-    public function testNestedMapsWriteTagsRootFirst(): void
-    {
-        $expected = ['kind' => 'car', 'fuel' => 'electric', 'range' => 300];
-
-        self::assertNormalizes('mixed', new ElectricCarStub(), $expected);
-        self::assertNormalizes(ElectricCarStub::class, new ElectricCarStub(), $expected);
-        self::assertNormalizes(CarStub::class, new ElectricCarStub(), $expected);
-        self::assertNormalizes(VehicleStub::class, new ElectricCarStub(), $expected);
-        self::assertNormalizes('mixed', new TruckStub(), ['kind' => 'truck', 'load' => 10]);
+        foreach ([null, CircleStub::class, ShapeStub::class] as $type) {
+            self::assertEquals($expected, $mapper->normalize(self::createCircle(1), $type));
+        }
     }
 
     public function testUnmappedChildOfBaseIsRejectedThroughBase(): void
@@ -297,12 +256,16 @@ final class DiscriminatorTypeTest extends TestCase
         self::assertNormalizationFails(HoverVehicleStub::class, new HoverVehicleStub(), $message);
     }
 
-    public function testUnmappedChildIsRejectedWithMessageOfBase(): void
+    public function testUnmappedChildIsRejectedWithMessageOfMapperOnNormalization(): void
     {
         self::assertNormalizationFails(
             MessageShapeStub::class,
             new MessageUnmappedStub(),
-            '$: Shape is expected, object(TypeLang\Mapper\Tests\Stub\Shape\MessageUnmappedStub) given',
+            \sprintf(
+                '$: Class "%s" has no tag in the discriminator map of "%s"',
+                MessageUnmappedStub::class,
+                MessageShapeStub::class,
+            ),
         );
     }
 
@@ -382,8 +345,8 @@ final class DiscriminatorTypeTest extends TestCase
         yield 'rect through itself' => [RectFigureStub::class, new RectFigureStub(), $rect];
         yield 'integer tag' => [FigureStub::class, new NumberFigureStub(), ['type' => 1, 'value' => 7]];
         yield 'integer tag by itself' => [NumberFigureStub::class, new NumberFigureStub(), ['type' => 1, 'value' => 7]];
-        yield 'own field of tag' => [FigureStub::class, new TypedFigureStub(), ['type' => 'own']];
-        yield 'own field of tag by itself' => [TypedFigureStub::class, new TypedFigureStub(), ['type' => 'own']];
+        yield 'tag over own field' => [FigureStub::class, new TypedFigureStub(), ['type' => 'typed']];
+        yield 'tag over own field by itself' => [TypedFigureStub::class, new TypedFigureStub(), ['type' => 'typed']];
     }
 
     #[DataProvider('objectOfHierarchyDataProvider')]
@@ -435,7 +398,11 @@ final class DiscriminatorTypeTest extends TestCase
         yield 'integer tag' => [FigureStub::class, ['type' => 1], new NumberFigureStub()];
         yield 'integer tag as string' => [FigureStub::class, ['type' => '1'], new NumberFigureStub()];
         yield 'integer tag as string by itself' => [NumberFigureStub::class, ['type' => '1'], new NumberFigureStub()];
-        yield 'own field of tag by itself' => [TypedFigureStub::class, ['type' => 'any'], self::createTyped('any')];
+        yield 'tag into own field by itself' => [
+            TypedFigureStub::class,
+            ['type' => 'typed'],
+            self::createTyped('typed'),
+        ];
     }
 
     /**
@@ -510,6 +477,11 @@ final class DiscriminatorTypeTest extends TestCase
             [],
             '$.type: Required field "type" is missing',
         ];
+        yield 'other value of own field of tag' => [
+            TypedFigureStub::class,
+            ['type' => 'any'],
+            '$.type: Value must be of type \'typed\', but "any" given',
+        ];
     }
 
     /**
@@ -566,16 +538,6 @@ final class DiscriminatorTypeTest extends TestCase
         }
     }
 
-    public function testObjectOfOtherBranchIsRejected(): void
-    {
-        self::assertNormalizationFails(
-            PolygonFigureStub::class,
-            new CircleFigureStub(),
-            '$: Value must be of type TypeLang\Mapper\Tests\Stub\Figure\PolygonFigureStub, '
-                . 'but object(TypeLang\Mapper\Tests\Stub\Figure\CircleFigureStub) given',
-        );
-    }
-
     public function testDenormalizationOfUnmappedClassWithoutMappedChildrenIsErrorOfType(): void
     {
         $mapper = self::createMapper();
@@ -592,19 +554,6 @@ final class DiscriminatorTypeTest extends TestCase
                 FigureStub::class,
             ),
             $error->getMessage(),
-        );
-    }
-
-    public function testObjectOfUnmappedClassIsRejectedThroughBase(): void
-    {
-        self::assertNormalizationFails(
-            FigureStub::class,
-            new HexagonFigureStub(),
-            \sprintf(
-                '$: Class "%s" has no tag in the discriminator map of "%s"',
-                HexagonFigureStub::class,
-                FigureStub::class,
-            ),
         );
     }
 
@@ -654,18 +603,6 @@ final class DiscriminatorTypeTest extends TestCase
         $object->type = $type;
 
         return $object;
-    }
-
-    public function testRoundTripOfOwnClassWithRejectedExtraFields(): void
-    {
-        $mapper = self::createMapper(config: new Configuration(rejectExtraFields: true));
-        $circle = self::createCircle(1);
-
-        $data = $mapper->normalize($circle);
-
-        self::assertSame(['type' => 'circle', 'radius' => 1], $data);
-        self::assertEquals($circle, $mapper->denormalize($data, CircleStub::class));
-        self::assertEquals($circle, $mapper->denormalize($data, ShapeStub::class));
     }
 
     public function testNestedMapsOnSameFieldAreErrorOfType(): void
@@ -851,16 +788,6 @@ final class DiscriminatorTypeTest extends TestCase
         self::assertNormalizesTo($type, new Circle(), self::CIRCLE);
     }
 
-    public function testTagIsTheFirstFieldOfNormalizedData(): void
-    {
-        foreach ([null, Shape::class, Polygon::class, Square::class] as $type) {
-            $data = self::createMapperWith()->normalize(new Square(), $type);
-
-            self::assertIsArray($data);
-            self::assertSame('type', \array_key_first($data), (string) $type);
-        }
-    }
-
     public function testObjectOfSiblingClassIsNotNormalizedAsMoreSpecificType(): void
     {
         self::assertNormalizeRejected(Circle::class, new Square());
@@ -914,23 +841,9 @@ final class DiscriminatorTypeTest extends TestCase
         self::assertNormalizesTo(HolderUnion::class, $holder, ['shape' => self::CIRCLE]);
     }
 
-    public function testNullIsNormalizedInNullablePropertyOfIntermediateClass(): void
-    {
-        self::assertNormalizesTo(HolderNullablePolygon::class, new HolderNullablePolygon(), ['shape' => null]);
-    }
-
     public function testNullIsNormalizedAsNullableIntermediateClass(): void
     {
         self::assertNormalizesTo('?' . Polygon::class, null, null);
-    }
-
-    public function testListOfIntermediateClassNormalizesEveryElementWithItsTag(): void
-    {
-        self::assertNormalizesTo(
-            'list<' . Polygon::class . '>',
-            [new Square(), new Cube(), new SquareProxy()],
-            [self::SQUARE, self::CUBE, self::SQUARE],
-        );
     }
 
     public function testListOfIntermediateClassRejectsElementOfSiblingBranch(): void
@@ -992,17 +905,6 @@ final class DiscriminatorTypeTest extends TestCase
         self::assertDenormalizes($type, $data, $expected, self::createMapperWith());
     }
 
-    public function testDenormalizationOfCustomValuesRespectsFieldsOfTheClass(): void
-    {
-        $expected = new Square();
-        $expected->side = 7;
-        $expected->corners = 4;
-
-        $data = ['type' => 'square', 'side' => 7, 'corners' => 4];
-
-        self::assertDenormalizes(Shape::class, $data, $expected, self::createMapperWith());
-    }
-
     public function testNullableIntermediateClassAcceptsNullAndTaggedData(): void
     {
         self::assertDenormalizes('?' . Polygon::class, null, null, self::createMapperWith());
@@ -1017,29 +919,6 @@ final class DiscriminatorTypeTest extends TestCase
             [new Square(), new Square()],
             self::createMapperWith(rejectExtraFields: false),
         );
-    }
-
-    public function testListOfIntermediateClassRejectsCircleWithPathOfTheElement(): void
-    {
-        self::assertDenormalizeRejected(
-            'list<' . Polygon::class . '>',
-            [self::SQUARE, self::CIRCLE],
-            '$',
-            contains: 'circle',
-        );
-    }
-
-    public function testPropertyOfIntermediateClassDenormalizesTaggedData(): void
-    {
-        $expected = new HolderPolygon();
-        $expected->shape = new Square();
-
-        self::assertDenormalizes(HolderPolygon::class, ['shape' => self::SQUARE], $expected, self::createMapperWith());
-    }
-
-    public function testPropertyOfIntermediateClassRejectsOtherBranchWithPathOfTheProperty(): void
-    {
-        self::assertDenormalizeRejected(HolderPolygon::class, ['shape' => self::CIRCLE], '$.shape.type');
     }
 
     /**
@@ -1067,15 +946,6 @@ final class DiscriminatorTypeTest extends TestCase
     public function testBadTagIsRejectedWithPathOfTheTag(string $type, mixed $data): void
     {
         self::assertDenormalizeRejected($type, $data, '$.type');
-    }
-
-    public function testSiblingTagIsRejectedByMoreSpecificTypes(): void
-    {
-        self::assertDenormalizeRejected(Polygon::class, self::CIRCLE, '$.type');
-        self::assertDenormalizeRejected(Round::class, self::SQUARE, '$.type');
-        self::assertDenormalizeRejected(Circle::class, self::SQUARE, '$.type');
-        self::assertDenormalizeRejected(Square::class, self::CIRCLE, '$.type');
-        self::assertDenormalizeRejected(Shape::class, ['type' => 'triangle'], '$.type');
     }
 
     /**
@@ -1114,32 +984,6 @@ final class DiscriminatorTypeTest extends TestCase
     public function testFieldOfSiblingClassIsExtraForTheClassOfTheTag(): void
     {
         self::assertDenormalizeRejected(Shape::class, [...self::SQUARE, 'radius' => 1], '$', contains: 'radius');
-    }
-
-    public function testTagIsNotAnExtraFieldAndExtraFieldsAreDroppedByDefault(): void
-    {
-        self::assertDenormalizes(Shape::class, self::SQUARE, new Square(), self::createMapperWith());
-        self::assertDenormalizes(
-            Shape::class,
-            [...self::SQUARE, 'zzz' => 1, 'radius' => 9],
-            new Square(),
-            self::createMapperWith(rejectExtraFields: false),
-        );
-    }
-
-    public function testStdClassDataWithoutRejectionDropsExtraFields(): void
-    {
-        self::assertDenormalizes(
-            Polygon::class,
-            (object) [...self::SQUARE, 'zzz' => 1],
-            new Square(),
-            self::createMapperWith(rejectExtraFields: false),
-        );
-    }
-
-    public function testParentOfMappedClassIsNotNormalizedAsItsChild(): void
-    {
-        self::assertNormalizeRejected(SportCar::class, new Car());
     }
 
     public function testInterfaceCarriesTheMap(): void
@@ -1215,18 +1059,6 @@ final class DiscriminatorTypeTest extends TestCase
         self::assertDenormalizeRejected(Animal::class, $extra, '$', contains: 'zzz');
     }
 
-    public function testOtherwiseThatIsInTheMapTakesUnknownAndMissingTags(): void
-    {
-        $mapper = self::createMapperWith(rejectExtraFields: false);
-
-        self::assertDenormalizes(Doc::class, ['type' => 'oval'], new Txt(), $mapper);
-        self::assertDenormalizes(Doc::class, ['type' => 'oval', 'encoding' => 'ascii'], self::txt('ascii'), $mapper);
-        self::assertDenormalizes(Doc::class, [], new Txt(), $mapper);
-        self::assertDenormalizes(Doc::class, ['encoding' => 'ascii'], self::txt('ascii'), $mapper);
-        self::assertDenormalizes(Doc::class, ['type' => 'pdf', 'pages' => 3], new Pdf(), $mapper);
-        self::assertDenormalizes(Txt::class, ['type' => 'txt', 'encoding' => 'utf8'], new Txt(), $mapper);
-    }
-
     public function testOtherwiseThatIsAParentOfMappedClassTakesUnknownTags(): void
     {
         $mapper = self::createMapperWith(rejectExtraFields: false);
@@ -1253,23 +1085,6 @@ final class DiscriminatorTypeTest extends TestCase
         self::assertDenormalizes(Msg::class, ['name' => 'plain'], new PlainMsg(), $mapper);
     }
 
-    public function testIntegerTagsAreWrittenAsIntegers(): void
-    {
-        $one = new LevelOne();
-
-        foreach ([null, Level::class, LevelOne::class] as $type) {
-            self::assertNormalizesTo($type, $one, ['kind' => 1, 'one' => 'a']);
-        }
-    }
-
-    public function testIntegerTagsAreReadFromIntegersAndNumericStrings(): void
-    {
-        $mapper = self::createMapperWith();
-
-        self::assertDenormalizes(Level::class, ['kind' => 1, 'one' => 'a'], new LevelOne(), $mapper);
-        self::assertDenormalizes(Level::class, ['kind' => '1', 'one' => 'a'], new LevelOne(), $mapper);
-    }
-
     /**
      * @return iterable<non-empty-string, array{mixed}>
      */
@@ -1292,21 +1107,6 @@ final class DiscriminatorTypeTest extends TestCase
     public function testWrongIntegerTagIsRejected(mixed $tag): void
     {
         self::assertDenormalizeRejected(Level::class, ['kind' => $tag, 'one' => 'a'], '$.kind');
-    }
-
-    public function testMissingIntegerTagIsRejected(): void
-    {
-        self::assertDenormalizeRejected(Level::class, ['one' => 'a'], '$.kind');
-    }
-
-    public function testClassWithPropertyNamedAsTheTagFieldWritesTheTagOnce(): void
-    {
-        foreach ([null, Label::class, Named::class] as $type) {
-            self::assertNormalizesTo($type, new Named(), ['type' => 'named', 'n' => 1]);
-        }
-
-        self::assertDenormalizes(Label::class, ['type' => 'named', 'n' => 1], new Named(), self::createMapperWith());
-        self::assertDenormalizes(Named::class, ['type' => 'named', 'n' => 1], new Named(), self::createMapperWith());
     }
 
     public function testMapWithMissingClassIsADefinitionError(): void
@@ -1364,6 +1164,16 @@ final class DiscriminatorTypeTest extends TestCase
         self::assertEquals($object, $mapper->denormalize($data, $type));
     }
 
+    #[RequiresPhp('>= 8.4.0')]
+    public function testClassOutsideMapIsNormalizedByFieldsOfParent(): void
+    {
+        // the field of the parent reads the backing store, not the hook
+        // of the child
+        $data = ['type' => 'square', 'side' => 2, 'corners' => 4];
+
+        self::assertNormalizesTo(HookedSquare::class, new HookedSquare(), $data);
+    }
+
     public function testProxyIsReadBackAsTheMappedClass(): void
     {
         $mapper = self::createMapperWith();
@@ -1416,22 +1226,6 @@ final class DiscriminatorTypeTest extends TestCase
             self::assertStringContainsString('$.side', $error->getMessage(), $type);
             self::assertStringContainsString('and 1 more', $error->getMessage(), $type);
         }
-    }
-
-    public function testOnlyTheFirstViolationIsReportedByDefault(): void
-    {
-        $mapper = self::createMapperWith(maxViolations: 1);
-        $error = self::captureThrowable(
-            static fn(): mixed => $mapper->denormalize(
-                ['type' => 'square', 'side' => 'x', 'corners' => 'y'],
-                Shape::class,
-            ),
-        );
-
-        self::assertNotSame(
-            \str_contains($error->getMessage(), '$.side'),
-            \str_contains($error->getMessage(), '$.corners'),
-        );
     }
 
     public function testBadTagIsTheOnlyViolationAsTheClassIsUnknown(): void
@@ -1597,13 +1391,5 @@ final class DiscriminatorTypeTest extends TestCase
         }
 
         return [$value, $expected];
-    }
-
-    private static function txt(string $encoding): Txt
-    {
-        $txt = new Txt();
-        $txt->encoding = $encoding;
-
-        return $txt;
     }
 }

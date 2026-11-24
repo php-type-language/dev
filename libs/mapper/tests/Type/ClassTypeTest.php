@@ -20,13 +20,17 @@ use TypeLang\Mapper\Instantiator\InstantiatorFactory;
 use TypeLang\Mapper\Instantiator\InstantiatorInterface;
 use TypeLang\Mapper\Instantiator\Strategy\InstantiationStrategyInterface;
 use TypeLang\Mapper\Mapper;
-use TypeLang\Mapper\Mapping\MetadataBuilder;
-use TypeLang\Mapper\Mapping\Metadata\AccessMetadata;
-use TypeLang\Mapper\Mapping\Metadata\AccessPoint\HookAccessPoint;
+use TypeLang\Mapper\Mapping\Exception\InvalidMetadataException;
+use TypeLang\Mapper\Mapping\Metadata\Access\HookAccessMetadata;
 use TypeLang\Mapper\Mapping\Metadata\ClassMetadata;
-use TypeLang\Mapper\Mapping\Metadata\PropertyMetadata;
+use TypeLang\Mapper\Mapping\Metadata\EnumMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Field\InputFieldMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Field\OutputFieldMetadata;
 use TypeLang\Mapper\Mapping\Metadata\SourceInfo;
+use TypeLang\Mapper\Mapping\Metadata\Struct\InputStructMetadata;
+use TypeLang\Mapper\Mapping\Metadata\Struct\OutputStructMetadata;
 use TypeLang\Mapper\Mapping\Metadata\TypeMetadata;
+use TypeLang\Mapper\Mapping\MetadataBuilder;
 use TypeLang\Mapper\Mapping\Provider\MetadataProviderInterface;
 use TypeLang\Mapper\PropertyAccessor\Exception\PropertyNotWritableException;
 use TypeLang\Mapper\PropertyAccessor\PropertyAccessorFactory;
@@ -40,8 +44,11 @@ use TypeLang\Mapper\Tests\Stub\AliasedStub;
 use TypeLang\Mapper\Tests\Stub\BrokenSkipStub;
 use TypeLang\Mapper\Tests\Stub\BuiltinFunctionSkipStub;
 use TypeLang\Mapper\Tests\Stub\BypassedSetHookStub;
+use TypeLang\Mapper\Tests\Stub\ChildSecretStub;
 use TypeLang\Mapper\Tests\Stub\ComputedStub;
 use TypeLang\Mapper\Tests\Stub\CustomFunctionSkipStub;
+use TypeLang\Mapper\Tests\Stub\DefaultHookStub;
+use TypeLang\Mapper\Tests\Stub\ErrorSkipStub;
 use TypeLang\Mapper\Tests\Stub\FirstInDataAliasStub;
 use TypeLang\Mapper\Tests\Stub\HookStub;
 use TypeLang\Mapper\Tests\Stub\LastInDataAliasStub;
@@ -52,25 +59,29 @@ use TypeLang\Mapper\Tests\Stub\NameOrFirstAliasStub;
 use TypeLang\Mapper\Tests\Stub\NameOrLastAliasStub;
 use TypeLang\Mapper\Tests\Stub\NodeStub;
 use TypeLang\Mapper\Tests\Stub\ObjectFormStub;
+use TypeLang\Mapper\Tests\Stub\PromotedDefaultStub;
 use TypeLang\Mapper\Tests\Stub\ReadonlyChildStub;
 use TypeLang\Mapper\Tests\Stub\ReadonlyStub;
 use TypeLang\Mapper\Tests\Stub\RelativeNameStub;
 use TypeLang\Mapper\Tests\Stub\RenamedStub;
+use TypeLang\Mapper\Tests\Stub\SideEffectStub;
 use TypeLang\Mapper\Tests\Stub\SkipStub;
 use TypeLang\Mapper\Tests\Stub\StdClassChildStub;
 use TypeLang\Mapper\Tests\Stub\StrictnessStub;
 use TypeLang\Mapper\Tests\Stub\ThrowingHookStub;
+use TypeLang\Mapper\Tests\Stub\UntaggedSecretStub;
 use TypeLang\Mapper\Tests\Stub\UntypedStub;
 use TypeLang\Mapper\Tests\Stub\UserStub;
 use TypeLang\Mapper\Tests\Stub\VirtualStringableStub;
+use TypeLang\Mapper\Tests\Stub\WarningSkipStub;
 use TypeLang\Mapper\Tests\Stub\WiderSetHookStub;
 use TypeLang\Mapper\Tests\TestCase;
-use TypeLang\Mapper\TypeMatcher\NamedTypePattern;
 use TypeLang\Mapper\Type\Builder\ClassTypeBuilder;
 use TypeLang\Mapper\Type\Builder\NamedTypeBuilder;
 use TypeLang\Mapper\Type\ClassType;
 use TypeLang\Mapper\Type\Repository\TypeRepository;
 use TypeLang\Mapper\Type\StringType;
+use TypeLang\Mapper\TypeMatcher\NamedTypePattern;
 use TypeLang\Parser\TypeParser;
 use TypeLang\Printer\PrettyTypePrinter;
 use TypeLang\Type\Name;
@@ -449,26 +460,104 @@ final class ClassTypeTest extends TestCase
         self::assertSame($data, $mapper->normalize($object, WiderSetHookStub::class));
     }
 
-    public function testPropertyIsWrittenAndReadThroughItsMethods(): void
+    public function testFieldIsWrittenAndReadThroughItsMethods(): void
     {
         $mapper = self::createMapper();
 
         $object = $mapper->denormalize(['name' => 'john'], AccessorStub::class);
 
         self::assertInstanceOf(AccessorStub::class, $object);
-        self::assertSame('set:john', $object->name);
+        self::assertSame('set:john', $object->getStoredName());
         self::assertSame(
-            ['name' => 'SET:JOHN', 'createdAt' => 'today'],
+            ['createdAt' => 'today', 'name' => 'SET:JOHN'],
             $mapper->normalize($object, AccessorStub::class),
         );
     }
 
-    public function testDefaultValueIsWrittenThroughSetter(): void
+    public function testSetterWithOptionalParameterIsNotCalledWithoutField(): void
     {
         $object = self::createMapper()->denormalize([], AccessorStub::class);
 
         self::assertInstanceOf(AccessorStub::class, $object);
-        self::assertSame('set:default', $object->name);
+        self::assertSame('default', $object->getStoredName());
+    }
+
+    #[RequiresPhp('>= 8.4.0')]
+    public function testSetHookIsNotCalledWithDefaultOfPropertyInitializedByPhp(): void
+    {
+        $object = self::createMapper()->denormalize(['code' => 'x'], DefaultHookStub::class);
+
+        self::assertInstanceOf(DefaultHookStub::class, $object);
+        self::assertSame('default', (new \ReflectionProperty(DefaultHookStub::class, 'title'))->getRawValue($object));
+        self::assertSame('x', $object->code);
+    }
+
+    #[RequiresPhp('>= 8.4.0')]
+    public function testExceptionOfSetHookWritingDefaultIsViolation(): void
+    {
+        $error = self::captureThrowable(
+            static fn(): mixed => self::createMapper()->denormalize([], DefaultHookStub::class),
+        );
+
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame('$.code: Value "" is rejected', $error->getMessage());
+        self::assertInstanceOf(\InvalidArgumentException::class, $error->violations[0]->cause);
+    }
+
+    public function testPrivatePropertyOfParentIsMappedInChild(): void
+    {
+        $mapper = self::createMapper();
+
+        $object = $mapper->denormalize(['own' => 2, 'secret' => 'x'], ChildSecretStub::class);
+
+        self::assertInstanceOf(ChildSecretStub::class, $object);
+        self::assertSame('x', $object->getSecret());
+        self::assertSame(['own' => 2, 'secret' => 'x'], $mapper->normalize($object, ChildSecretStub::class));
+    }
+
+    public function testNoFieldIsWrittenWhenOtherFieldIsRejected(): void
+    {
+        $mapper = self::createMapper();
+        SideEffectStub::$calls = [];
+
+        $data = ['a' => 1, 'b' => 'x'];
+        $error = self::captureThrowable(static fn() => $mapper->denormalize($data, SideEffectStub::class));
+
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame([], SideEffectStub::$calls);
+
+        $mapper->denormalize(['a' => 1, 'b' => 2], SideEffectStub::class);
+        self::assertSame([1], SideEffectStub::$calls);
+    }
+
+    public function testSubclassOutsideDiscriminatorMapReadsPrivatePropertyOfParent(): void
+    {
+        self::assertSame(
+            ['type' => 'tagged', 'name' => 'n', 'secret' => 's'],
+            self::createMapper()->normalize(new UntaggedSecretStub()),
+        );
+    }
+
+    public function testPromotedPropertiesThatAreNotWrittenTakeTheirDefaults(): void
+    {
+        $mapper = self::createMapper();
+
+        $object = $mapper->denormalize([], PromotedDefaultStub::class);
+
+        self::assertInstanceOf(PromotedDefaultStub::class, $object);
+        self::assertSame('hidden', $object->getSecret());
+        self::assertSame(['name' => 'default'], $mapper->normalize($object, PromotedDefaultStub::class));
+    }
+
+    public function testErrorOfSetterIsViolation(): void
+    {
+        $error = self::captureThrowable(
+            static fn(): mixed => self::createMapper()->denormalize(['times' => -1], PromotedDefaultStub::class),
+        );
+
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame('$.times: Value -1 is rejected', $error->getMessage());
+        self::assertInstanceOf(\ValueError::class, $error->violations[0]->cause);
     }
 
     public function testFieldOfPropertyThatIsOnlyReadIsNotExtra(): void
@@ -488,7 +577,7 @@ final class ClassTypeTest extends TestCase
     }
 
     #[RequiresPhp('>= 8.4.0')]
-    public function testTypeAttributeOfBypassedSetHookIsErrorOfMetadata(): void
+    public function testTypeAttributeOfHookIsErrorOfMetadata(): void
     {
         $mapper = self::createMapper();
 
@@ -498,7 +587,7 @@ final class ClassTypeTest extends TestCase
 
         self::assertNotInstanceOf(\TypeError::class, $error);
         self::assertInstanceOf(MapperExceptionInterface::class, $error);
-        self::assertStringContainsString('of the set hook has no effect', $error->getMessage());
+        self::assertStringContainsString('is not allowed on a method or a hook', $error->getMessage());
     }
 
     #[RequiresPhp('>= 8.4.0')]
@@ -517,10 +606,18 @@ final class ClassTypeTest extends TestCase
             public function read(\ReflectionClass $class): ClassMetadata
             {
                 $type = TypeMetadata::createFromType(new NamedTypeNode(new Name('string')), new SourceInfo());
-                $hook = new AccessMetadata(new HookAccessPoint('greeting'), $type);
-                $property = (new PropertyMetadata('greeting'))->withReadAccess($hook)->withWriteAccess($hook);
+                $hook = new HookAccessMetadata('greeting');
 
-                return (new ClassMetadata($class->name))->withProperty($property);
+                return new ClassMetadata(
+                    name: $class->name,
+                    input: new InputStructMetadata([new InputFieldMetadata('greeting', $hook, $type)]),
+                    output: new OutputStructMetadata([new OutputFieldMetadata('greeting', $hook, $type)]),
+                );
+            }
+
+            public function readEnum(\ReflectionEnum $enum): EnumMetadata
+            {
+                return new EnumMetadata($enum->name);
             }
         };
 
@@ -586,8 +683,9 @@ final class ClassTypeTest extends TestCase
         $error = self::captureBuildError(UntypedStub::class);
 
         self::assertInstanceOf(TypeDefinitionException::class, $error);
-        self::assertSame(
-            \sprintf('Type of property "%s::$value" is not defined', UntypedStub::class),
+        self::assertInstanceOf(InvalidMetadataException::class, $error->getPrevious());
+        self::assertStringContainsString(
+            \sprintf('%s::$value: type is not defined in', UntypedStub::class),
             $error->getMessage(),
         );
     }
@@ -663,9 +761,9 @@ final class ClassTypeTest extends TestCase
 
         $this->expectException(TypeDefinitionException::class);
         $this->expectExceptionMessage(
-            'Skip expression "blank(value)" of property "'
+            'Skip expression "blank(value)" of field "email" of "'
             . CustomFunctionSkipStub::class
-            . '::$email" is invalid: The function "blank" does not exist',
+            . '" is invalid: The function "blank" does not exist',
         );
 
         $mapper->normalize(new CustomFunctionSkipStub());
@@ -723,13 +821,33 @@ final class ClassTypeTest extends TestCase
         return $language;
     }
 
-    public function testFailingSkipConditionIsViolationWithPathOfProperty(): void
+    /**
+     * @return iterable<non-empty-string, array{object, class-string<\Throwable>, bool}>
+     */
+    public static function failingSkipConditionDataProvider(): iterable
     {
-        self::assertNormalizationFails(
-            'list<' . BrokenSkipStub::class . '>',
-            [new BrokenSkipStub()],
-            '$[0].name: Value "John" is rejected',
-        );
+        yield 'exception' => [new BrokenSkipStub(), \RuntimeException::class, false];
+        yield 'warning' => [new WarningSkipStub(), \ErrorException::class, false];
+        yield 'error' => [new ErrorSkipStub(), \Error::class, true];
+    }
+
+    /**
+     * @param class-string<\Throwable> $cause
+     */
+    #[DataProvider('failingSkipConditionDataProvider')]
+    public function testFailureOfSkipConditionIsViolationWithItsCause(
+        object $object,
+        string $cause,
+        bool $isFatal,
+    ): void {
+        $mapper = new Mapper();
+        $error = self::captureThrowable(static fn() => $mapper->normalize($object));
+
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame('$.name: Value "John" is rejected', $error->getMessage());
+        self::assertInstanceOf($cause, $error->violations[0]->cause);
+        self::assertSame($isFatal, $error->hasFatalViolations);
+        self::assertFalse($mapper->isNormalizable($object));
     }
 
     #[RequiresPhp('>= 8.4.0')]
@@ -738,7 +856,7 @@ final class ClassTypeTest extends TestCase
         self::assertNormalizationFails(
             'list<' . ThrowingHookStub::class . '>',
             [new ThrowingHookStub()],
-            '$[0].greeting: Value null is rejected',
+            '$[0].greeting: Value cannot be read',
         );
     }
 
@@ -762,7 +880,8 @@ final class ClassTypeTest extends TestCase
         self::assertNormalizationFails(
             MessageStub::class,
             new AddressStub(),
-            '$: Person is expected, object(TypeLang\Mapper\Tests\Stub\AddressStub) given',
+            '$: Value must be of type TypeLang\Mapper\Tests\Stub\MessageStub, '
+            . 'but object(TypeLang\Mapper\Tests\Stub\AddressStub) given',
         );
     }
 
@@ -797,7 +916,7 @@ final class ClassTypeTest extends TestCase
         }
     }
 
-    public function testAccessorStrategyReceivesMetadataOfProperty(): void
+    public function testAccessorStrategyReceivesMetadataOfField(): void
     {
         $strategy = new class implements AccessStrategyInterface {
             /**
@@ -807,18 +926,18 @@ final class ClassTypeTest extends TestCase
 
             public function tryCreateReader(
                 \ReflectionClass $class,
-                PropertyMetadata $metadata,
+                OutputFieldMetadata $field,
             ): ?PropertyReaderInterface {
-                $this->names[] = $metadata->externalName;
+                $this->names[] = $field->name;
 
                 return null;
             }
 
             public function tryCreateWriter(
                 \ReflectionClass $class,
-                PropertyMetadata $metadata,
+                InputFieldMetadata $field,
             ): ?PropertyWriterInterface {
-                $this->names[] = $metadata->externalName;
+                $this->names[] = $field->name;
 
                 return null;
             }
@@ -827,7 +946,7 @@ final class ClassTypeTest extends TestCase
         $object = self::createMapper(accessors: [$strategy])
             ->denormalize(['e-mail' => 'a@b.c', 'name' => 'John'], RenamedStub::class);
 
-        self::assertSame(['e-mail', 'e-mail', 'name', 'name'], $strategy->names);
+        self::assertSame(['e-mail', 'name', 'e-mail', 'name'], $strategy->names);
         self::assertInstanceOf(RenamedStub::class, $object);
         self::assertSame('a@b.c', $object->email);
     }
@@ -970,7 +1089,7 @@ final class ClassTypeTest extends TestCase
         self::assertInstanceOf(\InvalidArgumentException::class, $error->violations[0]->cause);
     }
 
-    public function testErrorOfProgramPassesThroughCompositeAsIs(): void
+    public function testValuePropertyDoesNotTakeIsViolationWithPath(): void
     {
         $mapper = self::createMapper();
 
@@ -978,7 +1097,9 @@ final class ClassTypeTest extends TestCase
             static fn(): mixed => $mapper->denormalize([['value' => 'x']], 'list<' . MismatchedTypeStub::class . '>'),
         );
 
-        self::assertInstanceOf(\TypeError::class, $error);
+        self::assertInstanceOf(InvalidValueException::class, $error);
+        self::assertSame('$[0].value: Value "x" is rejected', $error->getMessage());
+        self::assertInstanceOf(\TypeError::class, $error->violations[0]->cause);
     }
 
     public function testNormalizationRejectsObjectOfOtherClass(): void
