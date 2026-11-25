@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
+use TypeLang\Printer\Exception\PrinterExceptionInterface;
 use TypeLang\Printer\NodePrinter\Callable\CallableParameterNodePrinter;
 use TypeLang\Printer\NodePrinter\Callable\CallableTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Condition\ConditionalTypeNodePrinter;
@@ -110,6 +111,10 @@ final class PrettyTypePrinter implements TypePrinterInterface
         ]);
     }
 
+    /**
+     * @throws PrinterExceptionInterface in case of a node of the type cannot
+     *         be printed
+     */
     public function print(TypeNode $stmt): string
     {
         return $this->printer->print($stmt);

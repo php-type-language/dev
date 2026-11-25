@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer\NodePrinter\LogicalTypeNodePrinter;
 
+use TypeLang\Printer\Exception\PrinterExceptionInterface;
 use TypeLang\Printer\NodePrinter\LogicalTypeNodePrinter;
 use TypeLang\Printer\PrinterContext;
 use TypeLang\Printer\PrinterOptions;
@@ -14,8 +15,8 @@ use TypeLang\Type\TypeNode;
 use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
 
 /**
- * Prints a union as the native one: a "true" with a "false" are a "bool", and
- * a "mixed" swallows the rest.
+ * Prints a union as the native one: a `true` with a `false` are a `bool`, and
+ * a `mixed` swallows the rest.
  *
  * @template-extends LogicalTypeNodePrinter<UnionTypeNode>
  */
@@ -29,6 +30,9 @@ final class NativeUnionTypeNodePrinter extends LogicalTypeNodePrinter
     /**
      * A nullable member is its type with a `null`, a conditional one is its
      * branches, a name of an alias is the types of the alias.
+     *
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     protected function expand(TypeNode $type, PrinterContext $context): array
     {

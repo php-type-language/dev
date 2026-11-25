@@ -54,7 +54,8 @@ final class PrinterOptions
     public const DEFAULT_LIST_STYLE = ListStyle::DEFAULT;
 
     /**
-     * @throws \InvalidArgumentException in case of a negative maximum of the items in one line
+     * @throws \InvalidArgumentException in case of a negative maximum of the
+     *         items in one line
      */
     public function __construct(
         /**

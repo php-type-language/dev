@@ -24,12 +24,14 @@ abstract class FieldNodePrinter implements NodePrinterInterface
      * Prints a key of the field, or an empty string for a field with none.
      *
      * @param TField $field
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     abstract protected function printKey(FieldNode $field, PrinterContext $context): string;
 
     /**
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     public function printNode(Node $node, PrinterContext $context): string
     {

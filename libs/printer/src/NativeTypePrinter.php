@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TypeLang\Printer;
 
+use TypeLang\Printer\Exception\PrinterExceptionInterface;
 use TypeLang\Printer\NativeTypePrinter\TypeAliases;
 use TypeLang\Printer\NodePrinter\Callable\NativeCallableTypeNodePrinter;
 use TypeLang\Printer\NodePrinter\Condition\NativeConditionalTypeNodePrinter;
@@ -107,6 +108,10 @@ final class NativeTypePrinter implements TypePrinterInterface
         $this->aliases->addIntersection($alias, $types);
     }
 
+    /**
+     * @throws PrinterExceptionInterface in case of a node of the type cannot
+     *         be printed
+     */
     public function print(TypeNode $stmt): string
     {
         return $this->printer->print($stmt);

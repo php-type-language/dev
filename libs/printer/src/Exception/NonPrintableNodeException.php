@@ -10,7 +10,7 @@ final class NonPrintableNodeException extends PrinterException
 {
     public static function becauseInvalidNodeGiven(Node $node, ?\Throwable $previous = null): self
     {
-        $message = \sprintf('Could not print unknown node "%s"', $node::class);
+        $message = \sprintf('Could not print unknown node "%s"', \addcslashes($node::class, '"'));
 
         return new self($message, 0, $previous);
     }

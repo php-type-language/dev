@@ -89,9 +89,9 @@ final class PrinterContext
     /**
      * Runs a section one indentation level deeper.
      *
-     * @template TResult of mixed
-     * @param \Closure(): TResult $section
-     * @return TResult
+     * @template TArgResult of mixed
+     * @param \Closure(): TArgResult $section
+     * @return TArgResult
      */
     public function indent(\Closure $section): mixed
     {
@@ -108,9 +108,9 @@ final class PrinterContext
     /**
      * Runs a section as the content of a union or an intersection.
      *
-     * @template TResult of mixed
-     * @param \Closure(): TResult $section
-     * @return TResult
+     * @template TArgResult of mixed
+     * @param \Closure(): TArgResult $section
+     * @return TArgResult
      */
     public function groupLogical(\Closure $section): mixed
     {
@@ -129,9 +129,8 @@ final class PrinterContext
      * and the `[K]` of `T[K]`.
      *
      * A union or an intersection takes the brackets of its own. A nullable
-     * type and a callable with a return type would take the suffix for their
-     * own part (`?int[]` is a nullable list, `callable(): int[]` is a callable
-     * that returns a list), so they are grouped here.
+     * type written with `?` and a callable with a return type are grouped:
+     * `(?int)[]`, `(callable(): int)[]`.
      *
      * @throws PrinterExceptionInterface in case of the node cannot be printed
      */
@@ -149,9 +148,9 @@ final class PrinterContext
      * Runs a section as the content of a bracket pair, where a union or an
      * intersection needs no brackets of its own.
      *
-     * @template TResult of mixed
-     * @param \Closure(): TResult $section
-     * @return TResult
+     * @template TArgResult of mixed
+     * @param \Closure(): TArgResult $section
+     * @return TArgResult
      */
     public function isolate(\Closure $section): mixed
     {

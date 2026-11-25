@@ -21,7 +21,8 @@ use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
 final class CallableTypeNodePrinter implements NodePrinterInterface
 {
     /**
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     public function printNode(Node $node, PrinterContext $context): string
     {
@@ -63,8 +64,7 @@ final class CallableTypeNodePrinter implements NodePrinterInterface
     }
 
     /**
-     * Whether a type is written as the types joined by an operator, which
-     * a return type of a callable cannot be.
+     * Whether a type is written as the types joined by an operator.
      */
     private function isWrittenAsUnion(TypeNode $type, PrinterContext $context): bool
     {

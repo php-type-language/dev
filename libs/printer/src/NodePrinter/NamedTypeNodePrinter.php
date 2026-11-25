@@ -17,7 +17,8 @@ use TypeLang\Type\Shape\FieldListNode;
 final class NamedTypeNodePrinter implements NodePrinterInterface
 {
     /**
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     public function printNode(Node $node, PrinterContext $context): string
     {
@@ -35,7 +36,8 @@ final class NamedTypeNodePrinter implements NodePrinterInterface
     }
 
     /**
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     private function printShape(NamedTypeNode $node, FieldListNode $shape, PrinterContext $context): string
     {

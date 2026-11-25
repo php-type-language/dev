@@ -26,15 +26,19 @@ final class NodePrinterRegistry implements NodePrinterRegistryInterface
     /**
      * Gets a registry with the printer of the node class added, or replaced.
      *
-     * @template TNode of Node
-     * @param class-string<TNode> $node
-     * @param NodePrinterInterface<covariant TNode> $printer
+     * @template TArgNode of Node
+     * @param class-string<TArgNode> $node
+     * @param NodePrinterInterface<covariant TArgNode> $printer
      */
     public function with(string $node, NodePrinterInterface $printer): self
     {
         return new self([...$this->printers, $node => $printer]);
     }
 
+    /**
+     * @throws NonPrintableNodeException in case of no printer is registered
+     *         for the node
+     */
     public function getPrinter(Node $node): NodePrinterInterface
     {
         $class = $node::class;

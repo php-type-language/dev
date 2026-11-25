@@ -12,7 +12,8 @@ interface NodePrinterRegistryInterface
 {
     /**
      * @return NodePrinterInterface<covariant Node>
-     * @throws NonPrintableNodeException in case of no printer is registered for the node
+     * @throws NonPrintableNodeException in case of no printer is registered
+     *         for the node
      */
     public function getPrinter(Node $node): NodePrinterInterface;
 }

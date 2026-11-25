@@ -25,7 +25,8 @@ final class TypePrinter implements TypePrinterInterface
     ) {}
 
     /**
-     * @throws PrinterExceptionInterface in case of a node of the type cannot be printed
+     * @throws PrinterExceptionInterface in case of a node of the type cannot
+     *         be printed
      */
     public function print(TypeNode $stmt): string
     {

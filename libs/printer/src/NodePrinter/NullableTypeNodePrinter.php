@@ -21,7 +21,8 @@ use TypeLang\Type\WrappingTypeNode\NullableTypeNode;
 final class NullableTypeNodePrinter implements NodePrinterInterface
 {
     /**
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     public function printNode(Node $node, PrinterContext $context): string
     {
@@ -35,10 +36,10 @@ final class NullableTypeNodePrinter implements NodePrinterInterface
     }
 
     /**
-     * A nullable type of a nullable one is grouped: `?(?int)`, the `??int`
-     * is no type.
+     * A nullable type of a nullable one is grouped: `?(?int)`.
      *
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     private function printOperand(TypeNode $type, PrinterContext $context): string
     {

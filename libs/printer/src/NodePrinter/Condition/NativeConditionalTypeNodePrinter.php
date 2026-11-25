@@ -20,7 +20,8 @@ use TypeLang\Type\TypeNode;
 final class NativeConditionalTypeNodePrinter implements NodePrinterInterface
 {
     /**
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     public function printNode(Node $node, PrinterContext $context): string
     {

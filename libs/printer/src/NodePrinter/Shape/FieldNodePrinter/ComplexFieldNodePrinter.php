@@ -16,7 +16,8 @@ use TypeLang\Type\Shape\FieldNode;
 final class ComplexFieldNodePrinter extends FieldNodePrinter
 {
     /**
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     protected function printKey(FieldNode $field, PrinterContext $context): string
     {

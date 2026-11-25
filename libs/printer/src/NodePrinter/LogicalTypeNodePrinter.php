@@ -44,7 +44,8 @@ abstract class LogicalTypeNodePrinter implements NodePrinterInterface
      * of, which a subclass may expand.
      *
      * @return list<string>
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     protected function expand(TypeNode $type, PrinterContext $context): array
     {
@@ -52,7 +53,8 @@ abstract class LogicalTypeNodePrinter implements NodePrinterInterface
     }
 
     /**
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     public function printNode(Node $node, PrinterContext $context): string
     {
@@ -69,7 +71,8 @@ abstract class LogicalTypeNodePrinter implements NodePrinterInterface
     /**
      * @param LogicalTypeNode<TypeNode> $node
      * @return list<string>
-     * @throws PrinterExceptionInterface in case of a child node cannot be printed
+     * @throws PrinterExceptionInterface in case of a child node cannot be
+     *         printed
      */
     private function printTypes(LogicalTypeNode $node, PrinterContext $context): array
     {
@@ -83,9 +86,9 @@ abstract class LogicalTypeNodePrinter implements NodePrinterInterface
     }
 
     /**
-     * @template T of TypeNode
-     * @param LogicalTypeNode<T> $logical
-     * @return iterable<array-key, T>
+     * @template TArgType of TypeNode
+     * @param LogicalTypeNode<TArgType> $logical
+     * @return iterable<array-key, TArgType>
      */
     private function unwrap(LogicalTypeNode $logical): iterable
     {
