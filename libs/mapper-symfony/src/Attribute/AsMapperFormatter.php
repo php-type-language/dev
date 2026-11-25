@@ -14,7 +14,8 @@ use TypeLang\Mapper\Diagnostics\ViolationFormatterInterface;
  *
  * ```
  * #[AsMapperFormatter('denormalization')]
- * final class TranslatedViolationFormatter implements ViolationFormatterInterface {}
+ * final class TranslatedViolationFormatter implements
+ *     ViolationFormatterInterface {}
  * ```
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]

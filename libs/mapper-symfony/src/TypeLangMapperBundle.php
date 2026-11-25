@@ -6,6 +6,7 @@ namespace TypeLang\Mapper\Bridge\Symfony;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -54,6 +55,8 @@ final class TypeLangMapperBundle extends AbstractBundle
 
     /**
      * @param array<array-key, mixed> $config
+     * @throws InvalidConfigurationException in case of a mapping config path
+     *         does not exist or its format is not supported
      */
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
@@ -149,7 +152,7 @@ final class TypeLangMapperBundle extends AbstractBundle
             'Class "%s" is marked with #[%s], but does not implement "%s"',
             \addcslashes($class->name, '"'),
             $attribute,
-            $interface,
+            \addcslashes($interface, '"'),
         ));
     }
 

@@ -311,7 +311,10 @@ final class MapperDefinitions
                     '$profiler' => $collector,
                 ]);
 
-            $this->container->register(self::getInternalId($name, 'traceable_metadata'), TraceableMetadataProvider::class)
+            $this->container->register(
+                self::getInternalId($name, 'traceable_metadata'),
+                TraceableMetadataProvider::class,
+            )
                 ->setDecoratedService(self::getInternalId($name, 'metadata'))
                 ->setArguments([
                     '$delegate' => new Reference('.inner'),
@@ -329,7 +332,10 @@ final class MapperDefinitions
      * settings of a mapper by the key, without the inherited ones.
      *
      * @param MapperSettingsType $settings
-     * @return array<value-of<MapperSlot>, array<non-empty-string, non-empty-string>>
+     * @return array<
+     *     value-of<MapperSlot>,
+     *     array<non-empty-string, non-empty-string>,
+     * >
      */
     private static function getConfiguredSlots(array $settings): array
     {
@@ -497,7 +503,7 @@ final class MapperDefinitions
         $result = [];
 
         foreach ($paths as $path) {
-            foreach ($this->findConfigFiles($path) as $file) {
+            foreach ($this->getConfigFiles($path) as $file) {
                 $id = '.type_lang_mapper.file_reader.' . \hash('xxh128', $file . "\0" . $expressions);
 
                 if (!$this->container->hasDefinition($id)) {
@@ -518,9 +524,9 @@ final class MapperDefinitions
      * @throws InvalidConfigurationException in case of the path does not
      *         exist
      */
-    private function findConfigFiles(string $path): array
+    private function getConfigFiles(string $path): array
     {
-        /** @var non-empty-string $path */
+        /** @var non-empty-string */
         $path = $this->container->getParameterBag()->resolveValue($path);
 
         if (!$this->container->fileExists($path, self::FILE_PATTERN)) {
@@ -595,7 +601,7 @@ final class MapperDefinitions
         return new InvalidConfigurationException(\sprintf(
             'Mapping config file "%s" requires the "%s" package',
             \addcslashes($file, '"'),
-            $package,
+            \addcslashes($package, '"'),
         ));
     }
 

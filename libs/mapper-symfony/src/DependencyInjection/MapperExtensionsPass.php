@@ -46,12 +46,17 @@ final class MapperExtensionsPass implements CompilerPassInterface
             return;
         }
 
-        /** @var array<non-empty-string, array<value-of<ExtensionKind>, list<non-empty-string>>> */
+        /**
+         * @var array<
+         *     non-empty-string,
+         *     array<value-of<ExtensionKind>, list<non-empty-string>>,
+         * >
+         */
         $services = $container->getParameter(MapperDefinitions::EXTENSIONS_PARAMETER);
         $container->getParameterBag()->remove(MapperDefinitions::EXTENSIONS_PARAMETER);
 
         foreach (ExtensionKind::cases() as $kind) {
-            foreach ($this->findTaggedServices($container, $kind, \array_keys($services)) as $name => $ids) {
+            foreach ($this->getTaggedServices($container, $kind, \array_keys($services)) as $name => $ids) {
                 $services[$name][$kind->value] = [...$services[$name][$kind->value], ...$ids];
             }
         }
@@ -85,7 +90,15 @@ final class MapperExtensionsPass implements CompilerPassInterface
             }
         }
 
-        /** @var array<non-empty-string, array<value-of<MapperSlot>, array<non-empty-string, non-empty-string>>> */
+        /**
+         * @var array<
+         *     non-empty-string,
+         *     array<
+         *         value-of<MapperSlot>,
+         *         array<non-empty-string, non-empty-string>,
+         *     >,
+         * >
+         */
         $slots = $container->getParameter(MapperDefinitions::SLOTS_PARAMETER);
         $container->getParameterBag()->remove(MapperDefinitions::SLOTS_PARAMETER);
 
@@ -104,8 +117,10 @@ final class MapperExtensionsPass implements CompilerPassInterface
      * Passes the services of the role to the mappers: the own service of a
      * key, then the one of the default mapper, then the default of the core.
      *
-     * @param array<non-empty-string, array<non-empty-string, non-empty-string>> $services
-     *        configured services of the mappers by the key
+     * @param array<
+     *     non-empty-string,
+     *     array<non-empty-string, non-empty-string>,
+     * > $services configured services of the mappers by the key
      * @throws InvalidArgumentException in case of a mapper is given two
      *         services of one key or a service of an unknown key
      */
@@ -135,10 +150,10 @@ final class MapperExtensionsPass implements CompilerPassInterface
                 if (isset($services[$mapper][$key])) {
                     throw new InvalidArgumentException(\sprintf(
                         'Mapper "%s" is given two %ss of %s "%s": "%s" and "%s"',
-                        $mapper,
+                        \addcslashes($mapper, '"'),
                         $slot->getName(),
                         $slot->getKeyName(),
-                        $key,
+                        \addcslashes($key, '"'),
                         \addcslashes($services[$mapper][$key], '"'),
                         \addcslashes($id, '"'),
                     ));
@@ -196,7 +211,7 @@ final class MapperExtensionsPass implements CompilerPassInterface
      * @throws InvalidArgumentException in case of a service is tagged for a
      *         mapper that is not configured
      */
-    private function findTaggedServices(ContainerBuilder $container, ExtensionKind $kind, array $mappers): array
+    private function getTaggedServices(ContainerBuilder $container, ExtensionKind $kind, array $mappers): array
     {
         $found = [];
 

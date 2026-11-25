@@ -119,6 +119,8 @@ enum MapperSlot: string
 
     /**
      * Returns the key the attribute declares the service for.
+     *
+     * @return non-empty-string
      */
     public function getAttributeKey(AsMapperCoercer|AsMapperFormatter $attribute): string
     {
