@@ -33,12 +33,13 @@ use TypeLang\Type\TypeNode;
 final class ComplexFieldNode extends ExplicitFieldNode
 {
     /**
-     * A key that is an int, a string, a bool or a null belongs to a
-     * {@see ScalarFieldNode} or a {@see NamedFieldNode}, so it is not
-     * accepted here. The check is made on creation only.
+     * A key that is an int, a string, a bool or a null literal is not
+     * accepted, it belongs to a {@see ScalarFieldNode} or
+     * a {@see NamedFieldNode}. The check is made on creation only.
      *
      * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of the key is a literal other node types stand for
+     * @throws \InvalidArgumentException in case of the key is a literal other
+     *         node types stand for
      */
     public function __construct(
         TypeNode $key,

@@ -19,7 +19,7 @@ namespace TypeLang\Type\Literal;
  *  // raw: the text as written, "-1_5.5e+3", ".42", "- 1.5"
  * ```
  *
- * A node made by hand has no text to read the exact number from, so the
+ * A node made by hand has no text to read the exact number from: the
  * mantissa and the exponent are the ones of the value itself.
  *
  * @template-extends ScalarLiteralNode<float>
@@ -43,11 +43,14 @@ final class FloatLiteralNode extends ScalarLiteralNode
     public readonly string $exponent;
 
     /**
-     * @param numeric-string|null $mantissa {@see null} to take it from the value
-     * @param numeric-string|null $exponent {@see null} to take it from the value
+     * @param numeric-string|null $mantissa {@see null} to take it from the
+     *        value
+     * @param numeric-string|null $exponent {@see null} to take it from the
+     *        value
      * @param non-empty-string|null $raw
      * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of a non-finite value is passed with no raw text, no mantissa or no exponent
+     * @throws \InvalidArgumentException in case of a non-finite value is
+     *         passed with no raw text, no mantissa or no exponent
      */
     public function __construct(
         float $value,

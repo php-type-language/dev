@@ -8,8 +8,8 @@ namespace TypeLang\Type\Literal;
  * A whole number, written in any of the four radixes.
  *
  * ```
- *  0xFE_DE  // value: 65246, raw: "0xFE_DE", decimal: "65246", kind: Hexadecimal
- *  042      // value: 34,    raw: "042",     decimal: "34",    kind: Octal
+ *  0xFE_DE // value: 65246, raw: "0xFE_DE", decimal: "65246", kind: Hexadecimal
+ *  042     // value: 34,    raw: "042",     decimal: "34",    kind: Octal
  * ```
  *
  * @template-extends ScalarLiteralNode<int>
@@ -27,7 +27,8 @@ final class IntLiteralNode extends ScalarLiteralNode
      * @param numeric-string|null $decimal
      * @param non-empty-string|null $raw
      * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of no raw text for a non-decimal number out of the native range
+     * @throws \InvalidArgumentException in case of no raw text for
+     *         a non-decimal number out of the native range
      */
     public function __construct(
         int $value,
@@ -48,7 +49,8 @@ final class IntLiteralNode extends ScalarLiteralNode
     /**
      * @param numeric-string $decimal
      * @return non-empty-string
-     * @throws \InvalidArgumentException in case of a non-decimal number out of the native range
+     * @throws \InvalidArgumentException in case of a non-decimal number out
+     *         of the native range
      */
     private static function representAsRawValue(int $value, string $decimal, IntLiteralKind $kind): string
     {
@@ -60,7 +62,8 @@ final class IntLiteralNode extends ScalarLiteralNode
             throw new \InvalidArgumentException('A number out of the native range requires raw text');
         }
 
-        // The conversions read a negative integer as unsigned: for the lower bound it is the magnitude
+        // The conversions read a negative integer as unsigned: for the lower
+        // bound it is the magnitude
         $magnitude = $value === \PHP_INT_MIN ? $value : \abs($value);
 
         $literal = match ($kind) {

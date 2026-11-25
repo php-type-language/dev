@@ -36,6 +36,9 @@ final class TemplateParameterListNode extends NodesListNode
         }
     }
 
+    /**
+     * @throws \UnderflowException in case of the last parameter is removed
+     */
     #[\Override]
     public function offsetUnset(mixed $offset): void
     {

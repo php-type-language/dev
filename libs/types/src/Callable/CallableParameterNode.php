@@ -21,15 +21,15 @@ use TypeLang\Type\VariableNode;
  * or without one.
  *
  * The constructor checks the parameter on creation only. The properties are
- * public and writable, so a later change is not checked. Since PHP 8.4,
- * property hooks make it possible to keep the checks permanent.
+ * public and writable, a later change is not checked.
  */
 final class CallableParameterNode extends Node
 {
     /**
      * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of the parameter carries neither a type nor a name,
-     *         or is both variadic and has a default
+     * @throws \InvalidArgumentException in case of the parameter carries
+     *         neither a type nor a name, or is both variadic and has
+     *         a default
      */
     public function __construct(
         /**
@@ -61,7 +61,7 @@ final class CallableParameterNode extends Node
         public bool $isVariadic = false,
         /**
          * Default of a parameter, or {@see null} in case of a required one.
-         * A variadic parameter is optional itself, so it has no default.
+         * A variadic parameter is optional itself and has no default.
          *
          * ```
          *  callable(int $a)            // null

@@ -11,8 +11,7 @@ namespace TypeLang\Type;
  * holds the three types side by side.
  *
  * The flattening and the minimum of two types are checked on creation
- * only. Since PHP 8.4, property hooks make it possible to keep the checks
- * permanent.
+ * only.
  *
  * @template T of TypeNode = TypeNode
  *
@@ -36,7 +35,8 @@ abstract class LogicalTypeNode extends TypeNode implements
     /**
      * @param iterable<mixed, T> $types
      * @param int<0, max> $offset
-     * @throws \InvalidArgumentException in case of less than two types are passed
+     * @throws \InvalidArgumentException in case of less than two types are
+     *         passed
      */
     public function __construct(
         iterable $types,
@@ -48,7 +48,7 @@ abstract class LogicalTypeNode extends TypeNode implements
             throw new \InvalidArgumentException('A logical type must contain at least 2 types');
         }
 
-        // @phpstan-ignore-next-line : The list contains at least 2 types, checked above
+        // @phpstan-ignore-next-line at least 2 types, checked above
         $this->children = $types;
 
         parent::__construct($offset);
@@ -79,6 +79,10 @@ abstract class LogicalTypeNode extends TypeNode implements
         return $result;
     }
 
+    /**
+     * @throws \InvalidArgumentException in case of the offset is not an
+     *         `int<0, max>` or less than two types are left
+     */
     public function offsetUnset(mixed $offset): void
     {
         $previous = $this->children;

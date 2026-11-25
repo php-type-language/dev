@@ -11,7 +11,7 @@ use TypeLang\Type\TypeNode;
  * The default of a callable parameter, written as an `=` and the value it
  * stands for.
  *
- * The node itself tells that the parameter may be left out, so a parameter
+ * The node itself tells that the parameter may be left out: a parameter
  * with it is optional, and one without it is required.
  *
  * ```
@@ -30,7 +30,7 @@ final class DefaultValueNode extends Node
          * The value of a default, or {@see null} in case of the parameter
          * is only marked as optional.
          *
-         * The value is a literal or a constant, so it is a type node of the
+         * The value is a literal or a constant, a type node of the
          * same kind as in any other position.
          */
         public ?TypeNode $value = null,

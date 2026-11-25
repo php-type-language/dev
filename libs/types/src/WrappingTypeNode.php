@@ -18,10 +18,10 @@ namespace TypeLang\Type;
 abstract class WrappingTypeNode extends TypeNode
 {
     /**
-     * @param T $type
      * @param int<0, max> $offset
      */
     public function __construct(
+        /** @var T */
         public TypeNode $type,
         int $offset = 0,
     ) {

@@ -25,9 +25,6 @@ final class VarianceNode extends Node
      * @param int<0, max> $offset
      */
     public function __construct(
-        /**
-         * The kind of the variance.
-         */
         public readonly VarianceKind $kind,
         int $offset = 0,
     ) {

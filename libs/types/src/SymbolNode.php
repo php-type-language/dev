@@ -7,7 +7,7 @@ namespace TypeLang\Type;
 /**
  * A node that stands for a piece of text: an identifier, a name or a variable.
  *
- * The text of a node is the one it is written with, so a node is told apart
+ * The text of a node is the one it is written with, a node is told apart
  * from the others by {@see toString()} alone.
  */
 abstract class SymbolNode extends Node implements \Stringable

@@ -33,6 +33,7 @@ final class MaskNode extends NodesListNode implements \Stringable
     /**
      * @param iterable<mixed, Identifier|WildcardMaskNode> $items
      * @param int<0, max> $offset
+     * @throws \InvalidArgumentException in case of no items are passed
      */
     public function __construct(iterable $items, int $offset = 0)
     {
@@ -43,6 +44,9 @@ final class MaskNode extends NodesListNode implements \Stringable
         }
     }
 
+    /**
+     * @throws \UnderflowException in case of the last item is removed
+     */
     #[\Override]
     public function offsetUnset(mixed $offset): void
     {

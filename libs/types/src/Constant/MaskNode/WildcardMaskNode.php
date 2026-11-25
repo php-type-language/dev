@@ -7,7 +7,8 @@ namespace TypeLang\Type\Constant\MaskNode;
 use TypeLang\Type\Node;
 
 /**
- * An asterisk standing in the place of any run of characters of a constant name.
+ * An asterisk standing in the place of any run of characters of a constant
+ * name.
  *
  * ```
  *  Some\Any::CONST_*

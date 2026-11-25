@@ -23,6 +23,10 @@ trait NodeListTrait
      */
     public array $children;
 
+    /**
+     * @throws \InvalidArgumentException in case of the offset is not an
+     *         `int<0, max>`
+     */
     public function offsetExists(mixed $offset): bool
     {
         if (!\is_int($offset) || $offset < 0) {
@@ -34,6 +38,8 @@ trait NodeListTrait
 
     /**
      * @return TNode|null
+     * @throws \InvalidArgumentException in case of the offset is not an
+     *         `int<0, max>`
      */
     public function offsetGet(mixed $offset): ?Node
     {
@@ -44,6 +50,10 @@ trait NodeListTrait
         return $this->children[$offset] ?? null;
     }
 
+    /**
+     * @throws \InvalidArgumentException in case of the value is not a
+     *         {@see Node} or the offset is not an `int<0, max>|null`
+     */
     public function offsetSet(mixed $offset, mixed $value): void
     {
         if (!$value instanceof Node) {
@@ -60,7 +70,7 @@ trait NodeListTrait
             throw new \InvalidArgumentException('An $offset must be an int<0, max>|null');
         }
 
-        // @phpstan-ignore-next-line : An offset beyond the end leaves a gap, the list is renumbered below
+        // @phpstan-ignore-next-line a gap past the end is renumbered below
         $this->children[$offset] = $value;
 
         if (!\array_is_list($this->children)) {
@@ -68,17 +78,21 @@ trait NodeListTrait
         }
     }
 
+    /**
+     * @throws \InvalidArgumentException in case of the offset is not an
+     *         `int<0, max>`
+     */
     public function offsetUnset(mixed $offset): void
     {
         if (!\is_int($offset) || $offset < 0) {
             throw new \InvalidArgumentException('An $offset must be an int<0, max>');
         }
 
-        // @phpstan-ignore-next-line : Unset leaves a gap, the list is renumbered below
+        // @phpstan-ignore-next-line the gap is renumbered below
         unset($this->children[$offset]);
 
         if (!\array_is_list($this->children)) {
-            // @phpstan-ignore-next-line : The callers keep the size the list is declared with
+            // @phpstan-ignore-next-line callers keep the declared list size
             $this->children = \array_values($this->children);
         }
     }

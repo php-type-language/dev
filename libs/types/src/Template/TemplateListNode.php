@@ -25,6 +25,7 @@ final class TemplateListNode extends NodesListNode
     /**
      * @param iterable<mixed, TemplateNode> $items
      * @param int<0, max> $offset
+     * @throws \InvalidArgumentException in case of no arguments are passed
      */
     public function __construct(iterable $items, int $offset = 0)
     {
@@ -35,6 +36,9 @@ final class TemplateListNode extends NodesListNode
         }
     }
 
+    /**
+     * @throws \UnderflowException in case of the last argument is removed
+     */
     #[\Override]
     public function offsetUnset(mixed $offset): void
     {

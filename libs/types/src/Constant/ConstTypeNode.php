@@ -31,7 +31,7 @@ final class ConstTypeNode extends TypeNode
          * The class or the namespace the constant belongs to.
          *
          * A constant of a namespace written by its whole name
-         * (`Some\CONST_NAME`) is a name of a type in the source, so the
+         * (`Some\CONST_NAME`) is a name of a type in the source, the
          * parser builds it as a {@see \TypeLang\Type\NamedTypeNode}.
          */
         public Name|NamespaceName $owner,

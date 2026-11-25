@@ -49,7 +49,7 @@ final class Name extends SymbolNode implements
     ];
 
     /**
-     * Words that PHP reserves for the types it has built in, so no class can
+     * Words that PHP reserves for the types it has built in, no class can
      * be named by one of them.
      *
      * @var non-empty-array<non-empty-lowercase-string, true>
@@ -73,9 +73,8 @@ final class Name extends SymbolNode implements
 
     /**
      * @var non-empty-list<non-empty-string>
-     *
-     * @phpstan-ignore-next-line : PHPStan does not support lazy init
      */
+    // @phpstan-ignore-next-line PHPStan does not support lazy init
     private readonly array $parts;
 
     /**
@@ -291,7 +290,7 @@ final class Name extends SymbolNode implements
         $parts = $this->namespace?->toArray() ?? [];
         $parts[] = $this->value;
 
-        /** @phpstan-ignore-next-line : PHPStan does not support lazy initialization */
+        // @phpstan-ignore-next-line PHPStan does not support lazy init
         return $this->parts = $parts;
     }
 
@@ -376,32 +375,42 @@ final class Name extends SymbolNode implements
 
     public function offsetExists(mixed $offset): bool
     {
-        assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
+        \assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
 
         $parts = $this->toArray();
 
         return isset($parts[$offset]);
     }
 
+    /**
+     * @throws \OutOfBoundsException in case of the name has no segment at
+     *         the offset
+     */
     public function offsetGet(mixed $offset): string
     {
-        assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
+        \assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
 
         $parts = $this->toArray();
 
         return $parts[$offset] ?? throw new \OutOfBoundsException('Invalid name segment offset');
     }
 
+    /**
+     * @throws \LogicException in case of an attempt to modify the name
+     */
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
+        \assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
 
         throw new \LogicException('Cannot modify name parts');
     }
 
+    /**
+     * @throws \LogicException in case of an attempt to modify the name
+     */
     public function offsetUnset(mixed $offset): void
     {
-        assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
+        \assert(\is_int($offset) && $offset >= 0, new \InvalidArgumentException('Invalid name segment offset'));
 
         throw new \LogicException('Cannot modify name parts');
     }
