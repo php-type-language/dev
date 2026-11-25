@@ -142,16 +142,19 @@ final class ClassType implements TypeInterface
         }
 
         foreach ($this->writable as $property) {
-            $key = $property->metadata->name;
+            $metadata = $property->metadata;
+            $key = $metadata->name;
 
-            $present = self::getPresentNames($property->metadata, $value);
+            if ($metadata->aliases !== null) {
+                $present = self::getPresentNames($metadata, $value);
 
-            if ($present !== []) {
-                $key = self::selectName($property->metadata, $present, $value);
-            }
+                if ($present !== []) {
+                    $key = self::selectName($metadata, $present, $value);
+                }
 
-            if ($key === null) {
-                return false;
+                if ($key === null) {
+                    return false;
+                }
             }
 
             if (!\array_key_exists($key, $value)) {
@@ -215,12 +218,16 @@ final class ClassType implements TypeInterface
         }
 
         foreach ($this->writable as $property) {
-            $key = $property->metadata->name;
+            $metadata = $property->metadata;
+            $key = $metadata->name;
+            $present = [];
 
-            $present = self::getPresentNames($property->metadata, $value);
+            if ($metadata->aliases !== null) {
+                $present = self::getPresentNames($metadata, $value);
 
-            if ($present !== []) {
-                $key = self::selectName($property->metadata, $present, $value);
+                if ($present !== []) {
+                    $key = self::selectName($metadata, $present, $value);
+                }
             }
 
             if ($key === null) {
