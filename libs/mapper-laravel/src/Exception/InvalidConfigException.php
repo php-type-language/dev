@@ -17,8 +17,8 @@ final class InvalidConfigException extends \InvalidArgumentException
         return new self(\sprintf(
             'Mapper name "%s" is invalid, a name matches "%s" and is not "%s"',
             \addcslashes($name, '"'),
-            $pattern,
-            $default,
+            \addcslashes($pattern, '"'),
+            \addcslashes($default, '"'),
         ));
     }
 
@@ -30,7 +30,7 @@ final class InvalidConfigException extends \InvalidArgumentException
     {
         return new self(\sprintf(
             'Config "%s" must be %s, but %s given',
-            $key,
+            \addcslashes($key, '"'),
             $expected,
             \get_debug_type($value),
         ));
@@ -56,7 +56,7 @@ final class InvalidConfigException extends \InvalidArgumentException
         return new self(\sprintf(
             'Service "%s" must implement "%s", but %s given',
             \addcslashes($id, '"'),
-            $class,
+            \addcslashes($class, '"'),
             \get_debug_type($service),
         ));
     }
@@ -80,6 +80,10 @@ final class InvalidConfigException extends \InvalidArgumentException
 
     public static function becauseProfilerRequiresPackage(string $key, string $package): self
     {
-        return new self(\sprintf('Config "%s" requires the "%s" package', $key, $package));
+        return new self(\sprintf(
+            'Config "%s" requires the "%s" package',
+            \addcslashes($key, '"'),
+            \addcslashes($package, '"'),
+        ));
     }
 }

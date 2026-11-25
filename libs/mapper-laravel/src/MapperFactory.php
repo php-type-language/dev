@@ -370,7 +370,7 @@ final class MapperFactory
         $result = [];
 
         foreach ($paths as $path) {
-            foreach (self::findConfigFiles($path) as $file) {
+            foreach (self::getConfigFiles($path) as $file) {
                 $class = self::getFileReaderClass($file);
 
                 $result[] = new $class($file, $this->parser, $expressions);
@@ -385,7 +385,7 @@ final class MapperFactory
      * @return list<non-empty-string>
      * @throws InvalidConfigException in case of the path does not exist
      */
-    private static function findConfigFiles(string $path): array
+    private static function getConfigFiles(string $path): array
     {
         if (!\file_exists($path)) {
             throw InvalidConfigException::becausePathDoesNotExist($path);
@@ -449,7 +449,10 @@ final class MapperFactory
     }
 
     /**
-     * @return array<value-of<MapperSettings::FORMATTED_DIRECTIONS>, ViolationFormatterInterface>
+     * @return array<
+     *     value-of<MapperSettings::FORMATTED_DIRECTIONS>,
+     *     ViolationFormatterInterface,
+     * >
      * @throws InvalidConfigException in case of a formatter is invalid
      */
     private function makeFormatters(MapperSettings $settings): array

@@ -76,7 +76,8 @@ return [
     ],
 
     // Mappers extending the default one, by the name:
-    // 'api' => ['strict' => true, 'types' => [App\Mapper\MoneyTypeBuilder::class]]
+    // 'api' => ['strict' => true,
+    //     'types' => [App\Mapper\MoneyTypeBuilder::class]]
     'mappers' => [],
 
     'profiler' => [

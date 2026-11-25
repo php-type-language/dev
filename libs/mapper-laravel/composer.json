@@ -24,11 +24,13 @@
         "illuminate/cache": "^10.0|^11.0|^12.0|^13.0",
         "illuminate/config": "^10.0|^11.0|^12.0|^13.0",
         "illuminate/container": "^10.0|^11.0|^12.0|^13.0",
+        "illuminate/events": "^10.0|^11.0|^12.0|^13.0",
         "laravel/telescope": "^5.0",
         "php-debugbar/php-debugbar": "^2.0|^3.0",
         "phpstan/phpstan": "^2.3.6",
         "phpunit/phpunit": "^10.5.36|^11.0|^12.0|^13.0",
-        "symfony/expression-language": "^6.4|^7.0|^8.0"
+        "symfony/expression-language": "^6.4|^7.0|^8.0",
+        "type-lang/types": "self.version"
     },
     "suggest": {
         "barryvdh/laravel-debugbar": "(^3.0|^4.0) Allows showing the mapper calls in the Laravel Debugbar",

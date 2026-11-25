@@ -154,7 +154,12 @@ final class MapperSettings
      */
     public function getFormatters(): array
     {
-        /** @var array<value-of<self::FORMATTED_DIRECTIONS>, non-empty-string> */
+        /**
+         * @var array<
+         *     value-of<self::FORMATTED_DIRECTIONS>,
+         *     non-empty-string,
+         * >
+         */
         return $this->getServicesByKey('formatters', self::FORMATTED_DIRECTIONS);
     }
 
@@ -211,7 +216,10 @@ final class MapperSettings
             $name = $store['store'] ?? null;
             $prefix = $store['prefix'] ?? null;
 
-            if (($name !== null && (!\is_string($name) || $name === '')) || ($prefix !== null && !\is_string($prefix))) {
+            if (
+                ($name !== null && (!\is_string($name) || $name === ''))
+                || ($prefix !== null && !\is_string($prefix))
+            ) {
                 throw InvalidConfigException::becauseValueIsInvalid(
                     $this->getKey($key),
                     'a list of arrays with the string "store" and "prefix"',
