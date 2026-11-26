@@ -21,8 +21,8 @@ const SIGNS = { ok: '✓', fail: '✗', lossy: '!' } as const;
 
 // On the malformed input a rejection is the right answer.
 const TITLES = {
-    read: { ok: 'read as written', fail: 'rejected', lossy: 'accepted, meaning changed' },
-    malformed: { ok: 'rejected', fail: 'accepted', lossy: 'accepted, meaning changed' },
+    read: { ok: 'read as written', fail: 'not read as written', lossy: 'read as another type, a bug' },
+    malformed: { ok: 'rejected', fail: 'accepted', lossy: 'accepted after dropping a part, a bug' },
 } as const;
 
 const { section } = Astro.props;

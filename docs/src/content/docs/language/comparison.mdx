@@ -8,16 +8,31 @@ sidebar:
 import { Aside } from '@astrojs/starlight/components';
 import ComparisonTable from '../../../components/ComparisonTable.astro';
 
-Every construct below is fed to the parser of each tool, asked directly. The
-table lists the basic constructs all of them read the same way and those on
-which they differ. Only the syntax is compared: whether the named type exists
-is not.
+Every construct below is written into a docblock as `@return <type>` and read
+by each tool the way it reads a docblock. The table lists the basic constructs
+all of them read the same way and those on which they differ. Only the syntax
+is compared: whether the named type exists is not.
 
-| Sign | Constructs                                                | Malformed input            |
-|------|-----------------------------------------------------------|----------------------------|
-| ✓    | read as written                                           | rejected                   |
-| ✗    | rejected                                                  | accepted                   |
-| !    | accepted, but the meaning changed (a word dropped, words glued together, a value clamped) | accepted, meaning changed |
+| Sign | Constructs                         | Malformed input                       |
+|------|------------------------------------|---------------------------------------|
+| ✓    | read as written                    | rejected                              |
+| ✗    | not read as written                | accepted                              |
+| !    | read as another type, a bug        | accepted after dropping a part, a bug |
+
+A result in another form is the same type: Psalm returns `A&B` for `A&?B`,
+since an object of `A` is never `null`, and that is `✓`. Every other mark has
+a note that names its kind:
+
+- **Bug**: the tool reads the type wrongly, confirmed by an issue, by its
+  documentation or by its own reading of a neighbouring form.
+- **By design**: the tool rejects or reshapes the type on purpose, as an issue,
+  its documentation or a dedicated error says.
+- **Not implemented**: the tool has no such syntax yet, and nothing says it is
+  refused.
+- **Differs**: the tools group the operators differently and none of them
+  documents its choice.
+- **Accepted**: the tool reads malformed input as written, because a rule of
+  its lexer allows it.
 
 <ComparisonTable />
 
@@ -29,22 +44,23 @@ language each parser reads.
 
 ## Methodology
 
-| Tool     | Version                       | A type is supported when                                                   |
-|----------|-------------------------------|----------------------------------------------------------------------------|
-| PHPStan  | `phpstan/phpdoc-parser` 2.4   | `TypeParser::parse()` reads the source whole, leaving no trailing input    |
-| Psalm    | `vimeo/psalm` 7.0             | `Psalm\Type::parseString()` returns a type carrying what was written       |
-| TypeLang | `type-lang/parser` 2.0        | `TypeParser::parse()` returns a node, every feature of the parser enabled  |
+| Tool     | Version                       | How `@return` is read                                                  |
+|----------|-------------------------------|------------------------------------------------------------------------|
+| PHPStan  | `phpstan/phpdoc-parser` 2.4.2 | `PhpDocParser::parse()`                                                |
+| Psalm    | `vimeo/psalm` 7.21.1          | `DocblockParser::parse()`, then the steps of `extractReturnType()`: `splitDocLine()`, `sanitizeDocblockType()`, `Type::parseString()` |
+| TypeLang | `type-lang/phpdoc` 2.0        | `DocBlockParser::createDefault()`, every feature of the parser enabled |
 
-The tools run with their default settings. Psalm is given the templates
+A type is read as written when the whole text becomes the type and nothing is
+left for the description. A line break of a type continues the docblock with
+` * `. The tools run with their default settings. Psalm is given the templates
 `T U V K K2 L` and the parameters `$a $b`, otherwise it cannot read `T[K]` and
-conditional types at all. Error messages, offsets and the error-tolerant mode
+conditional types at all: it accepts only a template as an offset and as the
+subject of a condition. Error messages, offsets and the error-tolerant mode
 have no counterpart in the other tools and are not compared.
 
 <Aside>
-Psalm answers even where it did not understand the question. It reads a word
-it cannot parse as a name, so `int string` comes back as a type called
-`intstring`, and it cuts off what stands behind the part it understood. Such
-an answer is marked `!`.
+A block comment `/* */` cannot be written inside a docblock, its `*/` closes
+the docblock. Only line comments are compared.
 </Aside>
 
 ## Names
