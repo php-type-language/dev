@@ -2,11 +2,24 @@
 /*
  * The landing page.
  */
+import { getCollection } from 'astro:content';
 import { links, sections } from '../navigation';
 import typelangUrl from '../scripts/typelang.js?url';
 import landingUrl from '../scripts/landing.js?url';
 import '../styles/tokens.css';
 import '../styles/landing.css';
+
+// Coverage, counted over the syntax comparison like its totals table.
+const comparison = await getCollection('comparison');
+const constructs = comparison.filter((s) => !s.data.isMalformed).flatMap((s) => s.data.cases);
+const malformed = comparison.filter((s) => s.data.isMalformed).flatMap((s) => s.data.cases);
+const countOk = (cases: typeof constructs, tool: 'phpstan' | 'psalm' | 'typelang') =>
+    cases.filter((c) => c.verdicts[tool].verdict === 'ok').length;
+const rulers = [
+    { tool: 'typelang', label: 'TypeLang', version: 'type-lang/phpdoc 2.0' },
+    { tool: 'phpstan', label: 'PHPStan', version: 'phpstan/phpdoc-parser 2.4' },
+    { tool: 'psalm', label: 'Psalm', version: 'vimeo/psalm 7.21' },
+] as const;
 
 const parts = [
     {
@@ -233,22 +246,19 @@ const parts = [
     <p class="num">§ 04</p>
     <h2>Coverage.</h2>
     <p class="sub">
-      239 syntactic constructs, the basic ones and those on which PHPStan, Psalm and TypeLang disagree, each fed to the tool's own parser.
-      A construct counts when the parser returns a node carrying what was written, not a silently truncated one.
+      {constructs.length} syntactic constructs, the basic ones and those on which PHPStan, Psalm and TypeLang disagree, each written as <code>@return</code> and read by the tool's own docblock reader.
+      A construct counts when the whole text becomes the type it was written as, with nothing left for the description.
     </p>
   </div>
-  <div class="rulers" id="rulers">
-    <div class="ruler" data-value="236"><span class="who">TypeLang <small>type-lang/parser 2.0</small></span><span class="bar"><i></i></span><span class="val">236<small>/239</small></span></div>
-    <div class="ruler" data-value="180"><span class="who">PHPStan <small>phpstan/phpdoc-parser 2.4</small></span><span class="bar"><i></i></span><span class="val">180<small>/239</small></span></div>
-    <div class="ruler" data-value="108"><span class="who">Psalm <small>vimeo/psalm 7.0</small></span><span class="bar"><i></i></span><span class="val">108<small>/239</small></span></div>
-    <div class="ruler" data-value="99"><span class="who">Phan <small>phan/phan 6.0</small></span><span class="bar"><i></i></span><span class="val">99<small>/239</small></span></div>
+  <div class="rulers" id="rulers" style={`--max: ${constructs.length}`}>
+    {rulers.map((r) => (
+      <div class="ruler" data-value={countOk(constructs, r.tool)}><span class="who">{r.label} <small>{r.version}</small></span><span class="bar"><i></i></span><span class="val">{countOk(constructs, r.tool)}<small>/{constructs.length}</small></span></div>
+    ))}
   </div>
   <p class="foot-note">
     Full table with the verdict for every construct, per tool, in the
     <a href="/language/comparison/">syntax comparison</a>.
-    Phan is not in that table; it was run over the same constructs.
-    The table also lists 34 malformed inputs that must be rejected: TypeLang rejects 33, PHPStan 29, Phan 29 and Psalm 5.
-    Psalm answers even where it did not understand the question; the comparison explains how those answers are told apart.
+    The table also lists {malformed.length} malformed inputs that must be rejected: TypeLang rejects {countOk(malformed, 'typelang')}, PHPStan {countOk(malformed, 'phpstan')} and Psalm {countOk(malformed, 'psalm')}.
   </p>
 </section>
 

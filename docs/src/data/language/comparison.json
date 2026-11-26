@@ -96,7 +96,7 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
+                        "verdict": "ok",
                         "note": 2
                     },
                     "typelang": {
@@ -111,8 +111,8 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 2
+                        "verdict": "lossy",
+                        "note": 3
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -122,7 +122,8 @@
         ],
         "notes": {
             "1": "By design: a hyphen is reserved for the names of Psalm itself, an unknown name with a hyphen is rejected.",
-            "2": "By design: `$this` is read as `static`, any instance of the called class, not only this object."
+            "2": "The type is read as `static`, and `@return $this` alone is also marked as returning the object itself, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> describes.",
+            "3": "Bug: `$this` is read as `static`, any instance of the called class, although the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> tells them apart: \"`@return static` is not enough: the method may return another instance of the class\". Only `@return $this` alone keeps the object."
         }
     },
     {
@@ -1168,7 +1169,7 @@
             "1": "Not implemented: an offset access is read only as a template indexed by a template, `T[K]`.",
             "2": "By design: a space before `[K]` ends the type and the rest becomes the description, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/119\">phpdoc-parser#119</a>.",
             "3": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
-            "4": "Not implemented: a line break is read only before `|` or `&` and inside brackets, the other places were added on request one by one, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/263\">phpdoc-parser#263</a>.",
+            "4": "Not implemented: a line break is not read here, the places it is read in were added on request one by one, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/263\">phpdoc-parser#263</a>.",
             "5": "Not implemented: in a docblock a line break at the top level ends the type, and `[]` becomes the description.",
             "6": "Not implemented: in `@return` a type starting with `$` is rejected as a misplaced variable, unless it is `$this` alone or in a union."
         }
@@ -1508,7 +1509,7 @@
             "3": "Differs: Psalm reads `?(A&B)`, TypeLang reads `(?A)&B`, which is `A&B`. Neither reading is documented, PHPStan requires parentheses.",
             "4": "Bug: `B` is lost, `A|null` is returned instead of `(A&B)|null`.",
             "5": "Bug: `B` is lost and `A&C` is returned, while `A&(B&C)` gives `A&B&C`.",
-            "6": "By design: the arrays of a union are merged into `array<A|B>`, which also admits a mixed array `[A, B]`.",
+            "6": "By design: the arrays of a union are merged into `array<A|B>`, which also admits a mixed array `[A, B]`, for the projects that wrote `int[]|string[]` meaning either, <a href=\"https://github.com/vimeo/psalm/issues/5212\">psalm#5212</a>.",
             "7": "Bug: `?B` is lost and `A[]` is returned, `(A|?B)` alone gives `A`."
         }
     },
@@ -2285,7 +2286,7 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
+                        "verdict": "lossy",
                         "note": 7
                     },
                     "typelang": {
@@ -2332,7 +2333,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 9
+                        "note": 11
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2361,7 +2362,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 11
+                        "note": 12
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2376,7 +2377,7 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 12
+                        "note": 13
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2388,11 +2389,11 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 13
+                        "note": 14
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 14
+                        "note": 15
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2407,14 +2408,15 @@
             "4": "Not implemented: a parameter of a callable needs a type.",
             "5": "Bug: the `&` is dropped and the parameter is read as passed by value, as in <a href=\"https://github.com/vimeo/psalm/issues/14874\">psalm#14874</a>.",
             "6": "Not implemented: only the bare optional marker `=` is read, not a default value.",
-            "7": "By design: `$this` is read as `static`, any instance of the called class, not only this object.",
+            "7": "Bug: `$this` is read as `static`, any instance of the called class, although the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> tells them apart: \"`@return static` is not enough: the method may return another instance of the class\". Only `@return $this` alone keeps the object.",
             "8": "Not implemented: a conditional type is read only inside parentheses.",
-            "9": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
-            "10": "By design: a parameter list after a bare name is the syntax of `@method`.",
-            "11": "Differs: Psalm takes `T&U` as the return type, PHPStan and TypeLang read `(callable(): T)&U`. Neither reading is documented, Psalm itself ends the return type at `|`.",
-            "12": "Bug: `?T|U` is taken as the return type, while `callable(): T|U` is read as `(callable(): T)|U`.",
-            "13": "Not implemented: a callable as a return type is read only inside parentheses, `callable(): (callable(): T)`.",
-            "14": "Bug: Psalm reads `callable(): ((callable(): T)|U)`, the `|` leaves only the inner callable, while `callable(): T|U` is read as `(callable(): T)|U`."
+            "9": "By design: a conditional type is read only in parentheses, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/type_syntax/conditional_types.md\">documentation</a> says.",
+            "10": "Not implemented: a parameter list is read only after `callable`, `Closure` and their variants.",
+            "11": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
+            "12": "Differs: Psalm takes `T&U` as the return type, PHPStan and TypeLang read `(callable(): T)&U`. Neither reading is documented, Psalm itself ends the return type at `|`.",
+            "13": "Bug: `?T|U` is taken as the return type, while `callable(): T|U` is read as `(callable(): T)|U`.",
+            "14": "Not implemented: a callable as a return type is read only inside parentheses, `callable(): (callable(): T)`.",
+            "15": "Bug: Psalm reads `callable(): ((callable(): T)|U)`, the `|` leaves only the inner callable, while `callable(): T|U` is read as `(callable(): T)|U`."
         }
     },
     {
@@ -2822,7 +2824,7 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
+                        "verdict": "lossy",
                         "note": 14
                     },
                     "typelang": {
@@ -2860,7 +2862,7 @@
             "11": "Not implemented: the key of an object shape is a name or a quoted string only.",
             "12": "Not implemented: a shape is read only after `array`, `list`, `non-empty-array`, `non-empty-list` and `object`.",
             "13": "Not implemented: a shape is read only after `array`, `list`, `object` and `callable-array`.",
-            "14": "By design: the shapes of a union are merged into `array{a?: int, b?: string}`, which also admits `[]` and an array with both keys.",
+            "14": "Bug: the shapes of a union are merged into `array{a?: int, b?: string}`, which also admits `[]` and an array with both keys. A maintainer knows no reason for it, <a href=\"https://github.com/vimeo/psalm/issues/5212\">psalm#5212</a>, the fix is open, <a href=\"https://github.com/vimeo/psalm/issues/10002\">psalm#10002</a>.",
             "15": "By design: a duplicate key is rejected while parsing."
         }
     },
@@ -2952,7 +2954,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 3
+                        "note": 2
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2967,7 +2969,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 3
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2982,7 +2984,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 4
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2997,7 +2999,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 5
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3039,8 +3041,8 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 7
+                        "verdict": "lossy",
+                        "note": 6
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3055,7 +3057,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 8
+                        "note": 7
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3112,7 +3114,7 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 9
+                        "note": 8
                     },
                     "psalm": {
                         "verdict": "fail",
@@ -3142,14 +3144,13 @@
         ],
         "notes": {
             "1": "Not implemented: a conditional type is read only inside parentheses.",
-            "2": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
-            "3": "Not implemented: in `@return` a type starting with `$` is rejected as a misplaced variable, unless it is `$this` alone or in a union.",
-            "4": "Bug: the `?` of `?int` is taken for the `?` of the condition, `(T is (?int) ? A : B)` is read.",
-            "5": "Bug: `[]` in the target breaks the condition, `(T is (int[]) ? A : B)` is read.",
-            "6": "Bug: a callable with a return type in the target breaks the condition, `(T is (callable(int): void) ? A : B)` is read.",
-            "7": "By design: `$this` is read as `static`, any instance of the called class, not only this object.",
-            "8": "By design: the subject of a condition is a template or a parameter, and `$this` is read as `static`.",
-            "9": "Not implemented: a conditional type is read only inside parentheses, and a nullable subject needs its own, `((?T) is U ? V : Z)`."
+            "2": "By design: a conditional type is read only in parentheses, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/type_syntax/conditional_types.md\">documentation</a> says.",
+            "3": "Bug: the `?` of `?int` is taken for the `?` of the condition, `(T is (?int) ? A : B)` is read.",
+            "4": "Bug: `[]` in the target breaks the condition, `(T is (int[]) ? A : B)` is read.",
+            "5": "Bug: a callable with a return type in the target breaks the condition, `(T is (callable(int): void) ? A : B)` is read.",
+            "6": "Bug: `$this` is read as `static`, any instance of the called class, although the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> tells them apart: \"`@return static` is not enough: the method may return another instance of the class\". Only `@return $this` alone keeps the object.",
+            "7": "By design: the subject of a condition is a template parameter or a type depending on one, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/type_syntax/conditional_types.md\">documentation</a> says.",
+            "8": "Not implemented: a conditional type is read only inside parentheses, and a nullable subject needs its own, `((?T) is U ? V : Z)`."
         }
     },
     {
@@ -3399,7 +3400,7 @@
             "5": "Bug: `enum-string<Foo>` is read as `class-string<Foo>` and loses the restriction to enums, which a bare `enum-string` keeps.",
             "6": "Not implemented: `trait-string` takes no argument.",
             "7": "Bug: the second argument is dropped silently, while `list<int, string>` reports too many arguments.",
-            "8": "Not implemented: it is read as `string`, which also admits a lower case string, a TODO in the source and an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
+            "8": "Not implemented: it is read as `string`, which also admits a lower case string. The alias was agreed as a first step, <a href=\"https://github.com/vimeo/psalm/issues/11227\">psalm#11227</a>, the type itself is a TODO in the source and an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
             "9": "Not implemented: an open request, <a href=\"https://github.com/vimeo/psalm/issues/11521\">psalm#11521</a>."
         }
     },
@@ -3678,7 +3679,7 @@
             }
         ],
         "notes": {
-            "1": "Not implemented: a line break is read only before `|` or `&` and inside brackets, the other places were added on request one by one, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/263\">phpdoc-parser#263</a>.",
+            "1": "Not implemented: a line break is not read here, the places it is read in were added on request one by one, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/263\">phpdoc-parser#263</a>.",
             "2": "Not implemented: a `@return` tag with nothing on its first line is skipped.",
             "3": "By design: a space before `{` ends the type and the rest becomes the description, <a href=\"https://github.com/phpstan/phpdoc-parser/issues/201\">phpdoc-parser#201</a>.",
             "4": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
