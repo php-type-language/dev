@@ -175,6 +175,14 @@ $mapper->denormalize([], 'non-empty-list<int>');
 </TabItem>
 </Tabs>
 
+<Aside type="caution">
+PHP turns a key of decimal digits into an integer: `['1' => 5]` is
+`[1 => 5]`. So `array<string, int>` denormalizes it, but cannot normalize the
+result back, its key is no longer a string. For keys that must stay strings,
+use a collection: a class or a
+[type of your own](/mapper/extending/types/#type-builders).
+</Aside>
+
 ## Shapes
 
 <Tabs syncKey="data">
