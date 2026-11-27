@@ -111,6 +111,13 @@ $parser->parse('/** @priority urgent */')[0];
 
 <Aside type="tip">
 Read only your own syntax: the whitespace between the parts of a grammar is
-skipped by `Spec::sequence()`. When the input does not fit, throw instead of
-guessing: another alternative of `Spec::oneOf()` may take it.
+skipped by `Spec::sequence()`. When the input does not fit, call
+`$cursor->fail()` instead of guessing: another alternative of
+`Spec::oneOf()` may take it.
+</Aside>
+
+<Aside type="caution">
+Only `$cursor->fail()` turns the tag into an `InvalidTag`. Any other
+exception of a combinator, and a grammar that refers to an unregistered
+combinator, is thrown by the parser.
 </Aside>
