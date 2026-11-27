@@ -32,7 +32,7 @@ final class VariableNode extends SymbolNode
          *
          * @var non-empty-string
          */
-        public string $name,
+        public readonly string $name,
         int $offset = 0,
     ) {
         if ($name === '') {
