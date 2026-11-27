@@ -814,7 +814,7 @@
             ]
         },
         "grammar": [
-            "\"@link\" <URI> [ <Description> ]"
+            "\"@link\" ( <URL> | <URI> ) [ <Description> ]"
         ],
         "examples": [
             {
@@ -5448,7 +5448,7 @@
             ]
         },
         "grammar": [
-            "\"@see\" ( <Reference> | <URI> ) [ <Description> ]"
+            "\"@see\" ( <Reference> | <URL> | <URI> ) [ <Description> ]"
         ],
         "examples": [
             {
