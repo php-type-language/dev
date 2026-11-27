@@ -264,3 +264,102 @@ App\User:
 $mapper->denormalize([], User::class);
 // throws InvalidValueException: $.email: The email is required
 ```
+
+## Sensitive values
+
+Hides the rejected value of the property and of its nested values from the
+errors of denormalization, both from the message and from the violation.
+A `#[\SensitiveParameter]` of a promoted constructor parameter or of a
+setter is read by every source.
+<Tabs syncKey="metadata">
+<TabItem label="Attributes">
+```php
+use TypeLang\Mapper\Mapping\Sensitive;
+
+final class User
+{
+    #[Sensitive]
+    public string $password;
+}
+```
+</TabItem>
+
+<TabItem label="PHPDoc">
+<Aside type="caution">
+There is no PHPDoc tag for this option, use `#[\SensitiveParameter]`.
+</Aside>
+
+</TabItem>
+
+<TabItem label="Reflection">
+```php
+final class User
+{
+    public function __construct(
+        #[\SensitiveParameter]
+        public string $password,
+    ) {}
+}
+```
+</TabItem>
+
+<TabItem label="PHP Config">
+```php
+<?php
+
+return [
+    App\User::class => [
+        'properties' => [
+            'password' => [
+                'sensitive' => true,
+            ],
+        ],
+    ],
+];
+```
+</TabItem>
+
+<TabItem label="JSON">
+```json
+{
+    "App\\User": {
+        "properties": {
+            "password": {
+                "sensitive": true
+            }
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem label="YAML">
+```yaml
+App\User:
+    properties:
+        password:
+            sensitive: true
+```
+</TabItem>
+
+<TabItem label="NEON">
+```yaml
+App\User:
+    properties:
+        password:
+            sensitive: true
+```
+</TabItem>
+
+</Tabs>
+
+```php
+$mapper->denormalize(['password' => 42], User::class);
+// throws InvalidValueException:
+// $.password: Value must be of type string, but *redacted* given
+```
+
+<Aside type="caution">
+Only the fields of a class are hidden. The value given to the mapper itself
+and the messages of your own hooks and exceptions are shown as they are.
+</Aside>
