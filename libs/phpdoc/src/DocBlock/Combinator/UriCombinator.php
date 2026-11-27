@@ -7,7 +7,6 @@ namespace TypeLang\PhpDoc\DocBlock\Combinator;
 use TypeLang\PhpDoc\DocBlock\Reference\UriReference;
 use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
-use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 use Uri\Rfc3986\Uri;
 
 /**
@@ -26,7 +25,7 @@ final class UriCombinator implements CombinatorInterface
         $uri = $cursor->readWord();
 
         if ($uri === '' || !self::isUri($uri)) {
-            throw new NoMatchException('Expected a URI');
+            $cursor->fail('Expected a URI');
         }
 
         return new UriReference($uri);

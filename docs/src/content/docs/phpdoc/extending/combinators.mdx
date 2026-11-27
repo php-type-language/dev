@@ -18,7 +18,7 @@ interface CombinatorInterface
 ```
 
 A combinator reads its part from the `Cursor` and returns the value, or
-throws a `NoMatchException`: the grammar then rolls the cursor back and
+calls `$cursor->fail()`: the grammar then rolls the cursor back and
 tries the next alternative.
 
 | `Cursor` method                               | Reads                                  |
@@ -30,6 +30,7 @@ tries the next alternative.
 | `readLiteral($text)`                          | the exact text, `false` when it is not next |
 | `readRemainder()`                             | everything left                        |
 | `skipWhitespace()`, `isEof()`                 |                                        |
+| `fail($message)`                              | nothing: rejects the input             |
 
 ## Built-in combinators
 
@@ -77,7 +78,7 @@ final class PriorityCombinator implements CombinatorInterface
     public function __invoke(Cursor $cursor): Priority
     {
         return Priority::tryFrom($cursor->readWord())
-            ?? throw new NoMatchException('Expected a priority level');
+            ?? $cursor->fail('Expected a priority level');
     }
 }
 ```

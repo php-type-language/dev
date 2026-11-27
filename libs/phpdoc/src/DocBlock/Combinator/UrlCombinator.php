@@ -7,7 +7,6 @@ namespace TypeLang\PhpDoc\DocBlock\Combinator;
 use TypeLang\PhpDoc\DocBlock\Reference\UrlReference;
 use TypeLang\PhpDoc\Parser\Grammar\CombinatorInterface;
 use TypeLang\PhpDoc\Parser\Grammar\Cursor;
-use TypeLang\PhpDoc\Parser\Grammar\Exception\NoMatchException;
 
 /**
  * Reads a URL, that is a word carrying a scheme.
@@ -26,7 +25,7 @@ final class UrlCombinator implements CombinatorInterface
         $word = $cursor->readWord();
 
         if ($word === '' || !self::isUrl($word)) {
-            throw new NoMatchException('Expected a URL');
+            $cursor->fail('Expected a URL');
         }
 
         return new UrlReference($word);
