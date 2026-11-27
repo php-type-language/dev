@@ -16,8 +16,8 @@ use TypeLang\Mapper\Mapping\Sensitive;
 /**
  * Hidden rejected value of the field of the denormalization:
  * {@see Sensitive} and the `sensitive` key. A {@see \SensitiveParameter} of
- * a promoted constructor parameter or of a setter is read by the base
- * readers.
+ * a promoted constructor parameter is read by the reflection reader, of a
+ * setter by the readers of the accesses, with the helpers of the option.
  *
  * @internal this is an internal library class, please do not use it in your code
  * @psalm-internal TypeLang\Mapper\Mapping\Reader
