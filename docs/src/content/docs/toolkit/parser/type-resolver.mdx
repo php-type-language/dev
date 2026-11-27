@@ -25,11 +25,12 @@ $type = new TypeResolver()
     ->withTypeImportAs('TypeLang\Parser\Exception', 'Error')
     ->resolve($type);
 
-// TypeLang\Type\Name|TypeLang\Parser\Exception\ParsingException
+// \TypeLang\Type\Name|\TypeLang\Parser\Exception\ParsingException
 ```
 
 The first segment of a name is matched against the imports, without regard
-to case, as in PHP. The resolver is immutable: every `with*()` returns a new
+to case, as in PHP. A resolved name is fully qualified, so resolving it again
+changes nothing. The resolver is immutable: every `with*()` returns a new
 one.
 
 <Aside type="caution">
@@ -74,9 +75,9 @@ exists:
 ```php
 $resolver = new TypeResolver()->withNamespace('App');
 
-// list<Address>      list<App\Address>, when App\Address exists
+// list<Address>      list<\App\Address>, when App\Address exists
 // list<uuid>         list<uuid>
-// namespace\Address  App\Address, always
+// namespace\Address  \App\Address, always
 ```
 
 The second argument replaces the check, such as
@@ -92,8 +93,8 @@ parent of `self`.
 ```php
 $resolver = new TypeResolver()->withClasses(App\User::class);
 
-// list<self>      list<App\User>
-// self::STATUS_*  App\User::STATUS_*
+// list<self>      list<\App\User>
+// self::STATUS_*  \App\User::STATUS_*
 ```
 
 <Aside>
