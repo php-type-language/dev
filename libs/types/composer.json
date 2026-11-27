@@ -1,7 +1,7 @@
 {
     "name": "type-lang/types",
     "type": "library",
-    "description": "An AST nodes of the TypeLang",
+    "description": "Library of TypeLang AST nodes",
     "keywords": ["language", "php", "type-lang", "ast", "nodes", "types"],
     "license": "MIT",
     "support": {
