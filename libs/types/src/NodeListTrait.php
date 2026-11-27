@@ -102,6 +102,7 @@ trait NodeListTrait
      */
     public function getIterator(): \Traversable
     {
+        /** @var \ArrayIterator<int<0, max>, TNode> */
         return new \ArrayIterator($this->children);
     }
 

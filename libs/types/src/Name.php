@@ -360,6 +360,7 @@ final class Name extends SymbolNode implements
      */
     public function getIterator(): \Traversable
     {
+        /** @var \ArrayIterator<int<0, max>, non-empty-string> */
         return new \ArrayIterator($this->toArray());
     }
 

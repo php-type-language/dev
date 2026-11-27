@@ -15,7 +15,7 @@ namespace TypeLang\Type;
  *
  * @template T of TypeNode = TypeNode
  *
- * @template-implements \IteratorAggregate<array-key, T>
+ * @template-implements \IteratorAggregate<int<0, max>, T>
  * @template-implements \ArrayAccess<int<0, max>, T>
  *
  * @property list{T, T, ...<T>} $children

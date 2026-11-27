@@ -11,7 +11,7 @@ namespace TypeLang\Type;
  * @template TNode of Node = Node
  * @template TNonEmpty of bool = false
  *
- * @template-implements \IteratorAggregate<array-key, TNode>
+ * @template-implements \IteratorAggregate<int<0, max>, TNode>
  * @template-implements \ArrayAccess<int<0, max>, TNode>
  *
  * @method (TNonEmpty is true ? int<1, max> : int<0, max>) count()
