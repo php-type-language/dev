@@ -35,9 +35,8 @@ They are the tag-based forms that PHP_CodeSniffer used before it moved to its
 
 <Aside>
 The tags of this group belong to the PHP CodeSniffer platform, `PhpCodeSnifferPlatform`.
-`DocBlockParser::createDefault()` loads it together with every other
-built-in platform. The constructor loads only the platforms passed to it, so
-pass the platforms you need explicitly:
+`new DocBlockParser()` loads it together with every other built-in
+platform. A given list loads only the platforms in it:
 
 ```php
 use TypeLang\PhpDoc\DocBlockParser;

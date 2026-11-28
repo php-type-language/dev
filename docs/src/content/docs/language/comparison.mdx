@@ -48,7 +48,7 @@ language each parser reads.
 |----------|-------------------------------|------------------------------------------------------------------------|
 | PHPStan  | `phpstan/phpdoc-parser` 2.4.2 | `PhpDocParser::parse()`                                                |
 | Psalm    | `vimeo/psalm` 7.21.1          | `DocblockParser::parse()`, then the steps of `extractReturnType()`: `splitDocLine()`, `sanitizeDocblockType()`, `Type::parseString()` |
-| TypeLang | `type-lang/phpdoc` 2.0        | `DocBlockParser::createDefault()`, every feature of the parser enabled |
+| TypeLang | `type-lang/phpdoc` 2.0        | `new DocBlockParser()`, every feature of the parser enabled |
 
 A type is read as written when the whole text becomes the type and nothing is
 left for the description. A line break of a type continues the docblock with

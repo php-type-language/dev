@@ -15,10 +15,10 @@ A platform is a set of tags the parser knows: their
 use TypeLang\PhpDoc\DocBlockParser;
 
 // every built-in platform
-$parser = DocBlockParser::createDefault();
+$parser = new DocBlockParser();
 
 // every built-in platform and your own
-$parser = DocBlockParser::createDefault(additionalPlatforms: [
+$parser = DocBlockParser::create(additionalPlatforms: [
     new MoneyPlatform(),
 ]);
 
@@ -28,10 +28,6 @@ $parser = new DocBlockParser(platforms: [
     new PhpStanPlatform(),
 ]);
 ```
-
-<Aside type="caution">
-`new DocBlockParser()` without arguments loads **no** platform at all.
-</Aside>
 
 A later platform overrides a tag, an alias or a combinator of an earlier
 one with the same name. No name is shared by two built-in platforms, so

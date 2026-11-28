@@ -22,7 +22,7 @@ final class TypeLangParserBench extends DocBlockParserBench
 
     public function prepare(): void
     {
-        $this->parser = DocBlockParser::createDefault();
+        $this->parser = DocBlockParser::create();
     }
 
     #[ParamProviders('docBlocksDataProvider')]

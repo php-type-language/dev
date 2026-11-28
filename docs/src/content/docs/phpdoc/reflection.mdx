@@ -41,7 +41,7 @@ use TypeLang\PhpDoc\DocBlock\Tag\ReturnTag\ReturnTag;
 use TypeLang\PhpDoc\DocBlockParser;
 use TypeLang\Printer\PrettyTypePrinter;
 
-$parser = DocBlockParser::createDefault();
+$parser = new DocBlockParser();
 $printer = new PrettyTypePrinter();
 
 $method = new \ReflectionMethod(Repository::class, 'findAll');

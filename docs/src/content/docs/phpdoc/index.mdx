@@ -25,7 +25,7 @@ composer require type-lang/phpdoc
 ```php
 use TypeLang\PhpDoc\DocBlockParser;
 
-$parser = DocBlockParser::createDefault();
+$parser = new DocBlockParser();
 
 $block = $parser->parse(<<<'PHPDOC'
     /**
@@ -45,9 +45,10 @@ foreach ($block as $tag) {
 ```
 
 <Aside>
-`DocBlockParser::createDefault()` recognizes every built-in tag: the standard
-set and the phpDocumentor, Psalm, PHPStan, Phan, PhpStorm and PHP CodeSniffer
-families. `new DocBlockParser()` with no platforms recognizes no tag at all.
+`new DocBlockParser()` recognizes every built-in tag: the standard set and
+the phpDocumentor, Psalm, PHPStan, Phan, PhpStorm and PHP CodeSniffer
+families. An empty list of [platforms](/phpdoc/platforms/) recognizes no
+tag at all.
 </Aside>
 
 ## Broken tags do not break the comment

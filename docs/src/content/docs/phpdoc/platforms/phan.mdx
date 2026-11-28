@@ -56,9 +56,8 @@ one Phan should trust.
 
 <Aside>
 The tags of this group belong to the Phan platform, `PhanPlatform`.
-`DocBlockParser::createDefault()` loads it together with every other
-built-in platform. The constructor loads only the platforms passed to it, so
-pass the platforms you need explicitly:
+`new DocBlockParser()` loads it together with every other built-in
+platform. A given list loads only the platforms in it:
 
 ```php
 use TypeLang\PhpDoc\DocBlockParser;
