@@ -5439,7 +5439,7 @@
         "tag": "see",
         "class": "TypeLang\\PhpDoc\\DocBlock\\Tag\\SeeTag\\SeeTag",
         "alias": null,
-        "summary": "The `@see` tag can be used to define a {@see CodeReference element}.",
+        "summary": "The `@see` tag can be used to define a reference to another element or to a URI.",
         "since": null,
         "deprecated": null,
         "registrations": {
