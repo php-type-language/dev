@@ -76,8 +76,6 @@ final class NativeTypePrinter implements TypePrinterInterface
     }
 
     /**
-     * @api
-     *
      * @param non-empty-string $alias
      * @param non-empty-string $type
      */
@@ -87,8 +85,6 @@ final class NativeTypePrinter implements TypePrinterInterface
     }
 
     /**
-     * @api
-     *
      * @param non-empty-string $alias
      * @param non-empty-list<non-empty-string> $types
      */
@@ -98,8 +94,6 @@ final class NativeTypePrinter implements TypePrinterInterface
     }
 
     /**
-     * @api
-     *
      * @param non-empty-string $alias
      * @param non-empty-list<non-empty-string> $types
      */

@@ -112,8 +112,6 @@ final class Name extends SymbolNode implements
      *  Name::from('int')        // int, there is no namespace
      * ```
      *
-     * @api
-     *
      * @param non-empty-string $name
      * @param int<0, max> $offset
      * @throws \InvalidArgumentException in case of the text ends in a
@@ -143,8 +141,6 @@ final class Name extends SymbolNode implements
 
     /**
      * Whether the text is one of `self`, `parent` and `static`.
-     *
-     * @api
      */
     public function isSpecial(): bool
     {
@@ -154,8 +150,6 @@ final class Name extends SymbolNode implements
     /**
      * Whether the text is the name of a type that PHP has built in, such as
      * `int`, `array` or `callable`.
-     *
-     * @api
      */
     public function isBuiltin(): bool
     {
@@ -172,8 +166,6 @@ final class Name extends SymbolNode implements
      *  \Any           // true
      *  namespace\Any  // false
      * ```
-     *
-     * @api
      */
     public function isFullyQualified(): bool
     {
@@ -183,8 +175,6 @@ final class Name extends SymbolNode implements
     /**
      * Whether the name is made of a single word, the leading separator and
      * the `namespace` keyword are not counted.
-     *
-     * @api
      */
     public function isSimple(): bool
     {
@@ -206,8 +196,6 @@ final class Name extends SymbolNode implements
      *      // value-of<T>
      *  }
      * ```
-     *
-     * @api
      *
      * @param non-empty-string $word
      */
@@ -237,8 +225,6 @@ final class Name extends SymbolNode implements
      *  }
      * ```
      *
-     * @api
-     *
      * @return non-empty-string|null
      */
     public function toClassString(): ?string
@@ -258,8 +244,6 @@ final class Name extends SymbolNode implements
      *  Some\Any   // Any
      *  Any        // Any
      * ```
-     *
-     * @api
      */
     public function toUnqualified(): self
     {
@@ -276,8 +260,6 @@ final class Name extends SymbolNode implements
      * ```
      *  \Some\Any  // ['Some', 'Any']
      * ```
-     *
-     * @api
      *
      * @return non-empty-list<non-empty-string>
      */
@@ -301,8 +283,6 @@ final class Name extends SymbolNode implements
      *  Some\Any  // Some
      * ```
      *
-     * @api
-     *
      * @return non-empty-string
      */
     public function first(): string
@@ -317,8 +297,6 @@ final class Name extends SymbolNode implements
      *  Some\Any  // Any
      * ```
      *
-     * @api
-     *
      * @return non-empty-string
      */
     public function last(): string
@@ -329,8 +307,6 @@ final class Name extends SymbolNode implements
     /**
      * Returns the name as it is written, with the leading separator if it has
      * one.
-     *
-     * @api
      *
      * @return non-empty-string
      */

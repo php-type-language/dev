@@ -15,16 +15,12 @@ abstract class SymbolNode extends Node implements \Stringable
     /**
      * Returns the text as it is written.
      *
-     * @api
-     *
      * @return non-empty-string
      */
     abstract public function toString(): string;
 
     /**
      * Returns the text as it is written, in lower case.
-     *
-     * @api
      *
      * @return non-empty-lowercase-string
      */
@@ -39,8 +35,6 @@ abstract class SymbolNode extends Node implements \Stringable
      *
      * - `SomeClass`, `false` - not virtual.
      * - `non-empty-array`, `empty-string` - virtual.
-     *
-     * @api
      */
     public function isVirtual(): bool
     {

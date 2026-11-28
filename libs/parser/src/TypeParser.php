@@ -48,8 +48,6 @@ final class TypeParser implements TypeParserInterface
      *     ->parse('Type<U, V>');
      * ```
      *
-     * @api
-     *
      * @return self<TypeNode, TSource>
      */
     public function forType(): self
@@ -64,8 +62,6 @@ final class TypeParser implements TypeParserInterface
      * $result = $parser->forTemplateParameter()
      *     ->parse('T of U<V> = Default<Z>');
      * ```
-     *
-     * @api
      *
      * @return self<TemplateParameterNode, TSource>
      */

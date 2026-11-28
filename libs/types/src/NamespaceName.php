@@ -87,8 +87,6 @@ final class NamespaceName extends Node implements \Stringable
     /**
      * Whether the namespace is the root one: the leading separator and no
      * words.
-     *
-     * @api
      */
     public function isRoot(): bool
     {
@@ -103,8 +101,6 @@ final class NamespaceName extends Node implements \Stringable
      *  \Some\Any  // ['Some', 'Any']
      *  \          // []
      * ```
-     *
-     * @api
      *
      * @return list<non-empty-string>
      */
@@ -129,8 +125,6 @@ final class NamespaceName extends Node implements \Stringable
      *  namespace\Some\Any  // namespace\Some\Any
      *  namespace           // namespace
      * ```
-     *
-     * @api
      */
     public function toString(): string
     {

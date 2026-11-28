@@ -22,7 +22,7 @@
         "group": "",
         "kind": "abstract",
         "parent": "TypeNode",
-        "description": "Several types joined by an operator, like a union or an intersection.\n\nA type of the same kind is flattened into its parent: an `A|(B|C)`\nholds the three types side by side.\n\nThe flattening and the minimum of two types are checked on creation\nonly. Since PHP 8.4, property hooks make it possible to keep the checks\npermanent.",
+        "description": "Several types joined by an operator, like a union or an intersection.\n\nA type of the same kind is flattened into its parent: an `A|(B|C)`\nholds the three types side by side.\n\nThe flattening and the minimum of two types are checked on creation\nonly.",
         "properties": [
             {
                 "name": "children",
@@ -148,7 +148,7 @@
         "group": "",
         "kind": "abstract",
         "parent": "Node",
-        "description": "A node that stands for a piece of text: an identifier, a name or a variable.\n\nThe text of a node is the one it is written with, so a node is told apart\nfrom the others by `toString()` alone.",
+        "description": "A node that stands for a piece of text: an identifier, a name or a variable.\n\nThe text of a node is the one it is written with, a node is told apart\nfrom the others by `toString()` alone.",
         "properties": [],
         "cases": []
     },
@@ -206,7 +206,7 @@
             {
                 "name": "name",
                 "type": "string",
-                "isReadonly": false,
+                "isReadonly": true,
                 "description": "The name of the variable, written without the leading `$`."
             }
         ],
@@ -245,7 +245,7 @@
         "group": "Callable",
         "kind": "final",
         "parent": "Node",
-        "description": "A single parameter of a callable.\n\n```\n callable(int &$byRef, string ...$rest, bool $flag = true)\n //       ^^^^^^^^^^^  ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^\n //       by reference  variadic         optional, with a default\n```\n\nA parameter is optional when it has a `DefaultValueNode`, with a value\nor without one.\n\nThe constructor checks the parameter on creation only. The properties are\npublic and writable, so a later change is not checked. Since PHP 8.4,\nproperty hooks make it possible to keep the checks permanent.",
+        "description": "A single parameter of a callable.\n\n```\n callable(int &$byRef, string ...$rest, bool $flag = true)\n //       ^^^^^^^^^^^  ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^\n //       by reference  variadic         optional, with a default\n```\n\nA parameter is optional when it has a `DefaultValueNode`, with a value\nor without one.\n\nThe constructor checks the parameter on creation only. The properties are\npublic and writable, a later change is not checked.",
         "properties": [
             {
                 "name": "type",
@@ -275,7 +275,7 @@
                 "name": "default",
                 "type": "?Callable\\DefaultValueNode",
                 "isReadonly": false,
-                "description": "Default of a parameter, or `null` in case of a required one.\nA variadic parameter is optional itself, so it has no default.\n\n```\n callable(int $a)            // null\n callable(int $a =)          // a default without a value\n callable(int $a = 42)       // a default with a value\n```"
+                "description": "Default of a parameter, or `null` in case of a required one.\nA variadic parameter is optional itself and has no default.\n\n```\n callable(int $a)            // null\n callable(int $a =)          // a default without a value\n callable(int $a = 42)       // a default with a value\n```"
             }
         ],
         "cases": []
@@ -321,13 +321,13 @@
         "group": "Callable",
         "kind": "final",
         "parent": "Node",
-        "description": "The default of a callable parameter, written as an `=` and the value it\nstands for.\n\nThe node itself tells that the parameter may be left out, so a parameter\nwith it is optional, and one without it is required.\n\n```\n callable(int $a =, string $b = 'x')\n //             ^                      no value, the parameter is optional\n //                            ^^^^^^^ the value\n```",
+        "description": "The default of a callable parameter, written as an `=` and the value it\nstands for.\n\nThe node itself tells that the parameter may be left out: a parameter\nwith it is optional, and one without it is required.\n\n```\n callable(int $a =, string $b = 'x')\n //             ^                      no value, the parameter is optional\n //                            ^^^^^^^ the value\n```",
         "properties": [
             {
                 "name": "value",
                 "type": "?TypeNode",
                 "isReadonly": false,
-                "description": "The value of a default, or `null` in case of the parameter\nis only marked as optional.\n\nThe value is a literal or a constant, so it is a type node of the\nsame kind as in any other position."
+                "description": "The value of a default, or `null` in case of the parameter\nis only marked as optional.\n\nThe value is a literal or a constant, a type node of the\nsame kind as in any other position."
             }
         ],
         "cases": []
@@ -444,7 +444,7 @@
                 "name": "owner",
                 "type": "Name|NamespaceName",
                 "isReadonly": false,
-                "description": "The class or the namespace the constant belongs to.\n\nA constant of a namespace written by its whole name\n(`Some\\CONST_NAME`) is a name of a type in the source, so the\nparser builds it as a `NamedTypeNode`."
+                "description": "The class or the namespace the constant belongs to.\n\nA constant of a namespace written by its whole name\n(`Some\\CONST_NAME`) is a name of a type in the source, the\nparser builds it as a `NamedTypeNode`."
             },
             {
                 "name": "constant",
@@ -471,7 +471,7 @@
         "group": "Constant",
         "kind": "final",
         "parent": "Node",
-        "description": "An asterisk standing in the place of any run of characters of a constant name.\n\n```\n Some\\Any::CONST_*\n //              ^ the part of the name that is left unsaid\n```",
+        "description": "An asterisk standing in the place of any run of characters of a constant\nname.\n\n```\n Some\\Any::CONST_*\n //              ^ the part of the name that is left unsaid\n```",
         "properties": [],
         "cases": []
     },
@@ -491,7 +491,7 @@
         "group": "Literal",
         "kind": "final",
         "parent": "Literal\\ScalarLiteralNode",
-        "description": "A floating point number.\n\nThe value is the nearest double, the mantissa and the exponent keep the\nexact number: `mantissa * 10 ** exponent`. A parser stores the nearest bound\nof the range (`PHP_FLOAT_MAX`) for a number out of it, never an infinity.\n\n```\n -1_5.5e+3  // value: -15500.0, mantissa: \"-15.5\", exponent: \"3\"\n .42        // value: 0.42,     mantissa: \"0.42\",  exponent: \"0\"\n - 1.5      // value: -1.5,     mantissa: \"-1.5\",  exponent: \"0\"\n\n // raw: the text as written, \"-1_5.5e+3\", \".42\", \"- 1.5\"\n```\n\nA node made by hand has no text to read the exact number from, so the\nmantissa and the exponent are the ones of the value itself.",
+        "description": "A floating point number.\n\nThe value is the nearest double, the mantissa and the exponent keep the\nexact number: `mantissa * 10 ** exponent`. A parser stores the nearest bound\nof the range (`PHP_FLOAT_MAX`) for a number out of it, never an infinity.\n\n```\n -1_5.5e+3  // value: -15500.0, mantissa: \"-15.5\", exponent: \"3\"\n .42        // value: 0.42,     mantissa: \"0.42\",  exponent: \"0\"\n - 1.5      // value: -1.5,     mantissa: \"-1.5\",  exponent: \"0\"\n\n // raw: the text as written, \"-1_5.5e+3\", \".42\", \"- 1.5\"\n```\n\nA node made by hand has no text to read the exact number from: the\nmantissa and the exponent are the ones of the value itself.",
         "properties": [
             {
                 "name": "mantissa",
@@ -541,7 +541,7 @@
         "group": "Literal",
         "kind": "final",
         "parent": "Literal\\ScalarLiteralNode",
-        "description": "A whole number, written in any of the four radixes.\n\n```\n 0xFE_DE  // value: 65246, raw: \"0xFE_DE\", decimal: \"65246\", kind: Hexadecimal\n 042      // value: 34,    raw: \"042\",     decimal: \"34\",    kind: Octal\n```",
+        "description": "A whole number, written in any of the four radixes.\n\n```\n 0xFE_DE // value: 65246, raw: \"0xFE_DE\", decimal: \"65246\", kind: Hexadecimal\n 042     // value: 34,    raw: \"042\",     decimal: \"34\",    kind: Octal\n```",
         "properties": [
             {
                 "name": "decimal",
@@ -916,7 +916,7 @@
                 "name": "kind",
                 "type": "Template\\VarianceNode\\VarianceKind",
                 "isReadonly": true,
-                "description": "The kind of the variance."
+                "description": ""
             }
         ],
         "cases": []

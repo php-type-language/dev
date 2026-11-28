@@ -9,6 +9,9 @@ namespace TypeLang\Printer\NativeTypePrinter;
  *
  * The builtin names are the ones of Phan, Psalm and PHPStan, taken in this
  * order of priority from `resources/aliases`. The names added by hand win.
+ *
+ * @internal this is an internal library class, please do not use it in your code
+ * @psalm-internal TypeLang\Printer
  */
 final class TypeAliases
 {
