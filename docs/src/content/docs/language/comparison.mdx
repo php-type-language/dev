@@ -47,7 +47,7 @@ language each parser reads.
 | Tool     | Version                       | How `@return` is read                                                  |
 |----------|-------------------------------|------------------------------------------------------------------------|
 | PHPStan  | `phpstan/phpdoc-parser` 2.4.2 | `PhpDocParser::parse()`                                                |
-| Psalm    | `vimeo/psalm` 7.21.1          | `DocblockParser::parse()`, then the steps of `extractReturnType()`: `splitDocLine()`, `sanitizeDocblockType()`, `Type::parseString()` |
+| Psalm    | `vimeo/psalm` 7.23.0          | `DocblockParser::parse()`, then the steps of `extractReturnType()`: `splitDocLine()`, `sanitizeDocblockType()`, `Type::parseString()` |
 | TypeLang | `type-lang/phpdoc` 2.0        | `new DocBlockParser()`, every feature of the parser enabled |
 
 A type is read as written when the whole text becomes the type and nothing is

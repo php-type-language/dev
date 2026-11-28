@@ -1651,8 +1651,7 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "lossy",
-                        "note": 1
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1666,8 +1665,7 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "lossy",
-                        "note": 1
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1679,11 +1677,11 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 2
+                        "note": 1
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 3
+                        "note": 2
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1698,7 +1696,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 3
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1710,7 +1708,7 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 4
                     },
                     "psalm": {
                         "verdict": "ok"
@@ -1722,11 +1720,10 @@
             }
         ],
         "notes": {
-            "1": "Bug: the variance is skipped and the argument is checked as invariant, <a href=\"https://github.com/vimeo/psalm/issues/14242\">psalm#14242</a>.",
-            "2": "Not implemented: a type argument takes only `covariant`, `contravariant` and `*`.",
-            "3": "Not implemented: only `covariant` and `contravariant` are read before a type argument.",
-            "4": "Not implemented: an offset access is read only as a template indexed by a template, `T[K]`.",
-            "5": "Not implemented: a conditional type is read only inside parentheses."
+            "1": "Not implemented: a type argument takes only `covariant`, `contravariant` and `*`.",
+            "2": "Not implemented: only `covariant` and `contravariant` are read before a type argument.",
+            "3": "Not implemented: an offset access is read only as a template indexed by a template, `T[K]`.",
+            "4": "Not implemented: a conditional type is read only inside parentheses."
         }
     },
     {
@@ -2824,8 +2821,7 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "lossy",
-                        "note": 14
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2840,7 +2836,7 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 15
+                        "note": 14
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2862,8 +2858,7 @@
             "11": "Not implemented: the key of an object shape is a name or a quoted string only.",
             "12": "Not implemented: a shape is read only after `array`, `list`, `non-empty-array`, `non-empty-list` and `object`.",
             "13": "Not implemented: a shape is read only after `array`, `list`, `object` and `callable-array`.",
-            "14": "Bug: the shapes of a union are merged into `array{a?: int, b?: string}`, which also admits `[]` and an array with both keys. A maintainer knows no reason for it, <a href=\"https://github.com/vimeo/psalm/issues/5212\">psalm#5212</a>, the fix is open, <a href=\"https://github.com/vimeo/psalm/issues/10002\">psalm#10002</a>.",
-            "15": "By design: a duplicate key is rejected while parsing."
+            "14": "By design: a duplicate key is rejected while parsing."
         }
     },
     {
