@@ -97,21 +97,29 @@ $template = $parser->forTemplateParameter()->parse('T of U<V> = Default<Z>');
 
 ## Errors
 
-Every exception thrown by the parser implements
-`TypeLang\Parser\Exception\ParserExceptionInterface` and carries the `$source`
-and the `$range` (`ParsingErrorRange` with `$offset` and `$length`) of the
-problematic fragment.
+Every exception of the parser implements
+`TypeLang\Parser\Exception\ParserExceptionInterface`. An error of parsing
+also implements `ParserRuntimeExceptionInterface` and tells where the source
+is broken:
 
-| Exception                     | Thrown when                                                                     |
-|-------------------------------|---------------------------------------------------------------------------------|
-| `UnexpectedTokenException`    | a token stands where another one is expected: `Unexpected "and"`                |
-| `MalformedSyntaxException`    | a construct is broken: `The group is not closed properly, ")" expected`        |
-| `UnrecognizedSyntaxException` | a fragment is not a part of the syntax at all: `Unrecognized syntax "~"`        |
-| `FeatureNotEnabledException`  | the syntax is [disabled](/toolkit/parser/features/): `Unions feature is not allowed`    |
+```php
+use TypeLang\Parser\Exception\ParserRuntimeExceptionInterface;
 
-The first three extend `SyntaxErrorException`, and all of them extend
-`ParsingException`. `MalformedSyntaxException` extends
-`UnexpectedTokenException`.
+try {
+    $parser->parse('array<int, string');
+} catch (ParserRuntimeExceptionInterface $e) {
+    echo $e->getMessage();     // Invalid template arguments, "," or ">" is expected
+    echo $e->position->line;   // 1
+    echo $e->position->column; // 18
+    echo $e->range->offset;    // 17
+}
+```
+
+| Property    | Type                | Value                                                        |
+|-------------|---------------------|--------------------------------------------------------------|
+| `$source`   | `ReadableInterface` | the parsed source                                            |
+| `$range`    | `ParsingErrorRange` | `int $offset` and `int $length` of the fragment, in bytes    |
+| `$position` | `PositionInterface` | `int $line` and `int $column` of the start of the fragment   |
 
 ## What's next
 

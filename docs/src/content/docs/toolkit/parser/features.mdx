@@ -129,7 +129,7 @@ Literals are concrete values: [numbers](/language/syntax/numbers/) (`42`,
 ## Behavior of disabled features
 
 A disabled feature is reported as a
-`TypeLang\Parser\Exception\FeatureNotEnabledException` (a `ParsingException`)
+`TypeLang\Parser\Exception\FeatureNotEnabledException` (a `ParserRuntimeExceptionInterface`)
 by both `parse()` and `partial()`:
 
 ```php
