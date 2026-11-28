@@ -10,6 +10,7 @@ use TypeLang\PhpDoc\DocBlock\Combinator\DescriptionCombinator;
 use TypeLang\PhpDoc\DocBlock\Description\DescriptionInterface;
 use TypeLang\PhpDoc\DocBlock\DocBlock;
 use TypeLang\PhpDoc\DocBlock\Tag\TagInterface;
+use TypeLang\PhpDoc\Exception\InvalidTagAliasException;
 use TypeLang\PhpDoc\Exception\ParsingException;
 use TypeLang\PhpDoc\Exception\PhpDocExceptionInterface;
 use TypeLang\PhpDoc\Exception\TagParsingException;
@@ -49,6 +50,8 @@ final class DocBlockParser implements DocBlockParserInterface
      *        the same name, every platform shipped with the library in case
      *        of {@see null}
      * @param TypeParser<TypeNode> $typeParser parser of the types inside tags
+     * @throws InvalidTagAliasException in case of an alias of the platforms
+     *         cannot be resolved to a definition
      */
     public function __construct(
         ?iterable $platforms = null,
@@ -84,6 +87,8 @@ final class DocBlockParser implements DocBlockParserInterface
      *        loaded after the built-in ones, overriding their entries with the
      *        same name
      * @param TypeParser<TypeNode> $typeParser parser of the types inside tags
+     * @throws InvalidTagAliasException in case of an alias of the platforms
+     *         cannot be resolved to a definition
      */
     public static function create(
         iterable $additionalPlatforms = [],
@@ -111,6 +116,8 @@ final class DocBlockParser implements DocBlockParserInterface
 
     /**
      * @param list<PlatformInterface> $platforms
+     * @throws InvalidTagAliasException in case of an alias cannot be resolved
+     *         to a definition
      */
     private static function createTagRegistry(array $platforms): TagRegistryInterface
     {
