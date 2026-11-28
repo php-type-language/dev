@@ -68,6 +68,15 @@ final class ArrayTypeTest extends TestCase
         );
     }
 
+    public function testNonEmptyArrayRejectsEmptyArray(): void
+    {
+        self::assertDenormalizationFails(
+            'non-empty-array<int>',
+            [],
+            '$: Value must be of type non-empty-array<int> (non-empty)',
+        );
+    }
+
     public function testValueTypeOfArrayWithOneArgument(): void
     {
         self::assertDenormalizes('array<int>', ['a' => '1', 5 => 2], ['a' => 1, 5 => 2]);
