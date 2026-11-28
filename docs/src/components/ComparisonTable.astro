@@ -12,6 +12,7 @@ interface Props {
 const TOOLS = [
     { id: 'phpstan', label: 'PHPStan', href: 'https://github.com/phpstan/phpdoc-parser' },
     { id: 'psalm', label: 'Psalm', href: 'https://github.com/vimeo/psalm' },
+    { id: 'mago', label: 'Mago', href: 'https://github.com/carthage-software/mago' },
     { id: 'typelang', label: 'TypeLang', href: 'https://github.com/php-type-language' },
 ] as const;
 
@@ -21,8 +22,16 @@ const SIGNS = { ok: '✓', fail: '✗', lossy: '!' } as const;
 
 // On the malformed input a rejection is the right answer.
 const TITLES = {
-    read: { ok: 'read as written', fail: 'not read as written', lossy: 'read as another type, a bug' },
-    malformed: { ok: 'rejected', fail: 'accepted', lossy: 'accepted after dropping a part, a bug' },
+    read: {
+        ok: 'read as written',
+        fail: 'not supported by the parser',
+        lossy: 'parsed, but read as a damaged type',
+    },
+    malformed: {
+        ok: 'rejected',
+        fail: 'accepted',
+        lossy: 'accepted after dropping or damaging a part',
+    },
 } as const;
 
 const { section } = Astro.props;

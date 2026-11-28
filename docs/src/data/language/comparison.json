@@ -13,6 +13,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -25,6 +28,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -41,6 +47,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -55,6 +64,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -64,9 +76,13 @@
                 "type": "namespace\\Foo",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 1
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -78,11 +94,15 @@
                 "type": "Foo-bar",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "fail",
+                        "note": 2
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 1
+                        "note": 3
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -96,8 +116,10 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "ok",
-                        "note": 2
+                        "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -112,7 +134,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 3
+                        "note": 4
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -121,9 +146,10 @@
             }
         ],
         "notes": {
-            "1": "By design: a hyphen is reserved for the names of Psalm itself, an unknown name with a hyphen is rejected.",
-            "2": "The type is read as `static`, and `@return $this` alone is also marked as returning the object itself, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> describes.",
-            "3": "Bug: `$this` is read as `static`, any instance of the called class, although the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> tells them apart: \"`@return static` is not enough: the method may return another instance of the class\". Only `@return $this` alone keeps the object."
+            "1": "Bug: `namespace\\` is not resolved as a relative name, the class `namespace\\Foo` is read, and `App\\namespace\\Foo` inside the namespace `App`.",
+            "2": "By design: a name with a hyphen gives an error type, except the names of the `OCI-` classes.",
+            "3": "By design: a hyphen is reserved for the names of Psalm itself, an unknown name with a hyphen is rejected. The parse tree keeps it, the type parser rejects it.",
+            "4": "Bug: `$this` is read as `static`, any instance of the called class, although the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> tells them apart: \"`@return static` is not enough: the method may return another instance of the class\". Only `@return $this` alone keeps the object."
         }
     },
     {
@@ -140,6 +166,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -152,6 +181,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -168,6 +200,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -180,6 +215,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -196,6 +234,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -208,6 +249,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -224,6 +268,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -236,6 +283,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -252,6 +302,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -266,6 +319,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -278,6 +334,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -295,6 +354,9 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -311,6 +373,9 @@
                         "verdict": "fail",
                         "note": 3
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -326,6 +391,9 @@
                         "verdict": "fail",
                         "note": 4
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -335,11 +403,15 @@
                 "type": "0x1F",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 5
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 6
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -350,11 +422,15 @@
                 "type": "-0x1F",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 5
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 6
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -365,11 +441,15 @@
                 "type": "0b101",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 5
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 6
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -380,11 +460,15 @@
                 "type": "0o17",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 5
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 6
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -399,7 +483,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -414,7 +501,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 7
+                        "note": 8
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -429,7 +519,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 8
+                        "note": 9
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -444,7 +537,11 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 8
+                        "note": 9
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 10
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -459,7 +556,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -470,11 +570,16 @@
                 "type": "9223372036854775808",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 11
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 9
+                        "note": 11
+                    },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 12
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -485,11 +590,16 @@
                 "type": "-9223372036854775809",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 13
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 10
+                        "note": 13
+                    },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 14
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -503,6 +613,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -519,6 +632,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -531,6 +647,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -547,6 +666,10 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 15
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -561,6 +684,10 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 16
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -568,16 +695,22 @@
             }
         ],
         "notes": {
-            "1": "Not implemented: a number takes only a minus sign.",
+            "1": "Not implemented: a number takes only a minus sign. The parse tree keeps it, the type parser rejects it.",
             "2": "Not implemented: the sign belongs to the number token, a space after it is not read.",
             "3": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
-            "4": "Not implemented: a leading zero is not read, so there are no legacy octal numbers.",
-            "5": "Not implemented: only decimal numbers are read.",
-            "6": "Not implemented: a float has no exponent.",
-            "7": "Not implemented: digit separators are read in integers only.",
-            "8": "Not implemented: a float needs digits on both sides of the point.",
-            "9": "Bug: the digits are cast to `int` without a range check, and the value silently becomes `9223372036854775807`.",
-            "10": "Bug: the digits are cast to `int` without a range check, and the value silently becomes `-9223372036854775808`."
+            "4": "Not implemented: a leading zero is not read, so there are no legacy octal numbers. The parse tree keeps it, the type parser rejects it.",
+            "5": "Bug: the integer is cast from its text with `(int)` and becomes `0`. Fixed in phpdoc-parser 2.4.2, which normalizes integer literals, but PHPStan 2.3.7 still bundles 2.4.1.",
+            "6": "Not implemented: only decimal numbers are read. The parse tree keeps it, the type parser rejects it.",
+            "7": "Not implemented: a float has no exponent. The parse tree keeps it, the type parser rejects it.",
+            "8": "Not implemented: digit separators are read in integers only. The parse tree keeps it, the type parser rejects it.",
+            "9": "Not implemented: a float needs digits on both sides of the point.",
+            "10": "Not implemented: a float needs a digit after the point, `.` becomes the description.",
+            "11": "Bug: the digits are cast to `int` without a range check, and the value silently becomes `9223372036854775807`.",
+            "12": "Bug: the digits are cast to a 64-bit integer without a range check, and the value silently wraps to `-9223372036854775808`.",
+            "13": "Bug: the digits are cast to `int` without a range check, and the value silently becomes `-9223372036854775808`.",
+            "14": "Bug: the digits are cast to a 64-bit integer without a range check, and the value silently wraps to `9223372036854775807`.",
+            "15": "Not implemented: only one-character escapes such as `\\n` are decoded in a double-quoted string, `\\x41` stays as text.",
+            "16": "Not implemented: only one-character escapes such as `\\n` are decoded in a double-quoted string, `\\u{1F600}` stays as text."
         }
     },
     {
@@ -594,6 +727,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -606,6 +742,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -622,6 +761,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -634,6 +776,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -650,6 +795,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -664,6 +812,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -676,6 +827,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -693,6 +847,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -706,6 +863,9 @@
                         "note": 1
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -723,6 +883,10 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -737,7 +901,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 2
+                        "note": 3
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -753,7 +920,11 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 3
+                        "note": 4
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 5
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -769,7 +940,11 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 3
+                        "note": 4
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 6
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -784,7 +959,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -799,7 +977,11 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 8
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -811,15 +993,19 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 9
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 10
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 11
                     },
                     "typelang": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 9
                     }
                 }
             },
@@ -828,26 +1014,35 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 9
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 10
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 11
                     },
                     "typelang": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 9
                     }
                 }
             }
         ],
         "notes": {
             "1": "Not implemented: masks exist for class constants only, global ones are an open request, <a href=\"https://github.com/phpstan/phpstan/issues/7272\">phpstan#7272</a>.",
-            "2": "Bug: the leading `*` is stripped as a docblock margin and the class `_SOME` is read.",
-            "3": "Not implemented: a global constant mask needs a name character before `*`.",
-            "4": "Not implemented: a class constant mask takes `*` only at the end or alone, the other forms are an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
-            "5": "Not implemented: `$this` is not read before `::`.",
-            "6": "Not implemented: in `@return` a type starting with `$` is rejected as a misplaced variable, unless it is `$this` alone or in a union."
+            "2": "Not implemented: a global constant mask takes `*` only at the start or at the end, `BAR` becomes the description.",
+            "3": "Bug: the leading `*` is stripped as a docblock margin and the class `_SOME` is read.",
+            "4": "Not implemented: a global constant mask needs a name character before `*`. The parse tree keeps it, the type parser rejects it.",
+            "5": "Not implemented: a global constant mask needs a name character right before `*`, the rest becomes the description.",
+            "6": "Not implemented: a bare `*` after a namespace separator is rejected, a global mask needs a name character before `*`.",
+            "7": "Not implemented: a class constant mask takes `*` only at the end or alone, the other forms are an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
+            "8": "Not implemented: a class constant mask takes `*` only at the start, at the end or alone.",
+            "9": "Not implemented: `$this` is not read before `::`.",
+            "10": "Not implemented: in `@return` a type starting with `$` is rejected as a misplaced variable, unless it is `$this` alone or in a union.",
+            "11": "Not implemented: `$this` is not read before `::`, the rest becomes the description."
         }
     },
     {
@@ -864,6 +1059,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -876,6 +1074,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -892,6 +1093,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -904,6 +1108,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -920,6 +1127,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -932,6 +1142,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -948,6 +1161,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -960,6 +1176,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -977,6 +1196,9 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -991,6 +1213,9 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 1
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1007,6 +1232,9 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1021,6 +1249,9 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 1
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1037,6 +1268,9 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1050,7 +1284,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 1
+                        "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1065,7 +1302,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 1
+                        "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1080,7 +1320,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 1
+                        "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1095,7 +1338,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 1
+                        "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1110,7 +1356,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 1
+                        "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1122,11 +1371,15 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 2
+                        "note": 3
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 3
+                        "note": 4
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 5
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1138,11 +1391,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 6
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 5
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1157,7 +1413,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 8
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1166,12 +1425,14 @@
             }
         ],
         "notes": {
-            "1": "Not implemented: an offset access is read only as a template indexed by a template, `T[K]`.",
-            "2": "By design: a space before `[K]` ends the type and the rest becomes the description, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/119\">phpdoc-parser#119</a>.",
-            "3": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
-            "4": "Not implemented: a line break is not read here, the places it is read in were added on request one by one, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/263\">phpdoc-parser#263</a>.",
-            "5": "Not implemented: in a docblock a line break at the top level ends the type, and `[]` becomes the description.",
-            "6": "Not implemented: in `@return` a type starting with `$` is rejected as a misplaced variable, unless it is `$this` alone or in a union."
+            "1": "Not implemented: an offset access is read only as a template indexed by a template, `T[K]`. The parse tree reads `[...]` after a name as the purity brackets of `callable[pure]`, the type parser takes them as an offset only for a template name with a template inside.",
+            "2": "Not implemented: an offset access is read only as a template indexed by a template, `T[K]`.",
+            "3": "By design: a space before `[K]` ends the type and the rest becomes the description, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/119\">phpdoc-parser#119</a>.",
+            "4": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
+            "5": "Not implemented: after a space `[` is read only as `[]`, an offset access needs `[` right after the type.",
+            "6": "Not implemented: a line break is not read here, the places it is read in were added on request one by one, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/263\">phpdoc-parser#263</a>.",
+            "7": "Not implemented: in a docblock a line break at the top level ends the type, and `[]` becomes the description.",
+            "8": "Not implemented: in `@return` a type starting with `$` is rejected as a misplaced variable, unless it is `$this` alone or in a union."
         }
     },
     {
@@ -1188,6 +1449,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1200,6 +1464,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1216,6 +1483,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1228,6 +1498,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1244,6 +1517,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1258,6 +1534,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1270,6 +1549,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1287,6 +1569,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1300,6 +1585,9 @@
                         "note": 1
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1317,6 +1605,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1330,6 +1621,9 @@
                         "note": 2
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1347,6 +1641,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1362,6 +1659,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1375,8 +1675,12 @@
                         "note": 2
                     },
                     "psalm": {
-                        "verdict": "fail",
+                        "verdict": "lossy",
                         "note": 3
+                    },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 4
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1393,6 +1697,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1407,7 +1714,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 4
+                        "note": 5
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1423,6 +1733,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1436,7 +1749,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 5
+                        "note": 6
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1447,11 +1763,15 @@
                 "type": "A[]|B[]",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 7
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 6
+                        "verdict": "lossy",
+                        "note": 8
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1467,6 +1787,29 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 9
+                    },
+                    "typelang": {
+                        "verdict": "ok"
+                    }
+                }
+            },
+            {
+                "type": "int[]&string[]",
+                "verdicts": {
+                    "phpstan": {
+                        "verdict": "lossy",
+                        "note": 10
+                    },
+                    "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 9
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1479,6 +1822,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1495,7 +1841,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 7
+                        "note": 11
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1507,10 +1856,14 @@
             "1": "By design: `&` and `|` are not mixed without parentheses, <a href=\"https://github.com/phpstan/phpstan/issues/1877\">phpstan#1877</a>.",
             "2": "By design: `?` is not combined with `|` or `&`, as in native PHP types, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/321\">phpdoc-parser#321</a>.",
             "3": "Differs: Psalm reads `?(A&B)`, TypeLang reads `(?A)&B`, which is `A&B`. Neither reading is documented, PHPStan requires parentheses.",
-            "4": "Bug: `B` is lost, `A|null` is returned instead of `(A&B)|null`.",
-            "5": "Bug: `B` is lost and `A&C` is returned, while `A&(B&C)` gives `A&B&C`.",
-            "6": "By design: the arrays of a union are merged into `array<A|B>`, which also admits a mixed array `[A, B]`, for the projects that wrote `int[]|string[]` meaning either, <a href=\"https://github.com/vimeo/psalm/issues/5212\">psalm#5212</a>.",
-            "7": "Bug: `?B` is lost and `A[]` is returned, `(A|?B)` alone gives `A`."
+            "4": "Differs: `?` takes the whole type after it, mago reads `?(A&B)`, TypeLang reads `(?A)&B`, which is `A&B`. Neither reading is documented.",
+            "5": "Bug: the parse tree puts `?B` beside the intersection instead of inside it, and `B` is lost: `A|null` is returned instead of `(A&B)|null`.",
+            "6": "Bug: `B` is lost and `A&C` is returned, while `A&(B&C)` gives `A&B&C`.",
+            "7": "By design: the arrays of a union are merged into `array<A|B>`, which also admits a mixed array `[A, B]`, the same way `array<A>|array<B>` is merged. The `[]` members are collected on purpose, for `Collection|Foo[]`, as the <a href=\"https://phpstan.org/writing-php-code/phpdoc-types#iterables\">documentation</a> describes.",
+            "8": "By design: the arrays of a union are merged into `array<A|B>`, which also admits a mixed array `[A, B]`, for the projects that wrote `int[]|string[]` meaning either, <a href=\"https://github.com/vimeo/psalm/issues/5212\">psalm#5212</a>.",
+            "9": "Not implemented: an intersection is kept only on a type that can carry one, an array cannot, so two arrays are rejected, while `iterable<A>&iterable<B>` and `A[]&iterable<B>` are read.",
+            "10": "Bug: the intersection collapses to `never` and loses `[]`, the one array of both, while `array<int&string>` gives `array<never>`.",
+            "11": "Bug: the parse tree puts `?B` beside the union instead of inside it, and `?B` is lost: `A[]` is returned, `(A|?B)` alone gives `A`."
         }
     },
     {
@@ -1527,6 +1880,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1539,6 +1895,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1555,6 +1914,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1567,6 +1929,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1583,6 +1948,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1595,6 +1963,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1611,6 +1982,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1623,6 +1997,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1639,6 +2016,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1653,6 +2033,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1665,6 +2048,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1683,6 +2069,10 @@
                         "verdict": "fail",
                         "note": 2
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1696,7 +2086,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 3
+                        "note": 4
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1708,9 +2101,12 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 5
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1722,8 +2118,9 @@
         "notes": {
             "1": "Not implemented: a type argument takes only `covariant`, `contravariant` and `*`.",
             "2": "Not implemented: only `covariant` and `contravariant` are read before a type argument.",
-            "3": "Not implemented: an offset access is read only as a template indexed by a template, `T[K]`.",
-            "4": "Not implemented: a conditional type is read only inside parentheses."
+            "3": "Not implemented: a type argument takes only `covariant` and `contravariant`.",
+            "4": "Not implemented: an offset access is read only as a template indexed by a template, `T[K]`.",
+            "5": "Not implemented: a conditional type is read only inside parentheses."
         }
     },
     {
@@ -1741,6 +2138,10 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1755,6 +2156,10 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 1
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1771,6 +2176,10 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1786,6 +2195,10 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1795,11 +2208,16 @@
                 "type": "callable<T super int>(T): T",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 3
                     },
                     "psalm": {
                         "verdict": "fail",
                         "note": 1
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1810,11 +2228,16 @@
                 "type": "callable<T of A super B>(): void",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 3
                     },
                     "psalm": {
                         "verdict": "fail",
                         "note": 1
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1831,6 +2254,10 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1846,6 +2273,10 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1856,11 +2287,15 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 2
+                        "note": 4
                     },
                     "psalm": {
                         "verdict": "fail",
                         "note": 1
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1877,6 +2312,10 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 5
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1892,6 +2331,10 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1901,11 +2344,16 @@
                 "type": "Foo<T>(T): T",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "fail",
+                        "note": 6
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 3
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 8
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -1915,8 +2363,13 @@
         ],
         "notes": {
             "1": "Not implemented: a callable has no template parameters, an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
-            "2": "Not implemented: a template parameter of a callable has no variance.",
-            "3": "Not implemented: a parameter list is read only after `callable`, `Closure` and their variants."
+            "2": "Not implemented: a callable has no template parameters, the parser stops after the keyword and the rest becomes the description.",
+            "3": "Not implemented: a template has no lower bound, `super` is parsed and then dropped, an open request, <a href=\"https://github.com/phpstan/phpstan/issues/5179\">phpstan#5179</a>.",
+            "4": "Not implemented: a template parameter of a callable has no variance.",
+            "5": "Not implemented: a callable has no template parameters, `Closure<T>` is read as a generic class and the parameter list becomes the description.",
+            "6": "By design: only `callable`, `Closure` and their variants take a parameter list, any other name with one gives an error type.",
+            "7": "Not implemented: a parameter list is read only after `callable`, `Closure` and their variants.",
+            "8": "Not implemented: a parameter list is read only after `callable`, `Closure` and their pure variants."
         }
     },
     {
@@ -1933,6 +2386,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1945,6 +2401,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1961,6 +2420,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -1973,6 +2435,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -1989,6 +2454,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2001,6 +2469,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2018,6 +2489,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2033,6 +2507,10 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 3
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2047,6 +2525,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2059,6 +2540,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2076,9 +2560,12 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "fail",
-                        "note": 3
+                        "note": 4
                     }
                 }
             },
@@ -2091,7 +2578,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 5
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2107,7 +2597,11 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 5
+                    },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 6
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2121,6 +2615,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2137,7 +2634,11 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 4
+                        "note": 5
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 7
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2152,7 +2653,11 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 5
+                        "note": 8
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 7
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2166,6 +2671,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2182,6 +2690,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2196,6 +2707,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2206,10 +2720,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 9
                     },
                     "psalm": {
                         "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 9
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2221,10 +2739,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 9
                     },
                     "psalm": {
                         "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 9
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2236,10 +2758,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 9
                     },
                     "psalm": {
                         "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 9
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2251,10 +2777,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 9
                     },
                     "psalm": {
                         "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 9
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2266,10 +2796,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 9
                     },
                     "psalm": {
                         "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 9
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2284,7 +2818,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 7
+                        "note": 10
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2296,11 +2833,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 8
+                        "note": 11
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 9
+                        "note": 12
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2311,11 +2851,16 @@
                 "type": "foo(T): void",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "fail",
+                        "note": 13
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 10
+                        "note": 14
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 15
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2330,7 +2875,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 11
+                        "note": 16
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2346,6 +2894,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2358,8 +2909,11 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 12
+                        "verdict": "lossy",
+                        "note": 17
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2374,7 +2928,11 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 13
+                        "note": 18
+                    },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 19
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2386,11 +2944,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 14
+                        "note": 20
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 15
+                        "note": 21
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2401,19 +2962,25 @@
         "notes": {
             "1": "By design: the type of every parameter and the return type are required, as the PHPStan documentation says.",
             "2": "Not implemented: only the postfix form `int...` is read, <a href=\"https://github.com/phpstan/phpdoc-parser/issues/125\">phpdoc-parser#125</a>.",
-            "3": "Not implemented: `...` needs a type or a name after it.",
-            "4": "Not implemented: a parameter of a callable needs a type.",
-            "5": "Bug: the `&` is dropped and the parameter is read as passed by value, as in <a href=\"https://github.com/vimeo/psalm/issues/14874\">psalm#14874</a>.",
-            "6": "Not implemented: only the bare optional marker `=` is read, not a default value.",
-            "7": "Bug: `$this` is read as `static`, any instance of the called class, although the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> tells them apart: \"`@return static` is not enough: the method may return another instance of the class\". Only `@return $this` alone keeps the object.",
-            "8": "Not implemented: a conditional type is read only inside parentheses.",
-            "9": "By design: a conditional type is read only in parentheses, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/type_syntax/conditional_types.md\">documentation</a> says.",
-            "10": "Not implemented: a parameter list is read only after `callable`, `Closure` and their variants.",
-            "11": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
-            "12": "Differs: Psalm takes `T&U` as the return type, PHPStan and TypeLang read `(callable(): T)&U`. Neither reading is documented, Psalm itself ends the return type at `|`.",
-            "13": "Bug: `?T|U` is taken as the return type, while `callable(): T|U` is read as `(callable(): T)|U`.",
-            "14": "Not implemented: a callable as a return type is read only inside parentheses, `callable(): (callable(): T)`.",
-            "15": "Bug: Psalm reads `callable(): ((callable(): T)|U)`, the `|` leaves only the inner callable, while `callable(): T|U` is read as `(callable(): T)|U`."
+            "3": "Not implemented: only the postfix form `int...` is read, `...` is followed only by a name.",
+            "4": "Not implemented: `...` needs a type or a name after it.",
+            "5": "Not implemented: a parameter of a callable needs a type.",
+            "6": "Bug: a parameter without a type is read as the variable type `$a`, a reference to the parameter of the function, while `...$a` and `int $a` read `$a` as a name.",
+            "7": "Not implemented: `&` is read as a by-reference marker only after a type and before a name or `...`, otherwise it starts an intersection.",
+            "8": "Bug: the `&` is read as a dangling intersection and dropped, so the parameter is passed by value, as with `I1 & $x` in <a href=\"https://github.com/vimeo/psalm/issues/14874\">psalm#14874</a>.",
+            "9": "Not implemented: only the bare optional marker `=` is read, not a default value.",
+            "10": "Bug: `$this` is read as `static`, any instance of the called class, although the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> tells them apart: \"`@return static` is not enough: the method may return another instance of the class\". Only `@return $this` alone keeps the object.",
+            "11": "Not implemented: a conditional type is read only inside parentheses.",
+            "12": "By design: a conditional type is read only in parentheses, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/type_syntax/conditional_types.md\">documentation</a> says.",
+            "13": "By design: only `callable`, `Closure` and their variants take a parameter list, any other name with one gives an error type.",
+            "14": "Not implemented: a parameter list is read only after `callable`, `Closure` and their variants. The parse tree reads it as a method signature of `@method`, the type parser rejects it.",
+            "15": "Not implemented: a parameter list is read only after `callable`, `Closure` and their pure variants.",
+            "16": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
+            "17": "Differs: Psalm takes `T&U` as the return type, PHPStan and TypeLang read `(callable(): T)&U`. Neither reading is documented, Psalm itself ends the return type at `|`.",
+            "18": "Bug: `?T|U` is taken as the return type, while `callable(): T|U` is read as `(callable(): T)|U`.",
+            "19": "Bug: `?` takes the rest of the type, so `?T|U` becomes the return type, while `callable(): T|U` is read as `(callable(): T)|U`.",
+            "20": "Not implemented: a callable as a return type is read only inside parentheses, `callable(): (callable(): T)`.",
+            "21": "Bug: Psalm reads `callable(): ((callable(): T)|U)`, the `|` leaves only the inner callable, while `callable(): T|U` is read as `(callable(): T)|U`."
         }
     },
     {
@@ -2430,6 +2997,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2442,6 +3012,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2458,6 +3031,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2470,6 +3046,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2486,6 +3065,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2498,6 +3080,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2514,6 +3099,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2526,6 +3114,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2542,6 +3133,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2556,6 +3150,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2568,6 +3165,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2585,6 +3185,9 @@
                         "verdict": "fail",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2599,6 +3202,9 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2615,6 +3221,9 @@
                         "verdict": "fail",
                         "note": 3
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2627,6 +3236,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2644,6 +3256,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2658,6 +3273,9 @@
                     "psalm": {
                         "verdict": "lossy",
                         "note": 5
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2674,6 +3292,10 @@
                         "verdict": "fail",
                         "note": 6
                     },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 7
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2688,6 +3310,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2700,8 +3325,10 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 7
+                        "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2716,7 +3343,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 8
+                        "note": 5
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2731,7 +3361,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 9
+                        "note": 8
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2747,6 +3380,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2757,9 +3393,12 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 10
+                        "note": 9
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2772,9 +3411,12 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 11
+                        "note": 10
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2787,11 +3429,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 11
+                        "note": 10
                     },
                     "psalm": {
                         "verdict": "fail",
                         "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2803,9 +3448,13 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 12
+                        "note": 11
                     },
                     "psalm": {
+                        "verdict": "fail",
+                        "note": 12
+                    },
+                    "mago": {
                         "verdict": "fail",
                         "note": 13
                     },
@@ -2823,6 +3472,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2832,11 +3484,15 @@
                 "type": "array{a: int, a: string}",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 14
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 14
+                        "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 15
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2845,20 +3501,21 @@
             }
         ],
         "notes": {
-            "1": "By design: named and positional keys are not mixed, a dedicated error says so.",
-            "2": "Not implemented: a class constant is not read as a key, an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
-            "3": "Bug: the word `covariant` is skipped as a variance even in a key, while `as` and `int` are read as keys.",
+            "1": "By design: named and positional keys are not mixed, a dedicated error says so. The parse tree keeps it, the type parser rejects it.",
+            "2": "Not implemented: a class constant is not read as a key, an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>. The parse tree keeps it, the type parser rejects it.",
+            "3": "Bug: the word `covariant` is taken for a variance even in a key, while `as` and `int` are read as keys.",
             "4": "Not implemented: the sign belongs to the number token, a space after it is not read.",
-            "5": "Bug: a shape without fields gives `array<never, never>`, the empty array, although `...` makes it open, as the documentation describes.",
-            "6": "Not implemented: `...<>` takes a key type and a value type, a single one is an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
-            "7": "By design: the keys of a list shape have to run from `0` in order, a dedicated error says so.",
-            "8": "Bug: a shape without fields gives `array<never, never>`, the empty array, although `...` makes it open.",
-            "9": "Not implemented: no shape after `non-empty-array`, an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
-            "10": "Not implemented: `...` is read only in array and list shapes.",
-            "11": "Not implemented: the key of an object shape is a name or a quoted string only.",
-            "12": "Not implemented: a shape is read only after `array`, `list`, `non-empty-array`, `non-empty-list` and `object`.",
-            "13": "Not implemented: a shape is read only after `array`, `list`, `object` and `callable-array`.",
-            "14": "By design: a duplicate key is rejected while parsing."
+            "5": "Bug: a shape without fields gives `array<never, never>`, the empty array, although `...` makes it open, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/type_syntax/array_types.md\">documentation</a> describes for a shape with fields.",
+            "6": "Not implemented: `...<>` takes a key type and a value type, a single one is an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>. The parse tree keeps it, the type parser rejects it.",
+            "7": "Bug: a single argument of `...<>` is taken as the key type and the value becomes `mixed`, while `array<string>` and `list{...<string>}` take it as the value type.",
+            "8": "Not implemented: no shape after `non-empty-array`, an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>. The parse tree keeps it, the type parser rejects it.",
+            "9": "Not implemented: `...` is read only in array and list shapes.",
+            "10": "Not implemented: the key of an object shape is a name or a quoted string only.",
+            "11": "Not implemented: a shape is read only after `array`, `list`, `non-empty-array`, `non-empty-list` and `object`.",
+            "12": "Not implemented: a shape is read only after `array`, `list`, `object` and `callable-array`. The parse tree keeps it, the type parser rejects it.",
+            "13": "Not implemented: a shape is read only after `array`, `list`, their non-empty variants and `object`, `{a: int}` becomes the description.",
+            "14": "Not implemented: the last of the duplicate keys wins silently and `array{a: string}` is read, a warning is an open request, <a href=\"https://github.com/phpstan/phpstan/issues/5212\">phpstan#5212</a>.",
+            "15": "Bug: the tree keeps both keys, but the type builder silently replaces the first one and returns `array{a: string}`."
         }
     },
     {
@@ -2875,6 +3532,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2889,6 +3549,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2901,6 +3564,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -2919,6 +3585,9 @@
                         "verdict": "fail",
                         "note": 2
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2934,6 +3603,9 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2951,6 +3623,9 @@
                         "verdict": "fail",
                         "note": 2
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2965,6 +3640,9 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 3
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -2981,6 +3659,9 @@
                         "verdict": "fail",
                         "note": 4
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -2996,6 +3677,9 @@
                         "verdict": "fail",
                         "note": 5
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3010,6 +3694,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3022,6 +3709,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3039,6 +3729,9 @@
                         "verdict": "lossy",
                         "note": 6
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3051,8 +3744,10 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 7
+                        "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3068,6 +3763,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3081,6 +3779,9 @@
                         "note": 1
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3099,6 +3800,9 @@
                         "verdict": "fail",
                         "note": 2
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3109,11 +3813,15 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 8
+                        "note": 7
                     },
                     "psalm": {
                         "verdict": "fail",
                         "note": 2
+                    },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 8
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3131,6 +3839,9 @@
                         "verdict": "fail",
                         "note": 2
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3144,8 +3855,8 @@
             "4": "Bug: `[]` in the target breaks the condition, `(T is (int[]) ? A : B)` is read.",
             "5": "Bug: a callable with a return type in the target breaks the condition, `(T is (callable(int): void) ? A : B)` is read.",
             "6": "Bug: `$this` is read as `static`, any instance of the called class, although the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/purity_model.md#fluent-calls\">documentation</a> tells them apart: \"`@return static` is not enough: the method may return another instance of the class\". Only `@return $this` alone keeps the object.",
-            "7": "By design: the subject of a condition is a template parameter or a type depending on one, as the <a href=\"https://github.com/vimeo/psalm/blob/master/docs/annotating_code/type_syntax/conditional_types.md\">documentation</a> says.",
-            "8": "Not implemented: a conditional type is read only inside parentheses, and a nullable subject needs its own, `((?T) is U ? V : Z)`."
+            "7": "Not implemented: a conditional type is read only inside parentheses, and a nullable subject needs its own, `((?T) is U ? V : Z)`.",
+            "8": "Differs: `?` takes the whole type after it, mago reads `?(T is U ? V : Z)`, TypeLang reads `(?T) is U ? V : Z`. Neither reading is documented."
         }
     },
     {
@@ -3162,6 +3873,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3174,6 +3888,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3190,6 +3907,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3202,6 +3922,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3218,6 +3941,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3232,6 +3958,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3244,8 +3973,10 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 1
+                        "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3256,11 +3987,15 @@
                 "type": "int<PHP_INT_MIN, PHP_INT_MAX>",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 1
                     },
                     "psalm": {
                         "verdict": "fail",
                         "note": 2
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3274,6 +4009,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3291,6 +4029,9 @@
                         "verdict": "fail",
                         "note": 3
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3303,8 +4044,10 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 4
+                        "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3319,7 +4062,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 5
+                        "note": 4
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3330,11 +4076,15 @@
                 "type": "trait-string<Foo>",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "fail",
+                        "note": 5
                     },
                     "psalm": {
                         "verdict": "fail",
                         "note": 6
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3351,6 +4101,10 @@
                         "verdict": "lossy",
                         "note": 7
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 8
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3363,8 +4117,11 @@
                         "verdict": "ok"
                     },
                     "psalm": {
-                        "verdict": "fail",
-                        "note": 8
+                        "verdict": "lossy",
+                        "note": 9
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3375,11 +4132,15 @@
                 "type": "open-resource",
                 "verdicts": {
                     "phpstan": {
-                        "verdict": "ok"
+                        "verdict": "lossy",
+                        "note": 10
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 9
+                        "note": 11
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3388,15 +4149,17 @@
             }
         ],
         "notes": {
-            "1": "By design: a range whose minimum exceeds its maximum is rejected while parsing.",
-            "2": "Not implemented: the bounds of a range are integers, `min` and `max` only.",
-            "3": "Not implemented: the union form is an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
-            "4": "By design: the argument of `class-string` has to be a class, a dedicated error says so.",
-            "5": "Bug: `enum-string<Foo>` is read as `class-string<Foo>` and loses the restriction to enums, which a bare `enum-string` keeps.",
-            "6": "Not implemented: `trait-string` takes no argument.",
+            "1": "Bug: `PHP_INT_MIN` and `PHP_INT_MAX` are read as the values of both 32-bit and 64-bit builds, `2147483647|9223372036854775807`, a bound has to be one integer and the range becomes an error type, while `int<0, Foo::BAZ>` is read, <a href=\"https://github.com/phpstan/phpstan/issues/14948\">phpstan#14948</a>.",
+            "2": "Not implemented: the bounds of a range are integers, `min` and `max` only. The parse tree keeps it, the type parser rejects it.",
+            "3": "Not implemented: the union form is an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>. The parse tree keeps it, the type parser rejects it.",
+            "4": "Bug: `enum-string<Foo>` is read as `class-string<Foo>` and loses the restriction to enums, which a bare `enum-string` keeps.",
+            "5": "Not implemented: of the `*-string` names only `class-string` and `interface-string` take an argument, `trait-string<Foo>` gives an error type.",
+            "6": "Not implemented: `trait-string` takes no argument. The parse tree keeps it, the type parser rejects it.",
             "7": "Bug: the second argument is dropped silently, while `list<int, string>` reports too many arguments.",
-            "8": "Not implemented: it is read as `string`, which also admits a lower case string. The alias was agreed as a first step, <a href=\"https://github.com/vimeo/psalm/issues/11227\">psalm#11227</a>, the type itself is a TODO in the source and an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
-            "9": "Not implemented: an open request, <a href=\"https://github.com/vimeo/psalm/issues/11521\">psalm#11521</a>."
+            "8": "Not implemented: `key-of` takes a single argument, a second one is a syntax error.",
+            "9": "Not implemented: it is read as `string`, which also admits a lower case string. The alias was suggested as a first step in <a href=\"https://github.com/vimeo/psalm/issues/11227\">psalm#11227</a>, the type itself is a TODO in the source and an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
+            "10": "By design: it is read as `resource`, which also admits a closed one, resources are not worth the effort as PHP moves away from them, <a href=\"https://github.com/phpstan/phpstan/issues/13295\">phpstan#13295</a>.",
+            "11": "Not implemented: an open request, <a href=\"https://github.com/vimeo/psalm/issues/11521\">psalm#11521</a>. The parse tree keeps the word, the type parser rejects a hyphen in a name it does not know."
         }
     },
     {
@@ -3415,6 +4178,9 @@
                         "verdict": "fail",
                         "note": 2
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3430,6 +4196,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3442,6 +4211,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3459,6 +4231,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3472,6 +4247,9 @@
                         "note": 3
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3489,6 +4267,9 @@
                         "verdict": "fail",
                         "note": 4
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3503,6 +4284,9 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 4
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3520,6 +4304,10 @@
                         "verdict": "fail",
                         "note": 4
                     },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 6
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3534,6 +4322,9 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 4
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3550,6 +4341,9 @@
                         "verdict": "fail",
                         "note": 4
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3564,6 +4358,9 @@
                     "psalm": {
                         "verdict": "fail",
                         "note": 4
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3580,6 +4377,9 @@
                         "verdict": "fail",
                         "note": 4
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3592,6 +4392,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3608,6 +4411,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3620,6 +4426,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3635,7 +4444,11 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 6
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 8
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3651,6 +4464,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3661,11 +4477,15 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 7
+                        "note": 9
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 8
+                        "note": 10
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 9
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3679,9 +4499,11 @@
             "3": "By design: a space before `{` ends the type and the rest becomes the description, <a href=\"https://github.com/phpstan/phpdoc-parser/issues/201\">phpdoc-parser#201</a>.",
             "4": "Not implemented: in a docblock a space at the top level ends the type, except around `|` and `&` and before `{` and `:`, and the rest becomes the description. Such exceptions are added on request, <a href=\"https://github.com/vimeo/psalm/pull/10000\">psalm#10000</a>.",
             "5": "By design: a space before `[K]` ends the type and the rest becomes the description, <a href=\"https://github.com/phpstan/phpdoc-parser/pull/119\">phpdoc-parser#119</a>.",
-            "6": "Not implemented: a callable has no template parameters, an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
-            "7": "Not implemented: only `//` comments are read inside a type.",
-            "8": "Not implemented: only `//` comments are read, and `# c` is glued with the next key into `'#cb'`."
+            "6": "Not implemented: after a space `[` is read only as `[]`, an offset access needs `[` right after the type.",
+            "7": "Not implemented: a callable has no template parameters, an open request, <a href=\"https://github.com/vimeo/psalm/issues/13774\">psalm#13774</a>.",
+            "8": "Not implemented: a callable has no template parameters, the parser stops after the keyword and the rest becomes the description.",
+            "9": "Not implemented: only `//` comments are read inside a type.",
+            "10": "Not implemented: only `//` comments are read, `# c` is taken for a key name and breaks the shape."
         }
     },
     {
@@ -3698,6 +4520,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3710,6 +4535,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3726,6 +4554,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3738,6 +4569,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3755,6 +4589,10 @@
                         "verdict": "lossy",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3770,6 +4608,9 @@
                         "verdict": "lossy",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3783,7 +4624,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 2
+                        "note": 3
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3800,6 +4644,10 @@
                         "verdict": "lossy",
                         "note": 1
                     },
+                    "mago": {
+                        "verdict": "lossy",
+                        "note": 2
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3813,7 +4661,11 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 3
+                        "note": 4
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 5
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3828,7 +4680,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 4
+                        "note": 6
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3844,6 +4699,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3857,7 +4715,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 5
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3872,7 +4733,11 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 5
+                        "note": 7
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 8
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3886,6 +4751,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -3902,6 +4770,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -3915,7 +4786,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 6
+                        "note": 9
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3930,7 +4804,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 7
+                        "note": 10
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3945,7 +4822,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 7
+                        "note": 10
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3957,10 +4837,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 8
+                        "note": 11
                     },
                     "psalm": {
                         "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 12
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3972,10 +4856,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 9
+                        "note": 13
                     },
                     "psalm": {
                         "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 14
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -3990,7 +4878,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 10
+                        "note": 15
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -4002,9 +4893,12 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 11
+                        "note": 16
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -4020,7 +4914,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 12
+                        "note": 17
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -4035,7 +4932,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 13
+                        "note": 18
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -4047,10 +4947,14 @@
                 "verdicts": {
                     "phpstan": {
                         "verdict": "fail",
-                        "note": 14
+                        "note": 19
                     },
                     "psalm": {
                         "verdict": "ok"
+                    },
+                    "mago": {
+                        "verdict": "fail",
+                        "note": 20
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -4065,7 +4969,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 15
+                        "note": 21
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -4081,6 +4988,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -4094,7 +5004,10 @@
                     },
                     "psalm": {
                         "verdict": "lossy",
-                        "note": 16
+                        "note": 22
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -4109,7 +5022,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 17
+                        "note": 23
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -4124,7 +5040,10 @@
                     },
                     "psalm": {
                         "verdict": "fail",
-                        "note": 17
+                        "note": 23
+                    },
+                    "mago": {
+                        "verdict": "ok"
                     },
                     "typelang": {
                         "verdict": "ok"
@@ -4138,6 +5057,9 @@
                         "verdict": "ok"
                     },
                     "psalm": {
+                        "verdict": "ok"
+                    },
+                    "mago": {
                         "verdict": "ok"
                     },
                     "typelang": {
@@ -4154,6 +5076,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -4168,6 +5093,9 @@
                     "psalm": {
                         "verdict": "ok"
                     },
+                    "mago": {
+                        "verdict": "ok"
+                    },
                     "typelang": {
                         "verdict": "ok"
                     }
@@ -4176,22 +5104,28 @@
         ],
         "notes": {
             "1": "Bug: a dangling operator is ignored.",
-            "2": "Bug: the doubled `&` is read as one.",
-            "3": "Bug: the doubled `?` is read as one.",
-            "4": "Bug: `?[]` after the type is dropped.",
-            "5": "Bug: the `*` after a space is stripped as a docblock margin.",
-            "6": "Bug: the second string is dropped.",
-            "7": "Accepted: a name may hold any run of backslashes.",
-            "8": "Accepted: a name may hold `-` after its first character, for names such as `non-empty-string`, and nothing forbids it at the end.",
-            "9": "Accepted: digits after a leading zero are read as a decimal number, PHP rejects `08`.",
-            "10": "Accepted: the integer rule allows doubled digit separators, PHP rejects them.",
-            "11": "Accepted: a digit separator may follow the decimal point, PHP rejects it. Reported in <a href=\"https://github.com/phpstan/phpdoc-parser/issues/343\">phpdoc-parser#343</a>, not confirmed.",
-            "12": "Bug: `::class` after a constant is dropped.",
-            "13": "Bug: `::class` after parentheses is dropped.",
-            "14": "Accepted: a constant name may hold `-`. Reported in <a href=\"https://github.com/phpstan/phpdoc-parser/issues/343\">phpdoc-parser#343</a>, not confirmed.",
-            "15": "By design: `T of Bar` is the template map syntax of Psalm, as in `class-string-map<T of Foo, T>`.",
-            "16": "Bug: the type after `...` is dropped and the shape is read as open.",
-            "17": "Accepted: the text of an unquoted key is not checked and becomes a string key."
+            "2": "Accepted: a dangling `|` before the end or a closing bracket is a dedicated `TrailingPipe` node of the tree, and the type is read without it.",
+            "3": "Bug: the doubled `&` is read as one.",
+            "4": "Bug: the doubled `?` is read as one.",
+            "5": "Accepted: `?` applies to any type, a nullable one too, and `?(?int)` is read.",
+            "6": "Bug: `?[]` after the type is dropped.",
+            "7": "Bug: the `*` after a space is stripped as a docblock margin.",
+            "8": "Bug: the space between a name and `*` is skipped and `PHP_*` is read, while `int *` leaves `*` in the description.",
+            "9": "Bug: the second string is dropped.",
+            "10": "Accepted: a name may hold any run of backslashes.",
+            "11": "Accepted: a name may hold `-` after its first character, for names such as `non-empty-string`, and nothing forbids it at the end.",
+            "12": "Accepted: a name may hold `-` anywhere after its first character, for names such as `non-empty-string`, and nothing forbids it at the end.",
+            "13": "Accepted: digits after a leading zero are read as a decimal number, PHP rejects `08`.",
+            "14": "Accepted: a leading zero followed by `8` or `9` is read as a decimal number, PHP rejects `08`.",
+            "15": "Accepted: the integer rule allows doubled digit separators, PHP rejects them.",
+            "16": "Accepted: a digit separator may follow the decimal point, PHP rejects it. Reported in <a href=\"https://github.com/phpstan/phpdoc-parser/issues/343\">phpdoc-parser#343</a>, not confirmed.",
+            "17": "Bug: `::class` after a constant is dropped.",
+            "18": "Bug: `::class` after parentheses is dropped.",
+            "19": "Accepted: a constant name may hold `-`. Reported in <a href=\"https://github.com/phpstan/phpdoc-parser/issues/343\">phpdoc-parser#343</a>, not confirmed.",
+            "20": "Accepted: a constant name is lexed as a name, which may hold `-`.",
+            "21": "By design: `T of Bar` is the template map syntax of Psalm, as in `class-string-map<T of Foo, T>`.",
+            "22": "Bug: the type after `...` is dropped and the shape is read as open.",
+            "23": "Accepted: the text of an unquoted key is not checked and becomes a string key."
         }
     }
 ]

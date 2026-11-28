@@ -125,7 +125,23 @@ A property without a typed `set` hook gives its read type for both.
 
 ## Error handling
 
-A `ReflectionType` of an unknown kind throws an
-`Unrecognized{Constant|Property|Function|Parameter}TypeException` naming the
-element. Every exception of the reader implements
-`TypeLang\Reader\Exception\ReaderExceptionInterface`.
+Every exception of the reader implements
+`TypeLang\Reader\Exception\ReaderExceptionInterface`. A `ReflectionType` of
+an unknown kind throws an `UnrecognizedReflectionTypeException`, which tells
+what type it is and where it is declared:
+
+```php
+use TypeLang\Reader\Exception\UnrecognizedReflectionTypeException;
+
+try {
+    $reader->findPropertyType($property);
+} catch (UnrecognizedReflectionTypeException $e) {
+    $e->type;      // the ReflectionType
+    $e->reflector; // the ReflectionProperty
+}
+```
+
+| Property     | Type              | Value                                                        |
+|--------------|-------------------|--------------------------------------------------------------|
+| `$type`      | `ReflectionType`  | the type that is not recognized                              |
+| `$reflector` | `Reflector\|null` | the property, parameter, function or constant it is declared on, `null` for `getType()` |

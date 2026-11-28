@@ -13,13 +13,19 @@ import '../styles/landing.css';
 const comparison = await getCollection('comparison');
 const constructs = comparison.filter((s) => !s.data.isMalformed).flatMap((s) => s.data.cases);
 const malformed = comparison.filter((s) => s.data.isMalformed).flatMap((s) => s.data.cases);
-const countOk = (cases: typeof constructs, tool: 'phpstan' | 'psalm' | 'typelang') =>
+const countOk = (cases: typeof constructs, tool: 'phpstan' | 'psalm' | 'mago' | 'typelang') =>
     cases.filter((c) => c.verdicts[tool].verdict === 'ok').length;
-const rulers = [
-    { tool: 'typelang', label: 'TypeLang', version: 'type-lang/phpdoc 2.0' },
-    { tool: 'phpstan', label: 'PHPStan', version: 'phpstan/phpdoc-parser 2.4' },
+type Ruler = { tool: 'phpstan' | 'psalm' | 'mago' | 'typelang'; label: string; version: string };
+const others: Ruler[] = [
+    { tool: 'phpstan', label: 'PHPStan', version: 'phpstan/phpstan 2.3' },
     { tool: 'psalm', label: 'Psalm', version: 'vimeo/psalm 7.23' },
-] as const;
+    { tool: 'mago', label: 'Mago', version: 'carthage-software/mago 1.61' },
+];
+// TypeLang first (the accented ruler), the other tools by their count.
+const rulers: Ruler[] = [
+    { tool: 'typelang', label: 'TypeLang', version: 'type-lang/phpdoc 2.0' },
+    ...others.sort((a, b) => countOk(constructs, b.tool) - countOk(constructs, a.tool)),
+];
 
 const parts = [
     {
@@ -246,8 +252,8 @@ const parts = [
     <p class="num">§ 04</p>
     <h2>Coverage.</h2>
     <p class="sub">
-      {constructs.length} syntactic constructs, the basic ones and those on which PHPStan, Psalm and TypeLang disagree, each written as <code>@return</code> and read by the tool's own docblock reader.
-      A construct counts when the whole text becomes the type it was written as, with nothing left for the description.
+      {constructs.length} syntactic constructs, the basic ones and those on which PHPStan, Psalm, Mago and TypeLang disagree, each written as <code>@return</code> and read by the tool's own docblock reader.
+      A construct counts when the whole text becomes the type it was written as, with nothing left for the description and nothing lost on the way to the type the tool works with.
     </p>
   </div>
   <div class="rulers" id="rulers" style={`--max: ${constructs.length}`}>
@@ -258,7 +264,7 @@ const parts = [
   <p class="foot-note">
     Full table with the verdict for every construct, per tool, in the
     <a href="/language/comparison/">syntax comparison</a>.
-    The table also lists {malformed.length} malformed inputs that must be rejected: TypeLang rejects {countOk(malformed, 'typelang')}, PHPStan {countOk(malformed, 'phpstan')} and Psalm {countOk(malformed, 'psalm')}.
+    The table also lists {malformed.length} malformed inputs that must be rejected: TypeLang rejects {countOk(malformed, 'typelang')}, PHPStan {countOk(malformed, 'phpstan')}, Psalm {countOk(malformed, 'psalm')} and Mago {countOk(malformed, 'mago')}.
   </p>
 </section>
 

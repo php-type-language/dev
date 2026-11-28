@@ -43,7 +43,7 @@ export const collections = {
             isMalformed: z.boolean(),
             cases: z.array(z.object({
                 type: z.string(),
-                verdicts: z.object({ phpstan: verdict, psalm: verdict, typelang: verdict }),
+                verdicts: z.object({ phpstan: verdict, psalm: verdict, mago: verdict, typelang: verdict }),
             })),
             notes: z.record(z.string(), z.string()),
         }),

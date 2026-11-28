@@ -1,6 +1,6 @@
 ---
 title: Comparison
-description: How PHPStan, Psalm and TypeLang parse the same type syntax, construct by construct.
+description: How PHPStan, Psalm, Mago and TypeLang parse the same type syntax, construct by construct.
 sidebar:
   order: 10
 ---
@@ -10,18 +10,24 @@ import ComparisonTable from '../../../components/ComparisonTable.astro';
 
 Every construct below is written into a docblock as `@return <type>` and read
 by each tool the way it reads a docblock. The table lists the basic constructs
-all of them read the same way and those on which they differ. Only the syntax
-is compared: whether the named type exists is not.
+all of them read the same way and those on which they differ.
 
-| Sign | Constructs                         | Malformed input                       |
-|------|------------------------------------|---------------------------------------|
-| ✓    | read as written                    | rejected                              |
-| ✗    | not read as written                | accepted                              |
-| !    | read as another type, a bug        | accepted after dropping a part, a bug |
+Only the syntax is compared, the type system is not. Each tool is read twice:
+by its parser and then by the code that turns the parsed type into the type the
+tool works with. A rejection of that second step counts only when the type is
+valid as written: `int<10, 0>` or `class-string<int>` may be refused, and
+whether the named type exists is not checked.
 
-A result in another form is the same type: Psalm returns `A&B` for `A&?B`,
-since an object of `A` is never `null`, and that is `✓`. Every other mark has
-a note that names its kind:
+| Sign | Constructs                                 | Malformed input                     |
+|------|--------------------------------------------|-------------------------------------|
+| ✓    | read as written                            | rejected                            |
+| ✗    | not supported                              | accepted                            |
+| !    | read, but the type comes out damaged       | accepted after dropping or damaging a part |
+
+A damaged type has lost a part, a precision or a value, was merged with
+another one or grouped in another order. A result in another form is the same
+type: Psalm returns `A&B` for `A&?B`, since an object of `A` is never `null`,
+and that is `✓`. Every other mark has a note that names its kind:
 
 - **Bug**: the tool reads the type wrongly, confirmed by an issue, by its
   documentation or by its own reading of a neighbouring form.
@@ -44,19 +50,21 @@ language each parser reads.
 
 ## Methodology
 
-| Tool     | Version                       | How `@return` is read                                                  |
-|----------|-------------------------------|------------------------------------------------------------------------|
-| PHPStan  | `phpstan/phpdoc-parser` 2.4.2 | `PhpDocParser::parse()`                                                |
-| Psalm    | `vimeo/psalm` 7.23.0          | `DocblockParser::parse()`, then the steps of `extractReturnType()`: `splitDocLine()`, `sanitizeDocblockType()`, `Type::parseString()` |
-| TypeLang | `type-lang/phpdoc` 2.0        | `new DocBlockParser()`, every feature of the parser enabled |
+| Tool     | Version                          | Parser                                    | Type                         |
+|----------|----------------------------------|-------------------------------------------|------------------------------|
+| PHPStan  | `phpstan/phpstan` 2.3.7          | `PhpDocParser::parse()` of the bundled `phpstan/phpdoc-parser` 2.4.1 | `TypeNodeResolver::resolve()` |
+| Psalm    | `vimeo/psalm` 7.23.0             | `DocblockParser::parse()`, `splitDocLine()`, `sanitizeDocblockType()`, `TypeTokenizer`, `ParseTreeCreator` | `Type::parseString()` |
+| Mago     | `carthage-software/mago` 1.61.0  | `PHPDocParser` of `mago-phpdoc-syntax`    | the scanner of `mago-codex`  |
+| TypeLang | `type-lang/phpdoc` 2.0           | `new DocBlockParser()`, every feature of the parser enabled | none, TypeLang stops at the parser |
 
 A type is read as written when the whole text becomes the type and nothing is
 left for the description. A line break of a type continues the docblock with
-` * `. The tools run with their default settings. Psalm is given the templates
-`T U V K K2 L` and the parameters `$a $b`, otherwise it cannot read `T[K]` and
-conditional types at all: it accepts only a template as an offset and as the
-subject of a condition. Error messages, offsets and the error-tolerant mode
-have no counterpart in the other tools and are not compared.
+` * `. The tools run with their default settings. Every tool is given the
+templates `T U V K K2 L` and the parameters `$a $b`, otherwise Psalm cannot
+read `T[K]` and conditional types at all: it accepts only a template as an
+offset and as the subject of a condition. Error messages, offsets and the
+error-tolerant mode have no counterpart in the other tools and are not
+compared.
 
 <Aside>
 A block comment `/* */` cannot be written inside a docblock, its `*/` closes
@@ -125,7 +133,9 @@ The `T is U ? A : B` family.
 
 ## Special names
 
-Names that carry meaning in PHPStan and Psalm. PHPStan and TypeLang read them as ordinary `Name<arguments>` and leave the meaning to the next layer, Psalm checks them while parsing.
+Names that carry meaning in PHPStan, Psalm and Mago. Their parsers read them as
+ordinary `Name<arguments>`, the meaning is given by the type of each tool.
+TypeLang has no such step and leaves the meaning to the next layer.
 
 <ComparisonTable section="special-names" />
 
