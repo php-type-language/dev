@@ -48,6 +48,19 @@ final class ParamTagDefinition extends TagDefinition
 | `name`      | the name of the tag, without the `@`                       |
 | `spec`      | the grammar of the line after the name                     |
 | `placement` | where the tag may be written, see [below](#inline-tags)    |
+| `description` | what the tag means, in markdown, `null` by default       |
+
+The description is for the tools around the parser, such as a language
+server showing the meaning of a tag under the cursor:
+
+```php
+$parser = new DocBlockParser();
+
+echo $parser->tags->find('param')
+    ?->description;
+// The `@param` tag documents a single argument of a function or method.
+// ...
+```
 
 <Aside>
 The built-in definitions also have a static `getCanonicalName()`: a
