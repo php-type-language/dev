@@ -11,6 +11,7 @@ use Phplrt\Contracts\Source\ReadableInterface;
 use Phplrt\Contracts\Source\SourceFactoryInterface;
 use Phplrt\Position\PositionFactory;
 use Phplrt\Source\SourceFactory;
+use TypeLang\Parser\Exception\SourceNotReadableException;
 use TypeLang\Parser\Internal\Executor;
 use TypeLang\Parser\Partial\FailureParsedResult;
 use TypeLang\Parser\Partial\SuccessfulParsedResult;
@@ -141,11 +142,15 @@ final class TypeParser implements TypeParserInterface
     }
 
     /**
-     * @throws SourceExceptionInterface in case of no source can be created out
-     *         of the given value
+     * @throws SourceNotReadableException in case of no source can be created
+     *         out of the given value
      */
     private function toSource(mixed $source): ReadableInterface
     {
-        return $this->sources->create($source);
+        try {
+            return $this->sources->create($source);
+        } catch (SourceExceptionInterface $e) {
+            throw SourceNotReadableException::becauseSourceIsNotCreatable($source, $e);
+        }
     }
 }
